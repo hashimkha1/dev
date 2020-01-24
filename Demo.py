@@ -26,6 +26,10 @@ def home():
 def about():
     return render_template('about.html',title='about')
 
+@app.route("/feedback")
+def feedback():
+    return render_template('feedback.html',posts=posts,title='feedback')
+
 @app.route("/reports")
 def reports():
     return render_template('reports.html',title='View Coda Reports')
