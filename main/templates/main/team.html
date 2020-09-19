@@ -1,0 +1,49 @@
+{%extends "main/base.html"%} {% block content %}
+<section id="team">
+  <div class="team text-center">
+    <h3 class="title">OUR TEAM</h3>
+    <div class="row text-center">
+      <div class="col-md-3">
+        <img
+          src="media\profile_pics\Chris.jpg"
+          class="team-img"
+          width="175px"
+          height="200px"
+        />
+      </div>
+      <div class="col-md-3">
+        <h3>Chris Maghas</h3>
+        <h5>BI Architect| The Coach</h5>
+        <p>
+          Over 12 years of experience working for 5 companies in BI. Trained
+          over 100 students with 90% success rate.
+        </p>
+        <a href="{% url 'main-coach_profile' %}" target="_blank">
+          <button type="button" class="btn btn-primary">Meet the Coach</button>
+        </a>
+      </div>
+
+      <div class="col-md-3">
+        <img
+          src="static/img/profile/PM.jpg"
+          class="team-img"
+          width="175px"
+          height="200px"
+        />
+      </div>
+      <div class="col-md-3">
+        <h3>Ken Kamwada</h3>
+        <h5>Sr. Data Analyst|PM</h5>
+        <p>
+          Data Analyst and Project Manager for the past 5 years. Focuses on
+          client deliverables with a concentration in ETL, Database and
+          Reporting.
+        </p>
+        <a href="{% url 'main-coach_profile' %}" target="_blank">
+          <button type="button" class="btn btn-primary">Learn More</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

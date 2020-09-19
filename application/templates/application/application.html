@@ -1,0 +1,45 @@
+{%extends "application/baseapplication.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
+    <div class="row text-center">
+      <div class="col-md-6">
+        <h3>EAC Based Candidates</h3>
+        <img
+          src="media/maps/EAC.jpg"
+          class="career-img"
+          width="600px"
+          height="300px"
+        />
+        <h5>Data Analyst</h5>
+        <p>
+          The candidate must have a degree in a recognized institution within
+          the East Africa and must have adequate knowledge in Microsoft Packages
+          (Excel, Word, Powerpoint,Tableau,Alteryx and SQL).
+        </p>
+        <a href="{% url 'application-apply' %}" target="_blank">
+          <button type="button" class="btn btn-primary">Apply</button>
+        </a>
+      </div>
+      <div class="col-md-6">
+        <h3>US Based Candidates</h3>
+        <img
+          src="media/maps/US.jpg"
+          class="career-img"
+          width="600px"
+          height="300px"
+        />
+        <h5>Data Analyst Jobs</h5>
+        <p>
+          For US Based Candidates please click below to search jobs within your
+          prefered region or states.Upload your update resume to start the
+          application process.
+        </p>
+        <a href="https://www.indeed.com/" target="_blank">
+          <button type="button" class="btn btn-primary">Apply</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
