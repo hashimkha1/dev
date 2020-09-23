@@ -5,13 +5,17 @@ from .models import Application
 
 
 class ApplicationForm(UserCreationForm):
-    email = forms.EmailField()
+    pass
+    #email = forms.EmailField()
 
-    class Meta:
-        model = User
-        fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+    #class Meta:
+        #model = User
+        #model=Application
+        #fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+
 
 class ApplicantForm(forms.ModelForm):
+    email = forms.EmailField()
     class Meta:
         model = Application
-        fields = ['first_name','username','resume']
+        fields = ['first_name','last_name','username', 'email','resume']

@@ -9,6 +9,10 @@ def home(request):
 def about(request):
     return render(request, 'main/about.html', {'title': 'about'})
 
+def about_us(request):
+    return render(request, 'main/about_us.html', {'title': 'about_us'})
+
+
 def team(request):
     return render(request, 'main/team.html', {'title': 'team'})
 

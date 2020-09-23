@@ -1,4 +1,4 @@
-{%extends "application/baseapplication.html"%} {% block content %}
+{%extends "main/base.html"%} {% block content %}
 <section id="career">
   <div class="career text-center">
     <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
@@ -11,13 +11,27 @@
           width="600px"
           height="300px"
         />
+
+        <img
+          src="media\background\home2.jpg"
+          class="d-block img-fluid"
+          width="1500px"
+          alt="home1"
+        />
+
+        <img
+          src="media\home\project4.jpg"
+          class="service-img"
+          width="500px"
+          height="230px"
+        />
         <h5>Data Analyst</h5>
         <p>
           The candidate must have a degree in a recognized institution within
           the East Africa and must have adequate knowledge in Microsoft Packages
           (Excel, Word, Powerpoint,Tableau,Alteryx and SQL).
         </p>
-        <a href="{% url 'application-apply' %}" target="_blank">
+        <a href="{% url 'application-upload_resume' %}">
           <button type="button" class="btn btn-primary">Apply</button>
         </a>
       </div>

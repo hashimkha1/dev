@@ -5,8 +5,11 @@ urlpatterns = [
     path('report/', views.report, name='data-report'),
     path('etl/', views.etl, name='data-etl'),
     path('database/', views.database, name='data-database'),
+    path('financialsystem/', views.financialsystem, name='data-financialsystem'),
+    path('payroll/', views.payroll, name='data-payroll'),
     path('project/', views.project, name='data-project'),
     path('training/', views.training, name='data-training'),
     path('course/', views.course, name='data-course'),
+    path('consultancy/', views.consultancy, name='data-consultancy'),
 
 ]

@@ -8,9 +8,19 @@ def course(request):
     
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})
+
+def payroll(request):
+    return render(request, 'data/payroll.html', {'title': 'payroll'})
+
+def financialsystem(request):
+    return render(request, 'data/financialsystem.html', {'title': 'financialsystem'})
+
 def project(request):
     return render(request, 'data/project.html', {'title': 'project'})
 
+def consultancy(request):
+    return render(request, 'data/consultancy.html', {'title': 'consultancy'})
+    
 # views on samples reports.
 def report(request):
     return render(request, 'data/report.html', {'title': 'report'})

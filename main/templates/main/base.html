@@ -67,6 +67,10 @@
                   About
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                  <a class="dropdown-item" href="{% url 'main-about_us' %}"
+                    >US</a
+                  >
+                  <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'main-team' %}"
                     >Our Team</a
                   >
@@ -94,15 +98,15 @@
                   Services
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="{% url 'data-project' %}"
+                  <a class="dropdown-item" href="{% url 'data-consultancy' %}"
                     >Project Management</a
                   >
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'data-project' %}"
-                    >Software Solutions</a
+                  <a class="dropdown-item" href="{% url 'data-training' %}"
+                    >BI Training</a
                   >
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'data-project' %}"
+                  <a class="dropdown-item" href="{% url 'data-consultancy' %}"
                     >Consultancy</a
                   >
                 </div>
@@ -151,9 +155,7 @@
                   <hr />
                   <div class="dropdown-divider"></div>
 
-                  <a class="dropdown-item" href="{% url 'codablog-success' %}"
-                    >Success Stories</a
-                  >
+                  <a class="dropdown-item" href="#">Success Stories</a>
                   <hr />
                 </div>
               </li>

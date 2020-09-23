@@ -11,15 +11,15 @@ class Applicant_Profile(models.Model):
 
 
 class Application(models.Model):
+    id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
-    #last_name=models.CharField(default="None",max_length=100, NULL=False)
-    #phone=models.CharField(default=None,max_length=100)
-    #country=models.CharField(default=None,max_length=100)
+    last_name=models.CharField(max_length=100)
+    phone=models.CharField(max_length=100,blank=True, null=True)
+    country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
 
     def __str__(self):
         return f'{self.username} application'
-
 

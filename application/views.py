@@ -25,7 +25,7 @@ def upload_resume(request):
         form=ApplicantForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-applicants')
+            return redirect('application-first_interview')
     else:
         form=ApplicantForm()
     return render(request, 'application/upload_resume.html',{'form':form})
@@ -35,19 +35,6 @@ def applicants(request):
     applicants=Application.objects.all()
     return render(request, 'application/applicants.html', {'applicants': applicants})
 
-
-def apply(request):
-    if request.method == 'POST':
-        form = ApplicationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('application-interview')
-    else:
-        form = ApplicationForm()
-    return render(request, 'application/apply.html', {'form': form})
 
 @login_required
 def applicant_profile(request):
@@ -59,3 +46,9 @@ def career(request):
 
 def interview(request):
     return render(request, 'application/interview.html', {'title': 'interview'})
+
+def first_interview(request):
+    return render(request, 'application/first_interview.html', {'title': 'first_interview'})
+
+def second_interview(request):
+    return render(request, 'application/second_interview.html', {'title': 'second_interview'})
