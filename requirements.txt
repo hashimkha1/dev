@@ -25,3 +25,4 @@ toml==0.10.1
 Tree==0.2.4
 urllib3==1.25.10
 wrapt==1.12.1
+whitenoise
