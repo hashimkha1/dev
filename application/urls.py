@@ -8,7 +8,7 @@ urlpatterns = [
     path('first_interview/', views.first_interview, name='application-first_interview'),
     path('second_interview/', views.second_interview, name='application-second_interview'),
     path('upload/', views.upload, name='application-upload'),
-    path('upload_resume/', views.upload_resume, name='application-upload_resume'),
+    path('apply/', views.apply, name='application-apply'),
     path('applicants/', views.applicants, name='application-applicants'),
    
 ]

@@ -20,15 +20,15 @@ def upload(request):
     return render(request, 'application/upload.html')
 
 # Saving uploaded information to database
-def upload_resume(request):
+def apply(request):
     if request.method== "POST":
         form=ApplicantForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-first_interview')
+            return redirect('application-interview')
     else:
         form=ApplicantForm()
-    return render(request, 'application/upload_resume.html',{'form':form})
+    return render(request, 'application/apply.html',{'form':form})
 
 
 def applicants(request):
