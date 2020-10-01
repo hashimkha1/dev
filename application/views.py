@@ -52,3 +52,6 @@ def first_interview(request):
 
 def second_interview(request):
     return render(request, 'application/second_interview.html', {'title': 'second_interview'})
+
+def orientation(request):
+    return render(request, 'application/orientation.html', {'title': 'orientation'})
