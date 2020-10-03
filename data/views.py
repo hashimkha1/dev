@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 def course(request):
     return render(request, 'data/course.html', {'title': 'course'})
 
-@login_required  
+ 
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})
 
