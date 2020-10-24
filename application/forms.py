@@ -18,4 +18,4 @@ class ApplicantForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
         model = Application
-        fields = ['first_name','last_name','username', 'email','resume']
+        fields = ['application_date','first_name','last_name','username', 'email','resume']

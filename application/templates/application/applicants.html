@@ -6,6 +6,7 @@
     <table style="width: 100%">
       <thead>
         <tr>
+          <th>Application Date</th>
           <th>First Name</th>
           <th>Last Name</th>
           <th>Resume</th>
@@ -18,6 +19,7 @@
       <tbody>
         {% for applicant in applicants %}
         <tr>
+          <td>{{applicant.application_date}}</td>
           <td>{{applicant.first_name}}</td>
           <td>{{applicant.last_name}}</td>
           <!--
