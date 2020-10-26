@@ -1,10 +1,59 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import ApplicationForm,ApplicantForm
+from .forms import ApplicationForm,ApplicantForm,RatingForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application
+from .models import Application,Rating
+
+
+#Interview description data
+
+interview_descs=[
+
+{
+	'Inteview':'First   Interview',
+	'Concentration':'Data Analysis',
+	'Description':'Understanding SQL,Tableau & Alteryx	',
+	'Duration':'5 Days	',
+	'Lead':'HR Manager'
+},
+{
+	'Inteview':'Second Interview',
+	'Concentration':'General Tools& Company Projects',
+	'Description':'Understanding Company Projects, Values and Other Tools	',
+	'Duration':'3 Days	',
+	'Lead':'HR Manager'
+},
+{
+	'Inteview':'Third Interview',
+	'Concentration':'History,Values & Systems',
+	'Description':'Understanding about our history and Key Systems in CODA	',
+	'Duration':'2 Days	',
+	'Lead':'HR Manager',
+},
+
+{
+	'Inteview':'Final Interview',
+	'Concentration':'Data Analysis 1-1 Sessions',
+	'Description':'Measuring,assessing Time sensitivity.',
+	'Duration':'7 Days',
+	'Lead':'Scrum Master'
+}
+]
+
+def home(request):
+    context = {
+        'posts': posts
+    }
+    return render(request, 'blog/home.html', context)
+
+
+def interview(request):
+    context = {
+        'interview_descs': interview_descs
+    }
+    return render(request, 'application/interview.html', {'title': 'interview'}, context)
 
 # Create your views here.
 class application(TemplateView):
@@ -55,3 +104,17 @@ def second_interview(request):
 
 def orientation(request):
     return render(request, 'application/orientation.html', {'title': 'orientation'})
+
+def rating(request):
+    ratings=Rating.objects.all().order_by('-total_score')
+    return render(request, 'application/rating.html', {'ratings': ratings })
+
+def rate(request):
+    if request.method== "POST":
+        form=RatingForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-rating')
+    else:
+        form=RatingForm()
+    return render(request, 'application/rate.html',{'form':form})

@@ -1,40 +1,45 @@
 {%extends "data/basedata.html"%} {% block content %}
-<section id="career">
-  <div class="career text-center">
+<section id="rating">
+  <div class="rating text-center">
     <h2>All Applicants</h2>
     <hr />
     <table style="width: 100%">
       <thead>
         <tr>
-          <th>Applicant_Id</th>
-          <th>Application Date</th>
+          <th>Rating Id</th>
+          <th>Rating Date</th>
           <th>First Name</th>
           <th>Last Name</th>
-          <th>Phone Number</th>
-          <th>Resume</th>
+          <th>Punctuality</th>
+          <th>Communication</th>
+          <th>Topic</th>
           <!--
-          <th>Phone</th>
+          <th>Total Score</th>
+         
           <th>Country</th>
            <th>Cover Letter</th>-->
         </tr>
       </thead>
       <tbody>
-        {% for applicant in applicants %}
+        {% for rating in ratings %}
         <tr>
-          <td>{{applicant.id}}</td>
-          <td>{{applicant.application_date}}</td>
-          <td>{{applicant.first_name}}</td>
-          <td>{{applicant.last_name}}</td>
-          <td>{{applicant.Phone}}</td>
-          <!--
-          <td>{{applicant.Country}}</td>
-          -->
+          <td>{{rating.id}}</td>
+          <td>{{rating.rating_date}}</td>
+          <td>{{rating.first_name}}</td>
+          <td>{{rating.last_name}}</td>
+          <td>{{rating.punctuality}}</td>
+          <td>{{rating.communication}}</td>
+          <td>{{rating.topic}}</td>
+          <!---
+          <td>{{rating.total_score}}</td>
+
+          
           <td>
             <a href="{{applicant.resume.url}}" class="btn btn-primary btn-sm"
               >Download Resume
             </a>
           </td>
-          <!---
+          
           <td>
 
             <a href="{{applicant.cover.url}}" class="btn btn-primary btn-sm"

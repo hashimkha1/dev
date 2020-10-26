@@ -1,0 +1,38 @@
+{%extends "data/basedata.html"%} {%load crispy_forms_tags%} {% block content %}
+{% csrf_token %}
+<div class="rate">
+  <h3>Rating Candidates</h3>
+  <p>
+    On a scale(0-5) rate time,punctuality and Communication Skills for
+    candidates
+  </p>
+  <hr />
+  <form method="POST" enctype="multipart/form-data">
+    <div class="form-row">
+      <div class="form-group col-md-4 mb-0">
+        {{ form.first_name|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        {{ form.last_name|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        {{ form.topic|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        {{ form.punctuality|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        {{ form.communication|as_crispy_field }}
+      </div>
+      <div class="form-group col-md-4 mb-0">
+        {{ form.understanding|as_crispy_field }}
+      </div>
+    </div>
+  </form>
+  <hr />
+  <div>
+    <h> Results</h>
+  </div>
+</div>
+
+{% endblock content %}
