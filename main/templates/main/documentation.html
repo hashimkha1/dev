@@ -1,15 +1,14 @@
 {%extends "data/basedata.html"%} {% block content %}
 <section id="career">
   <div class="career text-center">
-    <h2>All Applicants</h2>
+    <h2>Download Documents For Use</h2>
     <hr />
     <table style="width: 100%">
       <thead>
         <tr>
-          <th>Application Date</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Resume</th>
+          <th>Date Uploaded</th>
+          <th>Document Name</th>
+          <th>Document</th>
           <!--
           <th>Phone</th>
           <th>Country</th>
@@ -17,18 +16,20 @@
         </tr>
       </thead>
       <tbody>
-        {% for applicant in applicants %}
+        {% for codadocument in codadocuments %}
         <tr>
-          <td>{{applicant.application_date}}</td>
-          <td>{{applicant.first_name}}</td>
-          <td>{{applicant.last_name}}</td>
+          <td>{{codadocument.date_uploaded|date:"F d, Y"}}</td>
+          <td>{{codadocument.document_name}}</td>
           <!--
+          <td>{{applicant.last_name}}</td>
           <td>{{applicant.Phone}}</td>
           <td>{{applicant.Country}}</td>
           -->
           <td>
-            <a href="{{applicant.resume.url}}" class="btn btn-primary btn-sm"
-              >Download Resume
+            <a
+              href="{{codadocument.codadoc.url}}"
+              class="btn btn-primary btn-sm"
+              >Download
             </a>
           </td>
           <!---

@@ -32,7 +32,7 @@ def apply(request):
 
 
 def applicants(request):
-    applicants=Application.objects.all()
+    applicants=Application.objects.all().order_by('-application_date')
     return render(request, 'application/applicants.html', {'applicants': applicants})
 
 

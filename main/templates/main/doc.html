@@ -1,0 +1,10 @@
+{%extends "data/basedata.html"%} {%load crispy_forms_tags%} {% block content %}
+
+<div class="upload">
+  <h3>Enter Company Document</h3>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token%} {{ form|crispy }}
+    <button type="submit">Submit</button>
+  </form>
+</div>
+{% endblock content %}
