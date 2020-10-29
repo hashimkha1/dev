@@ -8,10 +8,11 @@ urlpatterns = [
     path('first_interview/', views.first_interview, name='application-first_interview'),
     path('second_interview/', views.second_interview, name='application-second_interview'),
     path('orientation/', views.orientation, name='application-orientation'),
-    path('upload/', views.upload, name='application-upload'),
+    path('firstupload/', views.firstupload, name='application-firstupload'),
     path('apply/', views.apply, name='application-apply'),
     path('applicants/', views.applicants, name='application-applicants'),
     path('rating/', views.rating, name='application-rating'),
     path('rate/', views.rate, name='application-rate'),
+    path('fupload/', views.fupload, name='application-fupload'),
    
 ]

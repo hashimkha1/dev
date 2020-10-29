@@ -84,13 +84,26 @@ WSGI_APPLICATION = 'coda_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODADB',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER2020', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
+    }
+}
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
     }
 }
+
 
 
 # Password validation

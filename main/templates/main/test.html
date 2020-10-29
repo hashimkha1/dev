@@ -1,131 +1,29 @@
-{%extends "main/base.html"%} {% block content %}
-<section id="career">
-  <div class="career text-center">
-    <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
-    <div class="row text-center">
-      <div class="col-md-12">
-        <style type="text/css">
-          .tg {
-            border-collapse: collapse;
-            border-spacing: 0;
-            margin-left: auto;
-            margin-right: auto;
-          }
-          .tg td {
-            border-color: black;
-            border-style: solid;
-            border-width: 1px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            overflow: hidden;
-            padding: 10px 5px;
-            word-break: normal;
-          }
-          .tg th {
-            border-color: black;
-            border-style: solid;
-            border-width: 1px;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: normal;
-            overflow: hidden;
-            padding: 10px 5px;
-            word-break: normal;
-          }
-          .tg .tg-67dp {
-            background-color: #dce6f1;
-            text-align: left;
-            vertical-align: bottom;
-          }
-          .tg .tg-8xdm {
-            background-color: #9b9b9b;
-            color: #333333;
-            font-family: Impact, Charcoal, sans-serif !important;
-            font-size: 15px;
-            text-align: center;
-            vertical-align: bottom;
-          }
-          .tg .tg-xs21 {
-            background-color: #9b9b9b;
-            color: #333333;
-            font-family: Impact, Charcoal, sans-serif !important;
-            font-size: 15px;
-            font-weight: bold;
-            text-align: center;
-            vertical-align: bottom;
-          }
-          .tg .tg-7zrl {
-            text-align: left;
-            vertical-align: bottom;
-          }
-        </style>
-        <table class="tg">
-          <thead>
-            <tr>
-              <th class="tg-8xdm">
-                <span style="text-decoration: none">Inteview</span>
-              </th>
-              <th class="tg-xs21">
-                <span style="font-weight: 400; text-decoration: none"
-                  >Concentration</span
-                >
-              </th>
-              <th class="tg-xs21">
-                <span style="font-weight: 400; text-decoration: none"
-                  >Description</span
-                >
-              </th>
-              <th class="tg-xs21">
-                <span style="font-weight: 400; text-decoration: none"
-                  >Duration</span
-                >
-              </th>
-              <th class="tg-xs21">
-                <span style="font-weight: 400; text-decoration: none"
-                  >Lead</span
-                >
-              </th>
-            </tr>
-          </thead>
+{%extends "data/basedata.html"%} {%load crispy_forms_tags%} {% block content %}
 
-          <tbody>
-            {% for context in context %}
-            <tr>
-              <td class="tg-7zrl">
-                <span
-                  style="font-weight: 400; text-decoration: none; color: black"
-                  >{{context.interview}}</span
-                >
-              </td>
-              <td class="tg-7zrl">
-                <span
-                  style="font-weight: 400; text-decoration: none; color: black"
-                  >Data Analysis</span
-                >
-              </td>
-              <td class="tg-7zrl">
-                <span
-                  style="font-weight: 400; text-decoration: none; color: black"
-                  >Understanding SQL,Tableau &amp; Alteryx</span
-                >
-              </td>
-              <td class="tg-7zrl">
-                <span
-                  style="font-weight: 400; text-decoration: none; color: black"
-                  >5 Days</span
-                >
-              </td>
-              <td class="tg-7zrl">
-                <span
-                  style="font-weight: 400; text-decoration: none; color: black"
-                  >HR Manager</span
-                >
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <hr />
+<!-------------------Our Services Section------------------------->
+<section id="project">
+  <div class="project text-center">
+    <div class="business_header">
+      <h3 class="title text-center">Rating Candidates</h3>
+    </div>
+    <div class="row text-center">
+      <div class="col-md-12 project">
+        <div class="rate">
+          <h3>Rating Candidates</h3>
+          <p>
+            On a scale(0-5) rate time,punctuality and Communication Skills for
+            candidates
+          </p>
+          <hr />
+          <form method="POST" enctype="multipart/form-data">
+            <div class="form-row">
+              <div class="form-group col-md-4 mb-0">
+                {% csrf_token %}{{ form.first_name|as_crispy_field }}
+              </div>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

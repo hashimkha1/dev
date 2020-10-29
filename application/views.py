@@ -1,11 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import ApplicationForm,ApplicantForm,RatingForm
+from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rating
-
+from .models import Application,Rating,InteviewUpload
 
 #Interview description data
 
@@ -49,17 +48,13 @@ def home(request):
     return render(request, 'blog/home.html', context)
 
 
-def interview(request):
-    context = {
-        'interview_descs': interview_descs
-    }
-    return render(request, 'application/interview.html', {'title': 'interview'}, context)
+
 
 # Create your views here.
 class application(TemplateView):
     template_name='application.html'
 
-#saving uploaded file to file system under media
+'''saving uploaded file to file system under media
 def upload(request):
     if request.method== "POST":
         uploaded_file=request.FILES["document"]
@@ -67,7 +62,7 @@ def upload(request):
         fs.save(uploaded_file.name,uploaded_file)
         #print(uploaded_file.name)
     return render(request, 'application/upload.html')
-
+'''
 # Saving uploaded information to database
 def apply(request):
     if request.method== "POST":
@@ -84,12 +79,11 @@ def applicants(request):
     applicants=Application.objects.all().order_by('-application_date')
     return render(request, 'application/applicants.html', {'applicants': applicants})
 
-
 @login_required
 def applicant_profile(request):
     return render(request, 'application/applicant_profile.html')
 
-# Create your views here.
+# # ------------------------Interview Section-------------------------------------#.
 def career(request):
     return render(request, 'application/career.html', {'title': 'career'})
 
@@ -105,16 +99,41 @@ def second_interview(request):
 def orientation(request):
     return render(request, 'application/orientation.html', {'title': 'orientation'})
 
-def rating(request):
-    ratings=Rating.objects.all().order_by('-total_score')
-    return render(request, 'application/rating.html', {'ratings': ratings })
+# -------------------------Uploads Section-------------------------------------#
+def firstupload(request):
+    if request.method=='POST':
+        form=InterviewUploadForm(request.POST,request.FILES)
+        if form.is_valid:
+            form.save()
+            return redirect('application-second_interview')
+    else:
+         form=InterviewUploadForm()
+    return render(request, 'application/firstupload.html',{'form':form})
 
+def fupload(request):
+    iuploads=InteviewUpload.objects.all().order_by('-Interviewid')
+    return render(request, 'application/fupload.html', {'iuploads': iuploads})
+
+# -------------------------rating Section-------------------------------------#
 def rate(request):
     if request.method== "POST":
         form=RatingForm(request.POST,request.FILES)
         if form.is_valid():
+            cd = form.cleaned_data     
+            punctuality = cd['punctuality']
+            communication = cd['communication']
+            understanding = cd['understanding']
+            total_score = punctuality + communication+understanding
+            request.session['total_score']=total_score
             form.save()
             return redirect('application-rating')
     else:
         form=RatingForm()
     return render(request, 'application/rate.html',{'form':form})
+
+def rating(request):
+    ratings=Rating.objects.all().order_by('-punctuality')
+    # Get the result from the session
+    total_score = request.session.pop('total_score', None)
+    return render(request, 'application/rating.html', {'ratings': ratings,'total_score':total_score})
+
