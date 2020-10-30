@@ -28,7 +28,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 #DEBUG = True
 DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 
-ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
+
+ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
+#ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
 #ALLOWED_HOSTS = []
 
 
