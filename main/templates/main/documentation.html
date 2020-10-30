@@ -1,3 +1,4 @@
+<!--
 {%extends "data/basedata.html"%} {% block content %}
 <section id="career">
   <div class="career text-center">
@@ -9,10 +10,6 @@
           <th>Date Uploaded</th>
           <th>Document Name</th>
           <th>Document</th>
-          <!--
-          <th>Phone</th>
-          <th>Country</th>
-           <th>Cover Letter</th>-->
         </tr>
       </thead>
       <tbody>
@@ -20,11 +17,6 @@
         <tr>
           <td>{{codadocument.date_uploaded|date:"F d, Y"}}</td>
           <td>{{codadocument.document_name}}</td>
-          <!--
-          <td>{{applicant.last_name}}</td>
-          <td>{{applicant.Phone}}</td>
-          <td>{{applicant.Country}}</td>
-          -->
           <td>
             <a
               href="{{codadocument.codadoc.url}}"
@@ -32,17 +24,11 @@
               >Download
             </a>
           </td>
-          <!---
-          <td>
-
-            <a href="{{applicant.cover.url}}" class="btn btn-primary btn-sm"
-              >Download Cover Letter
-            </a>
-          </td>
-        --></tr>
+        </tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
 </section>
 {% endblock content %}
+-->

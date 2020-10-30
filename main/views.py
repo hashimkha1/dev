@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Codadoc
+#from .models import Codadoc
 from .forms import CodadocumentsForm
 # Create your views here.
 def test(request):
@@ -39,6 +39,7 @@ def project(request):
     return render(request, 'main/project.html', {'title': 'project'})
 
 #-----------------------------Documents---------------------------------
+'''
 def codadocuments(request):
     codadocuments=Codadoc.objects.all().order_by('-date_uploaded')
     return render(request, 'main/documentation.html', {'codadocuments': codadocuments})
@@ -53,3 +54,4 @@ def doc(request):
     else:
         form=CodadocumentsForm()
     return render(request, 'main/doc.html',{'form':form})
+'''
