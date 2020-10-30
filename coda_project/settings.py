@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 
 
-ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
-#ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
+#ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
+ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
 #ALLOWED_HOSTS = []
 
 
@@ -86,7 +86,7 @@ WSGI_APPLICATION = 'coda_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -105,7 +105,10 @@ DATABASES = {
         
     }
 }
-'''
+
+import dj-database-url
+db_from_env=dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
