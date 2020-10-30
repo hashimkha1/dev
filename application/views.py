@@ -8,7 +8,7 @@ from .models import Application,Rating,InteviewUpload
 
 #Interview description data
 
-interview_descs=[
+posts=[
 
 {
 	'Inteview':'First   Interview',
@@ -111,7 +111,7 @@ def firstupload(request):
     return render(request, 'application/firstupload.html',{'form':form})
 
 def fupload(request):
-    iuploads=InteviewUpload.objects.all().order_by('-Interviewid')
+    iuploads=InteviewUpload.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
 
 # -------------------------rating Section-------------------------------------#

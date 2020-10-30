@@ -28,4 +28,4 @@ class RatingForm(forms.ModelForm):
 class InterviewUploadForm(forms.ModelForm):
     class Meta:
         model = InteviewUpload
-        fields = ['Interviewid','interviewppt','interviewtab','interviewalteryx', 'interviewdb','interviewother']
+        fields = ['username','interviewppt','tableau','alteryx', 'SQL','other']

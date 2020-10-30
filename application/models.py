@@ -30,13 +30,14 @@ class Application(models.Model):
 
 class InteviewUpload(models.Model):
     Id = models.AutoField(primary_key=True)
-    Interviewid= models.PositiveIntegerField(blank=False,null=True)
-    #upload_date = models.DateTimeField(default=timezone.now)
+    username=models.CharField(default='coachofanalytics', max_length=30,null=True)
+    #Interviewid= models.PositiveIntegerField(blank=False,null=True)
+    upload_date = models.DateTimeField(default=timezone.now)
     interviewppt=models.FileField(upload_to='interviewppt/ppt/')
-    interviewtab=models.FileField(default=None,upload_to='interviewtab/tab/')
-    interviewalteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
-    interviewdb=models.FileField(default=None,upload_to='interviewdb/dba/')
-    interviewother=models.FileField(default=None,upload_to='interviewother/general/')
+    tableau=models.FileField(default=None,upload_to='interviewtab/tab/')
+    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
+    SQL=models.FileField(default=None,upload_to='interviewdb/dba/')
+    other=models.FileField(default=None,upload_to='interviewother/general/')
     #Interview_Id= models.ForeignKey(Application, on_delete=models.CASCADE)
     Applicant=models.ManyToManyField(Application)
 
