@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 #from .models import Codadoc
-from .forms import CodadocumentsForm
+#from .forms import CodadocumentsForm
 # Create your views here.
 def test(request):
     return render(request, 'main/test.html', {'title': 'test'})
