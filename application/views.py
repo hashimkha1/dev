@@ -135,6 +135,6 @@ def rate(request):
 def rating(request):
     ratings=Ratings.objects.all().order_by('-punctuality')
     # Get the result from the session
-    total_score = request.session.pop('total_score', None)
-    return render(request, 'application/rating.html', {'ratings': ratings,'total_score':total_score})
+    #total_score = request.session.pop('total_score', None)
+    return render(request, 'application/rating.html', {'ratings': ratings})#,'total_score':total_score})
 
