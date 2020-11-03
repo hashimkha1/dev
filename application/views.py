@@ -120,12 +120,6 @@ def rate(request):
     if request.method== "POST":
         form=RatingForm(request.POST,request.FILES)
         if form.is_valid():
-            cd = form.cleaned_data     
-            punctuality = cd['punctuality']
-            communication = cd['communication']
-            understanding = cd['understanding']
-            total_score = punctuality + communication+understanding
-            request.session['total_score']=total_score
             form.save()
             return redirect('application-rating')
     else:
