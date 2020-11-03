@@ -28,7 +28,7 @@ class Application(models.Model):
     def __str__(self):
         return f'{self.username} application'
 
-class InteviewUploads(models.Model):
+class InteviewUpload(models.Model):
     Id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
@@ -42,7 +42,7 @@ class InteviewUploads(models.Model):
     def __str__(self):
         return f'{self.username} InteviewUploads'
 
-class Rating(models.Model):
+class Ratings(models.Model):
     class Score(models.IntegerChoices):
         very_Poor = 1
         Poor =2
@@ -59,49 +59,7 @@ class Rating(models.Model):
     communication = models.IntegerField(choices=Score.choices)
     understanding = models.IntegerField(choices=Score.choices)
 
-    '''
-    punctuality = [ (1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5')],
-    communication = [ (1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5')],
-    understanding = [ (1, '1'),(2, '2'),(3, '3'),(4, '4'),(5, '5')],
-    
-    punctuality=models.PositiveIntegerField(default=None,validators=[MinValueValidator(1), MaxValueValidator(5)])
-    communication=models.PositiveIntegerField(default=None,validators=[MinValueValidator(1), MaxValueValidator(5)])
-    understanding=models.PositiveIntegerField(default=None,validators=[MinValueValidator(1), MaxValueValidator(5)])
-    '''
     def __str__(self):
         return f'{self.id} Rating'
-'''
-    @property
-    def total_score(self):
-        #returns the total score for candidates
-        return self.punctuality+self.communication+self.topic
-    total_score=total_score()
-    #resume=models.FileField(upload_to='resumes/doc/')
-    #cover=models.FileField(default=None,upload_to='cover/doc/')
 
-    def baby_boomer_status(self):
-            "Returns the person's baby-boomer status."
-        import datetime
-        if self.birth_date < datetime.date(1945, 8, 1):
-            return "Pre-boomer"
-        elif self.birth_date < datetime.date(1965, 1, 1):
-            return "Baby boomer"
-        else:
-            return "Post-boomer"
-
-class InteviewUpload(models.Model):
-    Id = models.AutoField(primary_key=True)
-    username=models.CharField(default='coachofanalytics', max_length=30,null=True)
-    #Interviewid= models.PositiveIntegerField(blank=False,null=True)
-    #upload_date = models.DateTimeField(default=timezone.now)
-    interviewppt=models.FileField(upload_to='interviewppt/ppt/')
-    tableau=models.FileField(default=None,upload_to='interviewtab/tab/')
-    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
-    SQL=models.FileField(default=None,upload_to='interviewdb/dba/')
-    other=models.FileField(default=None,upload_to='interviewother/general/')
-    #Interview_Id= models.ForeignKey(Application, on_delete=models.CASCADE)
-    Applicant=models.ManyToManyField(Application)
-
-    def __str__(self):
-        return f'{self.Interviewid} InteviewUpload'
-'''
+    
