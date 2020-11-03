@@ -28,21 +28,19 @@ class Application(models.Model):
     def __str__(self):
         return f'{self.username} application'
 
-class InteviewUpload(models.Model):
+class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)
-    username=models.CharField(default='coachofanalytics', max_length=30,null=True)
-    #Interviewid= models.PositiveIntegerField(blank=False,null=True)
+    username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
     interviewppt=models.FileField(upload_to='interviewppt/ppt/')
     tableau=models.FileField(default=None,upload_to='interviewtab/tab/')
     alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
     SQL=models.FileField(default=None,upload_to='interviewdb/dba/')
     other=models.FileField(default=None,upload_to='interviewother/general/')
-    #Interview_Id= models.ForeignKey(Application, on_delete=models.CASCADE)
     Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
-        return f'{self.Interviewid} InteviewUpload'
+        return f'{self.username} InteviewUploads'
 
 class Rating(models.Model):
     class Score(models.IntegerChoices):
@@ -80,10 +78,7 @@ class Rating(models.Model):
     total_score=total_score()
     #resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
-'''
 
-
-'''
     def baby_boomer_status(self):
             "Returns the person's baby-boomer status."
         import datetime
@@ -93,4 +88,20 @@ class Rating(models.Model):
             return "Baby boomer"
         else:
             return "Post-boomer"
+
+class InteviewUpload(models.Model):
+    Id = models.AutoField(primary_key=True)
+    username=models.CharField(default='coachofanalytics', max_length=30,null=True)
+    #Interviewid= models.PositiveIntegerField(blank=False,null=True)
+    #upload_date = models.DateTimeField(default=timezone.now)
+    interviewppt=models.FileField(upload_to='interviewppt/ppt/')
+    tableau=models.FileField(default=None,upload_to='interviewtab/tab/')
+    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
+    SQL=models.FileField(default=None,upload_to='interviewdb/dba/')
+    other=models.FileField(default=None,upload_to='interviewother/general/')
+    #Interview_Id= models.ForeignKey(Application, on_delete=models.CASCADE)
+    Applicant=models.ManyToManyField(Application)
+
+    def __str__(self):
+        return f'{self.Interviewid} InteviewUpload'
 '''

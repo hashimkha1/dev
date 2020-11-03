@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rating,InteviewUpload
+from .models import Application,Rating,InteviewUploads
 
 #Interview description data
 
@@ -101,9 +101,9 @@ def orientation(request):
 
 # -------------------------Uploads Section-------------------------------------#
 def firstupload(request):
-    if request.method=='POST':
+    if request.method== "POST":
         form=InterviewUploadForm(request.POST,request.FILES)
-        if form.is_valid:
+        if form.is_valid():
             form.save()
             return redirect('application-second_interview')
     else:
@@ -111,7 +111,7 @@ def firstupload(request):
     return render(request, 'application/firstupload.html',{'form':form})
 
 def fupload(request):
-    iuploads=InteviewUpload.objects.all().order_by('-upload_date')
+    iuploads=InteviewUploads.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
 
 # -------------------------rating Section-------------------------------------#

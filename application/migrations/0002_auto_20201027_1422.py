@@ -29,17 +29,4 @@ class Migration(migrations.Migration):
             name='application_date',
             field=models.DateTimeField(default=django.utils.timezone.now),
         ),
-        migrations.CreateModel(
-            name='InteviewUpload',
-            fields=[
-                ('Id', models.AutoField(primary_key=True, serialize=False)),
-                ('Interviewid', models.PositiveIntegerField(null=True)),
-                ('interviewppt', models.FileField(upload_to='interviewppt/ppt/')),
-                ('interviewtab', models.FileField(default=None, upload_to='interviewtab/tab/')),
-                ('interviewalteryx', models.FileField(upload_to='interviewalteryx/alteryx/')),
-                ('interviewdb', models.FileField(default=None, upload_to='interviewdb/dba/')),
-                ('interviewother', models.FileField(default=None, upload_to='interviewother/general/')),
-                ('Applicant', models.ManyToManyField(to='application.Application')),
-            ],
-        ),
     ]
