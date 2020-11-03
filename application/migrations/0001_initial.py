@@ -29,19 +29,6 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Ratings',
-            fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('topic', models.CharField(default=None, max_length=100)),
-                ('rating_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('punctuality', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
-                ('communication', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
-                ('understanding', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
-            ],
-        ),
-        migrations.CreateModel(
             name='InteviewUploads',
             fields=[
                 ('Id', models.AutoField(primary_key=True, serialize=False)),
