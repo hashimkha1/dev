@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Ratings,InteviewUploads
+from .models import Application,Rated,InteviewUploads
 
 #Interview description data
 
@@ -127,7 +127,7 @@ def rate(request):
     return render(request, 'application/rate.html',{'form':form})
 
 def rating(request):
-    ratings=Ratings.objects.all().order_by('-punctuality')
+    ratings=Rated.objects.all().order_by('-punctuality')
     # Get the result from the session
     #total_score = request.session.pop('total_score', None)
     return render(request, 'application/rating.html', {'ratings': ratings})#,'total_score':total_score})
