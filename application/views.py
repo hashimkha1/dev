@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Ratings,InteviewUpload
+from .models import Application,Ratings,InteviewUploads
 
 #Interview description data
 
@@ -111,8 +111,9 @@ def firstupload(request):
     return render(request, 'application/firstupload.html',{'form':form})
 
 def fupload(request):
-    iuploads=InteviewUpload.objects.all().order_by('-upload_date')
+    iuploads=InteviewUploads.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
+
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):

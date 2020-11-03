@@ -28,7 +28,7 @@ class Application(models.Model):
     def __str__(self):
         return f'{self.username} application'
 
-class InteviewUpload(models.Model):
+class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
