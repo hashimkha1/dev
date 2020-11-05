@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,InteviewUploads
+from .models import Application,Rated,Uploads
 
 
 class ApplicationForm(UserCreationForm):
@@ -27,6 +27,12 @@ class RatingForm(forms.ModelForm):
 
 class InterviewUploadForm(forms.ModelForm):
     class Meta:
-        model = InteviewUploads
-        fields = ['username','interviewppt','tableau','alteryx', 'SQL','other']
+        model = Uploads
+        fields = ['username']
 
+'''
+class InterviewUploadForm(forms.ModelForm):
+    class Meta:
+        model = Uploads
+        fields = ['username','interviewppt','tableau','alteryx', 'SQL','other']
+'''

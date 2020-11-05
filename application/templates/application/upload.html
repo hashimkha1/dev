@@ -1,0 +1,25 @@
+{%extends "data/basedata.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Applicants</h2>
+    <hr />
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          <th>username</th>
+          <th>Date Uploaded</th>
+          <th>Powerpoint</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for iupload in iuploads %}
+        <tr>
+          <td>{{iupload.username}}</td>
+          <td>{{iupload.upload_date|date:"F d, Y"}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

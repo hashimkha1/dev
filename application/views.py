@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rated,InteviewUploads
+from .models import Application,Rated,Uploads
 
 #Interview description data
 
@@ -47,9 +47,6 @@ def home(request):
     }
     return render(request, 'blog/home.html', context)
 
-
-
-
 # Create your views here.
 class application(TemplateView):
     template_name='application.html'
@@ -73,7 +70,6 @@ def apply(request):
     else:
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
-
 
 def applicants(request):
     applicants=Application.objects.all().order_by('-application_date')
@@ -111,10 +107,12 @@ def firstupload(request):
     return render(request, 'application/firstupload.html',{'form':form})
 
 def fupload(request):
-    iuploads=InteviewUploads.objects.all().order_by('-upload_date')
+    iuploads=Uploads.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
 
-
+def upload(request):
+    iuploads=Uploads.objects.all().order_by('-upload_date')
+    return render(request, 'application/fupload.html', {'iuploads': iuploads})
 # -------------------------rating Section-------------------------------------#
 def rate(request):
     if request.method== "POST":

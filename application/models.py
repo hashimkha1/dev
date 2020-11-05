@@ -33,16 +33,31 @@ class InteviewUploads(models.Model):
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
     interviewppt=models.FileField(upload_to='interviewppt/ppt/')
-    tableau=models.FileField(default=None,upload_to='interviewtab/tab/')
+    tableau=models.FileField(upload_to='interviewtab/tab/')
     alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
-    SQL=models.FileField(default=None,upload_to='interviewdb/dba/')
-    other=models.FileField(default=None,upload_to='interviewother/general/')
+    SQL=models.FileField(upload_to='interviewdb/dba/')
+    other=models.FileField(upload_to='interviewother/general/')
     Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
         return f'{self.username} InteviewUploads'
+
+class Uploads(models.Model):
+    Id = models.AutoField(primary_key=True)
+    username=models.CharField(max_length=30,null=True)
+    upload_date = models.DateTimeField(default=timezone.now)
+    interviewppt=models.FileField(upload_to='interviewppt/ppt/')
+    '''
+    tableau=models.FileField(upload_to='interviewtab/tab/')
+    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
+    SQL=models.FileField(upload_to='interviewdb/dba/')
+    other=models.FileField(upload_to='interviewother/general/')
+    Applicant=models.ManyToManyField(Application)
+    '''
+    def __str__(self):
+        return f'{self.username} InteviewUploads'
 '''
-class Ratings(models.Model):
+class uploads(models.Model):
     class Score(models.IntegerChoices):
         very_Poor = 1
         Poor =2

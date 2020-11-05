@@ -14,5 +14,6 @@ urlpatterns = [
     path('rating/', views.rating, name='application-rating'),
     path('rate/', views.rate, name='application-rate'),
     path('fupload/', views.fupload, name='application-fupload'),
+    path('upload/', views.upload, name='application-upload'),
    
 ]
