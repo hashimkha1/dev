@@ -33,6 +33,7 @@ urlpatterns = [
     path('blog/', include('codablog.urls')),
     path('users/', include('users.urls')),
     path('data/', include('data.urls')),
+    path('getdata/', include('getdata.urls')),
     path('application/', include('application.urls')),
     path('', include('main.urls')),
 ]

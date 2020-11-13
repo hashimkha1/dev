@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'codablog.apps.CodablogConfig',
     'data.apps.DataConfig',
     'application.apps.ApplicationConfig',
+    'getdata.apps.GetdataConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',

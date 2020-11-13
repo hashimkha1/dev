@@ -113,6 +113,7 @@ def fupload(request):
 def upload(request):
     iuploads=Uploads.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
+    
 # -------------------------rating Section-------------------------------------#
 def rate(request):
     if request.method== "POST":

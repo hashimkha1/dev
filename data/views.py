@@ -30,3 +30,6 @@ def database(request):
 
 def etl(request):
     return render(request, 'data/etl.html', {'title': 'etl'})  
+
+def getdata(request):
+    return render(request, 'data/getdata.html', {'title': 'getdata'})  
