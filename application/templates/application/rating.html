@@ -1,10 +1,9 @@
-{%extends "data/basedata.html"%} {% block content %}
+{%extends "application/baseapplication.html"%} {% block content %}
 <section id="rating">
   <div class="rating text-center">
     <h2>Rating Results For All Applicants</h2>
-    <hr />
-    <table style="width: 100%">
-      <thead>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
           <th>First</th>
@@ -26,6 +25,14 @@
           <td>{{rating.punctuality}}</td>
           <td>{{rating.communication}}</td>
           <td>{{rating.understanding}}</td>
+          <td>
+            <a
+              href="{% url 'employee_update' rating.id}"
+              class="btn text-secondary px-0"
+            >
+              <i far fa-edit fa-lg></i>
+            </a>
+          </td>
           <!--    <td>{{total_score}}</td>-->
         </tr>
 

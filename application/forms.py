@@ -18,13 +18,40 @@ class ApplicantForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
         model = Application
-        fields = ['id','first_name','last_name','phone','username', 'email','resume']
+        fields = ['id','first_name','last_name','username','phone', 'email','country','resume']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'username':'User Name',
+                'email':'Email',
+                
 
+
+        }
+        '''
+    def __init__(self, *args, **kwargs):
+        super(ApplicantForm,self).__init__(*args, **kwargs)
+        self.fields['gender'].empty_label= "Select"
+'''
 class RatingForm(forms.ModelForm):
     class Meta:
         model = Rated
         fields = ['id','first_name','last_name','topic', 'punctuality','communication','understanding']
-
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'topic':'Topic',
+                'punctuality':'Punctuality',
+                'communication':'Communication',
+                'understanding':'Understanding',
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super(RatingForm,self).__init__(*args, **kwargs)
+        self.fields['punctuality'].empty_label= "Select"
+        self.fields['communication'].empty_label= "Select"
+        self.fields['understanding'].empty_label= "Select"
+        self.fields['topic'].required= False
 class InterviewUploadForm(forms.ModelForm):
     class Meta:
         model = Uploads

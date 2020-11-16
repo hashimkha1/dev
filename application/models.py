@@ -14,6 +14,11 @@ class Applicant_Profile(models.Model):
 
 
 class Application(models.Model):
+    '''
+    class Score(models.IntegerChoices):
+        Male = 1
+        Female =2
+    '''
     id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
@@ -22,6 +27,7 @@ class Application(models.Model):
     application_date = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=100,blank=True, null=True)
     country=models.CharField(max_length=100,blank=True, null=True)
+    #gender = models.IntegerField(choices=Score.choices,default=None)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
 

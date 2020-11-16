@@ -188,13 +188,15 @@
       </nav>
     </header>
 
-    <main role="main" class="container">
-      <div class="row">
-        {% if messages %} {% for message in messages %}
-        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-        {% endfor %} {% endif %} {% block content %} {% endblock %}
+    <div class="container">
+      <div class="col-md offset-md-1 mt-5">
+        <div class="jumbotron">
+          {% if messages %} {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %} {% endif %} {% block content %} {% endblock %}
+        </div>
       </div>
-    </main>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -1,10 +1,38 @@
-{%extends "data/basedata.html"%} {%load crispy_forms_tags%} {% block content %}
+{%extends "application/baseapplication.html"%} {%load crispy_forms_tags%}
+{%block content %}
 
 <div class="upload">
-  <h3>Upload Your CV/Resume</h3>
-  <form method="POST" enctype="multipart/form-data">
-    {% csrf_token%} {{ form|crispy }}
-    <button type="submit">Submit</button>
+  <h3 class="display-6 text-center">Job Application</h3>
+  <p class="lead font-italic text-center">
+    Please Complete the form below to apply for a position with us.
+  </p>
+  <hr />
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token%}
+    <div class="row">
+      <div class="col-md-6">{{ form.first_name|as_crispy_field }}</div>
+      <div class="col-md-6">{{form.last_name|as_crispy_field }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">{{ form.username|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.phone|as_crispy_field }}</div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">{{ form.email|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.country|as_crispy_field }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">{{ form.resume|as_crispy_field }}</div>
+    </div>
+    <div class="row text-center">
+      <div class="col-md-12">
+        <button type="submit " class="btn btn-success">
+          <i class="fas fa-database"></i>Submit
+        </button>
+      </div>
+    </div>
   </form>
+  <div></div>
 </div>
 {% endblock content %}
