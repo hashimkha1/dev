@@ -1,0 +1,46 @@
+{%extends "application/baseapplication.html"%} {% block content %}
+<section id="employee_list">
+  <div class="employee_list text-center">
+    <h2>Employee Ratings</h2>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>First</th>
+          <th>Last</th>
+          <th>Topic</th>
+          <th>Punctuality</th>
+          <th>Communication</th>
+          <th>Understanding</th>
+          <th>Rated By</th>
+          <th></th>
+          <!-- <th>total_score</th>-->
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for employee in employees %}
+          <td>{{employee.employee_date|date:"F d, Y"}}</td>
+          <td>{{employee.first_name}}</td>
+          <td>{{employee.last_name}}</td>
+          <td>{{employee.topic}}</td>
+          <td>{{employee.punctuality}}</td>
+          <td>{{employee.communication}}</td>
+          <td>{{employee.understanding}}</td>
+          <td>{{employee.rated_by}}</td>
+          <td>
+            <a
+              href="{% url 'application-update' employee.id %}"
+              class="btn text-secondary px-0"
+            >
+              edit
+            </a>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

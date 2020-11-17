@@ -14,11 +14,9 @@ class Applicant_Profile(models.Model):
 
 
 class Application(models.Model):
-    '''
     class Score(models.IntegerChoices):
         Male = 1
         Female =2
-    '''
     id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
@@ -27,7 +25,6 @@ class Application(models.Model):
     application_date = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=100,blank=True, null=True)
     country=models.CharField(max_length=100,blank=True, null=True)
-    #gender = models.IntegerField(choices=Score.choices,default=None)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
 
@@ -38,51 +35,32 @@ class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
-    interviewppt=models.FileField(upload_to='interviewppt/ppt/')
-    tableau=models.FileField(upload_to='interviewtab/tab/')
-    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
-    SQL=models.FileField(upload_to='interviewdb/dba/')
-    other=models.FileField(upload_to='interviewother/general/')
+    interviewppt=models.FileField(upload_to='interviewppt/doc/')
+    tableau=models.FileField(upload_to='interviewtab/doc/')
+    alteryx=models.FileField(upload_to='interviewalteryx/doc/')
+    SQL=models.FileField(upload_to='interviewdb/doc/')
+    other=models.FileField(upload_to='interviewother/doc/')
     Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
         return f'{self.username} InteviewUploads'
-
+'''
 class Uploads(models.Model):
     Id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
     interviewppt=models.FileField(upload_to='interviewppt/ppt/')
-    '''
+
     tableau=models.FileField(upload_to='interviewtab/tab/')
     alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
     SQL=models.FileField(upload_to='interviewdb/dba/')
     other=models.FileField(upload_to='interviewother/general/')
     Applicant=models.ManyToManyField(Application)
-    '''
+    
     def __str__(self):
         return f'{self.username} InteviewUploads'
 '''
-class uploads(models.Model):
-    class Score(models.IntegerChoices):
-        very_Poor = 1
-        Poor =2
-        Good = 3
-        Very_good = 4
-        Excellent = 5
-    id = models.AutoField(primary_key=True)
-    #username=models.CharField(max_length=100)
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
-    topic=models.CharField(max_length=100,default=None)
-    rating_date = models.DateTimeField(default=timezone.now)
-    punctuality = models.IntegerField(choices=Score.choices)
-    communication = models.IntegerField(choices=Score.choices)
-    understanding = models.IntegerField(choices=Score.choices)
 
-    def __str__(self):
-        return f'{self.id} Rating'
-'''
 class Rated(models.Model):
     class Score(models.IntegerChoices):
         very_Poor = 1
@@ -101,4 +79,24 @@ class Rated(models.Model):
 
     def __str__(self):
         return f'{self.id} Rating'
+
+class Employee(models.Model):
+    class Score(models.IntegerChoices):
+        very_Poor = 1
+        Poor =2
+        Good = 3
+        Very_good = 4
+        Excellent = 5
+    id = models.AutoField(primary_key=True)
+    first_name=models.CharField(max_length=100)
+    last_name=models.CharField(max_length=100)
+    topic=models.CharField(max_length=100,default=None)
+    employee_date = models.DateTimeField(default=timezone.now)
+    punctuality = models.IntegerField(choices=Score.choices)
+    communication = models.IntegerField(choices=Score.choices)
+    understanding = models.IntegerField(choices=Score.choices)
+    rated_by=models.CharField(default="CEO",max_length=100)
+    
+    def __str__(self):
+        return f'{self.id} Employee'
  

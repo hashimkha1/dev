@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,Uploads
+from .models import Application,Rated,InteviewUploads,Employee
 
 
 class ApplicationForm(UserCreationForm):
@@ -44,6 +44,7 @@ class RatingForm(forms.ModelForm):
                 'punctuality':'Punctuality',
                 'communication':'Communication',
                 'understanding':'Understanding',
+
         }
         
     def __init__(self, *args, **kwargs):
@@ -52,14 +53,29 @@ class RatingForm(forms.ModelForm):
         self.fields['communication'].empty_label= "Select"
         self.fields['understanding'].empty_label= "Select"
         self.fields['topic'].required= False
-class InterviewUploadForm(forms.ModelForm):
-    class Meta:
-        model = Uploads
-        fields = ['username']
 
-'''
 class InterviewUploadForm(forms.ModelForm):
     class Meta:
-        model = Uploads
+        model = InteviewUploads
         fields = ['username','interviewppt','tableau','alteryx', 'SQL','other']
-'''
+
+class EmployeeForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = ['id','first_name','last_name','topic', 'punctuality','communication','understanding','rated_by']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'topic':'Topic',
+                'punctuality':'Punctuality',
+                'communication':'Communication',
+                'understanding':'Understanding',
+                'rated_by':'Rated_By',
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super(EmployeeForm,self).__init__(*args, **kwargs)
+        self.fields['punctuality'].empty_label= "Select"
+        self.fields['communication'].empty_label= "Select"
+        self.fields['understanding'].empty_label= "Select"
+        self.fields['topic'].required= False

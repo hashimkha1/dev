@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm
+from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rated,Uploads
+from .models import Application,Rated,InteviewUploads,Employee
 
 #Interview description data
 
@@ -54,7 +54,7 @@ def apply(request):
         form=ApplicantForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-interview',context)
+            return redirect('application-interview')
     else:
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
@@ -96,14 +96,14 @@ def firstupload(request):
     else:
          form=InterviewUploadForm()
     return render(request, 'application/firstupload.html',{'form':form})
-
+'''
 def fupload(request):
     iuploads=Uploads.objects.all().order_by('-upload_date')
     return render(request, 'application/fupload.html', {'iuploads': iuploads})
-
+'''
 def upload(request):
-    iuploads=Uploads.objects.all().order_by('-upload_date')
-    return render(request, 'application/fupload.html', {'iuploads': iuploads})
+    iuploads=InteviewUploads.objects.all().order_by('-upload_date')
+    return render(request, 'application/upload.html', {'iuploads': iuploads})
     
 # -------------------------rating Section-------------------------------------#
 def rate(request):
@@ -121,6 +121,34 @@ def rating(request):
     # Get the result from the session
     #total_score = request.session.pop('total_score', None)
     return render(request, 'application/rating.html', {'ratings': ratings})
+
+def employee_form(request,id=0):
+    if request.method == "GET":
+        if id==0:
+            form=EmployeeForm()
+        else:
+            employee=Employee.objects.get(pk=id)
+            form=EmployeeForm(instance=employee)
+        return render(request, 'application/employee_form.html',{'form':form})
+    else:
+        form=EmployeeForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+        return redirect('application-employee_list')
+
+def employee_insert(request):
+    if request.method== "POST":
+        form=Employee(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-update')
+    else:
+        form=EmployeeForm()
+    return render(request, 'application/rate.html',{'form':form})
+
+def employee_list(request):
+    context={'employees': Employee.objects.all().order_by('-punctuality')}
+    return render(request, 'application/employee_list.html',context)
 
 # -------------------------testing Section-------------------------------------#
 def test(request):
