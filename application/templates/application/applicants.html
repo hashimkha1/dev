@@ -12,10 +12,7 @@
           <th>Phone Number</th>
           <th>Country</th>
           <th>Resume</th>
-          <!--
-          <th>Phone</th>
-          <th>Country</th>
-           <th>Cover Letter</th>-->
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -28,11 +25,19 @@
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
           <!--
-          <td>{{applicant.Country}}</td>
+          <td>edit</td>
           -->
           <td>
             <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
               >Download Resume
+            </a>
+          </td>
+          <td>
+            <a
+              href="{% url 'employee_update' rating.id}"
+              class="btn text-secondary px-0"
+            >
+              edit
             </a>
           </td>
           <!---

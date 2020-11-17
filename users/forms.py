@@ -8,7 +8,13 @@ class UserRegisterForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['first_name','username', 'email', 'password1', 'password2']
+        fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+        labels={
+            'first_name':"First Name",
+            'last_name':"Last Name",
+            'username':"User Name"
+        }
+
 
 class UserLoginForm(UserCreationForm):
     email = forms.EmailField()

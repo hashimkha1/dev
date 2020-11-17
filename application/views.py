@@ -20,16 +20,9 @@ posts=[
 {
 	'Inteview':'Second Interview',
 	'Concentration':'General Tools& Company Projects',
-	'Description':'Understanding Company Projects, Values and Other Tools	',
-	'Duration':'3 Days	',
+	'Description':'Understanding Company Projects, Values & Systems	',
+	'Duration':'5 Days	',
 	'Lead':'HR Manager'
-},
-{
-	'Inteview':'Third Interview',
-	'Concentration':'History,Values & Systems',
-	'Description':'Understanding about our history and Key Systems in CODA	',
-	'Duration':'2 Days	',
-	'Lead':'HR Manager',
 },
 
 {
@@ -41,11 +34,6 @@ posts=[
 }
 ]
 
-def home(request):
-    context = {
-        'posts': posts
-    }
-    return render(request, 'blog/home.html', context)
 
 # Create your views here.
 class application(TemplateView):
@@ -66,7 +54,7 @@ def apply(request):
         form=ApplicantForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-interview')
+            return redirect('application-interview',context)
     else:
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
@@ -84,8 +72,11 @@ def career(request):
     return render(request, 'application/career.html', {'title': 'career'})
 
 def interview(request):
-    return render(request, 'application/interview.html', {'title': 'interview'})
-
+    context = {
+        'posts': posts
+    }
+    return render(request, 'application/interview.html', context )
+    
 def first_interview(request):
     return render(request, 'application/first_interview.html', {'title': 'first_interview'})
 
@@ -129,5 +120,11 @@ def rating(request):
     ratings=Rated.objects.all().order_by('-punctuality')
     # Get the result from the session
     #total_score = request.session.pop('total_score', None)
-    return render(request, 'application/rating.html', {'ratings': ratings})#,'total_score':total_score})
+    return render(request, 'application/rating.html', {'ratings': ratings})
 
+# -------------------------testing Section-------------------------------------#
+def test(request):
+    context = {
+        'posts': posts
+    }
+    return render(request, 'application/test.html', context)
