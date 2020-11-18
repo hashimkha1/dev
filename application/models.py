@@ -35,15 +35,16 @@ class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=30,null=True)
     upload_date = models.DateTimeField(default=timezone.now)
-    interviewppt=models.FileField(upload_to='interviewppt/doc/')
-    tableau=models.FileField(upload_to='interviewtab/doc/')
-    alteryx=models.FileField(upload_to='interviewalteryx/doc/')
-    SQL=models.FileField(upload_to='interviewdb/doc/')
-    other=models.FileField(upload_to='interviewother/doc/')
+    ppt=models.FileField(default=None,upload_to='Powerpoints/doc/')
+    report=models.FileField(default=None,upload_to='Reports/doc/')
+    workflow=models.FileField(default=None,upload_to='Workflows/doc/')
+    proc=models.FileField(default=None,upload_to='Procedures/doc/')
+    other=models.FileField(default=None,upload_to='Others/doc/')
     Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
         return f'{self.username} InteviewUploads'
+
 '''
 class Uploads(models.Model):
     Id = models.AutoField(primary_key=True)
@@ -99,4 +100,19 @@ class Employee(models.Model):
     
     def __str__(self):
         return f'{self.id} Employee'
- 
+
+class FirstUpload(models.Model):
+    id = models.AutoField(primary_key=True)
+    username=models.CharField(max_length=100)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
+    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    ppt=models.FileField(upload_to='Powerpoints/doc/')
+    report=models.FileField( upload_to='Reports/doc/',null=True,blank=True)
+    workflow=models.FileField(upload_to='Workflows/doc/',null=True,blank=True)
+    proc=models.FileField(upload_to='Procedures/doc/',null=True,blank=True)
+    other=models.FileField(default="None",upload_to='Others/doc/')
+    Applicant=models.ManyToManyField(Application)
+
+    def __str__(self):
+        return f'{self.username} upload'

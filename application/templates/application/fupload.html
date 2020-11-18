@@ -1,7 +1,8 @@
-{%extends "data/basedata.html"%} {% block content %}
+{%extends "application/baseapplication.html"%} {%load crispy_forms_tags%}
+{%block content %}
 <section id="career">
   <div class="career text-center">
-    <h2>All Applicants</h2>
+    <h2>Applicants Work</h2>
     <hr />
     <table style="width: 100%">
       <thead>
@@ -12,7 +13,6 @@
           <th>Tableau</th>
           <th>Alteryx</th>
           <th>Database</th>
-          <th>Other Work</th>
         </tr>
       </thead>
       <tbody>
@@ -21,29 +21,22 @@
           <td>{{iupload.username}}</td>
           <td>{{iupload.upload_date|date:"F d, Y"}}</td>
           <td>
-            <a
-              href="{{iupload.interviewppt.url}}"
-              class="btn btn-secondary btn-sm"
+            <a href="{{iupload.ppt.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
           </td>
           <td>
-            <a href="{{iupload.tableau.url}}" class="btn btn-secondary btn-sm"
+            <a href="{{iupload.report.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
           </td>
           <td>
-            <a href="{{iupload.alteryx.url}}" class="btn btn-secondary btn-sm"
+            <a href="{{iupload.workflow.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
           </td>
           <td>
-            <a href="{{iupload.SQL.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-          <td>
-            <a href="{{iupload.other.url}}" class="btn btn-secondary btn-sm"
+            <a href="{{iupload.proc.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
           </td>

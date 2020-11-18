@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm
+from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rated,InteviewUploads,Employee
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload
 
 #Interview description data
 
@@ -59,6 +59,8 @@ def apply(request):
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
 
+
+
 def applicants(request):
     applicants=Application.objects.all().order_by('-application_date')
     return render(request, 'application/applicants.html', {'applicants': applicants})
@@ -75,7 +77,7 @@ def interview(request):
     context = {
         'posts': posts
     }
-    return render(request, 'application/interview.html', context )
+    return render(request, 'application/interview.html', context)
     
 def first_interview(request):
     return render(request, 'application/first_interview.html', {'title': 'first_interview'})
@@ -87,6 +89,7 @@ def orientation(request):
     return render(request, 'application/orientation.html', {'title': 'orientation'})
 
 # -------------------------Uploads Section-------------------------------------#
+'''
 def firstupload(request):
     if request.method== "POST":
         form=InterviewUploadForm(request.POST,request.FILES)
@@ -96,15 +99,26 @@ def firstupload(request):
     else:
          form=InterviewUploadForm()
     return render(request, 'application/firstupload.html',{'form':form})
-'''
-def fupload(request):
-    iuploads=Uploads.objects.all().order_by('-upload_date')
-    return render(request, 'application/fupload.html', {'iuploads': iuploads})
-'''
+
 def upload(request):
     iuploads=InteviewUploads.objects.all().order_by('-upload_date')
     return render(request, 'application/upload.html', {'iuploads': iuploads})
-    
+'''
+
+def firstupload(request):
+    if request.method== "POST":
+        form=InterviewForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-second_interview')
+    else:
+        form=InterviewForm()
+    return render(request, 'application/firstupload.html',{'form':form})
+
+def fupload(request):
+    iuploads=FirstUpload.objects.all().order_by('-upload_date')
+    return render(request, 'application/fupload.html', {'iuploads': iuploads})
+
 # -------------------------rating Section-------------------------------------#
 def rate(request):
     if request.method== "POST":
@@ -118,10 +132,8 @@ def rate(request):
 
 def rating(request):
     ratings=Rated.objects.all().order_by('-punctuality')
-    # Get the result from the session
-    #total_score = request.session.pop('total_score', None)
     return render(request, 'application/rating.html', {'ratings': ratings})
-
+'''
 def employee_form(request,id=0):
     if request.method == "GET":
         if id==0:
@@ -149,10 +161,12 @@ def employee_insert(request):
 def employee_list(request):
     context={'employees': Employee.objects.all().order_by('-punctuality')}
     return render(request, 'application/employee_list.html',context)
-
+'''
 # -------------------------testing Section-------------------------------------#
+'''
 def test(request):
-    context = {
-        'posts': posts
-    }
-    return render(request, 'application/test.html', context)
+    pass
+
+def uploaded(request):
+    pass
+'''

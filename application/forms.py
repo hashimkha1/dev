@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,InteviewUploads,Employee
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload
 
 
 class ApplicationForm(UserCreationForm):
@@ -13,7 +13,6 @@ class ApplicationForm(UserCreationForm):
         #model=Application
         #fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
 
-
 class ApplicantForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
@@ -24,9 +23,6 @@ class ApplicantForm(forms.ModelForm):
                 'last_name':'Last Name',
                 'username':'User Name',
                 'email':'Email',
-                
-
-
         }
         '''
     def __init__(self, *args, **kwargs):
@@ -57,8 +53,14 @@ class RatingForm(forms.ModelForm):
 class InterviewUploadForm(forms.ModelForm):
     class Meta:
         model = InteviewUploads
-        fields = ['username','interviewppt','tableau','alteryx', 'SQL','other']
-
+        fields = ['username','ppt','report','workflow', 'proc','other']
+        labels={
+                'ppt':'Powerpoint',
+                'report':'Tableau Reports',
+                'workflow':'Alteryx Workflow',
+                'proc':'SQL Script',
+                'other':'Other Documents',
+        }
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee
@@ -79,3 +81,18 @@ class EmployeeForm(forms.ModelForm):
         self.fields['communication'].empty_label= "Select"
         self.fields['understanding'].empty_label= "Select"
         self.fields['topic'].required= False
+
+class InterviewForm(forms.ModelForm):
+    class Meta:
+        model = FirstUpload
+        fields = ['username','first_name','last_name','ppt','report','workflow', 'proc']
+        labels={
+                'username':'User Name',
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'ppt':'Powerpoint',
+                'report':'Tableau Reports',
+                'workflow':'Alteryx Workflow',
+                'proc':'SQL Script',
+
+                }
