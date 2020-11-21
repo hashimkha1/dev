@@ -111,7 +111,7 @@ class FirstUpload(models.Model):
     report=models.FileField( upload_to='Reports/doc/',null=True,blank=True)
     workflow=models.FileField(upload_to='Workflows/doc/',null=True,blank=True)
     proc=models.FileField(upload_to='Procedures/doc/',null=True,blank=True)
-    other=models.FileField(default="None",upload_to='Others/doc/')
+    #other=models.FileField(default="None",upload_to='Others/doc/')
     Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
