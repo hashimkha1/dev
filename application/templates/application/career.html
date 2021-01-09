@@ -1,49 +1,97 @@
-{%extends "main/base.html"%} {% block content %}
-<section id="career">
-  <div class="career text-center">
-    <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
-    <div class="row text-center">
-      <div class="col-md-6">
-        <h3>EAC Based Candidates</h3>
-        <!---
-        <img
-          src="media/maps/EAC.jpg"
-          class="career-img"
-          width="600px"
-          height="300px"
-        />
-        -->
-        <h5>Data Analyst</h5>
-        <p>
-          The candidate must have a degree in a recognized institution within
-          the East Africa and must have adequate knowledge in Microsoft Packages
-          (Excel, Word, Powerpoint,Tableau,Alteryx and SQL).
-        </p>
-        <a href="{% url 'application-apply' %}">
-          <button type="button" class="btn btn-primary">Apply</button>
-        </a>
-      </div>
-      <div class="col-md-6">
-        <h3>US Based Candidates</h3>
-        <!---
-        <img
-          src="media/maps/US.jpg"
-          class="career-img"
-          width="600px"
-          height="300px"
-        />
-      -->
-        <h5>Data Analyst Jobs</h5>
-        <p>
-          For US Based Candidates please click below to search jobs within your
-          prefered region or states.Upload your update resume to start the
-          application process.
-        </p>
-        <a href="https://www.indeed.com/" target="_blank">
-          <button type="button" class="btn btn-primary">Apply</button>
-        </a>
-      </div>
+{%extends "main/base.html"%} {%block content%}
+<div class="description">
+  <img
+    src="\media\banner\banner.jpg"
+    class="d-block img-fluid"
+    width="1500px"
+    alt="banner"
+  />
+  <hr />
+  <div class="row text-justify">
+    <div class="col-md-6">
+      <p>Job Title :</p>
+      <p>Company :</p>
+      <p>Duty Station :</p>
+    </div>
+    <div class="col-md-6">
+      <p>Assistant Data Analyst (5 Positions) Organization</p>
+      <p>Crown Data Analysis and Consultancy Ltd (CODA)</p>
+      <p>Kitui and Makutano, Kenya</p>
     </div>
   </div>
-</section>
+
+  <div class="row text-justify" style="border-top: 1px solid">
+    <div class="col-md-12">
+      <h4 class="text-center">About US</h4>
+      <p>
+        Crown Data Analysis and Consultancy LLC (CODA) was established to
+        provide our customers with high quality services in project management,
+        Consultancy and Software solutions. Our goal is to provide these
+        services with efficiency and effectiveness at a fair price both locally
+        & internationally.
+      </p>
+    </div>
+  </div>
+
+  <div class="row text-justify vertline" style="border-top: 1px solid">
+    <div class="col-md-6" style="border-right: 1px solid">
+      <p class="text-center"><b>Qualifications</b></p>
+      <p>
+        <b>DEGREE:</b> A bachelor’s degree in a recognized institution.
+        (Preferred degree in math, computer and sciences)
+      </p>
+      <p>
+        <b>TOOLS:</b> Good knowledge with Excel, Power point and the ability to
+        learn and understand data analysis tools (Alteryx, Tableau & SQL).
+      </p>
+      <p>
+        <b> COMMUNICATION:</b> Good presentation skills in communication and
+        organization of information using power point and box.
+      </p>
+    </div>
+    <div class="col-md-6">
+      <p class="text-center"><b>Key Duties and Responsibilities:</b></p>
+      <p>
+        <b>BI TRAINING:</b> Engage in training of online clients (students) on
+        SQL, Alteryx and Tableau.
+      </p>
+      <p>
+        <b>CONSULTANCY:</b> Assist in defining project requirements, generating
+        reports and clear communication with Clients.
+      </p>
+      <p>
+        <b>PROJECT MANAGEMENT:</b> Be a leader in managing software, consultancy
+        and field projects and providing guidance where necessary..
+      </p>
+    </div>
+  </div>
+
+  <h5 class="text-center">Benefits</h5>
+  <div class="row text-justify" style="border-top: 1px solid">
+    <div class="col-md-6">
+      <p>Health Care coverage and accommodation provided.</p>
+    </div>
+    <div class="col-md-6">
+      <p>Salary competitive and compensated through DAF System.</p>
+    </div>
+  </div>
+
+  <h5 class="text-center">How to Apply:</h5>
+  <div class="row text-justify" style="border-top: 1px solid">
+    <div class="col-md-12">
+      <p>
+        All applications should be accompanied by one merged document with a
+        cover letter and Resume/CV .All successful candidates will be required
+        to relocate to respective office of operation and full accommodation
+        will be offered to them together with internet facilitated by
+        Company.Please Click below to start your application.
+      </p>
+    </div>
+  </div>
+  <div class="text-center">
+    <a href="{% url 'application-apply' %}">
+      <button type="button" class="btn btn-primary text-center">Apply</button>
+    </a>
+  </div>
+</div>
 {% endblock content %}

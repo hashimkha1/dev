@@ -133,20 +133,24 @@ def rate(request):
 def rating(request):
     ratings=Rated.objects.all().order_by('-punctuality')
     return render(request, 'application/rating.html', {'ratings': ratings})
-'''
+
 def employee_form(request,id=0):
     if request.method == "GET":
-        if id==0:
+        if id == 0:
             form=EmployeeForm()
         else:
             employee=Employee.objects.get(pk=id)
             form=EmployeeForm(instance=employee)
         return render(request, 'application/employee_form.html',{'form':form})
     else:
-        form=EmployeeForm(request.POST,request.FILES)
+        if id==0:
+            form=EmployeeForm(request.POST,request.FILES)
+        else:
+            employee=Employee.objects.get(pk=id)
+            form=EmployeeForm(request.POST,request.FILES,instance=employee)
         if form.is_valid():
             form.save()
-        return redirect('application-employee_list')
+        return redirect('application-emp_list')
 
 def employee_insert(request):
     if request.method== "POST":
@@ -161,12 +165,69 @@ def employee_insert(request):
 def employee_list(request):
     context={'employees': Employee.objects.all().order_by('-punctuality')}
     return render(request, 'application/employee_list.html',context)
-'''
-# -------------------------testing Section-------------------------------------#
-'''
-def test(request):
-    pass
 
+
+def employee_delete(request,id):
+    employee = Employee.objects.get(pk=id)
+    employee.delete()
+    return redirect('application-emp_list')
+
+# -------------------------testing Section-------------------------------------#
+
+def test(request):
+    return render(request, 'application/test.html', {'title': 'test'})
+'''
 def uploaded(request):
     pass
+'''
+#------------------------testing Section-----------------------------------------#
+
+def success_stories(request):
+    context = {
+        'posts': Post.objects.all()
+    }
+    return render(request, 'codablog/success.html', context)
+'''
+class PostListView(ListView):
+    model=Post
+    template_name='codablog/success.html'
+    context_object_name='posts'
+    ordering=['-date_posted']
+
+class PostDetailView(DetailView):
+    model=Post
+    ordering=['-date_posted']
+
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model=Post
+    fields=['title','content']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)
+        
+
+class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Post
+    fields=['title','content']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Post
+    success_url="/"
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
 '''

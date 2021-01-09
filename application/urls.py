@@ -15,8 +15,9 @@ urlpatterns = [
     path('rate/', views.rate, name='application-rate'),
     path('fupload/', views.fupload, name='application-fupload'),
     #path('uploaded/', views.uploaded, name='application-uploaded'),
-    #path('employee_insert/', views.employee_form, name='application-employee_insert'),
-    #path('<int:id>/', views.employee_form, name='application-update'),
-    #path('employee_list/', views.employee_list, name='application-employee_list'),
-    #path('test/', views.test, name='application-test'),
+    path('employee_insert/', views.employee_form, name='application-emp_insert'),
+    path('<int:id>/', views.employee_form, name='application-emp_update'),
+    path('<int:id>/', views.employee_delete, name='application-emp_delete'),
+    path('employee_list/', views.employee_list, name='application-emp_list'),
+    path('test/', views.test, name='application-test'),
 ]

@@ -7,7 +7,6 @@ from django.views.generic import (
     CreateView,
     UpdateView,
     DeleteView,
-    UpdateView
 )
 from .models import Post
 

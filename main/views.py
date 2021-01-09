@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 def test(request):
     return render(request, 'main/test.html', {'title': 'test'})
 
+def layout(request):
+    return render(request, 'main/layout.html', {'title': 'layout'})
+
 def home(request):
     return render(request, 'main/home.html', {'title': 'home'})
 

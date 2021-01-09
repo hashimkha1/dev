@@ -61,6 +61,7 @@ class InterviewUploadForm(forms.ModelForm):
                 'proc':'SQL Script',
                 'other':'Other Documents',
         }
+        
 class EmployeeForm(forms.ModelForm):
     class Meta:
         model = Employee

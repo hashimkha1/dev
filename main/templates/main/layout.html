@@ -15,12 +15,12 @@
             alt="home1"
             >
             <div class="carousel-caption">
-                <h2>CODA CONSULTANCY</h2>
+                <h2 class="" style="font-weight: 600; font-size: x-large; font-style: inherit;">CODA CONSULTANCY</h2>
                 <p> We deliver Success in Project Management , Software Solutions, and consultancy Services.
                     <br> Check out our services for more information</p>
                 <p></p>
                 <a href="/register" target="_blank">
-                    <button type="button" class="btn btn-primary">Join Today</button>
+                    <button type="button" class="btn btn-muted">Join Today</button>
                 </a>
             </div>
           </div>
@@ -62,7 +62,7 @@
             alt="home3"
             >
             <div class="carousel-caption">
-                <h2>Lets Go..</h2>
+                <h2><b>Lets Go..</b></h2>
                 <a href="/register" target="_blank">
                     <button type="button" class="btn btn-primary">Join Today</button>
                 </a>
@@ -86,28 +86,115 @@
 <section id="service">
   <div class="service text-center">
     <h3 class="title">SELECT A SERVICE OF INTEREST</h3>
-    <div class="row text-center">
-
-      <div class="col-md-4">
-        <h5> BI/Data Analysis Training </h5>
+    <div class="row text-center" >
+      
+      <div class="col-md-4" style="border: 1px solid ; border-color: blue;">
         <img
-          src="\media\background\datatrainingv1.jpg"
-          class="service-img"
-          width="75px"
-          height="75px"
-        />
-        <p>
-          We offer 3 month Project based training in both web and
-          Data Analysis, focusing in Reporting, ETL & DBA.
-        </p>
-        <div class="text-center">
-          <a href="{% url 'main-home' %}">
-            <button type="button" class="btn btn-primary text-center">Learn More</button>
-          </a>
+            src="\media\tools\BIv1.jpg"
+            width="355px"
+            height="120px"
+          />
+        <h5> <b>BI/Data Analysis Training:</b> </h5>
+        <div class="row text-left" >
+          <div class="col-md-2">
+            <img
+            src="\media\tools\reportv1.jpg"
+            width="100px"
+            height="100px"
+          />
+          </div>
+
+          <div class="col-md-8 text-left ml-auto">
+            <h6 class="text-center"><b>Reporting</b></h6>
+          <p>
+              We offer 3 month Project based training in both web and
+              Data Analysis, focusing in Reporting, ETL & DBA.
+            </p>
+            <div class="text-center">
+              <a href="{% url 'main-home' %}">
+                <button type="button" class="btn btn-secondary btn-sm text-center">Learn More</button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <hr/>
+        <div class="row text-left" >
+          <div class="col-md-2">
+            <img
+            src="\media\tools\dbav1.jpg"
+            class="service-img"
+            width="100px"
+            height="100px"
+          />
+          </div>
+
+          <div class="col-md-8 text-left ml-auto">
+            <h6 class="text-center"><b>Databases</b></h6>
+          <p>
+              We offer 3 month Project based training in both web and
+              Data Analysis, focusing in Reporting, ETL & DBA.
+            </p>
+            <div class="text-center">
+              <a href="{% url 'main-home' %}">
+                <button type="button" class="btn btn-secondary btn-sm text-center">Learn More</button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <hr/>
+        <div class="row text-center" >
+          <div class="col-md-2">
+            <img
+            src="\media\tools\etlv1.jpg"
+            class="service-img"
+            width="100px"
+            height="100px"
+          />
+          </div>
+
+          <div class="col-md-8 text-left ml-auto" style="font-size: 0em; font-weight: 600;">
+            <h6 class="text-center"><b>ETL</b></h6>
+            <h6 >
+              We offer 3 month Project based training in both web and
+              Data Analysis, focusing in Reporting, ETL & DBA.
+            </h6>
+            <div class="text-center">
+              <a href="{% url 'main-home' %}">
+                <button type="button" class="btn btn-secondary btn-sm text-center">Learn More</button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <hr/>
+        <div class="row text-center" >
+          <div class="col-md-2">
+            <img
+            src="\media\tools\qav1.jpg"
+            class="service-img"
+            width="100px"
+            height="100px"
+          />
+          </div>
+
+          <div class="col-md-8 text-left ml-auto">
+            <h6 class="text-center"><b>QA/Testing</b></h6>
+            <p>
+              We offer 3 month Project based training in both web and
+              Data Analysis, focusing in Reporting, ETL & DBA.
+            </p>
+            <div class="text-center">
+              <a href="{% url 'main-home' %}">
+                <button type="button" class="btn btn-secondary btn-sm text-center">Learn More</button>
+              </a>
+            </div>
+          </div>
+         
+
         </div>
       </div>
-      <div class="col-md-4">
-        <h5> Project Management </h5>
+
+      <div class="col-md-6">
+        <h5> Project Management & Consultancy </h5>
         <img
           src="\media\home\project4.jpg"
           class="service-img"
@@ -119,31 +206,11 @@
           and managing projects for our clients across multiple line of business.
         </p>
         <div class="text-center">
-          <a href="{% url 'application-apply' %}">
-            <button type="button" class="btn btn-primary text-center">Learn More</button>
-          </a>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <h3> Consultancy </h3>
-        <img
-          src="\media\background\consultancyv1.jpg"
-          class="service-img"
-          width="75px"
-          height="75px"
-        />
-        <p>
-          We as CODA utilize both SDLC and Agile framework in training, creating
-          and managing projects for our clients across multiple line of business.
-        </p>
-        <div class="text-center">
           <a href="{% url 'main-home' %}">
-            <button type="button" class="btn btn-primary text-center">Learn More</button>
+            <button type="button" class="btn btn-secondary text-center">Learn More</button>
           </a>
         </div>
       </div>
-      
     </div>
   </div>
 </section>
