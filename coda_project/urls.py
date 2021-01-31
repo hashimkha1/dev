@@ -35,6 +35,8 @@ urlpatterns = [
     path('data/', include('data.urls')),
     path('getdata/', include('getdata.urls')),
     path('application/', include('application.urls')),
+    path('projectmanagement/', include('projectmanagement.urls')),
+    path('investing/', include('investing.urls')),
     path('', include('main.urls')),
 ]
 

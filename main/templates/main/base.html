@@ -34,7 +34,7 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'main-home' %}">CODA</a>
+          <a class="navbar-brand mr-4" href="{% url 'main-layout' %}">CODA</a>
           <button
             class="navbar-toggler"
             type="button"
@@ -50,7 +50,7 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="{% url 'main-home' %}"
+                <a class="nav-link" href="{% url 'main-layout' %}"
                   >Home <span class="sr-only">(current)</span></a
                 >
               </li>
@@ -101,7 +101,9 @@
                   Services
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="{% url 'data-consultancy' %}"
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'projectmanagement-home' %}"
                     >Project Management</a
                   >
                   <div class="dropdown-divider"></div>
@@ -111,6 +113,10 @@
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'data-consultancy' %}"
                     >Consultancy</a
+                  >
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'investing-home' %}"
+                    >Investments</a
                   >
                 </div>
               </li>

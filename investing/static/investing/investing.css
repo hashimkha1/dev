@@ -1,0 +1,137 @@
+/*-------------------------whole Page--------------------------------------------*/
+html {
+  padding: 0;
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body {
+  background: white;
+  padding: 0;
+  margin: 5rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+/*------------------------- Navigation Section---------------------------------------------*/
+.bg-steel {
+  background-color: #0a00005b;
+}
+
+ul {
+  margin: 0;
+}
+.site-header .navbar-nav .nav-link {
+  color: #fcfcfc;
+}
+
+/*------------------------- Main Section---------------------------------------*/
+.container {
+  padding: 10px 20px;
+}
+
+/*------------------------- Home Section: Services---------------------------------------*/
+
+/*------------------------- Image on Right---------------------------------------*/
+#service .service .row .img-top {
+  position: relative;
+  text-align: center;
+}
+#service .service .row .img-top img {
+  width: 1100px;
+  height: 500px;
+  text-align: center;
+}
+#service .service .row .img-top .centered {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#service .service .row .centered h2 {
+  color: rgb(62, 15, 83);
+}
+
+/*------------------------- FINANCIAL EDUCATION/WHAT WE TEACH SECTION---------------------------------------*/
+#service .service .title {
+  background-color: rgba(5, 68, 119, 0.952);
+  height: 80px;
+  width: 1100px;
+  text-align: center;
+  color: aliceblue;
+}
+
+#service .service .row .col-md-8 .img-bottom-left {
+  position: relative;
+  text-align: center;
+}
+#service .service .row .img-bottom-left img {
+  width: 700px;
+  height: 400px;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#service .service .row .img-bottom-left .centered {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #000000;
+}
+
+/*------------------------- Center-right Links(Elementary,Advanced)--------------------------------------*/
+#service .service .row .col-md-4 h5 {
+  background-color: rgba(117, 94, 153, 0.952);
+  color: white;
+  margin-top: 1rem;
+}
+
+#service .service .row ul {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+#service .service .row ul li {
+  text-align: left;
+  list-style-type: none;
+}
+
+#service .service .row ul li a {
+  margin-left: 1rem;
+  text-align: center;
+  list-style-type: none;
+}
+
+/*------------------------- footer Section--------------------------------------------*/
+#footer {
+  background-color: rgba(149, 171, 190, 0.952);
+  margin-top: 2rem;
+  color: #fcfcfc;
+  height: 300px;
+}
+
+#footer .footer {
+  background-color: rgba(4, 54, 95, 0.952);
+  height: 40px;
+  width: 1100px;
+  text-align: center;
+  color: #fcfcfc;
+}
+#footer .footer .row ul {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+#footer .f_Color .row ul li {
+  text-align: left;
+  list-style-type: none;
+  text-decoration: none;
+}
+
+.footer-link {
+  color: #000000;
+  text-align: left;
+  list-style-type: none;
+}

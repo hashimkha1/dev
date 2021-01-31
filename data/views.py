@@ -3,10 +3,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 # views on training.
-def course(request):
-    return render(request, 'data/course.html', {'title': 'course'})
+def home(request):
+    return render(request, 'data/home.html', {'title': 'home'})
 
- 
+def course(request):
+        return render(request, 'data/course.html', {'title': 'course'})
+
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})
 

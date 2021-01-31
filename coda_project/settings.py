@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'data.apps.DataConfig',
     'application.apps.ApplicationConfig',
     'getdata.apps.GetdataConfig',
+    'projectmanagement.apps.ProjectmanagementConfig',
+    'investing.apps.InvestingConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',

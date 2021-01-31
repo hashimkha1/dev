@@ -1,9 +1,7 @@
 {%extends "main/base.html"%} {% block content %}
 <!--------------------------Slider Section--------------------------------->
-<div class="row text-center">
-  <div class="col-md-6">
-    <div id="slider">
-      <div id="headerSlider" class="carousel slide" data-ride="carousel">
+<div id="slider">
+    <div id="headerSlider" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
           <li data-target="#headerSlider" data-slide-to="0" class="active"></li>
           <li data-target="#headerSlider" data-slide-to="1"></li>
@@ -11,142 +9,345 @@
         </ol>
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img src="..\media\background\home2.jpg" class="d-block img-fluid"
-            width: "200px"; height: "400px"; object-fit: "cover"; alt="home1" />
+            <img src="..\media\background\home_v2.jpg" 
+            class="d-block img-fluid"
+            width="1500px"
+            height="1500px"
+            alt="home1"
+            >
             <div class="carousel-caption">
-              <h2>CODA CONSULTANCY</h2>
-              <p>
-                We deliver Success in Project Management , Software Solutions,
-                and consultancy Services. <br />
-                Check out our services for more information
-              </p>
-              <p></p>
-              <a href="/register" target="_blank">
-                <button type="button" class="btn btn-primary">
-                  Join Today
-                </button>
-              </a>
+                <h2>CODA CONSULTANCY</h2>
+                <a href="/register" target="_blank">
+                    <button type="button" class="btn btn-primary">Join Today</button>
+                </a>
             </div>
           </div>
           <div class="carousel-item">
-            <img
-              src="..\media\background\home2.jpg"
-              class="d-block img-fluid"
-              alt="home2"
-            />
+            <img src="..\media\background\home2.jpg" 
+            class="d-block img-fluid"
+            width="1500px"
+            height="1500px"
+            alt="home2"
+            >
+            <div class="carousel-caption">
+              <h2>BI TRAINING</h2>
+                <a href="{% url 'data-training' %}" target="_blank">
+                    <button type="button" class="btn btn-primary">Join Today</button>
+                </a>
+            </div>
           </div>
           <div class="carousel-item">
-            <img
-              src="..\media\background\home3.jpg"
-              class="d-block img-fluid"
-              alt="home3"
-            />
+            <img src="..\media\background\home_v1.jpg" 
+            class="d-block img-fluid"
+            width="1500px"
+            height="1500px"
+            alt="home3"
+            >
             <div class="carousel-caption">
-              <h2>Lets Go..</h2>
-              <a href="/register" target="_blank">
-                <button type="button" class="btn btn-primary">
-                  Join Today
-                </button>
-              </a>
+                <h2>Finance & Investment</h2>
+                <a href="/register" target="_blank">
+                    <button type="button" class="btn btn-primary">Join Today</button>
+                </a>
             </div>
           </div>
         </div>
-        <a
-          class="carousel-control-prev"
-          href="#headerSlider"
-          role="button"
-          data-slide="prev"
-        >
+        <a class="carousel-control-prev" href="#headerSlider" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="sr-only">Previous</span>
         </a>
-        <a
-          class="carousel-control-next"
-          href="#headerSlider"
-          role="button"
-          data-slide="next"
-        >
+        <a class="carousel-control-next" href="#headerSlider" role="button" data-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="sr-only">Next</span>
         </a>
       </div>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <div id="slider">
-      <div id="headerSlider" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-          <li data-target="#headerSlider" data-slide-to="0" class="active"></li>
-          <li data-target="#headerSlider" data-slide-to="1"></li>
-          <li data-target="#headerSlider" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <img
-              src="..\media\background\home2.jpg"
-              class="d-block img-fluid"
-              width="2000px"
-              height="2000px"
-              alt="home1"
-            />
-            <div class="carousel-caption">
-              <h2>CODA CONSULTANCY</h2>
-              <p>
-                We deliver Success in Project Management , Software Solutions,
-                and consultancy Services. <br />
-                Check out our services for more information
-              </p>
-              <p></p>
-              <a href="/register" target="_blank">
-                <button type="button" class="btn btn-primary">
-                  Join Today
-                </button>
-              </a>
-            </div>
-          </div>
-          <div class="carousel-item">
-            <img
-              src="..\media\background\home2.jpg"
-              class="d-block img-fluid"
-              alt="home2"
-            />
-          </div>
-          <div class="carousel-item">
-            <img
-              src="..\media\background\home3.jpg"
-              class="d-block img-fluid"
-              alt="home3"
-            />
-            <div class="carousel-caption">
-              <h2>Lets Go..</h2>
-              <a href="/register" target="_blank">
-                <button type="button" class="btn btn-primary">
-                  Join Today
-                </button>
-              </a>
-            </div>
-          </div>
-        </div>
-        <a
-          class="carousel-control-prev"
-          href="#headerSlider"
-          role="button"
-          data-slide="prev"
-        >
-          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span class="sr-only">Previous</span>
-        </a>
-        <a
-          class="carousel-control-next"
-          href="#headerSlider"
-          role="button"
-          data-slide="next"
-        >
-          <span class="carousel-control-next-icon" aria-hidden="true"></span>
-          <span class="sr-only">Next</span>
-        </a>
-      </div>
-    </div>
-  </div>
+
 </div>
-{%endblock%}
+
+<!-------------------Our Services Section------------------------->
+
+<section id="service">
+  <div class="service text-center">
+    <h3 class="title">WHAT WE DO </h3>
+    <p>
+      We as CODA utilize both SDLC and Agile framework in training, creating
+      and managing projects for our clients across multiple lines of business.
+    </p>
+    <div class="row text-center">
+
+      <div class="col-md-8">
+        <img
+          src="..\media\home\overview_v3.jpg"
+          class="service-img"
+          width="750px"
+          height="500px"
+        />
+      </div>
+      <div class="col-md-4">
+       <h4><b>Consultancy Services</b></h4> 
+        <p>
+          Our services includes construction,errands,market feasibilities and 
+          business plans for diaspora 
+        </p>
+        <a href="/register" target="_blank">
+          <button type="button" class="btn btn-primary">More</button>
+      </a>
+      <hr/>
+        <h4><b>Busines & Data Analysis</b></h4> 
+        <p>
+          We offer 3 month Project based training in both web and Data Analysis, focusing in Reporting, ETL & DBA. 
+        </p>
+        <a href="{% url 'data-training' %}" target="_blank">
+          <button type="button" class="btn btn-primary">More</button>
+      </a>
+      <hr/>
+        <h4><b>Financial & Investment</b></h4> 
+        <p>
+          Take our Investment training in stocks and options for individuals & small businesses.
+        </p>
+        <a href="/register" target="_blank">
+          <button type="button" class="btn btn-primary">More</button>
+      </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section id="service">
+  <div class="service text-center">
+    <h3 class="title">WHY US?</h3>
+    <!--------------------------WHY US Section--------------------------------->
+<div id="slider">
+  <div id="headerSlider" class="carousel slide" data-ride="carousel">
+      <ol class="carousel-indicators">
+        <li data-target="#headerSlider" data-slide-to="0" class="active"></li>
+        <li data-target="#headerSlider" data-slide-to="1"></li>
+        <li data-target="#headerSlider" data-slide-to="2"></li>
+      </ol>
+      <div class="carousel-inner">
+        
+        <div class="carousel-item active">
+          <img src="..\media\background\why_v3.jpg" 
+          class="d-block img-fluid"
+          width="1500px"
+          alt="home1"
+          >
+          <div class="carousel-caption">
+              <h2>Customer Relationships</h2>
+              <p>Building Customer Relationships is our number one priority.
+              <p></p>
+              <!--
+              <a href="#" target="_blank">
+                  <button type="button" class="btn btn-primary">Explore Why</button>
+              </a>
+              -->
+          </div>
+        </div>
+
+        <div class="carousel-item">
+          <div class="row text-center">
+            <div class="col-md-3">
+              <img
+                src="..\media\background\commitment_v1.jpg"
+                class="team-img"
+                width="100px"
+                height="150px"
+              />
+              <h3>Commitment</h3>
+              <p>
+                A 24/7 management system committed to meeting the needs of our clients.
+              </p>
+              <a href="#" target="_blank">
+                <button type="button" class="btn btn-primary">Understand Our Way</button>
+              </a>
+            </div>
+            <div class="col-md-3">
+              <img
+                src="..\media\background\cost_v1.jpg"
+                class="team-img"
+                width="100px"
+                height="150px"
+              />
+              <h3>Cost Effectiveness</h3>
+              <p>
+               You get all you need to know in investment,and Data Analysis Courses for just $2999.
+              </p>
+              <a href="{% url 'main-coach_profile' %}" target="_blank">
+                <button type="button" class="btn btn-primary">Sign Up!</button>
+              </a>
+            </div>
+            <div class="col-md-3">
+              <img
+                src="..\media\background\delivery_v1.jpg"
+                class="team-img"
+                width="100px"
+                height="150px"
+              />
+              <h3>We Deliver</h3>
+              <p>
+                Utilization of Agile methodology to deliver high quality services to our customers.
+              </p>
+              <a href="{% url 'data-financialsystem' %}" target="_blank">
+                <button type="button" class="btn btn-primary">See Our deliverables</button>
+              </a>
+            </div>
+            <div class="col-md-3">
+              <img
+                src="..\media\background\teamwork_v1.jpg"
+                class="team-img"
+                width="100px"
+                height="150px"
+              />
+              <h3>Team Work</h3>
+              <p>
+               Over 20 years of experience in all our services.You can trust the quality of our work.
+              </p>
+              <a href="{% url 'main-team' %}" target="_blank">
+                <button type="button" class="btn btn-primary">Meet the team</button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        
+      </div>
+      <a class="carousel-control-prev" href="#headerSlider" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next" href="#headerSlider" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+
+      
+
+    </div>
+
+</div>
+</section>
+
+<!-------------------CONTACT US------------------------->
+
+<section id="service">
+  <div class="service text-center">
+    <h3 class="title">CONTACT US</h3>
+    <p>
+      We Would Love to Hear From You!
+     </p>
+<hr/>
+      <div class="row text-center">
+        <div class="col-md-3">
+          <h3>Call Us</h3>
+          <img
+            src="..\media\icons\phone_v1.jpg"
+            class="team-img"
+            width="100px"
+            height="100px"
+          />
+          <p>
+           4174137966/18122002265
+          </p>
+        </div>
+        <div class="col-md-3">
+          <h3>Email</h3>
+          <img
+            src="..\media\icons\email_v1.jpg"
+            class="team-img"
+            width="100px"
+            height="100px"
+          />
+         
+          <p>
+            info@codanalytics.net
+            Coachofanalytics@gmail.com
+          </p>
+        </div>
+        <div class="col-md-3">
+          <h3>Social Media</h3>
+          <img
+            src="..\media\icons\facebook_v1.jpg"
+            class="team-img"
+            width="100px"
+            height="100px"
+          />
+          <a href="#" target="_blank"> <p>Vist US</p>  </a>
+        </div>
+        <div class="col-md-3">
+          <h3>Address</h3>
+          <img
+            src="..\media\icons\phone_v1.jpg"
+            class="team-img"
+            width="100px"
+            height="100px"
+          />
+    
+          <p>
+            3557 W Rockwood St,
+            Springfield,MO,65807
+          </p>
+        </div>
+      </div>
+    </div>
+</section>
+
+
+
+<section id="footer">
+    <div class="footer">
+        <footer>
+            <h4>Trademark | Company Policy | Contracts | Specifications</h4>
+            </h4>
+        </footer>
+    </div>
+    <div class="f_Color">
+        <div class="container text-center">
+            <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
+            <div class="row text-center">
+                <div class="col-md-3 ">
+                    <!-- <img src="static/img//service1.png" class="service-img" >-->
+                    <h5>About Us</h5>
+                        <a class="footer-link" href="/service">Meet the service</a>
+                        <a class="footer-link" href="/">Partners</a>
+                        <a class="footer-link" href="/">Location</a>
+                        <a class="footer-link" href="/">Our Network</a>
+                        <a class="footer-link" href="/">Connect</a>
+                </div>
+                <div class="col-md-3 ">
+                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                    <h5>Core Services</h5>
+                        <a class="footer-link" href="/">Training</a>
+                        <a class="footer-link" href="/">Project Management</a>
+                        <a class="footer-link" href="/">Job Networking</a>
+                        <a class="footer-link" href="/">Recruitment</a>
+                        <a class="footer-link" href="/">Resume Prep</a>
+                </div>
+                <div class="col-md-3 services">
+                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                    <h5>Technologies</h5>
+                        <a class="footer-link" href="https://www.youtube.com/watch?v=gWZtNdMko1k&list=PLWPirh4EWFpGXTBu8ldLZGJCUeTMBpJFK">Tableau</a>
+                        <a class="footer-link" href="/">SQL</a>
+                        <a class="footer-link" href="/">Python</a>
+                        <a class="footer-link" href="https://www.youtube.com/watch?v=6DZ7YVeCeqg">Alteryx</a>
+                        <a class="footer-link" href="/">Advanced Excel</a>
+                </div>
+                <div class="col-md-3">
+                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                    <h5>More Resources</h5>
+                        <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=RbWCBz5fBBw&list=PL5nViEmyYI0ZpbH5jjFPvMZVDDPqvd080">Business
+                            Analysis</a>
+                        <a class="footer-link" target="_blank"
+                            href="https://public.tableau.com/en-us/s/resources">Tableau Resources</a>
+                        <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=ZNObiptSMSI&list=PL08903FB7ACA1C2FB"> SQL by Venkat</a>
+                        <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" target="_blank">Python by Corey</a>
+                        <a class="footer-link" href="www.w3schools.com">General Links(w3schools)</a>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+
+{% endblock content %}
