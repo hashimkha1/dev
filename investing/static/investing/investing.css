@@ -36,7 +36,7 @@ ul {
   text-align: center;
 }
 #service .service .row .img-top img {
-  width: 1100px;
+  width: 1125px;
   height: 500px;
   text-align: center;
 }
@@ -53,21 +53,41 @@ ul {
 
 /*------------------------- FINANCIAL EDUCATION/WHAT WE TEACH SECTION---------------------------------------*/
 #service .service .title {
-  background-color: rgba(5, 68, 119, 0.952);
-  height: 80px;
-  width: 1100px;
+  background-color: rgba(52, 90, 121, 0.952);
   text-align: center;
-  color: aliceblue;
+  margin-top: 0em;
+  color: rgba(52, 90, 121, 0.952);
 }
 
-#service .service .row .col-md-8 .img-bottom-left {
+#service
+  .service
+  .row
+  .col-md-8
+  #slider
+  #headerSlider
+  .carousel-inner
+  .carousel-item {
   position: relative;
+  text-align: center;
+}
+
+#service
+  .service
+  .row
+  .col-md-8
+  #slider
+  #headerSlider
+  .carousel-inner
+  .carousel-item
+  img {
+  width: auto;
+  height: auto;
+  margin-top: 1rem;
   text-align: center;
 }
 #service .service .row .img-bottom-left img {
   width: 700px;
   height: 400px;
-  margin-top: 1rem;
   text-align: center;
 }
 
@@ -83,7 +103,7 @@ ul {
 #service .service .row .col-md-4 h5 {
   background-color: rgba(117, 94, 153, 0.952);
   color: white;
-  margin-top: 1rem;
+  margin-top: 2rem;
 }
 
 #service .service .row ul {
@@ -105,10 +125,9 @@ ul {
 
 /*------------------------- footer Section--------------------------------------------*/
 #footer {
-  background-color: rgba(149, 171, 190, 0.952);
-  margin-top: 2rem;
-  color: #fcfcfc;
-  height: 300px;
+  background-color: rgba(212, 234, 252, 0.952);
+  margin-top: 1rem;
+  color: #0e0000;
 }
 
 #footer .footer {
@@ -116,7 +135,7 @@ ul {
   height: 40px;
   width: 1100px;
   text-align: center;
-  color: #fcfcfc;
+  color: #ffffff;
 }
 #footer .footer .row ul {
   margin: 0;
