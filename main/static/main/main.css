@@ -33,7 +33,7 @@ ul {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: center;
   color: #fcfcfc;
 }
@@ -43,7 +43,7 @@ ul {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 0rem;
   text-align: center;
   color: #fcfcfc;
 }
@@ -53,7 +53,7 @@ ul {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 0rem;
   text-align: center;
   color: #fcfcfc;
 }
@@ -102,34 +102,39 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 /*------------------------- footer Section--------------------------------------------*/
-#footer {
-  background-color: rgba(149, 171, 190, 0.952);
-  margin-top: 2rem;
-  color: #fcfcfc;
-  height: 300px;
+.container .row #footer {
+  background-color: rgba(205, 220, 233, 0.952);
+  margin-top: 1rem;
 }
 
-#footer .footer {
+#footer .footer footer {
   background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 1100px;
   text-align: center;
-  color: #fcfcfc;
+  color: rgba(250, 253, 255, 0.952);
 }
-#footer .footer .row ul {
+
+.container .row #footer .row .col-md-3 h5 {
+  text-align: left;
+  margin-left: 3em;
+  padding: 0;
+}
+
+.container .row #footer .row .col-md-3 ul {
   margin: 0;
   padding: 0;
   text-align: left;
+  margin-right: 4em;
+  margin-left: 3em;
 }
 
-#footer .f_Color .row ul li {
+.container .row #footer .row .col-md-3 ul li {
   text-align: left;
   list-style-type: none;
   text-decoration: none;
 }
 
 .footer-link {
-  color: #000000;
+  color: #4623a5;
   text-align: left;
   list-style-type: none;
 }

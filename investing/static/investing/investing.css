@@ -85,6 +85,7 @@ ul {
   margin-top: 1rem;
   text-align: center;
 }
+
 #service .service .row .img-bottom-left img {
   width: 700px;
   height: 400px;
@@ -100,6 +101,11 @@ ul {
 }
 
 /*------------------------- Center-right Links(Elementary,Advanced)--------------------------------------*/
+#service .service .row .col-md-4 {
+  color: white;
+  border: 1px solid rgb(147, 161, 147);
+}
+
 #service .service .row .col-md-4 h5 {
   background-color: rgba(117, 94, 153, 0.952);
   color: white;
@@ -127,23 +133,35 @@ ul {
 #footer {
   background-color: rgba(212, 234, 252, 0.952);
   margin-top: 1rem;
-  color: #0e0000;
+}
+
+#footer .footer .title {
+  background-color: rgba(4, 54, 95, 0.952);
+  text-align: center;
+  color: rgba(250, 253, 255, 0.952);
 }
 
 #footer .footer {
-  background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 1100px;
-  text-align: center;
+  background-color: rgba(118, 189, 243, 0.952);
+  text-align: left;
   color: #ffffff;
 }
+
+#footer .footer .row .col-md-3 h5 {
+  padding: 0;
+  text-align: left;
+  margin-left: 2em;
+}
+
 #footer .footer .row ul {
   margin: 0;
   padding: 0;
   text-align: left;
+  margin-right: 4em;
+  margin-left: 3em;
 }
 
-#footer .f_Color .row ul li {
+#footer .footer .row ul li {
   text-align: left;
   list-style-type: none;
   text-decoration: none;
