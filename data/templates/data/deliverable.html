@@ -12,6 +12,7 @@
             <img src="\media\data\data-home_v3.jpg" 
             class="d-block img-fluid"
             width="1200px"
+            height="800px"
             alt="home1"
             >
             <div class="carousel-caption">
@@ -21,15 +22,14 @@
             </div>
           </div>
           <div class="carousel-item">
-            <img src="\media\data\data-home_v5.jpg" 
+            <img src="\media\data\data-home_v2.jpg" 
             class="d-block img-fluid"
             width="1200px"
+            height="800px"
             alt="home2"
             >
             <div class="carousel-caption">
-              <h2>Become a data Analyst</h2>
-              <p>Learn data analysis on our online platform in as little as 13 weeks</p>
-                <a href="{% url 'user-register' %}" target="_blank">
+                <a href="{% url 'data-training' %}" target="_blank">
                     <button type="button" class="btn btn-primary">Join Today</button>
                 </a>
             </div>
@@ -38,6 +38,7 @@
             <img src="\media\data\data-home_v3.jpg" 
             class="d-block img-fluid"
             width="1200px"
+            height="800px"
             alt="home3"
             >
             <div class="carousel-caption">
@@ -59,239 +60,93 @@
 
 </div>
 
-<!-------------------Our home services Section------------------------->
-<!-------------------1. Our  Job Report Section------------------------->
 
-<section id="service_report">
-  <div class="service_report text-center">
+<!-------------------Our Deliverables Section------------------------->
 
-    <div class="row text-center">
-
-      <div class="col-md-12">
-        <h3><b>Belive Our Actions!</b></h3> 
-        <p>
-          Check out our <a href="/" target="_blank"> Current Job Report </a> in various Data Analysts fields who have been placed in multiple locations around the world.
-        </p>
+<section id="service">
+    <div class="service text-center">
+      <h3 class="title">PAST DELIVERABLES </h3>
+      <div class="row text-center">
+  
+        <div class="col-md-3">
+              <!--
+            <img
+              src="..\media\background\teamwork_v1.jpg"
+              class="team-img"
+              width="100px"
+              height="150px"
+            />
+            -->
+            <h4>Construction Case</h4>
+            <p>
+             See how this use case was developed by our first cohort students.
+            </p>
+            <a href="#" target="_blank">
+              <button type="button" class="btn btn-primary">Understand Our Way</button>
+            </a>
+          </div>
+          <div class="col-md-3">
+              <!--
+            <img
+              src="..\media\background\teamwork_v1.jpg"
+              class="team-img"
+              width="100px"
+              height="150px"
+            />
+            -->
+            <h4>Payment System</h4>
+            <p>
+             This Use Case was created by our outgoing 2nd and 3rd cohort candidates.Please access their materials.
+            </p>
+            <a href="{% url 'data-project' %}" target="_blank">
+              <button type="button" class="btn btn-primary">How to do it!</button>
+            </a>
+          </div>
+          <div class="col-md-3">
+              <!--
+            <img
+              src="..\media\background\teamwork_v1.jpg"
+              class="team-img"
+              width="100px"
+              height="150px"
+            />
+            -->
+            <h4>Financial Use Case</h4>
+            <p>
+              Developed and delivered by our esteemed 4th cohort graduates.
+            </p>
+            <a href="{% url 'data-financialsystem' %}" target="_blank">
+              <button type="button" class="btn btn-primary">See It in Action</button>
+            </a>
+          </div>
+          <div class="col-md-3">
+              <!--
+            <img
+              src="..\media\background\teamwork_v1.jpg"
+              class="team-img"
+              width="100px"
+              height="150px"
+            />
+            -->
+            <h4>Employee Productivity</h4>
+            <p>
+            Upcoming Use case. Please Join to learn how to use data analysis to deliver this usecase.
+            </p>
+            <a href="{% url 'user-register' %}" target="_blank">
+              <button type="button" class="btn btn-primary">Sign Up</button>
+            </a>
+          </div>
       </div>
     </div>
-
-    <div class="lg">
-      <p>Our Graduates Stellar Performance!!</p>
-    </div>
-<div class="stats">
-    <div class="row text-center">
-      <div class=" salary col-md-4">
-         <p class="salary_fig">$85K</p>
-         <h4><b>Starting Salary</b></h4> 
-         <hr/>
-         <p class="salary_desc">
-         On average our graduates start on an average salary of over 85k per year.
-        </p>
-
-     </div>
-
-    <div class="success col-md-4">
-
-      <p class="success_fig">80%</p>
-      <h4><b>Success Rate</b></h4> 
-      <hr/>
-       <p>
-        Over 80% of CODA graduates land plum jobs in various data analyst fields.
-      </p>
-
-   </div>
-   
-    <div class="placement col-md-4">
-
-        <p class="placement_fig">90%</p>
-           
-        <h4><b>Placement Rate</b></h4> 
-       
-        <hr/>
-        <p>
-          Our work is demonstrated by our ability to place over 90 % of our students in the job market.
-        </p>
-
-      </div>
-
-    </div>
-
-</div>
-    <div class="row text-center">
-
-      <div class=" application col-md-12">
-
-        <a href="{% url 'user-register' %}" target="_blank">
-          <button type="button" class="btn btn-primary">Start Application</button>
-      </a>
-
-      </div>
-  </div>
-  </div>
-</section>
-
-
-<!-------------------2. Our OFFER Section------------------------->
-
-
-<section id="service_offer">
-  <div class="service_offer text-center">
-    <h3 class="title">Start your Journey</h3>
-
-    <div class=" offer_top row text-center">
-
-      <div class="col-md-3">
-        <img
-          src="\media\data\etl_v1.jpg"
-          class="offer-img"
-        />
-      </div>
-      <div class="col-md-3">
-          <h4><b>ETL & Data Management</b></h4> 
-          <p>
-           Alteryx is the premier tool in our toolkit for data cleaning before staging in databases.  
-          </p>
-          <a href="{% url 'data-training' %}" target="_blank">
-            <button type="button" class="btn btn-primary">More</button>
-        </a>
-      </div>
-
-      <div class="col-md-3">
-        <img
-          src="\media\data\ba_v1.jpg"
-          class="offer-img"
-        />
-     </div>
-
-    <div class="col-md-3">
-      <h4><b>Business Analyst</b></h4> 
-       <p>
-           Become a business analyst and getting to know how a project is delivered in real time.
-       </p>
-       <a href="{% url 'data-training' %}" target="_blank">
-         <button type="button" class="btn btn-primary">More</button>
-     </a>
-   </div>
-  </div>
-
-  <div class="offer_bottom row text-center">
-    <div class="col-md-3">
-      <img
-        src="\media\data\reporting_v1.jpg"
-        class="offer-img"
-      />
-    </div>
-    <div class="col-md-3">
-      <h4><b>Reporting</b></h4> 
-       <p>
-           We utilized Tableau and Power BI in generating highly scalable reports for both for Training and educational purposes.
-       </p>
-       <a href="{% url 'data-training' %}" target="_blank">
-         <button type="button" class="btn btn-primary">More</button>
-     </a>
-   </div>
-
-   <div class="col-md-3">
-    <img
-      src="\media\data\database_v1.jpg"
-      class="offer-img"
-    />
- </div>
-
-    <div class="col-md-3">
-        <h4><b>Data Management</b></h4> 
-        <p>
-         Data Management and storage is at the heart of data analysis.Click to see how it is done.  
-        </p>
-        <a href="{% url 'data-training' %}" target="_blank">
-          <button type="button" class="btn btn-primary">More</button>
-      </a>
-    </div>
-
-    </div>
-  </div>
-</section>
-
-<!-------------------Work Section------------------------->
-
-<section id="service_work">
-  <div class="service_work text-center">
-
-    <hr style="height:5px;border-width:0;color:gray;background-color:rgb(49, 8, 97)">
-    
-    <p class="grad">
-      Where are they now?
-    </p>
-    <hr style="height:5px;border-width:0;color:gray;background-color:green ">
-    <p class="gd">
-      Our graduates work here
-    </p>
-    <div class="row text-center">
-      <div class="work col-md-3">
-        <img
-          src="\media\data\boa_v1.jpg"
-          class="work-img"
-        />
-      </div>
-      <div class="work col-md-3">
-        <img
-        src="\media\data\enterprise_v1.jpg"
-          class="work-img"
-        />
-      </div>
-      <div class="work col-md-3">
-        <img
-          src="\media\data\citi_v1.jpg"
-          class="work-img"
-        />
-      </div>
-      <div class="work col-md-3">
-        <img
-          src="\media\data\wells_v1.jpg"
-          class="work-img"
-        />
-      </div>
-    </div>
-
-    <div class="row text-center">
-      <div class="work2 col-md-3">
-        <img
-          src="\media\data\boa_v1.jpg"
-          class="work-img"
-        />
-      </div>
-      <div class="work col-md-3">
-        <img
-        src="\media\data\enterprise_v1.jpg"
-          class="work2-img"
-          width="100px"
-          height="150px"
-        />
-      </div>
-      <div class="work2 col-md-3">
-        <img
-          src="\media\data\citi_v1.jpg"
-          class="work-img"
-        />
-      </div>
-      <div class="work2 col-md-3">
-        <img
-          src="\media\data\wells_v1.jpg"
-          class="work-img"
-        />
-      </div>
-    </div>
-  </div>
-</section>
-
+  </section>
 
 
 <!-------------------CONTACT US------------------------->
 
-<section id="service_contact">
-  <div class="service_contact text-center">
+<section id="service">
+  <div class="service text-center">
     <h3 class="title">CONTACT US</h3>
-    <p class="hear">
+    <p>
       We Would Love to Hear From You!
      </p>
 <hr/>
@@ -300,20 +155,19 @@
           <h3>Call Us</h3>
           <img
             src="\media\icons\phone_v1.jpg"
-            class="contact-img"
+            class="team-img"
             width="100px"
             height="100px"
           />
           <p>
-            cell :4174137966 <br>         
-           cell2:  18122002265
+           4174137966/18122002265
           </p>
         </div>
         <div class="col-md-3">
           <h3>Email</h3>
           <img
             src="\media\icons\email_v1.jpg"
-            class="contact-img"
+            class="team-img"
             width="100px"
             height="100px"
           />
@@ -326,19 +180,18 @@
         <div class="col-md-3">
           <h3>Social Media</h3>
           <img
-            src="\media\icons\facebook_v2.jpg"
-            class="contact-img"
+            src="\media\icons\facebook_v1.jpg"
+            class="team-img"
             width="100px"
             height="100px"
           />
-          <a href="#" target="_blank"> 
-            <p>Get more info on <br> Our facebook Page</p> </a>
+          <a href="#" target="_blank"> <p>Vist US</p>  </a>
         </div>
         <div class="col-md-3">
           <h3>Address</h3>
           <img
             src="\media\icons\address_v1.jpg"
-            class="contact-img"
+            class="team-img"
             width="100px"
             height="100px"
           />
@@ -351,6 +204,8 @@
       </div>
     </div>
 </section>
+
+
 
 
 <section id="footer">

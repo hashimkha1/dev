@@ -50,7 +50,7 @@
           <div class="collapse navbar-collapse" id="navbarToggle">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="{% url 'main-layout' %}"
+                <a class="nav-link" href="{% url 'data-home' %}"
                   >Home <span class="sr-only">(current)</span></a
                 >
               </li>
@@ -64,20 +64,25 @@
                   aria-haspopup="true"
                   aria-expanded="false"
                 >
-                  About
+                  Careers
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="{% url 'main-team' %}"
-                    >Our Team</a
+                  <a class="dropdown-item" href="{% url 'data-home' %}"
+                    >Business Analysis</a
                   >
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'main-about' %}"
-                    >Mission & Vision</a
+                  <a class="dropdown-item" href="{% url 'data-home' %}"
+                    >UI/UX Designers</a
                   >
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'main-contact' %}"
-                    >Contact</a
+                  <a class="dropdown-item" href="{% url 'data-home' %}"
+                    >Developers</a
                   >
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'data-home' %}"
+                    >QA Analysts</a
+                  >
+
                 </div>
               </li>
 

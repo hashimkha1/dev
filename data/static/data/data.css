@@ -6,14 +6,13 @@ html {
 }
 
 body {
-  background: white;
+  background: rgb(255, 255, 255);
   padding: 0;
-  margin: 5rem;
   font-family: Arial, Helvetica, sans-serif;
 }
 /*------------------------- Navigation Section---------------------------------------------*/
 .bg-steel {
-  background: #351286;
+  background: #241153;
 }
 
 ul {
@@ -30,18 +29,185 @@ ul {
 }
 /*------------------------- Main Section---------------------------------------*/
 .container {
-  padding: 10px 20px;
-  /* border: 1px solid #dddddd;--*/
+  padding: 0px;
+  /* border: 1px solid #dddddd;*/
 }
 
-/*------------------------- Home Section: Services---------------------------------------*/
-#service .service .title {
+/*-------------------Our home services Section-------------------------*/
+/*------------------------1. Slider on top---------------------------------------*/
+#slider #headerSlider .row .img-top {
+  position: relative;
+  text-align: center;
+}
+
+#service .service .row .img-top img {
+  width: 1125px;
+  height: 500px;
+  text-align: center;
+}
+#service .service .row .img-top .centered {
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#slider #headerSlider .carousel-inner .carousel-item .carousel-caption h2 {
+  color: rgb(255, 255, 255);
+  font-size: 30px;
+  font-weight: 800;
+  font-style: inherit;
+}
+
+#slider img.bg {
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+@media screen and (max-width: 1024px) {
+  /* Specific to this particular image */
+  img.bg {
+    left: 50%;
+    margin-left: -512px; /* 50% */
+  }
+}
+
+/*-------------------1. Our Reporting Section------------------------->*/
+
+#service_report .service_report {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#service_report .service_report .stats {
+  margin-top: 1rem;
+  text-align: center;
+  border: 1px dotted rgb(147, 161, 147);
+}
+
+#service_report .service_report .application {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+#service_report .service_report .row .salary p.salary_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+#service_report .service_report .row .success p.success_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+#service_report .service_report .row .placement p.placement_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+
+/*-------------------1. Our OFFER Section------------------------->*/
+
+#service_offer .service_offer .title {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
-  margin-top: 2rem;
+  margin-top: 1rem;
   text-align: center;
   color: #fcfcfc;
+}
+
+#service_offer .service_offer .offer_top {
+  margin-top: 2rem;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+#service_offer .service_offer .offer_top .col-md-3 .offer-img {
+  width: 125px;
+  height: 125px;
+}
+
+#service_offer .service_offer .offer_bottom .col-md-3 .offer-img {
+  width: 125px;
+  height: 125px;
+}
+
+/*-------------------1. Work Section------------------------->*/
+#service_work .service_work {
+  margin-top: 1rem;
+  text-align: center;
+  align-items: center;
+}
+
+#service_work .service_work .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 40px;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+#service_work .service_work p.grad {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+
+#service_work .service_work .row .work {
+  padding-left: 90px;
+  padding-right: 90px;
+  padding-top: 30px;
+  text-align: center;
+}
+
+#service_work .service_work .row .work2 {
+  padding-left: 90px;
+  padding-right: 90px;
+  padding-top: 30px;
+  margin-top: 10px;
+  text-align: center;
+}
+
+#service_work .service_work .row .work-img {
+  width: 125px;
+  height: 125px;
+}
+
+/*------------------------- Contact Section--------------------------------------*/
+#service_contact .service_contact .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 40px;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+#service_contact .service_contact p.hear {
+  text-align: center;
+  font-size: 25px;
+  font-weight: 300;
+  color: #384cbe;
+}
+
+#service_contact .service_contact .row .contact-img {
+  width: 125px;
+  height: 125px;
+  padding: 20px, 20px;
 }
 
 /*------------------------- Project Template--------------------------------------*/
@@ -108,21 +274,39 @@ a.article-title:hover {
   font-size: 2.5rem;
 }
 /*------------------------- footer Section--------------------------------------------*/
-#footer .footer {
+.container .row #footer {
+  background-color: rgba(205, 220, 233, 0.952);
+  margin-top: 1rem;
+}
+
+#footer .footer footer {
   background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 100%;
-  margin-top: 2rem;
   text-align: center;
-  color: #fcfcfc;
+  color: rgba(250, 253, 255, 0.952);
+}
+
+.container .row #footer .row .col-md-3 h5 {
+  text-align: left;
+  margin-left: 3em;
+  padding: 0;
+}
+
+.container .row #footer .row .col-md-3 ul {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  margin-right: 4em;
+  margin-left: 3em;
+}
+
+.container .row #footer .row .col-md-3 ul li {
+  text-align: left;
+  list-style-type: none;
+  text-decoration: none;
 }
 
 .footer-link {
-  color: #000000;
-  display: inline-block;
+  color: #4623a5;
   text-align: left;
-}
-.f_Color li {
-  color: #fcfcfc;
-  text-decoration: none;
+  list-style-type: none;
 }

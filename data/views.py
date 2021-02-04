@@ -6,8 +6,8 @@ from django.contrib.auth.decorators import login_required
 def home(request):
     return render(request, 'data/home.html', {'title': 'home'})
 
-def course(request):
-        return render(request, 'data/course.html', {'title': 'course'})
+def deliverable(request):
+        return render(request, 'data/deliverable.html', {'title': 'deliverable'})
 
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})

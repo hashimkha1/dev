@@ -10,8 +10,8 @@ def test(request):
 def layout(request):
     return render(request, 'main/layout.html', {'title': 'layout'})
 
-#def home(request):
-   # return render(request, 'main/home.html', {'title': 'home'})
+def home(request):
+    return render(request, 'main/home.html', {'title': 'home'})
 
 def about(request):
     return render(request, 'main/about.html', {'title': 'about'})

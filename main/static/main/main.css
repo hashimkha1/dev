@@ -13,7 +13,7 @@ body {
 }
 /*------------------------- Navigation Section---------------------------------------------*/
 .bg-steel {
-  background-color: #5a516e;
+  background-color: #6e6251;
 }
 
 ul {
@@ -30,6 +30,15 @@ ul {
 
 /*------------------------- Home Section: Services---------------------------------------*/
 #service .service .title {
+  background-color: rgba(4, 54, 95, 0.952);
+  height: 40px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+.container .row #service .service .title h3 {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
