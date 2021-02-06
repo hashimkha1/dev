@@ -29,10 +29,12 @@ ul {
 }
 /*------------------------- Main Section---------------------------------------*/
 .container {
-  padding: 10px 10px;
-  /* border: 1px solid #dddddd;*/
+  box-sizing: content-box;
+  padding-left: 3%;
+  padding-right: 3%;
+  margin-left: auto;
+  margin-right: auto;
 }
-
 /*-------------------Our home services Section-------------------------*/
 /*------------------------1. Slider on top---------------------------------------*/
 #slider #headerSlider .row .img-top {
@@ -168,27 +170,78 @@ ul {
   color: #384cbe;
 }
 
+#service_work .service_work p.gd {
+  text-align: center;
+  font-size: 25px;
+  font-weight: 500;
+}
+
 #service_work .service_work .row .work {
-  padding-left: 90px;
-  padding-right: 90px;
+  padding-left: 85px;
+  padding-right: 85px;
   padding-top: 30px;
   text-align: center;
 }
 
 #service_work .service_work .row .work2 {
-  padding-left: 90px;
-  padding-right: 90px;
+  padding-left: 85px;
+  padding-right: 85px;
   padding-top: 30px;
-  margin-top: 10px;
+  text-align: center;
+}
+
+#service_work .service_work .row .work3 {
+  padding-left: 85px;
+  padding-right: 85px;
+  padding-top: 30px;
   text-align: center;
 }
 
 #service_work .service_work .row .work-img {
-  width: 125px;
-  height: 125px;
+  width: 115px;
+  height: 115px;
+}
+
+#service_work .service_work .row .work2-img {
+  width: 115px;
+  height: 115px;
+}
+
+#service_work .service_work .row .work2-img {
+  width: 115px;
+  height: 115px;
+}
+
+#service_work .service_work .row .boa-img {
+  float: left;
+  padding-right: 30px;
+}
+
+#service_work .service_work .row .enterprise-img {
+  float: right;
+}
+
+#service_work .service_work .row .spectrum-img {
+  float: left;
+  padding-right: 30px;
+}
+#service_work .service_work .row .statestreet-img {
+  float: right;
+}
+
+#service_work .service_work .row .wells-img {
+  float: left;
+  padding-right: 30px;
+}
+#service_work .service_work .row .citi-img {
+  float: right;
 }
 
 /*------------------------- Contact Section--------------------------------------*/
+#service_contact .service_contact {
+  margin-top: 45px;
+}
+
 #service_contact .service_contact .title {
   background-color: rgba(16, 50, 78, 0.808);
   height: 40px;
@@ -210,69 +263,6 @@ ul {
   padding: 20px, 20px;
 }
 
-/*------------------------- Project Template--------------------------------------*/
-#project .project .title {
-  background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 100%;
-  margin-top: 2rem;
-  text-align: center;
-  color: #fcfcfc;
-}
-
-/*------------------------- Training Template--------------------------------------*/
-#training .training .title {
-  background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 100%;
-  margin-top: 2rem;
-  text-align: center;
-  color: #fcfcfc;
-}
-
-/* ---------------------------------------*/
-.content-section {
-  color: #444444;
-  align-items: center;
-}
-.article-title {
-  color: #444444;
-}
-
-a.article-title:hover {
-  color: #428bca;
-  text-decoration: none;
-}
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
-}
-.article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3;
-}
-.article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
-}
-.article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
-}
-
-.account-img {
-  height: 120px;
-  width: 100px;
-  margin-right: 20px;
-  margin-bottom: 16px;
-}
-
-.account-heading {
-  font-size: 2.5rem;
-}
 /*------------------------- footer Section--------------------------------------------*/
 .container .row #footer {
   background-color: rgba(205, 220, 233, 0.952);
