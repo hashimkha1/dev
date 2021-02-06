@@ -68,63 +68,50 @@
 <section id="service">
   <div class="service text-center">
     <h3 class="title">WHAT WE DO </h3>
-    <p>
-      We as CODA utilize both SDLC and Agile framework in training, creating
-      and managing projects for our clients across multiple lines of business.
-    </p>
-    <div class="row text-center">
-<!--
-      <div class="col-md-8">
-        <img
-          src="..\media\home\overview_v4.jpg"
-          class="service-img"
-          width="750px"
-          height="500px"
-        />
-      </div>
-      -->
+      <div class="row text-center">
+          <div class="bada col-md-3">
+                <h4><b>Busines & Data Analysis</b></h4>
+                <p class="pay_fig">$2995</p>
+                <hr/>
+                <p class="bd">
+                  We offer 3 month Project based training in both web development and Data Analysis.
+                </p>
+                <a href="{% url 'data-home' %}" >
+                  <button type="button" class="btn btn-primary">START MY COURSE</button>
+              </a>
+          </div>
 
-      <div class="col-md-4">
-        <h4><b>Busines & Data Analysis</b></h4> 
-        <p>
-          We offer 3 month Project based training in both web and Data Analysis, focusing in Reporting, ETL & DBA. 
-        </p>
-        <a href="{% url 'data-home' %}" >
-          <button type="button" class="btn btn-primary">More</button>
-      </a>
+          <div class="fina col-md-3">
+            <h4><b>Financial & Investment</b></h4>
+            <p class="pay_fig">$1496</p>
+            <hr/>
+            <p class="fi">
+              Take our Investment training sessions in stocks and options.
+            </p>
+            <a href="{% url 'investing-home' %}" >
+              <button type="button" class="btn btn-primary">START MY COURSE</button>
+          </a>
+        </div>
+        <div class="cota col-md-3">
+          <h4><b>Consultancy Services</b></h4>
+          <p class="pay_fig">$1</p>
+          <hr/>
+          <p class="co">
+            Construction management,errands,market & business plans for diaspora 
+          </p>
+          <a href="https://public.tableau.com/profile/coda2331#!/vizhome/BudgetCalculatorV1/SummaryBudgetCalculatorReport" target="_blank">
+            <button type="button" class="btn btn-primary">SELECT FOR MORE</button>
+        </a>
       </div>
-      <div class="col-md-4">
-    
-        <h4><b>Financial & Investment</b></h4> 
-        <p>
-          Take our Investment training sessions in stocks and options.
-        </p>
-        <a href="{% url 'investing-home' %}" >
-          <button type="button" class="btn btn-primary">More</button>
-      </a>
-      </div>
-      <div class="col-md-4">
-    
-        <h4><b>Consultancy Services</b></h4> 
-        <p>
-          Our services includes construction,errands,market feasibilities and 
-          business plans for diaspora 
-        </p>
-        <a href="https://public.tableau.com/profile/coda2331#!/vizhome/BudgetCalculatorV1/SummaryBudgetCalculatorReport" target="_blank">
-          <button type="button" class="btn btn-primary">More</button>
-      </a>
-      </div>
-
-
-
     </div>
   </div>
 </section>
 
-<section id="service">
-  <div class="service text-center">
+
+ <!--------------------------WHY US Section--------------------------------->
+<section id="service-why">
+  <div class="service-why text-center">
     <h3 class="title">WHY US?</h3>
-    <!--------------------------WHY US Section--------------------------------->
 <div id="slider">
   <div id="headerSlider" class="carousel slide" data-ride="carousel">
       <ol class="carousel-indicators">
@@ -298,8 +285,9 @@
         </footer>
     </div>
             <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
-            <div class="row text-left">
-                <div class="col-md-3 ">
+            <div class="row">
+                <div class="col-md-6 ">
+                  <div class="about">
                     <!-- <img src="static/img//service1.png" class="service-img" >-->
                     <h5>About Us</h5>
                     <ul>
@@ -309,51 +297,52 @@
                         <li> <a class="footer-link" href="/">Our Network</a></li>
                         <li> <a class="footer-link" href="/">Connect</a></li>
                     </ul>
-
+                  </div>
+                    <div class="core">
+                      <h5>Core Services</h5>
+                      <ul>
+                        <li>  <a class="footer-link" href="/">Training</a></li>
+                        <li>  <a class="footer-link" href="/">Project Management</a></li>
+                        <li>  <a class="footer-link" href="/">Job Networking</a></li>
+                        <li>  <a class="footer-link" href="/">Recruitment</a></li>
+                        <li>  <a class="footer-link" href="/">Resume Prep</a></li>
+                      </ul>
+                    </div>
                 </div>
-                <div class="col-md-3 ">
-                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-                    <h5>Core Services</h5>
-                    <ul>
-                      <li>  <a class="footer-link" href="/">Training</a></li>
-                      <li>  <a class="footer-link" href="/">Project Management</a></li>
-                      <li>  <a class="footer-link" href="/">Job Networking</a></li>
-                      <li>  <a class="footer-link" href="/">Recruitment</a></li>
-                      <li>  <a class="footer-link" href="/">Resume Prep</a></li>
-                    </ul>
 
+                <div class="col-md-6 ">
+                  <div class="tech">
+                    <!-- <img src="static/img//service1.png" class="service-img" >-->
+                      <h5>Technologies</h5>
+                      <ul>
+                        <li> <a class="footer-link" href="https://www.youtube.com/watch?v=gWZtNdMko1k&list=PLWPirh4EWFpGXTBu8ldLZGJCUeTMBpJFK">Tableau</a></li>
+                        <li> <a class="footer-link" href="/">SQL</a></li>
+                        <li> <a class="footer-link" href="/">Python</a></li>
+                        <li> <a class="footer-link" href="https://www.youtube.com/watch?v=6DZ7YVeCeqg">Alteryx</a></li>
+                        <li> <a class="footer-link" href="/">Advanced Excel</a></li>
+                      </ul>
+                  </div>
+                    <div class="more">
+                        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                        <h5>More Resources</h5>
+                        <ul>
+                          <li>  <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=RbWCBz5fBBw&list=PL5nViEmyYI0ZpbH5jjFPvMZVDDPqvd080">Business
+                            Analysis</a></li>
+                        <li>  <a class="footer-link" target="_blank"
+                            href="https://public.tableau.com/en-us/s/resources">Tableau Resources</a></li>
+                        <li>  <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=ZNObiptSMSI&list=PL08903FB7ACA1C2FB"> SQL by Venkat</a></li>
+                        <li>  <a class="footer-link" target="_blank"
+                            href="https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" target="_blank">Python by Corey</a></li>
+                        <li>  <a class="footer-link" href="www.w3schools.com">General Links(w3schools)</a></li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-md-3 services">
-                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-                    <h5>Technologies</h5>
-                    <ul>
-                      <li> <a class="footer-link" href="https://www.youtube.com/watch?v=gWZtNdMko1k&list=PLWPirh4EWFpGXTBu8ldLZGJCUeTMBpJFK">Tableau</a></li>
-                      <li> <a class="footer-link" href="/">SQL</a></li>
-                      <li> <a class="footer-link" href="/">Python</a></li>
-                      <li> <a class="footer-link" href="https://www.youtube.com/watch?v=6DZ7YVeCeqg">Alteryx</a></li>
-                      <li> <a class="footer-link" href="/">Advanced Excel</a></li>
-                    </ul>
-
-                </div>
-                <div class="col-md-3">
-                    <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-                    <h5>More Resources</h5>
-                    <ul>
-                      <li>  <a class="footer-link" target="_blank"
-                        href="https://www.youtube.com/watch?v=RbWCBz5fBBw&list=PL5nViEmyYI0ZpbH5jjFPvMZVDDPqvd080">Business
-                        Analysis</a></li>
-                    <li>  <a class="footer-link" target="_blank"
-                        href="https://public.tableau.com/en-us/s/resources">Tableau Resources</a></li>
-                    <li>  <a class="footer-link" target="_blank"
-                        href="https://www.youtube.com/watch?v=ZNObiptSMSI&list=PL08903FB7ACA1C2FB"> SQL by Venkat</a></li>
-                    <li>  <a class="footer-link" target="_blank"
-                        href="https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" target="_blank">Python by Corey</a></li>
-                    <li>  <a class="footer-link" href="www.w3schools.com">General Links(w3schools)</a></li>
-
-                      
-                    </ul>
-
-                </div>
+                <div class=" col-md-6">
+                        <h5>.</h5>
+                    </div>
+              </div>
             </div>
   </section>
 
