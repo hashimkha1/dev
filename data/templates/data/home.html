@@ -133,28 +133,11 @@
 
 <!-------------------2. Our OFFER Section------------------------->
 
-
 <section id="service_offer">
   <div class="service_offer text-center">
     <h3 class="title">Start your Journey</h3>
 
     <div class=" offer_top row text-center">
-
-      <div class="col-md-3">
-        <img
-          src="\media\data\etl_v1.jpg"
-          class="offer-img"
-        />
-      </div>
-      <div class="col-md-3">
-          <h4><b>ETL & Data Management</b></h4> 
-          <p>
-           Alteryx is the premier tool in our toolkit for data cleaning before staging in databases.  
-          </p>
-          <a href="{% url 'data-training' %}" target="_blank">
-            <button type="button" class="btn btn-primary">More</button>
-        </a>
-      </div>
 
       <div class="col-md-3">
         <img
@@ -172,6 +155,22 @@
          <button type="button" class="btn btn-primary">More</button>
      </a>
    </div>
+
+   <div class="col-md-3">
+    <img
+      src="\media\data\etl_v1.jpg"
+      class="offer-img"
+    />
+  </div>
+  <div class="col-md-3">
+      <h4><b>ETL & Data Management</b></h4> 
+      <p>
+       Alteryx is the premier tool in our toolkit for data cleaning before staging in databases.  
+      </p>
+      <a href="{% url 'data-training' %}" target="_blank">
+        <button type="button" class="btn btn-primary">More</button>
+    </a>
+  </div>
   </div>
 
   <div class="offer_bottom row text-center">
@@ -210,6 +209,7 @@
 
     </div>
   </div>
+
 </section>
 
 <!-------------------Work Section------------------------->
@@ -217,8 +217,8 @@
 <section id="service_work">
   <div class="service_work text-center">
 
-    <hr style="height:5px;border-width:0;color:gray;background-color:rgb(49, 8, 97)">
     
+    <hr style="height:5px;border-width:0;color:gray;background-color:rgb(5, 6, 78) ">
     <p class="grad">
       Where are they now?
     </p>
@@ -262,6 +262,17 @@
         />
       </div>
     </div>
+    <hr style="height:1px;border-width:0;color:gray;background-color:rgb(97, 93, 100)">
+    <div class="row text-center">
+
+      <div class=" application col-md-12">
+  
+        <a href="{% url 'user-register' %}" target="_blank">
+          <button type="button" class="btn btn-primary">Join Them</button>
+      </a>
+  
+      </div>
+  </div>
     </div>
 </section>
 
