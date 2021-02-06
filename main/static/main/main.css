@@ -66,7 +66,6 @@ ul {
   text-align: center;
   font-size: 20px;
   font-style: inherit;
-  margin-top: 1rem;
 }
 
 .container .row #service .service .row .bada p.pay_fig {
@@ -154,6 +153,18 @@ ul {
   border-radius: 1em;
   font-style: initial;
 }
+
+/*------------------------- Why Section--------------------------------------------*/
+.container .row #service-why .service-why {
+  margin-top: 2rem;
+}
+
+/*------------------------- Why Section--------------------------------------------*/
+.container .row #service-why .service-why .title {
+  margin-top: 1rem;
+  background-color: rgb(19, 35, 85);
+  color: #fcfcfc;
+}
 /*------------------------- footer Section--------------------------------------------*/
 .container .row #footer {
   background-color: rgba(205, 220, 233, 0.952);
@@ -166,21 +177,45 @@ ul {
   color: rgba(250, 253, 255, 0.952);
 }
 
-.container .row #footer .row .col-md-3 h5 {
+.container .row #footer .row .col-md-6 {
+  padding-left: 85px;
+  padding-right: 85px;
+  padding-top: 30px;
+  text-align: center;
+}
+
+.container .row #footer .row .col-md-6 .about {
   text-align: left;
-  margin-left: 3em;
+  float: left;
+}
+
+.container .row #footer .row .col-md-6 .core {
+  text-align: left;
+  float: right;
+}
+.container .row #footer .row .col-md-6 .tech {
+  text-align: left;
+  float: left;
+}
+
+.container .row #footer .row .col-md-6 .more {
+  text-align: left;
+  margin-left: 1rem;
+  float: right;
+}
+
+.container .row #footer .row .col-md-6 h5 {
+  text-align: left;
   padding: 0;
 }
 
-.container .row #footer .row .col-md-3 ul {
+.container .row #footer .row .col-md-6 ul {
   margin: 0;
   padding: 0;
   text-align: left;
-  margin-right: 4em;
-  margin-left: 3em;
 }
 
-.container .row #footer .row .col-md-3 ul li {
+.container .row #footer .row .col-md-6 ul li {
   text-align: left;
   list-style-type: none;
   text-decoration: none;
