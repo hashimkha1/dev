@@ -29,6 +29,7 @@ ul {
 }
 
 /*------------------------- Home Section: Services---------------------------------------*/
+/*---------- WHAT WE DO SECTION-------------------*/
 #service .service .title {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
@@ -38,77 +39,120 @@ ul {
   color: #fcfcfc;
 }
 
-.container .row #service .service .title h3 {
+.container .row #service .service .title {
   background-color: rgba(4, 54, 95, 0.952);
   height: 40px;
   width: 100%;
+  margin: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+/*-------------Business & Data Analysis------------------*/
+.container .row #service .service .row .bada {
   margin-top: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  border: 1px dotted rgb(147, 161, 147);
+  background-color: honeydew;
+}
+
+.container .row #service .service .row .bada h4 {
+  font-size: 20px;
+  font-style: inherit;
+}
+
+.container .row #service .service .row .bada p.bd {
   text-align: center;
-  color: #fcfcfc;
+  font-size: 20px;
+  font-style: inherit;
+  margin-top: 1rem;
 }
 
-/*------------------------- Project Template--------------------------------------*/
-#project .project .title {
-  background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 100%;
-  margin-top: 0rem;
+.container .row #service .service .row .bada p.pay_fig {
   text-align: center;
-  color: #fcfcfc;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
 }
 
-/*------------------------- Training Template--------------------------------------*/
-#training .training .title {
-  background-color: rgba(4, 54, 95, 0.952);
-  height: 40px;
-  width: 100%;
-  margin-top: 0rem;
+.container .row #service .service .row .bada .btn {
   text-align: center;
-  color: #fcfcfc;
+  font-size: 20px;
+  font-weight: 500;
+  background-color: grey;
+  border-radius: 1em;
+  margin-bottom: 1rem;
 }
 
-/* ---------------------------------------*/
-.content-section {
-  color: #444444;
-  align-items: center;
-}
-.article-title {
-  color: #444444;
-}
-
-a.article-title:hover {
-  color: #428bca;
-  text-decoration: none;
-}
-.article-img {
-  height: 65px;
-  width: 65px;
-  margin-right: 16px;
-}
-.article-metadata {
-  padding-bottom: 1px;
-  margin-bottom: 4px;
-  border-bottom: 1px solid #e3e3e3;
-}
-.article-metadata a:hover {
-  color: #333;
-  text-decoration: none;
-}
-.article-svg {
-  width: 25px;
-  height: 25px;
-  vertical-align: middle;
+/*-------------Financial Investment------------------*/
+.container .row #service .service .row .fina {
+  margin-top: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  border: 1px dotted rgb(147, 161, 147);
+  background-color: honeydew;
 }
 
-.account-img {
-  height: 120px;
-  width: 100px;
-  margin-right: 20px;
-  margin-bottom: 16px;
+.container .row #service .service .row .fina h4 {
+  font-size: 20px;
+  font-style: inherit;
 }
 
-.account-heading {
-  font-size: 2.5rem;
+.container .row #service .service .row .fina p.fi {
+  text-align: center;
+  font-size: 20px;
+  font-style: inherit;
+}
+
+.container .row #service .service .row .fina p.pay_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+
+.container .row #service .service .row .fina .btn {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  background-color: green;
+  border-radius: 1em;
+  font-style: initial;
+}
+
+/*-------------Consultancy Section------------------*/
+.container .row #service .service .row .cota {
+  margin-top: 1rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
+  border: 1px dotted rgb(147, 161, 147);
+  background-color: rgb(247, 247, 247);
+}
+.container .row #service .service .row .cota h4 {
+  font-size: 20px;
+  font-style: inherit;
+}
+
+.container .row #service .service .row .cota p.co {
+  text-align: center;
+  font-size: 20px;
+  font-style: inherit;
+}
+
+.container .row #service .service .row .cota p.pay_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #384cbe;
+}
+.container .row #service .service .row .cota .btn {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 500;
+  background-color: rgb(89, 104, 89);
+  border-radius: 1em;
+  font-style: initial;
 }
 /*------------------------- footer Section--------------------------------------------*/
 .container .row #footer {
