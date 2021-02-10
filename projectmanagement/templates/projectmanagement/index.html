@@ -32,9 +32,9 @@
 
   <body>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'projectmanagement-home' %}"
+          <a class="navbar-brand mr-4" href="{% url 'main-layout' %}"
             >CODA</a
           >
           <button
@@ -69,18 +69,18 @@
                   About
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="#">Our Team</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Our Team</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Mission & Vision</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Mission & Vision</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Contact</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Contact</a>
                 </div>
               </li>
 
               <li class="nav-item dropdown">
                 <a
                   class="nav-link dropdown-toggle"
-                  href="#"
+                  href="{% url 'projectmanagement-home' %}"
                   id="navbarDropdown"
                   role="button"
                   data-toggle="dropdown"
@@ -90,63 +90,24 @@
                   Services
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="#">Fields Project</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Fields Project</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">IT</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Errands</a>
                   <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Consultancy</a>
+                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Feasibility Studies</a>
                 </div>
               </li>
-              <!--
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="navbarDropDown"
-                  role="button"
-                  data-toggle="dropdown"
-                  >Your Career</a
-                >
-                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="#" target=""
-                    >Business & Data Analysis</a
-                  >
-
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#" target=""
-                    >Building a Network</a
-                  >
-                  <hr />
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#" target=""
-                    >Deliverable(Projects)</a
-                  >
-                  <hr />
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#">Find Your Job</a>
-                  <hr />
-                  <div class="dropdown-divider"></div>
-
-                  <a class="dropdown-item" href="#">Success Stories</a>
-                  <hr />
-                </div>
-              </li>
-              -->
             </ul>
-
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if user.is_authenticated %}
-              <a class="nav-item nav-link" href="#">Account</a>
-              <a class="nav-item nav-link" href="#">Logout</a>
-              <a class="nav-item nav-link" href="#">Make a Payment</a>
+              <a class="nav-item nav-link" href="{% url 'main-layout' %}">Account</a>
+              <a class="nav-item nav-link" href="">Logout</a>
+              <a class="nav-item nav-link" href="{% url 'main-pay' %}">Make a Payment</a>
               {% else %}
-              <a class="nav-item nav-link" href="#">Login</a>
-              <a class="nav-item nav-link" href="#">Register</a>
-              <a class="nav-item nav-link" href="#">Make a Payment</a>
+              <a class="nav-item nav-link" href="{% url 'user-login' %}">Login</a>
+              <a class="nav-item nav-link" href="{% url 'user-register' %}">Register</a>
+              <a class="nav-item nav-link" href="{% url 'main-pay' %}">Make a Payment</a>
               {% endif %}
             </div>
           </div>
@@ -154,13 +115,11 @@
       </nav>
     </header>
 
-    <div class="container">
-      <div class="col-md offset-md-1 mt-5">
-        <div class="jumbotron">
+    <div class="main">
+      <div id="container">
           {% if messages %} {% for message in messages %}
           <div class="alert alert-{{ message.tags }}">{{ message }}</div>
           {% endfor %} {% endif %} {% block content %} {% endblock %}
-        </div>
       </div>
     </div>
 
@@ -181,5 +140,10 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script
+    src="https://use.fontawesome.com/releases/v5.0.8/js/all/js"></script>
+
+    <script
+    src="js/all/js"></script>
   </body>
 </html>
