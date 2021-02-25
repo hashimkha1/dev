@@ -1,0 +1,40 @@
+{%extends "application/baseapplication.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<div class="content-section">
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4 text-center">
+        Job Application
+        <p class="lead font-italic text-center">
+          Please Complete the form below to apply for a position with us.
+        </p>
+        <hr />
+      </legend>
+      <div class="row">
+        <div class="col-md-6">{{ form.first_name|as_crispy_field }}</div>
+        <div class="col-md-6">{{form.last_name|as_crispy_field }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{ form.username|as_crispy_field }}</div>
+        <div class="col-md-6">{{form.phone|as_crispy_field }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{form.email|as_crispy_field }}</div>
+        <div class="col-md-6">{{ form.country|as_crispy_field }}</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">{{ form.resume|as_crispy_field }}</div>
+      </div>
+    </fieldset>
+    <div class="form-group">
+      <button class="btn btn-outline-info" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+{% endblock content%}
+
+
+
+
+

@@ -1,0 +1,64 @@
+{%extends "application/baseapplication.html"%} {% block content %}
+<section id="employee_list">
+  <div class="employee_list text-center">
+    <h2>Employee Ratings</h2>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <td>Date</td>
+          <th>First</th>
+          <th>Last</th>
+          <th>Topic</th>
+          <th>Punctuality</th>
+          <th>Communication</th>
+          <th>Understanding</th>
+          <th>Rated By</th>
+          <td>
+            <a
+              href="{% url 'application-emp_insert'%}"
+              class="btn btn-success btn-sm"
+            >
+              +Add New
+            </a>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for employee in employees %}
+          <td>{{employee.employee_date|date:"F d, Y"}}</td>
+          <td>{{employee.first_name}}</td>
+          <td>{{employee.last_name}}</td>
+          <td>{{employee.topic}}</td>
+          <td>{{employee.punctuality}}</td>
+          <td>{{employee.communication}}</td>
+          <td>{{employee.understanding}}</td>
+          <td>{{employee.rated_by}}</td>
+          <td>
+            <a
+              href="{% url 'application-emp_update' employee.id %}"
+              class="btn text-secondary px-0"
+            >
+              <i class="far fa-edit fa-lg">Edit</i>
+            </a>
+            <form
+              action="{% url 'application-emp_delete' employee.id %}"
+              method="post"
+              class="d-inline"
+            >
+              {% csrf_token %}
+              <button type="submit" class="btn">
+                <i class="far fa-trash-alt fa-lg text-danger float-right"
+                  >Delete</i
+                >
+              </button>
+            </form>
+          </td>
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}
