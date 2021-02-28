@@ -1,0 +1,35 @@
+{%extends "main/base.html"%} {% block content %}
+<section id="rating">
+  <div class="rating text-center">
+    <h2>All Transanctions</h2>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>Full Name</th>
+          <th>Project Name</th>
+          <th>Activity</th>
+          <th>Description</th>
+          <th>Payment Method</th>
+          <th>Amount</th>
+          <th></th>
+          <!-- <th>total_score</th>-->
+        </tr>
+      </thead>
+      <tbody>
+        {% for transanction in transactions %}
+        <tr>
+          <td>{{transanction.activity_date|date:"F d, Y"}}</td>
+          <td>{{transanction.full_name}}</td>
+          <td>{{transanction.project_name}}</td>
+          <td>{{transanction.activity}}</td>
+          <td>{{transanction.description}}</td>
+          <td>{{transanction.payment_method}}</td>
+          <td>{{transanction.amount}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}
