@@ -39,15 +39,6 @@ posts=[
 class application(TemplateView):
     template_name='application.html'
 
-'''saving uploaded file to file system under media
-def upload(request):
-    if request.method== "POST":
-        uploaded_file=request.FILES["document"]
-        fs=FileSystemStorage()
-        fs.save(uploaded_file.name,uploaded_file)
-        #print(uploaded_file.name)
-    return render(request, 'application/upload.html')
-'''
 # Saving uploaded information to database
 def apply(request):
     if request.method== "POST":
@@ -58,8 +49,6 @@ def apply(request):
     else:
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
-
-
 
 def applicants(request):
     applicants=Application.objects.all().order_by('-application_date')
@@ -131,7 +120,7 @@ def rate(request):
     return render(request, 'application/rate.html',{'form':form})
 
 def rating(request):
-    ratings=Rated.objects.all().order_by('-punctuality')
+    ratings=Rated.objects.all().order_by('-rating_date')
     return render(request, 'application/rating.html', {'ratings': ratings})
 
 def employee_form(request,id=0):

@@ -25,5 +25,6 @@ def transact(request):
     return render(request, 'projectmanagement/transact.html',{'form':form})
 
 def transaction(request):
-    transactions=Transanct.objects.all().order_by('-activity')
+    transactions=Transanct.objects.all().order_by('-activity_date')
     return render(request, 'projectmanagement/transaction.html', {'transactions': transactions})
+
