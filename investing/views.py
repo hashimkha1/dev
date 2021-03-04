@@ -12,6 +12,15 @@ def home(request):
 def testing(request):
     return render(request, 'investing/testing.html', {'title': 'testing'})
 
+def sauti(request):
+    return render(request, 'investing/sauti.html', {'title': 'sauti'})
+
+def layout(request):
+    return render(request, 'investing/layout.html', {'title': 'layout'})
+
+def training(request):
+    return render(request, 'investing/training.html', {'title': 'training'})
+
 
 # Saving uploaded information to database
 def upload(request):
