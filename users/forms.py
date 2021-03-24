@@ -15,7 +15,6 @@ class UserRegisterForm(UserCreationForm):
             'username':"User Name"
         }
 
-
 class UserLoginForm(UserCreationForm):
     email = forms.EmailField()
     class Meta:

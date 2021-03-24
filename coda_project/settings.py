@@ -32,13 +32,14 @@ DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 #ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
 ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
 #ALLOWED_HOSTS = []
-
+#AUTH_USER_MODEL='accounts.User'
 
 # Application definition
 
 INSTALLED_APPS = [
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
+    'accounts.apps.AccountsConfig',
     'codablog.apps.CodablogConfig',
     'data.apps.DataConfig',
     'application.apps.ApplicationConfig',
