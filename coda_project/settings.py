@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = True
-DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
+DEBUG =(os.environ.get('DEBUG_VALUE')=='False')
 
 
 #ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
@@ -197,7 +197,9 @@ DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 #STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
-if os.getcwd()='/app':
+'''
+if os.getcwd()=='/app':
     SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT=True
     DEBUG=False
+'''
