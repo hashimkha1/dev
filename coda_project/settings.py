@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'projectmanagement.apps.ProjectmanagementConfig',
     'investing.apps.InvestingConfig',
     'crispy_forms',
-    #'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
