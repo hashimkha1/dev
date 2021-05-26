@@ -1,10 +1,30 @@
 
 
 from django.contrib import admin
-'''
-from .models import User,Customer,Applicant
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from .models import CustomerUser
+
 # Register your models here.
-admin.site.register(User)
-admin.site.register(Customer)
-admin.site.register(Applicant)
-'''
+
+#admin.site.register(CustomerUser)
+
+class CustomerAdmin(UserAdmin):
+    add_form=UserCreationForm
+    form=UserChangeForm
+    list_display=('email','first_name','last_name')
+
+
+    fieldsets=UserAdmin.fieldsets +(
+        (None, {'fields': ('gender','phone','address','city','state','country')}),
+    )
+
+    add_fieldsets=UserAdmin.add_fieldsets +(
+        (None, {'fields': ('email', 'first_name','last_name','password1','password2','gender','category','phone','address','city','state','country')}),
+    )
+    search_fields = ('email',)
+    filter_horizontal = ()
+
+
+# Now register the new UserAdmin...
+admin.site.register(CustomerUser, CustomerAdmin)

@@ -1,11 +1,10 @@
 from django.db import models
 from django.utils import timezone
-from django.contrib.auth.models import User
 from django.core.validators import MinValueValidator,MaxValueValidator
 
 # Create your models here.
 class Applicant_Profile(models.Model):
-    applicant = models.OneToOneField(User, on_delete=models.CASCADE)
+    applicant = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='applicant_profile_pics')
 
     def __str__(self):

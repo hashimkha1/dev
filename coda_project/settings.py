@@ -30,9 +30,9 @@ DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 
 
 #ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
-ALLOWED_HOSTS = ['codatrainingapp.herokuapp.com']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []
-#AUTH_USER_MODEL='accounts.User'
+AUTH_USER_MODEL='accounts.CustomerUser'
 
 # Application definition
 
@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'storages',
+    'django_countries',
 ]
 
 MIDDLEWARE = [

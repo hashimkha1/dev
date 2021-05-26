@@ -1,0 +1,37 @@
+{%extends "main/base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Clients</h2>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>CustomerId</th>
+          <th>Date</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Phone Number</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Registering For:</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for client in clients %}
+        <tr>
+          <td>{{client.id}}</td>
+          <td>{{client.date_joined|date:"F d, Y"}}</td>
+          <td>{{client.first_name}}</td>
+          <td>{{client.last_name}}</td>
+          <td>{{client.phone}}</td>
+          <td>{{client.city}}</td>
+          <td>{{client.state}}</td>
+          <td>{{client.country}}</td>
+          <td>{{client.category}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

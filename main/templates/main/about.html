@@ -1,47 +1,96 @@
 {%extends "main/base.html"%} {% block content %}
-<section id="about">
-  <div class="about text-center">
-    <h3 class="title">WHY US?</h3>
-    <div class="row text-center">
-      <div class="col-md-4 about-column1">
-        <div class="about-content">
-          <h3>About</h3>
-          <p>
-            Since its inception, Crown Data Analysis and Consultancy LLC(CODA)
-            has provided our customers with high quality services and training
-            in numerous industries with efficiency and effective at a fair price
-            both locally & internationally.
+<!--------------------------Slider Section--------------------------------->
+<!-------------------WHAT WE DO Section------------------------->
+<div class="container-fluid padding">
+  <div class="row welcome text-center">
+    <div class="col-12">
+      <h1 class="display-4">TOPICS TO COVER</h1>
+    </div>
+    <hr/>
+    <div class="col-12">
+      <p class="lead">
+          Meet all your needs by getting high class services at affordable rates.
+      </p>
+    </div> 
+  </div> 
+  </div>
+
+<!-------------------Meet the Team------------------------>
+<div class="container-fluid padding">
+  <div class="row team text-center">
+    <div class="col-12">
+      <h1 class="display-4">Meet the Team</h1>
+    </div>
+    <hr>
+    </div>
+  </div>
+
+
+
+
+  <div class="container-fluid padding">
+  <div class="row padding ">
+    <div class="col-md-2">
+      <div class="card">
+        <img src="\media\profile_pics\Chris3.jpg" 
+        class="card-img-top"
+        width="100"
+        height="260"
+        >
+        <div class="card-body">
+          <h4 class="card-title">Chris Maghas</h4>
+          <p class="card-text">Project Manager,Data & Risk Analyst for over 12 years</p>
+          <a href="/register" target="_blank">
+            <button type="button" class="btn btn-primary btn-lg">www.codanalytics.net</button>
+          </a>
+        </div>
+      </div>
+    </div>
+
+ 
+    <div class="col-md-9" id="bada">
+      <div class="row padding  ">
+
+      <div class="col-md-6" id="fina">
+        <div class="card-body">
+          <h4>Featuring the following topics</h4>
+          <hr/>
+        </div>
+      <div class="card1">
+       <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+        <div class="card-body">
+          <h4><b>Why Investors Lose Money</b></h4>
+          <hr/>
+          <p class="bd">
+            The underlying factors that cause investors to lose money in stock market.
           </p>
         </div>
       </div>
+      <div class="card1">
+        <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+        <div class="card-body">
+          <h4><b>Data Analysis in Stock Market</b></h4>
+          <hr/>
+          <p class="fi">
+            How to use data analysis to leverage consistent income in stock market.
+          </p>
+        </div>
+       </div>
 
-      <div class="col-md-4">
-        <h3>Expertise & Experience</h3>
-        <div class="progress">
-          <div class="progress-bar" style="width: 100%;">100%</div>
+       <div class="card1">
+        <div class="card-body">
+          <h4><b>Leveraging Market Studies</b></h4>
+          <p class="co">
+            Understanding the  martket and creating highly predictable portifolio.
+          </p>
         </div>
-        <p>Project Management</p>
-        <div class="progress">
-          <div class="progress-bar" style="width: 95%;">95%</div>
-        </div>
-        <p>Business Analysis</p>
-        <div class="progress">
-          <div class="progress-bar" style="width: 90%;">90%</div>
-        </div>
-        <p>Data Analysis</p>
-      </div>
-
-      <div class="col-md-4 about-column-2">
-        <h3>Why we are different</h3>
-        <ul>
-          <li>We understand our customers unique needs</li>
-          <li>We Believe in doing business with Integrity</li>
-          <li>We deliver on schedule</li>
-          <li>We prepare you for the current job market</li>
-          <li>We advice and advance your Resume Creation</li>
-        </ul>
-      </div>
+       </div>
+    </div>
+    <hr>
     </div>
   </div>
-</section>
+<!-------------------Cards-Category Section----------------------->
+
+
+
 {% endblock content %}

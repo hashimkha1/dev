@@ -1,8 +1,80 @@
 from django import forms
+from django.contrib.auth.models import User
+from .models import CustomerUser
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
+#from django.db import transaction
 
-from django.contrib.auth.forms import UserCreationForm
-from django.db import transaction
+class CustomerForm(forms.ModelForm):
+    password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Repeat Password', widget=forms.PasswordInput)
+
+    class Meta:
+        model = CustomerUser
+        fields = ['category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country']
+        labels={
+                'category':'Registering For:',
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'username':'User Name',
+                'email':'Email',
+                'gender':'Gender',
+                'phone':'Phone',
+                'address':'Address',
+                'city':'City',
+                'state':'State',
+                'country':'Country',
+        }
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError('Passwords don\'t match')
+        return password2
+
+    def save(self, commit=True):
+        user = super(CustomerForm, self).save(commit=False)
+        user.set_password(self.cleaned_data['password2'])
+        if commit:
+            user.save()
+        return user
+
+
+class UserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField()
+
+class Meta:
+    model = CustomerUser
+    fields = ('email','password','date_joined','is_active','is_admin')
+
+def clean_password(self):
+    return self.initial['password']
+
+
+
 '''
+class CustomerForm(forms.ModelForm):
+    email = forms.EmailField()
+    class Meta:
+        model = CustomerUser
+        fields = ['first_name','last_name','username','phone','gender', 'email','address','city','state','country']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'username':'User Name',
+                'email':'Email',
+                'gender':'Gender',
+                'phone':'Phone',
+                'address':'Address',
+                'city':'City',
+                'state':'State',
+                'country':'Country',
+        }
+
+#'password1','password2',
+
+
 #from .models import Customer,Applicant,User
 class CustomerSignupForm(UserCreationForm):
     first_name=forms.CharField(required=True)
@@ -26,7 +98,6 @@ class CustomerSignupForm(UserCreationForm):
         customer.save()
         return customer
         
-
 class ApplicantSignUpForm(UserCreationForm):
     first_name=forms.CharField(required=True)
     last_name=forms.CharField(required=True)
@@ -52,4 +123,4 @@ class ApplicantSignUpForm(UserCreationForm):
         applicant.country=self.cleaned_data.get('country')
         applicant.save()
         return applicant
-        '''
+'''

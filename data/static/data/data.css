@@ -263,6 +263,56 @@ ul {
   padding: 20px, 20px;
 }
 
+/*-------------------1. Training Page Section------------------------->*/
+
+#data_training .data_training {
+  margin-top: 5rem;
+  text-align: center;
+}
+
+#data_training .data_training .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 35px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+#data_training .training .data_header .title {
+  margin-top: 1rem;
+  text-align: center;
+  border: 1px dotted rgb(147, 161, 147);
+}
+
+/*-------------1. Project Definition Section------------->*/
+
+#project_based .project_based .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 35px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+#embed_analytics .embed_analytics .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 35px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
+#job_market .job_market .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 35px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+
 /*------------------------- footer Section--------------------------------------------*/
 .container .row #footer {
   background-color: rgba(205, 220, 233, 0.952);

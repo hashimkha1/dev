@@ -1,4 +1,4 @@
-{%extends "data/basedata.html"%} {% block content %}
+{%extends "data/index.html"%} {% block content %}
 <!-------------------Our Services Section------------------------->
 <section id="training">
   <div class="training text-center">
@@ -45,7 +45,6 @@
             </div>
           </li>
         </ul>
-
       </div>
 
 
@@ -81,7 +80,6 @@
             </div>
           </li>
         </ul>
-
       </div>
      
       <div class="col-md-4 services">
@@ -124,78 +122,8 @@
     </div>
 
     <div class="row text-center">
-      <div class="col-md-4 services">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Project Management</h4>
-        <p>
-          Define and incorporate agile methodology in project delivery.See how
-          it is done!
-        </p>
 
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="navbarDropDown"
-              role="button"
-              data-toggle="dropdown"
-            >
-              <button type="btn" class="btn-primary">Select</button>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/8f284e36b8ac46546fe69d23eaf647301e0d2e94a972c677cdfc886b44613c9b">Lecture 0: PLC</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/7f1745ce89024780a50383b42c5d6805d7be6544a06d4c831a26f29600c646c3">Lecture 1: Data Flow</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1A-XhqcBTljOPLFEE8iPnZnCutNAKzapJ/view">Lecture 2: Methodology: Agile vs Waterfall</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/af183ed87655dd80bc6847f445c06093e5518d369835441d32c60b04bc3879d0">Lecture 3: Project Management Tool(MS Project)</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/e58e31924207d5d6d9e55707f30c1ad08c46cacb9837c324b92e2260688415b0"Agile vs Waterfall application</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1HsMD7iAU3TenisnfakoMxGU5r8VIQXEHCgV4RsnWML0/edit#slide=id.p10"Project Charter Template</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/6e9292c99099f482e16d179008091bb0ce71d61766f50442a176dacc4e6b3284">Writing Requirements</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-      <div class="col-md-4 services">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Business Analysis</h4>
-        <p>
-          Gather, define and document requirements through a real time project.
-        </p>
-
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="navbarDropDown"
-              role="button"
-              data-toggle="dropdown"
-            >
-              <button type="btn" class="btn-primary">Select</button>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Vid0: Elicitation&Requirement Definition</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1JllAXWyMmMV66UmKro7OCTp_ZuOqMYxX/view">Vid1:Requirements</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Vid:Requirements</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://play.planningpoker.com/play/game/lsPkEMmYdBGZCtyKXsKi4GC9UDcAvbkE">Planning Poker Website</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/16ZOzQVbZCjFb1eW1MLE5ixUky7lBBSGI/view">Vid0:Planning Poker-Sizing</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/9b6fffe26ea9ec354dd40ce2565af678dde00fa40ce76ac0fbc9997b9fc2585d">Lecture 4:Video</a>
-              <div class="dropdown-divider"></div>
-            </div>
-          </li>
-        </ul>
-      </div>
+      
 
       <div class="col-md-4 services">
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
@@ -217,8 +145,6 @@
               <button type="btn" class="btn-primary">Select</button>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-			  <a class="dropdown-item"  href="{% url 'data-financialsystem'%}">5th Cohort: Employee Productivity Use Case </a>
-			  <div class="dropdown-divider"></div>
               <a class="dropdown-item"  href="{% url 'data-financialsystem'%}">4th Cohort: Financial Use Case </a>
               <div class="dropdown-divider"></div>
               <a class="dropdown-item"  href="{% url 'data-payroll'%}">2nd & 3rd Cohort: Payment Use Case </a>
@@ -239,6 +165,7 @@
       <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
       <h3 class="title text-center">Embed Data analytics into your project</h3>
     </div>
+
     <div class="row text-center">
       <div class="col-md-4 services">
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
@@ -257,18 +184,19 @@
             </a>
            
               <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p3">Installation</a>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p3">Lecture 0: Installation</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1TxhoFQG8hluo0QDM_r_KFcrM-hwEXbn5/view">Introduction</a>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1TxhoFQG8hluo0QDM_r_KFcrM-hwEXbn5/view">Lecture 1: Introduction</a>
                 <div class="dropdown-divider"></div>
-				<a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20">Presentation PowerPoint</a>
-				<div class="dropdown-divider"></div>
-                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/eb1e6dfe6f8730084584f266241dbbc659fc5af3e629aa69e8d1db6398fbb1cb">Meetings Data Workflow</a>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Testing</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/b4a6863d940f65475ce8d5f2dccc79164c7586319e4232c622bb91b283db8827">WhatsApp Data Workflow</a>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Video: Testing Introduction</a>
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/462631a42972f059c41f51e4cffaca585f1088dd8ffb396f5b8e26f5ff3ab5d5">DAF Data Workflow</a>
-             
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/2930a34b5d15118a264263fa6bf9f0ea677a6e69c02ce9571b384b79230db944">Team : Discussion</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/ee363242b4ec507213c6f48510693032c1c30fd5c4b571796cd3a49062899639">Class : Discussion</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/open?id=1yDLxQXOIhjG3ObgC15EEKyzf3mGrIE1e">Sprint : Presentation</a>
               </div>
           </li>
         </ul>
@@ -291,23 +219,15 @@
               <button type="btn" class="btn-primary">Select</button>
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a class="dropdown-item" target="_blank" href="https://www.youtube.com/watch?v=QYnkudCxbmE&feature=youtu.be">Installation</a>
+              <a class="dropdown-item" target="_blank" href="#">Lecture 0: Installation</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/151LYm4klMH4WGLtZSDxSuNiuOVrY6CmwQBEycSHDi1g/edit#gid=0">Dataset</a>
+              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/43414dd95547bf831396707b83f472689ab466785af93852937ae7615e6dd4fd">Lecture 1: Getting Into Tableau</a>
               <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.p1">Presentation PowerPoint</a>
-			  <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="">Landing Page</a>
+              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/2930a34b5d15118a264263fa6bf9f0ea677a6e69c02ce9571b384b79230db944">Class : Class Discussion</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/6723465db91f06ae7a9c7f0d1ac54c6c5454983775eadfb42e27e1c769a55f1b">Employee Productivity Overview</a>
+              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/2930a34b5d15118a264263fa6bf9f0ea677a6e69c02ce9571b384b79230db944">Team : Discussion</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/701eb4fc80b170feaf340f60258c50e6d0e993e5f28ea3b7ad667ae11d93d5b9">Summary Report</a>
-			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/51c4b74556c7c542438082bbbad3efd5b1f717726a052151b68a7340729df133">Meetings Report</a>
-              <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/a04fdb6ef4cbdcc51a3eaeed2a20a88bd9f9628058c8927e16a7633ab8337102">WhatsApp Chat Report</a>
-			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/385847dc777120c672174e9a6a23cbd86d602863f55c94925377e095f243f9fc">DAF Records Report</a>
+              <a class="dropdown-item" target="_blank" href="#">Sprint : Presentation</a>
             </div>
           </li>
         </ul>
@@ -317,8 +237,6 @@
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
         <h4>Databases</h4>
         <p>Data management in SQL and Oracle</p>
-
-        
         <ul class="navbar-nav ml-auto">
           <li class="nav-item dropdown">
             <a
@@ -333,138 +251,29 @@
             <div class="dropdown-menu" aria-labelledby="navbarDropDown">
               <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1JyOwXwJTzqqWSjV9XVXQ2yAGf9Xi8RUckMO3U1KHiqs/edit#slide=id.p1">Installation</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/151LYm4klMH4WGLtZSDxSuNiuOVrY6CmwQBEycSHDi1g/edit#gid=0">Dataset</a>
-			  <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1pXfwU396rvBaLahmvEhCoiWR7pYGIoT7/edit#slide=id.p4">Presentation PowerPoint</a>
-			  <div class="dropdown-divider"></div>
+              <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1TxhoFQG8hluo0QDM_r_KFcrM-hwEXbn5/view">Introduction</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/fe41a92db1d1ebbca833ca9c6ae3f652348b904d169ae85dcc15aa4571a00082">Meetings Data Normalization</a>
+              <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Normalization</a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/e4af372299fe9f46dfa3fc6712398e29f98a3673b56e2a05c95b39c465a56c30">WhatsApp Data Normalization</a>
+              <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Table Creation</a>
               <div class="dropdown-divider"></div>
-			  <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/19098394a29cafd6822126c87db4fb8e1dc3be418e6ddee18a57f69333df91bb">Creation, Insertion and Retrieval</a>
+              <a class="dropdown-item" target="_blank" href=" https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">Database-SQL</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9">DBA Revision</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/2930a34b5d15118a264263fa6bf9f0ea677a6e69c02ce9571b384b79230db944">Class : Discussion1</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/79ad277c2badc2ff4dd8c5990059e08b4597e1e5cc1739264afc86f5bf17c742">Team : Discussion2</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" target="_blank" href="#">Sprint : Presentation</a>
             </div>
           </li>
         </ul>
       </div>
     </div>
 
-    <div class="">.</div>
-    <div class="job_header">
-      <h3 class="title text-center">Getting into the Job Market</h3>
-    </div>
+    
 
-    <div class="row text-center">
-      <div class="col-md-4 services">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Application Process</h4>
-        <p>
-          We do offer tremendous assistance in the application process. Join and
-          learn how experts do it.
-        </p>
-
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="navbarDropDown"
-              role="button"
-              data-toggle="dropdown"
-            >
-              <button type="btn" class="btn-primary">Select</button>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/18acgFSw3bvQiIDqatgwK4eQkPbEyWwzgB_m8aSBnbTk/edit">Resume Preparation</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/17RxXz8c5bjX9OrdbWR97qpoM4P-zqVgweOpNY4-CsnA/edit">Sample Resume 1</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href=" https://docs.google.com/document/d/1PPAnIhGYMW62wXuihT0UiPKBAmWNZK-xAebK4pSm9Ko/edit">Sample Resume 2</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="">Salary Negotiation(C2C/W2s)</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href=" ">Job Tracker(Recruiters)</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-
-      <div class="col-md-4 services">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Networking</h4>
-        <p>
-          Work within a network,build a team and meet experienced professionals
-          working in the field to respond to your questions.
-        </p>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="navbarDropDown"
-              role="button"
-              data-toggle="dropdown"
-            >
-              <button type="btn" class="btn-primary">Select</button>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/2fffdd47b8bfd8f75447b76446a58475680b364d0d10c5e4c78ff46f155d6f22"><b>Guest Speaker:</b> VP Francis Umude</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/fab36e736f62941d738b0f739d6be19ec0ed31bc08cefe63b5ea3fbf0dce5e9b"><b>Guest Speaker:</b> Data Analyst James Kontoh</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#"><b>Guest Speaker:</b> Business Analyst Gladys Mwongo</a>
-            </div>
-          </li>
-        </ul>
-
-      </div>
-
-      <div class="col-md-4 services">
-        <!-- <img src="static/img/background/service1.png" class="service-img" >-->
-        <h4>Interview Strategy</h4>
-        <p>
-          We will offer training in Job Interview. Please Join and get access to
-          past audio interviews and questions
-        </p>
-        <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href=""
-              id="navbarDropDown"
-              role="button"
-              data-toggle="dropdown"
-            >
-              <button type="btn" class="btn-primary">Select</button>
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1GZZ_6ME1QI-4zeHt0cQ1lNrztSTKKp5-D7K0ytOXgh8/edit#heading=h.gjdgxs">1. Introduction</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/15-82jaqBrXW21SoLJ5QNvGmltOrekv8F/view">Video. Introduction</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#">2. Project Story</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1yDi3AAzYh-fdtL7d235PR9m9cPTAHorlcXycfq99uI8/edit#">3. Performance  Tuning</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#">3. Agile vs Waterfall</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#">4. SDLC</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#">5. Mock Interview</a>
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" target="_blank" href="#">6. Sample Interviews</a>
-
-              
-            </div>
-          </li>
-        </ul>
-
-     <!--   <a href="#" target="_blank">
-          <button type="button" class="btn1 btn-primary">More</button>
-        </a>
-        -->
-      </div>
     </div>
   </div>
 </section>
