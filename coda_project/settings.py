@@ -33,7 +33,9 @@ DEBUG =(os.environ.get('DEBUG_VALUE')=='False')
 ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []
 AUTH_USER_MODEL='accounts.CustomerUser'
-
+AUTHENTICATION_BACKENDS = (
+    ('django.contrib.auth.backends.ModelBackend'),
+)
 # Application definition
 
 INSTALLED_APPS = [
