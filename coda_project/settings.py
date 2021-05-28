@@ -30,7 +30,7 @@ DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 
 
 #ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
-ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','https://www.codanalytics.net/']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []
 AUTH_USER_MODEL='accounts.CustomerUser'
 AUTHENTICATION_BACKENDS = (
