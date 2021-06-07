@@ -16,7 +16,7 @@
             >
             <div class="carousel-caption">
               <h2>Become a Data Scientist</h2>
-                <a href="/register" target="_blank">
+                <a href="{% url 'account-join' %}" target="_blank">
                     <button type="button" class="btn btn-primary">Join Today</button>
                 </a>
             </div>
@@ -30,7 +30,7 @@
             <div class="carousel-caption">
               <h2>Become a Business Analyst</h2>
               <p>Learn data analysis on our online platform in as little as 13 weeks</p>
-                <a href="{% url 'user-register' %}" target="_blank">
+                <a href="{% url 'account-join' %}" target="_blank">
                     <button type="button" class="btn btn-primary">Join Today</button>
                 </a>
             </div>
@@ -43,7 +43,7 @@
             >
             <div class="carousel-caption">
               <h2>Become a Database Developer</h2>
-                <a href="/register" target="_blank">
+                <a href="{% url 'account-join' %}" target="_blank">
                     <button type="button" class="btn btn-primary">Join Today</button>
                 </a>
             </div>
@@ -123,7 +123,7 @@
 
       <div class=" application col-md-12">
 
-        <a href="{% url 'user-register' %}" target="_blank">
+        <a href="{% url 'account-join' %}" target="_blank">
           <button type="button" class="btn btn-primary">Start Application</button>
       </a>
 
@@ -138,26 +138,22 @@
 <section id="service_offer">
   <div class="service_offer text-center">
     <h3 class="title">Start your Journey</h3>
-
     <div class=" offer_top row text-center">
-
       <div class="col-md-3">
         <img
           src="\media\data\ba_v1.jpg"
           class="offer-img"
         />
-     </div>
-
-    <div class="col-md-3">
-      <h4><b>Business Analyst</b></h4> 
-       <p>
-           Become a business analyst and getting to know how a project is delivered in real time.
-       </p>
-       <a href="{% url 'data-training' %}" target="_blank">
-         <button type="button" class="btn btn-primary">More</button>
-     </a>
-   </div>
-
+    </div>
+      <div class="col-md-3">
+        <h4><b>Busines Analysis</b></h4>
+        <p class="bd">
+                <p>Gather, refine & document business needs for only:<b>$599</b></p>
+          <a href="{% url 'main-pay' %}" target="_blank">
+            <button type="button" class="btn btn-primary">Here</button>
+        </a>
+        </p>
+      </div>
    <div class="col-md-3">
     <img
       src="\media\data\etl_v1.jpg"
@@ -165,11 +161,11 @@
     />
   </div>
   <div class="col-md-3">
-      <h4><b>ETL & Data Management</b></h4> 
+      <h4><b>ETL(Alteryx)</b></h4> 
       <p>
-       Alteryx is the premier tool in our toolkit for data cleaning before staging in databases.  
+      Become an ETL Developer for just:<b>$999</b>
       </p>
-      <a href="{% url 'data-training' %}" target="_blank">
+      <a href="{% url 'main-pay' %}" target="_blank">
         <button type="button" class="btn btn-primary">More</button>
     </a>
   </div>
@@ -185,10 +181,10 @@
     <div class="col-md-3">
       <h4><b>Reporting</b></h4> 
        <p>
-           We utilized Tableau and Power BI in generating highly scalable reports for both for Training and educational purposes.
+           Click below to register for this course for :<b>$999</b> 
        </p>
-       <a href="{% url 'data-training' %}" target="_blank">
-         <button type="button" class="btn btn-primary">More</button>
+       <a href="{% url 'main-pay' %}" target="_blank">
+         <button type="button" class="btn btn-primary">Here</button>
      </a>
    </div>
 
@@ -200,12 +196,12 @@
  </div>
 
     <div class="col-md-3">
-        <h4><b>Data Management</b></h4> 
+        <h4><b>Database Developer</b></h4> 
         <p>
-         Data Management and storage is at the heart of data analysis.Click to see how it is done.  
+         Data Management and storage is at the heart of data analysis.Start this course at:<b>$999</b>.  
         </p>
-        <a href="{% url 'data-training' %}" target="_blank">
-          <button type="button" class="btn btn-primary">More</button>
+        <a href="{% url 'main-pay' %}" target="_blank">
+          <button type="button" class="btn btn-primary">Here</button>
       </a>
     </div>
 
@@ -269,7 +265,7 @@
 
       <div class=" application col-md-12">
   
-        <a href="{% url 'user-register' %}" target="_blank">
+        <a href="{% url 'account-join' %}" target="_blank">
           <button type="button" class="btn btn-primary">Join Them</button>
       </a>
   

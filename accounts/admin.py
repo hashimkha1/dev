@@ -8,7 +8,6 @@ from .models import CustomerUser
 # Register your models here.
 
 #admin.site.register(CustomerUser)
-
 class CustomerAdmin(UserAdmin):
     add_form=UserCreationForm
     form=UserChangeForm

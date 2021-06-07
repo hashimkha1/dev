@@ -4,10 +4,9 @@
 			<div class="user_card">
 				<div class="d-flex justify-content-center">
 					<h4 id="form-title">LOGIN</h4>
-        </div>
+			</div>
 				<div class="d-flex justify-content-center form_container">
-					<form method="POST" action="">
-            {% csrf_token %}
+					<form method="POST" action="">{% csrf_token %}
 						<div class="input-group mb-3">
 							<div class="input-group-append">
 								<span class="input-group-text"><i class="fas fa-user"></i></span>
@@ -30,7 +29,7 @@
         </div>
 				<div class="mt-4">
 					<div class="d-flex justify-content-center links">
-						Don't have an account? <a href="{% url 'accounts-register' %}" class="ml-2">Sign Up</a>
+						Don't have an account? <a href="{% url 'account-join' %}" class="ml-2">Sign Up</a>
 					</div>
 				</div>
 			</div>

@@ -9,6 +9,7 @@ def home(request):
 def deliverable(request):
         return render(request, 'data/deliverable.html', {'title': 'deliverable'})
 
+@login_required
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})
 
@@ -35,6 +36,9 @@ def etl(request):
 
 def getdata(request):
     return render(request, 'data/getdata.html', {'title': 'getdata'}) 
+
+def pay(request):
+    return render(request, 'data/pay.html', {'title': 'pay'}) 
 
 def testing(request):
     return render(request, 'data/testing.html', {'title': 'testing'})  

@@ -14,6 +14,7 @@ urlpatterns = [
     path('deliverable/', views.deliverable, name='data-deliverable'),
     path('consultancy/', views.consultancy, name='data-consultancy'),
     path('getdata/', views.getdata, name='data-getdata'),
+    #path('pay/', views.pay, name='data-pay'),
 
 
 ]
