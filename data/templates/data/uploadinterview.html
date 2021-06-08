@@ -1,0 +1,47 @@
+{%extends "data/index.html"%} {%load crispy_forms_tags%}
+{%block content %}
+
+<div class="upload">
+  <h3 class="display-6 text-center">Upload Interview Materials</h3>
+  <p class="lead font-italic text-center">
+    Please upload your  Interview Documents needed for training.
+  </p>
+  <hr />
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token%}
+    <div class="row">
+      <div class="col-md-4 text-center">
+        {{ form.username|as_crispy_field }}
+      </div>
+      <div class="col-md-4 text-center">
+        {{ form.first_name|as_crispy_field }}
+      </div>
+      <div class="col-md-4 text-center">
+        {{ form.last_name|as_crispy_field }}
+      </div>
+      <div class="col-md-4 text-center">
+        {{ form.doc_type|as_crispy_field }}
+      </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-3">{{ form.resume|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.introduction|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.project_Story|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.sdlc|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.environment|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.performance|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.testing|as_crispy_field }}</div>
+    </div>
+    <hr />
+    <div class="row text-center">
+      <div class="col-md-12">
+        <button type="submit " class="btn btn-success">
+          <i class="fas fa-database"></i>Submit
+        </button>
+      </div>
+    </div>
+    <div class="col-md-12">{{ form.errors}}</div>
+  </form>
+</div>
+{% endblock content %}

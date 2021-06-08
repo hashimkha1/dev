@@ -263,8 +263,56 @@ ul {
   padding: 20px, 20px;
 }
 
-/*-------------------1. Training Page Section------------------------->*/
+/*-------------------1. Interview Page Section------------------------->*/
+#data_interview .data_interview {
+  margin-top: 5rem;
+  text-align: center;
+}
 
+#data_interview .data_interview .title {
+  background-color: rgba(16, 50, 78, 0.808);
+  height: 35px;
+  width: 100%;
+  margin-top: 1rem;
+  text-align: center;
+  color: #fcfcfc;
+}
+#data_interview .interview .data_header .title {
+  margin-top: 1rem;
+  text-align: center;
+  border: 1px dotted rgb(147, 161, 147);
+}
+
+/*-------------------1. card section ------------------------->*/
+
+.main #container .container-fluid .row #cota .card h4 {
+  font-size: 125%;
+  font-style: inherit;
+}
+
+.main #container .container-fluid .row #cota .card p.bd {
+  text-align: center;
+  font-size: 100%;
+  font-style: inherit;
+}
+
+.main #container .container-fluid .row #cota .card p.pay_fig {
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  color: #563d7c;
+}
+
+.main #container .container-fluid .row #cota .card .btn {
+  text-align: center;
+  font-size: 100%;
+  font-weight: 500;
+  background-color: rgb(89, 104, 89);
+  border-radius: 1em;
+  font-style: initial;
+}
+
+/*-------------------1. Training Page Section------------------------->*/
 #data_training .data_training {
   margin-top: 5rem;
   text-align: center;

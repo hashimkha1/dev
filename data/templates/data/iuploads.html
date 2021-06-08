@@ -1,0 +1,71 @@
+{%extends "main/base.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<section id="career">
+  <div class="career text-center">
+    <h3>How to ace a BA, Data Analysis/Data Science Interview</h3>
+    <table style="width: 100%">
+      <thead>
+        <tr>
+          <th>Date Uploaded</th>
+          <th>Applying as:</th>
+          <th>Resume</th>
+          <th>Introduction</th>
+          <th>Project Story</th>
+          <th>SDLC</th>
+          <th>Environment</th>
+          <th>Performance</th>
+          <th>Testing</th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        {% for upload in uploads %}
+        <tr>
+          
+          <td>{{upload.upload_date|date:"F d, Y"}}</td>
+          <td>{{upload.doc_type}}</td>
+          <td>
+            <a href="{{upload.resume.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a href="{{upload.introduction.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a href="{{upload.project_Story.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a href="{{upload.sdlc.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a href="{{upload.environment.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+
+          <td>
+            <a href="{{upload.performance.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+
+          <td>
+            <a href="{{upload.testing.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

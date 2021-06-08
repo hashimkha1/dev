@@ -10,11 +10,14 @@ urlpatterns = [
     path('payroll/', views.payroll, name='data-payroll'),
     path('project/', views.project, name='data-project'),
     path('training/', views.training, name='data-training'),
+    path('interview/', views.interview, name='data-interview'),
+    path('uploadinterview/', views.uploadinterview, name='data-upload'),
+    path('iuploads/', views.iuploads, name='data-uploads'),
     path('testing/', views.testing, name='data-testing'),
     path('deliverable/', views.deliverable, name='data-deliverable'),
     path('consultancy/', views.consultancy, name='data-consultancy'),
     path('getdata/', views.getdata, name='data-getdata'),
-    #path('pay/', views.pay, name='data-pay'),
+    path('pay/', views.pay, name='data-pay'),
 
 
 ]

@@ -1,8 +1,42 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .models import Upload
+from .forms import InterviewForm
 
-# views on training.
+
+
+posts=[
+
+{
+	'Concentration':'Questions',
+	'Description':'Key Questions on each role listed below	',
+	'Duration':'5 Days	',
+	'Lead':'Interview Coach'
+},
+{
+	'Concentration':'Responses',
+	'Description':'End to end guide on how to respond to interview questions.	',
+	'Duration':'5 Days	',
+	'Lead':'Interview Coach'
+},
+
+{
+	'Concentration':'Past Interviews',
+	'Description':'Review your interview skills using recorded real interviews.',
+	'Duration':'7 Days',
+	'Lead':'Interview Coach'
+},
+
+{
+	'Concentration':'Mock Sessions',
+	'Description':'Do 10 Mock Interview with experienced coaches and Data Analysts in the Field',
+	'Duration':'7 Days',
+	'Lead':'Interview Coach'
+}
+]
+
+
 def home(request):
     return render(request, 'data/home.html', {'title': 'home'})
 
@@ -12,6 +46,13 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, 'data/training.html', {'title': 'training'})
+
+@login_required
+def interview(request):
+    context = {
+        'posts': posts
+    }
+    return render(request, 'data/interview.html', context)  
 
 def payroll(request):
     return render(request, 'data/payroll.html', {'title': 'payroll'})
@@ -40,5 +81,25 @@ def getdata(request):
 def pay(request):
     return render(request, 'data/pay.html', {'title': 'pay'}) 
 
+# Views on interview Section
+@login_required
+def uploadinterview(request):
+    if request.method== "POST":
+        form=InterviewForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('data-uploads')
+    else:
+        form=InterviewForm()
+    return render(request, 'data/uploadinterview.html',{'form':form})
+
+@login_required
+def iuploads(request):
+    uploads=Upload.objects.all().order_by('-upload_date')
+    return render(request, 'data/iuploads.html', {'uploads': uploads})
+
 def testing(request):
-    return render(request, 'data/testing.html', {'title': 'testing'})  
+    context = {
+        'posts': posts
+    }
+    return render(request, 'data/testing.html', context)  
