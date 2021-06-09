@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy
 
 
 class ApplicationForm(UserCreationForm):
@@ -97,3 +97,16 @@ class InterviewForm(forms.ModelForm):
                 'proc':'SQL Script',
 
                 }
+            
+class PolicyForm(forms.ModelForm):
+    class Meta:
+        model = Policy
+        fields = ['first_name','last_name','policy_type','description','policy_doc']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'policy_type':'Policy Type',
+                'description':'Description',
+                'policy_doc':'Attach Policy',
+                }
+

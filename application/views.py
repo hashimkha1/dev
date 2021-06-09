@@ -1,13 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm
+from datetime import timedelta, date
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload
+from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy
 
 #Interview description data
-
 posts=[
 
 {
@@ -17,6 +17,7 @@ posts=[
 	'Duration':'5 Days	',
 	'Lead':'HR Manager'
 },
+
 {
 	'Inteview':'Second Interview',
 	'Concentration':'General Tools& Company Projects',
@@ -45,7 +46,7 @@ def apply(request):
         form=ApplicantForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-interview')
+            return redirect('application-policies')
     else:
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
@@ -77,23 +78,33 @@ def second_interview(request):
 def orientation(request):
     return render(request, 'application/orientation.html', {'title': 'orientation'})
 
-# -------------------------Uploads Section-------------------------------------#
-'''
-def firstupload(request):
+def policy(request):
+    forms=PolicyForm()
+    context = {
+        'forms': forms
+    }
+    return render(request, 'application/policy.html' ,context)
+
+def policy(request):
     if request.method== "POST":
-        form=InterviewUploadForm(request.POST,request.FILES)
+        form=PolicyForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-second_interview')
+            return redirect('application-policies')
     else:
-         form=InterviewUploadForm()
-    return render(request, 'application/firstupload.html',{'form':form})
+        form=PolicyForm()
+    return render(request, 'application/policy.html',{'form':form})
 
-def upload(request):
-    iuploads=InteviewUploads.objects.all().order_by('-upload_date')
-    return render(request, 'application/upload.html', {'iuploads': iuploads})
-'''
+def policies(request):
+    reporting_date = date.today() + timedelta(days=7)
+    uploads=Policy.objects.all().order_by('upload_date')
+    context = {
+        'uploads': uploads,
+        'reporting_date': reporting_date
+    }
+    return render(request, 'application/policies.html',context)
 
+# -------------------------Uploads Section-------------------------------------#
 def firstupload(request):
     if request.method== "POST":
         form=InterviewForm(request.POST,request.FILES)

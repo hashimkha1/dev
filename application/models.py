@@ -11,8 +11,6 @@ class Applicant_Profile(models.Model):
     def __str__(self):
         return f'{self.applicant.username} Applicant_Profile'
 
-
-
 class Application(models.Model):
     class Score(models.IntegerChoices):
         Male = 1
@@ -45,22 +43,35 @@ class InteviewUploads(models.Model):
     def __str__(self):
         return f'{self.username} InteviewUploads'
 
-'''
-class Uploads(models.Model):
-    Id = models.AutoField(primary_key=True)
-    username=models.CharField(max_length=30,null=True)
-    upload_date = models.DateTimeField(default=timezone.now)
-    interviewppt=models.FileField(upload_to='interviewppt/ppt/')
+class Policy(models.Model):
+    Leave = 'Leave'
+    Working_Hours = 'Working Hours'
+    Working_Days = 'Working Days'
+    Unpaid_Training = 'Unpaid Training'
+    Location = 'Location'
+    Other = 'Other'
+    CHOICES = [
+        (Leave, 'Leave'),
+        (Working_Hours, 'Working Hours'),
+        (Working_Days, 'Working Days'),
+        (Unpaid_Training, 'Unpaid_Training'),
+        (Location, 'Location'),
+        (Other, 'Other'),
+    ]
+    id = models.AutoField(primary_key=True)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
+    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    policy_type= models.CharField(
+        max_length=25,
+        choices=CHOICES,
+        default=Other,
+    )
+    description = models.TextField()
+    policy_doc=models.FileField(upload_to='policy/doc/',default=None,null=True,blank=True)
 
-    tableau=models.FileField(upload_to='interviewtab/tab/')
-    alteryx=models.FileField(upload_to='interviewalteryx/alteryx/')
-    SQL=models.FileField(upload_to='interviewdb/dba/')
-    other=models.FileField(upload_to='interviewother/general/')
-    Applicant=models.ManyToManyField(Application)
-    
     def __str__(self):
-        return f'{self.username} InteviewUploads'
-'''
+        return f'{self.id} policy'
 
 class Rated(models.Model):
     class Score(models.IntegerChoices):
