@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 def test(request):
     return render(request, 'main/test.html', {'title': 'test'})
 
+def checkout(request):
+    return render(request, 'main/checkout.html', {'title': 'checkout'})
+
 def layout(request):
     return render(request, 'main/layout.html', {'title': 'layout'})
 

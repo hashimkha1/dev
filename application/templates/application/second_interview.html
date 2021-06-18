@@ -1,8 +1,10 @@
-{%extends "data/index.html"%} {% block content %}
+{%extends "data/index.html"%} {%load crispy_forms_tags%} {% block content %}
 <!-------------------Our Services Section------------------------->
 <section id="project">
   <div class="project text-center">
     <div class="business_header">
+      <hr>
+      <h3 class="title text-center">------</h3>
       <h3 class="title text-center">Second Interview</h3>
     </div>
 
@@ -12,52 +14,28 @@
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
         <h4></h4>
         <p>
-         Congratulations and welcome to the second Interview. This part of the interview is designed to give you an understanding of the company and its operations. Please go thorugh each section and attempt to the best of your knowledge. Our Assesment will be based on candidate's effort in understanding the tools utilized in the work below.
+         You are required to go through the following step by step interview process on the three sections which covers ETL(Alteryx),Database(SQL) and Tableau, which are the most commonly used tools in CODA.
+         Our assessment and evaluation in this section will be based on the following:
+         1. The ability for a candidate to follow step by step instructions and the requirements given.
+         2. The ability for a candidate to learn a new tool and the utilization of the tool to meet business requirements.
+       3. The ability for the candidate to organize deliverables/his or her submissions
+           4. The ability for a candidate to be organized, audible and flawless during presentation
+       
         </p>
        </div>
     </div>
-    <!-------------------------ETL WORKFLOW----------------------------------->
+    <!-------------------------Data Analysis Section----------------------------------->
     <div class="data_header">
       <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
-      <h3 class="title text-center"> General Tools</h3>
+      <h3 class="title text-center">1. Data Analysis Section</h3>
     </div>
 
     <div class="row text-center">
       <div class="col-md-4 project">
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>VSDC-Video Editing</h4>
-        <p>Click on the link below, watch the installation video and install Video Editing tool.Then proceed to the next tab to edit the attached videos based on the outlined instructions.
-        </p>
-        <div class="ETL">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-
-                <a class="dropdown-item" href="https://docs.google.com/presentation/d/1iaGE2JtuLK0CJqylIC0qZ4_wzBkWQFvO/edit#slide=id.p1                                                      ">Installation Guide Link</a>
-                
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1OMwvN191nhQMcWdE_VwruZJY8P-VtAMm2YIg0e7ECzY/edit?usp=sharing                                                            ">Video List</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Understanding Paint</h4>
+        <h4>Alteryx - ETL</h4>
         <p>
-          Attached is a word document that has some photos from a project the company was managing. 
-          Access the instructions and the video below on how to accomplish this part.
+          Please click on the videos to understand how to create, and test the workflow and replicate the work using the dataset attached.
         </p>
 
         <div class="ETL">
@@ -75,79 +53,108 @@
  
               <div class="dropdown-menu" aria-labelledby="navbarDropDown">
 
+                <a class="dropdown-item" href=" https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p1 ">Installation Guide Link</a>
+                <div class="dropdown-divider"></div>
+
                 <a
               class="dropdown-item"
-              href="https://docs.google.com/document/d/1SqxClZqs8pEx3tORQ0mS3UaDEC0dRJsEoUqR2gQ8ECY/edit?usp=sharing                                         "
+              href="https://docs.google.com/spreadsheets/d/1EwHOboaZFKn6FdzmByZZGe5TsrbnqPdc/edit#gid=886321968 "
               target="_blank"
-              >Instructions
+              >Backlog/Requirements
               </a>
               <div class="dropdown-divider"></div>
 
               <a 
                class="dropdown-item" 
-               href="https://transcripts.gotomeeting.com/#/s/8dcd28a92cc67d99aad96cfc01c42abd982a9232dbf29787d788d617c9f71f0e                                          " 
-               target="_blank"> Video on Use of Paint for Editing
+               href="https://docs.google.com/spreadsheets/d/13UnRSbACsExsi3zoVRffbutzfcXoDsFOIGrbp-EGer0/edit#gid=1882813916" 
+               target="_blank"> Dataset:Finance Data
             </a>
+                <div class="dropdown-divider"></div>
+        <a
+        class="dropdown-item"
+        href="https://transcripts.gotomeeting.com/#/s/5bf5697577af8446633504dcec35ab87b335bec244ea997ae860a83bfd890ebe"
+        target="_blank"
+        >Video: Creation of Workflow
+      </a>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1ljf3BCdMZZOTPIue6c8hsXC_gKkJTDfB/edit#gid=1847756889">Access the Test Script</a>
+      <div class="dropdown-divider"></div>
+     <a
+      class="dropdown-item"
+      href="https://drive.google.com/file/d/1jwtmbq3kYmtq3ZzJ1jkS5vMb8SiBEZTS/view"
+      target="_blank"
+      >Video - Testing in Alteryx</a
+    >
+		</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+<!-------------------------Database----------------------------------->
+      <div class="col-md-4 project">
+        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+        <h4>Database-SQL</h4>
+        <p>Watch videos on installation,Requirements,Normalization and creation,insertion and retrieval.
+        </p>
+        <div class="dba">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+              >
+                <button type="btn" class="btn-primary">Select</button>
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" href=" https://drive.google.com/file/d/148J8xhikG5CqroObDjUtNC3r7vk9HmxF/view ">Installation</a>
                 <div class="dropdown-divider"></div>
                 <a
-              class="dropdown-item"
-              href="https://docs.google.com/spreadsheets/d/1OkUEjCmEBcpdPo8_TRNnqsGSIl26TyHT2V5G7ema3Do/edit?usp=sharing                                                             "
-              target="_blank"
-              >Pictures/Receipts 
-            </a>
-				
-		</div>
+                  class="dropdown-item"
+                  href=" https://drive.google.com/file/d/1JllAXWyMmMV66UmKro7OCTp_ZuOqMYxX/view"
+                  target="_blank"
+                  >Backlog/Requirements</a
+                >
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/13UnRSbACsExsi3zoVRffbutzfcXoDsFOIGrbp-EGer0/edit#gid=1882813916 " target="_blank"
+                >Dataset:Finance Data</a
+              >
+              <div class="dropdown-divider"></div>
+    
+              <a
+                class="dropdown-item"
+                href="https://drive.google.com/file/d/1lOKmjY7r7y19dhLVZeei8s_dzY_cUcf5/view"
+                target="_blank"
+                >Video 1: Normalization </a
+              >
+              <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href=" https://drive.google.com/file/d/1iemWbgHnUnWjAYPavrwQvieeJ5iwd77U/view " target="_blank"
+                  >Video 2: Creation & Insertion</a
+                >
+                <div class="dropdown-divider"></div>
+
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/ad91ad7918436bc295c722fc1e9c02f61d2773ac4e065cbf5468ce559d69e984"
+                  target="_blank"
+                  >Video 3: Retrieval</a
+                >
+              </div>
             </li>
           </ul>
         </div>
       </div>
-
-      <div class="col-md-4 project">
+<!-------------------------Reporting Section----------------------------------->
+      <div class="col-md-4 services">
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        		
-		<h4>Excel Overview</h4>
-    <p>
-      Use the below Finance Data to create a report in Excel. Watch the videos attached for reference.
-    </p>
-
-        <div class="Testing">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/13UnRSbACsExsi3zoVRffbutzfcXoDsFOIGrbp-EGer0/edit?usp=sharing">Dataset</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://www.youtube.com/watch?v=qPJMrwtYSDc">Video-Excel Video</a>
-                
-              </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-    </div>
-    
-
-    <!-------------------------Company Work----------------------------------->
-    <div class="data_header">
-      <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
-      <h3 class="title text-center">Understanding Company</h3>
-    </div>
-
-    <div class="row text-center">
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Company Project</h4>
-        <p>Watch the following videos on company projects and come up with a detailed powerpoint documenting the projects, CODA is involved in.
+        <h4>Tableau - Reporting</h4>
+        <p>
+         Watch the Video on the Financial Usecase then proceed to CREATE ALL the reports in tableau using the given dataset.
         </p>
-        <div class="ETL">
+
+        <div class="UI">
           <ul class="navbar-nav ml-auto">
             <li class="nav-item dropdown">
               <a
@@ -160,206 +167,54 @@
                 <button type="btn" class="btn-primary">Select</button>
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/e3c9c63a30dd96d319643661e8617d1c4e97e42a982bb6e907d8627cba6d99a1">Field Projects</a>
+                <a
+                class="dropdown-item"
+                href=" https://www.youtube.com/watch?v=QYnkudCxbmE&feature=youtu.be"
+                target="https://drive.google.com/file/d/1i1jFu3Qb4wfLubfcjQgproK4RklIhaLf/view"
+                >	Installation</a
+              >
+              <div class="dropdown-divider"></div>
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/970aab910830a8cf09def8e0080e7becad596ba22bb39d9da2dc2c8fad5fdee4"
+                  target="_blank"
+                  >Financial Dataset</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/784064222656dced17cf2d51e072a24b1a92b580664ac87d6af90d1e0079792b">Kitui Project</a>
+                <a
+                  class="dropdown-item"
+                  href=""
+                  target="_blank"
+                  >Video: Financial Use Case Overview</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://drive.google.com/file/d/1XXoT-A6m8OO8TKzfm_tgMOixPZRawEYh/view?usp=sharing    ">Rutgers Project</a>
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/475fef0f20201724f609c26c9d07b7e0f1680518aa8e37ffebd767ea4cd917b1"
+                  target="_blank"
+                  >Video 1: Landing Page-CODA Financial Main Page</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1sS11ZMgJFkVhH8xvktgmzZ9aPUAAnPFsFaPoDLjMJwI/edit?usp=sharing    ">BI Training</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Company Systems</h4>
-        <p>
-          We are a company that runs on systems. Attached are some of the systems currently inforce within the company. Click on the links to understand what each is all about.   </p>
-        <div class="ETL">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
- 
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a 
-               class="dropdown-item" 
-               href="https://transcripts.gotomeeting.com/#/s/64e6bf4c7856b85d1d75dc6281b7f2b4acd91a8dbcdd96d5d1e1222a1e81d08f    " 
-               target="_blank"> Payment System(DAF)
-            </a>
-
-            <div class="dropdown-divider"></div>
-              <a 
-               class="dropdown-item" 
-               href="    " 
-               target="_blank">90 DAY-1 on 1 Session
-            </a>
-				
-		</div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        		
-		<h4>Business Plan</h4>
-    <p>
-      Having understood what CODA does, do research and outline in a powerpoint presentation on who CODA's competitors are,
-      and how those companies are doing differently in service delivery to their clients.
-    </p>
-
-        <div class="Testing">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/141d17af5f8144b91896ba105f2fcb4857b993c7cb7a41bccfe87db0cce6dbfb">Video-Company Overview</a>
-                
-              </div>
-              </div>
-            </li>
-          </ul>
-        </div>
-    </div>
-    
-    <!-------------------------Company values and processes----------------------------------->
-    <div class="data_header">
-      <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
-      <h3 class="title text-center">Understanding Company & Processes</h3>
-    </div>
-
-    <div class="row text-center">
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Company Values </h4>
-        <p>Watch the following videos and come up with a summary documenting what our Company Values are. </p>
-        <div class="ETL">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/08f983eee7ae3733f8f97ec67b5e0e6632679bedbdf1855997337e9d4b560f14    ">Managerial Meetings</a>
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/d640a4ee96f8b83655a1906f77f299281102f5a06b298b696438cb23296a79a2"
+                  target="_blank"
+                  >Video 2: Summary Page-Financial Executive Overview</a
+                >
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="https://drive.google.com/file/d/1T_mxQCQQXt8cHXiBvLZ_CWlhB2-5Pyww/view    ">Company Values & The Box System</a>
-              </div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-        <h4>Data Analysis Process </h4>
-        <p>
-          Go through the Video to understand our data Analysis process and document your understanding of the same.</p>
-
-        <div class="ETL">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
- 
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-              <a 
-               class="dropdown-item" 
-               href="https://drive.google.com/file/d/1SnJ5gNqKhbkg8q1XjGSI9dvlyaOkMzRu/view    " 
-               target="_blank"> Data Analysis process
-            </a>
-
-            <div class="dropdown-divider"></div>
-              <a 
-               class="dropdown-item" 
-               href="    " 
-               target="_blank">
-            </a>
-		</div>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div class="col-md-4 project">
-        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
-		<h4>Meetings</h4>
-    <p>
-      Attached are videos from some of the common meetings that happen in CODA.Please go through them and document some of this meetings and what they are about.</p>
-
-        <div class="Testing">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link dropdown-toggle"
-                href=""
-                id="navbarDropDown"
-                role="button"
-                data-toggle="dropdown"
-              >
-                <button type="btn" class="btn-primary">Select</button>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/27e4a104496c4e8d497aabd4fedf24fe35f91a22d05e962df24592cf5b6d854c ">General Meeting</a>
-                  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/27e4a104496c4e8d497aabd4fedf24fe35f91a22d05e962df24592cf5b6d854c ">Scrum Meeting</a></a>
-              </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/be722373afc7375e2e3bd4ddbda8763c1e2e8551b46f11e674a3534218339ad9    ">Ticket Meeting</a>
-                  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">   
-          </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/0ce37d7b6c074eb77656083608137a98e380e13c27cef5bdd8dacf12d20b5d62    ">Sprint(Projects)</a>
-                  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">   
-             </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/c76827fa05e977d8d7b79ca287925d2c46e2396b9b99b379e4678c7176b3e017   ">Sprint(Departmental)</a>
-                  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">   
-          </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                <a class="dropdown-item" href="https://transcripts.gotomeeting.com/#/s/38a749c73a058d0d1797118c63b46b8d9e296894063ab078efe0458f1cbb3fd5 ">Sprint Planning (Daf Review)</a>
-                  </a>
-              <div class="dropdown-menu" aria-labelledby="navbarDropDown">   
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/95627afbf777e71d393bfd3640dbd5de5148a90088ce31054920deea38b0e3a0 "
+                  target="_blank"
+                  >Video 3: Detailed Report-Financial Insight Report</a
+                >
+                <div class="dropdown-divider"></div>
+                <a
+                  class="dropdown-item"
+                  href="https://transcripts.gotomeeting.com/#/s/2d9c71cabeca60f62fed1f8ef11f996784514d190f968d9e15695892e37a6388"
+                  target="_blank"
+                  >Video 4: Detailed Page-List Report</a
+                >
               </div>
               </div>
             </li>
@@ -367,15 +222,14 @@
         </div>
     </div>
 
-  </div>
-
-   <!-------------------------Uploading work----------------------------------->
+                <!-------------------------Uploading work----------------------------------->
     <div class="data_header">
       <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
       <h3 class="title text-center">
-     Attachments & Uploads
+        3. Attachments & Uploads
       </h3>
     </div>
+
     <div class="row text-center">
       <div class="col-md-12 services">
         <!-- <img src="static/img/services/service1.png" class="service-img" >-->
@@ -387,6 +241,20 @@
 
         </div>
       </div>
+     <!--
+      <div class="row text-center">
+        <div class="col-md-12">
+          <a
+          class="dropdown-item"
+          href="{% url 'application-firstupload' %}"
+          target="_blank"
+          ><button type="submit " class="btn btn-secondary">
+            <i class="fas fa-database"></i>Please Proceed
+          </button></a
+        >
+        </div>
+      </div>
+      -->
+  </div>
 </section>
 {% endblock content %}
-
