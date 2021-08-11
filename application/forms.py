@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
 
 
 class ApplicationForm(UserCreationForm):
@@ -110,3 +110,16 @@ class PolicyForm(forms.ModelForm):
                 'policy_doc':'Attach Policy',
                 }
 
+class ReportingForm(forms.ModelForm):
+    class Meta:
+        model = Reporting
+        fields = ['first_name','last_name','gender','method','reporting_date','interview_type','comment']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'gender' :'Gender',
+                'method':'Method',
+                'reporting_date':'Reporting Date(Enter mm/dd/yy)',
+                'interview_type':'Interview Type',
+                'comment':'Comment'
+                }

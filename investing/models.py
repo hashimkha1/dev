@@ -24,3 +24,4 @@ class Uploads(models.Model):
 
     def __str__(self):
         return f'{self.id} Uploads'
+        

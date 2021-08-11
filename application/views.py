@@ -4,8 +4,8 @@ from django.contrib.auth.decorators import login_required
 from datetime import timedelta, date
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy
+from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
+from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
 
 #Interview description data
 posts=[
@@ -173,10 +173,10 @@ def employee_delete(request,id):
     return redirect('application-emp_list')
 
 # -------------------------testing Section-------------------------------------#
-
+'''
 def test(request):
     return render(request, 'application/test.html', {'title': 'test'})
-'''
+
 def uploaded(request):
     pass
 '''
@@ -231,3 +231,18 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 '''
+
+# -------------------------rating Section-------------------------------------#
+def trainee(request):
+    if request.method== "POST":
+        form=ReportingForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-trainees')
+    else:
+        form=ReportingForm()
+    return render(request, 'application/trainee.html',{'form':form})
+
+def trainees(request):
+    trainees=Reporting.objects.all().order_by('-update_date')
+    return render(request, 'application/trainees.html', {'trainees': trainees})
