@@ -131,6 +131,7 @@ class FirstUpload(models.Model):
         return f'{self.username} upload'
 
 class Reporting(models.Model):
+<<<<<<< HEAD
     first_interview = 'First Interview'
     second_interview = 'Second Interview'
     third_interview = 'Third Interview'
@@ -152,6 +153,30 @@ class Reporting(models.Model):
     METHOD_CHOICES = [
         (inside, 'INSIDE'),
         (outside, 'OUTSIDE'),
+=======
+    internal = 'Internal Interview'
+    first_interview = 'First Interview'
+    second_interview = 'Second Interview'
+    third_interview = 'Third Interview'
+    male = 'Male'
+    female = 'Female'
+    direct = 'Direct'
+    indirect = 'Indirect'
+    INTERVIEW_CHOICES = [
+        (internal, 'Internal Interview'),
+        (first_interview, 'First Interview'),
+        (second_interview, 'Second Interview'),
+        (third_interview, 'Third Interview'),
+        
+    ]
+    GENDER_CHOICES= [
+        (male, 'Male'),
+        (female, 'Female'),
+    ]
+    METHOD_CHOICES= [
+        (direct , 'Direct'),
+        (indirect , 'Indirect'),
+>>>>>>> eed6599aa116a5164ea26a980b7727f0b13dc180
     ]
     id = models.AutoField(primary_key=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
@@ -160,6 +185,7 @@ class Reporting(models.Model):
     #method=models.CharField(max_length=50,null=True,blank=True)
     interview_type= models.CharField(
         max_length=25,
+<<<<<<< HEAD
         choices=CHOICES,
     )
     gender= models.CharField(
@@ -173,6 +199,21 @@ class Reporting(models.Model):
         choices=METHOD_CHOICES,
         null=True,
         blank=True,
+=======
+        choices=INTERVIEW_CHOICES,
+    )
+    gender= models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        choices=GENDER_CHOICES,
+    )
+    method= models.CharField(
+        max_length=25,
+        null=True,
+        blank=True,
+        choices=METHOD_CHOICES,
+>>>>>>> eed6599aa116a5164ea26a980b7727f0b13dc180
     )
     reporting_date = models.DateTimeField("Reporting Date(mm/dd/yyyy)",auto_now_add=False,auto_now=False,blank=True,null=True)
     update_date = models.DateTimeField(default=timezone.now,null=True,blank=True)

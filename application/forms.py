@@ -113,12 +113,22 @@ class PolicyForm(forms.ModelForm):
 class ReportingForm(forms.ModelForm):
     class Meta:
         model = Reporting
+<<<<<<< HEAD
         fields = ['first_name','last_name','method','interview_type']
+=======
+        fields = ['first_name','last_name','gender','method','reporting_date','interview_type','comment']
+>>>>>>> eed6599aa116a5164ea26a980b7727f0b13dc180
         labels={
                 'first_name':'First Name',
                 'last_name':'Last Name',
                 'gender' :'Gender',
                 'method':'Method',
+<<<<<<< HEAD
                 'interview_type':'Interview Type',
                 'reporting_date':'Reporting Date',
+=======
+                'reporting_date':'Reporting Date(Enter mm/dd/yy)',
+                'interview_type':'Interview Type',
+                'comment':'Comment'
+>>>>>>> eed6599aa116a5164ea26a980b7727f0b13dc180
                 }
