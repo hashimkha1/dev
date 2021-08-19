@@ -9,8 +9,12 @@
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token%}
     <div class="row">
-      <div class="col-md-6">{{ form.full_name|as_crispy_field }}</div>
-      <div class="col-md-6">{{ form.project_name|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.sender|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.receiver|as_crispy_field }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">{{ form.phone|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.department|as_crispy_field }}</div>
     </div>
     <div class="row">
       <div class="col-md-6">{{ form.activity|as_crispy_field }}</div>

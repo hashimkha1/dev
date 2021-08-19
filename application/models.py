@@ -1,6 +1,8 @@
+#from coda_project.application.views import first_interview
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+#from DateTime import datetime,date
 from django.core.validators import MinValueValidator,MaxValueValidator
 
 # Create your models here.
@@ -127,3 +129,55 @@ class FirstUpload(models.Model):
 
     def __str__(self):
         return f'{self.username} upload'
+
+class Reporting(models.Model):
+    first_interview = 'First Interview'
+    second_interview = 'Second Interview'
+    third_interview = 'Third Interview'
+    No_interview = 'No Outside Interview'
+    male = 'MALE'
+    female = 'FEMALE'
+    inside = 'INSIDE'
+    outside = 'OUTSIDE'
+    CHOICES = [
+        (first_interview, 'First Interview'),
+        (second_interview, 'Second Interview'),
+        (third_interview, 'Third Interview'),
+        (No_interview, 'No Outside Interview'),
+    ]
+    GENDER_CHOICES = [
+        (male, 'MALE'),
+        (female, 'FEMALE'),
+    ]
+    METHOD_CHOICES = [
+        (inside, 'INSIDE'),
+        (outside, 'OUTSIDE'),
+    ]
+    id = models.AutoField(primary_key=True)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
+    #gender=models.CharField(max_length=50,null=True,blank=True)
+    #method=models.CharField(max_length=50,null=True,blank=True)
+    interview_type= models.CharField(
+        max_length=25,
+        choices=CHOICES,
+    )
+    gender= models.CharField(
+        max_length=10,
+        choices=GENDER_CHOICES,
+        null=True,
+        blank=True,
+    )
+    method= models.CharField(
+        max_length=10,
+        choices=METHOD_CHOICES,
+        null=True,
+        blank=True,
+    )
+    reporting_date = models.DateTimeField("Reporting Date(mm/dd/yyyy)",auto_now_add=False,auto_now=False,blank=True,null=True)
+    update_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    comment= models.TextField()
+
+    def __str__(self):
+        return f'{self.id} Reporting'
+

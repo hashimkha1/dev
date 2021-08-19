@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'storages',
     'django_countries',
 ]
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -94,6 +95,9 @@ WSGI_APPLICATION = 'coda_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+
+
 '''
 DATABASES = {
     'default': {
@@ -105,12 +109,23 @@ DATABASES = {
     }
 }
 
-'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         
+    }
+}
+'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODA_DEV',# Name of Database
+        'USER':'CODA_DEV',
+        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+        'PORT': '5432'
     }
 }
 

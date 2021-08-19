@@ -1,0 +1,33 @@
+{%extends "main/base.html"%} {% block content %}
+<section id="rating">
+    <div class="rating text-center">
+        <h2>Reporting Candidates</h2>
+        <table class="table table-borderless" style="width: 100%">
+            <thead class="border-bottom font-weight-bold">
+                <tr>
+                    <th>Reporting Date</th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>Gender</th>
+                    <th>Method</th>
+                    <th>Interview Type</th>
+                    <th></th>
+                    <!-- <th>total_score</th>-->
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for trainee in trainees %}
+                    <td>{{trainee.reporting_date|date:"F d, Y"}}</td>
+                    <td>{{trainee.first_name}}</td>
+                    <td>{{trainee.last_name}}</td>
+                    <td>{{trainee.gender}}</td>
+                    <td>{{trainee.method}}</td>
+                    <td>{{trainee.interview_type}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock content %}

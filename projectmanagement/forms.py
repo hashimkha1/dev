@@ -1,14 +1,16 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Transanct
+from .models import Expense
 
 class TransactionForm(forms.ModelForm):
     class Meta:
-        model = Transanct
-        fields = ['id','full_name','project_name', 'activity','payment_method','amount','description']
+        model = Expense
+        fields = ['id','sender','receiver','phone','department', 'activity','payment_method','amount','description']
         labels={
-                'full_name':'Your full Name',
-                'project_name':'Project Name',
+                'sender':'Your full Name',
+                'receiver':'Enter Receiver Name',
+                'phone':'Receiver Phone',
+                'department':'Department',
                 'activity':'Activity',
                 'payment_method':'Payment Method',
                 'amount':'Enter Amount',
