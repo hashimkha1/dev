@@ -18,12 +18,7 @@ urlpatterns = [
     path('trainees/', views.trainees, name='application-trainees'),
     path('rating/', views.rating, name='application-rating'),
     path('rate/', views.rate, name='application-rate'),
-<<<<<<< HEAD
-    path('trainee/', views.trainee, name='application-trainee'),
-    path('trainees/', views.trainees, name='application-trainees'),
-=======
     path('firstupload/', views.firstupload, name='application-firstupload'),
->>>>>>> eed6599aa116a5164ea26a980b7727f0b13dc180
     path('fupload/', views.fupload, name='application-fupload'),
     #path('uploaded/', views.uploaded, name='application-uploaded'),
     path('employee_insert/', views.employee_form, name='application-emp_insert'),
