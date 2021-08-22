@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import Upload
+from .models import InterviewUpload
 from .forms import InterviewForm
 
 
@@ -95,7 +95,7 @@ def uploadinterview(request):
 
 @login_required
 def iuploads(request):
-    uploads=Upload.objects.all().order_by('-upload_date')
+    uploads=InterviewUpload.objects.all().order_by('-upload_date')
     return render(request, 'data/iuploads.html', {'uploads': uploads})
 
 def testing(request):

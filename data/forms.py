@@ -1,24 +1,18 @@
 from django import forms
-from .models import Upload
+from .models import InterviewUpload
 
 
 class InterviewForm(forms.ModelForm):
     class Meta:
-        model = Upload
-        fields = ['username','first_name','last_name','doc_type','resume','introduction','project_Story', 'sdlc','environment','performance','testing']
+        model = InterviewUpload
+        fields = ['first_name','last_name','category','question_type','doc','link']
         labels={
-                'username':'User Name',
                 'first_name':'First Name',
                 'last_name':'Last Name',
-                'doc_type':'Document Type',
-                'resume':'Resume',
-                'introduction':'Introduction',
-                'project_Story':'Project Story',
-                'sdlc':'SDLC',
-                'environment':'Environment',
-                'performance':'Performance',
-                'testing':'Testing',
-
+                'category':'Category',
+                'question_type':'Question',
+                'doc':'Assignment',
+                'link':'Google Share Url',
                 }
 
 

@@ -1,3 +1,4 @@
+from django.db.models.aggregates import Avg, Sum
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -6,6 +7,7 @@ from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
 from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
+from .filters import RatingFilter
 
 #Interview description data
 posts=[
@@ -131,8 +133,24 @@ def rate(request):
     return render(request, 'application/rate.html',{'form':form})
 
 def rating(request):
+   
     ratings=Rated.objects.all().order_by('-rating_date')
-    return render(request, 'application/rating.html', {'ratings': ratings})
+    #total_customers = customers.count()
+	#total_orders = orders.count()
+	#delivered = orders.filter(status='Delivered').count()
+	#pending = orders.filter(status='Pending').count()
+    total_punctuality=Rated.objects.all().aggregate(Total_Punctuality=Sum('punctuality'))
+    total_communication=Rated.objects.all().aggregate(Total_Communication=Sum('communication'))
+    #total_understanding=Rated.objects.filter(user=self.request.user).aggregate(total_credit=Sum('subject__credit'))
+    total_understanding=Rated.objects.all().aggregate(Total_Understanding=Sum('understanding'))
+    #total_ratings=ratings.count()
+    myFilter = RatingFilter(request.GET, queryset=ratings)
+    ratings = myFilter.qs 
+    context = {'ratings': ratings,'myFilter':myFilter
+    ,'total_punctuality': total_punctuality
+    ,'total_communication': total_communication
+    ,'total_understanding': total_understanding}
+    return render(request, 'application/rating.html', context)
 
 def employee_form(request,id=0):
     if request.method == "GET":

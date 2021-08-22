@@ -2,6 +2,36 @@
 <section id="rating">
   <div class="rating text-center">
     <h2>Rating Results For All Applicants</h2>
+    <br>
+    
+    <div class="row">
+      <div class="col">
+        <div class="card card-body">
+    
+          <form method="get">
+            {{myFilter.form}}
+    
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+    
+        </div>
+      </div>
+      
+    </div>
+    <br>
+    <div class="row">
+      <div class="col-md-3">
+        {{total_punctuality}}
+      </div>
+      <div class="col-md-3">
+        {{total_communication}}
+       </div>
+       <div class="col-md-3">
+        {{total_understanding}}
+       </div>
+    </div>
+  
+
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>

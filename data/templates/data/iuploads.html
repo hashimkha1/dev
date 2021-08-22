@@ -6,62 +6,34 @@
     <table style="width: 100%">
       <thead>
         <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
           <th>Date Uploaded</th>
           <th>Applying as:</th>
-          <th>Resume</th>
-          <th>Introduction</th>
-          <th>Project Story</th>
-          <th>SDLC</th>
-          <th>Environment</th>
-          <th>Performance</th>
-          <th>Testing</th>
+          <th>Question</th>
+          <th>Assignment</th>
+          <th>Link</th>
         </tr>
       </thead>
       
       <tbody>
         {% for upload in uploads %}
         <tr>
-          
+          <td>{{upload.first_name}}</td>
+          <td>{{upload.last_name}}</td>
           <td>{{upload.upload_date|date:"F d, Y"}}</td>
-          <td>{{upload.doc_type}}</td>
+          <td>{{upload.category}}</td>
+          <td>{{upload.question_type}}</td>
           <td>
-            <a href="{{upload.resume.url}}" class="btn btn-secondary btn-sm"
+            <a href="{{upload.doc.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
           </td>
           <td>
-            <a href="{{upload.introduction.url}}" class="btn btn-secondary btn-sm"
-              >Download
+            <a href="{{upload.link}}" class="btn btn-secondary btn-sm"
+              >Review
             </a>
           </td>
-          <td>
-            <a href="{{upload.project_Story.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-          <td>
-            <a href="{{upload.sdlc.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-          <td>
-            <a href="{{upload.environment.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-
-          <td>
-            <a href="{{upload.performance.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-
-          <td>
-            <a href="{{upload.testing.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-          </td>
-
         </tr>
         {% endfor %}
       </tbody>
