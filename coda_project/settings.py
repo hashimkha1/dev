@@ -16,7 +16,6 @@ import django_heroku
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -27,8 +26,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'False'
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
-
-
 #ALLOWED_HOSTS = ['codaappdev.herokuapp.com']
 ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []
@@ -58,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'django_countries',
-    'django-filters',
+    #'django-filter',
 
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

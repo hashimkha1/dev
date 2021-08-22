@@ -1,5 +1,6 @@
+'''
 import django_filters
-#from django_filters import DateFilter, CharFilter
+from django_filters import DateFilter, CharFilter
 
 from .models import *
 
@@ -22,3 +23,5 @@ class RatingFilter(django_filters.FilterSet):
 		model = Rated
 		fields = '__all__'
 		exclude = ['rating_date','punctuality','understanding','communication']
+
+'''

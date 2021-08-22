@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
 from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
 from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
-from .filters import RatingFilter
+#from .filters import RatingFilter
 
 #Interview description data
 posts=[
@@ -144,9 +144,10 @@ def rating(request):
     #total_understanding=Rated.objects.filter(user=self.request.user).aggregate(total_credit=Sum('subject__credit'))
     total_understanding=Rated.objects.all().aggregate(Total_Understanding=Sum('understanding'))
     #total_ratings=ratings.count()
-    myFilter = RatingFilter(request.GET, queryset=ratings)
-    ratings = myFilter.qs 
-    context = {'ratings': ratings,'myFilter':myFilter
+    #myFilter = RatingFilter(request.GET, queryset=ratings)
+    #ratings = myFilter.qs 
+    context = {'ratings': ratings
+    #,'myFilter':myFilter
     ,'total_punctuality': total_punctuality
     ,'total_communication': total_communication
     ,'total_understanding': total_understanding}
