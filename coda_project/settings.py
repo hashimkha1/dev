@@ -58,7 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'django_countries',
-    #'django_filters',
+    'django-filters',
 
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
