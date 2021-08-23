@@ -10,28 +10,23 @@
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token%}
     <div class="row">
-      <div class="col-md-4 text-center">
-        {{ form.username|as_crispy_field }}
-      </div>
-      <div class="col-md-4 text-center">
+      <div class="col-md-3 text-center">
         {{ form.first_name|as_crispy_field }}
       </div>
-      <div class="col-md-4 text-center">
+      <div class="col-md-3 text-center">
         {{ form.last_name|as_crispy_field }}
       </div>
-      <div class="col-md-4 text-center">
-        {{ form.doc_type|as_crispy_field }}
+      <div class="col-md-3 text-center">
+        {{ form.category|as_crispy_field }}
+      </div>
+      <div class="col-md-3 text-center">
+        {{ form.question_type|as_crispy_field }}
       </div>
     </div>
     <hr />
     <div class="row">
-        <div class="col-md-3">{{ form.resume|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.introduction|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.project_Story|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.sdlc|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.environment|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.performance|as_crispy_field }}</div>
-        <div class="col-md-3">{{ form.testing|as_crispy_field }}</div>
+        <div class="col-md-6">{{ form.doc|as_crispy_field }}</div>
+        <div class="col-md-6">{{ form.link|as_crispy_field }}</div>
     </div>
     <hr />
     <div class="row text-center">
