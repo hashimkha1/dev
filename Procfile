@@ -1,1 +1,1 @@
-web: gunicorn coda_project.wsgi
+web: gunicorn coda_project:app
