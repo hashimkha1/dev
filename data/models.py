@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 
-# Create your models here.
 class Upload(models.Model):
     Project_Management = 'Project Management'
     Business_Analysis = 'Business Analyst'
