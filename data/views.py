@@ -93,6 +93,7 @@ def uploadinterview(request):
         form=InterviewForm()
     return render(request, 'data/uploadinterview.html',{'form':form})
 
+#for uploading interviews
 @login_required
 def iuploads(request):
     uploads=InterviewUpload.objects.all().order_by('-upload_date')
