@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import TransactionForm
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Expense
+from .models import Expenses,Expense
 
 # Create your views here.
 def home(request):
@@ -25,6 +25,6 @@ def transact(request):
     return render(request, 'projectmanagement/transact.html',{'form':form})
 
 def transaction(request):
-    transactions=Expense.objects.all().order_by('-activity_date')
+    transactions=Expenses.objects.all().order_by('-activity_date')
     return render(request, 'projectmanagement/transaction.html', {'transactions': transactions})
 

@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'getdata.apps.GetdataConfig',
     'projectmanagement.apps.ProjectmanagementConfig',
     'investing.apps.InvestingConfig',
+    'store',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -94,8 +95,8 @@ WSGI_APPLICATION = 'coda_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
+'''
+#postgresql database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -107,20 +108,6 @@ DATABASES = {
     }
 }
 
-'''
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODADB_UAT',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER2020', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
-
-
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -128,7 +115,33 @@ DATABASES = {
         
     }
 }
+
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODADB_DEV',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
+    }
+}
+
 '''
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODA_UAT',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
+    }
+}
+
 import dj_database_url
 db_from_env=dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)

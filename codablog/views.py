@@ -8,14 +8,16 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from .models import Post
+from .models import Post,Rate
+from .forms import RatingForm
 
 
-def success_stories(request):
-    context = {
-        'posts': Post.objects.all()
-    }
-    return render(request, 'codablog/success.html', context)
+
+
+class PostDetailView(DetailView):
+    model=Post
+    ordering=['-date_posted']
+
 
 class PostListView(ListView):
     model=Post
@@ -23,9 +25,6 @@ class PostListView(ListView):
     context_object_name='posts'
     ordering=['-date_posted']
 
-class PostDetailView(DetailView):
-    model=Post
-    ordering=['-date_posted']
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model=Post
@@ -33,8 +32,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self,form):
         form.instance.author=self.request.user
-        return super().form_valid(form)
-        
+        return super().form_valid(form)    
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Post
@@ -61,5 +59,29 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         return False
 
 
-def about(request):
-    return render(request, 'codablog/about.html', {'title': 'About'})
+# For Rating-Internal Use Only
+
+def rate(request):
+    if request.method== "POST":
+        form=RatingForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('codablog-rating')
+    else:
+        form=RatingForm()
+    return render(request, 'codablog/rate.html',{'form':form})
+
+class RateCreateView(LoginRequiredMixin, CreateView):
+    model=Rate
+    fields = ['title','content']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)
+
+class RateListView(ListView):
+    model=Rate
+    template_name='codablog/rating.html'
+    context_object_name='ratings'
+    ordering=['-date_posted']
+

@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
-#from DateTime import datetime,date
+from django.urls import reverse
 from django.core.validators import MinValueValidator,MaxValueValidator
 
 # Create your models here.
@@ -93,6 +93,7 @@ class Rated(models.Model):
 
     def __str__(self):
         return f'{self.id} Rating'
+
 
 class Employee(models.Model):
     class Score(models.IntegerChoices):

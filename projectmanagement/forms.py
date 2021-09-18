@@ -1,20 +1,21 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import Expense
+from .models import Expense,Expenses
 
 class TransactionForm(forms.ModelForm):
     class Meta:
-        model = Expense
-        fields = ['id','sender','receiver','phone','department', 'activity','payment_method','amount','description']
+        model = Expenses
+        fields = ['id','sender','receiver','phone','department', 'category','payment_method','amount','description','receipt']
         labels={
                 'sender':'Your full Name',
                 'receiver':'Enter Receiver Name',
                 'phone':'Receiver Phone',
                 'department':'Department',
-                'activity':'Activity',
+                'category':'Category',
                 'payment_method':'Payment Method',
                 'amount':'Enter Amount',
                 'description':'Description',
+                'receipt':'Receipt',
 
         }
     def __init__(self, *args, **kwargs):

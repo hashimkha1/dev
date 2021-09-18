@@ -11,6 +11,9 @@ class Document(models.Model):
     doc_name=models.CharField(max_length=100,blank=True, null=True)
     doc=models.FileField(upload_to='document/doc/')
 
+    class Meta:
+        verbose_name_plural = 'Documents'
+
     def __str__(self):
         return f'{self.id} Document'
 
@@ -21,6 +24,9 @@ class Uploads(models.Model):
     doc_name=models.CharField(max_length=100,blank=True, null=True)
     doc=models.FileField(upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Uploads'
 
     def __str__(self):
         return f'{self.id} Uploads'
