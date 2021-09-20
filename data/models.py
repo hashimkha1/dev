@@ -47,10 +47,7 @@ class Upload(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-<<<<<<< HEAD
 #Interview Model of Interest
-=======
->>>>>>> 9e61580aadad963d1542d15cafcf4b24f4bd6240
 class InterviewUpload(models.Model):
     # Job Category.
     Project_Management = 'Project Management'
@@ -114,11 +111,8 @@ class InterviewUpload(models.Model):
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
 
-<<<<<<< HEAD
     class Meta:
         verbose_name_plural = 'InterviewUploads'   
 
-=======
->>>>>>> 9e61580aadad963d1542d15cafcf4b24f4bd6240
     def __str__(self):
         return f'{self.username} upload'
