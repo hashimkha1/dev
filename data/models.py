@@ -47,7 +47,7 @@ class Upload(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-#Interview Model of Interest
+#Interview Model
 class InterviewUpload(models.Model):
     # Job Category.
     Project_Management = 'Project Management'
