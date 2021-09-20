@@ -14,6 +14,9 @@ urlpatterns = [
     path('training/', views.training, name='main-training'),
     path('test/', views.test, name='main-test'),
     path('pay/', views.pay, name='main-pay'),
+        path('transact/', views.transact, name='main-transact'),
+    path('transaction/', views.transaction, name='main-transaction'),
     #path('documents/', views.codadocuments, name='main-documents'),
     path('checkout/', views.checkout, name='main-checkout')
+
 ]

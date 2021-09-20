@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-#from .models import Codadoc
-#from .forms import CodadocumentsForm
+from .models import Expenses
+from .forms import TransactionForm
 # Create your views here.
 def test(request):
     return render(request, 'main/test.html', {'title': 'test'})
@@ -43,6 +43,23 @@ def training(request):
 
 def project(request):
     return render(request, 'main/project.html', {'title': 'project'})
+
+
+# -------------------------transactions Section-------------------------------------#
+def transact(request):
+    if request.method== "POST":
+        form=TransactionForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('projectmanagement-transaction')
+    else:
+        form=TransactionForm()
+    return render(request, 'projectmanagement/transact.html',{'form':form})
+
+def transaction(request):
+    transactions=Expenses.objects.all().order_by('-activity_date')
+    return render(request, 'projectmanagement/transaction.html', {'transactions': transactions})
+
 
 #-----------------------------Documents---------------------------------
 '''
