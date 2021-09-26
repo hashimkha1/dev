@@ -1,4 +1,6 @@
 from django.urls import path
+from .views import TransactionListView #,TransactionUpdateView
+
 from . import views
 
 urlpatterns = [
@@ -14,8 +16,10 @@ urlpatterns = [
     path('training/', views.training, name='main-training'),
     path('test/', views.test, name='main-test'),
     path('pay/', views.pay, name='main-pay'),
-        path('transact/', views.transact, name='main-transact'),
-    path('transaction/', views.transaction, name='main-transaction'),
+    # transactions url patterns
+    path('transact/', views.transact, name='main-transact'),
+    path('transaction/', TransactionListView.as_view(), name='transaction-list'),
+    #path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-updated'),
     #path('documents/', views.codadocuments, name='main-documents'),
     path('checkout/', views.checkout, name='main-checkout')
 

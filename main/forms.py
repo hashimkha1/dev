@@ -5,7 +5,7 @@ from .models import Expenses
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Expenses
-        fields = ['id','sender','receiver','phone','department', 'category','payment_method','amount','description','receipt']
+        fields = ['id','sender','receiver','phone','department', 'category','payment_method','quantity','amount','description','receipt']
         labels={
                 'sender':'Your full Name',
                 'receiver':'Enter Receiver Name',
@@ -13,6 +13,7 @@ class TransactionForm(forms.ModelForm):
                 'department':'Department',
                 'category':'Category',
                 'payment_method':'Payment Method',
+                'quantity':'Quantity',
                 'amount':'Enter Amount',
                 'description':'Description',
                 'receipt':'Receipt',

@@ -37,3 +37,4 @@ def upload(request):
 def uploaded(request):
     documents=Uploads.objects.all().order_by('-document_date')
     return render(request, 'investing/uploaded.html', {'documents': documents})
+

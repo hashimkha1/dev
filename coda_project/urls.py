@@ -43,7 +43,7 @@ urlpatterns = [
     path('projectmanagement/', include('projectmanagement.urls')),
     path('investing/', include('investing.urls')),
     path('store/', include('store.urls')),
-    #path('', include('store.urls', namespace='store')),
+    path('testing/', include('testing.urls')),
     path('', include('main.urls')),
 ]
 

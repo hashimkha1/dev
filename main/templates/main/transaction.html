@@ -2,6 +2,16 @@
 <section id="rating">
   <div class="rating text-center">
     <h2>Cashflows</h2>
+    <button>
+      <a
+      href="{%url 'main-transact'%}" 
+        class="btn text-secondary px-0"
+      >
+        Add a New Transaction
+      </a>
+
+    </button>
+
     <hr>
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
@@ -13,10 +23,10 @@
           <th>Department</th>
           <th>Category</th>
           <th>Description</th>
-          <th>Payment Method</th>
+          <th>Method</th>
           <th>Amount</th>
           <th>Receipt</th>
-          <!-- <th>total_score</th>-->
+          <th>Edit</th>
         </tr>
       </thead>
       <tbody>
@@ -31,7 +41,24 @@
           <td>{{transanction.description}}</td>
           <td>{{transanction.payment_method}}</td>
           <td>{{transanction.amount}}</td>
-          <td>{{transanction.receipt}}</td>
+          <td>
+            <a href="{{transaction.receipt.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a
+            <td>
+              <a
+              href="#" 
+                class="btn text-secondary px-0"
+              >
+                edit
+              </a>
+            </td>
+
+            
+          </td>
         </tr>
         {% endfor %}
       </tbody>

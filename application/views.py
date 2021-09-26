@@ -1,12 +1,22 @@
 from django.db.models.aggregates import Avg, Sum
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404,redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from datetime import timedelta, date
 from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .forms import ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
+from .forms import  ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
 from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
+from django.urls import reverse
+
 #from .filters import RatingFilter
 
 #Interview description data
@@ -53,9 +63,17 @@ def apply(request):
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
 
-def applicants(request):
-    applicants=Application.objects.all().order_by('-application_date')
-    return render(request, 'application/applicants.html', {'applicants': applicants})
+class ApplicantListView(ListView):
+    model=Application
+    template_name='application/applicants.html'  #<app>/<model>_<viewtype>
+    context_object_name='applicants'
+    ordering=['-application_date']
+
+class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
+    model=Application
+
+    def get_success_url(self):
+        return reverse('applicant-list')
 
 @login_required
 def applicant_profile(request):
@@ -80,12 +98,10 @@ def second_interview(request):
 def orientation(request):
     return render(request, 'application/orientation.html', {'title': 'orientation'})
 
-def policy(request):
-    forms=PolicyForm()
-    context = {
-        'forms': forms
-    }
-    return render(request, 'application/policy.html' ,context)
+
+def internal_training(request):
+    return render(request, 'application/internal_training.html', {'title': 'orientation'})
+
 
 def policy(request):
     if request.method== "POST":
@@ -191,14 +207,7 @@ def employee_delete(request,id):
     employee.delete()
     return redirect('application-emp_list')
 
-# -------------------------testing Section-------------------------------------#
-'''
-def test(request):
-    return render(request, 'application/test.html', {'title': 'test'})
 
-def uploaded(request):
-    pass
-'''
 #------------------------testing Section-----------------------------------------#
 
 def success_stories(request):
@@ -206,50 +215,6 @@ def success_stories(request):
         'posts': Post.objects.all()
     }
     return render(request, 'codablog/success.html', context)
-'''
-class PostListView(ListView):
-    model=Post
-    template_name='codablog/success.html'
-    context_object_name='posts'
-    ordering=['-date_posted']
-
-class PostDetailView(DetailView):
-    model=Post
-    ordering=['-date_posted']
-
-class PostCreateView(LoginRequiredMixin, CreateView):
-    model=Post
-    fields=['title','content']
-
-    def form_valid(self,form):
-        form.instance.author=self.request.user
-        return super().form_valid(form)
-        
-
-class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    model=Post
-    fields=['title','content']
-
-    def form_valid(self,form):
-        form.instance.author=self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-
-class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
-    model=Post
-    success_url="/"
-
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-            return True
-        return False
-'''
 
 # -------------------------rating Section-------------------------------------#
 def trainee(request):
@@ -265,3 +230,28 @@ def trainee(request):
 def trainees(request):
     trainees=Reporting.objects.all().order_by('-update_date')
     return render(request, 'application/trainees.html', {'trainees': trainees})
+
+
+class TraineeUpdateView(LoginRequiredMixin,UpdateView):
+    model=Reporting
+    fields = ['first_name','last_name','gender','reporting_date','method','interview_type','comment']
+    form=ReportingForm()
+    def form_valid(self,form):
+        form.instance.username=self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('application-trainees') 
+'''
+    def test_func(self):
+        employee = self.get_object()
+        if self.request.firstname == employee.name:
+            return True
+        return False
+
+'''
+class TraineeDeleteView(LoginRequiredMixin,DeleteView):
+    model=Reporting
+
+    def get_success_url(self):
+        return reverse('application-trainees') 

@@ -37,6 +37,7 @@ AUTHENTICATION_BACKENDS = (
 # Application definition
 
 INSTALLED_APPS = [
+    'testing.apps.TestingConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
     'accounts.apps.AccountsConfig',

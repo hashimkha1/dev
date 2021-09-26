@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .models import InterviewUpload
-from .forms import InterviewForm
+from .models import InterviewUpload,Upload
+from .forms import InterviewForm,UploadForm
 
 
 
@@ -99,8 +99,27 @@ def iuploads(request):
     uploads=InterviewUpload.objects.all().order_by('-upload_date')
     return render(request, 'data/iuploads.html', {'uploads': uploads})
 
+# Saving uploaded information to database
+def upload(request):
+    if request.method== "POST":
+        form=UploadForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('investing-uploaded')
+    else:
+        form=UploadForm()
+    return render(request, 'investing/upload.html',{'form':form})
+
+
+def uploaded(request):
+    documents=Upload.objects.all().order_by('-document_date')
+    return render(request, 'investing/uploaded.html', {'documents': documents})
+
+
 def testing(request):
     context = {
         'posts': posts
     }
     return render(request, 'data/testing.html', context)  
+
+

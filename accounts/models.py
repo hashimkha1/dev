@@ -65,3 +65,10 @@ class Applicant(models.Model):
     country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
 '''
+class Employee(models.Model):  
+    name = models.CharField(max_length=100)  
+    email = models.EmailField()  
+    contact = models.CharField(max_length=15) 
+  
+    class Meta:  
+        db_table = "employee"

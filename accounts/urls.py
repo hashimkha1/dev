@@ -1,12 +1,13 @@
 from django.urls import path
-from . import views
+from . import views 
+from .views import EmployeeCreateView ,EmployeeUpdateView,EmployeeDeleteView 
 
 urlpatterns = [
     path('join/', views.join, name='account-join'),
-    #path('joined/', views.joined, name='account-joined'),
     path('clients/', views.clients, name='account-clients'),
-    #path('login/', views.loginPage, name='account-login'),
-    #path('application/', views.application, name='application-application'),
-    #path('interview/', views.interview, name='application-interview'),
-    #path('test/', views.test, name='application-test'),
+    path('show/ ', views.show, name='employee-records'),
+    path('employee/new',EmployeeCreateView.as_view(), name='employee-add'),
+    path('employee/update/<int:pk>/', EmployeeUpdateView.as_view(), name='employee-edit'),
+    path('employee/delete/<int:pk>/', EmployeeDeleteView.as_view(), name='employee-deleted'), 
+
 ]  

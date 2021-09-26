@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
+from django.urls import reverse
 
 # Create your models here.
 
@@ -86,7 +88,8 @@ class Expenses(models.Model):
     phone=models.CharField(max_length=50,null=True,default=None)
     department=models.CharField(max_length=100,default=None)
     activity_date = models.DateTimeField(default=timezone.now)
-    receipt=models.FileField(default="None",upload_to='Uploads/Receipt_doc/')
+    receipt=models.FileField(upload_to='Uploads/Receipt_doc/', null=False)
+    quantity=models.IntegerField( null=False)
     amount = models.DecimalField (max_digits=10, decimal_places=2, null=True, default=None)
     description=models.TextField(default=None)
 
@@ -113,7 +116,9 @@ class Expenses(models.Model):
             return f'{self.id} Expenses'
 
 
-
+    def get_absolute_url(self):
+        return reverse('transaction-list')
+        #return reverse('employee-detail', kwargs={'pk': self.pk})
 
 
 '''
