@@ -2,10 +2,9 @@
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import CustomerUser
+from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-# Register your models here.
+from .models import CustomerUser
 
 #admin.site.register(CustomerUser)
 class CustomerAdmin(UserAdmin):
@@ -24,6 +23,9 @@ class CustomerAdmin(UserAdmin):
     search_fields = ('email',)
     filter_horizontal = ()
 
-
 # Now register the new UserAdmin...
 admin.site.register(CustomerUser, CustomerAdmin)
+
+
+
+

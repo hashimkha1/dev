@@ -1,9 +1,11 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import DocumentForm,UploadForm
 from django.core.files.storage import FileSystemStorage
-from .models import Document,Uploads
+from django.shortcuts import redirect, render
+
+from .forms import DocumentForm, UploadForm
+from .models import Document, Uploads
+
 
 # Create your views here.
 def home(request):

@@ -1,0 +1,40 @@
+{%extends "data/index.html"%}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<!--------------------------Slider Section--------------------------------->
+
+<!-------------------2. Our OFFER Section------------------------->
+
+<section id="service_offer">
+  <div class="service_offer text-center">
+    <h3 class="title">Start your Journey</h3>
+    
+    <div class=" offer_top row text-center">
+      {% for activity in activities %}
+      <div class="col-md-3">
+        <img class="img-fluid" alt="Responsive image" src="{{ product.image.url }}">
+    </div>
+      <div class="col-md-3">
+        
+        <h4>
+          <b><a class="text-dark text-decoration-none" href="{{ activity.get_absolute_url }}">{{activity.activity_name }}</a></b>
+        </h4>
+        <p class="bd">
+                <p>{{ activity.description }}:<b>{{ activity.price }}</b></p>
+          <a href="{{ activity.get_absolute_url }}" >
+            <button type="button" class="btn btn-primary">Here</button>
+        </a>
+        </p>
+      </div>
+      {% endfor %}
+  </div>
+
+  </div>
+
+</section>
+
+{% endblock %}
+
+
+

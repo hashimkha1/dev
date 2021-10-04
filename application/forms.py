@@ -1,7 +1,9 @@
 from django import forms
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
+from django.contrib.auth.models import User
+
+from .models import (Application, Employee, FirstUpload, InteviewUploads,
+                     Policy, Rated, Reporting)
 
 
 class ApplicationForm(UserCreationForm):

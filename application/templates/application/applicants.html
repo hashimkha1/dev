@@ -22,7 +22,7 @@
         {% for applicant in applicants %}
         <tr>
           <td>{{applicant.id}}</td>
-          <td>{{applicant.application_date|date:"F d, Y"}}</td>
+          <td>{{applicant.application_date|date:"n/d/Y"}}</td>
           <td>{{applicant.first_name}}</td>
           <td>{{applicant.last_name}}</td>
           <td>{{applicant.phone}}</td>

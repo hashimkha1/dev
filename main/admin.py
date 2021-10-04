@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Picture ,Service, Order,Expenses #,Codadoc ,Codadocuments,Codadocs
+
+from .models import (Expenses, Order,  # ,Codadoc ,Codadocuments,Codadocs
+                     Picture, Service)
 
 # Register your models here.
 admin.site.register(Picture)

@@ -1,21 +1,20 @@
-from django.db.models.aggregates import Avg, Sum
-from django.shortcuts import render, redirect, get_object_or_404,redirect
+from datetime import date, timedelta
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from datetime import timedelta, date
-from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .forms import  ApplicationForm,ApplicantForm,RatingForm,InterviewUploadForm,EmployeeForm,InterviewForm,PolicyForm,ReportingForm
-from .models import Application,Rated,InteviewUploads,Employee,FirstUpload,Policy,Reporting
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
+from django.db.models.aggregates import Avg, Sum
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView)
+
+from .forms import (ApplicantForm, ApplicationForm, EmployeeForm,
+                    InterviewForm, InterviewUploadForm, PolicyForm, RatingForm,
+                    ReportingForm)
+from .models import (Application, Employee, FirstUpload, InteviewUploads,
+                     Policy, Rated, Reporting)
 
 #from .filters import RatingFilter
 

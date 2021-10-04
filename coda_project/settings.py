@@ -11,21 +11,17 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+
 import django_heroku
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
+# SECURITY
 SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = 'False'
-#DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
+#DEBUG = 'True'
+DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []
@@ -47,6 +43,7 @@ INSTALLED_APPS = [
     'getdata.apps.GetdataConfig',
     'projectmanagement.apps.ProjectmanagementConfig',
     'investing.apps.InvestingConfig',
+    'management.apps.ManagementConfig',
     'store',
     'crispy_forms',
     'django.contrib.admin',
@@ -57,7 +54,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'django_countries',
+    'mathfilters' ,
+    'mptt',
     #'django-filter',
+     
 
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -86,6 +86,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'management.context_processors.categories',
+                'management.context_processors.departments',
             ],
         },
     },
@@ -143,6 +145,7 @@ DATABASES = {
 
 
 import dj_database_url
+
 db_from_env=dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
 

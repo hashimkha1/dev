@@ -4,7 +4,7 @@
     <h2>Employee Records</h2>
     <button>
       <a
-      href="{%url 'employee-create'%}" 
+      href="{%url 'management:employee-create'%}" 
         class="btn text-secondary px-0"
       >
         Add New Employee
@@ -36,7 +36,7 @@
           
           <td>
             <a
-            href="{%url 'employees-update' employee.id%}" 
+            href="{%url 'testing:employees-update' employee.id%}" 
               class="btn text-secondary px-0"
             >
               edit
@@ -45,7 +45,7 @@
 
           <td>
             <a
-            href="{%url 'employee-delete' employee.id %}" 
+            href="{%url 'testing:employee-delete' employee.id %}" 
               class="btn text-secondary px-0"
             >
              <h3><b>x</b></h3> 

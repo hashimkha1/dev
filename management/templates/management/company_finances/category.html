@@ -1,0 +1,69 @@
+{%extends "management/payment_index.html"%} 
+  {% load static %}
+  {% load mathfilters %}
+  {% block title %}
+  {% if category %}{{ category.name }}{% else %}activities{% endif %}
+  {% endblock %}
+  {% block content %}
+
+  <main>
+    <div class="album py-5 bg-light">
+      <div class="container">
+
+        <div class="pb-3 h5">{{category.name|title}}</div>
+          <div class="col">
+              <div class="table-responsive">
+                <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
+                  <thead>
+                      <th><input type="checkbox" id="checkall" /></th>
+                      <th>Activity_name</th>
+                      <th>Submission</th>
+                      <th>Deadline</th>
+                      <th>Late Penalty</th>
+                      <th>Points</th>
+                      <th>Max Points</th>
+                      <th>Max Earning</th>
+                      <th>Earning</th>
+                      <th>Edit</th>
+                  </thead>
+          <tbody>
+          {% for activity in activities %}  
+          <tr>  
+          <td><input type="checkbox" class="checkthis" /></td>
+          <td>
+              <a class="text-dark  text-decoration-none" 
+              data-toggle="tooltip" title="{{  activity.description  }}"
+              href="https://www.youtube.com/watch?v=hGg13rzvoNY">
+              {{  activity.activity_name  }}
+              </a>
+          </td>
+          <td>{{  activity.submission  }}</td>
+          <td>{{  deadline  }}</td>
+          <td>{% if activity.submission > deadline  %} 0.98 {% else %} 1  {% endif %}</td>
+          <td>{{  activity.point  }}</td>
+          <td>{{  activity.mx_point}}</td>
+          <td>{{  activity.mx_earning}}</td>
+          <td>
+                {% if activity.submission > deadline  %} 
+                      {{0.98|mul:activity.compute_pay}} 
+                {% else %} 
+                      {{1|mul:activity.compute_pay}}  
+                {% endif %}
+            </td>
+            <td><h4 ><a href="{%url 'management:activity-edit' activity.id %}">✔️</H4></a></p></td> 
+          </tr>  
+          {% endfor %} 
+
+
+
+          </tbody>
+          </table>
+          </div>
+          </div>
+      </div>
+    </div>
+  </main>
+
+
+
+  {% endblock %}

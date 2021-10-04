@@ -1,18 +1,14 @@
-from django.shortcuts import render, get_object_or_404,redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-)
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import Expenses
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+
 from .forms import TransactionForm
+from .models import Expenses
 
 # Create your views here.
 def test(request):
@@ -32,7 +28,6 @@ def about(request):
 
 def about_us(request):
     return render(request, 'main/about_us.html', {'title': 'about_us'})
-
 
 def team(request):
     return render(request, 'main/team.html', {'title': 'team'})
@@ -55,7 +50,6 @@ def training(request):
 def project(request):
     return render(request, 'main/project.html', {'title': 'project'})
 
-
 # -------------------------transactions Section-------------------------------------#
 def transact(request):
     if request.method== "POST":
@@ -77,7 +71,6 @@ class TransactionListView(ListView):
     template_name='main/transaction.html'  #<app>/<model>_<viewtype>
     context_object_name='transactions'
     ordering=['-activity_date']
-
 '''
 class TransactionUpdateView(LoginRequiredMixin,UpdateView):
     model=Expenses
@@ -89,7 +82,6 @@ class TransactionUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_success_url(self):
         return reverse('transaction-list') 
-
 '''
 #-----------------------------Documents---------------------------------
 '''

@@ -78,25 +78,19 @@
               </li>
 
               <li class="nav-item dropdown">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="{% url 'projectmanagement-home' %}"
-                  id="navbarDropdown"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  Services
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Departments
                 </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Fields Project</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Errands</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'projectmanagement-home' %}">Feasibility Studies</a>
-                </div>
-              </li>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/">All</a></li>
+                    {% for dept in departments %}
+                    <li {% if department.slug == dept.slug %}class="selected" {% endif %}>
+                        <a class="dropdown-item" href="{{ dept.get_absolute_url }}">{{ dept.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </li>
             </ul>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">

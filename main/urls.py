@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import TransactionListView #,TransactionUpdateView
 
 from . import views
+from .views import TransactionListView  # ,TransactionUpdateView
 
 urlpatterns = [
     path('', views.layout, name='main-layout'),

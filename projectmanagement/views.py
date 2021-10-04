@@ -1,10 +1,12 @@
-from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import TransactionForm
-from django.views.generic import TemplateView
 from django.core.files.storage import FileSystemStorage
-from .models import Expenses,Expense
+from django.shortcuts import redirect, render
+from django.views.generic import TemplateView
+
+from .forms import TransactionForm
+from .models import Expense, Expenses
+
 
 # Create your views here.
 def home(request):

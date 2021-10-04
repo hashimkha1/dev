@@ -1,9 +1,10 @@
 #from coda_project.application.views import first_interview
-from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 from django.urls import reverse
-from django.core.validators import MinValueValidator,MaxValueValidator
+from django.utils import timezone
+
 
 # Create your models here.
 class Applicant_Profile(models.Model):

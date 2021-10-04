@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 #Interview Model
 class InterviewUpload(models.Model):
     # Job Category.

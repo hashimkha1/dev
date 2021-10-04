@@ -1,6 +1,8 @@
 from django.urls import path
-from .views import PostListView,PostDetailView,PostCreateView,PostUpdateView,PostDeleteView,RateListView,RateCreateView
+
 from . import views
+from .views import (PostCreateView, PostDeleteView, PostDetailView,
+                    PostListView, PostUpdateView, RateCreateView, RateListView)
 
 urlpatterns = [
     path('', PostListView.as_view(), name='codablog-success'),

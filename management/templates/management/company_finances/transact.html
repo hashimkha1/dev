@@ -1,4 +1,4 @@
-{%extends "projectmanagement/index.html"%} {%load crispy_forms_tags%}
+{%extends "management/index.html"%} {%load crispy_forms_tags%}
 {%block content %}
 
 <div class="upload">
@@ -15,17 +15,19 @@
     </div>
     <div class="row">
       
-      <div class="col-md-6">{{ form.department|as_crispy_field }}</div>
-      <div class="col-md-6">{{ form.category|as_crispy_field }}</div>
+      <div class="col-md-4">{{ form.department|as_crispy_field }}</div>
+      <div class="col-md-4">{{ form.category|as_crispy_field }}</div>
+      <div class="col-md-4">{{ form.payment_method|as_crispy_field }}</div>
     </div>
     <div class="row">
-      <div class="col-md-4">{{ form.payment_method|as_crispy_field }}</div>
+      
+      <div class="col-md-4">{{ form.qty|as_crispy_field }}</div>
       <div class="col-md-4">{{ form.amount|as_crispy_field }}</div>
       <div class="col-md-4">{{ form.receipt|as_crispy_field }}</div>
       
     </div>
-    <div class="row">
-      <div class="col-md-12">{{ form.description|as_crispy_field }}</div>
+    <div class="row align-items-center">
+      <div class="col-md-10">{{ form.description|as_crispy_field }}</div>
     </div>
 
     <div class="row text-center">

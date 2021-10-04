@@ -1,8 +1,8 @@
 from django import forms
-from django.contrib.auth.models import User
-from .models import CustomerUser,Employee
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth.models import User
 
+from .models import CustomerUser
 #from django.db import transaction
 
 class CustomerForm(forms.ModelForm):
@@ -53,6 +53,7 @@ def clean_password(self):
     return self.initial['password']
 
 
+'''
 class EmployeeForm(forms.ModelForm):  
     class Meta:  
         model = Employee  
@@ -62,7 +63,6 @@ class EmployeeForm(forms.ModelForm):
             'contact': forms.TextInput(attrs={ 'class': 'form-control' }),
       }
 
-'''
 class CustomerForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:

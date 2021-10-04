@@ -1,10 +1,11 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser,User
 from django.db import models
 from django.utils import timezone
-#from django.utils.translation import gettext_lazy as _
-#from django.core.validators import RegexValidator
 from django_countries.fields import CountryField
-
+from django.urls import reverse
+import calendar
+from datetime import datetime
+from decimal import *
 
 # Create your models here.
 class CustomerUser(AbstractUser):
@@ -64,11 +65,12 @@ class Applicant(models.Model):
     city=models.CharField(max_length=100,blank=True, null=True)
     country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
+
+     @property
+     def get_unique_id(self):
+         a = self.last_name[:2].upper()     #First 2 letters of last name
+         b = self.birth_date.strftime('%d')     #Day of the month as string
+         c = self.city_of_birth[:2].upper()     #First 2 letters of city
+         return a + b + c 
 '''
-class Employee(models.Model):  
-    name = models.CharField(max_length=100)  
-    email = models.EmailField()  
-    contact = models.CharField(max_length=15) 
-  
-    class Meta:  
-        db_table = "employee"
+

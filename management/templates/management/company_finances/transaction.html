@@ -1,4 +1,6 @@
-{%extends "main/base.html"%} {% block content %}
+{%extends "main/base.html"%}
+{% load mathfilters %}
+{% block content %}
 <section id="rating">
   <div class="rating text-center">
     <h2>Cashflows</h2>
@@ -12,9 +14,11 @@
           <th>Phone</th>
           <th>Department</th>
           <th>Category</th>
-          <th>Description</th>
-          <th>Payment Method</th>
+          <th>Method</th>
+          <th>Quantity</th>
           <th>Amount</th>
+          <th>Total</th>
+          <th>Description</th>
           <th></th>
           <!-- <th>total_score</th>-->
         </tr>
@@ -22,15 +26,18 @@
       <tbody>
         {% for transanction in transactions %}
         <tr>
-          <td>{{transanction.activity_date|date:"F d, Y"}}</td>
+          <td>{{transanction.activity_date|date:"n/d/Y"}}</td>
           <td>{{transanction.sender}}</td>
           <td>{{transanction.receiver}}</td>
           <td>{{transanction.phone}}</td>
           <td>{{transanction.department}}</td>
           <td>{{transanction.category}}</td>
-          <td>{{transanction.description}}</td>
+
           <td>{{transanction.payment_method}}</td>
+          <td>{{transanction.qty}}</td>
           <td>{{transanction.amount}}</td>
+          <td>{{transanction.qty|mul:transanction.amount}}</td> 
+          <td>{{transanction.description}}</td>
         </tr>
         {% endfor %}
       </tbody>

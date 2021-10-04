@@ -1,5 +1,6 @@
 from django import forms
-from .models import InterviewUpload,Upload
+
+from .models import InterviewUpload, Upload
 
 
 class InterviewForm(forms.ModelForm):
