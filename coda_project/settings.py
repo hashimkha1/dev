@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'storages',
     'django_countries',
-    'mathfilters' ,
+    'mathfilters',
     'mptt',
     #'django-filter',
      
