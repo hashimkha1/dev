@@ -218,10 +218,10 @@ class Activity(models.Model):
     slug = models.SlugField(max_length=255)
     point = models.PositiveIntegerField(
             #max_digits=3, 
-            help_text=_('Maximum 200'),
+            help_text=_('Should be less than Maximum Points assigned'),
             error_messages={
                 "name":{
-                   ' max_length':("The quantity must be between 0 and 199")
+                   ' max_length':("Points must be less than Maximum Points")
                 
                 }
             },
@@ -273,10 +273,17 @@ class Activity(models.Model):
             return 1
     @property
     def pay(self):
-        Earning= round(Decimal(self.point/self.mx_point)*self.mx_earning ,2)
-        compute_pay=Earning * Decimal(self.late_penalty)
-        pay=round(compute_pay)
-        return pay
+        if self.point>self.mx_point:
+            return 0
+        else:
+            Earning= round(Decimal(self.point/self.mx_point)*self.mx_earning ,2)
+            compute_pay=Earning * Decimal(self.late_penalty)
+            pay=round(compute_pay)
+            return pay
+        
+        
+        
+        
 
     class Meta:
         verbose_name_plural = 'Activities'
