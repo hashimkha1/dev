@@ -36,19 +36,15 @@
             {{  activity.activity_name  }}
             </a>
         </td>
-        <td>{{  activity.submission  }}</td>
-        <td>{{  deadline  }}</td>
-        <td>{% if activity.submission > deadline  %} 0.98 {% else %} 1  {% endif %}</td>
+        <td>{{  activity.submission|date:"m/d/Y"  }}</td>
+        <td>{{  deadline|date:"m/d/Y"  }}</td>
+        <!--<td>{% if activity.submission > deadline  %} 0.98 {% else %} 1  {% endif %}</td>-->
+        <td>{{  activity.late_penalty }}</td>
         <td>{{  activity.point  }}</td>
         <td>{{  activity.mx_point  }}</td>
         <td>{{  activity.mx_earning  }}</td>
-        <td>
-              {% if activity.submission > deadline  %} 
-                    {{0.98|mul:activity.compute_pay}} 
-              {% else %} 
-                    {{1|mul:activity.compute_pay}}  
-              {% endif %}
-          </td>
+        <td>{{activity.pay}}</td>
+        
           <td><h4 ><a href="{%url 'management:activity-edit' activity.id %}">✔️</H4></a></p></td> 
         </tr>  
         </tbody>

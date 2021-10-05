@@ -3,6 +3,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils import timezone
 import calendar
+from dateutil.parser import parse
 from datetime import datetime
 from decimal import *
 from django.utils.translation import gettext_lazy as _
@@ -258,9 +259,24 @@ class Activity(models.Model):
     is_active=models.BooleanField(default=True)
 
     @property
-    def compute_pay(self):
+    def late_penalty(self):
+        #submission=datetime.strptime(str(self.submission),'%Y-%m-%d %H:%M:%S+%f:%z')
+        submission=datetime.date(self.submission)
+        today = datetime.today()
+        deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+        #deadline=datetime.strptime(str(deadline_date),'%Y-%m-%d %H:%M:%S')
+        deadline=datetime.date(deadline_date)
+       
+        if submission >deadline:
+            return 0.98
+        else:
+            return 1
+    @property
+    def pay(self):
         Earning= round(Decimal(self.point/self.mx_point)*self.mx_earning ,2)
-        return Earning
+        compute_pay=Earning * Decimal(self.late_penalty)
+        pay=round(compute_pay)
+        return pay
 
     class Meta:
         verbose_name_plural = 'Activities'

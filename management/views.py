@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
 from django.urls.conf import include
 from django.utils.timezone import datetime
+from dateutil.parser import parse
 import calendar
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                 UpdateView)
@@ -124,7 +125,10 @@ def category_list(request, category_slug=None):
        # category__in=Category.objects.get(name=category_slug).get_descendants(include_self=True)
     #)
     today = datetime.today()
-    deadline=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+    deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+    deadline=datetime.date(deadline_date)
+ 
+
     context ={
                 'category': category,
                 'activities': activities,
@@ -135,7 +139,9 @@ def category_list(request, category_slug=None):
 def activity_detail(request,slug,category_slug=None):
     activity = get_object_or_404(Activity, slug=slug, is_active=True)
     today = datetime.today()
-    deadline=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+    deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+    deadline=datetime.date(deadline_date)
+
     context ={
                 'activity': activity,
                 'deadline':deadline
@@ -146,12 +152,18 @@ class ActivityUpdateView(LoginRequiredMixin,UpdateView):
     model=Activity
     #fields=['category','created_by','activity_name','description','slug','earning','point','mx_point','submission','created','updated']
     fields=['activity_name','point','submission']
-    #success_url = 'category_list'
+    #success_url='/management/category/{slug}/'
+    #success_url="/parent/{parent_id}/" 
     def form_valid(self,form):
         form.instance.username=self.request.user
         return super().form_valid(form)
-
+    
 '''
+    def get_success_url(self):
+        return reverse('management:category_list', kwargs={
+            'category_slug': self.object.category_slug,
+        })
+
     def get_success_url(self):
         return self.request.GET.get('next', '/management/')
 
