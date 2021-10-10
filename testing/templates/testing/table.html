@@ -1,4 +1,5 @@
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<!---
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
 <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
 
@@ -20,191 +21,192 @@
     <div class="col-md-12">
         <div class="card card-body">
             <button class="btn btn-sm btn-primary" id="Employee Renumeration">Employee Renumeration System</button>
-            <!-- Data Table -->
+            <!-- Data Table
             <table class="table table-dark">
-              <thead>
-                <tr>
-                  <th scope="col">Task Name</th>
-                  <th scope="col">Submision</th>
-                  <th scope="col">Deadline</th>
-                  <th scope="col">Late Penalty</th>
-                  <th scope="col">Point</th>
-                  <th scope="col">Max Points</th>
-                  <th scope="col">Earning</th>
-                  <th scope="col">Pay</th>
-                </tr>
-              </thead>
-              <tbody id="tasks-table">
-
-
-
-                
-              </tbody>
-              <tr> 
-                    
-                <td colspan="8" >Total</td>
-                <td id="totalpay" style="font-weight: bold;"></td>
-            </tr>
-            </table>
-        </div>
-    </div>
-    <div class="col-md-12"></div>
-</div>
-
-<script>
-
-    function updateTaskPOST(data){
-        var url = '/testing/updatetask/'
-        $.ajax({
-            method:'POST',
-            url:url,
-            data:data,
-            success:function(){
-                
-            }
-        })
-
-
-    }
-
-    var tasks = []
-    var dataURL = 'taskapi/'
-    $.ajax({
-        method:'GET',
-        url:dataURL,
-        success:function(response){
-            tasks = response
-            console.log(tasks)
-            for (var i in tasks){
-                addRow(tasks[i])
-            }
-        }
-    })
-
-   
-    function addRow(obj){
-        var row = `<tr scope="row" class="task-row-${obj.id}">
-                       <td>${obj.name}</td>
-                       <td id="submission-${obj.id}" data-taskid="${obj.id}"">${obj.submission}</td>
-                       <td id="deadline-${obj.id}" data-taskid="${obj.id}"">${obj.deadline}</td>
-                       <td id="late_penalty-${obj.id}" data-taskid="${obj.id}"">${obj.late_penalty}</td>
-                       <td id="point-${obj.id}" data-taskid="${obj.id}"">${obj.point}</td>
-                       <td id="mxpoint-${obj.id}" data-taskid="${obj.id}"">${obj.mxpoint}</td>
-                       <td id="earning-${obj.id}" data-taskid="${obj.id}"">${obj.earning}</td>
-                       <td id="pay-${obj.id}" data-taskid="${obj.id}"">${obj.pay}</td>
-                       
-                       <td>
-                            <button class="btn btn-sm btn-danger hidden" data-taskid=${obj.id} id="delete-${obj.id}">Delete</button>
-                            <button class="btn btn-sm btn-info" disabled data-taskid="${obj.id}"  id="save-${obj.id}">Save</button>
-                            <button class="btn btn-sm btn-danger hidden" data-taskid="${obj.id}"  id="cancel-${obj.id}">Cancel</button>
-                            <button class="btn btn-sm btn-primary hidden" data-taskid="${obj.id}"  id="confirm-${obj.id}">Confirm</button>
-                       </td>
-                   </tr>`
-
-        $('#tasks-table').append(row)
-
-
-        $(`#delete-${obj.id}`).on('click', deleteTask)
-        $(`#cancel-${obj.id}`).on('click', cancelDeletion)
-        $(`#confirm-${obj.id}`).on('click', confirmDeletion)
-        $(`#save-${obj.id}`).on('click', saveUpdate)
-
-        $(`#point-${obj.id}`).on('click', editpoint)
-        
-    }
-
-    function editpoint(){
-        var taskid = $(this).data('taskid')
-        var value = $(this).html()
-
-        $(this).unbind()
-        $(this).html(`<input class="point form-control" data-taskid=${taskid} id="task-${taskid}" type="text" value="${value}">`)
-
-        $(`.point`).on('keyup', function(){
-            var taskid = $(this).data('taskid')
-            var saveBtn = $(`#save-${taskid}`)
-            saveBtn.prop('disabled', false)
-
-        })
-
-    }
-
-
-    function saveUpdate(){
-        console.log('Saved!')
-        var taskid = $(this).data('taskid')
-        var saveBtn = $(`#save-${taskid}`)
-        var row = $(`.task-row-${taskid}`)
-
-        saveBtn.prop('disabled', true)
-        row.css('opacity', "0.5")
-
-        var point = $(`#task-${taskid}`).val()
-        var data = {'id':taskid, 'point':point}
-
-        updateTaskPOST(data)
-
-        setTimeout(function(){
-            row.css('opacity', '1')
-        }, 2000)
-
-
-    }
-
-    function deleteTask(){
-        var taskid = $(this).data('taskid')
-
-        var deleteBtn = $(`#delete-${taskid}`)
-        var saveBtn = $(`#save-${taskid}`)
-        var cancelBtn = $(`#cancel-${taskid}`)
-        var confirmBtn = $(`#confirm-${taskid}`)
-
-        deleteBtn.addClass('hidden')
-        saveBtn.addClass('hidden')
-
-        cancelBtn.removeClass('hidden')
-        confirmBtn.removeClass('hidden')
-    }
-
-    function cancelDeletion(){
-        var taskid = $(this).data('taskid')
-
-        var deleteBtn = $(`#delete-${taskid}`)
-        var saveBtn = $(`#save-${taskid}`)
-        var cancelBtn = $(`#cancel-${taskid}`)
-        var confirmBtn = $(`#confirm-${taskid}`)
-
-        deleteBtn.removeClass('hidden')
-        saveBtn.removeClass('hidden')
-
-        cancelBtn.addClass('hidden')
-        confirmBtn.addClass('hidden')
-
-    }
-
-    function confirmDeletion(){
-        var taskid = $(this).data('taskid')
-        var row = $(`.task-row-${taskid}`)
-        row.remove()
-        var data = {'id':taskid}
-        deleteTaskPOST(data)
-
-    }
-
-
-</script>
-
-<script>
-    $(document).ready(function()
-      {
-        var emppay;
-        var totalpay=0;
-        $('td:nth-child(5)').each(function()
-      {
-          emppay=$(this).html();
-          totalpay += parseInt(emppay);
-          $('#totalpay').text(totalpay);
+                <thead>
+                  <tr>
+                    <th scope="col">Task Name</th>
+                    <th scope="col">Submision</th>
+                    <th scope="col">Deadline</th>
+                    <th scope="col">Late Penalty</th>
+                    <th scope="col">Point</th>
+                    <th scope="col">Max Points</th>
+                    <th scope="col">Earning</th>
+                    <th scope="col">Pay</th>
+                  </tr>
+                </thead>
+                <tbody id="tasks-table">
+  
+  
+  
+                  
+                </tbody>
+                <tr> 
+                      
+                  <td colspan="8" >Total</td>
+                  <td id="totalpay" style="font-weight: bold;"></td>
+              </tr>
+              </table>
+          </div>
+      </div>
+      <div class="col-md-12"></div>
+  </div>
+  
+  <script>
+  
+      function updateTaskPOST(data){
+          var url = '/testing/updatetask/'
+          $.ajax({
+              method:'POST',
+              url:url,
+              data:data,
+              success:function(){
+                  
+              }
+          })
+  
+  
+      }
+  
+      var tasks = []
+      var dataURL = 'taskapi/'
+      $.ajax({
+          method:'GET',
+          url:dataURL,
+          success:function(response){
+              tasks = response
+              console.log(tasks)
+              for (var i in tasks){
+                  addRow(tasks[i])
+              }
+          }
+      })
+  
+     
+      function addRow(obj){
+          var row = `<tr scope="row" class="task-row-${obj.id}">
+                         <td>${obj.name}</td>
+                         <td id="submission-${obj.id}" data-taskid="${obj.id}"">${obj.submission}</td>
+                         <td id="deadline-${obj.id}" data-taskid="${obj.id}"">${obj.deadline}</td>
+                         <td id="late_penalty-${obj.id}" data-taskid="${obj.id}"">${obj.late_penalty}</td>
+                         <td id="point-${obj.id}" data-taskid="${obj.id}"">${obj.point}</td>
+                         <td id="mxpoint-${obj.id}" data-taskid="${obj.id}"">${obj.mxpoint}</td>
+                         <td id="earning-${obj.id}" data-taskid="${obj.id}"">${obj.earning}</td>
+                         <td id="pay-${obj.id}" data-taskid="${obj.id}"">${obj.pay}</td>
+                         
+                         <td>
+                              <button class="btn btn-sm btn-danger hidden" data-taskid=${obj.id} id="delete-${obj.id}">Delete</button>
+                              <button class="btn btn-sm btn-info" disabled data-taskid="${obj.id}"  id="save-${obj.id}">Save</button>
+                              <button class="btn btn-sm btn-danger hidden" data-taskid="${obj.id}"  id="cancel-${obj.id}">Cancel</button>
+                              <button class="btn btn-sm btn-primary hidden" data-taskid="${obj.id}"  id="confirm-${obj.id}">Confirm</button>
+                         </td>
+                     </tr>`
+  
+          $('#tasks-table').append(row)
+  
+  
+          $(`#delete-${obj.id}`).on('click', deleteTask)
+          $(`#cancel-${obj.id}`).on('click', cancelDeletion)
+          $(`#confirm-${obj.id}`).on('click', confirmDeletion)
+          $(`#save-${obj.id}`).on('click', saveUpdate)
+  
+          $(`#point-${obj.id}`).on('click', editpoint)
+          
+      }
+  
+      function editpoint(){
+          var taskid = $(this).data('taskid')
+          var value = $(this).html()
+  
+          $(this).unbind()
+          $(this).html(`<input class="point form-control" data-taskid=${taskid} id="task-${taskid}" type="text" value="${value}">`)
+  
+          $(`.point`).on('keyup', function(){
+              var taskid = $(this).data('taskid')
+              var saveBtn = $(`#save-${taskid}`)
+              saveBtn.prop('disabled', false)
+  
+          })
+  
+      }
+  
+  
+      function saveUpdate(){
+          console.log('Saved!')
+          var taskid = $(this).data('taskid')
+          var saveBtn = $(`#save-${taskid}`)
+          var row = $(`.task-row-${taskid}`)
+  
+          saveBtn.prop('disabled', true)
+          row.css('opacity', "0.5")
+  
+          var point = $(`#task-${taskid}`).val()
+          var data = {'id':taskid, 'point':point}
+  
+          updateTaskPOST(data)
+  
+          setTimeout(function(){
+              row.css('opacity', '1')
+          }, 2000)
+  
+  
+      }
+  
+      function deleteTask(){
+          var taskid = $(this).data('taskid')
+  
+          var deleteBtn = $(`#delete-${taskid}`)
+          var saveBtn = $(`#save-${taskid}`)
+          var cancelBtn = $(`#cancel-${taskid}`)
+          var confirmBtn = $(`#confirm-${taskid}`)
+  
+          deleteBtn.addClass('hidden')
+          saveBtn.addClass('hidden')
+  
+          cancelBtn.removeClass('hidden')
+          confirmBtn.removeClass('hidden')
+      }
+  
+      function cancelDeletion(){
+          var taskid = $(this).data('taskid')
+  
+          var deleteBtn = $(`#delete-${taskid}`)
+          var saveBtn = $(`#save-${taskid}`)
+          var cancelBtn = $(`#cancel-${taskid}`)
+          var confirmBtn = $(`#confirm-${taskid}`)
+  
+          deleteBtn.removeClass('hidden')
+          saveBtn.removeClass('hidden')
+  
+          cancelBtn.addClass('hidden')
+          confirmBtn.addClass('hidden')
+  
+      }
+  
+      function confirmDeletion(){
+          var taskid = $(this).data('taskid')
+          var row = $(`.task-row-${taskid}`)
+          row.remove()
+          var data = {'id':taskid}
+          deleteTaskPOST(data)
+  
+      }
+  
+  
+  </script>
+  
+  <script>
+      $(document).ready(function()
+        {
+          var emppay;
+          var totalpay=0;
+          $('td:nth-child(5)').each(function()
+        {
+            emppay=$(this).html();
+            totalpay += parseInt(emppay);
+            $('#totalpay').text(totalpay);
+        });
+  
       });
-
-    });
-</script>
+  </script>
+-->

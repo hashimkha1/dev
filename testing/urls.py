@@ -1,9 +1,11 @@
+'''
 from django.urls import path
 
 from . import views
 
 urlpatterns = [
-    #path('', views.activity_home, name='activity_home'),
+	
+	#path('', views.activity_home, name='activity_home'),
     path('', views.table, name='table'),
     path('category/<slug:slug>', views.category_detail, name='category_detail'),
     path('task/<slug:slug>', views.task_detail, name='task_detail'),
@@ -22,7 +24,10 @@ urlpatterns = [
 	path('updatetask/', views.updateTask),
 
 	#path('deleteactivity/', views.deleteActivity),
+	
+    
 ]
 
 
 
+'''

@@ -53,7 +53,7 @@ urlpatterns = [
     path('store/', include('store.urls')),
     path('management/', include('management.urls'),name='management'),
     path('', include('main.urls')),
-    path('testing/', include('testing.urls')),
+   # path('testing/', include('testing.urls')),
 ]
 
 

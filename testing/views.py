@@ -1,12 +1,16 @@
+
+'''
 import random
 from datetime import datetime
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from .models import Task, Category,Activity
 from django.http import JsonResponse
+'''
 from django.views.decorators.csrf import csrf_exempt
 from django.db.models import Sum
 
+'''
 def get_total(request):
     title = 'All Tasks'
     queryset = Task.objects.all()
@@ -117,3 +121,5 @@ def category_detail(request, slug):
         'tasks': tasks
     }
     return render(request, 'testing/category_detail.html', context)
+
+'''

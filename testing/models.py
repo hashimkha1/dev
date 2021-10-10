@@ -1,3 +1,4 @@
+'''
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
@@ -37,7 +38,7 @@ class Activity(models.Model):
 
 
 class Category(models.Model):
-    '''Category Table implemented with MPTT'''
+    #Category Table implemented with MPTT
     parent = models.ForeignKey('self', related_name='children', on_delete=models.CASCADE, blank=True, null=True)
     slug = models.SlugField(max_length=255)
     ordering = models.IntegerField(default=0)
@@ -168,3 +169,6 @@ class Task(models.Model):
     
     def __str__(self):
         return self.task_name
+
+'''
+
