@@ -16,12 +16,19 @@ Including another URLconf
 """
 
 from django.conf import settings
+from django.conf.urls import handler400
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-
 from users import views as user_views
+
+
+#===========ERROR HANDLING SECTION================
+handler400='main.views.hendler400'
+handler403='main.views.hendler403'
+handler300='main.views.hendler300'
+handler500='main.views.hendler500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -46,6 +53,7 @@ urlpatterns = [
     path('store/', include('store.urls')),
     path('management/', include('management.urls'),name='management'),
     path('', include('main.urls')),
+    path('testing/', include('testing.urls')),
 ]
 
 

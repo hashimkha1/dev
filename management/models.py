@@ -214,6 +214,7 @@ class Activity(models.Model):
     description = models.TextField(
         verbose_name=_('description'),
         help_text=_('Not Required'),
+        default='Add description on this activity'
         )
     slug = models.SlugField(max_length=255)
     point = models.PositiveIntegerField(
@@ -249,28 +250,33 @@ class Activity(models.Model):
             )
     submission = models.DateTimeField(
          help_text=_('Date formart :mm/dd/yyyy'),
-         auto_now_add=False,
-         auto_now=False,
-         blank=False,
-         null=False
+         auto_now=True,
+         editable=True,
+         null=True
          )
-    created = models.DateTimeField(_('created on'),auto_now_add=True, editable=False)
+    created = models.DateTimeField(_('created on'),auto_now_add=True, editable=True)
     updated = models.DateTimeField(_('Updated at'),auto_now=True)
     is_active=models.BooleanField(default=True)
+    
+    @property
+    def submitted(self):
+        submitted=datetime.date(self.submission)
+        return submitted
+    
+    @property
+    def deadline(self):
+        today = datetime.today()
+        deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+        deadline=datetime.date(deadline_date)
+        return deadline
 
     @property
     def late_penalty(self):
-        #submission=datetime.strptime(str(self.submission),'%Y-%m-%d %H:%M:%S+%f:%z')
-        submission=datetime.date(self.submission)
-        today = datetime.today()
-        deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
-        #deadline=datetime.strptime(str(deadline_date),'%Y-%m-%d %H:%M:%S')
-        deadline=datetime.date(deadline_date)
-       
-        if submission >deadline:
+        if self.submitted >self.deadline:
             return 0.98
         else:
             return 1
+
     @property
     def pay(self):
         if self.point>self.mx_point:
@@ -280,10 +286,6 @@ class Activity(models.Model):
             compute_pay=Earning * Decimal(self.late_penalty)
             pay=round(compute_pay)
             return pay
-        
-        
-        
-        
 
     class Meta:
         verbose_name_plural = 'Activities'
@@ -291,7 +293,7 @@ class Activity(models.Model):
 
     def get_absolute_url(self):
        return reverse('management:activity-detail', args=[self.slug])
-    
+       
     def __str__(self):
         return self.activity_name
 

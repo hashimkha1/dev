@@ -1,0 +1,218 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+      <head>
+
+
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+        
+        <style>
+            .hidden{
+                display:none;
+            }
+        
+            .country{
+                max-width:80px; 
+            }
+        
+        </style>
+        
+      </head>
+
+      <body>
+        <header>
+          <nav class="navbar navbar-expand-md navbar-light bg-white border-bottom">
+              <div class="container-fluid">
+                  <a class="navbar-brand" href="/"CODA</a>
+                  <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+                      aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarCollapse">
+                      <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                          <li class="nav-item active">
+                              <a class="nav-link" aria-current="page" href="/management">Home</a>
+                          </li>
+  
+                          <li class="nav-item dropdown">
+                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                                  data-bs-toggle="dropdown" aria-expanded="false">
+                                  Departments
+                              </a>
+                              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                 <!--<li><a class="dropdown-item" href="/">All</a></li>--> 
+                                  {% for dept in departments %}
+                                  <li {% if department.slug == dept.slug %}class="selected" {% endif %}>
+                                      <a class="dropdown-item" href="{{ dept.get_absolute_url }}">{{ dept.name }}</a>
+                                  </li>
+                                  {% endfor %}
+                              </ul>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </nav>
+      </header>
+
+      <div>
+        {% block content %} 
+        
+        {% endblock %}
+      </div>
+      <script>
+
+        function updateApplicationPOST(data){
+            var url = '/application/updateapplication/'
+            $.ajax({
+                method:'POST',
+                url:url,
+                data:data,
+                success:function(){
+                    
+                }
+            })
+    
+    
+        }
+    
+    
+        function deleteApplicationPOST(data){
+            var url = 'deleteapplication/'
+            $.ajax({
+                method:'POST',
+                url:url,
+                data:data,
+                success:function(){
+                    
+                }
+            })
+        }
+    
+    
+        var applications = []
+        var dataURL = 'applicationapi/'
+        $.ajax({
+            method:'GET',
+            url:dataURL,
+            success:function(response){
+                applications = response
+                console.log(applications)
+                for (var i in applications){
+                    addRow(applications[i])
+                    i.submmited
+       
+                }
+            }
+        })
+    
+        function addRow(obj){
+            var row = `<tr scope="row" class="application-row-${obj.id}">
+                           <td id="submitted-${obj.id}" data-applicationid="${obj.id}"">${obj.submitted}</td>
+                           <td id="first_name-${obj.id}" data-applicationid="${obj.id}"">${obj.first_name}</td>
+                           <td id="last_name-${obj.id}" data-applicationid="${obj.id}"">${obj.last_name}</td>
+                           <td id="phone-${obj.id}" data-applicationid="${obj.id}"">${obj.phone}</td>
+                           <td id="country-${obj.id}" data-applicationid="${obj.id}"">${obj.country}</td>
+                           
+                           <td>
+                                <button class="btn btn-sm btn-danger" data-applicationid=${obj.id} id="delete-${obj.id}">Delete</button>
+                                <button class="btn btn-sm btn-info" disabled data-applicationid="${obj.id}"  id="save-${obj.id}">Save</button>
+                                <button class="btn btn-sm btn-danger hidden" data-applicationid="${obj.id}"  id="cancel-${obj.id}">Cancel</button>
+                                <button class="btn btn-sm btn-primary hidden" data-applicationid="${obj.id}"  id="confirm-${obj.id}">Confirm</button>
+                           </td>
+                       </tr>`
+    
+            $('#applications-table').append(row)
+    
+    
+            $(`#delete-${obj.id}`).on('click', deleteApplication)
+            $(`#cancel-${obj.id}`).on('click', cancelDeletion)
+            $(`#confirm-${obj.id}`).on('click', confirmDeletion)
+            $(`#save-${obj.id}`).on('click', saveUpdate)
+    
+            $(`#country-${obj.id}`).on('click', editcountry)
+            
+        }
+    
+        function editcountry(){
+            var applicationid = $(this).data('applicationid')
+            var value = $(this).html()
+    
+            $(this).unbind()
+            $(this).html(`<input class="country form-control" data-applicationid=${applicationid} id="application-${applicationid}" type="text" value="${value}">`)
+    
+            $(`.country`).on('keyup', function(){
+                var applicationid = $(this).data('applicationid')
+                var saveBtn = $(`#save-${applicationid}`)
+                saveBtn.prop('disabled', false)
+    
+            })
+    
+        }
+    
+    
+        function saveUpdate(){
+            console.log('Saved!')
+            var applicationid = $(this).data('applicationid')
+            var saveBtn = $(`#save-${applicationid}`)
+            var row = $(`.application-row-${applicationid}`)
+    
+            saveBtn.prop('disabled', true)
+            row.css('opacity', "0.5")
+    
+            var country = $(`#application-${applicationid}`).val()
+            var data = {'id':applicationid, 'country':country}
+    
+            updateApplicationPOST(data)
+    
+            setTimeout(function(){
+                row.css('opacity', '1')
+            }, 2000)
+    
+    
+        }
+    
+        function deleteApplication(){
+            var applicationid = $(this).data('applicationid')
+    
+            var deleteBtn = $(`#delete-${applicationid}`)
+            var saveBtn = $(`#save-${applicationid}`)
+            var cancelBtn = $(`#cancel-${applicationid}`)
+            var confirmBtn = $(`#confirm-${applicationid}`)
+    
+            deleteBtn.addClass('hidden')
+            saveBtn.addClass('hidden')
+    
+            cancelBtn.removeClass('hidden')
+            confirmBtn.removeClass('hidden')
+        }
+    
+        function cancelDeletion(){
+            var applicationid = $(this).data('applicationid')
+    
+            var deleteBtn = $(`#delete-${applicationid}`)
+            var saveBtn = $(`#save-${applicationid}`)
+            var cancelBtn = $(`#cancel-${applicationid}`)
+            var confirmBtn = $(`#confirm-${applicationid}`)
+    
+            deleteBtn.removeClass('hidden')
+            saveBtn.removeClass('hidden')
+    
+            cancelBtn.addClass('hidden')
+            confirmBtn.addClass('hidden')
+    
+        }
+    
+        function confirmDeletion(){
+            var applicationid = $(this).data('applicationid')
+            var row = $(`.application-row-${applicationid}`)
+            row.remove()
+            var data = {'id':applicationid}
+            deleteApplicationPOST(data)
+    
+        }
+    
+    
+    </script>

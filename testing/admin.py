@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Category, Task ,Activity#, ProductImage, ProductReview,
+
+admin.site.register(Activity)
+admin.site.register(Category)
+admin.site.register(Task)
+#admin.site.register(ProductImage)
+#admin.site.register(ProductReview)

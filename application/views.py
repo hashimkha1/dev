@@ -16,6 +16,10 @@ from .forms import (ApplicantForm, ApplicationForm, EmployeeForm,
 from .models import (Application, Employee, FirstUpload, InteviewUploads,
                      Policy, Rated, Reporting)
 
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Sum
+
 #from .filters import RatingFilter
 
 #Interview description data
@@ -62,6 +66,7 @@ def apply(request):
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
 
+'''
 class ApplicantListView(ListView):
     model=Application
     template_name='application/applicants.html'  #<app>/<model>_<viewtype>
@@ -73,6 +78,65 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
     def get_success_url(self):
         return reverse('applicant-list')
+'''
+
+#============JQUERY IMPLEMENTATION======================================
+
+
+def applicants(request):
+    return render(request, 'application/applicants.html')
+    
+def get_total(request):
+    title = 'All Applicants'
+    queryset = Application.objects.all()
+    total_earning = Application.objects.aggregate(Sum("mx_earning"))
+    context = {
+    "title": title,
+    "queryset": queryset,
+    "total_earning": total_earning,
+    }
+    return render(request, 'application/table.html', context)
+
+
+#API data
+def ApplicationDataAPI(request):
+    data = Application.objects.all().order_by('-application_date')
+    dataList = []
+    for i in data:
+        dataList.append({
+                            'id':i.id,
+                            'username':i.username,
+                            'first_name':i.first_name,
+                            'last_name':i.last_name,
+                            'phone':i.phone,
+                            'submitted':i.submitted,
+                            'phone':i.phone,
+                            'country':i.country,
+                         })
+    
+    return JsonResponse(dataList, safe=False)
+
+@csrf_exempt
+def updateApplication(request):
+    objId = request.POST.get('id')
+    point = request.POST.get('point')
+    application = Application.objects.get(id=objId)
+    application.point = point
+    application.save()
+
+    return JsonResponse('Application Updated!', safe=False)
+
+@csrf_exempt
+def deleteApplication(request):
+	print('Delete called!')
+	objId = request.POST.get('id')
+	application = Application.objects.get(id=objId)
+	application.delete()
+
+	return JsonResponse('Application Deleted!', safe=False)
+
+
+
 
 @login_required
 def applicant_profile(request):

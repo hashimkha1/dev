@@ -1,21 +1,18 @@
 from django.contrib.auth.mixins import LoginRequiredMixin #,UserPassesTestMixin
-from django.contrib.auth.models import User
-from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render,redirect
 from django.urls import reverse
-from django.urls.conf import include
 from django.utils.timezone import datetime
 from dateutil.parser import parse
 import calendar
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                 UpdateView)
 from .models import Employee ,Department,Category, Activity
-
 from .forms import TransactionForm
 from .models import Transaction
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
@@ -98,12 +95,12 @@ def transaction(request):
 
 
 # -------------------------DAF Section-------------------------------------#
-
+@login_required
 def all_activities(request):
     activities =Activity.activities.all()
     return render(request, 'management/home.html', {'activities': activities})
 
-
+@login_required
 def department_list(request, department_slug=None):
     department = get_object_or_404(Department, slug=department_slug)
     categories = Category.objects.filter(department=department)
@@ -113,9 +110,7 @@ def department_list(request, department_slug=None):
              }
     return render(request, 'management/company_finances/department.html', context)
 
-
-
-
+@login_required
 def category_list(request, category_slug=None):
     category = get_object_or_404(Category, slug=category_slug)
     #activities = Activity.objects.filter(category__in=category.get_descendants(include_self=True))
@@ -136,6 +131,7 @@ def category_list(request, category_slug=None):
              }
     return render(request, 'management/company_finances/category.html', context)
 
+@login_required
 def activity_detail(request,slug,category_slug=None):
     activity = get_object_or_404(Activity, slug=slug, is_active=True)
     today = datetime.today()
@@ -151,7 +147,7 @@ def activity_detail(request,slug,category_slug=None):
 class ActivityUpdateView(LoginRequiredMixin,UpdateView):
     model=Activity
     #fields=['category','created_by','activity_name','description','slug','earning','point','mx_point','submission','created','updated']
-    fields=['activity_name','point','submission']
+    fields=['activity_name','point']
     #success_url='/management/category/{slug}/'
     #success_url="/parent/{parent_id}/" 
     def form_valid(self,form):
@@ -173,3 +169,4 @@ class ActivityUpdateView(LoginRequiredMixin,UpdateView):
             return True
         return False
     '''  
+

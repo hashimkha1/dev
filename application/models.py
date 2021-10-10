@@ -1,9 +1,7 @@
 #from coda_project.application.views import first_interview
-from django.contrib.auth.models import User
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.urls import reverse
 from django.utils import timezone
+from datetime import datetime
 
 
 # Create your models here.
@@ -28,6 +26,11 @@ class Application(models.Model):
     country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
+
+    @property
+    def submitted(self):
+        submitted=datetime.date(self.application_date)
+        return submitted
 
     def __str__(self):
         return f'{self.username} application'

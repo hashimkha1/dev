@@ -1,0 +1,31 @@
+{% extends 'testing/base.html' %}
+
+{% block title %}{{ category.name }} | {% endblock %}
+
+{% block content %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="#">Home</a></li>
+            {% if category.parent %}
+                <li><a href="{% url 'category_detail' category.parent.slug %}">{{ category.parent.title }}</a></li>
+            {% endif %}
+            <li class="is-active"><a href="{% url 'category_detail' category.slug %}">{{ category.title }}</a></li>
+        </ul>
+    </nav>
+
+    <h1 class="title">{{ category.name }}</h1>
+    {% if category.children.all %}
+        <div class="columns is-multiline">
+            {% for subcategory in category.children.all %}
+                <div class="column is-3">
+                    <h2 class="subtitle">{{ subcategory.name }}</h2>
+                    <a href="{% url 'category_detail' subcategory.slug %}">View Tasks</a>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        {% with tasks as list_tasks %}
+            {% include 'testing/parts/task_list.html' %}
+        {% endwith %}
+    {% endif %}
+{% endblock %}
