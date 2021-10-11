@@ -66,7 +66,7 @@ def apply(request):
         form=ApplicantForm()
     return render(request, 'application/apply.html',{'form':form})
 
-'''
+
 class ApplicantListView(ListView):
     model=Application
     template_name='application/applicants.html'  #<app>/<model>_<viewtype>
@@ -78,14 +78,13 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
     def get_success_url(self):
         return reverse('applicant-list')
-'''
 
 #============JQUERY IMPLEMENTATION======================================
-
+'''
 
 def applicants(request):
     return render(request, 'application/applicants.html')
-    
+  
 def get_total(request):
     title = 'All Applicants'
     queryset = Application.objects.all()
@@ -135,7 +134,7 @@ def deleteApplication(request):
 
 	return JsonResponse('Application Deleted!', safe=False)
 
-
+'''
 
 
 @login_required
