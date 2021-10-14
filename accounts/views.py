@@ -1,5 +1,4 @@
 import calendar
-
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -38,6 +37,9 @@ def join(request):
     return render(request, 'accounts/registration/join.html', {'form': form})
     
 #@allowed_users(allowed_roles=['admin'])
+
+def home(request):
+    return render(request, 'main/home_templates/layout.html')
 
 def clients(request):
     clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')

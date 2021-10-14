@@ -13,7 +13,7 @@ from .models import Activity, Category, Department, Employee, Transaction
 
 
 def home(request):
-    return render(request, 'management/home.html',{'title': 'home'})
+    return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
 
 class EmployeeCreateView(LoginRequiredMixin, CreateView):
     model=Employee
@@ -94,7 +94,7 @@ def transaction(request):
 @login_required
 def all_activities(request):
     activities =Activity.activities.all()
-    return render(request, 'management/home.html', {'activities': activities})
+    return render(request, 'main/home_templates/management_home.html', {'activities': activities})
 
 @login_required
 def department_list(request, department_slug=None):
