@@ -1,19 +1,9 @@
-import calendar
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
-from django.core.files.storage import FileSystemStorage
-from django.forms import inlineformset_factory
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-from django.utils.timezone import datetime
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.shortcuts import  redirect, render
 
 from .decorators import unauthenticated_user
-from .forms import \
-    CustomerForm  # , SignUpForm, UserLoginForm, UserRegisterForm
+from .forms import CustomerForm  # , SignUpForm, UserLoginForm, UserRegisterForm
 from .models import CustomerUser
 
 # Create your views here..

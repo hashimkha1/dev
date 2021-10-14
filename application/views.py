@@ -1,22 +1,15 @@
 from datetime import date, timedelta
 
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.core.files.storage import FileSystemStorage
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Sum
 from django.db.models.aggregates import Avg, Sum
-from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import  redirect, render
 from django.urls import reverse
-from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  TemplateView, UpdateView)
+from django.views.generic import (DeleteView,ListView,TemplateView, UpdateView)
 
-from .forms import (ApplicantForm, ApplicationForm, InterviewForm,
-                    InterviewUploadForm, PolicyForm, RatingForm, ReportingForm)
-from .models import (Application, FirstUpload, InteviewUploads, Policy, Rated,
-                     Reporting)
+from .forms import (ApplicantForm, InterviewForm,PolicyForm, RatingForm, ReportingForm)
+from .models import (Application, FirstUpload, Policy, Rated,Reporting)
 
 #from .filters import RatingFilter
 
@@ -48,7 +41,6 @@ posts=[
 }
 ]
 
-
 # Create your views here.
 class application(TemplateView):
     template_name='application.html'
@@ -64,7 +56,6 @@ def apply(request):
         form=ApplicantForm()
     return render(request, 'application/applications/apply.html',{'form':form})
 
-
 class ApplicantListView(ListView):
     model=Application
     template_name='application/applications/applicants.html'  #<app>/<model>_<viewtype>
@@ -76,63 +67,6 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
     def get_success_url(self):
         return reverse('applicant-list')
-
-#============JQUERY IMPLEMENTATION======================================
-'''
-
-def applicants(request):
-    return render(request, 'application/applications/applicants.html')
-  
-def get_total(request):
-    title = 'All Applicants'
-    queryset = Application.objects.all()
-    total_earning = Application.objects.aggregate(Sum("mx_earning"))
-    context = {
-    "title": title,
-    "queryset": queryset,
-    "total_earning": total_earning,
-    }
-    return render(request, 'application/table.html', context)
-
-
-#API data
-def ApplicationDataAPI(request):
-    data = Application.objects.all().order_by('-application_date')
-    dataList = []
-    for i in data:
-        dataList.append({
-                            'id':i.id,
-                            'username':i.username,
-                            'first_name':i.first_name,
-                            'last_name':i.last_name,
-                            'phone':i.phone,
-                            'submitted':i.submitted,
-                            'phone':i.phone,
-                            'country':i.country,
-                         })
-    
-    return JsonResponse(dataList, safe=False)
-
-@csrf_exempt
-def updateApplication(request):
-    objId = request.POST.get('id')
-    point = request.POST.get('point')
-    application = Application.objects.get(id=objId)
-    application.point = point
-    application.save()
-
-    return JsonResponse('Application Updated!', safe=False)
-
-@csrf_exempt
-def deleteApplication(request):
-	print('Delete called!')
-	objId = request.POST.get('id')
-	application = Application.objects.get(id=objId)
-	application.delete()
-
-	return JsonResponse('Application Deleted!', safe=False)
-
-'''
 
 
 @login_required
@@ -209,25 +143,118 @@ def rate(request):
     return render(request, 'application/orientation/rate.html',{'form':form})
 
 def rating(request):
-   
     ratings=Rated.objects.all().order_by('-rating_date')
-    #total_customers = customers.count()
-	#total_orders = orders.count()
-	#delivered = orders.filter(status='Delivered').count()
-	#pending = orders.filter(status='Pending').count()
     total_punctuality=Rated.objects.all().aggregate(Sum('punctuality'))
     total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    #total_understanding=Rated.objects.filter(user=self.request.user).aggregate(total_credit=Sum('subject__credit'))
     total_understanding=Rated.objects.all().aggregate(Total_Understanding=Sum('understanding'))
-    #total_ratings=ratings.count()
-    #myFilter = RatingFilter(request.GET, queryset=ratings)
-    #ratings = myFilter.qs 
-    context = {'ratings': ratings
-    #,'myFilter':myFilter
-    ,'total_punctuality': total_punctuality
-    ,'total_communication': total_communication
-    ,'total_understanding': total_understanding}
+    context = {
+                'ratings': ratings
+                ,'total_punctuality': total_punctuality
+                ,'total_communication': total_communication
+                ,'total_understanding': total_understanding
+              }
     return render(request, 'application/orientation/rating.html', context)
+
+
+# -------------------------rating Section-------------------------------------#
+def trainee(request):
+    if request.method== "POST":
+        form=ReportingForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-trainees')
+    else:
+        form=ReportingForm()
+    return render(request, 'application/trainee.html',{'form':form})
+
+def trainees(request):
+    trainees=Reporting.objects.all().order_by('-update_date')
+    return render(request, 'application/trainees.html', {'trainees': trainees})
+
+
+class TraineeUpdateView(LoginRequiredMixin,UpdateView):
+    model=Reporting
+    fields = ['first_name','last_name','gender','reporting_date','method','interview_type','comment']
+    form=ReportingForm()
+    def form_valid(self,form):
+        form.instance.username=self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('application-trainees') 
+'''
+    def test_func(self):
+        employee = self.get_object()
+        if self.request.firstname == employee.name:
+            return True
+        return False
+
+'''
+class TraineeDeleteView(LoginRequiredMixin,DeleteView):
+    model=Reporting
+    def get_success_url(self):
+        return reverse('application-trainees') 
+
+
+#============JQUERY IMPLEMENTATION======================================
+'''
+
+def applicants(request):
+    return render(request, 'application/applications/applicants.html')
+  
+def get_total(request):
+    title = 'All Applicants'
+    queryset = Application.objects.all()
+    total_earning = Application.objects.aggregate(Sum("mx_earning"))
+    context = {
+    "title": title,
+    "queryset": queryset,
+    "total_earning": total_earning,
+    }
+    return render(request, 'application/table.html', context)
+
+
+#API data
+def ApplicationDataAPI(request):
+    data = Application.objects.all().order_by('-application_date')
+    dataList = []
+    for i in data:
+        dataList.append({
+                            'id':i.id,
+                            'username':i.username,
+                            'first_name':i.first_name,
+                            'last_name':i.last_name,
+                            'phone':i.phone,
+                            'submitted':i.submitted,
+                            'phone':i.phone,
+                            'country':i.country,
+                         })
+    
+    return JsonResponse(dataList, safe=False)
+
+@csrf_exempt
+def updateApplication(request):
+    objId = request.POST.get('id')
+    point = request.POST.get('point')
+    application = Application.objects.get(id=objId)
+    application.point = point
+    application.save()
+
+    return JsonResponse('Application Updated!', safe=False)
+
+@csrf_exempt
+def deleteApplication(request):
+	print('Delete called!')
+	objId = request.POST.get('id')
+	application = Application.objects.get(id=objId)
+	application.delete()
+
+	return JsonResponse('Application Deleted!', safe=False)
+
+
+
+
+#============EMPLOYEE IMPLEMENTATION======================================
 
 def employee_form(request,id=0):
     if request.method == "GET":
@@ -275,43 +302,4 @@ def success_stories(request):
         'posts': Post.objects.all()
     }
     return render(request, 'codablog/success.html', context)
-
-# -------------------------rating Section-------------------------------------#
-def trainee(request):
-    if request.method== "POST":
-        form=ReportingForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('application-trainees')
-    else:
-        form=ReportingForm()
-    return render(request, 'application/trainee.html',{'form':form})
-
-def trainees(request):
-    trainees=Reporting.objects.all().order_by('-update_date')
-    return render(request, 'application/trainees.html', {'trainees': trainees})
-
-
-class TraineeUpdateView(LoginRequiredMixin,UpdateView):
-    model=Reporting
-    fields = ['first_name','last_name','gender','reporting_date','method','interview_type','comment']
-    form=ReportingForm()
-    def form_valid(self,form):
-        form.instance.username=self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('application-trainees') 
 '''
-    def test_func(self):
-        employee = self.get_object()
-        if self.request.firstname == employee.name:
-            return True
-        return False
-
-'''
-class TraineeDeleteView(LoginRequiredMixin,DeleteView):
-    model=Reporting
-
-    def get_success_url(self):
-        return reverse('application-trainees') 
