@@ -32,16 +32,16 @@ def checkout(request):
     return render(request, 'main/checkout.html', {'title': 'checkout'})
 
 def layout(request):
-    return render(request, 'main/layout.html', {'title': 'layout'})
+    return render(request, 'main/home_templates/layout.html', {'title': 'layout'})
 
 def home(request):
-    return render(request, 'main/home.html', {'title': 'home'})
+    return render(request, 'main/home_templates/layout.html', {'title': 'home'})
 
 def about(request):
     return render(request, 'main/about.html', {'title': 'about'})
 
 def about_us(request):
-    return render(request, 'main/about_us.html', {'title': 'about_us'})
+    return render(request, 'main/home_templates/layout.html', {'title': 'about_us'})
 
 def team(request):
     return render(request, 'main/team.html', {'title': 'team'})
@@ -70,14 +70,14 @@ def transact(request):
         form=TransactionForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('projectmanagement-transaction')
+            return redirect('management-transaction')
     else:
         form=TransactionForm()
-    return render(request, 'projectmanagement/transact.html',{'form':form})
+    return render(request, 'management/company_finances/transact.html',{'form':form})
 ''' 
 def transaction(request):
     transactions=Expenses.objects.all().order_by('-activity_date')
-    return render(request, 'projectmanagement/transaction.html', {'transactions': transactions})
+    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
 '''
 
 class TransactionListView(ListView):

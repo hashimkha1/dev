@@ -1,8 +1,13 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField
+from django.contrib.auth import password_validation
+from django.contrib.auth.forms import (ReadOnlyPasswordHashField,
+                                       UserCreationForm)
 from django.contrib.auth.models import User
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _
 
 from .models import CustomerUser
+
 #from django.db import transaction
 
 class CustomerForm(forms.ModelForm):
@@ -42,94 +47,53 @@ class CustomerForm(forms.ModelForm):
         return user
 
 
-class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
-
-class Meta:
-    model = CustomerUser
-    fields = ('email','password','date_joined','is_active','is_admin')
-
-def clean_password(self):
-    return self.initial['password']
-
 
 '''
-class EmployeeForm(forms.ModelForm):  
-    class Meta:  
-        model = Employee  
-        fields = ['name', 'contact', 'email'] #https://docs.djangoproject.com/en/3.0/ref/forms/widgets/
-        widgets = { 'name': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'email': forms.EmailInput(attrs={ 'class': 'form-control' }),
-            'contact': forms.TextInput(attrs={ 'class': 'form-control' }),
-      }
+username_validator = UnicodeUsernameValidator()
 
-class CustomerForm(forms.ModelForm):
-    email = forms.EmailField()
+class SignUpForm(UserCreationForm):
+    first_name = forms.CharField(max_length=12, min_length=4, required=True, help_text='Required: First Name',
+                                widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name'}))
+    last_name = forms.CharField(max_length=12, min_length=4, required=True, help_text='Required: Last Name',
+                               widget=(forms.TextInput(attrs={'class': 'form-control'})))
+    email = forms.EmailField(max_length=50, help_text='Required. Inform a valid email address.',
+                             widget=(forms.TextInput(attrs={'class': 'form-control'})))
+    phone = forms.CharField(max_length=20, min_length=4, required=True, help_text='Required: Phone Number',
+                               widget=(forms.TextInput(attrs={'class': 'form-control'})))
+    password1 = forms.CharField(label=_('Password'),
+                                widget=(forms.PasswordInput(attrs={'class': 'form-control'})),
+                                help_text=password_validation.password_validators_help_text_html())
+    password2 = forms.CharField(label=_('Password Confirmation'), widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+                                help_text=_('Just Enter the same password, for confirmation'))
+    username = forms.CharField(
+        label=_('Username'),
+        max_length=150,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={'unique': _("A user with that username already exists.")},
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+
     class Meta:
-        model = CustomerUser
-        fields = ['first_name','last_name','username','phone','gender', 'email','address','city','state','country']
+        model = User
+        fields = ('username', 'first_name', 'last_name','phone', 'email', 'password1', 'password2',)
+
+
+class UserRegisterForm(UserCreationForm):
+    email = forms.EmailField()
+
+    class Meta:
+        model = User
+        fields = ['first_name','last_name','username', 'email', 'email','password1', 'password2']
         labels={
-                'first_name':'First Name',
-                'last_name':'Last Name',
-                'username':'User Name',
-                'email':'Email',
-                'gender':'Gender',
-                'phone':'Phone',
-                'address':'Address',
-                'city':'City',
-                'state':'State',
-                'country':'Country',
+            'first_name':"First Name",
+            'last_name':"Last Name",
+            'username':"User Name",
         }
 
-#'password1','password2',
-
-
-#from .models import Customer,Applicant,User
-class CustomerSignupForm(UserCreationForm):
-    first_name=forms.CharField(required=True)
-    last_name=forms.CharField(required=True)
-
+class UserLoginForm(UserCreationForm):
+    email = forms.EmailField()
     class Meta:
         model = User
-        fields = '__all__'
-
-    @transaction.atomic
-    def data_save(self):
-        user=super().save(commit=False)
-        user.first_name=self.cleaned_data.get('first_name')
-        user.last_name=self.cleaned_data.get('first_name')
-        user.save()
-        customer=Customer.objects.create(user=user)
-        customer.phone=self.cleaned_data.get('phone')
-        customer.email=self.cleaned_data.get('email')
-        customer.address=self.cleaned_data.get('address')
-        customer.city=self.cleaned_data.get('city')
-        customer.save()
-        return customer
-        
-class ApplicantSignUpForm(UserCreationForm):
-    first_name=forms.CharField(required=True)
-    last_name=forms.CharField(required=True)
-    phone_number=forms.CharField(required=True)
-
-    class Meta:
-        model = User
-        fields = '__all__'
-
-    @transaction.atomic
-    def data_save(self):
-        user=super().save(commit=False)
-        user.first_name=self.cleaned_data.get('first_name')
-        user.last_name=self.cleaned_data.get('first_name')
-        user.save()
-        applicant=Applicant.objects.create(user=user)
-        #applicant.applicant_id=self.cleaned_data.get('applicant_id')
-        applicant.username=self.cleaned_data.get('username')
-        applicant.phone=self.cleaned_data.get('phone')
-        applicant.gender=self.cleaned_data.get('gender')
-        applicant.email=self.cleaned_data.get('email')
-        applicant.city=self.cleaned_data.get('city')
-        applicant.country=self.cleaned_data.get('country')
-        applicant.save()
-        return applicant
-'''
+        fields = ['username', 'email']
+        '''

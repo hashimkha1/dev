@@ -1,20 +1,23 @@
+import calendar
+
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .decorators import unauthenticated_user
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.models import User
 from django.core.files.storage import FileSystemStorage
 from django.forms import inlineformset_factory
-from django.shortcuts import get_object_or_404, render,redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils.timezone import datetime
-import calendar
-from django.views.generic import (CreateView, DeleteView,UpdateView)
+from django.views.generic import CreateView, DeleteView, UpdateView
 
-from .forms import CustomerForm
+from .decorators import unauthenticated_user
+from .forms import \
+    CustomerForm  # , SignUpForm, UserLoginForm, UserRegisterForm
 from .models import CustomerUser
 
+# Create your views here..
 
 #---------------Test----------------------
 @unauthenticated_user
@@ -29,28 +32,66 @@ def join(request):
             if category == "Applicant":
                 return render(request, 'application/first_interview.html')
             else:
-                return redirect('user-login')
+                return redirect('account-login')
     else:
         form=CustomerForm()
-    return render(request, 'accounts/join.html', {'form': form})
+    return render(request, 'accounts/registration/join.html', {'form': form})
+    
+#@allowed_users(allowed_roles=['admin'])
+
+def clients(request):
+    clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')
+    return render(request, 'accounts/clients.html', {'clients': clients})
+
+@login_required(login_url='account-login')
+def profile(request):
+    return render(request,'users/profile.html')
+
 '''
 @unauthenticated_user
 def loginPage(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(request,username=username, password=password)
-        if user is not None:
-            login(request,user)
+        account = authenticate(request,username=username, password=password)
+        if account is not None:
+            login(request,account)
             return redirect('main-home')
         else:
             messages.info(request, 'USERNAME OR PASSWORD is incorrect!Please try again')
     context={}
     return render(request, 'accounts/login.html', context)
-'''
 @login_required
-#@allowed_users(allowed_roles=['admin'])
-def clients(request):
-    clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')
-    return render(request, 'accounts/clients.html', {'clients': clients})
  
+def register(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('account-login')
+    else:
+        form = SignUpForm(request.POST)
+    return render(request, 'users/register.html',{'form':form})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserRegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            messages.success(request, f'Account created for {username}!')
+            if category == Applicant:
+                return render(request, 'users/register.html', {'form': form})
+            else:
+                return redirect('account-login')
+    else:
+        form = UserRegisterForm()
+    return render(request, 'users/register.html', {'form': form})
+
+def registered(request):
+    clients=User.objects.all().order_by('-first_name')
+    return render(request, 'users/registered.html', {'clients': clients})
+'''

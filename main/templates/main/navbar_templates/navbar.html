@@ -1,0 +1,143 @@
+{% load static %}
+<nav class="navbar navbar-expand-md navbar-dark bg-steel sticky-top">
+  <div class="container">
+    <a class="navbar-brand mr-4" href="{% url 'main-layout' %}">CODA</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarToggle"
+      aria-controls="navbarToggle"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarToggle">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'main-layout' %}"
+            >Home <span class="sr-only">(current)</span></a
+          >
+        </li>
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            About
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+            <a class="dropdown-item" href="{% url 'main-team' %}"
+              >Team</a
+            >
+          </div>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdown"
+            role="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            Services
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+            <a
+              class="dropdown-item"
+              href="{% url 'main-layout' %}"
+              >Management & Consultancy</a
+            >
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'data-home' %}"
+              >Data Analysis Training</a
+            >
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'investing-home' %}"
+              >Stocks & Options Training</a
+            >
+          </div>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropDown"
+            role="button"
+            data-toggle="dropdown"
+            >Your Career</a
+          >
+          <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+            <a
+              class="dropdown-item"
+              href="{% url 'data-training' %}"
+              target=""
+              >Training Resources</a
+            >
+
+            <div class="dropdown-divider"></div>
+
+            <a
+              class="dropdown-item"
+              href="{% url 'data-training' %}"
+              target=""
+              >Building a Network</a
+            >
+            <hr />
+
+            <a
+              class="dropdown-item"
+              href="{% url 'data-training' %}"
+              target=""
+              >Deliverable(Projects)</a
+            >
+            <hr />
+
+            <a class="dropdown-item" href="{% url 'application-career' %}"
+              >Find Your Job</a
+            >
+          </div>
+        </li>
+      </ul>
+
+      <!-- Navbar Right Side -->
+      <div class="navbar-nav">
+        {% if user.is_authenticated %}
+        <a class="nav-item nav-link" href="{%url 'codablog-success'%}"
+          >Success Stories</a
+        >
+        <a class="nav-item nav-link" href="{% url 'account-profile' %}"
+          >Account</a
+        >
+        <a class="nav-item nav-link" href="{% url 'account-logout' %}"
+          >Logout</a
+        >
+        <a class="nav-item nav-link" href="{% url 'main-pay' %}"
+          >Make a Payment</a
+        >
+        {% else %}
+        <a class="nav-item nav-link" href="{% url 'account-login' %}"
+          >Login</a
+        >
+        <a class="nav-item nav-link" href="{% url 'account-join' %}"
+          >Register</a
+        >
+        <a class="nav-item nav-link" href="{% url 'main-pay' %}"
+          >Make a Payment</a
+        >
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

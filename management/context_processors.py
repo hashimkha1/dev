@@ -1,5 +1,4 @@
-from .models import Activity,Category, Department
-
+from .models import Activity, Category, Department
 
 
 def departments (request):

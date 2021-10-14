@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import CustomerUser
+from .models import CustomerUser, Profile
+
 
 #admin.site.register(CustomerUser)
 class CustomerAdmin(UserAdmin):
@@ -26,6 +27,7 @@ class CustomerAdmin(UserAdmin):
 # Now register the new UserAdmin...
 admin.site.register(CustomerUser, CustomerAdmin)
 
-
+# Register your models here.
+admin.site.register(Profile)
 
 

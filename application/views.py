@@ -4,21 +4,19 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.files.storage import FileSystemStorage
+from django.db.models import Sum
 from django.db.models.aggregates import Avg, Sum
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   TemplateView, UpdateView)
 
-from .forms import (ApplicantForm, ApplicationForm, EmployeeForm,
-                    InterviewForm, InterviewUploadForm, PolicyForm, RatingForm,
-                    ReportingForm)
-from .models import (Application, Employee, FirstUpload, InteviewUploads,
-                     Policy, Rated, Reporting)
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-from django.db.models import Sum
+from .forms import (ApplicantForm, ApplicationForm, InterviewForm,
+                    InterviewUploadForm, PolicyForm, RatingForm, ReportingForm)
+from .models import (Application, FirstUpload, InteviewUploads, Policy, Rated,
+                     Reporting)
 
 #from .filters import RatingFilter
 
@@ -64,12 +62,12 @@ def apply(request):
             return redirect('application-policies')
     else:
         form=ApplicantForm()
-    return render(request, 'application/apply.html',{'form':form})
+    return render(request, 'application/applications/apply.html',{'form':form})
 
 
 class ApplicantListView(ListView):
     model=Application
-    template_name='application/applicants.html'  #<app>/<model>_<viewtype>
+    template_name='application/applications/applicants.html'  #<app>/<model>_<viewtype>
     context_object_name='applicants'
     ordering=['-application_date']
 
@@ -83,7 +81,7 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 '''
 
 def applicants(request):
-    return render(request, 'application/applicants.html')
+    return render(request, 'application/applications/applicants.html')
   
 def get_total(request):
     title = 'All Applicants'
@@ -139,30 +137,30 @@ def deleteApplication(request):
 
 @login_required
 def applicant_profile(request):
-    return render(request, 'application/applicant_profile.html')
+    return render(request, 'application/applications/applicant_profile.html')
 
 # # ------------------------Interview Section-------------------------------------#.
 def career(request):
-    return render(request, 'application/career.html', {'title': 'career'})
+    return render(request, 'application/applications/career.html', {'title': 'career'})
 
 def interview(request):
     context = {
         'posts': posts
     }
-    return render(request, 'application/interview.html', context)
+    return render(request, 'application/interview_process/interview.html', context)
     
 def first_interview(request):
-    return render(request, 'application/first_interview.html', {'title': 'first_interview'})
+    return render(request, 'application/interview_process/first_interview.html', {'title': 'first_interview'})
 
 def second_interview(request):
-    return render(request, 'application/second_interview.html', {'title': 'second_interview'})
+    return render(request, 'application/interview_process/second_interview.html', {'title': 'second_interview'})
 
 def orientation(request):
-    return render(request, 'application/orientation.html', {'title': 'orientation'})
+    return render(request, 'application/orientation/orientation.html', {'title': 'orientation'})
 
 
 def internal_training(request):
-    return render(request, 'application/internal_training.html', {'title': 'orientation'})
+    return render(request, 'application/orientation/internal_training.html', {'title': 'orientation'})
 
 
 def policy(request):
@@ -173,7 +171,7 @@ def policy(request):
             return redirect('application-policies')
     else:
         form=PolicyForm()
-    return render(request, 'application/policy.html',{'form':form})
+    return render(request, 'application/orientation/policy.html',{'form':form})
 
 def policies(request):
     reporting_date = date.today() + timedelta(days=7)
@@ -182,7 +180,7 @@ def policies(request):
         'uploads': uploads,
         'reporting_date': reporting_date
     }
-    return render(request, 'application/policies.html',context)
+    return render(request, 'application/orientation/policies.html',context)
 
 # -------------------------Uploads Section-------------------------------------#
 def firstupload(request):
@@ -193,11 +191,11 @@ def firstupload(request):
             return redirect('application-second_interview')
     else:
         form=InterviewForm()
-    return render(request, 'application/firstupload.html',{'form':form})
+    return render(request, 'application/interview_process/firstupload.html',{'form':form})
 
 def fupload(request):
     iuploads=FirstUpload.objects.all().order_by('-upload_date')
-    return render(request, 'application/fupload.html', {'iuploads': iuploads})
+    return render(request, 'application/interview_process/fupload.html', {'iuploads': iuploads})
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):
@@ -208,7 +206,7 @@ def rate(request):
             return redirect('application-rating')
     else:
         form=RatingForm()
-    return render(request, 'application/rate.html',{'form':form})
+    return render(request, 'application/orientation/rate.html',{'form':form})
 
 def rating(request):
    
@@ -229,7 +227,7 @@ def rating(request):
     ,'total_punctuality': total_punctuality
     ,'total_communication': total_communication
     ,'total_understanding': total_understanding}
-    return render(request, 'application/rating.html', context)
+    return render(request, 'application/orientation/rating.html', context)
 
 def employee_form(request,id=0):
     if request.method == "GET":
@@ -257,7 +255,7 @@ def employee_insert(request):
             return redirect('application-update')
     else:
         form=EmployeeForm()
-    return render(request, 'application/rate.html',{'form':form})
+    return render(request, 'application/orientation/rate.html',{'form':form})
 
 def employee_list(request):
     context={'employees': Employee.objects.all().order_by('-punctuality')}

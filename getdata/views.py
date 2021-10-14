@@ -6,7 +6,7 @@ def getrating(request):
     return render(request, 'getdata/getrating.html', {'title': 'getrating'})
 
 def index(request):
-    return render(request, 'getdata/index.html', {'title': 'index'})
+    return render(request, 'getmain/base_templates/analysis_index.html', {'title': 'index'})
 
 def show(request):  
     employees = Employee.objects.all()  

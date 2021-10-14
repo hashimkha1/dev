@@ -1,7 +1,8 @@
 from django import forms
-from django.contrib.auth.forms import ReadOnlyPasswordHashField,UserCreationForm
-from django.contrib.auth.models import User
+from django.forms import ModelForm, Textarea
+
 from .models import Employee, Transaction
+
 
 class EmployeeForm(forms.ModelForm):  
     class Meta:  
@@ -12,21 +13,30 @@ class EmployeeForm(forms.ModelForm):
             'contact': forms.TextInput(attrs={ 'class': 'form-control' }),
       }
 
+
+
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
-        fields = ['id','sender','receiver','phone','department', 'category','payment_method','qty','amount','description','receipt']
+
+        fields = ['id','sender','receiver','phone','department', 'category','type','payment_method','qty','amount','transaction_cost','description','receipt_link']
         labels={
                 'sender':'Your full Name',
                 'receiver':'Enter Receiver Name',
                 'phone':'Receiver Phone',
                 'department':'Department',
                 'category':'Category',
+                'type':'Type',
                 'payment_method':'Payment Method',
                 'qty':'Quantity',
-                'amount':'Enter Amount',
+                'amount':'Unit Price',
+                'transaction_cost':'Transaction Cost',
                 'description':'Description',
-                'receipt':'Receipt',
+                'receipt_link':'Link',
+
+        }
+        widgets = {
+            'description': Textarea(attrs={'cols': 30, 'rows': 1})  
 
         }
     def __init__(self, *args, **kwargs):

@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <!-- Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'main/css/data.css' %}"
+    />
+
+    {% if title %}
+    <title>CODA - {{ title }}</title>
+    {% else %}
+    <title>CODA</title>
+    {% endif %}
+  </head>
+
+  <body>
+    <header class="site-header">
+      {% include 'main/navbar_templates/data_navbar.html' %}
+    </header>
+
+    <main role="main" class="container">
+      <div class="row">
+        {% if messages %} {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %} {% endif %} 
+        
+        {% block content %} 
+        
+        {% endblock %}
+        <section id="footer">
+          <div class="footer">
+              <footer>
+                  <h4>Trademark|Company Policy</h4>
+                  </h4>
+              </footer>
+          </div>
+                  <!--- <h3 class="title">BA & PROJECT MANAGEMENT</h3> -->
+                  <div class="row text-left">
+                      <div class="col-md-3 ">
+                          <!-- <img src="static/img//service1.png" class="service-img" >-->
+                          <h5>About Us</h5>
+                          <ul>
+                              <li> <a class="footer-link" href="/service">Meet the service</a></li>
+                              <li> <a class="footer-link" href="/">Partners</a></li>
+                              <li> <a class="footer-link" href="/">Location</a></li>
+                              <li> <a class="footer-link" href="/">Our Network</a></li>
+                              <li> <a class="footer-link" href="/">Connect</a></li>
+                          </ul>
+        
+                      </div>
+                      <div class="col-md-3 ">
+                          <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                          <h5>Core Services</h5>
+                          <ul>
+                            <li>  <a class="footer-link" href="/">Training</a></li>
+                            <li>  <a class="footer-link" href="/">Project Management</a></li>
+                            <li>  <a class="footer-link" href="/">Job Networking</a></li>
+                            <li>  <a class="footer-link" href="/">Recruitment</a></li>
+                            <li>  <a class="footer-link" href="/">Resume Prep</a></li>
+                          </ul>
+        
+                      </div>
+                      <div class="col-md-3 services">
+                          <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                          <h5>Technologies</h5>
+                          <ul>
+                            <li> <a class="footer-link" href="https://www.youtube.com/watch?v=gWZtNdMko1k&list=PLWPirh4EWFpGXTBu8ldLZGJCUeTMBpJFK">Tableau</a></li>
+                            <li> <a class="footer-link" href="/">SQL</a></li>
+                            <li> <a class="footer-link" href="/">Python</a></li>
+                            <li> <a class="footer-link" href="https://www.youtube.com/watch?v=6DZ7YVeCeqg">Alteryx</a></li>
+                            <li> <a class="footer-link" href="/">Advanced Excel</a></li>
+                          </ul>
+        
+                      </div>
+                      <div class="col-md-3">
+                          <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                          <h5>More Resources</h5>
+                          <ul>
+                            <li>  <a class="footer-link" target="_blank"
+                              href="https://www.youtube.com/watch?v=RbWCBz5fBBw&list=PL5nViEmyYI0ZpbH5jjFPvMZVDDPqvd080">Business
+                              Analysis</a></li>
+                          <li>  <a class="footer-link" target="_blank"
+                              href="https://public.tableau.com/en-us/s/resources">Tableau Resources</a></li>
+                          <li>  <a class="footer-link" target="_blank"
+                              href="https://www.youtube.com/watch?v=ZNObiptSMSI&list=PL08903FB7ACA1C2FB"> SQL by Venkat</a></li>
+                          <li>  <a class="footer-link" target="_blank"
+                              href="https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU" target="_blank">Python by Corey</a></li>
+                          <li>  <a class="footer-link" href="www.w3schools.com">General Links(w3schools)</a></li>
+        
+                            
+                          </ul>
+        
+                      </div>
+                  </div>
+        </section>
+
+
+      </div>
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+      integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -2,8 +2,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import (Application, Employee, FirstUpload, InteviewUploads,
-                     Policy, Rated, Reporting)
+from .models import (Application, FirstUpload, InteviewUploads, Policy, Rated,
+                     Reporting)
 
 
 class ApplicationForm(UserCreationForm):
@@ -64,27 +64,6 @@ class InterviewUploadForm(forms.ModelForm):
                 'other':'Other Documents',
         }
         
-class EmployeeForm(forms.ModelForm):
-    class Meta:
-        model = Employee
-        fields = ['id','first_name','last_name','topic', 'punctuality','communication','understanding','rated_by']
-        labels={
-                'first_name':'First Name',
-                'last_name':'Last Name',
-                'topic':'Topic',
-                'punctuality':'Punctuality',
-                'communication':'Communication',
-                'understanding':'Understanding',
-                'rated_by':'Rated_By',
-        }
-        
-    def __init__(self, *args, **kwargs):
-        super(EmployeeForm,self).__init__(*args, **kwargs)
-        self.fields['punctuality'].empty_label= "Select"
-        self.fields['communication'].empty_label= "Select"
-        self.fields['understanding'].empty_label= "Select"
-        self.fields['topic'].required= False
-
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = FirstUpload

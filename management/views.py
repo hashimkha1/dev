@@ -1,18 +1,15 @@
-from django.contrib.auth.mixins import LoginRequiredMixin #,UserPassesTestMixin
-from django.shortcuts import redirect, render
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, render,redirect
-from django.urls import reverse
-from django.utils.timezone import datetime
-from dateutil.parser import parse
 import calendar
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.utils.timezone import datetime
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                UpdateView)
-from .models import Employee ,Department,Category, Activity
+                                  UpdateView)
+
 from .forms import TransactionForm
-from .models import Transaction
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from .models import Activity, Category, Department, Employee, Transaction
 
 
 def home(request):
@@ -57,7 +54,6 @@ class EmployeeUpdateView(LoginRequiredMixin,UpdateView):
         return False
 
     '''
-
 
 class EmployeeDeleteView(LoginRequiredMixin,DeleteView):
     model=Employee
@@ -113,16 +109,10 @@ def department_list(request, department_slug=None):
 @login_required
 def category_list(request, category_slug=None):
     category = get_object_or_404(Category, slug=category_slug)
-    #activities = Activity.objects.filter(category__in=category.get_descendants(include_self=True))
-    #activities=Activity.objects.get(category__pk__in=category.get_descendants(include_self=True).values_list('pk'))
     activities = Activity.objects.filter(category=category)
-    #activities = Activity.objects.filter(
-       # category__in=Category.objects.get(name=category_slug).get_descendants(include_self=True)
-    #)
     today = datetime.today()
     deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
     deadline=datetime.date(deadline_date)
- 
 
     context ={
                 'category': category,
@@ -147,22 +137,16 @@ def activity_detail(request,slug,category_slug=None):
 class ActivityUpdateView(LoginRequiredMixin,UpdateView):
     model=Activity
     #fields=['category','created_by','activity_name','description','slug','earning','point','mx_point','submission','created','updated']
-    fields=['activity_name','point']
-    #success_url='/management/category/{slug}/'
-    #success_url="/parent/{parent_id}/" 
+    fields=['activity_name','description','point']
     def form_valid(self,form):
         form.instance.username=self.request.user
         return super().form_valid(form)
     
+    def get_success_url(self):
+        agent_slug = self.object.category.slug
+        return reverse_lazy('management:category_list', kwargs={'category_slug': agent_slug})
+
 '''
-    def get_success_url(self):
-        return reverse('management:category_list', kwargs={
-            'category_slug': self.object.category_slug,
-        })
-
-    def get_success_url(self):
-        return self.request.GET.get('next', '/management/')
-
     def test_func(self):
         employee = self.get_object()
         if self.request.firstname == employee.name:

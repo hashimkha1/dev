@@ -1,7 +1,8 @@
 #from coda_project.application.views import first_interview
+from datetime import datetime
+
 from django.db import models
 from django.utils import timezone
-from datetime import datetime
 
 
 # Create your models here.
@@ -98,26 +99,6 @@ class Rated(models.Model):
     def __str__(self):
         return f'{self.id} Rating'
 
-
-class Employee(models.Model):
-    class Score(models.IntegerChoices):
-        very_Poor = 1
-        Poor =2
-        Good = 3
-        Very_good = 4
-        Excellent = 5
-    id = models.AutoField(primary_key=True)
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
-    topic=models.CharField(max_length=100,default=None)
-    employee_date = models.DateTimeField(default=timezone.now)
-    punctuality = models.IntegerField(choices=Score.choices)
-    communication = models.IntegerField(choices=Score.choices)
-    understanding = models.IntegerField(choices=Score.choices)
-    rated_by=models.CharField(default="CEO",max_length=100)
-    
-    def __str__(self):
-        return f'{self.id} Employee'
 
 class FirstUpload(models.Model):
     id = models.AutoField(primary_key=True)

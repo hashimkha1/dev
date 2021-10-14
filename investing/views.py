@@ -9,7 +9,7 @@ from .models import Document, Uploads
 
 # Create your views here.
 def home(request):
-    return render(request, 'investing/home.html', {'title': 'home'})
+    return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
 
 def testing(request):
     return render(request, 'investing/testing.html', {'title': 'testing'})
@@ -33,10 +33,10 @@ def upload(request):
             return redirect('investing-uploaded')
     else:
         form=UploadForm()
-    return render(request, 'investing/upload.html',{'form':form})
+    return render(request, 'main/doc_templates/upload.html',{'form':form})
 
 
 def uploaded(request):
     documents=Uploads.objects.all().order_by('-document_date')
-    return render(request, 'investing/uploaded.html', {'documents': documents})
+    return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
 

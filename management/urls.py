@@ -1,8 +1,8 @@
 from django.urls import path
 
 from . import views
-from .views import (EmployeeCreateView, EmployeeDeleteView, EmployeeDetailView,
-                    EmployeeListView, EmployeeUpdateView,ActivityUpdateView)
+from .views import (ActivityUpdateView, EmployeeCreateView, EmployeeDeleteView,
+                    EmployeeDetailView, EmployeeListView, EmployeeUpdateView)
 
 app_name = 'management'
 #<app>/<model>_<viewtype>
@@ -24,16 +24,4 @@ urlpatterns = [
     path('department/<slug:department_slug>/', views.department_list, name='department_list'),
     path('category/<slug:category_slug>/', views.category_list, name='category_list'),
     path('activity/update/<int:pk>/', ActivityUpdateView.as_view(), name='activity-edit'),
-
-
-    #path('table/', views.table, name='table'),
-    #path('category/', views.category, name='category'),
-    #API data
-
-	#path('table/activityapi/', views.ActivityDataAPI),
-    #path('category/activityapi/', views.ActivityDataAPI),
-    #path('get_total/', views.get_total),
-    #path('updateactivity/', views.updateActivity),
-
-    
 ]

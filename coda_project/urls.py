@@ -21,8 +21,10 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
-from users import views as user_views
 
+from accounts import views as account_views
+from coda_project import settings
+from testing import AdminViews, views
 
 #===========ERROR HANDLING SECTION================
 handler400='main.views.hendler400'
@@ -32,30 +34,32 @@ handler500='main.views.hendler500'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('register/', user_views.register, name='user-register'),
-    path('registered/', user_views.registered, name='user-registered'),
-    path('profile/', user_views.profile, name='user-profile'),
-    #path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='accounts-login'),
-    path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='user-login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='user-logout'),
-    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='users/password_reset.html'), name='password_reset'),
-    path('password-reset/done', auth_views.PasswordResetDoneView.as_view(template_name='users/password_reset_done.html'), name='password_reset_done'),
-    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='users/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='users/password_reset_complete.html'), name='password_reset_complete'),
+    path('join/', account_views.join, name='account-join'),
+    #path('joined/', account_views.joined, name='account-joined'),
+    path('profile/', account_views.profile, name='account-profile'),
+    #path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
+    path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
+    path('logout/', auth_views.LogoutView.as_view(template_name='accounts/registration/logout.html'), name='account-logout'),
+    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='accounts/registration/password_reset.html'), name='password_reset'),
+    path('password-reset/done', auth_views.PasswordResetDoneView.as_view(template_name='accounts/registration/password_reset_done.html'), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='accounts/registration/password_reset_confirm.html'), name='password_reset_confirm'),
+    path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='accounts/registration/password_reset_complete.html'), name='password_reset_complete'),
     path('blog/', include('codablog.urls')),
-    path('users/', include('users.urls')),
+    
+    #path('users/', include('users.urls')),
     path('accounts/', include('accounts.urls')),
     path('data/', include('data.urls')),
     path('getdata/', include('getdata.urls')),
     path('application/', include('application.urls')),
     path('projectmanagement/', include('projectmanagement.urls')),
     path('investing/', include('investing.urls')),
-    path('store/', include('store.urls')),
+    #path('store/', include('store.urls'),name='store'),
     path('management/', include('management.urls'),name='management'),
     path('', include('main.urls')),
    # path('testing/', include('testing.urls')),
+    path('admindashboard/',include("testing.adminurls"))
 ]
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns +=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)

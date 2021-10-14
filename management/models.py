@@ -1,13 +1,37 @@
-from django.contrib.auth.models import User
+import calendar
+from datetime import datetime
+from decimal import *
+
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
-import calendar
-from dateutil.parser import parse
-from datetime import datetime
-from decimal import *
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
+
+
+class Department(models.Model):
+    """Department Table will provide a list of the different departments in CODA"""
+    name = models.CharField(
+        verbose_name=_('Department Name'),
+        help_text=_('Required'),
+        max_length=255, 
+        unique=True,
+        )
+
+    slug = models.SlugField(verbose_name=_('Department safe URL'), max_length=255, unique=True)
+
+    is_active=models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name=_('Department')
+        verbose_name_plural=_('Departments')
+
+    def get_absolute_url(self):
+        return reverse('management:department_list', args=[self.slug])
+
+    def __str__(self):
+        return self.name   
+
 
 #--------------------------------------
 class Transaction(models.Model):
@@ -67,15 +91,16 @@ class Transaction(models.Model):
         (Check, 'Check'),
         (Other, 'Other'),
         ]
-    id = models.AutoField(primary_key=True)
     sender=models.CharField(max_length=100,null=True,default=None)
     receiver=models.CharField(max_length=100,null=True,default=None)
     phone=models.CharField(max_length=50,null=True,default=None)
     department=models.CharField(max_length=100,default=None)
+    type=models.CharField(max_length=100,default=None,null=True)
     activity_date = models.DateTimeField(default=timezone.now)
-    receipt=models.FileField(default="None",upload_to='Uploads/Receipt_doc/')
-    qty= models.PositiveIntegerField(default=1)
+    receipt_link=models.CharField(max_length=100,blank=True, null=True)
+    qty= models.DecimalField (max_digits=10, decimal_places=2, null=True, default=None)
     amount = models.DecimalField (max_digits=10, decimal_places=2, null=True, default=None)
+    transaction_cost = models.DecimalField (max_digits=10, decimal_places=2, null=True, default=0)
     description=models.TextField(max_length=1000, default=None)
 
     payment_method= models.CharField(
@@ -95,10 +120,11 @@ class Transaction(models.Model):
             default=Other,
         )
     class Meta:
-            verbose_name_plural = 'Expenses'
+            verbose_name_plural = 'Transactions'
 
     def __str__(self):
-            return f'{self.id} Expenses'
+            return f'{self.id} Transactions'
+
 '''
 class ActivityManager(models.Manager):
     def get_queryset(self):
@@ -164,14 +190,14 @@ class Employee(models.Model):
 
     def __str__(self):
         return self.last_name
-'''  
+    ''' 
      @property
      def get_unique_id(self):
          a = self.last_name[:2].upper()     #First 2 letters of last name
          b = self.birth_date.strftime('%d')     #Day of the month as string
          c = self.city_of_birth[:2].upper()     #First 2 letters of city
          return a + b + c 
-''' 
+    ''' 
 
 class Category(MPTTModel):
     '''Category Table implemented with MPTT'''
@@ -180,9 +206,9 @@ class Category(MPTTModel):
         verbose_name=_('Category'),
         help_text=_('Required and Unique'),
         max_length=255, 
-        unique=True,
+        #unique=True,
         )
-    slug = models.SlugField(verbose_name=_('Category safe URL'), max_length=255, unique=True)
+    slug = models.SlugField(verbose_name=_('Category safe URL'), max_length=255)
     parent=TreeForeignKey('self',on_delete=models.CASCADE,null=True, blank=True,related_name="children")
     is_active=models.BooleanField(default=True)
 
@@ -204,6 +230,12 @@ class Category(MPTTModel):
         return self.name
 
 class Activity(models.Model):
+    group = models.CharField(
+        verbose_name=_('group'),
+        help_text=_('Required'),
+        max_length=255,
+        default="Group A"
+        )
     category = models.ForeignKey(Category, related_name='acitivity', on_delete=models.CASCADE)
     created_by = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name='activity_creator')
     activity_name = models.CharField(
@@ -227,7 +259,7 @@ class Activity(models.Model):
                 }
             },
             )
-    mx_point = models.PositiveIntegerField(
+    mxpoint = models.PositiveIntegerField(
             #max_digits=3, 
             help_text=_('Maximum 200'),
             error_messages={
@@ -237,7 +269,7 @@ class Activity(models.Model):
                 }
             },
             )
-    mx_earning = models.DecimalField(
+    mxearning = models.DecimalField(
             max_digits=10, 
             help_text=_('Maximum 4999.99'),
             error_messages={
@@ -254,8 +286,6 @@ class Activity(models.Model):
          editable=True,
          null=True
          )
-    created = models.DateTimeField(_('created on'),auto_now_add=True, editable=True)
-    updated = models.DateTimeField(_('Updated at'),auto_now=True)
     is_active=models.BooleanField(default=True)
     
     @property
@@ -279,22 +309,20 @@ class Activity(models.Model):
 
     @property
     def pay(self):
-        if self.point>self.mx_point:
+        if self.point>self.mxpoint:
             return 0
         else:
-            Earning= round(Decimal(self.point/self.mx_point)*self.mx_earning ,2)
+            Earning= round(Decimal(self.point/self.mxpoint)*self.mxearning ,2)
             compute_pay=Earning * Decimal(self.late_penalty)
             pay=round(compute_pay)
             return pay
 
     class Meta:
         verbose_name_plural = 'Activities'
-        ordering = ('-created',)
+        ordering = ('-submission',)
 
     def get_absolute_url(self):
        return reverse('management:activity-detail', args=[self.slug])
        
     def __str__(self):
         return self.activity_name
-
-

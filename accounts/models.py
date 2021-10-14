@@ -1,11 +1,12 @@
-from django.contrib.auth.models import AbstractUser,User
+from decimal import *
+
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import AbstractUser, User
 from django.db import models
+from django.urls import reverse
 from django.utils import timezone
 from django_countries.fields import CountryField
-from django.urls import reverse
-import calendar
-from datetime import datetime
-from decimal import *
+
 
 # Create your models here.
 class CustomerUser(AbstractUser):
@@ -33,44 +34,28 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering=['date_joined']
 
+
+class Profile(models.Model):
+    user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
+
+    #def save(self, *args, **kwargs):
+       # super().save(*args, **kwargs)
+
+        # img=image.open(self.image.path)
+
+        # if img.height> 300 or img.width>300:
+          #   output_size=(300,300)
+           #  img.thumbnail(output_size)
+           #  img.save(self.image.path)
+''' 
+class UserProfile(models.Model):
+    user = models.OneToOneField('CustomerUser', on_delete=models.CASCADE)
+    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
+
+    def __str__(self):
+        return f'{self.user.username} Profile'
 '''
-class User(AbstractUser):
-    is_customer=models.BooleanField(default=False)
-    is_applicant=models.BooleanField(default=False)
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
-
-class Customer(models.Model):
-    class Score(models.IntegerChoices):
-        Male = 1
-        Female =2
-    user = models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    email=models.CharField(max_length=100)
-    gender=models.IntegerField(choices=Score.choices)
-    phone=models.CharField(max_length=100)
-    address=models.CharField(max_length=100)
-    city=models.CharField(max_length=100)
-
-
-class Applicant(models.Model):
-    class Score(models.IntegerChoices):
-        Male = 1
-        Female =2
-    user = models.OneToOneField(User, on_delete=models.CASCADE,primary_key=True)
-    username=models.CharField(max_length=100)
-    gender=models.IntegerField(choices=Score.choices)
-    phone=models.CharField(default='90001',max_length=100)
-    application_date = models.DateTimeField(default=timezone.now)
-    phone=models.CharField(max_length=100,blank=True, null=True)
-    city=models.CharField(max_length=100,blank=True, null=True)
-    country=models.CharField(max_length=100,blank=True, null=True)
-    resume=models.FileField(upload_to='resumes/doc/')
-
-     @property
-     def get_unique_id(self):
-         a = self.last_name[:2].upper()     #First 2 letters of last name
-         b = self.birth_date.strftime('%d')     #Day of the month as string
-         c = self.city_of_birth[:2].upper()     #First 2 letters of city
-         return a + b + c 
-'''
-

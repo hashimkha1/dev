@@ -33,19 +33,27 @@
                                 Library
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="{% url "store:all_products" %}">All</a></li>
-                                {% for c in categories %}
-                                <li {% if category.slug == c.slug %}class="selected" {% endif %}>
-                                    <a class="dropdown-item" href="{{ c.get_absolute_url }}">{{ c.name|title }}</a>
-                                </li>
-                                {% endfor %}
+                                <li><a class="dropdown-item" href="#">All</a></li>
+ 
                             </ul>
                         </li>
                     </ul>
-                    <form class="d-flex">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="search-element">
+                            <div class="card">
+                                      
+                                      <div class="card-body">
+                                      <form method="get">
+                                        <button class="btn  btn-primary" type="submit" style="float:right"><i class="fas fa-search"></i> Search</button>
+                                        <input class="form-control" type="search" placeholder="Search" aria-label="Search" data-width="250" style="width: 250px;float:right" name="filter" value="{{ filter }}">
+                                       </form>
+                                      </div>
+                                      
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </nav>

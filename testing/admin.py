@@ -1,12 +1,7 @@
-
-'''
 from django.contrib import admin
 
-from .models import Category, Task ,Activity#, ProductImage, ProductReview,
+from testing.models import Categories, SubCategories
 
-admin.site.register(Activity)
-admin.site.register(Category)
-admin.site.register(Task)
-#admin.site.register(ProductImage)
-#admin.site.register(ProductReview)
-'''
+# Register your models here.
+admin.site.register(Categories)
+admin.site.register(SubCategories)
