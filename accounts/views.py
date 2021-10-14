@@ -47,7 +47,7 @@ def clients(request):
 
 @login_required(login_url='account-login')
 def profile(request):
-    return render(request,'users/profile.html')
+    return render(request,'accounts/profile.html')
 
 '''
 @unauthenticated_user
