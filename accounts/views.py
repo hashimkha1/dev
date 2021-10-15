@@ -48,7 +48,7 @@ def loginPage(request):
         account = authenticate(request,username=username, password=password)
         if account is not None:
             login(request,account)
-            return redirect('main-home')
+            return redirect('main-layout')
         else:
             messages.info(request, 'USERNAME OR PASSWORD is incorrect!Please try again')
     context={}

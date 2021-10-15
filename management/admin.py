@@ -128,15 +128,10 @@ class ActivityAdmin(admin.ModelAdmin):
 
 admin.site.register(Activity, ActivityAdmin)
 
-
-
-
-
 ''' 
 class EmployeeInline(admin.TabularInline):
     model=Employee
 
-admin.site.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
