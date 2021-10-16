@@ -119,20 +119,3 @@ class Expenses(models.Model):
     def get_absolute_url(self):
         return reverse('transaction-list')
         #return reverse('employee-detail', kwargs={'pk': self.pk})
-
-
-'''
-
-class Codadoc(models.Model):
-    id = models.AutoField(primary_key=True)
-    document_name=models.CharField(max_length=100)
-    #codalink=models.CharField(max_length=10000)
-    date_uploaded = models.DateTimeField(default=timezone.now)
-    codadoc=models.FileField(default=None,upload_to='codadoc/doc/')
-    description = models.TextField(max_length=220, blank=True, default=None)
-    #cover=models.FileField(default=None,upload_to='cover/doc/')
- 
-    def __str__(self):
-        return f'{self.document_name} Codadoc'
-
-'''

@@ -47,6 +47,7 @@ urlpatterns = [
     path('blog/', include('codablog.urls')),
     
     #path('users/', include('users.urls')),
+    path('', include('main.urls')),
     path('accounts/', include('accounts.urls')),
     path('data/', include('data.urls')),
     path('getdata/', include('getdata.urls')),
@@ -55,7 +56,7 @@ urlpatterns = [
     path('investing/', include('investing.urls')),
     #path('store/', include('store.urls'),name='store'),
     path('management/', include('management.urls'),name='management'),
-    path('', include('main.urls')),
+    
    # path('testing/', include('testing.urls')),
     path('admindashboard/',include("testing.adminurls"))
 ]

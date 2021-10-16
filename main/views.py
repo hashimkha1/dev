@@ -34,9 +34,6 @@ def checkout(request):
 def layout(request):
     return render(request, 'main/home_templates/layout.html', {'title': 'layout'})
 
-def home(request):
-    return render(request, 'main/home_templates/layout.html', {'title': 'home'})
-
 def about(request):
     return render(request, 'main/about.html', {'title': 'about'})
 
