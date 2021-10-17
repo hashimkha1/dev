@@ -18,6 +18,7 @@ urlpatterns = [
     # For Internal Use Only
     path('policy/', views.policy, name='application-policy'),
     path('policies/', views.policies, name='application-policies'),
+    path('info/', views.info, name='application-applicant_info'),
     path('trainee/', views.trainee, name='application-trainee'),
     path('trainees/', views.trainees, name='application-trainees'),
     path('trainee/<int:pk>/update/', TraineeUpdateView.as_view(), name='trainee-update'),

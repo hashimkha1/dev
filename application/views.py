@@ -46,6 +46,8 @@ class application(TemplateView):
     template_name='application.html'
 
 # Saving uploaded information to database
+''' 
+#Encountering an error in deployed app.
 def apply(request):
     if request.method== "POST":
         form=ApplicantForm(request.POST,request.FILES)
@@ -55,6 +57,18 @@ def apply(request):
     else:
         form=ApplicantForm()
     return render(request, 'application/applications/apply.html',{'form':form})
+'''
+def apply(request):
+    if request.method== "POST":
+        form=ApplicantForm(request.POST,request.FILES)
+        form.save()
+        return redirect('application-applicant_info')
+    else:
+        form=ApplicantForm()
+    return render(request, 'application/applications/apply.html',{'form':form})
+
+
+    
 
 class ApplicantListView(ListView):
     model=Application
@@ -67,7 +81,6 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
     def get_success_url(self):
         return reverse('applicant-list')
-
 
 @login_required
 def applicant_profile(request):
@@ -115,6 +128,15 @@ def policies(request):
         'reporting_date': reporting_date
     }
     return render(request, 'application/orientation/policies.html',context)
+
+def info(request):
+    reporting_date = date.today() + timedelta(days=7)
+    uploads=Policy.objects.all().order_by('upload_date')
+    context = {
+        'uploads': uploads,
+        'reporting_date': reporting_date
+    }
+    return render(request, 'application/orientation/applicant_info.html',context)
 
 # -------------------------Uploads Section-------------------------------------#
 def firstupload(request):
