@@ -111,7 +111,7 @@ class FirstUpload(models.Model):
     workflow=models.FileField(upload_to='Workflows/doc/',null=True,blank=True)
     proc=models.FileField(upload_to='Procedures/doc/',null=True,blank=True)
     other=models.FileField(default="None",upload_to='Others/doc/')
-    Applicant=models.ManyToManyField(Application)
+   # Applicant=models.ManyToManyField(Application)
 
     def __str__(self):
         return f'{self.username} upload'
