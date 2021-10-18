@@ -17,8 +17,8 @@ import django_heroku
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
-SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
-#SECRET_KEY = os.environ.get('SECRET_KEY')
+#SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
@@ -31,7 +31,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Application definition
-
 INSTALLED_APPS = [
     'testing.apps.TestingConfig',
     'main.apps.MainConfig',
@@ -114,7 +113,6 @@ DATABASES = {
     }
 }
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -124,7 +122,6 @@ DATABASES = {
         'HOST': 'localhost',
     }
 }
-
 
 DATABASES = {
     'default': {
@@ -136,7 +133,16 @@ DATABASES = {
     }
 }
 
-'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODADB_DEV',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
+    }
+}
+
 
 DATABASES = {
     'default': {
@@ -145,14 +151,24 @@ DATABASES = {
         
     }
 }
+'''
 
+#postgresql database
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODA_DEV',# Name of Database
+        'USER':'CODA_DEV',
+        'PASSWORD': os.environ.get('POSTGRESSPASS'),
+        'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+        'PORT': '5432'
+    }
+}
 
 import dj_database_url
 
 db_from_env=dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)
-
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -188,7 +204,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
