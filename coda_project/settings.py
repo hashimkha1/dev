@@ -142,17 +142,6 @@ DATABASES = {
         'HOST': 'localhost',
     }
 }
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
-    }
-}
-'''
-
 #postgresql database
 DATABASES = {
     'default': {
@@ -162,6 +151,17 @@ DATABASES = {
         'PASSWORD': os.environ.get('POSTGRESSPASS'),
         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
         'PORT': '5432'
+    }
+}
+
+
+
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
     }
 }
 
