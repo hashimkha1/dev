@@ -8,8 +8,8 @@ from django.shortcuts import  redirect, render
 from django.urls import reverse
 from django.views.generic import (DeleteView,ListView,TemplateView, UpdateView)
 
-from .forms import (ApplicantForm, InterviewForm,PolicyForm, RatingForm, ReportingForm)
-from .models import (Application, FirstUpload, Policy, Rated,Reporting)
+from .forms import (ApplicantForm, PolicyForm, RatingForm, ReportingForm)
+from .models import (Application, Policy, Rated,Reporting)
 
 #from .filters import RatingFilter
 

@@ -99,7 +99,7 @@ class Rated(models.Model):
     def __str__(self):
         return f'{self.id} Rating'
 
-
+'''
 class FirstUpload(models.Model):
     id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
@@ -115,6 +115,7 @@ class FirstUpload(models.Model):
 
     def __str__(self):
         return f'{self.username} upload'
+'''
 
 class Reporting(models.Model):
     internal = 'Internal Interview'

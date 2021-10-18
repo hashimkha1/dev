@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import (Application, FirstUpload, InteviewUploads, Policy, Rated,
-                     Reporting)
+from .models import (Application, InteviewUploads, Policy, Rated, Reporting)
 
 
 class ApplicationForm(UserCreationForm):
@@ -62,7 +61,7 @@ class InterviewUploadForm(forms.ModelForm):
                 'proc':'SQL Script',
                 'other':'Other Documents',
         }
-        
+'''  
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = FirstUpload
@@ -77,6 +76,7 @@ class InterviewForm(forms.ModelForm):
                 'proc':'SQL Script',
 
                 }
+'''   
             
 class PolicyForm(forms.ModelForm):
     class Meta:
