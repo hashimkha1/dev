@@ -187,11 +187,11 @@ def trainee(request):
             return redirect('application-trainees')
     else:
         form=ReportingForm()
-    return render(request, 'application/trainee.html',{'form':form})
+    return render(request, 'application/orientation/trainee.html',{'form':form})
 
 def trainees(request):
     trainees=Reporting.objects.all().order_by('-update_date')
-    return render(request, 'application/trainees.html', {'trainees': trainees})
+    return render(request, 'application/orientation/trainees.html', {'trainees': trainees})
 
 
 class TraineeUpdateView(LoginRequiredMixin,UpdateView):
