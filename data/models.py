@@ -72,10 +72,8 @@ class InterviewUpload(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-
 class Upload(models.Model):
     id = models.AutoField(primary_key=True)
-    document_date = models.DateTimeField(default=timezone.now)
     doc_type=models.CharField(max_length=100,blank=True, null=True)
     doc_name=models.CharField(max_length=100,blank=True, null=True)
     doc=models.FileField(upload_to='Uploads/doc/')

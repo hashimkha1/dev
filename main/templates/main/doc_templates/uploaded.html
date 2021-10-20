@@ -6,7 +6,7 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Document_Id</th>
-          <th>Document Date</th>
+         <!--- <th>Document Date</th>-->
           <th>Document Type</th>
           <th>Document Name</th>
           <th>Document</th>
@@ -18,7 +18,7 @@
         {% for document in documents %}
         <tr>
           <td>{{document.id}}</td>
-          <td>{{document.document_date|date:"F d, Y"}}</td>
+         <!--<td>{{document.document_date|date:"F d, Y"}}</td>--> 
           <td>{{document.doc_type}}</td>
           <td>{{document.doc_name}}</td>
           <td>
