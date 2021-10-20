@@ -9,7 +9,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import TransactionForm
-from .models import Activity, Category, Department, Employee, Transaction
+from .models import Activity, Category, Employee, Transaction #Department
 
 
 def home(request):
@@ -95,7 +95,7 @@ def transaction(request):
 def all_activities(request):
     activities =Activity.activities.all()
     return render(request, 'main/home_templates/management_home.html', {'activities': activities})
-
+'''
 @login_required
 def department_list(request, department_slug=None):
     department = get_object_or_404(Department, slug=department_slug)
@@ -105,7 +105,7 @@ def department_list(request, department_slug=None):
                 'categories': categories,
              }
     return render(request, 'management/company_finances/department.html', context)
-
+ '''
 @login_required
 def category_list(request, category_slug=None):
     category = get_object_or_404(Category, slug=category_slug)

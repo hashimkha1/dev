@@ -8,7 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
-
+'''
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
     name = models.CharField(
@@ -32,7 +32,7 @@ class Department(models.Model):
     def __str__(self):
         return self.name   
 
-
+'''  
 #--------------------------------------
 class Transaction(models.Model):
 # Method of Payment
@@ -129,7 +129,7 @@ class Transaction(models.Model):
 class ActivityManager(models.Manager):
     def get_queryset(self):
         return super(ActivityManager, self).get_queryset().filter(is_active=True)
-'''
+
 
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
@@ -154,9 +154,10 @@ class Department(models.Model):
     def __str__(self):
         return self.name   
 
+'''
+
 class Employee(models.Model):
     """Employee Table will provide a list of the employees working on activities"""
-    department=models.ForeignKey(Department, on_delete=models.CASCADE)
     first_name = models.CharField(
         verbose_name=_('Employee Name'),
         help_text=_('Required'),
@@ -201,7 +202,7 @@ class Employee(models.Model):
 
 class Category(MPTTModel):
     '''Category Table implemented with MPTT'''
-    department=models.ForeignKey(Department, on_delete=models.RESTRICT)
+   # department=models.ForeignKey(Department, on_delete=models.RESTRICT)
     name = models.CharField(
         verbose_name=_('Category'),
         help_text=_('Required and Unique'),

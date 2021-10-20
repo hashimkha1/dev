@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import path, reverse
 from mptt.admin import MPTTModelAdmin
 
-from .models import Activity, Category, Department, Employee, Transaction
+from .models import Activity, Category, Employee, Transaction #, Department
 
 
 # Register your models here.
@@ -62,11 +62,12 @@ admin.site.register(Transaction, TransactionAdmin)
 
 
 admin.site.register(Employee)
+''' 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
-
+'''
 admin.site.register(Category,MPTTModelAdmin)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']

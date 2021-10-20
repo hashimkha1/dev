@@ -21,7 +21,7 @@ urlpatterns = [
 
     #path('activities', views.all_activities, name='all_activities'),
     path('activity/<slug:slug>/', views.activity_detail, name='activity-detail'),
-    path('department/<slug:department_slug>/', views.department_list, name='department_list'),
+    #path('department/<slug:department_slug>/', views.department_list, name='department_list'),
     path('category/<slug:category_slug>/', views.category_list, name='category_list'),
     path('activity/update/<int:pk>/', ActivityUpdateView.as_view(), name='activity-edit'),
 ]
