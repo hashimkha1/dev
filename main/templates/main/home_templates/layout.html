@@ -15,10 +15,10 @@
                   alt="home2"
                   >
                   <div class="carousel-caption">
-                      <a href="{% url 'data-home' %}" target="_blank">
+                      <a href="{% url 'data:home' %}" target="_blank">
                             <button type="button" class="btn btn-primary btn-lg">Data Analysis</button>
                         </a>
-                        <a href="{% url 'data-home' %}" target="_blank">
+                        <a href="{% url 'data:home' %}" target="_blank">
                           <button type="button" class="btn btn-primary btn-lg">More</button>
                       </a>
                   </div>
@@ -32,10 +32,10 @@
                   >
                   <div class="carousel-caption">
                     <h1 class="display-2"></h1>
-                      <a href="{% url 'account-join' %}" target="_blank">
+                      <a href="{% url 'accounts:account-join' %}" target="_blank">
                           <button type="button" class="btn btn-primary btn-lg">Project Management</button>
                       </a>
-                      <a href="{% url 'account-join' %}" target="_blank">
+                      <a href="{% url 'accounts:account-join' %}" target="_blank">
                         <button type="button" class="btn btn-primary btn-lg">Get Started</button>
                     </a>
                   </div>
@@ -48,10 +48,10 @@
                   >
                   <div class="carousel-caption">
                       <h1 class="display-2"></h1>
-                      <a href="{% url 'investing-home' %}" target="_blank">
+                      <a href="{% url 'investing:home' %}" target="_blank">
                         <button type="button" class="btn btn-primary btn-lg">Finance & Investment</button>
                      </a>
-                     <a href="{% url 'investing-home' %}" target="_blank">
+                     <a href="{% url 'investing:home' %}" target="_blank">
                       <button type="button" class="btn btn-primary btn-lg">Join</button>
                      </a>
                      
@@ -82,7 +82,7 @@
     </div> 
 
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
-    <a href="{% url 'account-join' %}" target="_blank">
+    <a href="{% url 'accounts:account-join' %}" target="_blank">
       <button type="button" class="btn btn-primary btn-lg">Get Started</button>
     </a>
   </div>
@@ -117,7 +117,7 @@
           <p class="bd">
             We offer 3 month Project based training in both web development and Data Analysis.
           </p>
-          <a href="{% url 'data-home' %}" >
+          <a href="{% url 'data:home' %}" >
             <button type="button" class="btn btn-primary">GET MORE INFORMATION</button>
         </a>
         </div>
@@ -134,7 +134,7 @@
           <p class="fi">
             Investment training sessions in stocks and options.Understand tips and tricks for low risk high returns on capital.
           </p>
-          <a href="{% url 'investing-home' %}" >
+          <a href="{% url 'investing:home' %}" >
             <button type="button" class="btn btn-primary">GET MORE INFORMATION</button>
         </a>
         </div>
@@ -225,7 +225,7 @@
               <p>
                You get all you need to know in investment,and Data Analysis Courses for just $2999.
               </p>
-              <a href="{% url 'main-coach_profile' %}" target="_blank">
+              <a href="{% url 'main:coach' %}" target="_blank">
                 <button type="button" class="btn btn-primary">Sign Up!</button>
               </a>
             </div>
@@ -240,7 +240,7 @@
               <p>
                 Utilization of Agile methodology to deliver high quality services to our customers.
               </p>
-              <a href="{% url 'data-financialsystem' %}" target="_blank">
+              <a href="{% url 'data:finance' %}" target="_blank">
                 <button type="button" class="btn btn-primary">See Our deliverables</button>
               </a>
             </div>
@@ -255,7 +255,7 @@
               <p>
                Over 20 years of experience in all our services.You can trust the quality of our work.
               </p>
-              <a href="{% url 'main-team' %}" target="_blank">
+              <a href="{% url 'main:team' %}" target="_blank">
                 <button type="button" class="btn btn-primary">Meet the team</button>
               </a>
             </div>

@@ -13,7 +13,7 @@ class Post(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk})
+        return reverse('codablog:post-detail', kwargs={'pk': self.pk})
 
 class Rate(models.Model):
     title = models.CharField(max_length=100)
@@ -25,7 +25,7 @@ class Rate(models.Model):
         return self.topic
 
     def get_absolute_url(self):
-        return reverse('post-detail', kwargs={'pk': self.pk})
+        return reverse('codablog:post-detail', kwargs={'pk': self.pk})
 
 
 class Rated(models.Model):

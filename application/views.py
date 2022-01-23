@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.db.models import Sum
 from django.db.models.aggregates import Avg, Sum
 from django.shortcuts import  redirect, render
@@ -62,13 +62,10 @@ def apply(request):
     if request.method== "POST":
         form=ApplicantForm(request.POST,request.FILES)
         form.save()
-        return redirect('application-applicant_info')
+        return redirect('application:applicant_info')
     else:
         form=ApplicantForm()
     return render(request, 'application/applications/apply.html',{'form':form})
-
-
-    
 
 class ApplicantListView(ListView):
     model=Application
@@ -76,17 +73,31 @@ class ApplicantListView(ListView):
     context_object_name='applicants'
     ordering=['-application_date']
 
+'''
 class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
     model=Application
+    template_name='application/applications/applicants.html'
 
     def get_success_url(self):
         return reverse('applicant-list')
 
+
+'''
+class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Application
+    success_url='/application/applications/applicants.html'
+
+    def test_func(self):
+        applicant = self.get_object()
+        if self.request.user == 'admin':
+            return True
+        return False
+        
 @login_required
 def applicant_profile(request):
     return render(request, 'application/applications/applicant_profile.html')
 
-# # ------------------------Interview Section-------------------------------------#.
+#------------------------Interview Section-------------------------------------#.
 def career(request):
     return render(request, 'application/applications/career.html', {'title': 'career'})
 
@@ -105,10 +116,8 @@ def second_interview(request):
 def orientation(request):
     return render(request, 'application/orientation/orientation.html', {'title': 'orientation'})
 
-
 def internal_training(request):
     return render(request, 'application/orientation/internal_training.html', {'title': 'orientation'})
-
 
 def policy(request):
     if request.method== "POST":
@@ -184,7 +193,7 @@ def trainee(request):
         form=ReportingForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-trainees')
+            return redirect('application:trainees')
     else:
         form=ReportingForm()
     return render(request, 'application/orientation/trainee.html',{'form':form})
@@ -203,7 +212,7 @@ class TraineeUpdateView(LoginRequiredMixin,UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse('application-trainees') 
+        return reverse('application:trainees') 
 '''
     def test_func(self):
         employee = self.get_object()
@@ -215,7 +224,7 @@ class TraineeUpdateView(LoginRequiredMixin,UpdateView):
 class TraineeDeleteView(LoginRequiredMixin,DeleteView):
     model=Reporting
     def get_success_url(self):
-        return reverse('application-trainees') 
+        return reverse('application:trainees') 
 
 
 #============JQUERY IMPLEMENTATION======================================

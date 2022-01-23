@@ -1,0 +1,661 @@
+    {%extends "main/base_templates/analysis_index.html"%} 
+    {% load static %}
+    {% block title %}
+    {% if department %}{{ department.name }}{% else %}activities{% endif %}
+    {% endblock %}
+    {% block content %}
+    <!--------------------------Slider Section--------------------------------->
+    <!-------------------Our home services Section------------------------->
+    <!-------------------1. Our  Job Report Section------------------------->
+    <section id="data_training">
+    <div class="data_training text-center">
+        <h3 class="title">Course Overview</h3>
+        <div class="row text-center">
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>General Introduction</h4>
+            <p>
+            Prerequisites and what is required to be successful.We focus on the summary of the course, how to organize your information and also the specifications of the laptop.
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sxYkFlrLRioSWhHmx5SJCGPHbpVG1SUC0k9FiiYS89w/edit?usp=sharing">Course Introduction</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1lVJ2XEghLUx_ZlUBgIjnWs7fLMNzWoYNegAqaGmChOc/edit?usp=sharing">Course Summary</a>
+                <div class="dropdown-divider"></div>
+
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1IxdoVSlpwb-u2HPQjqmoVETPzeWspXegsDeCbfHUIHw/edit?usp=sharing">Laptop Specifications</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sxYkFlrLRioSWhHmx5SJCGPHbpVG1SUC0k9FiiYS89w/edit#slide=id.p2">Course Introduction Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view">Video 2 : Course Introduction</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/rjvmha45csprgzm8bhcxx2iivhasjfdu/file/888008292048">BI Training Schedule</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1whVgYPPSss19JU5bUK0CDFMP8EvTG6g-/edit?dls=true">Welcome Letter</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Organization</h4>
+            <p>
+            Organization is so crucially in IT industry, we will learn how to bookmark important links,organize emails and desktop.
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/p94t4yb2jys80bze38fxl7bdtkgpkumy">Organization Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1IRjzP99ct07XMNLyYVKxIDM_vz46pDsd/view">Video 1: Organization Video</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Data Tools</h4>
+            <p>
+            An overview of tools that will be used to deliver the project.In this project we will use Tableau for reporting,Alteryx for ETL and SQL for database.
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/1HY408A8jN-WBl73cqpXlcsu2k2nEwc62E381YPSHbTc/edit#gid=1549840439">Tools Overview</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1PO9tUnTU6xQwpa0leDM8Vkl9qg26J-ga/edit#slide=id.p6">SQL Installations Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1pQ2wX7nLOjCIi1g8KaavuFm79xpZSgSm/view">SQL Installations Video</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p5">Alteryx Installations</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1PO9tUnTU6xQwpa0leDM8Vkl9qg26J-ga/edit#slide=id.p6">Tableau Installations</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </section>
+
+    <!-------------------1. Project Definition Section------------------------->
+    <section id="project_based">
+    <div class="project_based text-center">
+        <h3 class="title">Initiation & Planning</h3>
+        <div class="row text-center">
+            <div class="col-md-4 services">
+                <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                <h4>Project Description</h4>
+                <p>
+                Define what the project is about and incorporate agile methodology in project delivery.
+                </p>
+                <ul class="navbar-nav ml-auto">
+                <li class="nav-item dropdown">
+                    <a
+                    class="nav-link dropdown-toggle"
+                    href=""
+                    id="navbarDropDown"
+                    role="button"
+                    data-toggle="dropdown"
+                    >
+                    <button type="btn" class="btn-primary">Select</button>
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    <a class="dropdown-item"  href="https://drive.google.com/file/d/1A-XhqcBTljOPLFEE8iPnZnCutNAKzapJ/view">Methodology:Agile Vs Methodology</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1_iSV5_AUpEVJnzzr5PJjYd0a63jR0jSB/edit">Project Description Powerpoint</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1aYx25V7UK1ae3B48rNhmfZIWmveMzBOO/view">Project Description Video </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1HsMD7iAU3TenisnfakoMxGU5r8VIQXEHCgV4RsnWML0/edit#slide=id.p11">More Info</a>
+                    <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                </ul>
+            </div>
+        <div class="col-md-4 services">
+            <h4>BA-Requirement/Gap Analysis</h4>
+            <p>
+            Gather,define and document requirements through a real time project.
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1hc4ONBmCgHTcm7hP2UvCIQFDbu9RuSZl/view">Video 1: Elicitation and requirements definition</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1JllAXWyMmMV66UmKro7OCTp_ZuOqMYxX/view">Video 2:Requirements</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://play.planningpoker.com/play/game/lsPkEMmYdBGZCtyKXsKi4GC9UDcAvbkE">Planning Poker Website</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1XGMy1GIrhdNkrkzsmw0ujtm2bQ_-Mx0P/view">Video 3:Planning Poker</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        <div class="col-md-4 services">
+            <h4>Designs-Wireframes/Mockups</h4>
+            <p>
+            Creating wireframes/mockups that mimicks the final product.A guide in development stage.
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="#">Video 1: Landing Page Wireframe</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">Video 2:Executive Overview Wireframe</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">Video 3:Rating Wireframe</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+    </section>
+    <!-------------------2. Analytics Section------------------------->
+    <section id="embed_analytics">
+    <div class="embed_analytics text-center">
+        <h3 class="title">Development</h3>
+        <h4>Reporting</h4>
+        <p>We will now learn how to embed analytics in our project.To that end,our first release we will start by creating the landing page, a home which will serve to consolidate all the reports and direct the end user to report of choice.Executive overview report will 
+            will give the top management high level overview of perfomance of employees to make enhance business decisions and finally the rating report,
+            This report shows the perfomance of employees during one-on-one sessions.Employees are rated based on communication,punctuality and understanding.
+        </p>
+        <div class="row text-center">
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <p>Landing Page Report</p>
+            <p>A home page that contains buttons to help us navigate to Executive Report,Meeting Report and Rating Report</p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gb3446842ab_0_0">Landing Page Report Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/t2tjprs82wxlhwpaalkd886n000quni2">Employee Dataset</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/oqn9c5as9hcb5wx2bjcvwjh6yqd6x1m2">Landing Page Images</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1zjInq2dSgb8RNNnKdF254qin1CQzbzXO/view">Video 1: Landing Page Development</a>
+
+                <!-------
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=1847756889"></a>
+                <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.ga93b667846_0_0"></a>
+                <div class="dropdown-divider"></div>
+                
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=1847756889"></a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=603369039"></a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1TZhJMHTPHPH7YulQQQbqt2bPW-OvRizp/edit"></a>
+                
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/4c8lsj87hvit6x6ey9cvbredtgrsprgs"></a>
+                --->
+                </div>
+            </li>
+            </ul>
+        </div>
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                <p>Executive Overview Report</p>
+            <p>Here we will visualize total meetings,total DAF points and total message points as well as ranking top perfoming employees in the company.It ranks departments and platforms based on DAF points,meetings attended and message points.</p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gb2340dd0a8_2_25">Executive Overview Report Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/4c8lsj87hvit6x6ey9cvbredtgrsprgs">Executive Report Images</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1Ousw6IgnKme1FfcKLgvg_NS_RIAS7-Ai/view">Video 1: Executive Report Development</a>
+                <!------
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/11d_F3508kj9GKIcy0ypyI1ZxGPkBBw0Q/view"></a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gd89457d9e8_0_0"></a>
+                ------>
+                </div>
+            </li>
+            </ul>
+        </div>
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                <p>Rating Report</p>
+            <p>We visualize total rating points for each employee as well as total points on communication,punctuality and understanding.This report also shows insights on all one-on-one sessions done by each employee. </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gb2340dd0a8_2_25">Rating Report Powerpoint</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://app.box.com/s/a6qc2apcx8a1x1iekmrsmntkmtj2gns7">Rating Report Images</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://codatrainingapp.herokuapp.com/application/rating/">Rating Dataset</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/8928887d5471d36c667ccb0a55435b25af51a39b79d24b243a69cfd4a30fd689">Video 1:Rating Report</a>
+                </li>
+                <ul>
+                </div>
+
+            </li>
+            </ul>
+        </div>
+    </div>
+    <div class="embed_analytics text-center">
+        <h4>ETL and Data Storage</h4>
+        <p>This will be our 2nd and 3rd release, where we shall clean our data and promote it to SQL Database for storage to minimize data redudancy and for scalability as well as mitigating performanc issues as our data grows.
+        </p>
+    <div class="row text-center">
+    <div class="col-md-4 services">
+        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+        <h4>Data Preparation(ETL)</h4>
+            <p>There are many tools that can be used to perfom ETL; Alteryx,SSIS and Datastage.For this project we use Alteryx to clean data.Below is what is required to come up with data cleaning workflows</p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p3">Alteryx Installation</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1TxhoFQG8hluo0QDM_r_KFcrM-hwEXbn5/view">Video 1: Introduction</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9"></a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1atstjtnG0LBcPK-Kv6bOh960LSyhXCFG/view?usp=sharing">Video 2: Alteryx Workflows</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/9a170aae00158a3275cbd93420945fdbb89eb68027f4c923bc5d6d244ab86e85">Video 3: Alteryx Workflows</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/ee363242b4ec507213c6f48510693032c1c30fd5c4b571796cd3a49062899639"></a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/open?id=1yDLxQXOIhjG3ObgC15EEKyzf3mGrIE1e">Sprint Demo</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/background/service1.png" class="service-img" >-->
+            <h4>Database Management</h4>
+            <p>
+            For this project we use SQL to create and manage a database by doing data normalization,developing a data dictionary and data models for optimal management of the database.
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1PO9tUnTU6xQwpa0leDM8Vkl9qg26J-ga/edit#slide=id.p6">SQL Installation</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1pQ2wX7nLOjCIi1g8KaavuFm79xpZSgSm/view">Video 1: SQL Installations</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/drive/u/1/folders/1Q-ilf6bQyk-Ya9pfhlz3vCihcRjxNab9"></a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/c37dae2a15bd42dc83f84b494ff8660e19099207e2527e99b29201da195acca6">Creation,Insertion and Update</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/4048a629e949d6ece864123a8d9057e8067faabcdbd98f0cc4ff07544097ed49">Database Retrieval</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/#/s/8dd348fa62a4ce55bb92f2d5f98eabea06ba31cbb369763e337a07f9ffa0228f">Store Procedure</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Projects</h4>
+            <p>
+            Learning by examining what was done by past students.
+            to get access to their presentations
+            </p>
+
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item"  href="https://public.tableau.com/app/profile/coda2331/viz/BI-SOLUTION-4/CODAANALYTICS-SCHEDULE">4th Cohort: Financial Use Case </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item"  href="https://public.tableau.com/app/profile/coda2331/viz/CODAANALYTICS-BI-SOLUTION-3v1/CODAANALYTICS-SCHEDULE">2nd & 3rd Cohort: Payment Use Case </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://public.tableau.com/app/profile/chris2050/viz/KituiHouseRenovation051620_v1/SummaryReport?publish=yes">1st  Cohort: Construction Use Case </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1hCW9zdcJ2zE35RFlYuxyDa9oy7RDxI4xetcFHdmFtrY/edit">Past: ITTS</a>
+                <div class="dropdown-divider"></div>
+                </div>
+            </li>
+            </ul>
+        </div>
+        </div>
+    </div>
+        </div>
+        </div>
+    </section>
+        
+    <!-------------------UAT/QA-TESTING Section------------------------->
+    <section id="job_market">
+    <div class="job_market text-center">
+        <h3 class="title">Testing</h3>
+        <div class="row text-center">
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Report Testing</h4>
+            <p>Reports created are moved to UAT for testing.We come up with test scenarios and test scripts to help us conduct test validation.Below is what will enable us perfom UAT</p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.ga93b667846_0_0">Landing Page Testing Powerpoint</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gd89457d9e8_0_0">Executive Report Testing</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1EQoRKsCd4ZI3trqY8DigCnPCXP4jyauV/view?usp=sharing">Video 1: Landing Page Testing</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/11d_F3508kj9GKIcy0ypyI1ZxGPkBBw0Q/view">Video 2:Executive Report Testing</a>
+                    <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=1847756889">Test Scenarios</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=603369039">Test Scripts</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1TZhJMHTPHPH7YulQQQbqt2bPW-OvRizp/edit">Landing Page Test Validation</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/10mRRrIXUP1S0OKu8WcDXDl_dyIS26sbE/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true">Executive Report Test Validation</a>
+                    </div>
+            </li>
+            </ul>
+        </div>
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>ETL Testing</h4>
+            <p>
+            In this section, we will learn how to test the workflows created in Alteryx to make sure they meet the stated objectives.
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.ga93b667846_0_0">Landing Page Testing Powerpoint</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gd89457d9e8_0_0">Executive Report Testing</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1EQoRKsCd4ZI3trqY8DigCnPCXP4jyauV/view?usp=sharing">Video 1: Landing Page Testing</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/11d_F3508kj9GKIcy0ypyI1ZxGPkBBw0Q/view">Video 2:Executive Report Testing</a>
+                    <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=1847756889">Test Scenarios</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=603369039">Test Scripts</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1TZhJMHTPHPH7YulQQQbqt2bPW-OvRizp/edit">Landing Page Test Validation</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/10mRRrIXUP1S0OKu8WcDXDl_dyIS26sbE/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true">Executive Report Test Validation</a>
+                    </div>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/background/service1.png" class="service-img" >-->
+            <h4>Database Testing</h4>
+            <p>
+            Our objective in this section is to test the database and the store procedures generated to run the reports.
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.ga93b667846_0_0">Landing Page Testing Powerpoint</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1YQFBjdnte48Al2V77xX2iR_o2fwS9kRK/edit#slide=id.gd89457d9e8_0_0">Executive Report Testing</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/1EQoRKsCd4ZI3trqY8DigCnPCXP4jyauV/view?usp=sharing">Video 1: Landing Page Testing</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/11d_F3508kj9GKIcy0ypyI1ZxGPkBBw0Q/view">Video 2:Executive Report Testing</a>
+                        <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=1847756889">Test Scenarios</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/spreadsheets/d/14tB9-ThwRFE7c-3uo7CKAA-iJhwApp9L/edit#gid=603369039">Test Scripts</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1TZhJMHTPHPH7YulQQQbqt2bPW-OvRizp/edit">Landing Page Test Validation</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/10mRRrIXUP1S0OKu8WcDXDl_dyIS26sbE/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true">Executive Report Test Validation</a>
+                        </div>
+            </li>
+            </ul>
+        </div>
+        </div>
+        </div>
+    </section>
+<!-------------------Job Market Section------------------------->
+<section id="job_market">
+    <div class="job_market text-center">
+        <h3 class="title">Getting into the Job Market</h3>
+        <div class="row text-center">
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Application Process</h4>
+            <p>
+            We do offer tremendous assistance in the application process. Join and
+            learn how experts do it.
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/18acgFSw3bvQiIDqatgwK4eQkPbEyWwzgB_m8aSBnbTk/edit">Resume Preparation</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/17RxXz8c5bjX9OrdbWR97qpoM4P-zqVgweOpNY4-CsnA/edit">Sample Resume 1</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href=" https://docs.google.com/document/d/1PPAnIhGYMW62wXuihT0UiPKBAmWNZK-xAebK4pSm9Ko/edit">Sample Resume 2</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="">Salary Negotiation(C2C/W2s)</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href=" ">Job Tracker(Recruiters)</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+            <h4>Networking</h4>
+            <p>
+            Work within a network,build a team and meet experienced professionals
+            working in the field to respond to your questions.
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/2fffdd47b8bfd8f75447b76446a58475680b364d0d10c5e4c78ff46f155d6f22"><b>Guest Speaker:</b> VP Francis Umude</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://transcripts.gotomeeting.com/?utm_source=recordingReadyNotification&utm_medium=email#/s/fab36e736f62941d738b0f739d6be19ec0ed31bc08cefe63b5ea3fbf0dce5e9b"><b>Guest Speaker:</b> Data Analyst James Kontoh</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#"><b>Guest Speaker:</b> Business Analyst Gladys Mwongo</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+
+        <div class="col-md-4 services">
+            <!-- <img src="static/img/background/service1.png" class="service-img" >-->
+            <h4>Interview Strategy</h4>
+            <p>
+            We will offer training in Job Interview. Please Join and get access to
+            past audio interviews and questions
+            </p>
+            <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown">
+                <a
+                class="nav-link dropdown-toggle"
+                href=""
+                id="navbarDropDown"
+                role="button"
+                data-toggle="dropdown"
+                >
+                <button type="btn" class="btn-primary">Select</button>
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1GZZ_6ME1QI-4zeHt0cQ1lNrztSTKKp5-D7K0ytOXgh8/edit#heading=h.gjdgxs">1. Introduction</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://drive.google.com/file/d/15-82jaqBrXW21SoLJ5QNvGmltOrekv8F/view">Video. Introduction</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">2. Project Story</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="https://docs.google.com/document/d/1yDi3AAzYh-fdtL7d235PR9m9cPTAHorlcXycfq99uI8/edit#">3. Performance  Tuning</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">3. Agile vs Waterfall</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">4. SDLC</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">5. Mock Interview</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" target="_blank" href="#">6. Sample Interviews</a>
+                </div>
+            </li>
+            </ul>
+        </div>
+        </div>
+        </div>
+    </section>
+    {% endblock content %}

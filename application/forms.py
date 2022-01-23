@@ -17,18 +17,21 @@ class ApplicantForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
         model = Application
-        fields = ['id','first_name','last_name','username','phone', 'email','country','resume']
+        fields = ['type','first_name','last_name','username','gender','phone', 'email','country','resume']
         labels={
                 'first_name':'First Name',
                 'last_name':'Last Name',
                 'username':'User Name',
+                'gender':'Gender',
                 'email':'Email',
+                 'type':'type',
         }
-        '''
+
     def __init__(self, *args, **kwargs):
         super(ApplicantForm,self).__init__(*args, **kwargs)
-        self.fields['gender'].empty_label= "Select"
-'''
+        self.fields['type'].empty_label= "Select"
+
+
 class RatingForm(forms.ModelForm):
     class Meta:
         model = Rated

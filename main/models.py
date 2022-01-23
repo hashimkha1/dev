@@ -115,7 +115,6 @@ class Expenses(models.Model):
     def __str__(self):
             return f'{self.id} Expenses'
 
-
     def get_absolute_url(self):
         return reverse('transaction-list')
         #return reverse('employee-detail', kwargs={'pk': self.pk})

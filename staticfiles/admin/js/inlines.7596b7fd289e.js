@@ -126,7 +126,7 @@
             }
             row.remove();
             nextIndex -= 1;
-            // Pass the deleted form to the post-delete callback, if provided.
+            // Pass the deleted form to the codablog:post-delete callback, if provided.
             if (options.removed) {
                 options.removed(row);
             }

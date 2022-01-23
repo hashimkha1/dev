@@ -1,0 +1,47 @@
+{%extends "main/base_templates/base.html"%} {% block content %}
+
+<section id="career">
+  <div class="career text-center">
+    <a
+    class="btn btn-secondary btn-md mt-1 mb-1"
+    href="{%url 'accounts:tracker-create' %}"
+  >
+    NEED HELP? </a
+  >
+  <div class="career text-center">
+    <a
+    class="btn btn-primary btn-md mt-1 mb-1"
+    href="#"
+  >My Total Time:
+  {{time}} hours</a
+  >
+       <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>Username</th>
+          <th>Category</th>
+          <th>Task</th>
+          <th>Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+       
+        {% for tracker in trackers %}
+        {% if tracker.author == user %}
+            <tr>
+              <td>{{tracker.login_date|date:"F d, Y"}}</td>
+              <td>{{tracker.author}}</td>
+              <td>{{tracker.category}}</td>
+              <td>{{tracker.task}}</td>
+              <td>{{tracker.duration}}</td>
+
+            {% endif %}
+        {% endfor %}
+
+      </tbody>
+    </table>
+  </div>
+
+</section>
+{% endblock content %}

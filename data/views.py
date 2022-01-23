@@ -5,8 +5,8 @@ from .forms import InterviewForm, UploadForm
 from .models import InterviewUpload, Upload
 
 
-def home(request):
-    return render(request, 'main/home_templates/analysis_home.html', {'title': 'home'})
+def analysis(request):
+    return render(request, 'main/home_templates/analysis_home.html', {'title': 'analysis'})
 
 def deliverable(request):
         return render(request, 'data/deliverable/deliverable.html', {'title': 'deliverable'})
@@ -14,6 +14,10 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, 'data/training/training.html', {'title': 'training'})
+
+@login_required
+def bitraining(request):
+    return render(request, 'data/training/bitraining.html', {'title': 'training'})
 
 @login_required
 def interview(request):

@@ -4,9 +4,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
 from mptt.admin import MPTTModelAdmin
+from .models import Transaction,Inflow,Outflow
 
-from .models import Activity, Category, Employee, Transaction #, Department
-
+#from .models import Activity, Category, Employee, Transaction , Department
 
 # Register your models here.
 class CsvImportForm(forms.Form):
@@ -59,26 +59,21 @@ class TransactionAdmin(admin.ModelAdmin):
 
 admin.site.register(Transaction, TransactionAdmin)
 
+admin.site.register(Inflow)
+admin.site.register(Outflow)
 
-
+'''
 admin.site.register(Employee)
-''' 
+
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
-'''
+
 admin.site.register(Category,MPTTModelAdmin)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
-
-'''
-@admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
-'''
 
 class ActivityAdmin(admin.ModelAdmin):
     list_display = ['activity_name','description', 'point','mxpoint', 'mxearning']
@@ -104,7 +99,7 @@ class ActivityAdmin(admin.ModelAdmin):
             file_data = file.split("\n")
             csv_data=[line for line in file_data if line.strip() != ""]
             print(csv_data)
-            ''' for x in csv_data:
+             for x in csv_data:
                 fields = x.split(",")
                 created = Activity.objects.update_or_create(
                                     category=fields[0],
@@ -121,34 +116,12 @@ class ActivityAdmin(admin.ModelAdmin):
             url = reverse('admin:index')
             return HttpResponseRedirect(url)
             
-            '''
+            
            
         form = CsvImportForm()
         data = {"form": form}
         return render(request, "admin/csv_upload.html", data)
 
 admin.site.register(Activity, ActivityAdmin)
-
-''' 
-class EmployeeInline(admin.TabularInline):
-    model=Employee
-
-class DepartmentAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
-    inlines=[
-        EmployeeInline,
-    ]
-
-class ActivityInline(admin.TabularInline):
-    model=Activity
-
-admin.site.register(Category,MPTTModelAdmin)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ['name', 'slug']
-    prepopulated_fields = {'slug': ('name',)}
-    inlines=[
-        ActivityInline,
-    ]
 
 '''

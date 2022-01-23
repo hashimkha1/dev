@@ -1,10 +1,17 @@
+import datetime
+from datetime import date ,timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import  redirect, render
-
+from django.utils.decorators import method_decorator
 from .decorators import unauthenticated_user
-from .forms import CustomerForm  # , SignUpForm, UserLoginForm, UserRegisterForm
-from .models import CustomerUser
+from django.db.models.aggregates import Avg, Sum
+from .forms import CustomerForm  # , TimeForm  , SignUpForm, UserLoginForm, UserRegisterForm
+
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect,render
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
+from .models import CustomerUser,Tracker
 
 # Create your views here..
 
@@ -26,8 +33,8 @@ def join(request):
         form=CustomerForm()
     return render(request, 'accounts/registration/join.html', {'form': form})
     
+    
 #@allowed_users(allowed_roles=['admin'])
-
 def home(request):
     return render(request, 'main/home_templates/layout.html')
 
@@ -38,7 +45,6 @@ def clients(request):
 @login_required(login_url='account-login')
 def profile(request):
     return render(request,'accounts/profile.html')
-
 '''
 @unauthenticated_user
 def loginPage(request):
@@ -48,13 +54,12 @@ def loginPage(request):
         account = authenticate(request,username=username, password=password)
         if account is not None:
             login(request,account)
-            return redirect('main-layout')
+            return redirect('main:layout')
         else:
             messages.info(request, 'USERNAME OR PASSWORD is incorrect!Please try again')
     context={}
     return render(request, 'accounts/login.html', context)
 @login_required
- 
 def register(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -87,3 +92,80 @@ def registered(request):
     clients=User.objects.all().order_by('-first_name')
     return render(request, 'users/registered.html', {'clients': clients})
 '''
+
+
+#----------------------TIME TRACKING CLASS-BASED VIEWS--------------------------------
+@method_decorator(login_required, name='dispatch')
+class TrackDetailView(DetailView):
+    model=Tracker
+    ordering=['-login_date']
+
+@method_decorator(login_required, name='dispatch')
+class TrackListView(ListView):
+    model=Tracker
+    template_name='accounts/tracker.html'
+    context_object_name='trackers'
+    ordering=['-login_date']
+
+
+def usertracker(request):
+    trackers=Tracker.objects.all().order_by('-login_date')
+    #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
+    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
+    total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
+    time=total_time.get('Your_Total_Time')
+    context = {
+                'trackers': trackers,
+                'total_time':total_time,
+                'time':time
+
+                
+              }
+    return render(request, 'accounts/usertracker.html', context)
+'''
+@method_decorator(login_required, name='dispatch')
+class UserTrackListView(ListView):
+    model=Tracker
+    template_name='accounts/user_tracker.html'
+    context_object_name='trackers'
+    ordering=['-login_date']
+
+    def get_queryset(self):
+        user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
+        return Tracker.objects.filter(author=user).order_by('-login_date')
+'''
+@method_decorator(login_required, name='dispatch')
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model=Tracker
+    success_url="/accounts/usertracker"
+    fields=['category','task']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)    
+
+class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Tracker
+    success_url="/accounts/tracker"
+    fields=['category','task','duration']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        track = self.get_object()
+        if self.request.user == track.author:
+            return True
+        return False
+
+
+class TrackDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Tracker
+    success_url="/accounts/tracker"
+
+    def test_func(self):
+        timer = self.get_object()
+        if self.request.user == timer.author:
+            return True
+        return False

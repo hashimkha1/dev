@@ -32,32 +32,31 @@ handler403='main.views.hendler403'
 handler300='main.views.hendler300'
 handler500='main.views.hendler500'
 
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('join/', account_views.join, name='account-join'),
-    #path('joined/', account_views.joined, name='account-joined'),
+    path('join/', account_views.join, name='accounts:account-join'),
     path('profile/', account_views.profile, name='account-profile'),
-    #path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='accounts/registration/logout.html'), name='account-logout'),
     path('password-reset/', auth_views.PasswordResetView.as_view(template_name='accounts/registration/password_reset.html'), name='password_reset'),
     path('password-reset/done', auth_views.PasswordResetDoneView.as_view(template_name='accounts/registration/password_reset_done.html'), name='password_reset_done'),
     path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='accounts/registration/password_reset_confirm.html'), name='password_reset_confirm'),
     path('password-reset-complete/', auth_views.PasswordResetCompleteView.as_view(template_name='accounts/registration/password_reset_complete.html'), name='password_reset_complete'),
-    path('blog/', include('codablog.urls')),
     
     #path('users/', include('users.urls')),
-    path('', include('main.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('data/', include('data.urls')),
-    path('getdata/', include('getdata.urls')),
-    path('application/', include('application.urls')),
-    path('projectmanagement/', include('projectmanagement.urls')),
-    path('investing/', include('investing.urls')),
+    path('', include('main.urls', namespace='main')),
+    path('accounts/', include('accounts.urls', namespace='accounts')),
+    path('data/', include('data.urls', namespace='data')),
+    path('getdata/', include('getdata.urls', namespace='getdata')),
+    path('application/', include('application.urls', namespace='application')),
+    path('projectmanagement/', include('projectmanagement.urls', namespace='projectmanagement')),
+    path('blog/', include('codablog.urls', namespace='blog')),
+    path('investing/', include('investing.urls', namespace='investing')),
     #path('store/', include('store.urls'),name='store'),
-    path('management/', include('management.urls'),name='management'),
+    path('management/', include('management.urls',namespace='management')),
     
-   # path('testing/', include('testing.urls')),
+   # path('testing/', include('testing.urls', namespace='testing')),
     path('admindashboard/',include("testing.adminurls"))
 ]
 

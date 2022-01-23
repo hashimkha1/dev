@@ -21,27 +21,12 @@
     </div> 
     </div>
 </section>
- <!-------------------Cards-Category Section----------------------->
+ <!-------------------Cards-Category Section------------------>
 <section id="project_based">
   <div class="project_based text-center">
     <div class="row text-center">
       {% if department %}
-      {% for category in categories %}
-      <div class="col-md-3" id="bada">
-        <div class="card" style="text-align: center;margin-left: 10px;">
-                        <div class="card-body" >
-                                <h3 class="card-text">
-                                  <a class="text-dark text-decoration-none" >{{category.name}}</a>
-                                </h3>
-                                <hr/>
-                                <p>{{category.description}}</p>
-                                <a href="{{ category.get_absolute_url }}" >
-                                  <button type="button" class="w3-btn w3-light-grey">Proceed</button>
-                                </a>
-                         </div>
-        </div>
-        </div>
-        {% endfor %}
+        <p>Categories Removed</p>
         {% endif%}
       </div>
     </div>

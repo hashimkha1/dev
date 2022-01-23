@@ -30,7 +30,7 @@ def upload(request):
         form=UploadForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('investing-uploaded')
+            return redirect('investing:uploaded')
     else:
         form=UploadForm()
     return render(request, 'main/doc_templates/upload.html',{'form':form})

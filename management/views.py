@@ -1,79 +1,20 @@
 import calendar
-
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils.decorators import method_decorator
+from django.db.models import Sum
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse, reverse_lazy
-from django.utils.timezone import datetime
+from django.urls import reverse
+from .forms import (TransactionForm,OutflowForm,InflowForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-
-from .forms import TransactionForm
-from .models import Activity, Category, Employee, Transaction #Department
+from .models import Transaction,Inflow,Outflow
 
 
 def home(request):
     return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
 
-class EmployeeCreateView(LoginRequiredMixin, CreateView):
-    model=Employee
-    fields=['name','email','contact']
-
-    def form_valid(self,form):
-        form.instance.name=str(self.request.user)
-        return super().form_valid(form)  
-
-    #def get_success_url(self):
-    #     return reverse('employees') 
-
-class EmployeeListView(ListView):
-    model=Employee
-    template_name='management/employees.html'  #<app>/<model>_<viewtype>
-    context_object_name='employees'
-    ordering=['-entry_date']
-
-class EmployeeDetailView(DetailView):
-    model=Employee
-
-
-class EmployeeUpdateView(LoginRequiredMixin,UpdateView):
-    model=Employee
-    fields=['email','contact']
-        
-    def form_valid(self,form):
-        form.instance.username=self.request.user
-        return super().form_valid(form)
-        
-    def get_success_url(self):
-        return reverse('management:employee-list') 
-    '''
-    def test_func(self):
-        employee = self.get_object()
-        if self.request.firstname == employee.name:
-            return True
-        return False
-
-    '''
-
-class EmployeeDeleteView(LoginRequiredMixin,DeleteView):
-    model=Employee
-
-    def get_success_url(self):
-        return reverse('employee-list') 
-
-    '''
-    def test_func(self):
-        post = self.get_object()
-        if self.request.user == post.author:
-                return True
-        return False
-    '''
-
-def construction(request):
-    return render(request, 'projectmanagement/construction.html', {'title': 'construction'})
-
-
-# -------------------------transactions Section-------------------------------------#
+#----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
 def transact(request):
     if request.method== "POST":
@@ -85,72 +26,203 @@ def transact(request):
         form=TransactionForm()
     return render(request, 'management/company_finances/transact.html',{'form':form})
 
-def transaction(request):
-    transactions=Transaction.objects.all().order_by('-activity_date')
-    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
-
-
-# -------------------------DAF Section-------------------------------------#
-@login_required
-def all_activities(request):
-    activities =Activity.activities.all()
-    return render(request, 'main/home_templates/management_home.html', {'activities': activities})
 '''
-@login_required
-def department_list(request, department_slug=None):
-    department = get_object_or_404(Department, slug=department_slug)
-    categories = Category.objects.filter(department=department)
-    context ={
-                'department': department,
-                'categories': categories,
-             }
-    return render(request, 'management/company_finances/department.html', context)
- '''
-@login_required
-def category_list(request, category_slug=None):
-    category = get_object_or_404(Category, slug=category_slug)
-    activities = Activity.objects.filter(category=category)
-    today = datetime.today()
-    deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
-    deadline=datetime.date(deadline_date)
+def transaction(request):
+    transactions=Transaction.objects.all().order_by('-transaction_date')
+    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
+'''
 
-    context ={
-                'category': category,
-                'activities': activities,
-                'deadline':deadline
-             }
-    return render(request, 'management/company_finances/category.html', context)
+class TransactionListView(ListView):
+    model=Transaction
+    template_name='management/company_finances/transaction.html'
+    context_object_name='transactions'
+    #ordering=['-transaction_date']
 
-@login_required
-def activity_detail(request,slug,category_slug=None):
-    activity = get_object_or_404(Activity, slug=slug, is_active=True)
-    today = datetime.today()
-    deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
-    deadline=datetime.date(deadline_date)
+@method_decorator(login_required, name='dispatch')
+class OutflowDetailView(DetailView):
+    template_name='management/outflow_detail.html'
+    model=Transaction
+    ordering=['-transaction_date']
 
-    context ={
-                'activity': activity,
-                'deadline':deadline
-             }
-    return render(request, 'management/company_finances/activity.html',context)
+class TransactionUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Transaction
+    #success_url="/management/transaction"
+    fields = ['sender','receiver','phone','department', 'category','type','payment_method','qty','amount','transaction_cost','description','receipt_link']
+    form=TransactionForm()
 
-class ActivityUpdateView(LoginRequiredMixin,UpdateView):
-    model=Activity
-    #fields=['category','created_by','activity_name','description','slug','earning','point','mx_point','submission','created','updated']
-    fields=['activity_name','description','point']
     def form_valid(self,form):
         form.instance.username=self.request.user
         return super().form_valid(form)
-    
-    def get_success_url(self):
-        agent_slug = self.object.category.slug
-        return reverse_lazy('management:category_list', kwargs={'category_slug': agent_slug})
 
-'''
+    def get_success_url(self):
+        return reverse('management:transaction-list') 
+''' 
+
     def test_func(self):
-        employee = self.get_object()
-        if self.request.firstname == employee.name:
+        expense = self.get_object()
+        if self.request.user == expense.author:
             return True
         return False
-    '''  
+'''
+#----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
+def outflow_entry(request):
+    if request.method== "POST":
+        form=OutflowForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.instance.employee=request.user
+            form.save()
+            return redirect('/management/outflows/')
+    else:
+        form=OutflowForm()
+    return render(request, 'management/company_finances/outflow_entry.html',{'form':form})
+'''
+@method_decorator(login_required, name='dispatch')
+class OutflowCreateView(LoginRequiredMixin, CreateView):
+    model=Outflow
+    success_url="/management/outflows"
+    fields = ['sender','receiver','phone','department', 'category','type','payment_method','qty','amount','transaction_cost','description']
+    def form_valid(self,form):
+        form.instance.employee=self.request.user
+        return super().form_valid(form) 
+
+@method_decorator(login_required, name='dispatch')
+class OutflowListView(ListView):
+    model=Outflow
+    template_name='management/cash_outflow/outflows.html'
+    context_object_name='outflows'
+    ordering=['-activity_date']
+''' 
+def outflowlist(request):
+    outflows=Outflow.objects.all().order_by('-activity_date')
+    #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
+    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
+    total=Outflow.objects.all().aggregate(Total_Cashoutflows=Sum('amount'))
+    expenses=total.get('Total_Cashoutflows')
+    context = {
+                'outflows': outflows,
+                'expenses':expenses
+              }
+    return render(request, 'management/cash_outflow/outflows.html', context)
+                                                                                                                                        
+@method_decorator(login_required, name='dispatch')
+class OutflowDetailView(DetailView):
+    template_name='management/cash_outflow/outflow_detail.html'
+    model=Outflow
+    ordering=['-activity_date']
+
+@method_decorator(login_required, name='dispatch')
+class OutflowUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Outflow
+    success_url='/management/outflows'
+    fields =['sender','receiver','phone','department', 'category','type','payment_method','qty','amount','transaction_cost','description']
+    def form_valid(self,form):
+        form.instance.employee=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        outflow = self.get_object()
+        if self.request.user == outflow.employee:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class OutflowDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Outflow
+    success_url='/management/outflows'
+
+    def test_func(self):
+        outflow = self.get_object()
+        if self.request.user == outflow.employee:
+            return True
+        return False
+#----------------------CASH INFLOW CLASS-BASED VIEWS--------------------------------
+'''
+@method_decorator(login_required, name='dispatch')
+class InflowCreateView(LoginRequiredMixin, CreateView):
+    model=Inflow
+    success_url="/management/user_inflow"
+    fields = ['receiver','phone','department', 'category','task','method','period','qty','amount','transaction_cost','description','receipt_link']
+    
+    def form_valid(self,form):
+        form.instance.sender=self.request.user
+        return super().form_valid(form) 
+'''
+
+def inflow(request):
+    if request.method== "POST":
+        form=InflowForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.instance.sender=request.user
+            form.save()
+            return redirect('/management/inflow/')
+    else:
+        form=InflowForm()
+    return render(request, 'management/company_finances/inflow_entry.html',{'form':form})
+
+@method_decorator(login_required, name='dispatch')
+class InflowDetailView(DetailView):
+    template_name='management/cash_inflow/inflow_detail.html'
+    model=Inflow
+    ordering=['-transaction_date']
+
+'''
+@method_decorator(login_required, name='dispatch')
+class InflowListView(ListView):
+    model=Inflow
+    template_name='management/cash_inflow/inflow.html'
+    context_object_name='inflows'
+    ordering=['-transaction_date']
+    
+'''
+
+def inflow(request):
+    inflows=Inflow.objects.all().order_by('-transaction_date')
+    #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
+    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
+    total=Inflow.objects.all().aggregate(Total_Cashinflows=Sum('amount'))
+    revenue=total.get('Total_Cashinflows')
+    context = {
+                'inflows': inflows,
+                'revenue':revenue
+              }
+    return render(request, 'management/cash_inflow/inflow.html', context)
+
+@method_decorator(login_required, name='dispatch')
+class UserInflowListView(ListView):
+    model=Inflow
+    template_name='management/cash_inflow/user_inflow.html'
+    context_object_name='inflows'
+    ordering=['-transaction_date']
+''' 
+    def get_queryset(self):
+        user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
+        return Inflow.objects.filter(author=user).order_by('-transaction_date')
+'''
+
+@method_decorator(login_required, name='dispatch')
+class InflowUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Inflow
+    success_url='/management/inflow'
+    fields=['sender','receiver','phone', 'category','task','method','period','qty','amount','transaction_cost','description']
+
+    def form_valid(self,form):
+        form.instance.sender=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        inflow = self.get_object()
+        if self.request.user == inflow.sender:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class InflowDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Inflow
+    success_url='/management/inflow'
+
+    def test_func(self):
+        inflow = self.get_object()
+        if self.request.user == inflow.sender:
+            return True
+        return False

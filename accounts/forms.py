@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
-from .models import CustomerUser
+from .models import CustomerUser,Tracker
 
 #from django.db import transaction
 
@@ -26,6 +26,10 @@ class CustomerForm(forms.ModelForm):
                 'country':'Country',
         }
 
+    def __init__(self, *args, **kwargs):
+        super(CustomerForm,self).__init__(*args, **kwargs)
+        self.fields['category'].empty_label= "Select"
+
     def clean_password2(self):
         password1 = self.cleaned_data.get('password1')
         password2 = self.cleaned_data.get('password2')
@@ -40,6 +44,8 @@ class CustomerForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
 
 
 
@@ -73,7 +79,6 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'first_name', 'last_name','phone', 'email', 'password1', 'password2',)
 
-
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
 
@@ -91,4 +96,5 @@ class UserLoginForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username', 'email']
-        '''
+
+     '''

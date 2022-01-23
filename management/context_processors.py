@@ -1,4 +1,7 @@
-from .models import Activity, Category #, Department
+
+
+#from .models import Activity, Category , Department
+
 
 #Interview description data
 Department=[
@@ -18,18 +21,18 @@ Department=[
 def departments (request):
     return {
        # 'departments': Department.objects.all()
-        'departments': Department
+        #'departments': Department
     }
-
 
 def categories(request):
     return {
         #'categories': Category.objects.all()
-      'categories': Category.objects.filter(level=0)
+      #'categories': Category.objects.filter(level=0)
       #'categories': Category.objects.filter(level=1)
     }
 
 def activities(request):
     return {
-        'activities': Activity.objects.all()
+       # 'activities': Activity.objects.all()
     }
+

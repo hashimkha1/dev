@@ -1,27 +1,42 @@
 from django.urls import path
-
 from . import views
-from .views import (ActivityUpdateView, EmployeeCreateView, EmployeeDeleteView,
-                    EmployeeDetailView, EmployeeListView, EmployeeUpdateView)
+from .views import (
+                        UserInflowListView,#InflowListView,
+                        InflowDetailView,#InflowCreateView,
+                        InflowUpdateView,InflowDeleteView,
+                        #OutflowCreateView,#OutflowListView,
+                        OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
+                        TransactionUpdateView,TransactionListView 
+                     )
 
 app_name = 'management'
-#<app>/<model>_<viewtype>
 urlpatterns = [
     path('', views.home, name='management-home'),
-    path('employees/', EmployeeListView.as_view(), name='employee-list'),
-    path('employee/new/', EmployeeCreateView.as_view(), name='employee-create'),
-    path('employee/<int:pk>/', EmployeeDetailView.as_view(), name='employee-detail'),
-    path('employee/<int:pk>/update/', EmployeeUpdateView.as_view(), name='employees-update'),
-    
-    path('employee/<int:pk>/delete/', EmployeeDeleteView.as_view(), name='employee-delete'),
-    path('construction/', views.construction, name='management-construction'),
     path('transact/', views.transact, name='management-transact'),
-    path('transaction/', views.transaction, name='management-transaction'),
+    #path('transaction/', views.transaction, name='management-transaction'),
+    path('transaction/', TransactionListView.as_view(), name='transaction-list'),
+    #path('transaction/', OutflowDetailView.as_view(), name='transaction-detail'),
+    path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-update'),
 
+    #-----------CASHINFLOW---------------------------------------
+    path('inflow_entry/', views.inflow, name='entry_inflow'),
+    #path('inflow/', InflowListView.as_view(), name='inflow-list'),
+    path('inflow/', views.inflow, name='inflow-list'),
+    path('user_inflow/', UserInflowListView.as_view(), name='user-list'),
+    #path('inflow/new/', InflowCreateView.as_view(), name='inflow-create'),
+    path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),
+    path('inflow/<int:pk>/update/', InflowUpdateView.as_view(), name='inflow-update'),
+    path('inflow/<int:pk>/delete/', InflowDeleteView.as_view(), name='inflow-delete'),
 
-    #path('activities', views.all_activities, name='all_activities'),
-    path('activity/<slug:slug>/', views.activity_detail, name='activity-detail'),
-    #path('department/<slug:department_slug>/', views.department_list, name='department_list'),
-    path('category/<slug:category_slug>/', views.category_list, name='category_list'),
-    path('activity/update/<int:pk>/', ActivityUpdateView.as_view(), name='activity-edit'),
+    #-----------CASHOUTFLOW---------------------------------------
+    path('outflow_entry/', views.outflow_entry, name='outflow_entry'),
+    #path('outflow/', OutflowListView.as_view(), name='outflow-list'),
+    path('outflows/', views.outflowlist, name='outflow-list'),
+    #path('outflow/new/', OutflowCreateView.as_view(), name='outflow-create'),
+    #path('user_outflow/', UseroutflowListView.as_view(), name='user-list'),
+    path('outflow/<int:pk>/', OutflowDetailView.as_view(), name='outflow-detail'),
+    path('outflow/<int:pk>/update/', OutflowUpdateView.as_view(), name='outflow-update'),
+    path('outflow/<int:pk>/delete/', OutflowDeleteView.as_view(), name='outflow-delete'),   
+
 ]
+ 

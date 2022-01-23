@@ -1,22 +1,23 @@
 from django.urls import path
-
 from . import views
 
+app_name = 'data'
 urlpatterns = [
-    path('', views.home, name='data-home'),
-    path('report/', views.report, name='data-report'),
-    path('etl/', views.etl, name='data-etl'),
-    path('database/', views.database, name='data-database'),
-    path('financialsystem/', views.financialsystem, name='data-financialsystem'),
-    path('payroll/', views.payroll, name='data-payroll'),
-    path('project/', views.project, name='data-project'),
-    path('training/', views.training, name='data-training'),
-    path('interview/', views.interview, name='data-interview'),
-    path('uploadinterview/', views.uploadinterview, name='data-uploadinterview'),
-    path('iuploads/', views.iuploads, name='data-uploads'),
-    path('upload/', views.upload, name='data-upload'),
-    path('uploaded/', views.uploaded, name='data-uploaded'),
-    path('deliverable/', views.deliverable, name='data-deliverable'),
-    path('getdata/', views.getdata, name='data-getdata'),
-    path('pay/', views.pay, name='data-pay'),
+    path('', views.analysis, name='home'),
+    path('report/', views.report, name='report'),
+    path('etl/', views.etl, name='etl'),
+    path('database/', views.database, name='database'),
+    path('financialsystem/', views.financialsystem, name='finance'),
+    path('payroll/', views.payroll, name='payroll'),
+    path('project/', views.project, name='project'),
+    path('training/', views.training, name='training'),
+    path('bitraining/', views.bitraining, name='bitraining'),
+    path('interview/', views.interview, name='interview'),
+    path('uploadinterview/', views.uploadinterview, name='uploadinterview'),
+    path('iuploads/', views.iuploads, name='uploads'),
+    path('upload/', views.upload, name='upload'),
+    path('uploaded/', views.uploaded, name='uploaded'),
+    path('deliverable/', views.deliverable, name='deliverable'),
+    path('getdata/', views.getdata, name='getdata'),
+    path('pay/', views.pay, name='pay'),
 ]
