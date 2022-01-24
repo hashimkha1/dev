@@ -1,6 +1,6 @@
 #from coda_project.application.views import first_interview
 from datetime import datetime
-from django.contrib.auth.models import AbstractUser
+
 from django.db import models
 from django.utils import timezone
 
@@ -14,18 +14,38 @@ class Applicant_Profile(models.Model):
         return f'{self.applicant.username} Applicant_Profile'
 
 class Application(models.Model):
+    class Sex(models.IntegerChoices):
+        Male = 1
+        Female =2
+
+        '''
+    # Method of Payment
+    Applicant = 'Applicant'
+    Other = 'Other'
+
+    APPLICATION_CHOICES = [
+        (Applicant, 'Applicant'),
+        (Other, 'Other'),
+        ]
+    '''
     id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
-    #gender=models.IntegerField(choices=Sex.choices,default=3)
+    gender=models.IntegerField(choices=Sex.choices,default=9999)
     phone=models.CharField(default='90001',max_length=100)
     application_date = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=100,blank=True, null=True)
     country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
-
+    '''
+    type= models.CharField(
+            max_length=25,
+            choices=APPLICATION_CHOICES,
+            default=Other,
+        )
+        '''
     @property
     def submitted(self):
         submitted=datetime.date(self.application_date)
