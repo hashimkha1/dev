@@ -30,7 +30,7 @@ class Application(models.Model):
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
     last_name=models.CharField(max_length=100)
-    gender=models.IntegerField(choices=Sex.choices,default=3)
+    #gender=models.IntegerField(choices=Sex.choices,default=3)
     phone=models.CharField(default='90001',max_length=100)
     application_date = models.DateTimeField(default=timezone.now)
     phone=models.CharField(max_length=100,blank=True, null=True)
