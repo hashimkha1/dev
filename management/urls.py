@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
+                        
                         UserInflowListView,#InflowListView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
@@ -21,7 +22,7 @@ urlpatterns = [
     #-----------CASHINFLOW---------------------------------------
     path('inflow_entry/', views.inflow, name='entry_inflow'),
     #path('inflow/', InflowListView.as_view(), name='inflow-list'),
-    path('inflow/', views.inflow, name='inflow-list'),
+    path('inflows/', views.inflows, name='inflow-list'),
     path('user_inflow/', UserInflowListView.as_view(), name='user-list'),
     #path('inflow/new/', InflowCreateView.as_view(), name='inflow-create'),
     path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),

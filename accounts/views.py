@@ -15,7 +15,11 @@ from .models import CustomerUser,Tracker
 
 # Create your views here..
 
-#---------------Test----------------------
+#@allowed_users(allowed_roles=['admin'])
+def home(request):
+    return render(request, 'main/home_templates/layout.html')
+
+#---------------ACCOUNTS VIEWS----------------------
 @unauthenticated_user
 def join(request):
     if request.method== "POST":
@@ -33,14 +37,45 @@ def join(request):
         form=CustomerForm()
     return render(request, 'accounts/registration/join.html', {'form': form})
     
-    
-#@allowed_users(allowed_roles=['admin'])
-def home(request):
-    return render(request, 'main/home_templates/layout.html')
-
-def clients(request):
+def clientlist(request):
     clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')
-    return render(request, 'accounts/clients.html', {'clients': clients})
+    return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
+
+@method_decorator(login_required, name='dispatch')
+class ClientDetailView(DetailView):
+    template_name='accounts/clients/client_detail.html'
+    model=CustomerUser
+    ordering=['-date_joined ']
+
+class ClientUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=CustomerUser
+    success_url="/accounts/clients"
+    fields=['category','address','city','state','country']
+    form=CustomerForm
+    def form_valid(self,form):
+        #form.instance.username=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        return False
+    def test_func(self):
+        client = self.get_object()
+        #if self.request.user == client.username:
+        if self.request.user.is_superuser:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class ClientDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=CustomerUser
+    success_url='/accounts/client'
+
+    def test_func(self):
+        client = self.get_object()
+        #if self.request.user == client.username:
+        if self.request.user.is_superuser:
+            return True
+        return False
+
 
 @login_required(login_url='account-login')
 def profile(request):

@@ -155,10 +155,13 @@ def inflow(request):
         if form.is_valid():
             form.instance.sender=request.user
             form.save()
-            return redirect('/management/inflow/')
+            return redirect('/management/inflows/')
     else:
         form=InflowForm()
     return render(request, 'management/company_finances/inflow_entry.html',{'form':form})
+
+
+
 
 @method_decorator(login_required, name='dispatch')
 class InflowDetailView(DetailView):
@@ -174,9 +177,9 @@ class InflowListView(ListView):
     context_object_name='inflows'
     ordering=['-transaction_date']
     
-'''
 
-def inflow(request):
+'''
+def inflows(request):
     inflows=Inflow.objects.all().order_by('-transaction_date')
     #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
     #total_communication=Rated.objects.all().aggregate(Sum('communication'))
@@ -186,7 +189,7 @@ def inflow(request):
                 'inflows': inflows,
                 'revenue':revenue
               }
-    return render(request, 'management/cash_inflow/inflow.html', context)
+    return render(request, 'management/cash_inflow/inflows.html', context)
 
 @method_decorator(login_required, name='dispatch')
 class UserInflowListView(ListView):
@@ -223,6 +226,7 @@ class InflowDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
     def test_func(self):
         inflow = self.get_object()
-        if self.request.user == inflow.sender:
+        #if self.request.user == inflow.sender:
+        if self.request.user.is_superuser:
             return True
         return False
