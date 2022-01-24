@@ -17,13 +17,12 @@ class ApplicantForm(forms.ModelForm):
     email = forms.EmailField()
     class Meta:
         model = Application
-        fields = ['type','first_name','last_name','username','phone', 'email','country','resume']
+        fields = ['first_name','last_name','username','phone', 'email','country','resume']
         labels={
                 'first_name':'First Name',
                 'last_name':'Last Name',
                 'username':'User Name',
                 'email':'Email',
-                 'type':'type',
         }
 
     def __init__(self, *args, **kwargs):

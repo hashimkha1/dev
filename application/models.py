@@ -14,18 +14,6 @@ class Applicant_Profile(models.Model):
         return f'{self.applicant.username} Applicant_Profile'
 
 class Application(models.Model):
-    class Sex(models.IntegerChoices):
-        Male = 1
-        Female =2
-    # Method of Payment
-    Applicant = 'Applicant'
-    Other = 'Other'
-
-    APPLICATION_CHOICES = [
-        (Applicant, 'Applicant'),
-        (Other, 'Other'),
-        ]
-    
     id = models.AutoField(primary_key=True)
     username=models.CharField(max_length=100)
     first_name=models.CharField(max_length=100)
@@ -37,11 +25,7 @@ class Application(models.Model):
     country=models.CharField(max_length=100,blank=True, null=True)
     resume=models.FileField(upload_to='resumes/doc/')
     #cover=models.FileField(default=None,upload_to='cover/doc/')
-    type= models.CharField(
-            max_length=25,
-            choices=APPLICATION_CHOICES,
-            default=Other,
-        )
+
     @property
     def submitted(self):
         submitted=datetime.date(self.application_date)
