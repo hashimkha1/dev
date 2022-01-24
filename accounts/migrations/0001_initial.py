@@ -49,21 +49,7 @@ class Migration(migrations.Migration):
                 ('objects', django.contrib.auth.models.UserManager()),
             ],
         ),
-        migrations.CreateModel(
-            name='Tracker',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('category', models.CharField(choices=[('Job_Support', 'Job_Support'), ('Interview', 'Interview'), ('Training', 'Training'), ('Mentorship', 'Mentorship'), ('Any Other', 'Other')], max_length=25)),
-                ('task', models.CharField(choices=[('reporting', 'reporting'), ('database', 'database'), ('Business Analysis', 'Business Analysis'), ('Data Cleaning', 'Data Cleaning'), ('Any Other', 'Other')], max_length=25)),
-                ('login_date', models.DateTimeField(auto_now_add=True)),
-                ('start_time', models.TimeField(auto_now_add=True)),
-                ('duration', models.IntegerField(choices=[(1, 'One Hour'), (2, 'Two Hours'), (3, 'Three Hours'), (4, 'Four Hours'), (5, 'Five Hours')], default=2)),
-                ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'ordering': ['login_date'],
-            },
-        ),
+       
         migrations.CreateModel(
             name='Profile',
             fields=[
