@@ -67,7 +67,7 @@ class ClientUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 @method_decorator(login_required, name='dispatch')
 class ClientDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=CustomerUser
-    success_url='/accounts/client'
+    success_url='/accounts/clients'
 
     def test_func(self):
         client = self.get_object()

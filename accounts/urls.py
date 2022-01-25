@@ -9,6 +9,7 @@ app_name = 'accounts'
 urlpatterns = [
     path('', views.home, name='home'),
     path('join/', views.join, name='join'),
+    #path('profile/', views.profile, name='profile'),
     path('clients/', views.clientlist, name='clients'),
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),

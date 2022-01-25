@@ -109,7 +109,7 @@ class Activity(models.Model):
         default="Group A"
         )
     category = models.ForeignKey(Category, related_name='acitivity', on_delete=models.CASCADE)
-    created_by = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name='activity_creator')
+   #created_by = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name='activity_creator')
     activity_name = models.CharField(
         verbose_name=_('Activity Name'),
         help_text=_('Required'),
