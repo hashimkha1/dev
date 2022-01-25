@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import path, reverse
 from mptt.admin import MPTTModelAdmin
 
-from .models import Activity, Category, Employee, Transaction , Department
+from .models import  Transaction #Activity, Category, Employee, Transaction , Department
 
 # Register your models here.
 class CsvImportForm(forms.Form):
@@ -58,6 +58,8 @@ class TransactionAdmin(admin.ModelAdmin):
 
 admin.site.register(Transaction, TransactionAdmin)
 
+
+'''  
 admin.site.register(Employee)
 
 @admin.register(Department)
@@ -94,7 +96,7 @@ class ActivityAdmin(admin.ModelAdmin):
             file_data = file.split("\n")
             csv_data=[line for line in file_data if line.strip() != ""]
             print(csv_data)
-            ''' for x in csv_data:
+                for x in csv_data:
                 fields = x.split(",")
                 created = Activity.objects.update_or_create(
                                     category=fields[0],
@@ -111,10 +113,12 @@ class ActivityAdmin(admin.ModelAdmin):
             url = reverse('admin:index')
             return HttpResponseRedirect(url)
             
-            '''
+          
            
         form = CsvImportForm()
         data = {"form": form}
         return render(request, "admin/csv_upload.html", data)
 
 admin.site.register(Activity, ActivityAdmin)
+
+  '''

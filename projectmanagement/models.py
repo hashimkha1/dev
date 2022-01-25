@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from mptt.models import MPTTModel, TreeForeignKey
 
+'''
 class ActivityManager(models.Manager):
     def get_queryset(self):
         return super(ActivityManager, self).get_queryset().filter(is_active=True)
@@ -72,7 +73,7 @@ class Employee(models.Model):
         return self.last_name
  
 class Category(MPTTModel):
-    '''Category Table implemented with MPTT'''
+    #Category Table implemented with MPTT
     department=models.ForeignKey(Department, on_delete=models.RESTRICT)
     name = models.CharField(
         verbose_name=_('Category'),
@@ -198,8 +199,9 @@ class Activity(models.Model):
        
     def __str__(self):
         return self.activity_name
-
+ '''
 #--------------------------------------
+
 class Transaction(models.Model):
 # Method of Payment
     Cash = 'Cash'

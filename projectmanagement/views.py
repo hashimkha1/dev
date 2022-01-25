@@ -9,12 +9,29 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
 from .forms import TransactionForm
-from .models import Activity, Category, Employee, Transaction,Department
+from .models import Transaction #Activity, Category, Employee ,Department
 
 
 def home(request):
     return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
+    
+# -------------------------transactions Section-------------------------------------#
 
+def transact(request):
+    if request.method== "POST":
+        form=TransactionForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('/management/transaction/')
+    else:
+        form=TransactionForm()
+    return render(request, 'projectmanagement/company_finances/transact.html',{'form':form})
+
+def transaction(request):
+    transactions=Transaction.objects.all().order_by('-activity_date')
+    return render(request, 'projectmanagement/company_finances/transaction.html', {'transactions': transactions})
+
+'''  
 class EmployeeCreateView(LoginRequiredMixin, CreateView):
     model=Employee
     fields=['name','email','contact']
@@ -46,14 +63,14 @@ class EmployeeUpdateView(LoginRequiredMixin,UpdateView):
         
     def get_success_url(self):
         return reverse('projectmanagement:employee-list') 
-    '''
+    
     def test_func(self):
         employee = self.get_object()
         if self.request.firstname == employee.name:
             return True
         return False
 
-    '''
+    
 
 class EmployeeDeleteView(LoginRequiredMixin,DeleteView):
     model=Employee
@@ -61,7 +78,7 @@ class EmployeeDeleteView(LoginRequiredMixin,DeleteView):
     def get_success_url(self):
         return reverse('employee-list') 
 
-    '''
+    
     def test_func(self):
         post = self.get_object()
         if self.request.user == post.author:
@@ -73,23 +90,8 @@ def construction(request):
     return render(request, 'projectmanagement/construction.html', {'title': 'construction'})
 
 
-# -------------------------transactions Section-------------------------------------#
 
-def transact(request):
-    if request.method== "POST":
-        form=TransactionForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('/management/transaction/')
-    else:
-        form=TransactionForm()
-    return render(request, 'projectmanagement/company_finances/transact.html',{'form':form})
-
-def transaction(request):
-    transactions=Transaction.objects.all().order_by('-activity_date')
-    return render(request, 'projectmanagement/company_finances/transaction.html', {'transactions': transactions})
-
-
+''' 
 # -------------------------DAF Section-------------------------------------#
 @login_required
 def all_activities(request):
@@ -146,7 +148,7 @@ class ActivityUpdateView(LoginRequiredMixin,UpdateView):
         agent_slug = self.object.category.slug
         return reverse_lazy('projectmanagement:category_list', kwargs={'category_slug': agent_slug})
 
-'''
+
     def test_func(self):
         employee = self.get_object()
         if self.request.firstname == employee.name:

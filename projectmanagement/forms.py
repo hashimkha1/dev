@@ -1,8 +1,9 @@
 from django import forms
 from django.forms import ModelForm, Textarea
 
-from .models import Employee, Transaction
+from .models import Transaction
 
+'''
 
 class EmployeeForm(forms.ModelForm):  
     class Meta:  
@@ -13,7 +14,7 @@ class EmployeeForm(forms.ModelForm):
             'contact': forms.TextInput(attrs={ 'class': 'form-control' }),
       }
 
-
+ '''
 
 class TransactionForm(forms.ModelForm):
     class Meta:
