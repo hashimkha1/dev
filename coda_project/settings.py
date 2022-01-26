@@ -226,8 +226,6 @@ if(DEBUG==True):
     STATICFILES_DIRS=[
          os.path.join(BASE_DIR,'static')
     ]
-    STATIC_ROOT='/home/username/websitedomain/static'
-    MEDIA_ROOT='/home/username/websitedomain/media'
 else:
     STATIC_URL = '/static/'
     MEDIA_URL = '/media/'
