@@ -137,77 +137,83 @@
 <section id="service_offer">
   <div class="service_offer text-center">
     <h3 class="title">Start your Journey</h3>
-
     <div class=" offer_top row text-center">
+      <!---
       <div class="col-md-3">
         <img
           src="\media\icons\ba_v1.jpg"
           class="offer-img"
         />
     </div>
-      <div class="col-md-3">
-        <h4><b>Busines Analysis</b></h4>
-        <p class="bd">
-                <p>Gather, refine & document business needs for only:<b>$599</b></p>
-          <a href="{% url 'main:pay' %}" target="_blank">
-            <button type="button" class="btn btn-primary">Here</button>
-        </a>
-        </p>
-      </div>
-   <div class="col-md-3">
-    <img
-      src="\media\data\etl_v1.jpg"
-      class="offer-img"
-    />
+    -->
+    <div class="col-md-3" id="gi">
+      <div class="card">
+        <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+        <div class="card-body">
+          <h4><b>Busines Analysis</b></h4>
+          <hr/>
+          <p class="gi">
+            Gather, refine & document.
+            <p class="bd">
+              <a href="{% url 'main:pay' %}" target="_blank">
+                <button type="button" class="btn btn-primary">Here</button>
+            </a>
+            </p>
+        </div>
   </div>
-  <!-- 
-  <div class="col-md-3">
-      <h4><b>ETL(Alteryx)</b></h4> 
-      <p>
-      Become an ETL Developer for just:<b>$999</b>
-      </p>
-      <a href="{% url 'main:pay' %}" target="_blank">
-        <button type="button" class="btn btn-primary">More</button>
-    </a>
-  </div>
-  -->
-  </div>
+</div>
 
-  <div class="offer_bottom row text-center">
-     <!--
-    <div class="col-md-3">
-      <img
-        src="\media\data\reporting_v1.jpg"
-        class="offer-img"
-      />
-    </div>
-  -->
-    <div class="col-md-3">
-      <h4><b>Reporting</b></h4> 
+  <div class="col-md-3" id="gi">
+    <div class="card">
+      <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+      <div class="card-body">
+        <h4><b>ETL(Alteryx)</b></h4> 
+        <hr/>
+              <p>
+              Become an ETL Developer.
+              </p>
+              <a href="{% url 'main:pay' %}" target="_blank">
+                <button type="button" class="btn btn-primary">More</button>
+            </a>
+          </p>
+      </div>
+</div>
+</div>
+  <div class="col-md-3" id="gi">
+    <div class="card">
+      <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+      <div class="card-body">
+        <h4><b>Reporting</b></h4> 
+        <hr/>
        <p>
-           Click below to register for this course for :<b>$999</b> 
+           Click below to register for this course.
        </p>
        <a href="{% url 'main:pay' %}" target="_blank">
          <button type="button" class="btn btn-primary">Here</button>
      </a>
-   </div>
-<!-- 
-   <div class="col-md-3">
-    <img
-      src="\media\data\database_v1.jpg"
-      class="offer-img"
-    />
- </div>
- -->
+      </div>
+</div>
+</div>
+
+<div class="col-md-3" id="gi">
+  <div class="card">
+    <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+    <div class="card-body">
+      <h5><b>Database Developer</b></h5> 
+      <hr/>
+      <p>
+       Data Management & storage is at the heart of data analysis.  
+      </p>
+      <a href="{% url 'main:pay' %}" target="_blank">
+        <button type="button" class="btn btn-primary">Here</button>
+    </a>
+    </div>
+</div>
+</div>
+
 
     <div class="col-md-3">
-        <h4><b>Database Developer</b></h4> 
-        <p>
-         Data Management and storage is at the heart of data analysis.Start this course at:<b>$999</b>.  
-        </p>
-        <a href="{% url 'main:pay' %}" target="_blank">
-          <button type="button" class="btn btn-primary">Here</button>
-      </a>
+       
     </div>
 
     </div>
@@ -243,7 +249,7 @@
       Our graduates work here
     </p>
     <div class="row text-center">
-      <div class="work col-md-4">
+      <div class="work col-md-3">
         <img
           src="\media\data\boa_v1.jpg"
           class="work-img boa-img"
