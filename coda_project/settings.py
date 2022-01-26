@@ -248,8 +248,7 @@ AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 #STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
-
-'''
+''' 
 if os.getcwd()=='/app':
     SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT=True
@@ -265,4 +264,5 @@ if os.getcwd() == '/app':
     ALLOWED_HOSTS = ['APP_NAME.herokuapp.com']
     DEBUG = True
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(_file_)))
+
     '''
