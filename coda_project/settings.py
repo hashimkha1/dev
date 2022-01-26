@@ -222,17 +222,17 @@ STATICFILES_DIR=(
 
 if(DEBUG==True):
     STATIC_URL = '/static/'
-    MEDIA_URL = '/static/media/'
+    MEDIA_URL = '/media/'
     STATICFILES_DIRS=[
          os.path.join(BASE_DIR,'static')
     ]
     STATIC_ROOT='/home/username/websitedomain/static'
-    MEDIA_ROOT='/home/username/websitedomain/static/media'
+    MEDIA_ROOT='/home/username/websitedomain/media'
 else:
     STATIC_URL = '/static/'
-    MEDIA_URL='static/media/'
-    STATIC_ROOT=os.path.join(BASE_DIR,'static')
-    MEDIA_ROOT=os.path.join(BASE_DIR,'static/media/')
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -265,6 +265,7 @@ AWS_DEFAULT_ACL = None
 DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 #STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
+
 ''' 
 if os.getcwd()=='/app':
     SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO', 'https')
