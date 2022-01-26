@@ -14,14 +14,13 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-
+from django.contrib import admin
+from django.urls import path, re_path, include
 from django.conf import settings
 from django.conf.urls import handler400
 from django.conf.urls.static import static
-#from django.views.static import serve
-from django.contrib import admin
+from django.views.static import serve
 from django.contrib.auth import views as auth_views
-from django.urls import include, path
 
 from accounts import views as account_views
 from coda_project import settings
@@ -35,9 +34,10 @@ handler500='main.views.hendler500'
 
 
 urlpatterns = [
-    #path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
-    #path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     path('admin/', admin.site.urls),
+    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+    #path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     path('join/', account_views.join, name='accounts:join'),
     path('profile/', account_views.profile, name='account-profile'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
