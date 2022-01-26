@@ -28,7 +28,8 @@
       <tbody>
        
         {% for tracker in trackers %}
-        {% if tracker.author == user %}
+       
+        {% if user.is_active or user.is_superuser %}
             <tr>
               <td>{{tracker.login_date|date:"F d, Y"}}</td>
               <td>{{tracker.author}}</td>

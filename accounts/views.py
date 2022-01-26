@@ -145,7 +145,9 @@ class TrackListView(ListView):
 
 
 def usertracker(request):
-    trackers=Tracker.objects.all().order_by('-login_date')
+    #trackers=Tracker.objects.all().order_by('-login_date')
+    #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
+    trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
     #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
     #total_communication=Rated.objects.all().aggregate(Sum('communication'))
     total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
@@ -154,12 +156,10 @@ def usertracker(request):
                 'trackers': trackers,
                 'total_time':total_time,
                 'time':time
-
                 
               }
     return render(request, 'accounts/usertracker.html', context)
-    
-'''
+''' 
 @method_decorator(login_required, name='dispatch')
 class UserTrackListView(ListView):
     model=Tracker
