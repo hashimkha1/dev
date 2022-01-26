@@ -173,7 +173,7 @@ class UserTrackListView(ListView):
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/usertracker"
-    fields=['category','task']
+    fields=['category','task','duration']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
