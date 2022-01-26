@@ -159,6 +159,7 @@ def usertracker(request):
                 
               }
     return render(request, 'accounts/usertracker.html', context)
+    
 ''' 
 @method_decorator(login_required, name='dispatch')
 class UserTrackListView(ListView):
