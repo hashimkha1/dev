@@ -141,6 +141,7 @@ class TrackListView(ListView):
     template_name='accounts/tracker.html'
     context_object_name='trackers'
     ordering=['-login_date']
+    
 
 
 def usertracker(request):
@@ -157,6 +158,7 @@ def usertracker(request):
                 
               }
     return render(request, 'accounts/usertracker.html', context)
+    
 '''
 @method_decorator(login_required, name='dispatch')
 class UserTrackListView(ListView):
@@ -169,6 +171,7 @@ class UserTrackListView(ListView):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
 '''
+
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
@@ -179,28 +182,36 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         form.instance.author=self.request.user
         return super().form_valid(form)    
 
+@method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Tracker
     success_url="/accounts/tracker"
-    fields=['category','task','duration']
+    fields=['author','category','task','duration']
 
     def form_valid(self,form):
-        form.instance.author=self.request.user
-        return super().form_valid(form)
+        #form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return False
 
     def test_func(self):
         track = self.get_object()
-        if self.request.user == track.author:
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==track.author:
             return True
         return False
-
-
+        
+@method_decorator(login_required, name='dispatch')
 class TrackDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Tracker
     success_url="/accounts/tracker"
 
     def test_func(self):
-        timer = self.get_object()
-        if self.request.user == timer.author:
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
             return True
         return False

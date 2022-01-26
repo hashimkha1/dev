@@ -2,7 +2,7 @@
 <section id="career">
   <div class="career text-center">
     <h2>All Clients</h2>
-    {% if object.author == user %}
+    {% if user.is_active or user.is_superuser %}
     <a
       class="btn btn-secondary btn-sm mt-1 mb-1"
       href="{%url 'accounts:tracker-update' object.id%}"
