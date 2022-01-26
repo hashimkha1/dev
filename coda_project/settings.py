@@ -207,7 +207,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-
+''' 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
@@ -216,6 +216,23 @@ STATIC_URL = '/static/'
 STATICFILES_DIR=(
     os.path.join(BASE_DIR,"static")
 )
+'''
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.1/howto/static-files/
+
+if(DEBUG==True):
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/static/media/'
+    STATICFILES_DIRS=[
+         os.path.join(BASE_DIR,'static')
+    ]
+    STATIC_ROOT='/home/username/websitedomain/static'
+    MEDIA_ROOT='/home/username/websitedomain/static/media'
+else:
+    STATIC_URL = '/static/'
+    MEDIA_URL='static/media/'
+    STATIC_ROOT=os.path.join(BASE_DIR,'static')
+    MEDIA_ROOT=os.path.join(BASE_DIR,'static/media/')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
@@ -264,5 +281,8 @@ if os.getcwd() == '/app':
     ALLOWED_HOSTS = ['APP_NAME.herokuapp.com']
     DEBUG = True
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(_file_)))
+
+
+
 
     '''

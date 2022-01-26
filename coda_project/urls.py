@@ -18,7 +18,7 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import handler400
 from django.conf.urls.static import static
-from django.views.static import serve
+#from django.views.static import serve
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.urls import include, path
@@ -35,8 +35,8 @@ handler500='main.views.hendler500'
 
 
 urlpatterns = [
-    path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
-    path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
+    #path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
+    #path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     path('admin/', admin.site.urls),
     path('join/', account_views.join, name='accounts:join'),
     path('profile/', account_views.profile, name='account-profile'),
