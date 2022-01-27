@@ -3,20 +3,18 @@
 <section id="career">
   <div class="career text-center">
     <h3>How to ace a BA, Data Analysis/Data Science Interview</h3>
-
 <br>
 <div  class="row">
   <div class="col">
     <div class="card card-body">
       <form method="get">
+        {% csrf_token %}
         {{myFilter.form}}
         <button class="btn btn-primary" type="submit">Search</button>
       </form>
     </div>
   </div>
 </div>
- 
-
 
     <table style="width: 100%">
       <thead>
