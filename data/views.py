@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
+from django.template import context
 
 from .forms import InterviewForm, UploadForm
 from .models import InterviewUpload, Upload
-
+from .filters import InterviewFilter
 
 def analysis(request):
     return render(request, 'main/home_templates/analysis_home.html', {'title': 'analysis'})
@@ -64,7 +65,13 @@ def uploadinterview(request):
 @login_required
 def iuploads(request):
     uploads=InterviewUpload.objects.all().order_by('-upload_date')
-    return render(request, 'data/interview/iuploads.html', {'uploads': uploads})
+    myFilter=InterviewFilter(request.GET, queryset=uploads)
+    uploads=myFilter.qs
+    context={
+              'uploads': uploads,
+              'myFilter':myFilter
+            }
+    return render(request, 'data/interview/iuploads.html',context)
 
 # Saving uploaded information to database
 def upload(request):

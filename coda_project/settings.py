@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django_countries',
     'mathfilters',
     'mptt',
-    #'django-filter',
+    'django_filters',
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 

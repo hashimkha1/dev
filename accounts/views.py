@@ -20,6 +20,7 @@ def home(request):
     return render(request, 'main/home_templates/layout.html')
 
 #---------------ACCOUNTS VIEWS----------------------
+''' 
 @unauthenticated_user
 def join(request):
     if request.method== "POST":
@@ -36,7 +37,30 @@ def join(request):
     else:
         form=CustomerForm()
     return render(request, 'accounts/registration/join.html', {'form': form})
-    
+'''
+
+@unauthenticated_user
+def join(request):
+    if request.method== "POST":
+        form=CustomerForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            messages.success(request, f'Account created for {username}!')
+            if category == "Applicant":
+                #return redirect('apply')
+                return render(request, 'application/applications/apply.html')
+
+            if category == "employee":
+                #return redirect('apply')
+                return render(request, 'management/company_finances/activities.html')
+            else:
+                return redirect('account-login')
+    else:
+        form=CustomerForm()
+    return render(request, 'accounts/registration/join.html', {'form': form})
+
 def clientlist(request):
     clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
@@ -159,7 +183,7 @@ def usertracker(request):
                 
               }
     return render(request, 'accounts/usertracker.html', context)
-    
+
 ''' 
 @method_decorator(login_required, name='dispatch')
 class UserTrackListView(ListView):
