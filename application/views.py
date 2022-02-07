@@ -213,14 +213,13 @@ class TraineeUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_success_url(self):
         return reverse('application:trainees') 
-'''
     def test_func(self):
         employee = self.get_object()
         if self.request.firstname == employee.name:
             return True
         return False
+        
 
-'''
 class TraineeDeleteView(LoginRequiredMixin,DeleteView):
     model=Reporting
     def get_success_url(self):
