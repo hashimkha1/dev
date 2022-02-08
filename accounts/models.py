@@ -12,10 +12,10 @@ import requests
 # Create your models here.
 class CustomerUser(AbstractUser):
     class Category(models.IntegerChoices):
-        Data_Analysis_Course= 1
-        Trading_Course=2
-        Employee = 3
-        Applicant =4
+        Client_OR_Customer_or_Student= 1
+        Applicant_or_Job_Applicant=2
+        # Employee = 3
+        # Applicant =4
     class Score(models.IntegerChoices):
         Male = 1
         Female =2
@@ -24,16 +24,17 @@ class CustomerUser(AbstractUser):
     last_name=models.CharField(max_length=100)
     date_joined = models.DateTimeField(default=timezone.now)
     email=models.CharField(max_length=100)
-    gender=models.IntegerField(default=9999,choices=Score.choices)
+    gender=models.IntegerField(choices=Score.choices,blank=True,null=True)
     phone=models.CharField(default='90001',max_length=100)
     address=models.CharField(blank=True,null=True,max_length=100)
     city=models.CharField(blank=True,null=True,max_length=100)
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
-    category=models.IntegerField(default=9999,choices=Category.choices)
+    category=models.IntegerField(choices=Category.choices)
 
     class Meta:
         ordering=['date_joined']
+
 
 '''
 class Profile(models.Model):

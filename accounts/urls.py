@@ -14,6 +14,8 @@ urlpatterns = [
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
+    
+    path('applicants/', views.applicantlist, name='applicants'),
     path('tracker/', TrackListView.as_view(), name='tracker-list'),
     #path('user/<str:username>', UserTrackListView.as_view(), name='user-list'),
     #path('user_tracker/', UserTrackListView.as_view(), name='user-list'),

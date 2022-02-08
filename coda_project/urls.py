@@ -38,7 +38,7 @@ urlpatterns = [
     re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
     re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
     #path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
-    path('join/', account_views.join, name='accounts:join'),
+    path('join/', account_views.join, name='accounts-join'),
     path('profile/', account_views.profile, name='account-profile'),
     path('login/', auth_views.LoginView.as_view(template_name='accounts/registration/login.html'), name='account-login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='accounts/registration/logout.html'), name='account-logout'),

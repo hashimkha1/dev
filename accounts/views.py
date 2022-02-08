@@ -52,9 +52,9 @@ def join(request):
                 #return redirect('apply')
                 return render(request, 'application/applications/apply.html')
 
-            if category == "employee":
-                #return redirect('apply')
-                return render(request, 'management/company_finances/activities.html')
+            # elif category == "employee":
+                # #return redirect('apply')
+                # return render(request, 'management/company_finances/activities.html')
             else:
                 return redirect('account-login')
     else:
@@ -62,7 +62,7 @@ def join(request):
     return render(request, 'accounts/registration/join.html', {'form': form})
 
 def clientlist(request):
-    clients=CustomerUser.objects.filter(category = 1)|CustomerUser.objects.filter(category = 2).order_by('-date_joined')
+    clients=CustomerUser.objects.filter(category = 1).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
 
 @method_decorator(login_required, name='dispatch')
@@ -78,13 +78,17 @@ class ClientUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     form=CustomerForm
     def form_valid(self,form):
         #form.instance.username=self.request.user
-        if self.request.user.is_superuser:
-            return super().form_valid(form)
-        return False
+        # if request.user.is_authenticated:
+         if self.request.user.is_superuser or self.request.user.is_authenticated :
+             return super().form_valid(form)
+        #  elif self.request.user.is_authenticated:
+        #      return super().form_valid(form)
+         return False
     def test_func(self):
         client = self.get_object()
-        #if self.request.user == client.username:
-        if self.request.user.is_superuser:
+        # if self.request.user == client.username:
+        #     return True
+        if self.request.user.is_superuser or self.request.user == client.username:
             return True
         return False
 
@@ -99,6 +103,12 @@ class ClientDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+#=============================APPLICATION VIEWS=====================================
+
+def applicantlist(request):
+    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
+    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
 
 
 @login_required(login_url='account-login')

@@ -13,7 +13,7 @@ class CustomerForm(forms.ModelForm):
         model = CustomerUser
         fields = ['category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country']
         labels={
-                'category':'Registering For:',
+                'category':'Registering as:',
                 'first_name':'First Name',
                 'last_name':'Last Name',
                 'username':'User Name',
