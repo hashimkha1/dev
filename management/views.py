@@ -14,6 +14,13 @@ from .models import Transaction,Inflow,Outflow
 def home(request):
     return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
 
+#----------------------REPORTS--------------------------------
+def finance(request):
+    return render(request, 'management/company_finances/finance.html',{'title': 'finance'})
+
+def hr(request):
+    return render(request, 'management/company_finances/hr.html',{'title': 'hr'})
+
 #----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
 def transact(request):

@@ -37,6 +37,9 @@
             <a class="dropdown-item" href="{% url 'main:team' %}"
               >Team</a
             >
+            <a class="dropdown-item" href="{% url 'application:career' %}"
+            >Career</a
+          >
           </div>
         </li>
 
@@ -68,7 +71,7 @@
             >
           </div>
         </li>
-
+        {% if user.is_authenticated %}
         <li class="nav-item dropdown">
           <a
             class="nav-link dropdown-toggle"
@@ -76,39 +79,34 @@
             id="navbarDropDown"
             role="button"
             data-toggle="dropdown"
-            >Your Career</a
+            >Reports</a
           >
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
             <a
               class="dropdown-item"
-              href="{% url 'data:bitraining' %}"
+              href="{% url 'management:finance' %}"
               target=""
-              >Training Resources</a
+              >Finance Report</a
             >
-
             <div class="dropdown-divider"></div>
-
             <a
               class="dropdown-item"
-              href="{% url 'data:bitraining' %}"
+              href="{% url 'management:hr' %}"
               target=""
-              >Building a Network</a
+              >Human Resource Report</a
             >
             <hr />
-
             <a
               class="dropdown-item"
-              href="{% url 'data:bitraining' %}"
+              href="#"
               target=""
-              >Deliverable(Projects)</a
+              >Others</a
             >
             <hr />
-
-            <a class="dropdown-item" href="{% url 'application:career' %}"
-              >Find Your Job</a
-            >
           </div>
         </li>
+        {% endif %}
+
       </ul>
 
       <!-- Navbar Right Side -->

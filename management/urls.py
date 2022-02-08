@@ -37,7 +37,13 @@ urlpatterns = [
     #path('user_outflow/', UseroutflowListView.as_view(), name='user-list'),
     path('outflow/<int:pk>/', OutflowDetailView.as_view(), name='outflow-detail'),
     path('outflow/<int:pk>/update/', OutflowUpdateView.as_view(), name='outflow-update'),
-    path('outflow/<int:pk>/delete/', OutflowDeleteView.as_view(), name='outflow-delete'),   
+    path('outflow/<int:pk>/delete/', OutflowDeleteView.as_view(), name='outflow-delete'),  
+
+
+    #-----------COMPANY REPORTS---------------------------------------
+    path('finance/', views.finance, name='finance'),
+    path('hr/', views.hr, name='hr'),
+    #path('other/', views.transact, name='management-transact'), 
 
 ]
  

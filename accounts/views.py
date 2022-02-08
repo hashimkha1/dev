@@ -110,6 +110,10 @@ def applicantlist(request):
     applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
     return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
 
+def apply(request):
+    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
+    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
+
 
 @login_required(login_url='account-login')
 def profile(request):
@@ -128,6 +132,7 @@ def loginPage(request):
             messages.info(request, 'USERNAME OR PASSWORD is incorrect!Please try again')
     context={}
     return render(request, 'accounts/login.html', context)
+
 @login_required
 def register(request):
     if request.method == 'POST':
