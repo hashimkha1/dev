@@ -30,7 +30,7 @@ class CustomerUser(AbstractUser):
     city=models.CharField(blank=True,null=True,max_length=100)
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
-    category=models.IntegerField(choices=Category.choices)
+    category=models.IntegerField(choices=Category.choices,default=999)
 
     class Meta:
         ordering=['date_joined']
