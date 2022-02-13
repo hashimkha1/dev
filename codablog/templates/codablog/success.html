@@ -14,7 +14,7 @@
       <h2>
         <a class="article-title" href="{% url 'codablog:post-detail' post.id %}">{{ post.title }}</a>
       </h2>
-      <p class="article-content">{{ post.content }}</p>
+      <p class="article-content">{{ post.content|truncatewords:5}}</p>
  
     </div>
 
@@ -27,5 +27,4 @@
         Add Your Story</a
       >
 </div>
-
 {% endblock content %}

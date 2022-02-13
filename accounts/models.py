@@ -35,7 +35,8 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering=['date_joined']
 
-
+# 1. Correct the number of hours for client
+#
 '''
 class Profile(models.Model):
     user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)

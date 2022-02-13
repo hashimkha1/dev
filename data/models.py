@@ -84,3 +84,16 @@ class Upload(models.Model):
 
     def __str__(self):
         return f'{self.id} Uploads'
+
+'''
+class Cat(models.Model):
+    category =models.CharField(max_length=100,blank=True, null=True)
+    description=models.CharField(max_length=1000,blank=True, null=True)
+    link=models.CharField(max_length=100,blank=True, null=True)
+    class Meta:
+        verbose_name_plural = 'categories'
+
+    def __str__(self):
+        return f'{self.id} Cat'
+
+        '''
