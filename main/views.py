@@ -70,7 +70,7 @@ def transact(request):
         form=TransactionForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('management-transaction')
+            return redirect('management: management-transaction')
     else:
         form=TransactionForm()
     return render(request, 'management/company_finances/transact.html',{'form':form})

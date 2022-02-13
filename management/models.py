@@ -67,7 +67,7 @@ class Transaction(models.Model):
         (Check, 'Check'),
         (Other, 'Other'),
         ]
-    id = models.AutoField(primary_key=True,default=99999999)
+    #id = models.AutoField(primary_key=True,default=99999999)
     sender=models.CharField(max_length=100,null=True,default=None)
     receiver=models.CharField(max_length=100,null=True,default=None)
     phone=models.CharField(max_length=50,null=True,default=None)
