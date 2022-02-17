@@ -191,7 +191,7 @@ def usertracker(request):
     trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
     #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
     #total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    total_communication=Rated.objects.all().aggregate(Sum('communication'))
+    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
     total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
     time=total_time.get('Your_Total_Time')
 

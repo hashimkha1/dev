@@ -56,7 +56,7 @@ def uploadinterview(request):
         form=InterviewForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('data-uploads')
+            return redirect('data:iuploads')
     else:
         form=InterviewForm()
     return render(request, 'data/interview/uploadinterview.html',{'form':form})
