@@ -182,23 +182,24 @@ class TrackListView(ListView):
     template_name='accounts/tracker.html'
     context_object_name='trackers'
     ordering=['-login_date']
-    
+    #total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
 
 
-def usertracker(request):
+def usertracker(request, pk=None, *args, **kwargs):
     #trackers=Tracker.objects.all().order_by('-login_date')
     #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
     trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
     #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
     #total_communication=Rated.objects.all().aggregate(Sum('communication'))
     #total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
-    time=total_time.get('Your_Total_Time')
+    #my_time=Tracker.objects.filter(id=pk).aggregate(Your_Total_Time=Sum('duration'))  author=user
+    my_time=Tracker.objects.filter(id=pk).aggregate(Your_Total_Time=Sum('duration'))  
+    time=my_time.get('Your_Total_Time')
 
     context = {
                 'trackers': trackers,
-                'total_time':total_time,
                 'time':time
+
                 
               }
     return render(request, 'accounts/usertracker.html', context)
