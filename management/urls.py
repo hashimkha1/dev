@@ -45,5 +45,9 @@ urlpatterns = [
     path('hr/', views.hr, name='hr'),
     #path('other/', views.transact, name='management-transact'), 
 
+    #-----------COMPANY POLICIES---------------------------------------
+    path('policy/', views.policy, name='policy'),
+    path('policies/', views.policies, name='policies'),
+
 ]
  

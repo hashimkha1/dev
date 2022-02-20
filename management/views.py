@@ -5,10 +5,10 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .forms import (TransactionForm,OutflowForm,InflowForm)
+from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from .models import Transaction,Inflow,Outflow
+from .models import Transaction,Inflow,Outflow,Policy
 
 
 def home(request):
@@ -237,3 +237,24 @@ class InflowDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+#----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
+def policy(request):
+    if request.method== "POST":
+        form=PolicyForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:policies')
+    else:
+        form=PolicyForm()
+    return render(request, 'management/hr/policy.html',{'form':form})
+
+
+def policies(request):
+    #reporting_date = date.today() + timedelta(days=7)
+    uploads=Policy.objects.all().order_by('upload_date')
+    context = {
+        'uploads': uploads,
+       # 'reporting_date': reporting_date
+    }
+    return render(request, 'management/hr/policies.html',context)

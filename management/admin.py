@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
 from mptt.admin import MPTTModelAdmin
-from .models import Transaction,Inflow,Outflow
+from .models import Transaction,Inflow,Outflow,Policy
 
 #from .models import Activity, Category, Employee, Transaction , Department
 
@@ -61,6 +61,7 @@ admin.site.register(Transaction, TransactionAdmin)
 
 admin.site.register(Inflow)
 admin.site.register(Outflow)
+admin.site.register(Policy)
 
 '''
 admin.site.register(Employee)

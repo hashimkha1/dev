@@ -3,7 +3,7 @@ from django.forms import ModelForm, Textarea
 
 #from .models import Employee, Transaction
 
-from .models import Transaction,Outflow,Inflow
+from .models import Transaction,Outflow,Inflow,Policy
 
 '''
 class EmployeeForm(forms.ModelForm):  
@@ -96,3 +96,18 @@ class InflowForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(InflowForm,self).__init__(*args, **kwargs)
         self.fields['method'].empty_label= "Select"
+
+
+
+class PolicyForm(forms.ModelForm):
+    class Meta:
+        model = Policy
+        fields = ['first_name','last_name','department','type','description','policy_doc']
+        labels={
+                'first_name':'First Name',
+                'last_name':'Last Name',
+                'type':'Policy Type',
+                'department':'Department',
+                'description':'Description',
+                'policy_doc':'Attach Policy',
+                }

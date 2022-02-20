@@ -324,3 +324,61 @@ class Inflow(models.Model):
     def total_payment(self):
         total = self.amount.objects.aggregate(TOTAL = Sum('amount'))['TOTAL']
         return total
+
+# -------------------------------------COMPANY POLICIES---------------------------------------
+class Policy(models.Model):
+    # Department
+    HR = 'HR Department'
+    IT = 'IT Department'
+    MKT = 'Marketing Department'
+    FIN = 'Finance Department'
+    SECURITY = 'Security Department'
+    MANAGEMENT = 'Management Department'
+    HEALTH = 'Health Department'
+    Other='Other'
+    DEPARTMENT_CHOICES = [
+        (HR , 'HR Department'),
+        (IT , 'IT Department'),
+        (MKT , 'Marketing Department'),
+        (FIN , 'Finance Department'),
+        (SECURITY , 'Security Department'),
+        (MANAGEMENT , 'Management Department'),
+        (HEALTH , 'Health Department'),
+        (Other , 'Other'),
+        ]
+
+    Leave = 'Leave'
+    Working_Hours = 'Working Hours'
+    Working_Days = 'Working Days'
+    Unpaid_Training = 'Unpaid Training'
+    Location = 'Location'
+    Other = 'Other'
+    CHOICES = [
+        (Leave, 'Leave'),
+        (Working_Hours, 'Working Hours'),
+        (Working_Days, 'Working Days'),
+        (Unpaid_Training, 'Unpaid_Training'),
+        (Location, 'Location'),
+        (Other, 'Other'),
+    ]
+    id = models.AutoField(primary_key=True)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
+    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+    type=models.CharField(max_length=100,null=True,blank=True)
+    '''policy_type= models.CharField(
+        max_length=25,
+        choices=CHOICES,
+        default=Other,
+    )'''
+    department= models.CharField(
+            max_length=100,
+            choices=DEPARTMENT_CHOICES,
+            default=Other,
+        )
+
+    description = models.TextField()
+    policy_doc=models.FileField(upload_to='policy/doc/',default=None,null=True,blank=True)
+
+    def __str__(self):
+        return f'{self.id} policy'
