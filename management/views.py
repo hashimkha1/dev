@@ -1,4 +1,5 @@
 import calendar
+from datetime import date, timedelta
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.db.models import Sum
@@ -251,10 +252,12 @@ def policy(request):
 
 
 def policies(request):
-    #reporting_date = date.today() + timedelta(days=7)
+    reporting_date = date.today()
+    day_name=date.today().strftime("%A")
     uploads=Policy.objects.all().order_by('upload_date')
     context = {
         'uploads': uploads,
-       # 'reporting_date': reporting_date
+        'reporting_date': reporting_date,
+        'day_name':day_name
     }
     return render(request, 'management/hr/policies.html',context)

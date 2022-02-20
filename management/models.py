@@ -328,25 +328,24 @@ class Inflow(models.Model):
 # -------------------------------------COMPANY POLICIES---------------------------------------
 class Policy(models.Model):
     # Department
-    HR = 'HR Department'
-    IT = 'IT Department'
-    MKT = 'Marketing Department'
-    FIN = 'Finance Department'
-    SECURITY = 'Security Department'
-    MANAGEMENT = 'Management Department'
-    HEALTH = 'Health Department'
+    HR = 'HR'
+    IT = 'IT'
+    MKT = 'Marketing'
+    FIN = 'Finance'
+    SECURITY = 'Security'
+    MANAGEMENT = 'Management'
+    HEALTH = 'Health'
     Other='Other'
     DEPARTMENT_CHOICES = [
-        (HR , 'HR Department'),
-        (IT , 'IT Department'),
-        (MKT , 'Marketing Department'),
-        (FIN , 'Finance Department'),
-        (SECURITY , 'Security Department'),
-        (MANAGEMENT , 'Management Department'),
-        (HEALTH , 'Health Department'),
+        (HR , 'HR'),
+        (IT , 'IT'),
+        (MKT , 'Marketing'),
+        (FIN , 'Finance'),
+        (SECURITY , 'Security'),
+        (MANAGEMENT , 'Management'),
+        (HEALTH , 'Health'),
         (Other , 'Other'),
         ]
-
     Leave = 'Leave'
     Working_Hours = 'Working Hours'
     Working_Days = 'Working Days'
@@ -376,7 +375,6 @@ class Policy(models.Model):
             choices=DEPARTMENT_CHOICES,
             default=Other,
         )
-
     description = models.TextField()
     policy_doc=models.FileField(upload_to='policy/doc/',default=None,null=True,blank=True)
 

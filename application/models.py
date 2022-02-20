@@ -94,6 +94,9 @@ class Policy(models.Model):
     def __str__(self):
         return f'{self.id} policy'
 
+
+    
+
 class Rated(models.Model):
     class Score(models.IntegerChoices):
         very_Poor = 1
