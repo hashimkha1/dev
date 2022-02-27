@@ -98,7 +98,6 @@ class InflowForm(forms.ModelForm):
         self.fields['method'].empty_label= "Select"
 
 
-
 class PolicyForm(forms.ModelForm):
     class Meta:
         model = Policy

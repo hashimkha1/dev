@@ -48,7 +48,6 @@ class TransactionAdmin(admin.ModelAdmin):
                             type=fields[9],
                             description=fields[10],
                             receipt_link=fields[11],
-
                          )
             url = reverse('admin:index')
             return HttpResponseRedirect(url)

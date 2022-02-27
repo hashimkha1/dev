@@ -1,24 +1,28 @@
-{%extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}
-{%block content %}
+{%extends "main/base_templates/base.html"%} {% block content %}
 <section id="career">
   <div class="career text-center">
-    <h3>How to ace a BA, Data Analysis/Data Science Interview</h3>
-<br>
-<div  class="row">
-  <div class="col">
-    <div class="card card-body">
-      <form method="get">
-        {% csrf_token %}
-        {{myFilter.form}}
-        <button class="btn btn-primary" type="submit">Search</button>
-      </form>
+    <div class="col-8">
+      How to ace a BA, Data Analysis/Data Science Interview
     </div>
-  </div>
+
+    <div class="row  mb-3 border-bottom font-weight-bold">
+      {% if query%}
+        <div class="col-12">
+            Searched for {{query}}
+        </div>
+    {% else%}
+      <div class="col-12 col-md-8 mx-auto py-5">
+        {% include 'globalsearch/snippets/search-form.html' %}
+      </div>
+    {% endif%}
 </div>
     <table style="width: 100%">
       <thead>
         <tr>
+          <th>Number</th>
           <th>username</th>
+          <th>First Name</th>
+          <th>Last Name</th>
           <th>Date Uploaded</th>
           <th>Applying as:</th>
           <th>Question</th>
@@ -26,13 +30,13 @@
           <th>Link</th>
         </tr>
       </thead>
-      
       <tbody>
-        {% for upload in uploads %}
-        
-
+        {% for upload in  object_list  %}
         <tr>
+          <td>{{forloop.counter}}</td>
           <td>{{user.username}}</td>
+          <td>{{upload.first_name}}</td>
+          <td>{{upload.last_name}}</td>
           <td>{{upload.upload_date|date:"F d, Y"}}</td>
           <td>{{upload.category}}</td>
           <td>{{upload.question_type}}</td>

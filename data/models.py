@@ -1,6 +1,64 @@
+from django.db.models import Q
+from posixpath import basename
+import random
+import os
+import calendar
+from decimal import *
+from django.utils.translation import gettext_lazy as _
+from sqlite3 import Timestamp
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.urls import reverse
+import requests
+from django.http import request
+
+from datetime import datetime
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
 from django.utils import timezone
 
+#User=settings.AUTH_USER_MODEL
+User = get_user_model()
+
+
+ #==================================INTERVIEWS====================================
+class InterviewQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
+    def featured(self):
+        return self.filter(featured=True ,is_active=True)
+        
+    def search(self,query):
+        lookups=(
+                Q(category__icontains=query)|Q(question_type__icontains=query)|
+                Q(last_name__icontains=query)|Q(first_name__icontains=query)|
+                Q(upload_date__icontains=query)|Q(username__username__icontains=query)
+              )
+        return self.filter(lookups).distinct()
+
+class InterviewManager(models.Manager):
+    def get_queryset(self):
+        #return super(TaskManager, self).get_queryset().filter(is_active=True)
+        return InterviewQuerySet(self.model,using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    """ def featured(self):
+        return self.get_queryset().featured() """
+
+    def get_by_slug(self,slug):
+        qs=self.get_queryset().filter(slug=slug)
+        if qs.count()==1:
+            return qs.first()
+        return None
+
+    def search(self,query):
+        return self.get_queryset().active().search(query)
 
 #Interview Model
 class InterviewUpload(models.Model):
@@ -48,6 +106,7 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     id = models.AutoField(primary_key=True)
+    username = models.ForeignKey('accounts.CustomerUser', on_delete=models.RESTRICT,null=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
@@ -65,6 +124,10 @@ class InterviewUpload(models.Model):
 
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
+    is_active=models.BooleanField(default=True)
+    featured=models.BooleanField(default=True)
+
+    objects=InterviewManager()
 
     class Meta:
         verbose_name_plural = 'InterviewUploads'   
