@@ -73,6 +73,9 @@ class ApplicantListView(ListView):
     context_object_name='applicants'
     ordering=['-application_date']
 
+
+
+
 '''
 class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
     model=Application

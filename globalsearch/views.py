@@ -1,5 +1,5 @@
-from tkinter import X
-from xml.dom import xmlbuilder
+#from tkinter import X
+#from xml.dom import xmlbuilder
 #from django.db.models import Q
 from urllib import request
 from django.http import Http404
@@ -31,3 +31,4 @@ class SearchInterviewView(ListView):
         if query is not None:
             return InterviewUpload.objects.search(query)
         return InterviewUpload.objects.none()
+    
