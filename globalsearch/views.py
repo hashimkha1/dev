@@ -23,6 +23,7 @@ class SearchInterviewView(ListView):
         __icontains =fields contains this
         __iexact=fields are exactly this
           How do we search on Foreign Keys
+          heroku rollback v46
         '''
         request=self.request
         print(request.GET)

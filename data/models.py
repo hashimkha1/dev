@@ -127,7 +127,7 @@ class InterviewUpload(models.Model):
     is_active=models.BooleanField(default=True)
     featured=models.BooleanField(default=True)
 
-    objects=InterviewManager()
+    #objects=InterviewManager()
 
     class Meta:
         verbose_name_plural = 'InterviewUploads'   
