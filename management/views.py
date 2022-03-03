@@ -280,7 +280,19 @@ def benefits(request):
     }
     return render(request, 'management/hr/benefits.html',context)
 
-#----------------------ACTIVITY CLASS-BASED VIEWS--------------------------------
+#===================================ACTIVITY CLASS-BASED VIEWS=========================================
+
+#======================TAG=======================
+class TagCreateView(LoginRequiredMixin, CreateView):
+    model=Tag
+    success_url="/management/newcategory"
+    fields=['title','description','slug']
+
+    def form_valid(self,form):
+        form.instance.user=self.request.user
+        return super().form_valid(form)  
+
+#======================TASKS=======================
 def task(request, slug=None, *args, **kwargs):
     # qs=Info.objects.filter(id=pk)
     # if qs.exists and qs.count()==1:
@@ -309,14 +321,14 @@ class TaskListView(ListView):
   queryset=Task.objects.all()
   template_name='management/daf/tasklist.html'
 
-class UserListView(ListView):
+""" class UserListView(ListView):
   queryset=Task.objects.all()
   template_name='management/daf/usertasks.html'
 
   def get_total(self):
       Amount=Task.objects.aggregate(Your_Total_Amount=Sum('pay'))  
       Total=Amount.get('Your_Total_Amount')
-      return Total
+      return Total """
 
 def usertask(request, user=None, *args, **kwargs):
     #tasks=Task.objects.all().order_by('-submission')
