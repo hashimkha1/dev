@@ -1,6 +1,8 @@
 import calendar
 from datetime import date, timedelta
+from decimal import Decimal
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -9,8 +11,13 @@ from django.urls import reverse
 from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from .models import Transaction,Inflow,Outflow,Policy
+from .models import Transaction,Inflow,Outflow,Policy,Task,Tag
 
+from django.conf import settings
+from django.contrib.auth import get_user_model
+
+#User=settings.AUTH_USER_MODEL
+User = get_user_model()
 
 def home(request):
     return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
@@ -261,3 +268,210 @@ def policies(request):
         'day_name':day_name
     }
     return render(request, 'management/hr/policies.html',context)
+
+def benefits(request):
+    reporting_date = date.today()
+    day_name=date.today().strftime("%A")
+    uploads=Policy.objects.all().order_by('upload_date')
+    context = {
+        'uploads': uploads,
+        'reporting_date': reporting_date,
+        'day_name':day_name
+    }
+    return render(request, 'management/hr/benefits.html',context)
+
+#----------------------ACTIVITY CLASS-BASED VIEWS--------------------------------
+def task(request, slug=None, *args, **kwargs):
+    # qs=Info.objects.filter(id=pk)
+    # if qs.exists and qs.count()==1:
+    #     instance=qs.first()
+    # else:
+    #     raise Http404("User does not exist")
+    instance=Task.objects.get_by_slug(slug)
+    if instance is None:
+        raise Http404("Task does not exist")
+
+    context = {
+                'object':instance
+              }
+    return render(request, 'management/daf/task.html', context)
+
+class TaskCreateView(LoginRequiredMixin, CreateView):
+    model=Task
+    success_url="/management/newtask"
+    fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
+
+    def form_valid(self,form):
+        form.instance.user=self.request.user
+        return super().form_valid(form)  
+
+class TaskListView(ListView):
+  queryset=Task.objects.all()
+  template_name='management/daf/tasklist.html'
+
+class UserListView(ListView):
+  queryset=Task.objects.all()
+  template_name='management/daf/usertasks.html'
+
+  def get_total(self):
+      Amount=Task.objects.aggregate(Your_Total_Amount=Sum('pay'))  
+      Total=Amount.get('Your_Total_Amount')
+      return Total
+
+def usertask(request, user=None, *args, **kwargs):
+    #tasks=Task.objects.all().order_by('-submission')
+    #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
+    #Amount=Task.objects.all().aggregate(Your_Total_GoalAmount=Sum('mxearning'))
+    #total_duration=Task.objects.all().aggregate(Sum('duration'))
+    #mxearning=Task.objects.filter().aggregate(Your_Total_AssignedAmt=Sum('mxearning'))  
+    #paybalance=round(bal,2)
+    #balance=paybalance.quantize(Decimal('0.01'))
+    #salary = [task.pay for pay in Task.objects.all().values()]
+    deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
+    delta=deadline_date-date.today()
+    time_remaining=delta.days
+
+    tasks = Task.objects.filter(user__username=request.user)
+    num_tasks = Task.objects.filter(user=request.user).count()
+    points=Task.objects.filter(user=request.user).aggregate(Your_Total_Points=Sum('point')) 
+    mxpoints=Task.objects.filter(user=request.user).aggregate(Your_Total_MaxPoints=Sum('mxpoint')) 
+    earning=Task.objects.filter(user=request.user).aggregate(Your_Total_Pay=Sum('mxearning'))
+    mxearning=Task.objects.filter(user=request.user).aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
+    Points=points.get('Your_Total_Points')
+    MaxPoints=mxpoints.get('Your_Total_MaxPoints')
+    pay=earning.get('Your_Total_Pay')
+    GoalAmount=mxearning.get('Your_Total_AssignedAmt')
+    pay=earning.get('Your_Total_Pay')
+    total_pay = 0
+    for task in tasks:
+        total_pay = total_pay + task.get_pay
+
+    try:
+        paybalance=Decimal(GoalAmount)-Decimal(total_pay)
+    except (TypeError, AttributeError):
+        paybalance=0
+    
+    try:
+        pointsbalance=Decimal(MaxPoints)-Decimal(Points)
+    except (TypeError, AttributeError):
+        pointsbalance=0
+
+
+    context= {
+                'num_tasks':num_tasks,
+                'tasks': tasks,
+                'Points':Points,
+                'MaxPoints':MaxPoints,
+                'pay':pay,
+                'GoalAmount':GoalAmount,
+                'paybalance':paybalance,
+                'pointsbalance':pointsbalance,
+                'time_remaining':time_remaining,
+                'total_pay':total_pay
+              }
+    return render(request, 'management/daf/usertasks.html', context)
+
+  
+class TaskDetailView(DetailView):
+    queryset=Task.objects.all()
+    template_name='management/daf/task_detail.html'
+    #ordering = ['-datePosted']
+
+    def get_context_data(self, *args,**kwargs):
+        context=super(TaskDetailView,self).get_context_data(*args,**kwargs)
+        # print(context)
+        return context
+    
+    def get_queryset(self, *args,**kwargs):
+        request=self.request
+        pk=self.kwargs.get('pk')
+        return Task.objects.filter(pk=pk)
+
+    ''' 
+    def get_object(self, *args,**kwargs):
+         request=self.request
+         pk=self.kwargs.get('pk')
+         instance=Info.objects.get_by_id(pk)
+         if instance is None:
+             raise Http404("User does not exist")
+             # print(context)
+         return instance
+    def get_queryset(self,employee):
+        employee=self.employee
+        return Task.objects.filter(employee=employee)
+    '''
+
+class TaskDetailSlugView(DetailView):
+    queryset=Task.objects.all()
+    template_name='management/daf/task_detail.html'
+    #ordering = ['-datePosted']
+
+    def get_object(self, *args,**kwargs):
+        request=self.request
+        slug=self.kwargs.get('slug')
+        try:
+             instance=Task.objects.get(slug=slug,is_active=True)
+        except Task.DoesNotExist:
+             raise Http404("User does not exist")
+
+        except Task.MultipleObjectsReturned:
+             qs=Task.objects.filter(slug=slug, is_active=True)
+             instance= qs.first()
+        return instance
+
+
+@method_decorator(login_required, name='dispatch')
+class TaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Task
+    success_url="/management/tasks"
+    fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
+    #fields=['user','activity_name','description','point']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return False
+
+    def test_func(self):
+        track = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==task.user:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Task
+    success_url="/management/usertasks"
+    #fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
+    fields=['user','activity_name','description','point']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return False
+
+    def test_func(self):
+        track = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==task.user:
+            return True
+        return False
+    
+
+@method_decorator(login_required, name='dispatch')
+class TaskDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Task
+    success_url="/accounts/tasklist"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False

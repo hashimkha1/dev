@@ -106,9 +106,9 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     id = models.AutoField(primary_key=True)
-    username = models.ForeignKey('accounts.CustomerUser', on_delete=models.RESTRICT,null=True)
-    first_name=models.CharField(max_length=100,null=True,blank=True)
-    last_name=models.CharField(max_length=100,null=True,blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    #first_name=models.CharField(max_length=100,null=True,blank=True)
+    #last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
     category= models.CharField(
@@ -127,7 +127,7 @@ class InterviewUpload(models.Model):
     is_active=models.BooleanField(default=True)
     featured=models.BooleanField(default=True)
 
-    #objects=InterviewManager()
+    objects=InterviewManager()
 
     class Meta:
         verbose_name_plural = 'InterviewUploads'   

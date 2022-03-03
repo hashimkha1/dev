@@ -4,6 +4,7 @@ from datetime import date ,timedelta
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Sum
 from django.utils import timezone
 from django_countries.fields import CountryField
@@ -107,10 +108,27 @@ class Tracker(models.Model):
         max_length=25,
         choices=TASK_CHOICES,
     )
+    plan = models.CharField(
+        verbose_name=_('group'),
+        help_text=_('Required'),
+        max_length=255,
+        default="Plan B"
+        )
     author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
     login_date = models.DateTimeField(auto_now_add=True)
     start_time = models.TimeField(auto_now_add=True)
     duration = models.IntegerField(choices=Duration.choices,default=2)
+    time = models.PositiveIntegerField(
+        #max_digits=3, 
+            help_text=_('Maximum 200'),
+            error_messages={
+                "name":{
+                   ' max_length':("The maximum hours must be between 0 and 199")
+                
+                }
+            },
+            default=120
+            )
     class Meta:
         ordering=['login_date']
 

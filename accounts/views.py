@@ -189,17 +189,19 @@ def usertracker(request, pk=None, *args, **kwargs):
     #trackers=Tracker.objects.all().order_by('-login_date')
     #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
     trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
-    #total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    #total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    #my_time=Tracker.objects.filter(id=pk).aggregate(Your_Total_Time=Sum('duration'))  author=user
-    my_time=Tracker.objects.filter(id=pk).aggregate(Your_Total_Time=Sum('duration'))  
-    time=my_time.get('Your_Total_Time')
+    num =trackers.count()
+    my_time=trackers.aggregate(Your_Total_Time=Sum('time')) 
+    Used=trackers.aggregate(Your_Total_Time=Sum('duration'))  
+    Usedtime=Used.get('Your_Total_Time')
+    plantime=my_time.get('Your_Total_Time')
+    delta=round(plantime/num-Usedtime)
 
     context = {
                 'trackers': trackers,
-                'time':time
-
+                'num':num,
+                'plantime': plantime,
+                'Usedtime':Usedtime,
+                'delta':delta
                 
               }
     return render(request, 'accounts/usertracker.html', context)

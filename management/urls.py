@@ -1,7 +1,10 @@
 from django.urls import path
 from . import views
 from .views import (
-                        
+                        TaskListView,UserListView,
+                        TaskDetailView,TaskCreateView,
+                        TaskUpdateView,TaskDeleteView,
+                        UsertaskUpdateView,TaskDetailSlugView,
                         UserInflowListView,#InflowListView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
@@ -48,6 +51,16 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
-
+    path('benefits/', views.benefits, name='benefits'),
+    #========================Task=====================================================
+    path('tasks/', TaskListView.as_view(), name='tasks'),
+    #path('usertasks/', UserListView.as_view(), name='usertask'),
+    path('usertasks/',views.usertask, name='usertask'),
+    path('newtask/', TaskCreateView.as_view(), name='newtask'),
+    path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
+    path('tasks/<str:slug>/', TaskDetailSlugView.as_view(), name='taskdetailSlug'),
+    path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
+    path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),
+    path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
 ]
  

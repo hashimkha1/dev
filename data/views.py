@@ -1,10 +1,16 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.template import context
+from django.contrib.auth import get_user_model,login,authenticate
+from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
+
 
 from .forms import InterviewForm, UploadForm
 from .models import InterviewUpload, Upload
 from .filters import InterviewFilter
+
+#User=settings.AUTH_USER_MODEL
+User = get_user_model()
 
 def analysis(request):
     return render(request, 'main/home_templates/analysis_home.html', {'title': 'analysis'})

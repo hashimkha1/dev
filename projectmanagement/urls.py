@@ -2,9 +2,6 @@ from django.urls import path
 
 from . import views
 
-#from .views import (ActivityUpdateView, EmployeeCreateView, EmployeeDeleteView,
-                   # EmployeeDetailView, EmployeeListView, EmployeeUpdateView)
-
 app_name = 'projectmanagement'
 #<app>/<model>_<viewtype>
 urlpatterns = [
