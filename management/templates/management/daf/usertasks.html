@@ -10,6 +10,7 @@
 <div class="data_training text-center">
 <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
 <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities this month</p>
+
 <div class="container-fluid mr-auto">
       <div class="row text-center">
                     <div class="col-md-2" id="bada">
@@ -92,8 +93,22 @@
 </div> 
 </section>
 
+<!----
 <section id="career">
   <div class="career text-center">
+    <!----
+    <div  class="row">
+      <div class="col">
+        <div class="card card-body">
+          <form method="get">
+            {% csrf_token %}
+            {{myFilter.form}}
+            <button class="btn btn-primary" type="submit">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+---->
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>

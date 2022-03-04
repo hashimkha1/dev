@@ -1,3 +1,4 @@
+from urllib import request
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.template import context
@@ -68,6 +69,8 @@ def uploadinterview(request):
     return render(request, 'data/interview/uploadinterview.html',{'form':form})
 
 #for uploading interviews
+
+
 @login_required
 def iuploads(request):
     uploads=InterviewUpload.objects.all().order_by('-upload_date')
@@ -78,7 +81,7 @@ def iuploads(request):
               'myFilter':myFilter
             }
     return render(request, 'data/interview/iuploads.html',context)
-
+    
 # Saving uploaded information to database
 def upload(request):
     if request.method== "POST":
