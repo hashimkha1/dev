@@ -8,7 +8,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 
 from .forms import InterviewForm, UploadForm
 from .models import InterviewUpload, Upload
-from .filters import InterviewFilter
+from .filters import InterviewFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -81,7 +81,7 @@ def iuploads(request):
               'myFilter':myFilter
             }
     return render(request, 'data/interview/iuploads.html',context)
-    
+
 # Saving uploaded information to database
 def upload(request):
     if request.method== "POST":
