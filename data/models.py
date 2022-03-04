@@ -105,7 +105,7 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE,null=True)
+    user = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE,null=True,blank=True)
     #user = models.ForeignKey('accounts.CustomerUser', on_delete=models.RESTRICT, related_name='client_interview')
     #author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
 
