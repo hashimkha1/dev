@@ -105,12 +105,12 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE,null=True,blank=True)
+    #user = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE,null=True,blank=True)
     #user = models.ForeignKey('accounts.CustomerUser', on_delete=models.RESTRICT, related_name='client_interview')
     #author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
 
-    #first_name=models.CharField(max_length=100,null=True,blank=True)
-    #last_name=models.CharField(max_length=100,null=True,blank=True)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
     category= models.CharField(

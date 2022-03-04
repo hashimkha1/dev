@@ -6,10 +6,10 @@ from .models import InterviewUpload, Upload
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = InterviewUpload
-        fields = ['category','question_type','doc','link']#'first_name','last_name',]
+        fields = ['first_name','last_name','category','question_type','doc','link']#'first_name','last_name',]
         labels={
-                #'first_name':'First Name',
-                #'last_name':'Last Name',
+                'first_name':'First Name',
+                'last_name':'Last Name',
                 'category':'Category',
                 'question_type':'Question',
                 'doc':'Assignment',
