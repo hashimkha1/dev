@@ -175,9 +175,6 @@ def inflow(request):
         form=InflowForm()
     return render(request, 'management/company_finances/inflow_entry.html',{'form':form})
 
-
-
-
 @method_decorator(login_required, name='dispatch')
 class InflowDetailView(DetailView):
     template_name='management/cash_inflow/inflow_detail.html'

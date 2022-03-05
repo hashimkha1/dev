@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import InterviewUpload, Upload
+from .models import  InterviewUpload, Upload
 
 # Register your models here.
 

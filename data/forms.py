@@ -6,7 +6,8 @@ from .models import InterviewUpload, Upload
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = InterviewUpload
-        fields =['category','question_type','doc','link']#'first_name','last_name',]
+        fields =['category','question_type','doc','link']
+        #'first_name','last_name',]
         labels={
                 """ 'first_name':'First Name',
                 'last_name':'Last Name', """
@@ -15,6 +16,8 @@ class InterviewForm(forms.ModelForm):
                 'doc':'Assignment',
                 'link':'Google Share Url',
                 }
+
+
 class UploadForm(forms.ModelForm):
     class Meta:
         model = Upload

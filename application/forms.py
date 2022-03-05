@@ -53,7 +53,7 @@ class RatingForm(forms.ModelForm):
         self.fields['understanding'].empty_label= "Select"
         self.fields['topic'].required= False
 
-class InterviewUploadForm(forms.ModelForm):
+class InterviewForm(forms.ModelForm):
     class Meta:
         model = InteviewUploads
         fields = ['username','ppt','report','workflow', 'proc','other']

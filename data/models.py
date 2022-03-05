@@ -58,6 +58,86 @@ class InterviewManager(models.Manager):
 
     def search(self,query):
         return self.get_queryset().active().search(query)
+''' 
+#Interview Model
+class Uploaded(models.Model):
+    # Job Category.
+    Project_Management = 'Project Management'
+    Business_Analysis = 'Business Analyst'
+    Quality_Assurance = 'Quality Assurance'
+    User_Experience = 'User Interface'
+    Reporting = 'Reporting'
+    ETL = 'ETL'
+    Database = 'Database'
+    Python = 'Python'
+    Other = 'Other'
+    # Question Type
+    Introduction = 'introduction'
+    Project_Story = 'Project Story'
+    Performance = 'performance'
+    Methodology = 'methodology'
+    SDLC = 'sdlc'
+    Testing = 'testing'
+    Environment = 'environment'
+    Resume = 'resume'
+
+    CAT_CHOICES = [
+        (Project_Management, 'Project Management'),
+        (Business_Analysis, 'Business Analysis'),
+        (Quality_Assurance, 'Quality Assurance'),
+        (User_Experience, 'User Experience'),
+        (Reporting, 'Reporting'),
+        (ETL, 'ETL'),
+        (Database, 'Database'),
+        (Python, 'Python'),
+        (Other, 'Other'),
+    ]
+    
+    QUESTION_CHOICES = [
+    (Introduction , 'introduction'),
+    (Project_Story , 'project story'),
+    (Performance , 'performance'),
+    (Methodology , 'methodology'),
+    (SDLC , 'sdlc'),
+    (Testing , 'testing'),
+    (Environment , 'environment'),
+    (Resume , 'resume'),
+    (Other, 'Other'),
+    ]
+    #id = models.AutoField(primary_key=True)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_interview',default=999)
+    #author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
+
+    first=models.CharField(max_length=100,null=True,blank=True)
+    last=models.CharField(max_length=100,null=True,blank=True)
+    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+
+    category= models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default=Other,
+    )
+    question_type= models.CharField(
+        max_length=25,
+        choices=QUESTION_CHOICES,
+        default=Other,
+    )
+
+    doc=models.FileField(default="None",upload_to='Uploads/doc/')
+    link=models.CharField(max_length=100,blank=True, null=True)
+    is_active=models.BooleanField(default=True)
+    featured=models.BooleanField(default=True)
+
+    objects=InterviewManager()
+
+    class Meta:
+        verbose_name_plural = 'uploads'   
+
+    def __str__(self):
+        return f'{self.username} upload'
+
+'''
 
 #Interview Model
 class InterviewUpload(models.Model):
@@ -105,12 +185,10 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     #id = models.AutoField(primary_key=True)
-    #user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
-    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_interview',default=999)
-    #author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
-
-    #first_name=models.CharField(max_length=100,null=True,blank=True)
-    #last_name=models.CharField(max_length=100,null=True,blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_interview',default=999)
+    first_name=models.CharField(max_length=100,null=True,blank=True)
+    midle=models.CharField(max_length=100,null=True,blank=True)
+    last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
     category= models.CharField(
@@ -126,16 +204,13 @@ class InterviewUpload(models.Model):
 
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
-    is_active=models.BooleanField(default=True)
-    featured=models.BooleanField(default=True)
-
-    objects=InterviewManager()
 
     class Meta:
         verbose_name_plural = 'InterviewUploads'   
 
     def __str__(self):
         return f'{self.username} upload'
+
 
 class Upload(models.Model):
     id = models.AutoField(primary_key=True)
@@ -150,15 +225,3 @@ class Upload(models.Model):
     def __str__(self):
         return f'{self.id} Uploads'
 
-'''
-class Cat(models.Model):
-    category =models.CharField(max_length=100,blank=True, null=True)
-    description=models.CharField(max_length=1000,blank=True, null=True)
-    link=models.CharField(max_length=100,blank=True, null=True)
-    class Meta:
-        verbose_name_plural = 'categories'
-
-    def __str__(self):
-        return f'{self.id} Cat'
-
-        '''

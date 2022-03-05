@@ -23,7 +23,7 @@ class InterviewFilter(django_filters.FilterSet):
 class InterviewFilter(django_filters.FilterSet):
 
      class Meta:
-         model = InterviewUpload
+         model = Interview
          fields = ['first_name', 'upload_date']
          #fields='__all__'
          filter_overrides = {
