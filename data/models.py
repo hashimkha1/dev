@@ -187,7 +187,7 @@ class InterviewUpload(models.Model):
     #id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_interview',default=999)
     first_name=models.CharField(max_length=100,null=True,blank=True)
-    midle=models.CharField(max_length=100,null=True,blank=True)
+    #midle=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
