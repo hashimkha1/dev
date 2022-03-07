@@ -185,7 +185,7 @@ class InterviewUpload(models.Model):
     (Other, 'Other'),
     ]
     #id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_interview',default=999)
+    user= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
     #midle=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
@@ -212,7 +212,7 @@ class InterviewUpload(models.Model):
         return f'{self.username} upload'
 
 
-class Upload(models.Model):
+class DocUpload(models.Model):
     id = models.AutoField(primary_key=True)
     doc_type=models.CharField(max_length=100,blank=True, null=True)
     doc_name=models.CharField(max_length=100,blank=True, null=True)

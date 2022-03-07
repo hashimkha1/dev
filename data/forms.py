@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import InterviewUpload, Upload
+from .models import InterviewUpload, DocUpload
 
 
 class InterviewForm(forms.ModelForm):
@@ -20,7 +20,7 @@ class InterviewForm(forms.ModelForm):
 
 class UploadForm(forms.ModelForm):
     class Meta:
-        model = Upload
+        model = DocUpload
         fields = ['id','doc_type','doc_name','doc','link']
         labels={
                 'doc_type':'Document Type',

@@ -7,7 +7,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 
 
 from .forms import InterviewForm, UploadForm
-from .models import InterviewUpload, Upload
+from .models import InterviewUpload, DocUpload
 from .filters import InterviewFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
@@ -94,7 +94,7 @@ def upload(request):
     return render(request, 'main/doc_templates/upload.html',{'form':form})
 
 def uploaded(request):
-    documents=Upload.objects.all().order_by('-document_date')
+    documents=DocUpload.objects.all().order_by('-document_date')
     return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
 
 
