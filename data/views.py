@@ -102,8 +102,8 @@ class InterviewDetailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Interview
-    success_url="data/interview/useruploads"
-    fields=['user','first_name','last_name','category','question_type''doc','link',]
+    success_url="data/interview/iuploads"
+    fields=['user','first_name','last_name','category','question_type','doc','link',]
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
@@ -123,7 +123,7 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 @method_decorator(login_required, name='dispatch')
 class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Interview
-    success_url="data/interview/useruploads"
+    success_url="data/interview/iuploads"
 
     def test_func(self):
         #timer = self.get_object()
