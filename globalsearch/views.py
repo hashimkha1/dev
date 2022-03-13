@@ -6,6 +6,10 @@ from django.http import Http404
 from django.contrib.auth.models import User
 from django.shortcuts import  redirect, render,get_object_or_404
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
+
+class SearchInterviewView(ListView):
+    pass
+'''
 from data.models import (Interview)
 
 class SearchInterviewView(ListView):
@@ -19,12 +23,11 @@ class SearchInterviewView(ListView):
         return context
 
     def get_queryset(self,*args,**kwargs):
-        '''
         __icontains =fields contains this
         __iexact=fields are exactly this
           How do we search on Foreign Keys
           heroku rollback v46
-        '''
+  
         request=self.request
         print(request.GET)
         method_dict=request.GET
@@ -32,4 +35,4 @@ class SearchInterviewView(ListView):
         if query is not None:
             return Interview.objects.search(query)
         return Interview.objects.none()
-    
+    '''

@@ -1,5 +1,5 @@
 from django import forms
-
+'''
 from .models import Interview, DocUpload
 
 
@@ -26,3 +26,4 @@ class UploadForm(forms.ModelForm):
                 'doc_name':'Document Name',
                 'doc':'Document',
         }
+        '''

@@ -8,7 +8,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
-
+''' 
 
 class InterviewFilter(django_filters.FilterSet):
     #start_date=DateFilter(field_name="upload_date",lookup_expr='gte')
@@ -19,7 +19,7 @@ class InterviewFilter(django_filters.FilterSet):
         exclude=['upload_date','doc','link','user','is_active','featured']
 
 
-'''
+
 class InterviewFilter(django_filters.FilterSet):
 
      class Meta:

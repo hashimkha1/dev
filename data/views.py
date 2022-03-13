@@ -6,9 +6,11 @@ from django.contrib.auth import get_user_model,login,authenticate
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
 
-from .forms import InterviewForm, UploadForm
-from .models import Interview, DocUpload
-from .filters import InterviewFilter #,UserFilter
+#from .forms import InterviewForm, UploadForm
+
+
+#from .models import Interview, DocUpload
+#from .filters import InterviewFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -55,7 +57,7 @@ def getdata(request):
 
 def pay(request):
     return render(request, 'data/pay.html', {'title': 'pay'}) 
-
+'''
 # Views on interview Section
 @login_required
 def uploadinterview(request):
@@ -98,3 +100,4 @@ def uploaded(request):
     return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
 
 
+        '''

@@ -137,7 +137,6 @@ class Uploaded(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-'''
 
 #Interview Model
 class Interview(models.Model):
@@ -227,3 +226,5 @@ class DocUpload(models.Model):
     def __str__(self):
         return f'{self.id} Uploads'
 
+
+'''
