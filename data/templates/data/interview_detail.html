@@ -1,7 +1,7 @@
 {%extends "main/base_templates/base.html"%} {% block content %}
 <section id="career">
   <div class="career text-center">
-    <h2>All Clients</h2>
+    <h2>Make Changes/Delete</h2>
     {% if user.is_active or user.is_superuser %}
     <a
       class="btn btn-secondary btn-sm mt-1 mb-1"
@@ -28,7 +28,6 @@
           <th>Question</th>
           <th>Download</th>
           <th>Link</th>
-          <th>Update</th>
         </tr>
       </thead>
       <tbody>
@@ -36,7 +35,7 @@
                 <td>{{user.username}}</td>
                 <td>{{user.first_name}}</td>
                 <td>{{user.last_name}}</td>
-                <td>{{object.object_date|date:"F d, Y"}}</td>
+                <td>{{object.upload_date|date:"F d, Y"}}</td>
                 <td>{{object.category}}</td>
                 <td>{{object.question_type}}</td>
                 <td>

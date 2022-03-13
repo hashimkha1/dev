@@ -27,6 +27,7 @@ urlpatterns = [
     #Interview/Assignment Section
     path('uploadinterview/', views.uploadinterview, name='uploadinterview'),
     path('iuploads/', views.iuploads, name='iuploads'),
+    path('useruploads/', views.useruploads, name='user-assignments'),
     path('upload/<int:pk>/',InterviewDetailView.as_view(), name='interview-detail'),
     path('interview/<int:pk>/update', InterviewUpdateView.as_view(), name='interview-update'),
     path('interview/<int:pk>/delete', InterviewDeleteView.as_view(), name='delete-interview'),

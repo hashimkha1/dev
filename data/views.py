@@ -116,7 +116,7 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         interview = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user==interview.author:
+        elif self.request.user==interview.user:
             return True
         return False
         
