@@ -215,7 +215,7 @@ class Interview(models.Model):
 
 
 class DocUpload(models.Model):
-    id = models.AutoField(primary_key=True)
+    #id = models.AutoField(primary_key=True)
     doc_type=models.CharField(max_length=100,blank=True, null=True)
     doc_name=models.CharField(max_length=100,blank=True, null=True)
     doc=models.FileField(upload_to='Uploads/doc/')
