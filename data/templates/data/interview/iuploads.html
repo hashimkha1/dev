@@ -18,7 +18,8 @@
       <table style="width: 100%">
         <thead>
           <tr>
-           <!-- <th>User Name</th>-->
+           <th>User Name</td>
+            <th>First</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Date Uploaded</th>
@@ -34,6 +35,7 @@
           {% for upload in  uploads  %}
           <tr>
             <td>{{upload.user}}</td>-->
+            <td>{{upload.user.first_name}}</td>-->
             <td>{{user.username}}</td>-->
             <td>{{user.first_name}}</td>
             <td>{{user.last_name}}</td>
