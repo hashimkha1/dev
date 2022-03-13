@@ -72,6 +72,8 @@ class Tracker(models.Model):
         Three_Hours = 3
         Four_Hours = 4
         Five_Hours = 5
+        Eight_Hours = 8
+        Ten_Hours = 10
     # Job Category.
     Job_Support = 'Job_Support'
     Interview = 'Interview'
@@ -112,7 +114,7 @@ class Tracker(models.Model):
         verbose_name=_('group'),
         help_text=_('Required'),
         max_length=255,
-        default="Plan B"
+        default="B"
         )
     author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
     login_date = models.DateTimeField(auto_now_add=True)
@@ -146,4 +148,13 @@ class Tracker(models.Model):
     def total_payment(self):
         total = self.duration.objects.aggregate(TOTAL = Sum('duration'))['TOTAL']
         return total
-
+    ''' 
+    @property
+    def amt_per_plan(self):
+        if self.plan=='A':
+            return 30
+        elif self.plan=='B':
+            return 120
+        else:
+            return 9999
+    '''

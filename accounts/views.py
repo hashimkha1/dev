@@ -190,11 +190,11 @@ def usertracker(request, pk=None, *args, **kwargs):
     #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
     trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
     num =trackers.count()
-    my_time=trackers.aggregate(Your_Total_Time=Sum('time')) 
-    Used=trackers.aggregate(Your_Total_Time=Sum('duration'))  
-    Usedtime=Used.get('Your_Total_Time')
-    plantime=my_time.get('Your_Total_Time')
-    delta=round(plantime/num-Usedtime)
+    my_time=trackers.aggregate(Assigned_Time=Avg('time')) 
+    Used=trackers.aggregate(Used_Time=Sum('duration'))  
+    Usedtime=Used.get('Used_Time')
+    plantime=my_time.get('Assigned_Time')
+    delta=round(plantime-Usedtime)
 
     context = {
                 'trackers': trackers,

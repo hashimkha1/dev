@@ -21,7 +21,7 @@ NEED HELP? </a
                         <div class="card-body">
                           <h5><b>Assigned Hours</b></h5>
                           <hr/>
-                          <i><h6>{{plantime|div:3}} {{tracker.time}}</h6></i>
+                          <i><h6>{{plantime}}</h6></i>
                           <hr/>
                           <i><p>Total Hours Assigned</p></i>
                         </div>
@@ -79,6 +79,7 @@ NEED HELP? </a
         <tr>
           <th>Date</th>
           <th>Username</th>
+          <th>Plan</th>
           <th>Category</th>
           <th>Task</th>
           <th>Duration</th>
@@ -88,10 +89,10 @@ NEED HELP? </a
         {% for tracker in trackers %}
         {% if user.is_active or user.is_superuser %}
             <tr>
-              <td>{{tracker.plan}}</td>
-              <td>{{tracker.category}}</td>
               <td>{{tracker.login_date|date:"F d, Y"}}</td>
               <td>{{tracker.author}}</td>
+              <td>{{tracker.plan}}</td>
+              <td>{{tracker.category}}</td>
               <td>{{tracker.category}}</td>
               <td>{{tracker.task}}</td>
               <td>{{tracker.duration}}</td>
