@@ -2,6 +2,8 @@ from urllib import request
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.template import context
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model,login,authenticate
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
@@ -57,6 +59,8 @@ def getdata(request):
 def pay(request):
     return render(request, 'data/pay.html', {'title': 'pay'}) 
 # Views on interview Section
+
+
 @login_required
 def uploadinterview(request):
     if request.method== "POST":
@@ -80,6 +84,55 @@ def iuploads(request):
               'myFilter':myFilter
             }
     return render(request, 'data/interview/iuploads.html',context)
+
+def useruploads(request, pk=None, *args, **kwargs):
+    useruploads=Interview.objects.filter(author=request.user).order_by('-login_date')
+    context = {
+                'useruploads': useruploads,
+              }
+    return render(request, 'data/interview/useruploads.html', context)
+
+
+@method_decorator(login_required, name='dispatch')
+class InterviewDetailView(DetailView):
+    model=Interview
+    ordering=['-upload_date']
+
+
+@method_decorator(login_required, name='dispatch')
+class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Interview
+    success_url="/accounts/interview"
+    fields=['user','first_name','last_name','category','question_type''doc','link',]
+
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return False
+
+    def test_func(self):
+        interview = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==interview.author:
+            return True
+        return False
+        
+@method_decorator(login_required, name='dispatch')
+class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Interview
+    success_url="/data/interview"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+
 
 # Saving uploaded information to database
 '''

@@ -203,6 +203,7 @@ class Interview(models.Model):
 
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
+    is_active=models.BooleanField(default=True)
 
     objects=InterviewManager()
 

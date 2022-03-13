@@ -18,6 +18,9 @@
       <table style="width: 100%">
         <thead>
           <tr>
+            <th>User Name</th>
+            <th>First Name</th>
+            <th>Last Name</th>
             <th>First Name</th>
             <th>Last Name</th>
             <th>Date Uploaded</th>
@@ -25,6 +28,7 @@
             <th>Question</th>
             <th>Assignment</th>
             <th>Link</th>
+            <th>Update</th>
           </tr>
         </thead>
         
@@ -34,8 +38,10 @@
             <td>{{user.username}}</td>
             <td>{{user.first_name}}</td>
             <td>{{user.last_name}}</td>
-            <!--<td>{{upload.first_name}}</td>
-            <td>{{upload.last_name}}</td>-->
+            <td>{{upload.user.first_name}}</td>
+            <td>{{upload.user.last_name}}</td>
+            <td>{{upload.first_name}}</td>
+            <td>{{upload.last_name}}</td>
             <td>{{upload.upload_date|date:"F d, Y"}}</td>
             <td>{{upload.category}}</td>
             <td>{{upload.question_type}}</td>
@@ -49,6 +55,7 @@
                 >Review
               </a>
             </td>
+            <td> <a class="article-title" href="{% url 'data:upload-detail' upload.id %}">Edit</a></td>
           </tr>
           {% endfor %}
         </tbody>
