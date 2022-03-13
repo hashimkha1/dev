@@ -86,7 +86,7 @@ def iuploads(request):
     return render(request, 'data/interview/iuploads.html',context)
 
 def useruploads(request, pk=None, *args, **kwargs):
-    useruploads=Interview.objects.filter(author=request.user).order_by('-login_date')
+    useruploads=Interview.objects.filter(user=request.user).order_by('-upload_date')
     context = {
                 'useruploads': useruploads,
               }
@@ -102,7 +102,7 @@ class InterviewDetailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Interview
-    success_url="/data/interview"
+    success_url="data/interview/useruploads"
     fields=['user','first_name','last_name','category','question_type''doc','link',]
 
     def form_valid(self,form):
@@ -123,7 +123,7 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 @method_decorator(login_required, name='dispatch')
 class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Interview
-    success_url="/data/interview"
+    success_url="data/interview/useruploads"
 
     def test_func(self):
         #timer = self.get_object()
