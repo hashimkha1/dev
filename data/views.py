@@ -102,7 +102,7 @@ class InterviewDetailView(DetailView):
 @method_decorator(login_required, name='dispatch')
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Interview
-    success_url="/accounts/interview"
+    success_url="/data/interview"
     fields=['user','first_name','last_name','category','question_type''doc','link',]
 
     def form_valid(self,form):
