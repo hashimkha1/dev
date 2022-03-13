@@ -1,11 +1,11 @@
 from django import forms
 
-from .models import InterviewUpload, DocUpload
+from .models import Interview, DocUpload
 
 
 class InterviewForm(forms.ModelForm):
     class Meta:
-        model = InterviewUpload
+        model = Interview
         fields =['first_name','last_name','category','question_type','doc','link']
         labels={
                 'first_name':'First Name',

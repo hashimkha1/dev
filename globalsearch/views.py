@@ -6,7 +6,7 @@ from django.http import Http404
 from django.contrib.auth.models import User
 from django.shortcuts import  redirect, render,get_object_or_404
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
-from data.models import (InterviewUpload)
+from data.models import (Interview)
 
 class SearchInterviewView(ListView):
     template_name="globalsearch/view.html"
@@ -30,6 +30,6 @@ class SearchInterviewView(ListView):
         method_dict=request.GET
         query=method_dict.get('q',None)
         if query is not None:
-            return InterviewUpload.objects.search(query)
-        return InterviewUpload.objects.none()
+            return Interview.objects.search(query)
+        return Interview.objects.none()
     

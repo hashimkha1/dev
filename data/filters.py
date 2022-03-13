@@ -14,7 +14,7 @@ class InterviewFilter(django_filters.FilterSet):
     #start_date=DateFilter(field_name="upload_date",lookup_expr='gte')
     #end_date=DateFilter(field_name="upload_date",lookup_expr='lte')
     class Meta:
-        model=InterviewUpload
+        model=Interview
         fields='__all__'
         exclude=['upload_date','doc','link','user','is_active','featured']
 

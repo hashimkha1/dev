@@ -7,7 +7,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 
 
 from .forms import InterviewForm, UploadForm
-from .models import InterviewUpload, DocUpload
+from .models import Interview, DocUpload
 from .filters import InterviewFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
@@ -73,7 +73,7 @@ def uploadinterview(request):
 
 @login_required
 def iuploads(request):
-    uploads=InterviewUpload.objects.all().order_by('-upload_date')
+    uploads=Interview.objects.all().order_by('-upload_date')
     myFilter=InterviewFilter(request.GET, queryset=uploads)
     uploads=myFilter.qs
     context={
