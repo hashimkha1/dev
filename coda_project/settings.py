@@ -17,8 +17,8 @@ import django_heroku
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
-#SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
+#SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
@@ -142,6 +142,19 @@ DATABASES = {
     }
 }
 
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
+    }
+}
+
+'''
+import dj_database_url
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -153,19 +166,6 @@ DATABASES = {
     }
 }
 
-
-
-
-'''
-import dj_database_url
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
-    }
-}
 
 db_from_env=dj_database_url.config(conn_max_age=600)
 DATABASES['default'].update(db_from_env)

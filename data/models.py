@@ -184,8 +184,8 @@ class InterviewUpload(models.Model):
     (Resume , 'resume'),
     (Other, 'Other'),
     ]
-    id = models.AutoField(primary_key=True)
-    #user= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    #id = models.AutoField(primary_key=True)
+    user= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     first_name=models.CharField(max_length=100,null=True,blank=True)
     #midle=models.CharField(max_length=100,null=True,blank=True)
     last_name=models.CharField(max_length=100,null=True,blank=True)
@@ -204,6 +204,8 @@ class InterviewUpload(models.Model):
 
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
     link=models.CharField(max_length=100,blank=True, null=True)
+
+    objects=InterviewManager()
 
     class Meta:
         verbose_name_plural = 'InterviewUploads'   
