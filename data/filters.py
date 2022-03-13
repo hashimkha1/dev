@@ -15,7 +15,7 @@ class InterviewFilter(django_filters.FilterSet):
     class Meta:
         model=Interview
         fields='__all__'
-        exclude=['upload_date','doc','link','user','is_active','featured']
+        exclude=['upload_date','doc','link','is_active','featured']
 
 
 '''
