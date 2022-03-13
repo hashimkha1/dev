@@ -1,6 +1,5 @@
 from django import forms
-'''
-from .models import Interview, DocUpload
+from .models import Interview #, DocUpload
 
 
 class InterviewForm(forms.ModelForm):
@@ -16,7 +15,7 @@ class InterviewForm(forms.ModelForm):
                 'link':'Google Share Url',
                 }
 
-
+'''
 class UploadForm(forms.ModelForm):
     class Meta:
         model = DocUpload
@@ -26,4 +25,4 @@ class UploadForm(forms.ModelForm):
                 'doc_name':'Document Name',
                 'doc':'Document',
         }
-        '''
+'''

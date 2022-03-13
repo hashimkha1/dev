@@ -6,11 +6,11 @@ from django.contrib.auth import get_user_model,login,authenticate
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
 
-#from .forms import InterviewForm, UploadForm
+from .forms import InterviewForm #, UploadForm
 
 
-#from .models import Interview, DocUpload
-#from .filters import InterviewFilter #,UserFilter
+from .models import Interview #, DocUpload
+from .filters import InterviewFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -42,7 +42,6 @@ def financialsystem(request):
 def project(request):
     return render(request, 'data/deliverable/project.html', {'title': 'project'})
 
-    
 # views on samples reports.
 def report(request):
     return render(request, 'data/documents/report.html', {'title': 'report'})
@@ -57,7 +56,6 @@ def getdata(request):
 
 def pay(request):
     return render(request, 'data/pay.html', {'title': 'pay'}) 
-'''
 # Views on interview Section
 @login_required
 def uploadinterview(request):
@@ -72,7 +70,6 @@ def uploadinterview(request):
 
 #for uploading interviews
 
-
 @login_required
 def iuploads(request):
     uploads=Interview.objects.all().order_by('-upload_date')
@@ -85,6 +82,7 @@ def iuploads(request):
     return render(request, 'data/interview/iuploads.html',context)
 
 # Saving uploaded information to database
+'''
 def upload(request):
     if request.method== "POST":
         form=UploadForm(request.POST,request.FILES)
@@ -95,9 +93,10 @@ def upload(request):
         form=UploadForm()
     return render(request, 'main/doc_templates/upload.html',{'form':form})
 
+
+ 
 def uploaded(request):
     documents=DocUpload.objects.all().order_by('-document_date')
     return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
 
-
-        '''
+'''

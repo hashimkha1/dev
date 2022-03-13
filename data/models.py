@@ -137,7 +137,7 @@ class Uploaded(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-
+''' 
 #Interview Model
 class Interview(models.Model):
     # Job Category.
@@ -212,7 +212,7 @@ class Interview(models.Model):
     def __str__(self):
         return f'{self.username} upload'
 
-
+'''
 class DocUpload(models.Model):
     #id = models.AutoField(primary_key=True)
     doc_type=models.CharField(max_length=100,blank=True, null=True)
