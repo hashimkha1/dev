@@ -204,7 +204,10 @@ def usertracker(request, pk=None, *args, **kwargs):
                 'delta':delta
                 
               }
-    return render(request, 'accounts/usertracker.html', context)
+    if request.user.is_superuser or request.user:
+        return render(request, 'accounts/usertracker.html', context)
+    else:
+        return False
 
 ''' 
 @method_decorator(login_required, name='dispatch')
@@ -233,7 +236,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Tracker
     success_url="/accounts/tracker"
-    fields=['author','category','task','duration']
+    fields=['author','plan','category','task','duration','time']
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
