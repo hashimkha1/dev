@@ -23,7 +23,6 @@
             <tr>
               <td>{{tracker.login_date|date:"F d, Y"}}</td>
               <td> <a class="mr-2" href="{% url 'accounts:user-list'%}">{{tracker.author}}</a></td>
-              <td>{{tracker.author.first_name}}</td>
               <td>{{tracker.author.last_name}} {{tracker.author.first_name}}</td>
               <td>{{tracker.category}}</td>
               <td>{{tracker.task}}</td>
