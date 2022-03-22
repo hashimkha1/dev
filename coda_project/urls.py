@@ -60,7 +60,7 @@ urlpatterns = [
     path('management/', include('management.urls',namespace='management')),
     path('globalsearch/', include('globalsearch.urls'),name='search'),
     
-   # path('testing/', include('testing.urls', namespace='testing')),
+    path('testing/', include('testing.urls', namespace='testing')),
     path('admindashboard/',include("testing.adminurls"))
 
 

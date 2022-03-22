@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -70,6 +70,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+CSRF_COOKIE_SECURE=False
 
 ROOT_URLCONF = 'coda_project.urls'
 
@@ -142,19 +144,6 @@ DATABASES = {
     }
 }
 
-
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
-    }
-}
-
-'''
-import dj_database_url
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -163,6 +152,19 @@ DATABASES = {
         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
         'PORT': '5432'
+    }
+}
+
+
+
+'''
+import dj_database_url
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
     }
 }
 
