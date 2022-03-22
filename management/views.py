@@ -459,7 +459,7 @@ class TaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         if self.request.user.is_superuser:
             return super().form_valid(form)
         else:
-            return False
+            return redirect('management:tasks')
 
     def test_func(self):
         task = self.get_object()
@@ -470,6 +470,7 @@ class TaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         return False
 
 @method_decorator(login_required, name='dispatch')
+      
 class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Task
     success_url="/management/thank"
@@ -477,10 +478,7 @@ class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     fields=['employee','activity_name','description','point']
     def form_valid(self,form):
         #form.instance.author=self.request.user
-        if self.request.user.is_superuser:
-            return super().form_valid(form)
-        else:
-            return False
+        return super().form_valid(form)
 
     def test_func(self):
         task = self.get_object()
@@ -489,7 +487,6 @@ class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         elif self.request.user==task.employee:
             return True
         return False
-    
 
 @method_decorator(login_required, name='dispatch')
 class TaskDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):

@@ -114,24 +114,21 @@
       <thead class="border-bottom font-weight-bold">  
         <tr>
           <th>Check</th>
-          <th>Group</th>
           <th>Task</th>
           <th>Deadline</th>
           <th>Submission</th>
           <th>Points</th>
-          <th>Maximum Points</th>
-          <th>Maximum Earnings</th>
+          <th>Target Points</th>
+          <th>Target Amount</th>
           <th>Earnings</th>
           <th>Evidence</th>
+          <th>Update</th>
         </tr>
       </thead>
       <tbody>
         {% for task in  tasks  %}
             <tr>
                 <td><input type="checkbox" class="checkthis" /></td>
-               <!--  <td>{{task.user.first_name}}</td>
-                <td>{{task.user.last_name}}</td>
-                -->
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
@@ -139,10 +136,10 @@
                     {{  task.activity_name  }}
                     </a>
                 </td>
-                <!--  <td>{{task.employee}}</td>-->
-                <td>{{task.group}}</td>
-                <td>{{task.deadline}}</td>
-                <td>{{task.submission}}</td>
+                <!--  <td>{{task.employee}}</td>
+                <!--<td>{{task.group}}</td>-->
+                <td>{{task.deadline|date:"F d, Y"}}</td>
+                <td>{{task.submission|date:"F d, Y"}}</td>
                 <td>{{task.point}}</td>
                 <td>{{task.mxpoint}}</td>
                 <td>{{task.mxearning}}</td>

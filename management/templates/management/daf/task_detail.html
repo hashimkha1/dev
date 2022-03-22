@@ -20,28 +20,25 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
-            <th>username</th>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>First</th>
+            <th>Last</th>
             <th>Submission</th>
             <th>Deadline</th>
-            <th>time_remaining</th>
-            
             <th>Task</th>
             <th>Points</th>
-            <th>Max Points</th>
-            <th>Max Earnings</th>
+            <th>Target Points</th>
+            <th>Targe Amount</th>
             <th>Earning</th>
         </tr>
       </thead>
       <tbody>
             <tr>
-                <td>{{object.user}}</td>
-                <td>{{object.user.first_name}}</td>
-                <td>{{object.user.last_name}}</td>
+             
+                <td>{{user.first_name}}</td>
+                <td>{{user.last_name}}</td>
                 <td>{{object.submission|date:"F d, Y"}}</td>
                 <td>{{object.deadline|date:"F d, Y"}}</td>
-                <td>{{object.time_remaining}}</td>
+                <!--<td>{{object.time_remaining}}</td>-->
                 <td>{{object.activity_name}}</td>
                 <td>{{object.point}}</td>
                 <td>{{object.mxpoint}}</td>
