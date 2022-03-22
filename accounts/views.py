@@ -1,5 +1,6 @@
 import datetime
 from datetime import date ,timedelta
+from types import NoneType
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import Http404
@@ -201,8 +202,11 @@ def usertracker(request, user=None, *args, **kwargs):
     Used=trackers.aggregate(Used_Time=Sum('duration'))  
     Usedtime=Used.get('Used_Time')
     plantime=my_time.get('Assigned_Time')
-    delta=round(plantime-Usedtime)
-
+    try:
+        delta=round(plantime-Usedtime)
+    except (TypeError, AttributeError):
+        delta=0
+        return render(request, 'accounts/tracker.html')
     context = {
                 'trackers': trackers,
                 'num':num,
