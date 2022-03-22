@@ -85,8 +85,6 @@
                         <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'management:hr' %}"
                       target="" >Human Resource Report</a>
-                      <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >DAF</a >
               </div>
         </li>
         {% endif %}
@@ -95,13 +93,25 @@
 
       <div class="navbar-nav">
         {% if user.is_authenticated %}
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
+            >Account</a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                  <a class="dropdown-item"href="{% url 'main:team' %}" target="" >My Account</a >
+                        <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" 
+                       target="" >My Time</a>
+                        <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'management:user_task' request.user %}"
+                      target="" >My DAF</a>
+                      <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="{% url 'account-logout' %}"
+                      target="" >Logout</a>
+                      <div class="dropdown-divider"></div>
+              </div>
+        </li>
 
-        <a class="nav-item nav-link" href="#"
-          >Account</a
-        >
-        <a class="nav-item nav-link" href="{% url 'account-logout' %}"
-          >Logout</a
-        >
+
 
         {% else %}
         <a class="nav-item nav-link" href="{% url 'account-login' %}"
@@ -111,9 +121,11 @@
           >Register</a
         >
         {% endif %}
+        <!------
         <div class="col-12 col-md-8 mr-auto ">
           {% include 'globalsearch/snippets/search-form.html' %}
         </div>
+        --->
       </div>
     </div>
   </div>
