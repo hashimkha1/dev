@@ -22,6 +22,9 @@ User = get_user_model()
 def home(request):
     return render(request, 'main/home_templates/management_home.html',{'title': 'home'})
 
+def thank(request):
+    return render(request, 'management/daf/thank.html')
+
 #==============================PLACE HOLDER MODELS=======================================
 
 #Summary information for tasks
@@ -360,11 +363,11 @@ def usertask(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get('username'))
     tasks=Task.objects.all().filter(employee=employee)
     #tasks = Task.objects.filter(user__username=request.user)
-    num_tasks = Task.objects.filter(employee=request.user).count()
-    points=Task.objects.filter(employee=request.user).aggregate(Your_Total_Points=Sum('point')) 
-    mxpoints=Task.objects.filter(employee=request.user).aggregate(Your_Total_MaxPoints=Sum('mxpoint')) 
-    earning=Task.objects.filter(employee=request.user).aggregate(Your_Total_Pay=Sum('mxearning'))
-    mxearning=Task.objects.filter(employee=request.user).aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
+    num_tasks = tasks.count()
+    points=tasks.aggregate(Your_Total_Points=Sum('point')) 
+    mxpoints=tasks.aggregate(Your_Total_MaxPoints=Sum('mxpoint')) 
+    earning=tasks.aggregate(Your_Total_Pay=Sum('mxearning'))
+    mxearning=tasks.aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
     Points=points.get('Your_Total_Points')
     MaxPoints=mxpoints.get('Your_Total_MaxPoints')
     pay=earning.get('Your_Total_Pay')

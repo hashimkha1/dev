@@ -24,7 +24,11 @@
             <tr>
 
                 <td><input type="checkbox" class="checkthis" /></td>
-                <td>{{task.employee.first_name}},{{task.employee.last_name}}</td>
+                <td>
+                  <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                    {{task.employee.first_name}},{{task.employee.last_name}}
+                  </a>
+                 </td>
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
@@ -32,7 +36,7 @@
                     {{  task.activity_name  }}
                     </a>
                 </td>
-                <td>{{task.employee}}</td>
+                <!--<td>{{task.employee}}</td>-->
                 <td>{{task.group}}</td>
                 <td>{{task.deadline}}</td>
                 <td>{{task.submission|date:"F d, Y"}}</td>
@@ -48,7 +52,6 @@
                 </button>
               </td>
               <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
-              <td> <a class="article-title" href="{% url 'management:user_task' task.employee %}">Employee</a></td>
             </tr>
         {% endfor %}
       </tbody>
