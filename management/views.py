@@ -472,7 +472,7 @@ class TaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
 @method_decorator(login_required, name='dispatch')
 class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Task
-    success_url="/management/usertasks"
+    success_url="/management/thank"
     #fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
     fields=['employee','activity_name','description','point']
     def form_valid(self,form):
