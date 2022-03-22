@@ -212,13 +212,14 @@ def usertracker(request, user=None, *args, **kwargs):
                 
               }
               
-    if request.user == user:
+    return render(request, 'accounts/usertracker.html', context)     
+"""     if request.user == user:
         return render(request, 'accounts/usertracker.html', context)
     elif request.user.is_superuser:
         return render(request, 'accounts/usertracker.html', context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
-
+ """
 
 '''
 @method_decorator(login_required, name='dispatch')
