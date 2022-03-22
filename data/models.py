@@ -1,3 +1,4 @@
+from msilib import type_string
 from django.db.models import Q
 from posixpath import basename
 import random
@@ -58,86 +59,8 @@ class InterviewManager(models.Manager):
 
     def search(self,query):
         return self.get_queryset().active().search(query)
-''' 
-#Interview Model
-class Uploaded(models.Model):
-    # Job Category.
-    Project_Management = 'Project Management'
-    Business_Analysis = 'Business Analyst'
-    Quality_Assurance = 'Quality Assurance'
-    User_Experience = 'User Interface'
-    Reporting = 'Reporting'
-    ETL = 'ETL'
-    Database = 'Database'
-    Python = 'Python'
-    Other = 'Other'
-    # Question Type
-    Introduction = 'introduction'
-    Project_Story = 'Project Story'
-    Performance = 'performance'
-    Methodology = 'methodology'
-    SDLC = 'sdlc'
-    Testing = 'testing'
-    Environment = 'environment'
-    Resume = 'resume'
 
-    CAT_CHOICES = [
-        (Project_Management, 'Project Management'),
-        (Business_Analysis, 'Business Analysis'),
-        (Quality_Assurance, 'Quality Assurance'),
-        (User_Experience, 'User Experience'),
-        (Reporting, 'Reporting'),
-        (ETL, 'ETL'),
-        (Database, 'Database'),
-        (Python, 'Python'),
-        (Other, 'Other'),
-    ]
-    
-    QUESTION_CHOICES = [
-    (Introduction , 'introduction'),
-    (Project_Story , 'project story'),
-    (Performance , 'performance'),
-    (Methodology , 'methodology'),
-    (SDLC , 'sdlc'),
-    (Testing , 'testing'),
-    (Environment , 'environment'),
-    (Resume , 'resume'),
-    (Other, 'Other'),
-    ]
-    #id = models.AutoField(primary_key=True)
-    #user = models.ForeignKey(User, on_delete=models.CASCADE,null=True,blank=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_interview',default=999)
-    #author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
 
-    first=models.CharField(max_length=100,null=True,blank=True)
-    last=models.CharField(max_length=100,null=True,blank=True)
-    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
-
-    category= models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-        default=Other,
-    )
-    question_type= models.CharField(
-        max_length=25,
-        choices=QUESTION_CHOICES,
-        default=Other,
-    )
-
-    doc=models.FileField(default="None",upload_to='Uploads/doc/')
-    link=models.CharField(max_length=100,blank=True, null=True)
-    is_active=models.BooleanField(default=True)
-    featured=models.BooleanField(default=True)
-
-    objects=InterviewManager()
-
-    class Meta:
-        verbose_name_plural = 'uploads'   
-
-    def __str__(self):
-        return f'{self.username} upload'
-
-''' 
 #Interview Model
 class Interview(models.Model):
     # Job Category.
@@ -226,6 +149,131 @@ class DocUpload(models.Model):
 
     def __str__(self):
         return f'{self.id} Uploads'
-
-
 '''
+ #==================================TRAINING====================================
+class FeaturedCategory(models.Model):
+     # Job Category.
+    Course_Overview = 'Course Overview'
+    Planning = 'Initiation & Planning'
+    Development = 'Development'
+    Testing= 'Testing'
+    Deployment = 'Deployment'
+    Other = 'Other'
+
+    CAT_CHOICES = [
+            (Course_Overview,'Course Overview'),
+            (Planning,'Initiation & Planning'),
+            (Development,'Development'),
+            (Testing,'Testing'),
+            (Deployment,'Deployment'),
+            (Other, 'Other'),
+    ]
+
+    title= models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        unique=True,
+        default=Other,
+    )
+    #title=models.CharField(max_length=255,unique=True)
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    #level=models.CharField(max_length=50,default='A')
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+
+    @classmethod
+    def get_default_pk(cls):
+        cat, created = cls.objects.get_or_create(
+            title='Planning', defaults=dict(description='this is not an cat'))
+        return cat.pk 
+
+    def get_absolute_url(self):
+        return reverse("bitraining")
+
+    def __str__(self):
+        return self.title
+
+class FeaturedSubCategory(models.Model):
+    featuredcategory = models.ForeignKey(to=FeaturedCategory, on_delete=models.CASCADE,default=FeaturedCategory.get_default_pk)
+    #category = models.ManyToManyField(Cat, blank=True,related_name='cats')
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    description=models.TextField(default='General')
+    created_at=models.DateTimeField(auto_now_add=True)
+    title=models.CharField(max_length=255)
+    updated_at=models.DateTimeField(auto_now=True)
+    #doc=models.FileField(default="None",upload_to='training/docs/')
+    #link=models.CharField(max_length=100,blank=True, null=True)
+    #link_name=models.CharField(max_length=255, default='General')
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "Subcategories"
+
+    def get_absolute_url(self):
+        return reverse("bitraining")
+
+    def __str__(self):
+        return self.title
+
+class FeaturedActivity(models.Model):
+    #SubCategory = models.ForeignKey(to=SubCategory, on_delete=models.CASCADE,default=SubCategory.get_default_pk)
+    featuredsubcategory = models.ManyToManyField(FeaturedSubCategory, blank=True,related_name='subcategories_fetured')
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    activity_name=models.CharField(max_length=255)
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "activities"
+
+    def get_absolute_url(self):
+        return reverse("bitraining")
+
+    def __str__(self):
+        return self.title
+
+class ActivityLinks(models.Model):
+    Activity = models.ManyToManyField(FeaturedActivity, blank=True,related_name='activity_featured')
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    link_name=models.CharField(max_length=255, default='General')
+    #description=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    doc=models.FileField(default="None",upload_to='training/docs/')
+    link=models.CharField(max_length=100,blank=True, null=True)
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "links"
+
+    def get_absolute_url(self):
+        return reverse("bitraining")
+
+    def __str__(self):
+        return self.link_name
+
+
+class UserLevel(models.Model):
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    level=models.CharField(max_length=50,default='A')
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "levels"
+
+    def get_absolute_url(self):
+        return reverse("bitraining")
+
+    def __str__(self):
+        return self.level

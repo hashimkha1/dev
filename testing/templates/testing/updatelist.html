@@ -1,0 +1,43 @@
+{%extends "main/base_templates/application_base.html"%} {% block content %}
+<section id="rating">
+    <div class="rating text-center">
+        <h2>Reporting Candidates</h2>
+        <table class="table table-borderless" style="width: 100%">
+            <thead class="border-bottom font-weight-bold">
+                <tr>
+                    <th>Editor</th>
+                    <th>Update Date</th>
+                    <th>Category</th>
+                    <th>Sub Category</th>
+                    <th>Description</th>
+                    <th>Link Name</th>
+                    <th>Edit</th>
+                     <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    {% for cat in cats %}
+                    <td>{{cat.created_by}}</td>
+                    <td>{{cat.updated_at|date:"F d, Y"}}</td>
+                    <td>{{cat.cat}}</td>
+                    <td>{{cat.subcat}}</td>
+                    <td>{{cat.description}}</td>
+                    <td>{{cat.link_name}}</td>
+                    <td>
+                        <a
+                        href="{%url 'testing:update_cat' cat.id %}" 
+                          class="btn text-secondary px-0"
+                        > 
+                        <h4><b>☑</b></h4> 
+                    </a>
+                      </td>
+                      <td><h4 ><a href="{%url 'testing:cat-delete' cat.id %}">❌</H4></a></p></td>  
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock content %}

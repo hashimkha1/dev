@@ -20,7 +20,12 @@ from .models import CustomerUser,Tracker
 #@allowed_users(allowed_roles=['admin'])
 def home(request):
     return render(request, 'main/home_templates/layout.html')
+    
 
+
+#@allowed_users(allowed_roles=['admin'])
+def thank(request):
+    return render(request, 'accounts/clients/thank.html')
 #---------------ACCOUNTS VIEWS----------------------
 ''' 
 @unauthenticated_user

@@ -1,3 +1,4 @@
+from unicodedata import category
 import django_filters 
 from django_filters import DateFilter
 from .forms import *
@@ -16,6 +17,17 @@ class InterviewFilter(django_filters.FilterSet):
         model=Interview
         fields='__all__'
         exclude=['upload_date','doc','link','is_active','featured']
+
+
+
+class BitrainingFilter(django_filters.FilterSet):
+    #start_date=DateFilter(field_name="upload_date",lookup_expr='gte')
+    #end_date=DateFilter(field_name="upload_date",lookup_expr='lte')
+    class Meta:
+        model=FeaturedCategory
+        fields='__all__'
+        exclude=['updated_at','description','created_at','is_active','created_by']
+
 
 
 '''

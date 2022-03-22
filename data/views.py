@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.template import context
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
+from django.db.models import Prefetch
 from django.contrib.auth import get_user_model,login,authenticate
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
@@ -11,8 +12,8 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 from .forms import InterviewForm #, UploadForm
 
 
-from .models import Interview #, DocUpload
-from .filters import InterviewFilter #,UserFilter
+from .models import Interview, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity#, DocUpload
+from .filters import InterviewFilter,BitrainingFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -26,6 +27,10 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, 'data/training/training.html', {'title': 'training'})
+
+@login_required
+def training_v2(request):
+    return render(request, 'data/training/training_v2.html', {'title': 'training_v2'})
 
 @login_required
 def bitraining(request):
@@ -153,3 +158,51 @@ def uploaded(request):
     return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
 
 '''
+ #==================================TRAINING VIEWS====================================
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
+    model=FeaturedCategory
+    success_url="/data/bitraining2"
+    fields=['featuredcategory','title','description']
+
+    def form_valid(self,form):
+        form.instance.created_by=self.request.user
+        return super().form_valid(form)  
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
+    model=FeaturedSubCategory
+    success_url="/data/bitraining2"
+    fields=['featuredcategory','title','description']
+
+    def form_valid(self,form):
+        form.instance.created_by=self.request.user
+        return super().form_valid(form) 
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
+    model=FeaturedActivity
+    success_url="/data/bitraining2"
+    fields=['featuredsubcategory','activity_name','description']
+
+    def form_valid(self,form):
+        form.instance.created_by=self.request.user
+        return super().form_valid(form)
+    
+def activity_view(request):
+    categories=FeaturedCategory.objects.prefetch_related('featuredsubcategory_set').all(),
+    cats=FeaturedCategory.objects.all().order_by('-created_at') 
+    BiFilter=BitrainingFilter(request.GET, queryset=cats)
+    categories=BiFilter.qs
+
+    context = {
+        "categories":categories,
+        "cats":cats,
+        'BiFilter':BiFilter
+    }
+    return render(request=request, template_name='data/training/bitraining2.html', context=context)
+
+
+
+ 

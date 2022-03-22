@@ -7,8 +7,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import  redirect, render,get_object_or_404
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
-
-from data.models import (Interview)
+from data.models import (Interview,FeaturedSubCategory)
 
 class SearchInterviewView(ListView):
     template_name="globalsearch/view.html"
@@ -34,3 +33,29 @@ class SearchInterviewView(ListView):
         if query is not None:
             return Interview.objects.search(query)
         return Interview.objects.none()
+
+
+class SearchBitrainingView(ListView):
+    template_name="globalsearch/view.html"
+
+    def get_context_data(self, *args,**kwargs):
+        context=super(SearchBitrainingView,self).get_context_data(*args,**kwargs)
+        query=self.request.GET.get('q')
+        context['query']=query
+        #SearchQuery.objects.create(query=query)
+        return context
+
+    def get_queryset(self,*args,**kwargs):
+        '''
+        __icontains =fields contains this
+        __iexact=fields are exactly this
+          How do we search on Foreign Keys
+          heroku rollback v46
+        ''' 
+        request=self.request
+        print(request.GET)
+        method_dict=request.GET
+        query=method_dict.get('q',None)
+        if query is not None:
+            return FeaturedSubCategory.objects.search(query)
+        return FeaturedSubCategory.objects.none()

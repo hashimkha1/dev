@@ -25,4 +25,5 @@ urlpatterns = [
     path('track/<int:pk>/', TrackDetailView.as_view(), name='tracker-detail'),
     path('track/<int:pk>/update/', TrackUpdateView.as_view(), name='tracker-update'),
     path('track/<int:pk>/delete/', TrackDeleteView.as_view(), name='tracker-delete'),
-]  
+    path('thank/',views.thank, name='thank-you'),
+]
