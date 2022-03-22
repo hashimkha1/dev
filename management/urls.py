@@ -1,12 +1,9 @@
 from django.urls import path
 from . import views
 from .views import (
-                        TaskListView, #,UserListView,
-                        TaskDetailView,TaskCreateView,
-                        TaskUpdateView,TaskDeleteView,
-                        TagCreateView,
-                        UsertaskUpdateView,TaskDetailSlugView,
-                        UserInflowListView,#InflowListView,
+                        TaskListView,TaskDetailView,TaskCreateView,
+                        TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
+                        UserInflowListView,UserTaskListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
                         #OutflowCreateView,#OutflowListView,
@@ -56,14 +53,13 @@ urlpatterns = [
     #========================Task=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
     #path('usertasks/', UserListView.as_view(), name='usertask'),
-    path('usertasks/',views.usertask, name='usertask'),
+    path('usertasks/<str:username>/',views.usertask, name='user_task'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
-    path('tasks/<str:slug>/', TaskDetailSlugView.as_view(), name='taskdetailSlug'),
+    path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
     path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
-
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
 ]
  

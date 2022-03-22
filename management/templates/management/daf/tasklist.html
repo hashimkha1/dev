@@ -5,15 +5,13 @@
       <thead class="border-bottom font-weight-bold">  
         <tr>
           <th>Check</th>
-          <th>First Name</th>
-          <th>Last Name</th>
+          <th>Full Name</th>
           <th>Task</th>
           <th>Group</th>
-          <th>Slug</th>
           <th>Deadline</th>
           <th>Submission</th>
           <th>Points</th>
-          <th>Maximum Points</th>
+          <th>Max Points</th>
           <th>Maximum Earnings</th>
           <th>Earnings</th>
           <th>Evidence</th>
@@ -26,8 +24,7 @@
             <tr>
 
                 <td><input type="checkbox" class="checkthis" /></td>
-                <td>{{task.user.first_name}}</td>
-                <td>{{task.user.last_name}}</td>
+                <td>{{task.employee.first_name}},{{task.employee.last_name}}</td>
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
@@ -35,10 +32,10 @@
                     {{  task.activity_name  }}
                     </a>
                 </td>
+                <td>{{task.employee}}</td>
                 <td>{{task.group}}</td>
-                <td>{{task.slug}}</td>
                 <td>{{task.deadline}}</td>
-                <td>{{task.submission}}</td>
+                <td>{{task.submission|date:"F d, Y"}}</td>
                 <td>{{task.point}}</td>
                 <td>{{task.mxpoint}}</td>
                 <td>{{task.mxearning}}</td>
@@ -51,6 +48,7 @@
                 </button>
               </td>
               <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+              <td> <a class="article-title" href="{% url 'management:user_task' task.employee %}">Employee</a></td>
             </tr>
         {% endfor %}
       </tbody>

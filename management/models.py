@@ -390,12 +390,40 @@ class Policy(models.Model):
 
 #==================================ACTIVITIES====================================
 class Tag(models.Model):
-    title=models.CharField(max_length=255)
-    slug=models.CharField(max_length=255)
+    # Tasks Category.
+    Meetings = 'Meetings'
+    Data_Analyis = 'Data Analysis'
+    Stocks_Options = 'Stocks & Options'
+    Website= 'Website Development'
+    Department = 'Department'
+    Other = 'Other'
+
+    CAT_CHOICES = [
+            (Meetings,'Meetings'),
+            (Data_Analyis,'Data Analysis'),
+            (Stocks_Options,'Stocks & Options'),
+            (Website,'Website Development'),
+            (Department,'Department'),
+            (Other,'Other'),
+    ]
+    title= models.CharField(
+        max_length=55,
+        choices=CAT_CHOICES,
+        unique=True,
+        default=Other,
+    )
+    #title=models.CharField(max_length=255)
+    #slug=models.CharField(max_length=255)
     #thumbnail=models.FileField()
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
     #active=models.IntegerField(default=1)
+
+    @classmethod
+    def get_default_pk(cls):
+        cat, created = cls.objects.get_or_create(
+            title='Other', defaults=dict(description='this is not an cat'))
+        return cat.pk 
 
     def get_absolute_url(self):
         return reverse("category_list")
@@ -454,8 +482,9 @@ class Task(models.Model):
         max_length=255,
         default="Group A"
         )
-    category = models.ManyToManyField(Tag, blank=True)
-    user = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='user_assiged',default=999)
+    category = models.ForeignKey(to=Tag, on_delete=models.CASCADE,default=Tag.get_default_pk)
+    #category = models.ManyToManyField(Tag, blank=True)
+    employee = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='user_assiged',default=999)
     activity_name = models.CharField(
         verbose_name=_('Activity Name'),
         help_text=_('Required'),
@@ -467,7 +496,18 @@ class Task(models.Model):
         default='Add description on this activity'
         )
     #task_date=models.DateField(auto_now_add=Tru, default=)
-    slug = models.SlugField(max_length=255,blank=True,unique=True)
+    slug = models.SlugField(max_length=255,blank=True,default='slug')
+    duration = models.PositiveIntegerField(
+            #max_digits=3, 
+            help_text=_('Should be less than Maximum Points assigned'),
+            error_messages={
+                "name":{
+                   ' max_length':("Points must be less than Maximum Points")
+                
+                }
+            },
+            default=1
+            )
     point = models.PositiveIntegerField(
             #max_digits=3, 
             help_text=_('Should be less than Maximum Points assigned'),
@@ -560,3 +600,35 @@ def task_pre_save_receiver(sender,instance, *args,**kwargs):
     if not instance.slug:
         instance.slug=unique_slug_generator(instance)
 pre_save.connect(task_pre_save_receiver,sender=Task)
+
+
+#==============================PLACE HOLDER MODELS=======================================
+
+#Interview description data
+
+TaskInfos=[
+
+{
+	'Inteview':'First   Interview',
+	'Concentration':'Data Analysis',
+	'Description':'Understanding SQL,Tableau & Alteryx	',
+	'Duration':'5 Days	',
+	'Lead':'HR Manager'
+},
+
+{
+	'Inteview':'Second Interview',
+	'Concentration':'General Tools& Company Projects',
+	'Description':'Understanding Company Projects, Values & Systems	',
+	'Duration':'5 Days	',
+	'Lead':'HR Manager'
+},
+
+{
+	'Inteview':'Final Interview',
+	'Concentration':'Data Analysis 1-1 Sessions',
+	'Description':'Measuring,assessing Time sensitivity.',
+	'Duration':'7 Days',
+	'Lead':'Scrum Master'
+}
+]

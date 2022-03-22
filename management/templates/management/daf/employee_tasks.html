@@ -7,10 +7,14 @@
 <!-------------------Our home services Section------------------------->
 <!-------------------1. Our  Job Report Section------------------------->
 <section id="data_training">
-
 <div class="data_training text-center">
-  <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
-  <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities this month</p>
+{% if user.is_superuser %}
+<h3 class="title">WELCOME BACK {{task.employee.first_name|upper }}</h3>
+<p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities this month</p>
+{% else %}
+<h3 class="title">TASKS FOR {{kwargs.username|upper}}</h3>
+{% endif %}
+
 <div class="container-fluid mr-auto">
       <div class="row text-center">
                     <div class="col-md-2" id="bada">
@@ -90,9 +94,7 @@
       </div>
     </div> 
 </div> 
-
 </section>
-
 
 <!----
 <section id="career">
@@ -162,8 +164,4 @@
     </table>
   </div>
 </section>
-
-
-
-
 {% endblock content %}
