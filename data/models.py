@@ -1,4 +1,3 @@
-from msilib import type_string
 from django.db.models import Q
 from posixpath import basename
 import random
