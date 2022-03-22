@@ -2,6 +2,8 @@ import datetime
 from datetime import date ,timedelta
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
@@ -47,12 +49,13 @@ def join(request):
             form.save()
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
             messages.success(request, f'Account created for {username}!')
-            if category == "Applicant":
+            if category =="Applicant":
                 #return redirect('apply')
                 return render(request, 'application/applications/apply.html')
 
-            # elif category == "employee":
+            #elif category == "Client":
                 # #return redirect('apply')
                 # return render(request, 'management/company_finances/activities.html')
             else:
@@ -169,8 +172,6 @@ def registered(request):
 
 
 #----------------------TIME TRACKING CLASS-BASED VIEWS--------------------------------
-
-
 @method_decorator(login_required, name='dispatch')
 class TrackDetailView(DetailView):
     model=Tracker
@@ -184,11 +185,12 @@ class TrackListView(ListView):
     ordering=['-login_date']
     #total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
 
-
-def usertracker(request, pk=None, *args, **kwargs):
+def usertracker(request, user=None, *args, **kwargs):
     #trackers=Tracker.objects.all().order_by('-login_date')
     #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-    trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
+    #trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
+    user = get_object_or_404(CustomerUser, username=kwargs.get('username'))
+    trackers=Tracker.objects.all().filter(author=user).order_by('-login_date')
     num =trackers.count()
     my_time=trackers.aggregate(Assigned_Time=Avg('time')) 
     Used=trackers.aggregate(Used_Time=Sum('duration'))  
@@ -204,12 +206,16 @@ def usertracker(request, pk=None, *args, **kwargs):
                 'delta':delta
                 
               }
-    if request.user.is_superuser or request.user:
+              
+    if request.user == user:
+        return render(request, 'accounts/usertracker.html', context)
+    elif request.user.is_superuser:
         return render(request, 'accounts/usertracker.html', context)
     else:
-        return False
+        raise Http404("Login/Wrong Page: Contact Admin Please!")
 
-''' 
+
+'''
 @method_decorator(login_required, name='dispatch')
 class UserTrackListView(ListView):
     model=Tracker
@@ -225,12 +231,13 @@ class UserTrackListView(ListView):
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
-    success_url="/accounts/usertracker"
+    success_url="/accounts/tracker"
+    #success_url="usertime"
     fields=['category','task','duration']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
-        return super().form_valid(form)    
+        return super().form_valid(form)  
 
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):

@@ -36,6 +36,8 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering=['date_joined']
 
+    
+
 # 1. Correct the number of hours for client
 #
 '''
@@ -74,6 +76,12 @@ class Tracker(models.Model):
         Five_Hours = 5
         Eight_Hours = 8
         Ten_Hours = 10
+
+    #class AssignedTime(models.IntegerChoices):
+       # Plan_A =30
+       # Plan_B =120
+       # Other = 999
+
     # Job Category.
     Job_Support = 'Job_Support'
     Interview = 'Interview'
@@ -135,7 +143,7 @@ class Tracker(models.Model):
         ordering=['login_date']
 
     def get_absolute_url(self):
-        return reverse('tracker-detail', kwargs={'pk': self.pk})
+        return reverse('usertime', args=[self.username])
 
     @property
     def end(self):

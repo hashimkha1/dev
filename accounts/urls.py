@@ -16,10 +16,11 @@ urlpatterns = [
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
     
     path('applicants/', views.applicantlist, name='applicants'),
+
     path('tracker/', TrackListView.as_view(), name='tracker-list'),
     #path('user/<str:username>', UserTrackListView.as_view(), name='user-list'),
-    #path('user_tracker/', UserTrackListView.as_view(), name='user-list'),
-    path('usertracker', views.usertracker, name='user-list'),
+    #path('user_tracker/', UserTrackListView.as_view(), name='single-list'),
+    path('client/<str:username>/', views.usertracker, name='user-list'),
     path('track/new/', TrackCreateView.as_view(), name='tracker-create'),
     path('track/<int:pk>/', TrackDetailView.as_view(), name='tracker-detail'),
     path('track/<int:pk>/update/', TrackUpdateView.as_view(), name='tracker-update'),
