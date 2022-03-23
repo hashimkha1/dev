@@ -115,9 +115,9 @@ class ClientInterviewListView(ListView):
     def get_queryset(self):
         #request=self.request
         #user=self.kwargs.get('user')
-        client = get_object_or_404(User, username=self.kwargs.get('username'))
+        user = get_object_or_404(User, username=self.kwargs.get('username'))
         #tasks=Task.objects.all().filter(client=client)
-        return Interview.objects.all().filter(client=client)
+        return Interview.objects.all().filter(user=user)
 
 @method_decorator(login_required, name='dispatch')
 class InterviewDetailView(DetailView):
@@ -128,7 +128,7 @@ class InterviewDetailView(DetailView):
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Interview
     success_url="/data/iuploads"
-    fields=['client','category','question_type','doc','link',]
+    fields=['user','category','question_type','doc','link',]
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
@@ -138,7 +138,7 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         interview = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user==interview.client:
+        elif self.request.user==interview.user:
             return True
         return False
         

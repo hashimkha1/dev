@@ -107,7 +107,7 @@ class Interview(models.Model):
     ]
     #id = models.AutoField(primary_key=True,default=9999999)
     #client= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    client= models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_assiged',default=1)
+    user= models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_assiged',default=1)
     #first_name=models.CharField(max_length=100,null=True,blank=True)
     #midle=models.CharField(max_length=100,null=True,blank=True)
     
