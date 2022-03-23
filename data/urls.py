@@ -2,7 +2,9 @@ from django.urls import path
 from . import views
 from .views import (
                     FeaturedCategoryCreateView,FeaturedSubCategoryCreateView,FeaturedActivityCreateView,
-                    InterviewDetailView ,InterviewUpdateView ,InterviewDeleteView
+                    FeaturedCategoryUpdateView,FeaturedCategoryListView,
+                    InterviewDetailView ,InterviewUpdateView ,InterviewDeleteView,InterviewListView,
+                    ClientInterviewListView,
                     #TrackCreateView, TrackDeleteView, TrackDetailView,
                     #TrackListView, InterviewUpdateView #,UserTrackListView
                     )
@@ -22,21 +24,27 @@ urlpatterns = [
     path('bitraining/', views.bitraining, name='bitraining'),
     path('bitraining2/', views.activity_view, name='bitraining2'),
     path('interview/', views.interview, name='interview'),
-
     path('deliverable/', views.deliverable, name='deliverable'),
     path('getdata/', views.getdata, name='getdata'),
     path('pay/', views.pay, name='pay'),
 
     #Interview/Assignment Section
+    #----------------------CREATION----------------------------------------------------
     path('uploadinterview/', views.uploadinterview, name='uploadinterview'),
-    path('iuploads/', views.iuploads, name='iuploads'),
-    path('useruploads/', views.useruploads, name='user-list'),
-    path('upload/<int:pk>/',InterviewDetailView.as_view(), name='interview-detail'),
-    path('interview/<int:pk>/update', InterviewUpdateView.as_view(), name='interview-update'),
-    path('interview/<int:pk>/delete', InterviewDeleteView.as_view(), name='delete-interview'),
-    #path('iuploads/', UploadListView.as_view(), name='iuploads'),
     #path('upload/', views.upload, name='upload'),
+    #----------------------LISTING----------------------------------------------------
+    path('iuploads/', views.iuploads, name='iuploads'),
+    path('clientuploads/<str:username>', ClientInterviewListView.as_view(), name='client-uploads'),
+    path('interviewuploads/', InterviewListView.as_view(), name='interviewlist'),
+    path('useruploads/', views.useruploads, name='user-list'),
+    #path('iuploads/', UploadListView.as_view(), name='iuploads'),
     #path('uploaded/', views.uploaded, name='uploaded'),
+    #----------------------DETAIL----------------------------------------------------
+    path('upload/<int:pk>/',InterviewDetailView.as_view(), name='interview-detail'),
+    #----------------------UPDATE----------------------------------------------------
+    path('interview/<int:pk>/update', InterviewUpdateView.as_view(), name='interview-update'),
+    #----------------------DELETING----------------------------------------------------
+    path('interview/<int:pk>/delete', InterviewDeleteView.as_view(), name='delete-interview'),
 
 
     # TRAINING SECTION
@@ -45,21 +53,15 @@ urlpatterns = [
     path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path('activity/new', FeaturedActivityCreateView.as_view(), name='featuredactivity'),
     #----------------------List----------------------------------------------------
-    #path('category/new', FeaturedCategoryCreateView.as_view(), name='featuredcategory'),
+    #path('list/', FeaturedCategoryListView.as_view(), name='featuredcategory-list'),
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
+    path('bitraining2/', views.activity_view, name='bitraining2'),  
+    path('category/', views.table_activity_view, name='activity-list'),
     #----------------------Update----------------------------------------------------
-
+    path('category/<int:pk>/update', FeaturedCategoryUpdateView.as_view(), name='update-category'),
+    #path('updatelist', InterviewDeleteView.as_view(), name='delete-interview'),
     #----------------------Deletion----------------------------------------------------
 
-    path('bitraining2/', views.activity_view, name='bitraining2'),
-    path('iuploads/', views.iuploads, name='iuploads'),
-    path('useruploads/', views.useruploads, name='user-list'),
-    path('upload/<int:pk>/',InterviewDetailView.as_view(), name='interview-detail'),
-    path('interview/<int:pk>/update', InterviewUpdateView.as_view(), name='interview-update'),
-    path('interview/<int:pk>/delete', InterviewDeleteView.as_view(), name='delete-interview'),
-    #path('iuploads/', UploadListView.as_view(), name='iuploads'),
-    #path('upload/', views.upload, name='upload'),
-    #path('uploaded/', views.uploaded, name='uploaded'),
 
 
 

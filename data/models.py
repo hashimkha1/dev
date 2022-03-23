@@ -106,10 +106,12 @@ class Interview(models.Model):
     (Other, 'Other'),
     ]
     #id = models.AutoField(primary_key=True,default=9999999)
-    user= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    first_name=models.CharField(max_length=100,null=True,blank=True)
+    #client= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    client= models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_assiged',default=1)
+    #first_name=models.CharField(max_length=100,null=True,blank=True)
     #midle=models.CharField(max_length=100,null=True,blank=True)
-    last_name=models.CharField(max_length=100,null=True,blank=True)
+    
+    #last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
 
     category= models.CharField(
@@ -261,8 +263,31 @@ class ActivityLinks(models.Model):
 
 
 class UserLevel(models.Model):
+    # Levels
+    A = 'Level A'
+    B = 'Level B'
+    C = 'Level C'
+    D = 'Level D'
+    E = 'Level E'
+    O = 'Other'
+
+    LEVEL_CHOICES = [
+            (A , 'Level A'),
+            (B , 'Level B'),
+            (C , 'Level C'),
+            (D , 'Level D'),
+            (E , 'Level E'),
+            (O , 'Other'),
+    ]
+
+    level= models.CharField(
+        max_length=25,
+        choices=LEVEL_CHOICES,
+        unique=True,
+        default=A,
+    )
     created_by= models.ForeignKey(User, on_delete=models.CASCADE)
-    level=models.CharField(max_length=50,default='A')
+    #level=models.CharField(max_length=50,default='A')
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)

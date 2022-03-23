@@ -1,6 +1,6 @@
 from urllib import request
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import context
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
@@ -90,6 +90,8 @@ def iuploads(request):
             }
     return render(request, 'data/interview/iuploads.html',context)
 
+
+
 def useruploads(request, pk=None, *args, **kwargs):
     useruploads=Interview.objects.filter(user=request.user).order_by('-upload_date')
     context = {
@@ -99,29 +101,44 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 
 @method_decorator(login_required, name='dispatch')
+class InterviewListView(ListView):
+  queryset=Interview.objects.all()
+  template_name='data/interview/interviewuploads.html'
+
+
+class ClientInterviewListView(ListView):
+    model = Interview
+    context_object_name = 'client_interviews'
+    template_name='data/interview/user_interviews.html'
+
+    #paginate_by = 5
+    def get_queryset(self):
+        #request=self.request
+        #user=self.kwargs.get('user')
+        client = get_object_or_404(User, username=self.kwargs.get('username'))
+        #tasks=Task.objects.all().filter(client=client)
+        return Interview.objects.all().filter(client=client)
+
+@method_decorator(login_required, name='dispatch')
 class InterviewDetailView(DetailView):
     model=Interview
     ordering=['-upload_date']
-
 
 @method_decorator(login_required, name='dispatch')
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Interview
     success_url="/data/iuploads"
-    fields=['user','first_name','last_name','category','question_type','doc','link',]
+    fields=['client','category','question_type','doc','link',]
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
-        if self.request.user.is_superuser:
-            return super().form_valid(form)
-        else:
-            return False
+        return super().form_valid(form)
 
     def test_func(self):
         interview = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user==interview.user:
+        elif self.request.user==interview.client:
             return True
         return False
         
@@ -159,6 +176,7 @@ def uploaded(request):
 
 '''
  #==================================TRAINING VIEWS====================================
+#========================1. CREATION OF VIEWS============================
 
 @method_decorator(login_required, name='dispatch')
 class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
@@ -190,6 +208,29 @@ class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by=self.request.user
         return super().form_valid(form)
     
+#========================2. UPDATE VIEWS============================
+@method_decorator(login_required, name='dispatch')
+class FeaturedCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=FeaturedCategory
+    success_url="/data/category"
+    #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields=['title','description']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        return super().form_valid(form)
+            
+    def test_func(self):
+        FeaturedCategory = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==FeaturedCategory.created_by:
+            return True
+        return redirect('data:activity-list')
+    
+class FeaturedCategoryListView(ListView):
+  queryset=FeaturedCategory.objects.all()
+  template_name='management/daf/updatelist.html'
+
 def activity_view(request):
     categories=FeaturedCategory.objects.prefetch_related('featuredsubcategory_set').all(),
     cats=FeaturedCategory.objects.all().order_by('-created_at') 
@@ -203,6 +244,15 @@ def activity_view(request):
     }
     return render(request=request, template_name='data/training/bitraining2.html', context=context)
 
+def table_activity_view(request):
+    categories=FeaturedCategory.objects.prefetch_related('featuredsubcategory_set').all(),
+    cats=FeaturedCategory.objects.all().order_by('-created_at') 
+    BiFilter=BitrainingFilter(request.GET, queryset=cats)
+    categories=BiFilter.qs
 
-
- 
+    context = {
+        "categories":categories,
+        "cats":cats,
+        'BiFilter':BiFilter
+    }
+    return render(request=request, template_name='data/training/updatelist.html', context=context)
