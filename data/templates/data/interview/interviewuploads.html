@@ -34,9 +34,8 @@
         {% for upload in  object_list   %}
         <tr>
           <td> <a class="mr-2" href="{% url 'data:user-list'%}">{{user.username}}</a></td>
-          <td>{{upload.client}}</td>
-          <td>{{upload.client.first_name}}</td>
-          <td>{{user.last_name}}</td>
+          <td>{{upload.user.first_name}}</td>
+          <td>{{user.user.last_name}}</td>
           <td>{{upload.upload_date|date:"F d, Y"}}</td>
           <td>{{upload.category}}</td>
           <td>{{upload.question_type}}</td>

@@ -88,7 +88,7 @@ def iuploads(request):
               'uploads': uploads,
               'myFilter':myFilter
             }
-    return render(request, 'data/interview/iuploads.html',context)
+    return render(request, 'data/interview/interviewuploads.html',context)
 
 
 
@@ -102,8 +102,8 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 @method_decorator(login_required, name='dispatch')
 class InterviewListView(ListView):
-  queryset=Interview.objects.all()
-  template_name='data/interview/interviewuploads.html'
+    queryset=Interview.objects.all()
+    template_name='data/interview/iuploads.html'
 
 
 class ClientInterviewListView(ListView):

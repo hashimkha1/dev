@@ -33,9 +33,9 @@ urlpatterns = [
     path('uploadinterview/', views.uploadinterview, name='uploadinterview'),
     #path('upload/', views.upload, name='upload'),
     #----------------------LISTING----------------------------------------------------
-    path('iuploads/', views.iuploads, name='iuploads'),
+    path('iuploads/', InterviewListView.as_view(), name='interviewlist'),
+    path('interviewuploads/', views.iuploads, name='iuploads'),
     path('clientuploads/<str:username>', ClientInterviewListView.as_view(), name='client-uploads'),
-    path('interviewuploads/', InterviewListView.as_view(), name='interviewlist'),
     path('useruploads/', views.useruploads, name='user-list'),
     #path('iuploads/', UploadListView.as_view(), name='iuploads'),
     #path('uploaded/', views.uploaded, name='uploaded'),

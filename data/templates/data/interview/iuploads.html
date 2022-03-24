@@ -4,6 +4,7 @@
     <div class="career text-center">
       <h3>How to ace a BA, Data Analysis/Data Science Interview</h3>
   <br>
+  <!--
   <div  class="row">
     <div class="col">
       <div class="card card-body">
@@ -15,10 +16,12 @@
       </div>
     </div>
   </div>
+  --->
       <table style="width: 100%">
         <thead>
           <tr>
-            <th>Full Name</th>
+            <th>Username</th>
+            <th>Name</th>
             <th>Date Uploaded</th>
             <th>Category</th>
             <th>Question</th>
@@ -28,27 +31,30 @@
           </tr>
         </thead>
         
-        <tbody>
-          {% for upload in  uploads  %}
-          <tr>
-            <td> <a class="mr-2" href="#> {{upload.user.first_name}},{{upload.user.last_name}}</a></td>
-            <td>{{upload.upload_date|date:"F d, Y"}}</td>
-            <td>{{upload.category}}</td>
-            <td>{{upload.question_type}}</td>
-            <td>
-              <a href="{{upload.doc.url}}" class="btn btn-secondary btn-sm"
-                >Download
-              </a>
-            </td>
-            <td>
-              <a href="{{upload.link}}" class="btn btn-secondary btn-sm"
-                >Review
-              </a>
-            </td>
-            <td> <a class="article-title" href="{% url 'data:interview-detail' upload.id %}">Edit</a></td>
-          </tr>
-          {% endfor %}
-        </tbody>
+        {% for upload in  object_list   %}
+        <tr>
+          <td> <a class="mr-2" href="{% url 'data:client-uploads' upload.user%}">{{upload.user}}</a></td>
+          {% if upload.user.first_name == "" or  upload.user.last_name == "" %}
+               <td>{{upload.user}}</td>
+          {% else %}
+               <td>{{upload.user.first_name}},{{upload.user.last_name}}</td>
+          {% endif %}
+          <td>{{upload.upload_date|date:"F d, Y"}}</td>
+          <td>{{upload.category}}</td>
+          <td>{{upload.question_type}}</td>
+          <td>
+            <a href="{{upload.doc.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+          </td>
+          <td>
+            <a href="{{upload.link}}" class="btn btn-secondary btn-sm"
+              >Review
+            </a>
+          </td>
+          <td> <a class="article-title" href="{% url 'data:interview-detail' upload.id %}">Edit</a></td>
+        </tr>
+        {% endfor %}
       </table>
     </div>
   </section>
