@@ -29,14 +29,19 @@ def thank(request):
 
 #Summary information for tasks
 
+
 tasksummary=[
 {
-	'Target':'Target',
-	'Concentration':'Data Analysis',
-	'Description':'Total Amount Assigned	',
+   
+	'Target':'1',
+	'Description':'Total Amount Assigned',
 },
 {
-	'Earned':'Earned',
+	'Target':'2',
+	'Description':' progress	',
+},
+{
+	'Target':'3',
 	'Description':'Keep making progress	',
 },
 ]
@@ -338,7 +343,22 @@ class TaskListView(ListView):
   queryset=Task.objects.all()
   template_name='management/daf/tasklist.html'
 
-""" class UserListView(ListView):
+
+''' 
+
+
+  def get_context_data(self, **kwargs):
+        context = super(TaskListView, self).get_context_data(**kwargs)
+        context['tasksummary'] = tasksummary
+        return context
+
+  def interview(self):
+    context = {
+        'tasksummary': tasksummary
+    }
+    return context
+
+class UserListView(ListView):
   queryset=Task.objects.all()
   template_name='management/daf/usertasks.html'
 
@@ -346,7 +366,7 @@ class TaskListView(ListView):
       Amount=Task.objects.aggregate(Your_Total_Amount=Sum('pay'))  
       Total=Amount.get('Your_Total_Amount')
       return Total """
-
+'''
 def usertask(request, user=None, *args, **kwargs):
     #tasks=Task.objects.all().order_by('-submission')
     #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))

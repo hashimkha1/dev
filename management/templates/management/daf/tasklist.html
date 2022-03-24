@@ -1,5 +1,26 @@
 {%extends "main/base_templates/base.html"%} {% block content %}
 <section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">DAF ACTIVITIES</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
+  <div class="container-fluid mr-auto">
+        <div class="row text-center">
+          {% for task in  tasksummary  %}
+              <div class="col-md-2" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>task.Target</b></h5>
+                    <hr/>
+                    <i><h6>task.Description</h6></i>
+                    <hr/>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+      </div> 
+  </div> 
+<hr>
   <div class="career text-center">
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
@@ -24,11 +45,18 @@
             <tr>
 
                 <td><input type="checkbox" class="checkthis" /></td>
+                {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
                 <td>
-                  <a class="article-title" href="{% url 'management:user_task' task.employee %}">
-                    {{task.employee.first_name}},{{task.employee.last_name}}
-                  </a>
-                 </td>
+                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                  {{task.employee}}
+                </td>
+
+                {% else %}
+                <td>
+                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                  {{task.employee.first_name}},{{task.employee.last_name}}
+                </td>
+                {% endif %}
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
