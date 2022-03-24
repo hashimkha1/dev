@@ -33,13 +33,7 @@
         
         {% for upload in  object_list   %}
         <tr>
-          <td><a class="mr-2" href="{% url 'data:client_uploads' upload.user %}">{{upload.user}}</a></td>
-          <td>
-            <a class="article-title" href="{% url 'management:user_task' task.employee %}">
-              {{task.employee.first_name}},{{task.employee.last_name}}
-            </a>
-           </td>
-
+        <td><a class="mr-2" href="{% url 'data:client_uploads' upload.user %}">{{upload.user}}</a></td>
           {% if upload.user.first_name == "" or  upload.user.last_name == "" %}
                <td>{{upload.user}}</td>
           {% else %}
