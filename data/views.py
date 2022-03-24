@@ -104,6 +104,7 @@ def useruploads(request, pk=None, *args, **kwargs):
 class InterviewListView(ListView):
     queryset=Interview.objects.all()
     template_name='data/interview/iuploads.html'
+    ordering=['-upload_date']
 
 
 class ClientInterviewListView(ListView):
