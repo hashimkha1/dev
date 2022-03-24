@@ -9,6 +9,17 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('about_us/', views.about_us, name='about_us'),
     path('team/', views.team, name='team'),
+
+    #==============DEPARTMENTS==============================================
+        #---------------HUMAN RESOURCE--------------------#
+
+        #---------------FINANCE--------------------#
+
+        #---------------MANAGEMENT--------------------#
+        path('it/', views.it, name='it'),
+
+        #---------------IT--------------------#
+
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
     path('report/', views.report, name='report'),

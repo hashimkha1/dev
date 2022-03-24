@@ -43,6 +43,9 @@ def about_us(request):
 def team(request):
     return render(request, 'main/team.html', {'title': 'team'})
 
+def it(request):
+    return render(request, 'main/departments/it.html', {'title': 'IT'})
+
 def testing(request):
     return render(request, 'main/testing.html', {'title': 'testing'})
 
