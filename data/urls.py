@@ -60,8 +60,7 @@ urlpatterns = [
     #path('list/', FeaturedCategoryListView.as_view(), name='featuredcategory-list'),
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path('bitraining2/', views.activity_view, name='bitraining2'),  
-    path('category/', views.table_activity_view, name='activity-list'),
-    path('updatelist', InterviewDeleteView.as_view(), name='delete-interview'),
+    path('updatelist/', views.table_activity_view, name='activity-list'),
     #----------------------Update----------------------------------------------------
     path('category/<int:pk>/update', FeaturedCategoryUpdateView.as_view(), name='update-category'),
     path('subcategory/<int:pk>/update',FeaturedSubCategoryUpdateView.as_view(), name='update-subcategory'),
