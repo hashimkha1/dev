@@ -12,7 +12,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 from .forms import InterviewForm #, UploadForm
 
 
-from .models import Interview, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity#, DocUpload
+from .models import Interview, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity,ActivityLinks #, DocUpload
 from .filters import InterviewFilter,BitrainingFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
@@ -157,25 +157,7 @@ class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         return False
 
 
-# Saving uploaded information to database
-'''
-def upload(request):
-    if request.method== "POST":
-        form=UploadForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('data-uploaded')
-    else:
-        form=UploadForm()
-    return render(request, 'main/doc_templates/upload.html',{'form':form})
 
-
- 
-def uploaded(request):
-    documents=DocUpload.objects.all().order_by('-document_date')
-    return render(request, 'main/doc_templates/uploaded.html', {'documents': documents})
-
-'''
  #==================================TRAINING VIEWS====================================
 #========================1. CREATION OF VIEWS============================
 
@@ -227,7 +209,115 @@ class FeaturedCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateVi
         elif self.request.user==FeaturedCategory.created_by:
             return True
         return redirect('data:activity-list')
-    
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedSubCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=FeaturedSubCategory
+    success_url="/data/category"
+    #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields=['featuredcategory','title','description']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        return super().form_valid(form)
+            
+    def test_func(self):
+        FeaturedSubCategory = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==FeaturedSubCategory.created_by:
+            return True
+        return redirect('data:activity-list')
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedActivityUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model= FeaturedActivity
+    success_url="/data/category"
+    #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields=['featuredsubcategory','activity_name','description']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        return super().form_valid(form)
+            
+    def test_func(self):
+        FeaturedActivity = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user== FeaturedActivity.created_by:
+            return True
+        return redirect('data:activity-list')
+
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedActivityLinksUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=ActivityLinks
+    success_url="/data/category"
+    #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields=['activity','link_name','doc','link']
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        return super().form_valid(form)
+            
+    def test_func(self):
+        ActivityLinks = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==ActivityLinks.created_by:
+            return True
+        return redirect('data:activity-list')
+
+#========================3. DELETE VIEWS============================
+@method_decorator(login_required, name='dispatch')
+class  FeaturedCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=FeaturedCategory
+    success_url="/data/category"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+@method_decorator(login_required, name='dispatch')
+class  FeaturedSubCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=FeaturedCategory
+    success_url="/data/category"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class  FeaturedActivityDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=FeaturedActivity
+    success_url="/data/category"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+
+@method_decorator(login_required, name='dispatch')
+class  FeaturedActivityLinksDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=ActivityLinks
+    success_url="/data/category"
+
+    def test_func(self):
+        #timer = self.get_object()
+        #if self.request.user == timer.author:
+        #if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+   
+#========================4. DISPLAY/LIST VIEWS============================
 class FeaturedCategoryListView(ListView):
   queryset=FeaturedCategory.objects.all()
   template_name='management/daf/updatelist.html'

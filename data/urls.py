@@ -1,8 +1,13 @@
 from django.urls import path
 from . import views
 from .views import (
-                    FeaturedCategoryCreateView,FeaturedSubCategoryCreateView,FeaturedActivityCreateView,
-                    FeaturedCategoryUpdateView,FeaturedCategoryListView,
+                    FeaturedCategoryCreateView,FeaturedSubCategoryCreateView,
+                    FeaturedActivityCreateView,
+                    FeaturedCategoryUpdateView,FeaturedSubCategoryUpdateView,
+                    FeaturedActivityUpdateView, FeaturedActivityLinksUpdateView,
+                    FeaturedCategoryDeleteView,FeaturedSubCategoryDeleteView,
+                    FeaturedActivityDeleteView,FeaturedActivityLinksDeleteView,
+                    FeaturedCategoryListView,
                     InterviewDetailView ,InterviewUpdateView ,InterviewDeleteView,InterviewListView,
                     ClientInterviewListView,
                     #TrackCreateView, TrackDeleteView, TrackDetailView,
@@ -56,11 +61,17 @@ urlpatterns = [
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path('bitraining2/', views.activity_view, name='bitraining2'),  
     path('category/', views.table_activity_view, name='activity-list'),
+    path('updatelist', InterviewDeleteView.as_view(), name='delete-interview'),
     #----------------------Update----------------------------------------------------
     path('category/<int:pk>/update', FeaturedCategoryUpdateView.as_view(), name='update-category'),
-    #path('updatelist', InterviewDeleteView.as_view(), name='delete-interview'),
+    path('subcategory/<int:pk>/update',FeaturedSubCategoryUpdateView.as_view(), name='update-subcategory'),
+    path('activity/<int:pk>/update', FeaturedActivityUpdateView.as_view(), name='update-activity'),
+    path('links/<int:pk>/update', FeaturedActivityLinksUpdateView.as_view(), name='update-links'),
     #----------------------Deletion----------------------------------------------------
-
+    path('category/<int:pk>/delete', FeaturedCategoryDeleteView.as_view(), name='delete-category'),
+    path('subcategory/<int:pk>/delete', FeaturedSubCategoryDeleteView.as_view(), name='delete-subcategory'),
+    path('activity/<int:pk>/delete', FeaturedActivityDeleteView.as_view(), name='delete-activity'),
+    path('links/<int:pk>/delete', FeaturedActivityLinksDeleteView.as_view(), name='delete-links'),
 
 
 

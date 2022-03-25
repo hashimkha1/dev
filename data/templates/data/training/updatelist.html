@@ -3,17 +3,32 @@
 <section id="rating">
     <div class="rating text-center">
         <a
-        href="{% url 'data:update-category' category.id %}"
+        href="#"
         
           class="btn text-secondary px-0"
         > 
         <h4><b>{{category.title}}</b></h4> 
+        <span align="left">
+          <a href="{% url 'data:update-category' category.id %}">✅</a>
+        </span>
+        <span align="right">
+            <a href="{% url 'data:delete-category' category.id %}">❎</a> 
+        </span>
     </a>
         {% for subcategory in category.featuredsubcategory_set.all %}
         <table class="table table-borderless" style="width: 100%">
             <thead class="border-bottom font-weight-bold">
                 <h4><b>{{subcategory.title}}</b></h4>
-                {{subcategory.description}}
+                    <span align="left">
+                        <a href="{% url 'data:update-subcategory' subcategory.id %}">✅</a>
+                      </span>
+                      <span align="right">
+                          <a href="{% url 'data:update-subcategory' subcategory.id %}">❎</a> 
+                      </span>
+                <div>
+                    {{subcategory.description}}
+                </div>subcategory
+                
                 <tr>
                 <!--<th>Edit</th>-->
                     <th>Update Date</th>
@@ -52,9 +67,9 @@
                                         {% endfor %}
                                     </div>
                                 </li>
-                    </td>
-                    <td><h4 ><a href="#">Edit</H4></a></p></td> 
-                        <td><h4 ><a href="#">❌</H4></a></p></td>  
+                    </td>update-activity
+                    <td><h4 ><a href="{% url 'data:update-activity' activity.id %}">✅</H4></a></p></td> 
+                        <td><h4 ><a href="{% url 'data:delete-activity' activity.id %}">❎</H4></a></p></td>  
                 </tr>
                 {% endfor %}
             </tbody>
