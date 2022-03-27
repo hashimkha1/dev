@@ -180,7 +180,7 @@ class FeaturedCategory(models.Model):
     created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     #level=models.CharField(max_length=50,default='A')
     description=models.TextField()
-    #created_at=models.DateTimeField(auto_now_add=True)
+    created_at=models.DateTimeField(default=datetime.now)
     #updated_at=models.DateTimeField(auto_now=True)
     #is_active=models.IntegerField(default=1)
 
