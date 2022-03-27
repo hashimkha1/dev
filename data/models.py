@@ -177,7 +177,7 @@ class FeaturedCategory(models.Model):
         default=Other,
     )
     #title=models.CharField(max_length=255,unique=True)
-    created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    #created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     #level=models.CharField(max_length=50,default='A')
     description=models.TextField()
     #created_at=models.DateTimeField(default=datetime.now)
