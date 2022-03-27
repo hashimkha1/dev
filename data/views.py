@@ -341,7 +341,7 @@ def activity_view(request):
 
 def table_activity_view(request):
     categories=FeaturedCategory.objects.prefetch_related('featuredsubcategory_set').all(),
-    cats=FeaturedCategory.objects.all().order_by('-created_at') 
+    cats=FeaturedCategory.objects.all()#.order_by('-created_at') 
     BiFilter=BitrainingFilter(request.GET, queryset=cats)
     categories=BiFilter.qs
 
