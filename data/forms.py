@@ -5,10 +5,10 @@ from .models import Interview #, DocUpload
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interview
-        fields =['category','question_type','doc','link']
+        fields =['user','category','question_type','doc','link']
         labels={
                # 'first_name':'First Name',
-                #'last_name':'Last Name', 
+                'user':'username', 
                 'category':'Category',
                 'question_type':'Question',
                 'doc':'Assignment',

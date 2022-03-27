@@ -8,7 +8,8 @@ from .views import (
                     FeaturedCategoryDeleteView,FeaturedSubCategoryDeleteView,
                     FeaturedActivityDeleteView,FeaturedActivityLinksDeleteView,
                     FeaturedCategoryListView,
-                    InterviewDetailView ,InterviewUpdateView ,InterviewDeleteView,InterviewListView,
+                    InterviewDetailView ,InterviewUpdateView ,
+                    InterviewDeleteView,InterviewListView,InterviewCreateView,
                     ClientInterviewListView,
                     #TrackCreateView, TrackDeleteView, TrackDetailView,
                     #TrackListView, InterviewUpdateView #,UserTrackListView
@@ -35,11 +36,11 @@ urlpatterns = [
 
     #Interview/Assignment Section
     #----------------------CREATION----------------------------------------------------
-    path('uploadinterview/', views.uploadinterview, name='uploadinterview'),
-    #path('upload/', views.upload, name='upload'),
+    path('uploadinterview/',InterviewCreateView.as_view(), name='uploadinterview'),
+    #path('upload/', views.uploadinterview, name='upload'),
     #----------------------LISTING----------------------------------------------------
     path('iuploads/', InterviewListView.as_view(), name='interviewlist'),
-    path('interviewuploads/', views.iuploads, name='iuploads'),
+    path('interviewuploads/', views.iuploads, name='interviewuploads'),
     #path('clientuploads/<str:username>', ClientInterviewListView.as_view(), name='client_uploads'),
     path('useruploads/', views.useruploads, name='user-list'),
     #path('iuploads/', UploadListView.as_view(), name='iuploads'),

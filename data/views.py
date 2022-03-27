@@ -65,14 +65,13 @@ def pay(request):
     return render(request, 'data/pay.html', {'title': 'pay'}) 
 # Views on interview Section
 
-
 @login_required
 def uploadinterview(request):
     if request.method== "POST":
         form=InterviewForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('data:iuploads')
+            return redirect('data:interviewlist')
     else:
         form=InterviewForm()
     return render(request, 'data/interview/uploadinterview.html',{'form':form})
@@ -90,8 +89,6 @@ def iuploads(request):
             }
     return render(request, 'data/interview/interviewuploads.html',context)
 
-
-
 def useruploads(request, pk=None, *args, **kwargs):
     useruploads=Interview.objects.filter(user=request.user).order_by('-upload_date')
     context = {
@@ -100,12 +97,22 @@ def useruploads(request, pk=None, *args, **kwargs):
     return render(request, 'data/interview/useruploads.html', context)
 
 
+#==================================INTERVIEW VIEWS====================================
+class InterviewCreateView(LoginRequiredMixin, CreateView):
+    model=Interview
+    success_url="/data/iuploads"
+    fields=['category','question_type','doc','link']
+
+    def form_valid(self,form):
+        form.instance.user=self.request.user
+        return super().form_valid(form)  
+ 
+
 @method_decorator(login_required, name='dispatch')
 class InterviewListView(ListView):
     queryset=Interview.objects.all()
     template_name='data/interview/iuploads.html'
     ordering=['-upload_date']
-
 
 class ClientInterviewListView(ListView):
     model = Interview
@@ -142,7 +149,7 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         elif self.request.user==interview.user:
             return True
         return False
-        
+
 @method_decorator(login_required, name='dispatch')
 class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Interview
@@ -155,9 +162,6 @@ class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
-
-
  #==================================TRAINING VIEWS====================================
 #========================1. CREATION OF VIEWS============================
 
