@@ -169,7 +169,7 @@ class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
     model=FeaturedCategory
     success_url="/data/bitraining2"
-    fields=['featuredcategory','title','description']
+    fields=['title','description']
 
     def form_valid(self,form):
         form.instance.created_by=self.request.user

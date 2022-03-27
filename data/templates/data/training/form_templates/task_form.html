@@ -1,9 +1,9 @@
-{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}{% block content %}
+{% extends "main/base_templates/analysis_index.html"%} {%load crispy_forms_tags%}{% block content %}
 <div class="content-section">
   <form method="POST">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4">FOR SUBCATEGORIES</legend>
+      <legend class="border-bottom mb-4">FOR INTERVIEW</legend>
           {{ form|crispy }}
     </fieldset>
     <div class="form-group">

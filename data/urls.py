@@ -36,7 +36,7 @@ urlpatterns = [
 
     #Interview/Assignment Section
     #----------------------CREATION----------------------------------------------------
-    path('uploadinterview/',InterviewCreateView.as_view(), name='uploadinterview'),
+    path('uploadinterview/',InterviewCreateView.as_view(template_name='data/interview/interview_form.html'), name='uploadinterview'),
     #path('upload/', views.uploadinterview, name='upload'),
     #----------------------LISTING----------------------------------------------------
     path('iuploads/', InterviewListView.as_view(), name='interviewlist'),
@@ -54,24 +54,24 @@ urlpatterns = [
 
     # TRAINING SECTION
     #----------------------Creation----------------------------------------------------
-    path('category/new', FeaturedCategoryCreateView.as_view(), name='featuredcategory'),
-    path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
-    path('activity/new', FeaturedActivityCreateView.as_view(), name='featuredactivity'),
+    path('category/new', FeaturedCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredcategory'),
+    path('subcategory/new', FeaturedSubCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredsubcategory'),
+    path('activity/new', FeaturedActivityCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredactivity'),
     #----------------------List----------------------------------------------------
     #path('list/', FeaturedCategoryListView.as_view(), name='featuredcategory-list'),
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path('bitraining2/', views.activity_view, name='bitraining2'),  
     path('updatelist/', views.table_activity_view, name='activity-list'),
     #----------------------Update----------------------------------------------------
-    path('category/<int:pk>/update', FeaturedCategoryUpdateView.as_view(), name='update-category'),
-    path('subcategory/<int:pk>/update',FeaturedSubCategoryUpdateView.as_view(), name='update-subcategory'),
-    path('activity/<int:pk>/update', FeaturedActivityUpdateView.as_view(), name='update-activity'),
-    path('links/<int:pk>/update', FeaturedActivityLinksUpdateView.as_view(), name='update-links'),
+    path('category/<int:pk>/update', FeaturedCategoryUpdateView.as_view(template_name='data/training/form_templates/task_form.html'), name='update-category'),
+    path('subcategory/<int:pk>/update',FeaturedSubCategoryUpdateView.as_view(template_name='data/training/form_templates/task_form.html'), name='update-subcategory'),
+    path('activity/<int:pk>/update', FeaturedActivityUpdateView.as_view(template_name='data/training/form_templates/task_form.html'), name='update-activity'),
+    path('links/<int:pk>/update', FeaturedActivityLinksUpdateView.as_view(template_name='data/training/form_templates/task_form.html'), name='update-links'),
     #----------------------Deletion----------------------------------------------------
-    path('category/<int:pk>/delete', FeaturedCategoryDeleteView.as_view(), name='delete-category'),
-    path('subcategory/<int:pk>/delete', FeaturedSubCategoryDeleteView.as_view(), name='delete-subcategory'),
-    path('activity/<int:pk>/delete', FeaturedActivityDeleteView.as_view(), name='delete-activity'),
-    path('links/<int:pk>/delete', FeaturedActivityLinksDeleteView.as_view(), name='delete-links'),
+    path('category/<int:pk>/delete', FeaturedCategoryDeleteView.as_view(template_name='data/training/delete_templates/task_delete.html'), name='delete-category'),
+    path('subcategory/<int:pk>/delete', FeaturedSubCategoryDeleteView.as_view(template_name='data/training/delete_templates/task_delete.html'), name='delete-subcategory'),
+    path('activity/<int:pk>/delete', FeaturedActivityDeleteView.as_view(template_name='data/training/delete_templates/task_delete.html'), name='delete-activity'),
+    path('links/<int:pk>/delete', FeaturedActivityLinksDeleteView.as_view(template_name='data/training/delete_templates/task_delete.html'), name='delete-links'),
 
 
 
