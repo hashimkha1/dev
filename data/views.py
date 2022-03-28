@@ -12,7 +12,7 @@ from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, D
 from .forms import InterviewForm #, UploadForm
 
 
-from .models import Interview, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity,ActivityLinks #, DocUpload
+from .models import Interviews, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity,ActivityLinks #, DocUpload
 from .filters import InterviewFilter,BitrainingFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
@@ -80,7 +80,7 @@ def uploadinterview(request):
 
 @login_required
 def iuploads(request):
-    uploads=Interview.objects.all().order_by('-upload_date')
+    uploads=Interviews.objects.all().order_by('-upload_date')
     myFilter=InterviewFilter(request.GET, queryset=uploads)
     uploads=myFilter.qs
     context={
@@ -90,7 +90,7 @@ def iuploads(request):
     return render(request, 'data/interview/interviewuploads.html',context)
 
 def useruploads(request, pk=None, *args, **kwargs):
-    useruploads=Interview.objects.filter(user=request.user).order_by('-upload_date')
+    useruploads=Interviews.objects.filter(user=request.user).order_by('-upload_date')
     context = {
                 'useruploads': useruploads,
               }
@@ -99,7 +99,7 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 #==================================INTERVIEW VIEWS====================================
 class InterviewCreateView(LoginRequiredMixin, CreateView):
-    model=Interview
+    model=Interviews
     success_url="/data/iuploads"
     fields=['category','question_type','doc','link']
 
@@ -110,12 +110,12 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
 
 @method_decorator(login_required, name='dispatch')
 class InterviewListView(ListView):
-    queryset=Interview.objects.all()
+    queryset=Interviews.objects.all()
     template_name='data/interview/iuploads.html'
     ordering=['-upload_date']
 
 class ClientInterviewListView(ListView):
-    model = Interview
+    model = Interviews
     context_object_name = 'client_interviews'
     template_name='data/interview/user_interviews.html'
 
@@ -125,18 +125,18 @@ class ClientInterviewListView(ListView):
         #user=self.kwargs.get('user')
         user = get_object_or_404(User, username=self.kwargs.get('username'))
         #tasks=Task.objects.all().filter(client=client)
-        return Interview.objects.all().filter(user=user)
+        return Interviews.objects.all().filter(user=user)
 
 @method_decorator(login_required, name='dispatch')
 class InterviewDetailView(DetailView):
-    model=Interview
+    model=Interviews
     ordering=['-upload_date']
 
 @method_decorator(login_required, name='dispatch')
 class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    model=Interview
+    model=Interviews
     success_url="/data/iuploads"
-    fields=['user','category','question_type','doc','link',]
+    fields=['client','category','question_type','doc','link',]
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
@@ -146,13 +146,13 @@ class InterviewUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         interview = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user==interview.user:
+        elif self.request.user==interview.client:
             return True
         return False
 
 @method_decorator(login_required, name='dispatch')
 class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
-    model=Interview
+    model=Interviews
     success_url="/data/iuploads"
 
     def test_func(self):

@@ -59,7 +59,7 @@ class InterviewManager(models.Manager):
     def search(self,query):
         return self.get_queryset().active().search(query)
 
-
+'''
 #Interview Model
 class Interview(models.Model):
     # Job Category.
@@ -126,7 +126,7 @@ class Interview(models.Model):
     )
 
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
-    link=models.CharField(max_length=100,blank=True, null=True)
+    link=models.CharField(max_length=255,blank=True, null=True)
     is_active=models.BooleanField(default=True)
 
     objects=InterviewManager()
@@ -136,6 +136,85 @@ class Interview(models.Model):
 
     def __str__(self):
         return f'{self.username} upload'
+'''
+
+#Interviews Model
+class Interviews(models.Model):
+    # Job Category.
+    Project_Management = 'Project Management'
+    Business_Analysis = 'Business Analyst'
+    Quality_Assurance = 'Quality Assurance'
+    User_Experience = 'User Interface'
+    Reporting = 'Reporting'
+    ETL = 'ETL'
+    Database = 'Database'
+    Python = 'Python'
+    Other = 'Other'
+    # Question Type
+    Introduction = 'introduction'
+    Project_Story = 'Project Story'
+    Performance = 'performance'
+    Methodology = 'methodology'
+    SDLC = 'sdlc'
+    Testing = 'testing'
+    Environment = 'environment'
+    Resume = 'resume'
+
+    CAT_CHOICES = [
+        (Project_Management, 'Project Management'),
+        (Business_Analysis, 'Business Analysis'),
+        (Quality_Assurance, 'Quality Assurance'),
+        (User_Experience, 'User Experience'),
+        (Reporting, 'Reporting'),
+        (ETL, 'ETL'),
+        (Database, 'Database'),
+        (Python, 'Python'),
+        (Other, 'Other'),
+    ]
+    
+    QUESTION_CHOICES = [
+    (Introduction , 'introduction'),
+    (Project_Story , 'project story'),
+    (Performance , 'performance'),
+    (Methodology , 'methodology'),
+    (SDLC , 'sdlc'),
+    (Testing , 'testing'),
+    (Environment , 'environment'),
+    (Resume , 'resume'),
+    (Other, 'Other'),
+    ]
+    #id = models.AutoField(primary_key=True,default=9999999)
+    #client= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    client= models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_assiged',default=1)
+    #first_name=models.CharField(max_length=100,null=True,blank=True)
+    #midle=models.CharField(max_length=100,null=True,blank=True)
+    
+    #last_name=models.CharField(max_length=100,null=True,blank=True)
+    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
+
+    category= models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default=Other,
+    )
+    question_type= models.CharField(
+        max_length=25,
+        choices=QUESTION_CHOICES,
+        default=Other,
+    )
+
+    doc=models.FileField(default="None",upload_to='Uploads/doc/')
+    link=models.CharField(max_length=255,blank=True, null=True)
+    is_active=models.BooleanField(default=True)
+
+    objects=InterviewManager()
+
+    class Meta:
+        verbose_name_plural = 'InterviewUploaded'   
+
+    def __str__(self):
+        return f'{self.username} upload'
+
 
 '''
 class DocUpload(models.Model):
@@ -176,13 +255,12 @@ class FeaturedCategory(models.Model):
         unique=True,
         default=Other,
     )
-    #title=models.CharField(max_length=255,unique=True)
-    #created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE,null=True)
     #level=models.CharField(max_length=50,default='A')
     description=models.TextField()
-    #created_at=models.DateTimeField(default=datetime.now)
-    #updated_at=models.DateTimeField(auto_now=True)
-    #is_active=models.IntegerField(default=1)
+    created_at=models.DateTimeField(default=datetime.now)
+    updated_at=models.DateTimeField(auto_now=True)
+    is_active=models.IntegerField(default=1)
 
     class Meta:
         verbose_name_plural = "Categories"
