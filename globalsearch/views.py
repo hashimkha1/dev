@@ -7,9 +7,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import  redirect, render,get_object_or_404
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
-from data.models import (FeaturedSubCategory)
+from data.models import (Interviews,FeaturedSubCategory)
 
-''' 
 class SearchInterviewView(ListView):
     template_name="globalsearch/view.html"
 
@@ -34,7 +33,6 @@ class SearchInterviewView(ListView):
         if query is not None:
             return Interviews.objects.search(query)
         return Interviews.objects.none()
-'''
 
 class SearchBitrainingView(ListView):
     template_name="globalsearch/view.html"
