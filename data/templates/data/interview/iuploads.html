@@ -23,7 +23,7 @@
       <table style="width: 100%">
         <thead>
           <tr>
-            <th>Username</th>
+            <th>username</th>
             <th>Name</th>
             <th>Date Uploaded</th>
             <th>Category</th>
@@ -35,11 +35,11 @@
         </thead>
         {% for upload in  object_list   %}
         <tr>
-        <td><a class="mr-2" href="{% url 'data:interviewlist' %}">{{upload.user}}</a></td>
-          {% if upload.user.first_name == "" or  upload.user.last_name == "" %}
-               <td>{{upload.user}}</td>
+        <td><a class="mr-2" href="{% url 'data:interviewlist' %}">{{upload.client}}</a></td>
+          {% if upload.client.first_name == "" or  upload.client.last_name == "" %}
+               <td>{{upload.client}}</td>
           {% else %}
-               <td>{{upload.user.first_name}},{{upload.user.last_name}}</td>
+               <td>{{upload.client.first_name}},{{upload.client.last_name}}</td>
           {% endif %}
           <td>{{upload.upload_date|date:"F d, Y"}}</td>
           <td>{{upload.category}}</td>

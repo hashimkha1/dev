@@ -46,11 +46,11 @@ urlpatterns = [
     #path('iuploads/', UploadListView.as_view(), name='iuploads'),
     #path('uploaded/', views.uploaded, name='uploaded'),
     #----------------------DETAIL----------------------------------------------------
-    path('upload/<int:pk>/',InterviewDetailView.as_view(), name='interview-detail'),
+    path('upload/<int:pk>/',InterviewDetailView.as_view(template_name='data/interview/interviews_detail.html'), name='interview-detail'),
     #----------------------UPDATE----------------------------------------------------
-    path('interview/<int:pk>/update', InterviewUpdateView.as_view(), name='interview-update'),
+    path('interview/<int:pk>/update', InterviewUpdateView.as_view(template_name='data/interview/interview_form.html'), name='interview-update'),
     #----------------------DELETING----------------------------------------------------
-    path('interview/<int:pk>/delete', InterviewDeleteView.as_view(), name='delete-interview'),
+    path('interview/<int:pk>/delete', InterviewDeleteView.as_view(template_name='data/interview/interview_confirm_delete.html'), name='delete-interview'),
 
     # TRAINING SECTION
     #----------------------Creation----------------------------------------------------

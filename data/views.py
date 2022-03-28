@@ -104,7 +104,7 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
     fields=['category','question_type','doc','link']
 
     def form_valid(self,form):
-        form.instance.user=self.request.user
+        form.instance.client=self.request.user
         return super().form_valid(form)  
  
 
