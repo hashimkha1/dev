@@ -96,7 +96,7 @@
               <a class="nav-item nav-link" href="">Logout</a>
               <a class="nav-item nav-link" href="{% url 'main:pay' %}">Make a Payment</a>
               {% else %}
-              <a class="nav-item nav-link" href="{% url 'account-login' %}">Login</a>
+              <a class="nav-item nav-link" href="{% url 'accounts:account-login' %}">Login</a>
               <a class="nav-item nav-link" href="{% url 'account-register' %}">Register</a>
               <a class="nav-item nav-link" href="{% url 'main:pay' %}">Make a Payment</a>
               {% endif %}
