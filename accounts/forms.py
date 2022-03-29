@@ -1,7 +1,7 @@
 from django import forms
-from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth.forms import UserCreationForm
 from .models import CustomerUser,Tracker
+from django.utils.translation import gettext_lazy as _
 
 #from django.db import transaction
 
@@ -45,6 +45,23 @@ class CustomerForm(forms.ModelForm):
             user.save()
         return user
 
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(
+        widget= forms.TextInput(
+            attrs={
+                "class": "form-control"
+            }
+        )
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "class": "form-control"
+            }
+        )
+    )
 
 
 
@@ -91,10 +108,13 @@ class UserRegisterForm(UserCreationForm):
             'username':"User Name",
         }
 
+
 class UserLoginForm(UserCreationForm):
     email = forms.EmailField()
     class Meta:
-        model = User
+        model = CustomerUser
         fields = ['username', 'email']
-
      '''
+
+
+

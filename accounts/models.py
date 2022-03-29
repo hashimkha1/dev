@@ -32,14 +32,22 @@ class CustomerUser(AbstractUser):
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
     category=models.IntegerField(choices=Category.choices,default=999)
+    #applicant=models.BooleanField('Is Job Applicant', default=True)
+    # Changes Made to Model
+    is_admin= models.BooleanField('Is admin', default=False)
+    is_employee = models.BooleanField('Is employee', default=False)
+    is_client = models.BooleanField('Is Client', default=False)
+    is_applicant = models.BooleanField('Is applicant', default=True)
 
     class Meta:
         ordering=['date_joined']
 
-    
+#Employee Table
+#class Employee(models.Model):
+    #user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
+    #is_admin= models.BooleanField('Is admin', default=False)
+    #is_staff = models.BooleanField('Is employee', default=True)
 
-# 1. Correct the number of hours for client
-#
 '''
 class Profile(models.Model):
     user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)

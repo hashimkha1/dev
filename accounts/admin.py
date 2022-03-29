@@ -15,11 +15,11 @@ class CustomerAdmin(UserAdmin):
 
 
     fieldsets=UserAdmin.fieldsets +(
-        (None, {'fields': ('gender','phone','address','city','state','country')}),
+        (None, {'fields': ('gender','phone','address','city','state','country','is_admin','is_employee','is_client','is_applicant')}),
     )
 
     add_fieldsets=UserAdmin.add_fieldsets +(
-        (None, {'fields': ('email', 'first_name','last_name','password1','password2','gender','category','phone','address','city','state','country')}),
+        (None, {'fields': ('email', 'first_name','last_name','password1','password2','gender','category','phone','address','city','state','country','is_admin')}),
     )
     search_fields = ('email',)
     filter_horizontal = ()
