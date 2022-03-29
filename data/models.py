@@ -59,6 +59,9 @@ class InterviewManager(models.Manager):
     def search(self,query):
         return self.get_queryset().active().search(query)
 
+
+        
+
 '''
 #Interview Model
 class Interview(models.Model):
