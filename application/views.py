@@ -1,5 +1,5 @@
 from datetime import date, timedelta
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
 from django.db.models import Sum
@@ -7,65 +7,40 @@ from django.db.models.aggregates import Avg, Sum
 from django.shortcuts import  redirect, render
 from django.urls import reverse
 from django.views.generic import (DeleteView,ListView,TemplateView, UpdateView)
-
 from .forms import (ApplicantForm, PolicyForm, RatingForm, ReportingForm)
+from accounts.forms import (UserForm)
 from .models import (Application, Policy, Rated,Reporting)
+from .utils import (posts, alteryx_list,dba_list,tableau_list)
 
 #from .filters import RatingFilter
 
-#Interview description data
-posts=[
-
-{
-	'Inteview':'First   Interview',
-	'Concentration':'Data Analysis',
-	'Description':'Understanding SQL,Tableau & Alteryx	',
-	'Duration':'5 Days	',
-	'Lead':'HR Manager'
-},
-
-{
-	'Inteview':'Second Interview',
-	'Concentration':'General Tools& Company Projects',
-	'Description':'Understanding Company Projects, Values & Systems	',
-	'Duration':'5 Days	',
-	'Lead':'HR Manager'
-},
-
-{
-	'Inteview':'Final Interview',
-	'Concentration':'Data Analysis 1-1 Sessions',
-	'Description':'Measuring,assessing Time sensitivity.',
-	'Duration':'7 Days',
-	'Lead':'Scrum Master'
-}
-]
-
 # Create your views here.
-class application(TemplateView):
-    template_name='application.html'
 
-# Saving uploaded information to database
-''' 
-#Encountering an error in deployed app.
+#=============================APPLICATION VIEWS=====================================
+#@unauthenticated_user
 def apply(request):
     if request.method== "POST":
-        form=ApplicantForm(request.POST,request.FILES)
+        form=UserForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('application-policies')
+            username = form.cleaned_data.get('username')
+            #category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            if country in ('KE','UG','RW','TZ'): #  Male East Africa
+                if gender==1: #  Males in East Africa
+                    return redirect('application:firstinterview')
+                    #return render(request, 'application/interview_process/firstinterview.html') 
+                elif gender==2: # Females in East Africa
+                    return redirect('application:firstinterview')
+            #  Everyone outside East Africa
+            else:
+                return redirect('application:application:firstinterview')
     else:
-        form=ApplicantForm()
-    return render(request, 'application/applications/apply.html',{'form':form})
-'''
-def apply(request):
-    if request.method== "POST":
-        form=ApplicantForm(request.POST,request.FILES)
-        form.save()
-        return redirect('application:applicant_info')
-    else:
-        form=ApplicantForm()
-    return render(request, 'application/applications/apply.html',{'form':form})
+        messages.success(request, f'Account Not Created, Please Try Again!!')
+        form=UserForm()
+    return render(request, 'application/applications/application.html', {'form': form})
 
 class ApplicantListView(ListView):
     model=Application
@@ -73,10 +48,9 @@ class ApplicantListView(ListView):
     context_object_name='applicants'
     ordering=['-application_date']
 
+class application(TemplateView):
+    template_name='application.html'
 
-
-
-'''
 class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
     model=Application
     template_name='application/applications/applicants.html'
@@ -84,8 +58,11 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
     def get_success_url(self):
         return reverse('applicant-list')
 
-
 '''
+def applicantlist(request):
+    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
+    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
+
 class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Application
     success_url='/application/applications/applicants.html'
@@ -95,7 +72,7 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user == 'admin':
             return True
         return False
-        
+'''     
 @login_required
 def applicant_profile(request):
     return render(request, 'application/applications/applicant_profile.html')
@@ -112,6 +89,14 @@ def interview(request):
     
 def first_interview(request):
     return render(request, 'application/interview_process/first_interview.html', {'title': 'first_interview'})
+
+def firstinterview(request):
+    context = {
+        'alteryx_list': alteryx_list,
+        'dba_list': dba_list,
+        'tableau_list': tableau_list
+    }
+    return render(request, 'application/interview_process/firstinterview.html', context)
 
 def second_interview(request):
     return render(request, 'application/interview_process/second_interview.html', {'title': 'second_interview'})
