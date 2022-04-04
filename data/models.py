@@ -271,7 +271,7 @@ class FeaturedCategory(models.Model):
     @classmethod
     def get_default_pk(cls):
         cat, created = cls.objects.get_or_create(
-            title='Planning', defaults=dict(description='this is not an cat'))
+            title=' ', defaults=dict(description='this is not an cat'))
         return cat.pk 
 
     def get_absolute_url(self):
@@ -320,7 +320,7 @@ class FeaturedActivity(models.Model):
         return reverse("bitraining")
 
     def __str__(self):
-        return self.title
+        return self.activity_name
 
 class ActivityLinks(models.Model):
     Activity = models.ManyToManyField(FeaturedActivity, blank=True,related_name='activity_featured')

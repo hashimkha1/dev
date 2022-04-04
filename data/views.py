@@ -96,7 +96,6 @@ def useruploads(request, pk=None, *args, **kwargs):
               }
     return render(request, 'data/interview/useruploads.html', context)
 
-
 #==================================INTERVIEW VIEWS====================================
 class InterviewCreateView(LoginRequiredMixin, CreateView):
     model=Interviews
@@ -194,12 +193,22 @@ class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self,form):
         form.instance.created_by=self.request.user
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
+    model=ActivityLinks
+    success_url="/data/bitraining2"
+    fields=['Activity','link_name','doc','link','is_active']
+
+    def form_valid(self,form):
+        form.instance.created_by=self.request.user
+        return super().form_valid(form)
     
 #========================2. UPDATE VIEWS============================
 @method_decorator(login_required, name='dispatch')
 class FeaturedCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=FeaturedCategory
-    success_url="/data/category"
+    success_url="/data/updatelist"
     #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
     fields=['title','description']
     def form_valid(self,form):
@@ -217,7 +226,7 @@ class FeaturedCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateVi
 @method_decorator(login_required, name='dispatch')
 class FeaturedSubCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=FeaturedSubCategory
-    success_url="/data/category"
+    success_url="/data/updatelist"
     #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
     fields=['featuredcategory','title','description']
     def form_valid(self,form):
@@ -235,7 +244,7 @@ class FeaturedSubCategoryUpdateView(LoginRequiredMixin,UserPassesTestMixin,Updat
 @method_decorator(login_required, name='dispatch')
 class FeaturedActivityUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model= FeaturedActivity
-    success_url="/data/category"
+    success_url="/data/updatelist"
     #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
     fields=['featuredsubcategory','activity_name','description']
     def form_valid(self,form):
@@ -250,11 +259,10 @@ class FeaturedActivityUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateVi
             return True
         return redirect('data:activity-list')
 
-
 @method_decorator(login_required, name='dispatch')
 class FeaturedActivityLinksUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=ActivityLinks
-    success_url="/data/category"
+    success_url="/data/updatelist"
     #fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
     fields=['activity','link_name','doc','link']
     def form_valid(self,form):
@@ -273,7 +281,7 @@ class FeaturedActivityLinksUpdateView(LoginRequiredMixin,UserPassesTestMixin,Upd
 @method_decorator(login_required, name='dispatch')
 class  FeaturedCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=FeaturedCategory
-    success_url="/data/category"
+    success_url="/data/updatelist"
 
     def test_func(self):
         #timer = self.get_object()
@@ -285,7 +293,7 @@ class  FeaturedCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteV
 @method_decorator(login_required, name='dispatch')
 class  FeaturedSubCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=FeaturedCategory
-    success_url="/data/category"
+    success_url="/data/updatelist"
 
     def test_func(self):
         #timer = self.get_object()
@@ -298,7 +306,7 @@ class  FeaturedSubCategoryDeleteView(LoginRequiredMixin,UserPassesTestMixin,Dele
 @method_decorator(login_required, name='dispatch')
 class  FeaturedActivityDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=FeaturedActivity
-    success_url="/data/category"
+    success_url="/data/updatelist"
 
     def test_func(self):
         #timer = self.get_object()
@@ -311,7 +319,7 @@ class  FeaturedActivityDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteV
 @method_decorator(login_required, name='dispatch')
 class  FeaturedActivityLinksDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=ActivityLinks
-    success_url="/data/category"
+    success_url="/data/updatelist"
 
     def test_func(self):
         #timer = self.get_object()

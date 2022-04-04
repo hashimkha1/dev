@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import (
                     FeaturedCategoryCreateView,FeaturedSubCategoryCreateView,
-                    FeaturedActivityCreateView,
+                    FeaturedActivityCreateView,FeaturedActivityLinksCreateView,
                     FeaturedCategoryUpdateView,FeaturedSubCategoryUpdateView,
                     FeaturedActivityUpdateView, FeaturedActivityLinksUpdateView,
                     FeaturedCategoryDeleteView,FeaturedSubCategoryDeleteView,
@@ -57,6 +57,8 @@ urlpatterns = [
     path('category/new', FeaturedCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredcategory'),
     path('subcategory/new', FeaturedSubCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredsubcategory'),
     path('activity/new', FeaturedActivityCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredactivity'),
+    path('link/new', FeaturedActivityLinksCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredactivity'),
+    
     #----------------------List----------------------------------------------------
     #path('list/', FeaturedCategoryListView.as_view(), name='featuredcategory-list'),
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
