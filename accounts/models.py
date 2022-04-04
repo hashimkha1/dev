@@ -13,10 +13,9 @@ import requests
 # Create your models here.
 class CustomerUser(AbstractUser):
     class Category(models.IntegerChoices):
-        Client_OR_Customer_or_Student= 1
-        Applicant_or_Job_Applicant=2
-        # Employee = 3
-        # Applicant =4
+        Applicant_or_Job_Applicant=1
+        Coda_Staff_Member = 2
+        Client_OR_Customer_or_Student= 3
     class Score(models.IntegerChoices):
         Male = 1
         Female =2
@@ -32,8 +31,10 @@ class CustomerUser(AbstractUser):
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
     category=models.IntegerField(choices=Category.choices,default=999)
+    #category=models.IntegerField(choices=Category.choices,blank=True,null=False)
     #applicant=models.BooleanField('Is Job Applicant', default=True)
-    # Changes Made to Model
+    # Changes Made to Model-3/29/2022
+
     is_admin= models.BooleanField('Is admin', default=False)
     is_employee = models.BooleanField('Is employee', default=False)
     is_client = models.BooleanField('Is Client', default=False)
@@ -41,12 +42,15 @@ class CustomerUser(AbstractUser):
 
     class Meta:
         ordering=['date_joined']
+''' 
+#Applicant Table
+class applicant(models.Model):
+    applicant = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
+    #applicant = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
+    resume=models.FileField(upload_to='resumes/doc/',blank=True,null=True)
+    uploaded = models.BooleanField('uploaded', default=True)
+'''
 
-#Employee Table
-#class Employee(models.Model):
-    #user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
-    #is_admin= models.BooleanField('Is admin', default=False)
-    #is_staff = models.BooleanField('Is employee', default=True)
 
 '''
 class Profile(models.Model):
@@ -73,7 +77,7 @@ class UserProfile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 '''
-
+#========================================TIME TRACKER====================================================
 # Time Tracking Model
 class Tracker(models.Model):
     class Duration(models.IntegerChoices):

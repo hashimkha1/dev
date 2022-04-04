@@ -18,13 +18,17 @@ urlpatterns = [
     #path('user/<int:pk>/update/', UserUpdateView.as_view(template_name='accounts/registration/join.html'), name='user-update'),
     path('user/<int:pk>/delete/', UserDeleteView.as_view(template_name='accounts/admin/user_delete.html'), name='user-delete'),
 
+
+
+
+
     #=============================CLIENTS VIEWS=====================================
     path('clients/', views.clientlist, name='clients'),
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
-    path('applicants/', views.applicantlist, name='applicants'),
-
+    #path('applicants/', views.applicantlist, name='applicants'),
+    #=============================CLIENTS WORK=====================================
     path('tracker/', TrackListView.as_view(), name='tracker-list'),
     #path('user/<str:username>', UserTrackListView.as_view(), name='user-list'),
     #path('user_tracker/', UserTrackListView.as_view(), name='single-list'),

@@ -8,7 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
-from .forms import CustomerForm,LoginForm # , TimeForm  , SignUpForm, UserLoginForm, UserRegisterForm
+from .forms import UserForm,LoginForm # , TimeForm  , SignUpForm, UserLoginForm, UserRegisterForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect,render
@@ -30,23 +30,23 @@ def thank(request):
 @unauthenticated_user
 def join(request):
     if request.method== "POST":
-        form=CustomerForm(request.POST,request.FILES)
+        form=UserForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
             messages.success(request, f'Account created for {username}!')
-            if category =="Applicant":
-                #return redirect('apply')
-                return render(request, 'application/applications/apply.html')
-            #elif category == "Client":
-                # #return redirect('apply')
-                # return render(request, 'management/company_finances/activities.html')
+            if category ==1 and gender==1: # Applicant and Male
+                #messages.success(request, f'Account Applicant')
+                return redirect('application:firstinterview')
+            elif category ==1 and gender==2: # Applicant and Female
+                return redirect('application:firstinterview')
+                messages.success(request, f'Account NOT Applicant')
             else:
-                return redirect('accounts:account-login')
+                 return redirect('main:layout')
     else:
-        form=CustomerForm()
+        form=UserForm()
     return render(request, 'accounts/registration/join.html', {'form': form})
 
 def login_view(request):
@@ -67,8 +67,12 @@ def login_view(request):
                 login(request, account)
                 return redirect('data:home')
             elif account is not None and account.is_applicant:
-                login(request, account)
-                return redirect('application:applicant_info')
+                if account.gender==1:
+                    login(request, account)
+                    return redirect('application:firstinterview')
+                else:
+                    login(request, account)
+                    return redirect('main:home')
             else:
                 msg= 'invalid credentials'
         else:
@@ -135,7 +139,7 @@ class ClientUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=CustomerUser
     success_url="/accounts/clients"
     fields=['category','address','city','state','country']
-    form=CustomerForm
+    form=UserForm
     def form_valid(self,form):
         #form.instance.username=self.request.user
         # if request.user.is_authenticated:
@@ -164,15 +168,9 @@ class ClientDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 
-#=============================APPLICATION VIEWS=====================================
 
-def applicantlist(request):
-    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
-    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
 
-def apply(request):
-    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
-    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
+
 
 @login_required(login_url='accounts:account-login')
 def profile(request):

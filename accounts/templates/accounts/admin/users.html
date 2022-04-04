@@ -6,6 +6,7 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
+          <th>Category</th>
           <th>First</th>
           <th>Last</th>
           <th>Number</th>
@@ -30,6 +31,7 @@
          
             <tr>
               <td>{{user.date_joined|date:"F d, Y"}}</td>
+              <td>{{user.category}}</td>
               <td>{{user.first_name}}</td>
               <td>{{user.last_name}}</td>
               <td>{{user.phone}}</td>
