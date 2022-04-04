@@ -36,7 +36,7 @@ def apply(request):
                     return redirect('application:firstinterview')
             #  Everyone outside East Africa
             else:
-                return redirect('application:application:firstinterview')
+                return redirect('application:firstinterview')
     else:
         messages.success(request, f'Account Not Created, Please Try Again!!')
         form=UserForm()
