@@ -67,12 +67,12 @@ def login_view(request):
                 login(request, account)
                 return redirect('data:home')
             elif account is not None and account.is_applicant:
-                if account.gender==1:
+                if account.gender==1:# Male
                     login(request, account)
                     return redirect('application:firstinterview')
                 else:
                     login(request, account)
-                    return redirect('main:home')
+                    return redirect('application:first_interview')
             else:
                 msg= 'invalid credentials'
         else:
