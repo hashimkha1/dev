@@ -30,13 +30,13 @@ def apply(request):
             messages.success(request, f'Account created for {username}!')
             if country in ('KE','UG','RW','TZ'): #  Male East Africa
                 if gender==1: #  Males in East Africa
-                    return redirect('application:firstinterview')
+                    return redirect('application:interview')
                     #return render(request, 'application/interview_process/firstinterview.html') 
                 elif gender==2: # Females in East Africa
-                    return redirect('application:firstinterview')
+                    return redirect('application:policies')
             #  Everyone outside East Africa
             else:
-                return redirect('application:firstinterview')
+                return redirect('application:interview')
     else:
         messages.success(request, f'Account Not Created, Please Try Again!!')
         form=UserForm()
