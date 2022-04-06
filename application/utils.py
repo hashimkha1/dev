@@ -95,3 +95,35 @@ tableau_list=[
 	'link':'https://docs.google.com/presentation/d/1ASZkzSJBSoOqH6R83ZznChL6ISi5SC5_YI5N2XTZD1w/edit?usp=sharing',
 },
 ]
+
+
+#==============================INTERVIEW DESCRIPTION MODELS=======================================
+
+#Interview description data
+
+TaskInfos=[
+
+{
+	'Inteview':'First   Interview',
+	'Concentration':'Data Analysis',
+	'Description':'Understanding SQL,Tableau & Alteryx	',
+	'Duration':'5 Days	',
+	'Lead':'HR Manager'
+},
+
+{
+	'Inteview':'Second Interview',
+	'Concentration':'General Tools& Company Projects',
+	'Description':'Understanding Company Projects, Values & Systems	',
+	'Duration':'5 Days	',
+	'Lead':'HR Manager'
+},
+
+{
+	'Inteview':'Final Interview',
+	'Concentration':'Data Analysis 1-1 Sessions',
+	'Description':'Measuring,assessing Time sensitivity.',
+	'Duration':'7 Days',
+	'Lead':'Scrum Master'
+}
+]
