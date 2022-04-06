@@ -36,18 +36,23 @@ def join(request):
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
             messages.success(request, f'Account created for {username}!')
-            if category ==1 and gender==1: # Applicant and Male
-                #messages.success(request, f'Account Applicant')
-                return redirect('application:firstinterview')
-            elif category ==1 and gender==2: # Applicant and Female
-                return redirect('application:firstinterview')
-                messages.success(request, f'Account NOT Applicant')
+            if  category ==1 and country in ('KE','UG','RW','TZ'): #  Male East Africa
+                if gender==1: # Applicant and Male
+                    return redirect('application:interview')
+                elif gender==2: # Females in East Africa
+                    return redirect('application:policies')
+            elif category ==1 and country not in ('KE','UG','RW','TZ'):#  Everyone outside East Africa
+                return redirect('application:interview')
             else:
-                 return redirect('main:layout')
+                return redirect('main:layout')
     else:
+        msg = 'error validating form'
         form=UserForm()
     return render(request, 'accounts/registration/join.html', {'form': form})
+
+
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -67,12 +72,16 @@ def login_view(request):
                 login(request, account)
                 return redirect('data:home')
             elif account is not None and account.is_applicant:
-                if account.gender==1:# Male
-                    login(request, account)
-                    return redirect('application:firstinterview')
+                if account.country in ('KE','UG','RW','TZ'):# Male
+                    if account.gender==1:
+                        login(request, account)
+                        return redirect('application:firstinterview')
+                    else:
+                        login(request, account)
+                        return redirect('application:first_interview')
                 else:
                     login(request, account)
-                    return redirect('application:first_interview')
+                    return redirect('application:firstinterview')
             else:
                 msg= 'invalid credentials'
         else:
