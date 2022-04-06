@@ -4,6 +4,7 @@ import random
 import os
 import calendar
 from decimal import *
+from django.forms import CharField
 from django.utils.translation import gettext_lazy as _
 from sqlite3 import Timestamp
 from django.contrib.auth.models import AbstractUser
@@ -342,7 +343,6 @@ class ActivityLinks(models.Model):
     def __str__(self):
         return self.link_name
 
-
 class UserLevel(models.Model):
     # Levels
     A = 'Level A'
@@ -382,3 +382,53 @@ class UserLevel(models.Model):
 
     def __str__(self):
         return self.level
+
+class DSU(models.Model):
+    # Job Category.
+    Interview = 'Interview'
+    BI_Training = 'BI Training'
+    Other = 'Other'
+
+    CAT_CHOICES = [
+        (Interview , 'Interview'),
+        (BI_Training , 'BI Training'),
+        (Other , 'Other'),
+    ]
+    # Client/Employee
+    client = 'client'
+    Staff = 'Staff'
+    Other = 'Other'
+
+    TYPE_CHOICES = [
+        (client , 'client'),
+        (Staff , 'Staff'),
+        (Other , 'Other'),
+    ]
+    category= models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default=Other,
+    )
+    type= models.CharField(
+        max_length=25,
+        choices=TYPE_CHOICES,
+        default=Other,
+    )
+    trained_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    client_name=models.CharField(max_length=255, default='admin')
+    task=models.TextField()
+    plan=models.TextField()
+    challenge=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    uploaded=models.BooleanField(default=False)
+    is_active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "DSU"
+
+    def get_absolute_url(self):
+        return reverse("data:bitraining")
+
+    def __str__(self):
+        return self.category

@@ -1,5 +1,5 @@
 from django import forms
-from .models import Interviews #, DocUpload
+from .models import Interviews ,DSU #, DocUpload
 
 
 class InterviewForm(forms.ModelForm):
@@ -26,3 +26,21 @@ class UploadForm(forms.ModelForm):
                 'doc':'Document',
         }
 '''
+
+class DSUForm(forms.ModelForm):
+    class Meta:
+        model = DSU
+        #fields =['client','category','question_type','doc','link']
+        fields=['trained_by','client_name','type','category','task','plan','challenge','uploaded']
+        labels={
+                'type':'Client/Staff?',
+                'trained_by':'Client Name',
+                'client_name':'Trainer', 
+                'category':'Category',
+                'task':'What Did You Work On?',
+                'plan':'What is your next plan of action?',
+                'challenge':'What Challenges are you facing?',
+                'uploaded' : 'Have you uploaded any assignments on the Interview Portal?'
+                }
+
+

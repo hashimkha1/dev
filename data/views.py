@@ -7,12 +7,12 @@ from django.utils.decorators import method_decorator
 from django.db.models import Prefetch
 from django.contrib.auth import get_user_model,login,authenticate
 from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
+from .forms import InterviewForm,DSUForm #, UploadForm
 
-
-from .forms import InterviewForm #, UploadForm
-
-
-from .models import Interviews, FeaturedCategory ,FeaturedSubCategory,FeaturedActivity,ActivityLinks #, DocUpload
+from .models import (
+                        Interviews, FeaturedCategory ,FeaturedSubCategory,
+                        FeaturedActivity,ActivityLinks,DSU #, DocUpload
+                    )
 from .filters import InterviewFilter,BitrainingFilter #,UserFilter
 
 #User=settings.AUTH_USER_MODEL
@@ -75,6 +75,18 @@ def uploadinterview(request):
     else:
         form=InterviewForm()
     return render(request, 'data/interview/uploadinterview.html',{'form':form})
+
+
+@login_required
+def dsu_entry(request):
+    if request.method== "POST":
+        form=DSUForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('data:dsu')
+    else:
+        form=DSUForm()
+    return render(request, 'data/training/form_templates/dsu_form.html',{'form':form})
 
 #for uploading interviews
 
@@ -164,6 +176,8 @@ class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
  #==================================TRAINING VIEWS====================================
 #========================1. CREATION OF VIEWS============================
 
+
+
 @method_decorator(login_required, name='dispatch')
 class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
     model=FeaturedCategory
@@ -203,6 +217,16 @@ class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self,form):
         form.instance.created_by=self.request.user
         return super().form_valid(form)
+
+@method_decorator(login_required, name='dispatch')
+class DSUCreateView(LoginRequiredMixin, CreateView):
+    model=DSU
+    success_url="/data/bitraining"
+    fields=['trained_by','category','task','plan','challenge','is_active']
+
+    def form_valid(self,form):
+        form.instance.trained_by=self.request.user
+        return super().form_valid(form)  
     
 #========================2. UPDATE VIEWS============================
 @method_decorator(login_required, name='dispatch')
@@ -359,3 +383,7 @@ def table_activity_view(request):
         'BiFilter':BiFilter
     }
     return render(request=request, template_name='data/training/updatelist.html', context=context)
+
+class DSUListView(ListView):
+  queryset=DSU.objects.all()
+  template_name='data/training/dsu.html'

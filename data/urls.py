@@ -7,7 +7,7 @@ from .views import (
                     FeaturedActivityUpdateView, FeaturedActivityLinksUpdateView,
                     FeaturedCategoryDeleteView,FeaturedSubCategoryDeleteView,
                     FeaturedActivityDeleteView,FeaturedActivityLinksDeleteView,
-                    FeaturedCategoryListView,
+                    FeaturedCategoryListView,DSUCreateView,DSUListView,
                     InterviewDetailView ,InterviewUpdateView ,
                     InterviewDeleteView,InterviewListView,InterviewCreateView,
                     ClientInterviewListView,
@@ -58,9 +58,10 @@ urlpatterns = [
     path('subcategory/new', FeaturedSubCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredsubcategory'),
     path('activity/new', FeaturedActivityCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredactivity'),
     path('link/new', FeaturedActivityLinksCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredactivity'),
-    
+    #path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
+    path('dsu/new', views.dsu_entry, name='dsu_entry'),
     #----------------------List----------------------------------------------------
-    #path('list/', FeaturedCategoryListView.as_view(), name='featuredcategory-list'),
+    path('dsu/', DSUListView.as_view(), name='dsu'),
     #path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path('bitraining2/', views.activity_view, name='bitraining2'),  
     path('updatelist/', views.table_activity_view, name='activity-list'),
