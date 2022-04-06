@@ -7,40 +7,17 @@ from django.db.models.aggregates import Avg, Sum
 from django.shortcuts import  redirect, render
 from django.urls import reverse
 from django.views.generic import (DeleteView,ListView,TemplateView, UpdateView)
+from django.utils.decorators import method_decorator
 from .forms import (ApplicantForm, PolicyForm, RatingForm, ReportingForm)
 from accounts.forms import (UserForm)
 from .models import (Application, Policy, Rated,Reporting)
 from .utils import (posts, alteryx_list,dba_list,tableau_list)
 
 #from .filters import RatingFilter
-
 # Create your views here.
 
-#=============================APPLICATION VIEWS=====================================
-#@unauthenticated_user
 def apply(request):
-    if request.method== "POST":
-        form=UserForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            #category = form.cleaned_data.get('category')
-            gender = form.cleaned_data.get('gender')
-            country = form.cleaned_data.get('country')
-            messages.success(request, f'Account created for {username}!')
-            if country in ('KE','UG','RW','TZ'): #  Male East Africa
-                if gender==1: #  Males in East Africa
-                    return redirect('application:interview')
-                    #return render(request, 'application/interview_process/firstinterview.html') 
-                elif gender==2: # Females in East Africa
-                    return redirect('application:policies')
-            #  Everyone outside East Africa
-            else:
-                return redirect('application:interview')
-    else:
-        messages.success(request, f'Account Not Created, Please Try Again!!')
-        form=UserForm()
-    return render(request, 'application/applications/application.html', {'form': form})
+    return redirect('accounts:join')
 
 class ApplicantListView(ListView):
     model=Application
@@ -135,20 +112,7 @@ def info(request):
     }
     return render(request, 'application/orientation/applicant_info.html',context)
 
-# -------------------------Uploads Section-------------------------------------#
-def firstupload(request):
-    if request.method== "POST":
-        form=InterviewForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('application-second_interview')
-    else:
-        form=InterviewForm()
-    return render(request, 'application/interview_process/firstupload.html',{'form':form})
 
-def fupload(request):
-    iuploads=FirstUpload.objects.all().order_by('-upload_date')
-    return render(request, 'application/interview_process/fupload.html', {'iuploads': iuploads})
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):
@@ -207,7 +171,6 @@ class TraineeUpdateView(LoginRequiredMixin,UpdateView):
             return True
         return False
         
-
 class TraineeDeleteView(LoginRequiredMixin,DeleteView):
     model=Reporting
     def get_success_url(self):
@@ -216,6 +179,20 @@ class TraineeDeleteView(LoginRequiredMixin,DeleteView):
 
 #============JQUERY IMPLEMENTATION======================================
 '''
+# -------------------------Uploads Section-------------------------------------#
+def firstupload(request):
+    if request.method== "POST":
+        form=InterviewForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('application-second_interview')
+    else:
+        form=InterviewForm()
+    return render(request, 'application/interview_process/firstupload.html',{'form':form})
+
+def fupload(request):
+    iuploads=FirstUpload.objects.all().order_by('-upload_date')
+    return render(request, 'application/interview_process/fupload.html', {'iuploads': iuploads})
 
 def applicants(request):
     return render(request, 'application/applications/applicants.html')
