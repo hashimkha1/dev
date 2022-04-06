@@ -135,7 +135,7 @@ class UserDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 #================================CLIENT SECTION================================
 
 def clientlist(request):
-    clients=CustomerUser.objects.filter(category = 1).order_by('-date_joined')
+    clients=CustomerUser.objects.filter(category = 3).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
 
 @method_decorator(login_required, name='dispatch')
@@ -177,15 +177,9 @@ class ClientDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 
-
-
-
-
 @login_required(login_url='accounts:account-login')
 def profile(request):
     return render(request,'accounts/profile.html')
-
-
 
 #----------------------TIME TRACKING CLASS-BASED VIEWS--------------------------------
 @method_decorator(login_required, name='dispatch')
