@@ -1,0 +1,54 @@
+{%extends "main/base_templates/base.html"%} {% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">WEEKLY EMPLOYEE ASSESSMENTS</h3>
+    <p class="p text-center"> </p>
+  <div class="career text-center">
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">  
+        <tr>
+          <th>Full Name</th>
+          <th>Category</th>
+          <th>task</th>
+          <th>Plan</th>
+          <th>Challenge</th>
+          <th>Created On</th>
+          <th>Updated On</th>
+          <th>Uploaded?</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for dsu in  object_list  %}
+            <tr>
+                {% if dsu.trained_by.first_name == "" or  dsu.trained_by.last_name == "" %}
+                <td>
+                <a class="article-title" href="#">
+                  {{dsu.trained_by}}
+                </td>
+
+                {% else %}
+                <td>
+                <a class="article-title" href="#">
+                  {{dsu.trained_by.first_name}},{{dsu.trained_by.last_name}}
+                </td>
+                {% endif %}
+                <td>
+                    <a class="text-dark  text-decoration-none" 
+                    data-toggle="tooltip" title="{{  dsu.description  }}"
+                    href="{{ category.get_absolute_url }}">
+                    {{  dsu.category  }}
+                    </a>
+                </td>
+                <td>{{dsu.task}}</td>
+                <td>{{dsu.plan}}</td>
+                <td>{{dsu.challenge}}</td>
+                <td>{{dsu.created_at|date:"F d, Y"}}</td>
+                <td>{{dsu.updated_at|date:"F d, Y"}}</td>
+                <td>{{dsu.uploaded}}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

@@ -3,7 +3,7 @@ from . import views
 from .views import (
                         TaskListView,TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
-                        UserInflowListView,UserTaskListView,TagCreateView,
+                        UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
                         #OutflowCreateView,#OutflowListView,
@@ -50,7 +50,7 @@ urlpatterns = [
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
     path('benefits/', views.benefits, name='benefits'),
-    #========================Task=====================================================
+    #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
     #path('usertasks/', UserListView.as_view(), name='usertask'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
@@ -62,5 +62,8 @@ urlpatterns = [
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
     path('thank/',views.thank, name='thank-you'),
+
+    path('assess/', views.assess, name='assess'),
+    path('assessment/', AssessListView.as_view(), name='assessment'),
 ]
  

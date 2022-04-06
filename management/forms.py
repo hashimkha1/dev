@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, Textarea
 
-#from .models import Employee, Transaction
+from data.models import DSU
 
 from .models import Transaction,Outflow,Inflow,Policy
 
@@ -109,4 +109,20 @@ class PolicyForm(forms.ModelForm):
                 'department':'Department',
                 'description':'Description',
                 'policy_doc':'Attach Policy',
+                }
+
+class ManagementForm(forms.ModelForm):
+    class Meta:
+        model = DSU
+        #fields =['client','category','question_type','doc','link']
+        fields=['trained_by','client_name','type','category','task','plan','challenge','uploaded']
+        labels={
+                'type':'Client/Staff?',
+                'client_name':'Manager', 
+                'trained_by':'Staff/Employee',
+                'category':'Category',
+                'task':'What Did You Work On?',
+                'plan':'What is your next plan of action on areas that you have not touched on?',
+                'challenge':'What specific questions/Challenges are you facing?',
+                'uploaded' : 'Have you uploaded any DAF evidence/1-1 sessions?'
                 }

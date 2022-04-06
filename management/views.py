@@ -8,10 +8,11 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm)
+from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm,ManagementForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from .models import Transaction,Inflow,Outflow,Policy,Task,Tag,TaskInfos
+from .models import Transaction,Inflow,Outflow,Policy,Task,Tag#,TaskInfos
+from data.models import DSU
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -521,3 +522,22 @@ class TaskDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 
+#=============================EMPLOYEE ASSESSMENTS========================================
+
+
+
+@login_required
+def assess(request):
+    if request.method== "POST":
+        form=ManagementForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:assessment')
+    else:
+        form=ManagementForm()
+    return render(request, 'management/hr/assess_form.html',{'form':form})
+
+class AssessListView(ListView):
+  queryset=DSU.objects.filter(type='Staff').order_by('-created_at')
+  #queryset=DSU.objects.all()
+  template_name='management//hr/assessment.html'
