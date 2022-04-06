@@ -30,8 +30,8 @@ urlpatterns = [
     path('trainee/<int:pk>/delete/', TraineeDeleteView.as_view(), name='trainee-delete'),
     path('rating/', views.rating, name='rating'),
     path('rate/', views.rate, name='rate'),
-    path('firstupload/', views.firstupload, name='firstupload'),
-    path('fupload/', views.fupload, name='fupload'),
+    #path('firstupload/', views.firstupload, name='firstupload'),
+    #path('fupload/', views.fupload, name='fupload'),
 
 
     #path('uploaded/', views.uploaded, name='uploaded'),
