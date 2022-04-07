@@ -31,8 +31,9 @@ class DSUForm(forms.ModelForm):
     class Meta:
         model = DSU
         #fields =['client','category','question_type','doc','link']
-        fields=['trained_by','client_name','type','category','task','plan','challenge','uploaded']
+        fields=['cohort','trained_by','client_name','type','category','task','plan','challenge','uploaded']
         labels={
+                'cohort':'Cohort',
                 'type':'Client/Staff?',
                 'trained_by':'Client Name',
                 'client_name':'Trainer', 

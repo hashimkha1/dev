@@ -422,7 +422,7 @@ class DSU(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     uploaded=models.BooleanField(default=False)
-    is_active=models.IntegerField(default=1)
+    cohort=models.PositiveIntegerField(default=1)
 
     class Meta:
         verbose_name_plural = "DSU"

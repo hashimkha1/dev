@@ -385,5 +385,5 @@ def table_activity_view(request):
     return render(request=request, template_name='data/training/updatelist.html', context=context)
 
 class DSUListView(ListView):
-  queryset=DSU.objects.all()
+  queryset=DSU.objects.all().order_by('-created_at') 
   template_name='data/training/dsu.html'
