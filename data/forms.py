@@ -40,7 +40,7 @@ class DSUForm(forms.ModelForm):
                 'task':'What Did You Work On?',
                 'plan':'What is your next plan of action?',
                 'challenge':'What Challenges are you facing?',
-                'uploaded' : 'Have you uploaded any assignments on the Interview Portal?'
+                'uploaded' : 'Have you uploaded your assignments to Interview Portal?'
                 }
 
 

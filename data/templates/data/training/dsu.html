@@ -2,8 +2,14 @@
 <section id="career">
   <div class="data_training text-center">
     <h3 class="title">DAILY STAND-UP SESSION</h3>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <p class="p text-center"> </p>
   <div class="career text-center">
+    <h4 class="title">DSU SESSIONS</h4>
+    <a href="{% url 'data:dsu_entry'%}" class="btn btn-primary btn-sm"
+    >NEXT STUDENT
+  </a>
+  <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>
@@ -48,7 +54,7 @@
                 <td>{{dsu.challenge}}</td>
                 <td>{{dsu.created_at|date:"F d, Y"}}</td>
                 <td>{{dsu.updated_at|date:"F d, Y"}}</td>
-                <td>{{dsu.uploaded|date:"F d, Y"}}</td>
+                <td>{{dsu.uploaded}}</td>
             </tr>
         {% endfor %}
       </tbody>
