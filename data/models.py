@@ -18,7 +18,7 @@ from django.http import request
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
+from accounts.models import Tracker
 from django.utils import timezone
 
 #User=settings.AUTH_USER_MODEL
@@ -303,6 +303,7 @@ class FeaturedSubCategory(models.Model):
     def __str__(self):
         return self.title
 
+
 class FeaturedActivity(models.Model):
     #SubCategory = models.ForeignKey(to=SubCategory, on_delete=models.CASCADE,default=SubCategory.get_default_pk)
     featuredsubcategory = models.ManyToManyField(FeaturedSubCategory, blank=True,related_name='subcategories_fetured')
@@ -342,6 +343,8 @@ class ActivityLinks(models.Model):
 
     def __str__(self):
         return self.link_name
+
+
 
 class UserLevel(models.Model):
     # Levels
@@ -387,11 +390,13 @@ class DSU(models.Model):
     # Job Category.
     Interview = 'Interview'
     BI_Training = 'BI Training'
+    Job_Support = 'Job Support'
     Other = 'Other'
 
     CAT_CHOICES = [
         (Interview , 'Interview'),
         (BI_Training , 'BI Training'),
+        (Job_Support , 'Job Support'),
         (Other , 'Other'),
     ]
     # Client/Employee
@@ -414,6 +419,8 @@ class DSU(models.Model):
         choices=TYPE_CHOICES,
         default=Other,
     )
+    #category = models.ManyToManyField(FeaturedActivity, blank=True,related_name='activity_featured')
+    #category= models.ManyToManyField(User, on_delete=models.CASCADE)
     trained_by= models.ForeignKey(User, on_delete=models.CASCADE)
     client_name=models.CharField(max_length=255, default='admin')
     task=models.TextField()

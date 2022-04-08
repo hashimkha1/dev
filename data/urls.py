@@ -15,7 +15,6 @@ from .views import (
                     #TrackListView, InterviewUpdateView #,UserTrackListView
                     )
 
-
 app_name = 'data'
 urlpatterns = [
     path('', views.analysis, name='home'),

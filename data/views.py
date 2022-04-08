@@ -176,8 +176,6 @@ class InterviewDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
  #==================================TRAINING VIEWS====================================
 #========================1. CREATION OF VIEWS============================
 
-
-
 @method_decorator(login_required, name='dispatch')
 class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
     model=FeaturedCategory
