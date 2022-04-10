@@ -1,57 +1,54 @@
 {%extends "main/base_templates/base.html"%} {% block content %}
-<section id="career">
-  <div class="data_training text-center">
-    <h3 class="title">WEEKLY EMPLOYEE ASSESSMENTS</h3>
-    <p class="p text-center"> </p>
-    <a href="{% url 'management:assess'%}" class="btn btn-primary btn-sm"
-    >NEXT EMPLOYEE
-  </a>
-  <div class="career text-center">
-    <table class="table table-borderless" style="width: 100%">
-      <thead class="border-bottom font-weight-bold">  
-        <tr>
-          <th>Full Name</th>
-          <th>Category</th>
-          <th>task</th>
-          <th>Plan</th>
-          <th>Challenge</th>
-          <th>Created On</th>
-          <th>Updated On</th>
-          <th>Uploaded?</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for dsu in  object_list  %}
-            <tr>
-                {% if dsu.trained_by.first_name == "" or  dsu.trained_by.last_name == "" %}
-                <td>
-                <a class="article-title" href="#">
-                  {{dsu.trained_by}}
-                </td>
 
-                {% else %}
-                <td>
-                <a class="article-title" href="#">
-                  {{dsu.trained_by.first_name}},{{dsu.trained_by.last_name}}
-                </td>
-                {% endif %}
-                <td>
-                    <a class="text-dark  text-decoration-none" 
-                    data-toggle="tooltip" title="{{  dsu.description  }}"
-                    href="{{ category.get_absolute_url }}">
-                    {{  dsu.category  }}
-                    </a>
-                </td>
-                <td>{{dsu.task}}</td>
-                <td>{{dsu.plan}}</td>
-                <td>{{dsu.challenge}}</td>
-                <td>{{dsu.created_at|date:"F d, Y"}}</td>
-                <td>{{dsu.updated_at|date:"F d, Y"}}</td>
-                <td>{{dsu.uploaded}}</td>
-            </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</section>
+<section id="data_training">
+    <div class="data_training text-center">
+        <h3 class="title">DAILY/WEEKLY EMPLOYEE ASSESSMENTS</h3>
+        <a href="{% url 'management:assess'%}" class="btn btn-primary btn-sm"
+        >NEXT CLIENT/STAFF
+      </a>
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <p class="p text-center"> </p>
+
+        <p class="gi">
+          Summary of what clients/staff have accomplished on a daily/weekly basis.Gives the management a chance to deal with the challenges faced by clients/staff.
+      </p>
+        <div class="row text-center">
+          {% for dsu in  object_list  %}
+            <div class="col-md-4" id="gi">
+                <div class="card">
+                  <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                    <div class="card-body">
+                      {% if dsu.trained_by.first_name == "" or  dsu.trained_by.last_name == "" %}
+                        {{dsu.trained_by}} | {{dsu.created_at|date:"F d, Y"}}
+                      {% else %} 
+                        {{dsu.trained_by.first_name}},{{dsu.trained_by.last_name}} | {{dsu.created_at|date:"F d, Y"}}
+                      {% endif %}
+                        <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                        <p><b>Achievements</b></p>
+                        {{dsu.task}}
+                        <p class="gi">
+                          {{dsu.task}}
+                        </p>
+                        <hr/>
+                        <p><b>Staff/Client Plan</b></p>
+                        <p class="gi">
+                          {{dsu.plan}}
+                        </p>
+                        <hr/>
+                        <p><b>Challeges</b></p>
+                        <p class="gi">
+                          {{dsu.challenge}}
+                        </p>
+                        
+                    </div>
+                  </div>
+               </div>
+              {%endfor%}
+        </div>
+    </div>
+    </section>
 {% endblock content %}
+
+
+
+

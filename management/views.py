@@ -523,9 +523,6 @@ class TaskDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         return False
 
 #=============================EMPLOYEE ASSESSMENTS========================================
-
-
-
 @login_required
 def assess(request):
     if request.method== "POST":
@@ -540,4 +537,4 @@ def assess(request):
 class AssessListView(ListView):
   queryset=DSU.objects.filter(type='Staff').order_by('-created_at')
   #queryset=DSU.objects.all()
-  template_name='management//hr/assessment.html'
+  template_name='management/hr/assessment.html'
