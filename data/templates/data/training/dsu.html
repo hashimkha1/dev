@@ -2,9 +2,15 @@
 
 <section id="data_training">
     <div class="data_training text-center">
-        <h3 class="title"> WELCOME BACK {{user.first_name|upper }} </h3>
+        <h3 class="title">DAILY STAND-UP SESSION</h3>
+        <a href="{% url 'data:dsu_entry'%}" class="btn btn-primary btn-sm"
+        >NEXT CLIENT/STAFF
+      </a>
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <p class="p text-center"> </p>
+
         <p class="gi">
-          An overview of tools that will be used to deliver the project.In this project we will use Tableau for reporting,Alteryx for ETL and SQL for database.
+          Summary of what clients/staff have accomplished on a daily/weekly basis.Gives the management a chance to deal with the challenges faced by clients/staff.
       </p>
         <div class="row text-center">
           {% for dsu in  object_list  %}
@@ -14,7 +20,7 @@
                     <div class="card-body">
                       {% if dsu.trained_by.first_name == "" or  dsu.trained_by.last_name == "" %}
                         {{dsu.trained_by}} | {{dsu.created_at|date:"F d, Y"}}
-                      {% else %}
+                      {% else %} 
                         {{dsu.trained_by.first_name}},{{dsu.trained_by.last_name}} | {{dsu.created_at|date:"F d, Y"}}
                       {% endif %}
                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
@@ -41,7 +47,6 @@
         </div>
     </div>
     </section>
-
 {% endblock content %}
 
 
