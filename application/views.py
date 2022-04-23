@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from multiprocessing import context
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin,UserPassesTestMixin
@@ -39,11 +40,15 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
 
 def applicantlist(request):
-    #applicants=User.objects.filter(category = 1).order_by('-date_joined')
+    applications=Application.objects.filter().order_by('-application_date')
     applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     #applicants=User.objects.filter(category = 2 or is_applicant=True).order_by('-date_joined')
+    context={
+        'applications':applications,
+        'applicants': applicants
+    }
     #return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
-    return render(request, 'application/applications/applicants.html', {'applicants': applicants})
+    return render(request, 'application/applications/applicants.html', context)
 
 '''
 class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):

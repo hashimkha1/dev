@@ -43,6 +43,28 @@
         -->
       </tr>
         {% endfor %}
+      <p>Old List</p>
+        {% for applicant in applications %}
+        <tr>
+          <td>{{applicant.id}}</td>
+          <td>{{applicant.application_date|date:"n/d/Y"}}</td>
+          <!--<td>{{applicant.date_joined|date:"F d, Y"}}</td>-->
+          <td>{{applicant.first_name}}</td>
+          <td>{{applicant.last_name}}</td>
+          <td>{{applicant.phone}}</td>
+          <td>{{applicant.country}}</td>
+          <!-- 
+          <td>
+            <button>
+              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+            </button>
+          </td>
+         <td><h4 ><a href="{%url 'application:applicant-delete' applicant.id %}">❌</H4></a></p></td>  
+        -->
+      </tr>
+        {% endfor %}
       </tbody>
     </table>
   </div>
