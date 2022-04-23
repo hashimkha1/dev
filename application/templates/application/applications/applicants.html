@@ -1,11 +1,10 @@
 {%extends "main/base_templates/application_base.html"%} {%load crispy_forms_tags%}
 {%block content %}
-  
   <section id="career">
     <div class="career text-center">
+      <h2>All Applicants</h2>
     <h2>All Applicants</h2>
     <div class="table-responsive">
-     
       <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
@@ -43,31 +42,57 @@
         -->
       </tr>
         {% endfor %}
-      <p>Old List</p>
-        {% for applicant in applications %}
-        <tr>
-          <td>{{applicant.id}}</td>
-          <td>{{applicant.application_date|date:"n/d/Y"}}</td>
-          <!--<td>{{applicant.date_joined|date:"F d, Y"}}</td>-->
-          <td>{{applicant.first_name}}</td>
-          <td>{{applicant.last_name}}</td>
-          <td>{{applicant.phone}}</td>
-          <td>{{applicant.country}}</td>
-          <!-- 
-          <td>
-            <button>
-              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
-              >Download
-            </a>
-            </button>
-          </td>
-         <td><h4 ><a href="{%url 'application:applicant-delete' applicant.id %}">❌</H4></a></p></td>  
-        -->
-      </tr>
-        {% endfor %}
       </tbody>
     </table>
   </div>
   </div>
+</section>
+
+<section id="career">
+  <div class="career text-center">
+  <h2>OLD LIST</h2>
+  <div class="table-responsive">
+   
+    <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
+    <thead class="border-bottom font-weight-bold">
+      <tr>
+        <th>Applicant_Id</th>
+        <th>Application Date</th>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Phone Number</th>
+        <th>Country</th>
+        <!--
+          <th>Resume</th>
+          <th>Delete</th>
+        -->
+      </tr>
+    </thead>
+    <tbody>
+      {% for applicant in applications %}
+      <tr>
+        <td>{{applicant.id}}</td>
+        <td>{{applicant.application_date|date:"n/d/Y"}}</td>
+        <!--<td>{{applicant.date_joined|date:"F d, Y"}}</td>-->
+        <td>{{applicant.first_name}}</td>
+        <td>{{applicant.last_name}}</td>
+        <td>{{applicant.phone}}</td>
+        <td>{{applicant.country}}</td>
+        <!-- 
+        <td>
+          <button>
+            <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
+            >Download
+          </a>
+          </button>
+        </td>
+       <td><h4 ><a href="{%url 'application:applicant-delete' applicant.id %}">❌</H4></a></p></td>  
+      -->
+    </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</div>
 </section>
 {%endblock content %}
