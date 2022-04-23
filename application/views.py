@@ -12,9 +12,11 @@ from .forms import (ApplicantForm, PolicyForm, RatingForm, ReportingForm)
 from accounts.forms import (UserForm)
 from .models import (Application, Policy, Rated,Reporting)
 from .utils import (posts, alteryx_list,dba_list,tableau_list)
+from django.conf import settings
+from django.contrib.auth import get_user_model
 
-#from .filters import RatingFilter
-# Create your views here.
+#User=settings.AUTH_USER_MODEL
+User = get_user_model()
 
 def apply(request):
     return redirect('accounts:join')
@@ -35,11 +37,15 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
     def get_success_url(self):
         return reverse('applicant-list')
 
-'''
-def applicantlist(request):
-    applicants=CustomerUser.objects.filter(category = 2).order_by('-date_joined')
-    return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
 
+def applicantlist(request):
+    #applicants=User.objects.filter(category = 1).order_by('-date_joined')
+    applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
+    #applicants=User.objects.filter(category = 2 or is_applicant=True).order_by('-date_joined')
+    #return render(request, 'accounts/applications/applicantlist.html', {'applicants': applicants})
+    return render(request, 'application/applications/applicants.html', {'applicants': applicants})
+
+'''
 class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
     model=Application
     success_url='/application/applications/applicants.html'
