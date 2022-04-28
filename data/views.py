@@ -11,7 +11,7 @@ from .forms import InterviewForm,DSUForm #, UploadForm
 
 from .models import (
                         Interviews, FeaturedCategory ,FeaturedSubCategory,
-                        FeaturedActivity,ActivityLinks,DSU #, DocUpload
+                        FeaturedActivity,ActivityLinks,DSU,Job_Tracker #, DocUpload
                     )
 from .filters import InterviewFilter,BitrainingFilter #,UserFilter
 
@@ -385,3 +385,47 @@ def table_activity_view(request):
 class DSUListView(ListView):
   queryset=DSU.objects.all().order_by('-created_at') 
   template_name='data/training/dsu.html'
+#=============================Job===================
+@method_decorator(login_required, name='dispatch')
+class JobCreateView(LoginRequiredMixin, CreateView):
+    model=Job_Tracker
+    success_url="/data/job_tracker"
+    fields=['position','recruiter','vendor_phone','primary_tool','secondary_tool',
+    		'job_location','offer','description','status','updated_resume']
+
+    def form_valid(self,form):
+        form.instance.created_by=self.request.user
+        return super().form_valid(form)  
+
+@method_decorator(login_required, name='dispatch')
+class JobListView(ListView):
+    queryset=Job_Tracker.objects.all()
+    template_name='data/interview/job_tracker.html'
+    ordering=['-created_at']
+
+
+def userjobtracker(request, user=None, *args, **kwargs):
+    user = get_object_or_404(User, username=kwargs.get('username'))
+    jobs=Job_Tracker.objects.all().filter(created_by=user).order_by('-created_at')
+    num =jobs.count()
+    #my_time=jobs.aggregate(Assigned_Time=Avg('time')) 
+    #Used=jobs.aggregate(Used_Time=Sum('duration'))  
+    #Usedtime=Used.get('Used_Time')
+    Usedtime=1
+    #plantime=my_time.get('Assigned_Time')
+    plantime=1
+    try:
+        delta=round(plantime-Usedtime)
+    except (TypeError, AttributeError):
+        delta=0
+        return render(request, 'testing/job_tracker.html')
+    context = {
+                'jobs': jobs,
+                'num':num,
+                'plantime': plantime,
+                'Usedtime':Usedtime,
+                'delta':delta
+                
+              }
+              
+    return render(request, 'data/interview/userjobtracker.html', context)

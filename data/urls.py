@@ -10,7 +10,7 @@ from .views import (
                     FeaturedCategoryListView,DSUCreateView,DSUListView,
                     InterviewDetailView ,InterviewUpdateView ,
                     InterviewDeleteView,InterviewListView,InterviewCreateView,
-                    ClientInterviewListView,
+                    JobCreateView,JobListView
                     #TrackCreateView, TrackDeleteView, TrackDetailView,
                     #TrackListView, InterviewUpdateView #,UserTrackListView
                     )
@@ -51,6 +51,11 @@ urlpatterns = [
     #----------------------DELETING----------------------------------------------------
     path('interview/<int:pk>/delete', InterviewDeleteView.as_view(template_name='data/interview/interview_confirm_delete.html'), name='delete-interview'),
 
+    #=============================JOB VIEWS=====================================
+	path('newjob/', JobCreateView.as_view(template_name='data/interview/interview_form.html'), name='job-create'),
+	path('job_tracker/', JobListView.as_view(), name='job-list'),
+	path('job_tracker/<str:username>/', views.userjobtracker, name='userjoblist'),
+	
     # TRAINING SECTION
     #----------------------Creation----------------------------------------------------
     path('category/new', FeaturedCategoryCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='featuredcategory'),

@@ -439,3 +439,54 @@ class DSU(models.Model):
 
     def __str__(self):
         return self.category
+
+
+class Job_Tracker(models.Model):
+    # Job Status.
+    screening_call = 'screening call'
+    first_interview = '1st interview'
+    second_interview = '2nd interview'
+    third_interview = '3rd interview'
+    Other = 'Other'
+    STATUS_CHOICES = [
+        (screening_call , 'screening call'),
+        (first_interview , '1st interview'),
+        (second_interview , '2nd interview'),
+        (third_interview , '3rd interview' ),      
+        (Other , 'Other' ),   
+    ]
+    created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    position=models.CharField(max_length=100,blank=True, null=True)
+    recruiter=models.CharField(max_length=100,blank=True, null=True)
+    vendor_phone=models.CharField(max_length=100,blank=True, null=True)
+    primary_tool=models.CharField(max_length=100,blank=True, null=True)
+    secondary_tool=models.CharField(max_length=100,blank=True, null=True)
+    job_location=models.CharField(max_length=100,blank=True, null=True)
+    offer = models.DecimalField(
+            max_digits=10, 
+            error_messages={
+                "name":{
+                   ' max_length':("The earning must be between 0 and 4999.99")
+                }
+            },
+            decimal_places=2 
+            )
+    status= models.CharField(
+        max_length=25,
+        choices=STATUS_CHOICES,
+        default='other'
+    )
+    description=models.TextField()
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    updated_resume=models.FileField(default="None",upload_to='training/docs/')
+    is_active=models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "jobs"
+
+    def get_absolute_url(self):
+        return reverse("jobtracker")
+
+    def __str__(self):
+        return self.position
