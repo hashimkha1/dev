@@ -54,6 +54,7 @@ urlpatterns = [
     path('tasks/', TaskListView.as_view(), name='tasks'),
     #path('usertasks/', UserListView.as_view(), name='usertask'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
+     path('payslip/<str:username>/',views.payslip, name='user_payslip'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),

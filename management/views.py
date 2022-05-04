@@ -377,6 +377,8 @@ def usertask(request, user=None, *args, **kwargs):
     #paybalance=round(bal,2)
     #balance=paybalance.quantize(Decimal('0.01'))
     #salary = [task.pay for pay in Task.objects.all().values()]
+    computer_maintenance=500
+    food_accomodation=1000
     deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
     delta=deadline_date-date.today()
     time_remaining=delta.days
@@ -397,12 +399,17 @@ def usertask(request, user=None, *args, **kwargs):
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
-
     try:
         paybalance=Decimal(GoalAmount)-Decimal(total_pay)
     except (TypeError, AttributeError):
         paybalance=0
     
+    loan=Decimal(total_pay)*Decimal('0.2')
+
+    try:
+        net=total_pay-computer_maintenance-food_accomodation-loan
+    except (TypeError, AttributeError):
+        net=total_pay-computer_maintenance-food_accomodation
     try:
         pointsbalance=Decimal(MaxPoints)-Decimal(Points)
     except (TypeError, AttributeError):
@@ -419,13 +426,58 @@ def usertask(request, user=None, *args, **kwargs):
                 'paybalance':paybalance,
                 'pointsbalance':pointsbalance,
                 'time_remaining':time_remaining,
-                'total_pay':total_pay
+                'total_pay':total_pay,
+                'loan':loan,
+                'net':net
               }
 
     if request.user == employee:
         return render(request, 'management/daf/usertasks.html', context)
     elif request.user.is_superuser:
         return render(request, 'management/daf/usertasks.html', context)
+    else:
+        raise Http404("Login/Wrong Page: Contact Admin Please!")
+
+def payslip(request, user=None, *args, **kwargs):
+    computer_maintenance=500
+    food_accomodation=1000
+    deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
+    employee = get_object_or_404(User, username=kwargs.get('username'))
+    tasks=Task.objects.all().filter(employee=employee)
+    earning=tasks.aggregate(Your_Total_Pay=Sum('mxearning'))
+    mxearning=tasks.aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
+    pay=earning.get('Your_Total_Pay')
+    GoalAmount=mxearning.get('Your_Total_AssignedAmt')
+    pay=earning.get('Your_Total_Pay')
+    total_pay = 0
+    for task in tasks:
+        total_pay = total_pay + task.get_pay
+    try:
+        paybalance=Decimal(GoalAmount)-Decimal(total_pay)
+    except (TypeError, AttributeError):
+        paybalance=0
+    loan=Decimal(total_pay)*Decimal('0.2')
+    try:
+        net=total_pay-computer_maintenance-food_accomodation-loan
+    except (TypeError, AttributeError):
+        net=total_pay-computer_maintenance-food_accomodation
+    context= {
+                'tasks':tasks,
+                'deadline_date':deadline_date,
+                'pay':pay,
+                'computer_maintenance':computer_maintenance,
+                'food_accomodation':food_accomodation,
+                'GoalAmount':GoalAmount,
+                'paybalance':paybalance,
+                'total_pay':total_pay,
+                'loan':loan,
+                'net':net
+              }
+
+    if request.user == employee:
+        return render(request, 'management/daf/payslip.html', context)
+    elif request.user.is_superuser:
+        return render(request, 'management/daf/payslip.html', context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
     

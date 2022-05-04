@@ -1,0 +1,42 @@
+{%extends "main/base_templates/base.html"%} {% block content %}
+{% load static %}
+{% block title %}
+<!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
+{% endblock %}
+<div class="description">
+  <img
+    src="\media\banner\banner.jpg"
+    class="d-block img-fluid"
+    width="1500px"
+    alt="banner"
+  />
+  <div class="row text-justify vertline" style="border-top: 1px solid">
+    <div class="col-md-6" style="border-right: 1px solid">
+      <p class="text-center"><b>PAYMENT</b></p>
+    </div>
+    <div class="col-md-6">
+      <p class="text-center"><b>Payment Summary:</b></p>
+      <p>
+        <b>Gross Pay:</b>-----------------------------------------------{{total_pay}}
+      </p>
+      <p>
+        <b>Training Loan:</b>--------------------------------------------{{loan}}
+      </p>
+      <p>
+        <b>Computer Maintenance:</b>----------------------------------{{computer_maintenance}}
+      </p>
+      <p>
+        <b>Accomodation & Food:</b>------------------------------------{{food_accomodation}}
+      </p>
+      <p>
+        <b>Net Pay:</b>-----------------------------------------------Ksh.{{net}}
+      </p>
+      
+    </div>
+    
+  </div>
+  <div class="row text-justify vertline" style="border-top: 1px solid"></div>
+</div>
+  </div>
+</section>
+{% endblock content %}

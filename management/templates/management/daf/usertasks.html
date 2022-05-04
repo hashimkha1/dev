@@ -10,7 +10,7 @@
 
 <div class="data_training text-center">
   <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
-  <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities this month</p>
+  <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p>
 <div class="container-fluid mr-auto">
       <div class="row text-center">
                     <div class="col-md-2" id="bada">
@@ -49,18 +49,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="col-md-2" id="bada">
-                      <div class="card">
-                      <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-                        <div class="card-body">
-                          <h5><b>Duration</b></h5>
-                          <hr/>
-                          <i><h6>{{time_remaining}} Days</h6></i>
-                          <hr/>
-                          <i><p>{{time_remaining}} days left to your next pay</p></i>
-                        </div>
-                      </div>
-                    </div>
+
                     <div class="col-md-2" id="bada">
                       <div class="card">
                       <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
@@ -70,6 +59,22 @@
                           <i><h6>{{Points}}/{{MaxPoints}} Points</h6></i>
                           <hr/>
                           <i><p>Completed {{Points}} with {{pointsbalance}} left </p></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-2" id="bada">
+                      <div class="card">
+                      <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                        <div class="card-body">
+                          <h5><b>Net Income</b></h5>
+                          <hr/>
+                          <i><h6>Ksh.{{net}}</h6></i>
+                          <hr/>
+                          <i><p>Thank You!
+                            
+                           </p></i>
+                           <a href="{% url 'management:user_payslip' user.username %}">More</a>
                         </div>
                       </div>
                     </div>
