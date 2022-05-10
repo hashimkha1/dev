@@ -133,6 +133,9 @@ class UserDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 
+def PasswordResetCompleteView(request):
+    return render(request, 'accounts/registration/password_reset_complete.html')
+    
 ''' 
 class PasswordsChangeView(PasswordChangeView):
     #model=CustomerUser
