@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = False
+DEBUG = True
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -32,6 +32,7 @@ AUTHENTICATION_BACKENDS = (
 
 # Application definition
 INSTALLED_APPS = [
+    #'django_crontab',
     'testing.apps.TestingConfig',
     'main.apps.MainConfig',
     'users.apps.UsersConfig',
@@ -57,8 +58,16 @@ INSTALLED_APPS = [
     'mathfilters',
     'mptt',
     'django_filters',
+    #'dbbackup',
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+#DBBACKUP_STORAGE='django.core.files.storage.FileSystemStorage'
+#DBBACKUP_STORAGE_OPTIONS={'location':BASE_DIR/'backup'}
+#DBBACKUP_STORAGE_OPTIONS={'location':'/codapp/backup'}
+
+CRONJOBS=[
+    ('*1****','coda_project.cron.my_backup')
+]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -225,13 +234,29 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'main:layout'
 LOGIN_URL = 'account-login'
 
+EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend'
+EMAIL_FILE_PATH=BASE_DIR + '/emails'
 
+''' 
 EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
-EMAIL_HOST_USER=os.environ.get('EMAIL_USER')
-EMAIL_HOST_PASS=os.environ.get('EMAIL_PASS')
+EMAIL_HOST_USER=os.environ.get('EMAIL_USER') # 'coachofanalytics@gmail.com' 
+#hr.department@gmail.com
+# Wherever 3rd party application to make this 
+EMAIL_HOST_PASS= os.environ.get('EMAIL_PASS') #'MANAGER@2033' 
+#DEFAULT_FROM_EMAIL = 'coachofanalytics@gmail.com'
+#SERVER_EMAIL = 'coachofanalytics@gmail.com'
+'''
+# Email Backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+
 
 AWS_S3_REGION_NAME = 'us-east-2' #change to your region
 AWS_S3_SIGNATURE_VERSION = 's3v4'
@@ -250,24 +275,3 @@ DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 #STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
-''' 
-if os.getcwd()=='/app':
-    SECURE_PROXY_SSL_HEADER=('HTTP_X_FORWARDED_PROTO', 'https')
-    SECURE_SSL_REDIRECT=True
-    DEBUG=False
-
-
-if os.getcwd() == '/app':
-    import dj_database_url
-    db_from_env = dj_database_url.config(conn_max_age=500)
-    DATABASES['default'].update(db_from_env)
-
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    ALLOWED_HOSTS = ['APP_NAME.herokuapp.com']
-    DEBUG = True
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(_file_)))
-
-
-
-
-    '''
