@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-                    UserUpdateView,UserDeleteView,
+                    UserUpdateView,UserDeleteView, #PasswordsChangeView,
                     ClientUpdateView,ClientDeleteView,ClientDetailView,
                     TrackCreateView, TrackDeleteView, TrackDetailView,
                     TrackListView, TrackUpdateView #,UserTrackListView
@@ -12,6 +12,7 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('join/', views.join, name='join'),
     path('login/', views.login_view, name='account-login'),
+    #path('changepassword/',PasswordsChangeView.as_view(template_name='accounts/registration/password_Change_Form.html'), name='password_Change_Form'),
     path('profile/', views.profile, name='account-profile'),
     path('users/', views.users, name='accounts-users'),
     path('user/<int:pk>/update/', UserUpdateView.as_view(template_name='accounts/admin/user_update_form.html'), name='user-update'),

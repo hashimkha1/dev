@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.http import Http404
 from django.urls import reverse, reverse_lazy
+#from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
+#from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
@@ -130,10 +132,28 @@ class UserDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-    
-    
-#================================CLIENT SECTION================================
 
+''' 
+class PasswordsChangeView(PasswordChangeView):
+    #model=CustomerUser
+    from_class=PasswordChangeForm
+    template_name='accounts/registration/password_change_form.html'
+    success_url=reverse_lazy('accounts:account-login')
+
+class PasswordsSetView(PasswordChangeView):
+    #model=CustomerUser
+    from_class=SetPasswordForm
+    success_url=reverse_lazy('accounts:account-login')
+
+def reset_password(email, from_email, template='registration/password_reset_email.html'):
+    """
+    Reset the password for all (active) users with given E-Mail adress
+    """
+    form = PasswordResetForm({'email': email})
+    #form = PasswordResetForm({'email':'sample@sample.com'})
+    return form.save(from_email=from_email, email_template_name=template)
+''' 
+#================================CLIENT SECTION================================
 def clientlist(request):
     clients=CustomerUser.objects.filter(category = 3).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
