@@ -148,7 +148,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CODA_DEV',# Name of Database
         'USER':'postgres',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'PASSWORD': os.environ.get('POSTGRESSPASS'),
         'HOST': 'localhost',
     }
 }
@@ -169,7 +169,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CODA_DEV',# Name of Database
         'USER':'CODA_DEV',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+        'PASSWORD': os.environ.get('POSTGRESSPASS'),
         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
         'PORT': '5432'
     }
@@ -237,18 +237,7 @@ LOGIN_URL = 'account-login'
 EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH=BASE_DIR + '/emails'
 
-''' 
-EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
-EMAIL_HOST_USER=os.environ.get('EMAIL_USER') # 'coachofanalytics@gmail.com' 
-#hr.department@gmail.com
-# Wherever 3rd party application to make this 
-EMAIL_HOST_PASS= os.environ.get('EMAIL_PASS') #'MANAGER@2033' 
-#DEFAULT_FROM_EMAIL = 'coachofanalytics@gmail.com'
-#SERVER_EMAIL = 'coachofanalytics@gmail.com'
-'''
+
 # Email Backend
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com"
