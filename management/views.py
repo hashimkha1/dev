@@ -439,44 +439,78 @@ def usertask(request, user=None, *args, **kwargs):
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 def payslip(request, user=None, *args, **kwargs):
-    computer_maintenance=500
-    food_accomodation=1000
     deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
+    today=date(date.today().year, date.today().month , date.today().day)
+    year=date.today().year
+    month=date.today().month
+    day=date.today().day
+
     employee = get_object_or_404(User, username=kwargs.get('username'))
     tasks=Task.objects.all().filter(employee=employee)
-    earning=tasks.aggregate(Your_Total_Pay=Sum('mxearning'))
     mxearning=tasks.aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
-    pay=earning.get('Your_Total_Pay')
     GoalAmount=mxearning.get('Your_Total_AssignedAmt')
-    pay=earning.get('Your_Total_Pay')
+    points=tasks.aggregate(Your_Total_Points=Sum('point'))
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
-    try:
-        paybalance=Decimal(GoalAmount)-Decimal(total_pay)
-    except (TypeError, AttributeError):
-        paybalance=0
+
+    # Deductions
     loan=Decimal(total_pay)*Decimal('0.2')
+    computer_maintenance=500
+    food_accomodation=1000
+    health=500
+    laptop_saving=1000
+    total_deduction=Decimal(loan)+Decimal(computer_maintenance)+Decimal(food_accomodation)+Decimal(health)+Decimal(laptop_saving)
+
+    # Bonus
+    Lap_Bonus=500
+    if points.get('Your_Total_Points')==None:
+        pointsearning=0
+    else:
+        pointsearning=points.get('Your_Total_Points')
+    
+    Night_Bonus=Decimal(total_pay)*Decimal('0.02')
+    if month in (12,1) and day in (24,25,26,31,1,2):
+        holidaypay=3000.00
+    else:
+        holidaypay=0.00
+    EOM=0
+    EOQ=0
+    EOY=0
+    yearly=12000
+    total_bonus=Decimal(pointsearning)+Decimal(holidaypay)+Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+Night_Bonus
+    # Net Pay
     try:
-        net=total_pay-computer_maintenance-food_accomodation-loan
+        net=total_pay-total_bonus-total_deduction
     except (TypeError, AttributeError):
-        net=total_pay-computer_maintenance-food_accomodation
+        net=total_pay
+        
     context= {
-                'tasks':tasks,
-                'deadline_date':deadline_date,
-                'pay':pay,
+                #deductions
+                'laptop_saving':laptop_saving,
                 'computer_maintenance':computer_maintenance,
                 'food_accomodation':food_accomodation,
-                'GoalAmount':GoalAmount,
-                'paybalance':paybalance,
-                'total_pay':total_pay,
+                'health':health,
                 'loan':loan,
+                'total_deduction':total_deduction,
+                #bonus
+                'Night_Bonus':Night_Bonus,
+                'pointsearning':pointsearning,
+                'holidaypay':holidaypay,
+                'yearly':yearly,
+                #General
+                'tasks':tasks,
+                'deadline_date':deadline_date,
+                'today':today,
+                'total_pay':total_pay,
                 'net':net
               }
 
     if request.user == employee:
+        #return render(request, 'management/daf/paystub.html', context)
         return render(request, 'management/daf/payslip.html', context)
     elif request.user.is_superuser:
+        #return render(request, 'management/daf/paystub.html', context)
         return render(request, 'management/daf/payslip.html', context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")

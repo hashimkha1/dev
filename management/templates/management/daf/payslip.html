@@ -3,40 +3,128 @@
 {% block title %}
 <!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
 {% endblock %}
-<div class="description">
-  <img
-    src="\media\banner\banner.jpg"
-    class="d-block img-fluid"
-    width="1500px"
-    alt="banner"
-  />
-  <div class="row text-justify vertline" style="border-top: 1px solid">
-    <div class="col-md-6" style="border-right: 1px solid">
-      <p class="text-center"><b>PAYMENT</b></p>
-    </div>
-    <div class="col-md-6">
-      <p class="text-center"><b>Payment Summary:</b></p>
-      <p>
-        <b>Gross Pay:</b>-----------------------------------------------{{total_pay}}
-      </p>
-      <p>
-        <b>Training Loan:</b>--------------------------------------------{{loan}}
-      </p>
-      <p>
-        <b>Computer Maintenance:</b>----------------------------------{{computer_maintenance}}
-      </p>
-      <p>
-        <b>Accomodation & Food:</b>------------------------------------{{food_accomodation}}
-      </p>
-      <p>
-        <b>Net Pay:</b>-----------------------------------------------Ksh.{{net}}
-      </p>
-      
-    </div>
-    
-  </div>
-  <div class="row text-justify vertline" style="border-top: 1px solid"></div>
+<div>
+    <img src="\media\banner\banner.jpg" class="d-block img-fluid" width="1500px" alt="banner" />
 </div>
-  </div>
-</section>
+
+<div class="container mt-5 mb-5">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="text-center lh-1 mb-2">
+                <h6 class="fw-bold">Payslip</h6> <span class="fw-normal">Payment slip for the month of {{deadline_date|date:"F d,Y"}}</span>
+              </div>
+            <div class="d-flex justify-content-end"> <span>Working Branch:MAKUTANO</span> </div>
+            <div class="row">
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div> <span class="fw-bolder">EMP Code</span> <small class="ms-3">CODA0274</small> </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div> <span class="fw-bolder">EMP Name</span> <small class="ms-3"> {{user.first_name|upper }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div> <span class="fw-bolder">Mode of Pay</span> <small class="ms-3">MPESA</small> </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div> <span class="fw-bolder">Designation</span> <small class="ms-3">DATA ANALYST(DA)
+                                </small> </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div> <span class="fw-bolder">Ac No./Phone No.</span> <small class="ms-3">{{user.phone|upper}}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="mt-4 table table-bordered">
+                    <thead class="bg-dark text-white">
+                        <tr>
+                            <th scope="col">Earnings</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Deductions</th>
+                            <th scope="col">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Total Earnings</th>
+                            <td>{{total_pay}}</td>
+                            <td>Training Loan</td>
+                            <td>{{loan}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Points Earnings</th>
+                            <td>{{pointsearning}}</td>
+                            <td>FA</td>
+                            <td>{{food_accomodation}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">EOM</th>
+                            <td>0.00</td>
+                            <td>CM</td>
+                            <td>{{computer_maintenance}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">EOQ</th>
+                            <td>0.00 </td>
+                            <td>Health Care</td>
+                            <td>{{health}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">EOY</th>
+                            <td>0.00 </td>
+                            <td>LS</td>
+                            <td>{{laptop_saving}}</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Laptop Bonus</th>
+                            <td>0.00</td>
+
+                        </tr>
+
+                        <tr>
+                            <th scope="row">Holiday Wages</th>
+                            <td>{{holidaypay}}</td>
+                            <td colspan="6"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Night Allowance</th>
+                            <td>{{Night_Bonus}}</td>
+                            <td colspan="2"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Retirement Yearly Package</th>
+                            <td>{{yearly}}</td>
+                            <td colspan="2"></td>
+                        </tr>
+
+                        <tr class="border-top">
+                            <th scope="row">Total Earning</th>
+                            <td>{{net}}</td>
+                            <td>Total Deductions</td>
+                            <td>{{total_deduction}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="row">
+                <div class="col-md-4"> <br> <span class="fw-bold">Net Pay : {{net}}</span> </div>
+                <div class="border col-md-8">
+                    <div class="d-flex flex-column"> <span>In Words</span> <span>Translate</span> </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <div class="d-flex flex-column mt-2"> <span class="fw-bolder">For CODA</span> <span
+                        class="mt-4">Authorised Signatory</span> </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock content %}
