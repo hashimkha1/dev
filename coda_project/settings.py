@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 import django_heroku
+import redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -58,6 +59,8 @@ INSTALLED_APPS = [
     'mathfilters',
     'mptt',
     'django_filters',
+    "django_celery_beat",
+    "django_celery_results",
     #'dbbackup',
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -162,6 +165,14 @@ DATABASES = {
 }
 
 '''
+
+CELERY_BROKER_URL = redis.from_url(os.environ.get("REDISCLOUD_URL"))
+CELERY_RESULT_BACKEND = os.environ.get("REDISCLOUD_URL")
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS=("codablog.task")
+
 import dj_database_url
 
 DATABASES = {
