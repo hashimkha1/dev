@@ -166,6 +166,14 @@ DATABASES = {
 
 '''
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
+    }
+}
+
 CELERY_BROKER_URL = redis.from_url(os.environ.get("REDISCLOUD_URL"))
 CELERY_RESULT_BACKEND = os.environ.get("REDISCLOUD_URL")
 CELERY_ACCEPT_CONTENT = ['application/json']
@@ -173,22 +181,22 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IMPORTS=("codablog.task")
 
-import dj_database_url
+# import dj_database_url
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_DEV',# Name of Database
-        'USER':'CODA_DEV',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-        'PORT': '5432'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_DEV',# Name of Database
+#         'USER':'CODA_DEV',
+#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 
 
-db_from_env=dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+# db_from_env=dj_database_url.config(conn_max_age=600)
+# DATABASES['default'].update(db_from_env)
 
 
 # Password validation
