@@ -238,13 +238,24 @@ EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH=BASE_DIR + '/emails'
 
 
-# Email Backend
+# Gmail Email Backend Account
+''' 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.gmail.com" 
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER") "info@codanalytics.net"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
+'''
+
+# Other Email Backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.privateemail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'info@codanalytics.net'
+EMAIL_HOST_PASSWORD ='@ZK123sebe'
+
 
 
 AWS_S3_REGION_NAME = 'us-east-2' #change to your region
