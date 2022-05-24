@@ -261,8 +261,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "mail.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER =os.environ.get("EMAIL_USER") 
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_HOST_USER ="info@codanalytics.net" #os.environ.get("EMAIL_USER") 
+EMAIL_HOST_PASSWORD ="@ZK123sebe" #os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
