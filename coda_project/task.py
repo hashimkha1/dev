@@ -1,9 +1,9 @@
-from celery import task
+from celery import shared_task
 
 from management.models import Task, TaskHistory
 
 
-@task(name='task_history')
+@shared_task(name="task_history")
 def dump_data():
     try:
         bulk_object = []

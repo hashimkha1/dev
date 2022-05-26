@@ -179,7 +179,7 @@ CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_IMPORTS=("codablog.task")
+CELERY_IMPORTS=("coda_project.task")
 
 from celery.schedules import crontab
 
