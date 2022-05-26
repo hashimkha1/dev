@@ -18,9 +18,8 @@ app.conf.broker_url = BASE_REDIS_URL
 
 
 app.conf.beat_schedule = {
-    'add-every-10-seconds': {
+    'run_on_every_1st': {
         'task': 'task_history',
-        # 'schedule': crontab(day_of_month=1, hour=7, minute=0),
-        'schedule': crontab(minute=1),
+        'schedule': crontab(0, 0, day_of_month='1'),
     },
 }
