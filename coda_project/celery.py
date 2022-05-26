@@ -16,12 +16,11 @@ app.autodiscover_tasks()
 
 app.conf.broker_url = BASE_REDIS_URL
 
-# app.conf.beat_scheduler = 'django_celery_beat.schedulers.DatabaseScheduler'
-
 
 app.conf.beat_schedule = {
     'add-every-10-seconds': {
         'task': 'task_history',
+        # 'schedule': crontab(day_of_month=1, hour=7, minute=0),
         'schedule': crontab(minute=1),
     },
 }
