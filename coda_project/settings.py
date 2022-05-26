@@ -174,8 +174,8 @@ DATABASES = {
     }
 }
 
-CELERY_BROKER_URL = redis.from_url(os.environ.get("REDISCLOUD_URL"))
-CELERY_RESULT_BACKEND = os.environ.get("REDISCLOUD_URL")
+CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
+CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
