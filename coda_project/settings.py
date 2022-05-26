@@ -58,6 +58,8 @@ INSTALLED_APPS = [
     'mathfilters',
     'mptt',
     'django_filters',
+    "django_celery_beat",
+    "django_celery_results",
     #'dbbackup',
 ]
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -283,3 +285,19 @@ DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 #STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
+CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
+CELERY_RESULT_BACKEND = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS=("coda_project.task")
+
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE = {
+    'run_on_every_1st': {
+        'task': 'task_history',
+        #'schedule': crontab(0, 0, day_of_month='1'),
+        'schedule': crontab(),
+    },
+}
