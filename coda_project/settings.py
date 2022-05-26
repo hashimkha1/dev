@@ -181,6 +181,15 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IMPORTS=("codablog.task")
 
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE = {
+    'run_on_every_1st': {
+        'task': 'task_history',
+        'schedule': crontab(0, 0, day_of_month='1'),
+    },
+}
+
 # import dj_database_url
 
 # DATABASES = {
