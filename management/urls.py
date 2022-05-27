@@ -3,6 +3,7 @@ from . import views
 from .views import (
                         TaskListView,TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
+                        TaskHistoryView,
                         UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
@@ -50,11 +51,13 @@ urlpatterns = [
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
     path('benefits/', views.benefits, name='benefits'),
+
     #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
-    #path('usertasks/', UserListView.as_view(), name='usertask'),
+    path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
+    #path('historytask/<str:username>/',views.historytask, name='history_task'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
-     path('payslip/<str:username>/',views.payslip, name='user_payslip'),
+    path('payslip/<str:username>/',views.payslip, name='user_payslip'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
