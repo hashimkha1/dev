@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
 from mptt.admin import MPTTModelAdmin
-from .models import Transaction,Inflow,Outflow,Policy,Tag,Task,TaskHistory
+from .models import Requirement, Transaction,Inflow,Outflow,Policy,Tag,Task,TaskHistory
 
 #from .models import Activity, Category, Employee, Transaction , Department
 
@@ -65,6 +65,7 @@ admin.site.register(Policy)
 admin.site.register(Task)
 admin.site.register(TaskHistory)
 admin.site.register(Tag)
+admin.site.register(Requirement)
 
 '''
 admin.site.register(Employee)
@@ -119,8 +120,6 @@ class ActivityAdmin(admin.ModelAdmin):
                          )
             url = reverse('admin:index')
             return HttpResponseRedirect(url)
-            
-            
            
         form = CsvImportForm()
         data = {"form": form}

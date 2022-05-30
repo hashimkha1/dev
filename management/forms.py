@@ -3,7 +3,7 @@ from django.forms import ModelForm, Textarea
 
 from data.models import DSU
 
-from .models import Transaction,Outflow,Inflow,Policy
+from .models import Transaction,Outflow,Inflow,Policy,Requirement
 
 '''
 class EmployeeForm(forms.ModelForm):  
@@ -125,4 +125,22 @@ class ManagementForm(forms.ModelForm):
                 'plan':'What is your next plan of action on areas that you have not touched on?',
                 'challenge':'What specific questions/Challenges are you facing?',
                 'uploaded' : 'Have you uploaded any DAF evidence/1-1 sessions?'
+                }
+    
+class RequirementForm(forms.ModelForm):
+    class Meta:
+        model = Requirement
+        fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc']
+        labels={
+                'created_by':'Creator',
+                'assigned_to':'assigned_to',
+                'requestor ': 'Who needs it/beneficiary?',
+                'app':'Specify app if Website',
+                'category':'Select a category',
+                'what': 'Describe the Requirement',
+                'why': 'Why do they need it ?',
+                'delivery_date': 'When should this be delivered',
+                'how': 'Mode of delivery(website/Report/database?',
+                'duration': 'how long will it take to work on this requirement',
+                'doc':'Upload Supporting Document',
                 }

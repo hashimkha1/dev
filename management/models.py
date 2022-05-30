@@ -675,6 +675,58 @@ class TaskHistory(models.Model):
          null=True
          ) 
 
+class Requirement(models.Model):
+    # Apps
+    Reporting = 'Reporting'
+    Website = 'Website'
+    ETL= 'ETL'
+    Database = 'Database'
+    Other = 'Other'
+    # Beneficiary
+    Management = 'Management'
+    Client = 'Client'
+    Other = 'Other'
+
+    CAT_CHOICES = [
+        (Reporting , 'Reporting'),
+        (ETL , 'ETL'),
+        (Database , 'Database'),
+        (Website , 'Website'),
+        (Other , 'Other'),
+    ]
+    BEN_CHOICES = [
+        (Management , 'Management'),
+        (Client , 'Client'),
+        (Other , 'Other'),
+    ]
+    category= models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default=Other,
+    )
+    requestor= models.CharField(
+        max_length=25,
+        choices=BEN_CHOICES,
+        default=Other,
+    )
+    assigned_to= models.ForeignKey(User, on_delete=models.CASCADE,default=1)
+    created_by=models.CharField(max_length=255, default='admin')
+    app=models.CharField(max_length=255, default='Data Analysis')
+    duration=models.IntegerField(null=False,default=4) # how long will it take
+    delivery_date=models.DateTimeField(default=timezone.now) # When should this be delivered
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at=models.DateTimeField(auto_now=True)
+    what=models.TextField() # What is needed?
+    why=models.TextField()  # Why do they need it ?
+    how=models.TextField()  # how should it be delivered/Which platform or mode of delivery?
+    doc=models.FileField(upload_to='Uploads/Support_Docs/', null=True,blank=True)
+
+    class Meta:
+        verbose_name_plural = "Requirements"
+    def get_absolute_url(self):
+        return reverse("main:layout")
+    def __str__(self):
+        return self.category
 
 
 def task_pre_save_receiver(sender,instance, *args,**kwargs):

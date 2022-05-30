@@ -1,0 +1,43 @@
+{%extends "main/base_templates/analysis_index.html"%} {% block content %}
+
+<section id="data_training">
+    <div class="data_training text-center">
+        <h3 class="title">ALL THE REQUIREMENTS</h3>
+        <a href="{% url 'management:new_requirement'%}" class="btn btn-primary btn-sm"
+        >ADD REQRUIREMENTS
+      </a>
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <p class="p text-center"> </p>
+
+        <p class="gi">
+          This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
+      </p>
+        <div class="row text-center">
+          {% for requirement in  requirements  %}
+            <div class="col-md-6" id="gi">
+                <div class="card">
+                  <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                    <div class="card-body">
+                        {{requirement.created_by}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}
+                        <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                        <p><b>Stated Requirement</b></p>
+                        <p class="gi">
+                         As {{requirement.requestor}} {{requirement.what}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
+                         {{requirement.delivery_date}}.
+                        </p>
+                        <hr/>
+                        <div>
+                            <p> <a class="article-title" href="{% url 'management:RequirementDetail' requirement.id %}">Details</a></p>
+                        </div>
+                          
+                    </div>
+                  </div>
+               </div>
+              {%endfor%}
+        </div>
+    </div>
+    </section>
+{% endblock content %}
+
+
+

@@ -8,10 +8,10 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm,ManagementForm)
+from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm,ManagementForm,RequirementForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from .models import TaskHistory, Transaction,Inflow,Outflow,Policy,Task,Tag#,TaskInfos
+from .models import TaskHistory, Transaction,Inflow,Outflow,Policy,Task,Tag,Requirement
 from data.models import DSU
 
 from django.conf import settings
@@ -544,3 +544,55 @@ class AssessListView(ListView):
   queryset=DSU.objects.filter(type='Staff').order_by('-created_at')
   #queryset=DSU.objects.all()
   template_name='management/hr/assessment.html'
+
+  #-----------------------------REQUIREMENTS---------------------------------
+def requirements(request):
+    requirements=Requirement.objects.all().order_by('-created_by')
+    return render(request, 'management/doc_templates/requirements.html', {'requirements': requirements})
+
+def newrequirement(request):
+    if request.method== "POST":
+        form=RequirementForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:requirements')
+    else:
+        form=RequirementForm()
+    return render(request, 'management/doc_templates/requirement_form.html',{'form':form})
+
+
+class RequirementDetailView(DetailView):
+    template_name='management/doc_templates/single_requirement.html'
+    model=Requirement
+    ordering=['-created_at ']
+
+class RequirementUpdateView(LoginRequiredMixin,UpdateView):
+    model=Requirement
+    success_url="/management/requirements"
+    fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc']
+    form=RequirementForm
+    def form_valid(self,form):
+        #form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return redirect('management:requirements')
+
+    def test_func(self):
+        requirement = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user==requirement.created_by:
+            return True
+        return False
+
+class RequirementDeleteView(LoginRequiredMixin,DeleteView):
+    model=Requirement
+    success_url='/management/requirements'
+
+    def test_func(self):
+        #creator = self.get_object()
+        #if self.request.user == creator.username:
+        if self.request.user.is_superuser:
+            return True
+        return False
