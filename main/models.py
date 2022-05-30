@@ -2,7 +2,11 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from tableauhyperapi import DatabaseName
 
+User = get_user_model()
 # Create your models here.
 
 class Picture(models.Model):
@@ -118,3 +122,4 @@ class Expenses(models.Model):
     def get_absolute_url(self):
         return reverse('transaction-list')
         #return reverse('employee-detail', kwargs={'pk': self.pk})
+
