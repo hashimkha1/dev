@@ -18,9 +18,8 @@
                 <div class="card">
                   <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
                     <div class="card-body">
-                        {{requirement.created_by}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}
+                      <b> REQ:CODA000{{requirement.id}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}</b>
                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                        <p><b>Stated Requirement</b></p>
                         <p class="gi">
                          As {{requirement.requestor}} {{requirement.what}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
                          {{requirement.delivery_date}}.
@@ -29,6 +28,15 @@
                         <div>
                             <p> <a class="article-title" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
                         </div>
+                        <!--
+                        <div>
+                          <button>
+                            <a href="{{requirement.doc}}" class="btn btn-secondary btn-sm"
+                            >Download
+                          </a>
+                          </button>
+                      </div>
+                      -->
                           
                     </div>
                   </div>
