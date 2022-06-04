@@ -33,9 +33,9 @@ AUTHENTICATION_BACKENDS = (
 # Application definition
 INSTALLED_APPS = [
     #'django_crontab',
-    'testing.apps.TestingConfig',
+    #'testing.apps.TestingConfig',
     'main.apps.MainConfig',
-    'users.apps.UsersConfig',
+    #'users.apps.UsersConfig',
     'accounts.apps.AccountsConfig',
     'codablog.apps.CodablogConfig',
     'data.apps.DataConfig',
