@@ -16,9 +16,12 @@ class CustomerUser(AbstractUser):
         Applicant_or_Job_Applicant=1
         Coda_Staff_Member = 2
         Client_OR_Customer_or_Student= 3
+    # added this column here
+    '''
     class SubCategory(models.IntegerChoices):
         Client_OR_Customer = 1
         Student = 2
+    '''
     class Score(models.IntegerChoices):
         Male = 1
         Female =2
@@ -34,7 +37,8 @@ class CustomerUser(AbstractUser):
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
     category=models.IntegerField(choices=Category.choices,default=999)
-    sub_category=models.IntegerField(choices=SubCategory.choices,default=999)
+    # added this column here
+    #sub_category=models.IntegerField(choices=SubCategory.choices,default=999)
     #category=models.IntegerField(choices=Category.choices,blank=True,null=False)
     #applicant=models.BooleanField('Is Job Applicant', default=True)
     # Changes Made to Model-3/29/2022

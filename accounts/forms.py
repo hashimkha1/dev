@@ -11,10 +11,9 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = CustomerUser
-        fields = ['category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country','sub_category']
+        fields = ['category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country']
         labels={
-                'category':'Registering as:',
-                'sub_category':'Sub Category:',
+                
                 'first_name':'First Name',
                 'last_name':'Last Name',
                 'username':'User Name',
@@ -30,8 +29,9 @@ class UserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(UserForm,self).__init__(*args, **kwargs)
         #self.fields['category'].required= True
+        # set category initial=1 and added category
         self.fields['category'].initial = 1
-        self.fields['sub_category'].initial = 1
+        #self.fields['sub_category'].initial = 1
         self.fields['gender'].required= True
         self.fields['country'].required= True
 
