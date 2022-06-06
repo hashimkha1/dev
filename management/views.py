@@ -358,6 +358,9 @@ def usertask(request, user=None, *args, **kwargs):
                 'loan':loan,
                 'net':net
               }
+    
+    # setting  up session 
+    request.session['employee_name'] = kwargs.get('username')
 
     if request.user == employee:
         return render(request, 'management/daf/usertasks.html', context)
@@ -500,11 +503,15 @@ class TaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
       
 class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Task
-    success_url="/management/thank"
+
+    # success_url = "/management/thank"
+    def get_success_url(self):
+        task = self.get_object()
+        return reverse('management:user_task', kwargs={"username": str(task.employee)})
+
     #fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
     fields=['employee','activity_name','description','point']
     def form_valid(self,form):
-        #form.instance.author=self.request.user
         return super().form_valid(form)
 
     def test_func(self):
