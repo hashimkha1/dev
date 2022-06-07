@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, Textarea
-
+from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
 from .models import Transaction, Outflow, Inflow, Policy, Requirement
@@ -174,7 +174,12 @@ class ManagementForm(forms.ModelForm):
             "challenge": "What specific questions/Challenges are you facing?",
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
-
+    def __init__(self, **kwargs):
+        super(ManagementForm, self).__init__(**kwargs)
+        self.fields["trained_by"].queryset = CustomerUser.objects.filter(
+            #is_employee=True 
+            Q(is_admin=True)| Q(is_employee=True)
+        )
 
 class RequirementForm(forms.ModelForm):
     class Meta:
@@ -217,5 +222,6 @@ class RequirementForm(forms.ModelForm):
     def __init__(self, **kwargs):
         super(RequirementForm, self).__init__(**kwargs)
         self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-            is_employee=True,
+            #is_employee=True 
+            Q(is_employee=True)
         )
