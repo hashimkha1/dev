@@ -101,9 +101,9 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     #fields=['category','address','city','state','country']
     fields=[
             'id','first_name','last_name','date_joined',
-            'email','gender','phone','address','city','state','country','sub_category',
+            'email','gender','phone','address','city','state','country',
             'category','is_admin','is_employee','is_client','is_applicant'
-            
+            #'sub_category',
             ]
     def form_valid(self,form):
         #form.instance.username=self.request.user
