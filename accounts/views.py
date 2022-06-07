@@ -102,10 +102,10 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     success_url="/accounts/users"
     #fields=['category','address','city','state','country']
     fields=[
-            'id','first_name','last_name','date_joined',
+            'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country',
-            'category','is_admin','is_employee','is_client','is_applicant'
-            #'sub_category',
+            'is_admin','is_employee','is_client','is_applicant'
+            
             ]
     def form_valid(self,form):
         #form.instance.username=self.request.user
