@@ -1,7 +1,7 @@
 from django import forms
 from .models import Interviews ,DSU #, DocUpload
-
-
+from accounts.models import CustomerUser
+from django.db.models import Q
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interviews
@@ -44,4 +44,9 @@ class DSUForm(forms.ModelForm):
                 'uploaded' : 'Have you uploaded your assignments to Interview Portal?'
                 }
 
+    def __init__(self, **kwargs):
+        super(DSUForm, self).__init__(**kwargs)
+        self.fields["trained_by"].queryset = CustomerUser.objects.filter(
+            Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
+        )
 
