@@ -16,9 +16,11 @@ class CustomerUser(AbstractUser):
         Applicant_or_Job_Applicant=1
         Coda_Staff_Member = 2
         Client_OR_Customer_or_Student= 3
+    # added this column here
     class SubCategory(models.IntegerChoices):
         Client_OR_Customer = 1
         Student = 2
+
     class Score(models.IntegerChoices):
         Male = 1
         Female =2
@@ -34,6 +36,7 @@ class CustomerUser(AbstractUser):
     state=models.CharField(blank=True,null=True,max_length=100)
     country=CountryField(blank=True,null=True)
     category=models.IntegerField(choices=Category.choices,default=999)
+    # added this column here
     sub_category=models.IntegerField(choices=SubCategory.choices,default=999)
     #category=models.IntegerField(choices=Category.choices,blank=True,null=False)
     #applicant=models.BooleanField('Is Job Applicant', default=True)
@@ -43,7 +46,7 @@ class CustomerUser(AbstractUser):
     is_employee = models.BooleanField('Is employee', default=False)
     is_client = models.BooleanField('Is Client', default=False)
     is_applicant = models.BooleanField('Is applicant', default=True)
-
+    #is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
         ordering=['date_joined']
 ''' 

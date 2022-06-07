@@ -93,16 +93,19 @@ def login_view(request):
 #================================USERS SECTION================================
 def users(request):
     users=CustomerUser.objects.all().order_by('-date_joined')
-    return render(request, 'accounts/admin/users.html', {'users': users})
-  
+    if request.user.is_superuser:
+        return render(request, 'accounts/admin/users.html', {'users': users})
+    else:
+        raise Http404('NOT ALLOWED!!')
 class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=CustomerUser
     success_url="/accounts/users"
     #fields=['category','address','city','state','country']
     fields=[
-            'id','first_name','last_name','date_joined',
+            'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country',
-            'category','is_admin','is_employee','is_client','is_applicant'
+            'is_admin','is_employee','is_client','is_applicant'
+            
             ]
     def form_valid(self,form):
         #form.instance.username=self.request.user
