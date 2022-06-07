@@ -47,7 +47,7 @@ class CustomerUser(AbstractUser):
     is_employee = models.BooleanField('Is employee', default=False)
     is_client = models.BooleanField('Is Client', default=False)
     is_applicant = models.BooleanField('Is applicant', default=True)
-
+    #is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
         ordering=['date_joined']
 ''' 

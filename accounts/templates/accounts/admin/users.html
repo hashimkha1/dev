@@ -7,17 +7,21 @@
         <tr>
           <th>Date</th>
           <th>Category</th>
+          <th>username</th>
           <th>First</th>
           <th>Last</th>
           <th>Number</th>
           <th>Email</th>
-          <th>City</th>
-          <th>State</th>
+          <!--<th>City</th>
+          <th>State</th>-->
           <th>Country</th>
           <th>is_admin</th>
           <th>is_client</th>
           <th>is_employee</th>
           <th>is_applicant</th>
+          <th>is_active</th>
+          <th>is_staff</th>
+          <th>is_superuser</th>
           <th>Update</th>
           <th>Delete</th>
           <!---
@@ -32,17 +36,22 @@
             <tr>
               <td>{{user.date_joined|date:"F d, Y"}}</td>
               <td>{{user.category}}</td>
+              <td>{{user.username}}</td>
               <td>{{user.first_name}}</td>
               <td>{{user.last_name}}</td>
               <td>{{user.phone}}</td>
               <td>{{user.email}}</td>
-              <td>{{user.city}}</td>
-              <td>{{user.state}}</td>
+              <!--<td>{{user.city}}</td>
+              <td>{{user.state}}</td>-->
               <td>{{user.country}}</td>
               <td>{{user.is_admin}}</td>
               <td>{{user.is_client}}</td>
               <td>{{user.is_employee}}</td>
               <td>{{user.is_applicant}}</td>
+              <td>{{user.is_active}}</td>
+              <td>{{user.is_staff}}</td>
+              <td>{{user.is_superuser}}</td>
+              
               <!-------
               <td>{{client.id}}</td>
               <td>{{client.category}}</td>
