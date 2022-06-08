@@ -215,12 +215,12 @@ class RequirementForm(forms.ModelForm):
 
         # Forms updated by Karki
 
-    def __init__(self, **kwargs):
-        super(RequirementForm, self).__init__(**kwargs)
-        self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-            #is_employee=True 
-            Q(is_employee=True)
-        )
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
+    #         #is_employee=True 
+    #         Q(is_employee=True)
+    #     )
 
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)

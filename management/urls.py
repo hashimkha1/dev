@@ -73,6 +73,7 @@ urlpatterns = [
 
     path('requirement/new', views.newrequirement, name='new_requirement'),
     path('requirements/', views.requirements, name='requirements'),
+    path('activerequirements/', views.active_requirements, name='requirements-active'),
     path('requirement/<int:pk>/update/', RequirementUpdateView.as_view(template_name='management/doc_templates/requirement_form.html'), name='requirement-update'),
     path('requirement/<int:pk>/delete/', RequirementDeleteView.as_view(), name='requirement-delete'),
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),

@@ -8,6 +8,8 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+
+from management.utils import email_template
 from .forms import (TransactionForm,OutflowForm,InflowForm,PolicyForm,ManagementForm,RequirementForm)
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
@@ -553,19 +555,40 @@ class AssessListView(ListView):
   template_name='management/hr/assessment.html'
 
   #-----------------------------REQUIREMENTS---------------------------------
+def active_requirements(request, Status=None, *args, **kwargs):
+    active_requirements=Requirement.objects.all().filter(is_active=True)
+    context={
+        'active_requirements':active_requirements
+    }
+    return render(request, 'management/doc_templates/active_requirements.html', context)
+
 def requirements(request):
     requirements=Requirement.objects.all().order_by('-created_by')
-    context={
-            'requirements': requirements
-        }
-    return render(request, 'management/doc_templates/requirements.html', context)
+    return render(request, 'management/doc_templates/requirements.html', {'requirements':requirements})
 
 def newrequirement(request):
     if request.method== "POST":
         form=RequirementForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('management:requirements')
+            if not get_user_model().objects.get(
+                pk=request.POST['assigned_to']) == request.user:
+                subject = 'Task assign on CodaTraining'
+                to = get_user_model().objects.get(
+                    pk=request.POST['assigned_to']).email
+                if request.is_secure():
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                html_content = f"""
+                    <span><h3>Requirement: </h3>{request.POST['what']}<br>
+                    <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
+                    kwargs={'pk':form.instance.id})}'>click here</a><br>
+                    <b>Dead Line: </b><b style='color:red;'>
+                    {request.POST['delivery_date']}</b><br><b>Created by: 
+                    {request.user}</b></span>"""
+                email_template(subject, to, html_content)
+            return redirect('management:requirements-active')
     else:
         form=RequirementForm()
     return render(request, 'management/doc_templates/requirement_form.html',{'form':form})
@@ -578,15 +601,35 @@ class RequirementDetailView(DetailView):
 
 class RequirementUpdateView(LoginRequiredMixin,UpdateView):
     model=Requirement
-    success_url="/management/requirements"
-    fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc']
+    success_url="/management/activerequirements"
+    fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc','is_active']
     form=RequirementForm
     def form_valid(self,form):
         #form.instance.author=self.request.user
         if self.request.user.is_superuser:
+            if not get_user_model().objects.get(
+                pk=self.request.POST['assigned_to']) == self.request.user\
+                   and not get_user_model().objects.get(
+                pk=self.request.POST['assigned_to']) == Requirement.objects.get(
+                    pk=form.instance.id).assigned_to:
+                subject = 'Task assign on CodaTraining'
+                to = get_user_model().objects.get(
+                    pk=self.request.POST['assigned_to']).email
+                if self.request.is_secure():
+                    protocol = 'https://'
+                else:
+                    protocol = 'http://'
+                html_content = f"""
+                    <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
+                    <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
+                    kwargs={'pk':form.instance.id})}'>click here</a><br>
+                    <b>Dead Line: </b><b style='color:red;'>
+                    {self.request.POST['delivery_date']}</b><br><b>Created by: 
+                    {self.request.user}</b></span>"""
+                email_template(subject, to, html_content)
             return super().form_valid(form)
         else:
-            return redirect('management:requirements')
+            return redirect('management:requirements-active')
 
     def test_func(self):
         requirement = self.get_object()
@@ -595,6 +638,7 @@ class RequirementUpdateView(LoginRequiredMixin,UpdateView):
         elif self.request.user==requirement.created_by:
             return True
         return False
+
 
 class RequirementDeleteView(LoginRequiredMixin,DeleteView):
     model=Requirement

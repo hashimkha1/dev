@@ -725,7 +725,7 @@ class Requirement(models.Model):
     class Meta:
         verbose_name_plural = "Requirements"
     def get_absolute_url(self):
-        return reverse("main:layout")
+        return reverse("management:requirements")
     def __str__(self):
         return self.category
 
