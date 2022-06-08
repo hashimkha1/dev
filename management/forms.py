@@ -174,12 +174,7 @@ class ManagementForm(forms.ModelForm):
             "challenge": "What specific questions/Challenges are you facing?",
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
-    def __init__(self, **kwargs):
-        super(ManagementForm, self).__init__(**kwargs)
-        self.fields["trained_by"].queryset = CustomerUser.objects.filter(
-            #is_employee=True 
-            Q(is_admin=True)| Q(is_employee=True)
-        )
+
 
 class RequirementForm(forms.ModelForm):
     class Meta:
@@ -196,6 +191,7 @@ class RequirementForm(forms.ModelForm):
             "why",
             "how",
             "doc",
+            'is_active'
         ]
 
         labels = {
@@ -225,3 +221,9 @@ class RequirementForm(forms.ModelForm):
             #is_employee=True 
             Q(is_employee=True)
         )
+
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     if self.fields["requestor"] =='Management':
+    #         self.fields["category"].queryset = CustomerUser.objects.filter(requestor=1)
+

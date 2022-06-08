@@ -13,7 +13,9 @@
           This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
       </p>
         <div class="row text-center">
+
           {% for requirement in  requirements  %}
+          {% if requirement.is_active %}
             <div class="col-md-6" id="gi">
                 <div class="card">
                   <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
@@ -25,8 +27,17 @@
                          {{requirement.delivery_date}}.
                         </p>
                         <hr/>
-                        <div>
+                        <div class="row">
+                          <div class="col-md-12">
                             <p> <a class="article-title" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+                          </div>
+                          <!-- <div class="col-md-4">
+                            <input type="checkbox" name="is_active"
+                            {% if requirement.is_active %} checked
+                            {% endif %}>
+                            <p><input type="checkbox" id="checkall"/>{{requirement.is_active}}</p>
+                            <p> {{requirement.is_active}}Uncheck</p>
+                          </div> -->
                         </div>
                         <!--
                         <div>
@@ -41,6 +52,7 @@
                     </div>
                   </div>
                </div>
+               {%endif%}
               {%endfor%}
         </div>
     </div>

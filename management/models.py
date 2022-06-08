@@ -720,6 +720,7 @@ class Requirement(models.Model):
     why=models.TextField()  # Why do they need it ?
     how=models.TextField()  # how should it be delivered/Which platform or mode of delivery?
     doc=models.FileField(upload_to='Uploads/Support_Docs/', null=True,blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Requirements"

@@ -555,7 +555,10 @@ class AssessListView(ListView):
   #-----------------------------REQUIREMENTS---------------------------------
 def requirements(request):
     requirements=Requirement.objects.all().order_by('-created_by')
-    return render(request, 'management/doc_templates/requirements.html', {'requirements': requirements})
+    context={
+            'requirements': requirements
+        }
+    return render(request, 'management/doc_templates/requirements.html', context)
 
 def newrequirement(request):
     if request.method== "POST":
