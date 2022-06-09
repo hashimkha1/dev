@@ -1,6 +1,6 @@
 from decimal import *
 import datetime
-from datetime import date ,timedelta
+from datetime import date, timedelta
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
 from django.db import models
@@ -13,9 +13,10 @@ import requests
 # Create your models here.
 class CustomerUser(AbstractUser):
     class Category(models.IntegerChoices):
-        Applicant_or_Job_Applicant=1
+        Applicant_or_Job_Applicant = 1
         Coda_Staff_Member = 2
-        Client_OR_Customer_or_Student= 3
+        Client_OR_Customer_or_Student = 3
+
     # added this column here
     class SubCategory(models.IntegerChoices):
         Client_OR_Customer = 1
@@ -23,32 +24,36 @@ class CustomerUser(AbstractUser):
 
     class Score(models.IntegerChoices):
         Male = 1
-        Female =2
+        Female = 2
+
     id = models.AutoField(primary_key=True)
-    first_name=models.CharField(max_length=100)
-    last_name=models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
     date_joined = models.DateTimeField(default=timezone.now)
-    email=models.CharField(max_length=100)
-    gender=models.IntegerField(choices=Score.choices,blank=True,null=True)
-    phone=models.CharField(default='90001',max_length=100)
-    address=models.CharField(blank=True,null=True,max_length=100)
-    city=models.CharField(blank=True,null=True,max_length=100)
-    state=models.CharField(blank=True,null=True,max_length=100)
-    country=CountryField(blank=True,null=True)
-    category=models.IntegerField(choices=Category.choices,default=999)
+    email = models.CharField(max_length=100)
+    gender = models.IntegerField(choices=Score.choices, blank=True, null=True)
+    phone = models.CharField(default="90001", max_length=100)
+    address = models.CharField(blank=True, null=True, max_length=100)
+    city = models.CharField(blank=True, null=True, max_length=100)
+    state = models.CharField(blank=True, null=True, max_length=100)
+    country = CountryField(blank=True, null=True)
+    category = models.IntegerField(choices=Category.choices, default=999)
     # added this column here
-    sub_category=models.IntegerField(choices=SubCategory.choices,default=999)
-    #category=models.IntegerField(choices=Category.choices,blank=True,null=False)
-    #applicant=models.BooleanField('Is Job Applicant', default=True)
+    sub_category = models.IntegerField(
+        choices=SubCategory.choices, default=999, blank=True, null=True
+    )
+    # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
+    # applicant=models.BooleanField('Is Job Applicant', default=True)
     # Changes Made to Model-3/29/2022
 
-    is_admin= models.BooleanField('Is admin', default=False)
-    is_employee = models.BooleanField('Is employee', default=False)
-    is_client = models.BooleanField('Is Client', default=False)
-    is_applicant = models.BooleanField('Is applicant', default=True)
-    #is_active = models.BooleanField('Is applicant', default=True)
+    is_admin = models.BooleanField("Is admin", default=False)
+    is_employee = models.BooleanField("Is employee", default=False)
+    is_client = models.BooleanField("Is Client", default=False)
+    is_applicant = models.BooleanField("Is applicant", default=True)
+    # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
-        ordering=['date_joined']
+        ordering = ["date_joined"]
+
 ''' 
 #Applicant Table
 class applicant(models.Model):

@@ -52,6 +52,7 @@ def join(request):
     else:
         msg = 'error validating form'
         form=UserForm()
+        print(msg)
     return render(request, 'accounts/registration/join.html', {'form': form})
 
 
@@ -96,7 +97,7 @@ def users(request):
     if request.user.is_superuser:
         return render(request, 'accounts/admin/users.html', {'users': users})
     else:
-        raise Http404('NOT ALLOWED!!')
+        return redirect('accounts:account-login')
 class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=CustomerUser
     success_url="/accounts/users"
