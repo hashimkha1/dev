@@ -602,7 +602,7 @@ class RequirementDetailView(DetailView):
 class RequirementUpdateView(LoginRequiredMixin,UpdateView):
     model=Requirement
     success_url="/management/activerequirements"
-    fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc','is_active']
+    fields = ['created_by','assigned_to','requestor','company','category','app','delivery_date','duration','what','why','how','doc','is_active']
     form=RequirementForm
     def form_valid(self,form):
         #form.instance.author=self.request.user

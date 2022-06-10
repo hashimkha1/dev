@@ -183,6 +183,7 @@ class RequirementForm(forms.ModelForm):
             "created_by",
             "assigned_to",
             "requestor",
+            "company",
             "category",
             "app",
             "delivery_date",
@@ -199,6 +200,7 @@ class RequirementForm(forms.ModelForm):
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
             "app": "Specify app if Website",
+            "company":"company",
             "category": "Select a category",
             "what": "Describe the Requirement",
             "why": "Why do they need it ?",
@@ -214,9 +216,9 @@ class RequirementForm(forms.ModelForm):
         # )
 
         # Forms updated by Karki
-    def __init__(self, **kwargs):
-        super(RequirementForm, self).__init__(**kwargs)
-        self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-            Q(is_admin=True) | Q(is_employee=True)
-            # Q(is_client=True)
-        )
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
+    #         Q(is_admin=True) | Q(is_employee=True)
+    #         # Q(is_client=True)
+    #     )
