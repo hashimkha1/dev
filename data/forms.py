@@ -50,6 +50,6 @@ class DSUForm(forms.ModelForm):
     def __init__(self, **kwargs):
         super(DSUForm, self).__init__(**kwargs)
         self.fields["trained_by"].queryset = CustomerUser.objects.filter(
-            Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
-            #Q(is_admin=True)
+            # Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
+            Q(is_client=True)
         )
