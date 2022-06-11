@@ -222,3 +222,13 @@ class RequirementForm(forms.ModelForm):
     #         Q(is_admin=True) | Q(is_employee=True)
     #         # Q(is_client=True)
     #     )
+
+    def __init__(self, **kwargs):
+        super(RequirementForm, self).__init__(**kwargs)
+        self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
+            #is_employee=True 
+            Q(is_employee=True)
+            is_employee=True,
+
+        )
+
