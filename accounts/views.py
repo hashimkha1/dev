@@ -65,6 +65,7 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
+            
             if account is not None and account.is_admin:
                 login(request, account)
                 return redirect('main:layout')
@@ -86,9 +87,9 @@ def login_view(request):
                     login(request, account)
                     return redirect('application:firstinterview')
             else:
-                msg= 'invalid credentials'
+                messages.success(request, f'Invalid credentials,Kindly Try Again!!')
         else:
-            msg = 'error validating form'
+            msg='INVALID'
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================

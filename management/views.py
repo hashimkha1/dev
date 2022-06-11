@@ -58,7 +58,6 @@ def hr(request):
     return render(request, 'management/company_finances/hr.html',{'title': 'hr'})
 
 #----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
-
 def transact(request):
     if request.method== "POST":
         form=TransactionForm(request.POST,request.FILES)
