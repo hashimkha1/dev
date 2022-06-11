@@ -36,9 +36,11 @@ def join(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
             country = form.cleaned_data.get('country')
+            account = authenticate(username=username, password=password)
             messages.success(request, f'Account created for {username}!')
             if  category ==1 and country in ('KE','UG','RW','TZ'): #  Male East Africa
                 if gender==1: # Applicant and Male
@@ -104,7 +106,7 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     #fields=['category','address','city','state','country']
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
-            'email','gender','phone','address','city','state','country',
+            'email','gender','phone','address','city','state','country','is_superuser',
             'is_admin','is_employee','is_client','is_applicant'
             
             ]
