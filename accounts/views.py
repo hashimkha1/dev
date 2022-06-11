@@ -86,7 +86,7 @@ def login_view(request):
                     login(request, account)
                     return redirect('application:firstinterview')
             else:
-                msg= 'invalid credentials'
+                messages.success(request,f'Invalid credentials.Kindly Try again!!')
         else:
             msg = 'error validating form'
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
