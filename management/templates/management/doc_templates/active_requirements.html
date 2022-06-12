@@ -21,7 +21,7 @@
                       <b> REQ:CODA000{{requirement.id}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}</b>
                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                         <p class="gi">
-                         As {{requirement.requestor}} {{requirement.what}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
+                         As {{requirement.requestor}} {{requirement.what|truncatewords:15}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
                          {{requirement.delivery_date}}.
                         </p>
                         <hr/>
