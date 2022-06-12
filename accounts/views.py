@@ -76,7 +76,7 @@ def login_view(request):
                 else:# Student
                     login(request, account)
                     return redirect('data:bitraining')
-            # If Category is client/customer
+            # If Category is applicant
             elif account is not None and account.category==1:
                 if account.country in ('KE','UG','RW','TZ'):# Male
                     if account.gender==1:
