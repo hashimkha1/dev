@@ -38,9 +38,11 @@ def join(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
             country = form.cleaned_data.get('country')
+            account = authenticate(username=username, password=password)
             messages.success(request, f'Account created for {username}!')
             if  category ==1 and country in ('KE','UG','RW','TZ'): #  Male East Africa
                 if gender==1: # Applicant and Male
@@ -54,6 +56,7 @@ def join(request):
     else:
         msg = 'error validating form'
         form=UserForm()
+        print(msg)
     return render(request, 'accounts/registration/join.html', {'form': form})
 
 
@@ -87,7 +90,7 @@ def login_view(request):
                     login(request, account)
                     return redirect('application:firstinterview')
             else:
-                msg= 'invalid credentials'
+                messages.success(request,f'Invalid credentials.Kindly Try again!!')
         else:
             msg = 'error validating form'
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
@@ -98,14 +101,14 @@ def users(request):
     if request.user.is_superuser:
         return render(request, 'accounts/admin/users.html', {'users': users})
     else:
-        raise Http404('NOT ALLOWED!!')
+        return redirect('accounts:account-login')
 class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=CustomerUser
     success_url="/accounts/users"
     #fields=['category','address','city','state','country']
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
-            'email','gender','phone','address','city','state','country',
+            'email','gender','phone','address','city','state','country','is_superuser',
             'is_admin','is_employee','is_client','is_applicant'
             
             ]

@@ -11,7 +11,7 @@ class UserForm(forms.ModelForm):
 
     class Meta:
         model = CustomerUser
-        fields = ['category','sub_category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country']
+        fields = ['category','sub_category','first_name','last_name','username','password1','password2','phone','gender', 'email','address','city','state','country','resume']
         labels={
                 
                 'first_name':'First Name',

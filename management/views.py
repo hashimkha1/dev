@@ -365,10 +365,10 @@ def usertask(request, user=None, *args, **kwargs):
     # setting  up session 
     request.session['employee_name'] = kwargs.get('username')
 
-    if request.user == employee:
+    if request.user.is_superuser or request.user == employee:
         return render(request, 'management/daf/usertasks.html', context)
     elif request.user.is_superuser:
-        return render(request, 'management/daf/usertasks.html', context)
+        return render(request, 'management/daf/tasklist.html', context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
@@ -613,7 +613,7 @@ class RequirementDetailView(DetailView):
 class RequirementUpdateView(LoginRequiredMixin,UpdateView):
     model=Requirement
     success_url="/management/activerequirements"
-    fields = ['created_by','assigned_to','requestor','category','app','delivery_date','duration','what','why','how','doc','is_active']
+    fields = ['created_by','assigned_to','requestor','company','category','app','delivery_date','duration','what','why','how','doc','is_active']
     form=RequirementForm
     def form_valid(self,form):
         #form.instance.author=self.request.user
