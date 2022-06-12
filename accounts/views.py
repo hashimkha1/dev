@@ -17,6 +17,8 @@ from django.shortcuts import get_object_or_404, redirect,render
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from .models import CustomerUser,Tracker
+from django.db.models import Q
+from management.models import Task
 # Create your views here..
 
 #@allowed_users(allowed_roles=['admin'])
@@ -275,17 +277,27 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
-    fields=['category','task','duration']
+    fields=['category','task','duration','clientname']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
+        total_duration_fil = Tracker.objects.filter(author=self.request.user)
+        total_duration = 0
+        for data in total_duration_fil.all():
+            total_duration += data.duration
+        # print("total_duration",total_duration)
+        if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
+            messages.error(self.request, "Total duration is greater than maximum assigned points.")
+            return super().form_invalid(form)
+            
         return super().form_valid(form)  
 
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    model=Tracker
+    model = Tracker
     success_url="/accounts/tracker"
-    fields=['author','plan','category','task','duration','time']
+
+    fields=['author','clientname','plan','category','task','duration','time']
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
@@ -293,6 +305,7 @@ class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
             return super().form_valid(form)
         else:
             return False
+
 
     def test_func(self):
         track = self.get_object()
