@@ -36,21 +36,11 @@ def join(request):
         if form.is_valid():
             form.save()
             username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
             country = form.cleaned_data.get('country')
-            account = authenticate(username=username, password=password)
             messages.success(request, f'Account created for {username}!')
-            if  category ==1 and country in ('KE','UG','RW','TZ'): #  Male East Africa
-                if gender==1: # Applicant and Male
-                    return redirect('application:interview')
-                elif gender==2: # Females in East Africa
-                    return redirect('application:policies')
-            elif category ==1 and country not in ('KE','UG','RW','TZ'):#  Everyone outside East Africa
-                return redirect('application:interview')
-            else:
-                return redirect('main:layout')
+            return redirect('accounts:account-login')
     else:
         msg = 'error validating form'
         form=UserForm()
@@ -67,16 +57,25 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
-            if account is not None and account.is_admin:
-                login(request, account)
-                return redirect('main:layout')
-            elif account is not None and account.is_employee:
-                login(request, account)
-                return redirect('management:user_task', username=request.user )
-            elif account is not None and account.is_client:
-                login(request, account)
-                return redirect('data:home')
-            elif account is not None and account.is_applicant:
+            login(request, account)
+            # If Category is Staff/employee
+            if account is not None and account.category==2:
+                if account.sub_category==2:# contractual
+                    login(request, account)
+                    return redirect('management:requirements-active')
+                else:# parttime (agents) & Fulltime
+                    login(request, account)
+                    return redirect('management:user_task', username=request.user )
+            # If Category is client/customer
+            elif account is not None and account.category==3:
+                if account.sub_category==1:# Job Support
+                    login(request, account)
+                    return redirect('accounts:user-list', username=request.user)
+                else:# Student
+                    login(request, account)
+                    return redirect('data:bitraining')
+            # If Category is client/customer
+            elif account is not None and account.category==1:
                 if account.country in ('KE','UG','RW','TZ'):# Male
                     if account.gender==1:
                         login(request, account)
@@ -107,7 +106,7 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country','is_superuser',
-            'is_admin','is_employee','is_client','is_applicant'
+            'is_admin','is_employee','is_client','is_applicant',
             
             ]
     def form_valid(self,form):

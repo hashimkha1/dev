@@ -369,7 +369,8 @@ def usertask(request, user=None, *args, **kwargs):
     elif request.user.is_superuser:
         return render(request, 'management/daf/tasklist.html', context)
     else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
+        #raise Http404("Login/Wrong Page: Contact Admin Please!")
+        return redirect('main:layout')
 
 def payslip(request, user=None, *args, **kwargs):
     deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])

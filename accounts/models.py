@@ -20,7 +20,7 @@ class CustomerUser(AbstractUser):
     # added this column here
     class SubCategory(models.IntegerChoices):
         No_selection = 0
-        Client_OR_Customer = 1
+        Job_Support = 1
         Student = 2
         Full_time = 3
         Contractual = 4
