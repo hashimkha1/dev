@@ -17,6 +17,8 @@ from django.shortcuts import get_object_or_404, redirect,render
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 from .models import CustomerUser,Tracker
+from django.db.models import Q
+from management.models import Task
 # Create your views here..
 
 #@allowed_users(allowed_roles=['admin'])
@@ -40,15 +42,7 @@ def join(request):
             gender = form.cleaned_data.get('gender')
             country = form.cleaned_data.get('country')
             messages.success(request, f'Account created for {username}!')
-            if  category ==1 and country in ('KE','UG','RW','TZ'): #  Male East Africa
-                if gender==1: # Applicant and Male
-                    return redirect('application:interview')
-                elif gender==2: # Females in East Africa
-                    return redirect('application:policies')
-            elif category ==1 and country not in ('KE','UG','RW','TZ'):#  Everyone outside East Africa
-                return redirect('application:interview')
-            else:
-                return redirect('main:layout')
+            return redirect('accounts:account-login')
     else:
         msg = 'error validating form'
         form=UserForm()
@@ -65,17 +59,25 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
-            
-            if account is not None and account.is_admin:
-                login(request, account)
-                return redirect('main:layout')
-            elif account is not None and account.is_employee:
-                login(request, account)
-                return redirect('management:user_task', username=request.user )
-            elif account is not None and account.is_client:
-                login(request, account)
-                return redirect('data:home')
-            elif account is not None and account.is_applicant:
+        
+            # If Category is Staff/employee
+            if account is not None and account.category==2:
+                if account.sub_category==2:# contractual
+                    login(request, account)
+                    return redirect('management:requirements-active')
+                else:# parttime (agents) & Fulltime
+                    login(request, account)
+                    return redirect('management:user_task', username=request.user )
+            # If Category is client/customer
+            elif account is not None and account.category==3:
+                if account.sub_category==1:# Job Support
+                    login(request, account)
+                    return redirect('accounts:user-list', username=request.user)
+                else:# Student
+                    login(request, account)
+                    return redirect('data:bitraining')
+            # If Category is applicant
+            elif account is not None and account.category==1:
                 if account.country in ('KE','UG','RW','TZ'):# Male
                     if account.gender==1:
                         login(request, account)
@@ -86,10 +88,14 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect('application:firstinterview')
-            else:
-                messages.success(request, f'Invalid credentials,Kindly Try Again!!')
+            # else:
+            #     messages.success(request, f'Invalid credentials,Kindly Try Again!!')
+        # else:
+        #     msg='INVALID'
+        #         login(request, account)
+        #         return redirect('main:layout')
         else:
-            msg='INVALID'
+            messages.success(request,f'Invalid credentials.Kindly Try again!!')
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================
@@ -105,8 +111,8 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     #fields=['category','address','city','state','country']
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
-            'email','gender','phone','address','city','state','country',
-            'is_admin','is_employee','is_client','is_applicant'
+            'email','gender','phone','address','city','state','country','is_superuser',
+            'is_admin','is_employee','is_client','is_applicant',
             
             ]
     def form_valid(self,form):
@@ -275,17 +281,27 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
-    fields=['category','task','duration']
+    fields=['category','task','duration','clientname']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
+        total_duration_fil = Tracker.objects.filter(author=self.request.user)
+        total_duration = 0
+        for data in total_duration_fil.all():
+            total_duration += data.duration
+        # print("total_duration",total_duration)
+        if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
+            messages.error(self.request, "Total duration is greater than maximum assigned points.")
+            return super().form_invalid(form)
+            
         return super().form_valid(form)  
 
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
-    model=Tracker
+    model = Tracker
     success_url="/accounts/tracker"
-    fields=['author','plan','category','task','duration','time']
+
+    fields=['author','clientname','plan','category','task','duration','time']
 
     def form_valid(self,form):
         #form.instance.author=self.request.user
@@ -293,6 +309,7 @@ class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
             return super().form_valid(form)
         else:
             return False
+
 
     def test_func(self):
         track = self.get_object()

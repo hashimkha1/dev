@@ -2,7 +2,7 @@ import calendar
 from datetime import date, timedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404,JsonResponse
 from django.utils.decorators import method_decorator
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -18,6 +18,7 @@ from data.models import DSU
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from accounts.models import Tracker
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -363,12 +364,13 @@ def usertask(request, user=None, *args, **kwargs):
     # setting  up session 
     request.session['employee_name'] = kwargs.get('username')
 
-    if request.user == employee:
+    if request.user.is_superuser or request.user == employee:
         return render(request, 'management/daf/usertasks.html', context)
     elif request.user.is_superuser:
-        return render(request, 'management/daf/usertasks.html', context)
+        return render(request, 'management/daf/tasklist.html', context)
     else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
+        #raise Http404("Login/Wrong Page: Contact Admin Please!")
+        return redirect('main:layout')
 
 def payslip(request, user=None, *args, **kwargs):
     deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
@@ -522,6 +524,16 @@ class UsertaskUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         elif self.request.user==task.employee:
             return True
         return False
+
+@login_required
+def gettotalduration(request):
+    employee_duration = Tracker.objects.filter(author=request.POST["name"])  
+    total_duration = 0
+    for data in employee_duration.all():
+        total_duration += data.duration
+   
+    return JsonResponse({"success":True, "value":total_duration})
+
 
 @method_decorator(login_required, name='dispatch')
 class TaskDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):

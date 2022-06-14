@@ -64,6 +64,7 @@ urlpatterns = [
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
     path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),
+    path('gettotalduration/', views.gettotalduration, name='gettotalduration'),
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
     path('thank/',views.thank, name='thank-you'),

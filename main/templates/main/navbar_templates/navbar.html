@@ -105,10 +105,8 @@
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Account</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                    {% if user.is_admin or  user.is_employee %}
+                    {% if user.is_employee %}
                           <a class="dropdown-item"href="{% url 'main:team' %}" target="" >My Account</a >
-                            <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
                             <div class="dropdown-divider"></div>
@@ -118,12 +116,26 @@
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
 
-                          {% elif user.is_client %}
-                    <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
-                        <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% elif user.is_admin or user.is_superuser %}
+                          <a class="dropdown-item"href="{% url 'main:team' %}" target="" >My Account</a >
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >Internal(1-1)</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% elif user.is_client %}
+                      <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
+                          <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     {% else %}
-                    <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                      <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     {% endif %}
               </div>
         </li>

@@ -19,8 +19,12 @@ class CustomerUser(AbstractUser):
 
     # added this column here
     class SubCategory(models.IntegerChoices):
-        Client_OR_Customer = 1
+        No_selection = 0
+        Job_Support = 1
         Student = 2
+        Full_time = 3
+        Contractual = 4
+        Part_time = 5
 
     class Score(models.IntegerChoices):
         Male = 1
@@ -40,12 +44,12 @@ class CustomerUser(AbstractUser):
     category = models.IntegerField(choices=Category.choices, default=999)
     # added this column here
     sub_category = models.IntegerField(
-        choices=SubCategory.choices, default=999, blank=True, null=True
+        choices=SubCategory.choices, blank=True, null=True
     )
     # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
     # applicant=models.BooleanField('Is Job Applicant', default=True)
     # Changes Made to Model-3/29/2022
-
+    resume = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
     is_admin = models.BooleanField("Is admin", default=False)
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
@@ -54,17 +58,18 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering = ["date_joined"]
 
-''' 
+
+""" 
 #Applicant Table
 class applicant(models.Model):
     applicant = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
     #applicant = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
     resume=models.FileField(upload_to='resumes/doc/',blank=True,null=True)
     uploaded = models.BooleanField('uploaded', default=True)
-'''
+"""
 
 
-'''
+"""
 class Profile(models.Model):
     user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg', upload_to='profile_pics')
@@ -88,57 +93,56 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
-'''
-#========================================TIME TRACKER====================================================
+"""
+# ========================================TIME TRACKER====================================================
 # Time Tracking Model
 class Tracker(models.Model):
     class Duration(models.IntegerChoices):
         One_Hour = 1
-        Two_Hours =2
+        Two_Hours = 2
         Three_Hours = 3
         Four_Hours = 4
         Five_Hours = 5
         Eight_Hours = 8
         Ten_Hours = 10
 
-    #class AssignedTime(models.IntegerChoices):
-       # Plan_A =30
-       # Plan_B =120
-       # Other = 999
+    # class AssignedTime(models.IntegerChoices):
+    # Plan_A =30
+    # Plan_B =120
+    # Other = 999
 
     # Job Category.
-    Job_Support = 'Job_Support'
-    Interview = 'Interview'
-    Training = 'Training'
-    Mentorship = 'Mentorship'
-    Other = 'Other'
+    Job_Support = "Job_Support"
+    Interview = "Interview"
+    Training = "Training"
+    Mentorship = "Mentorship"
+    Other = "Other"
     # Task/Activities
-    Reporting='reporting'
-    Database='database'
-    Business_Analysis = 'Business Analysis'
-    ETL ='Data Cleaning'
-    Other='Any Other'
+    Reporting = "reporting"
+    Database = "database"
+    Business_Analysis = "Business Analysis"
+    ETL = "Data Cleaning"
+    Other = "Any Other"
 
     CAT_CHOICES = [
-        (Job_Support , 'Job_Support'),
-        (Interview , 'Interview'),
-        (Training , 'Training'),
-        (Mentorship , 'Mentorship' ),      
-        (Other , 'Other' ),     
-       
+        (Job_Support, "Job_Support"),
+        (Interview, "Interview"),
+        (Training, "Training"),
+        (Mentorship, "Mentorship"),
+        (Other, "Other"),
     ]
     TASK_CHOICES = [
-        (Reporting,'reporting'),
-        (Database,'database'),
-        (Business_Analysis , 'Business Analysis'),
-        (ETL ,'Data Cleaning'),
-        (Other, 'Other'),
+        (Reporting, "reporting"),
+        (Database, "database"),
+        (Business_Analysis, "Business Analysis"),
+        (ETL, "Data Cleaning"),
+        (Other, "Other"),
     ]
-    category= models.CharField(
+    category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
     )
-    task= models.CharField(
+    task = models.CharField(
         max_length=25,
         choices=TASK_CHOICES,
     )
@@ -148,39 +152,40 @@ class Tracker(models.Model):
         max_length=255,
         default="B"
         )
-    author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
+    author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="author")
+    clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
+    author = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE)
     login_date = models.DateTimeField(auto_now_add=True)
     start_time = models.TimeField(auto_now_add=True)
-    duration = models.IntegerField(choices=Duration.choices,default=2)
+    duration = models.IntegerField(choices=Duration.choices, default=2)
     time = models.PositiveIntegerField(
-        #max_digits=3, 
-            help_text=_('Maximum 200'),
-            error_messages={
-                "name":{
-                   ' max_length':("The maximum hours must be between 0 and 199")
-                
-                }
-            },
-            default=120
-            )
+        # max_digits=3,
+        help_text=_("Maximum 200"),
+        error_messages={
+            "name": {" max_length": ("The maximum hours must be between 0 and 199")}
+        },
+        default=120,
+    )
+
     class Meta:
-        ordering=['login_date']
+        ordering = ["login_date"]
 
     def get_absolute_url(self):
-        return reverse('usertime', args=[self.username])
+        return reverse("usertime", args=[self.username])
 
     @property
     def end(self):
-        #date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
+        # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
         date_time = self.login_date + datetime.timedelta(hours=0)
         endtime = date_time.strftime("%H:%M")
         return endtime
-    
+
     @property
     def total_payment(self):
-        total = self.duration.objects.aggregate(TOTAL = Sum('duration'))['TOTAL']
+        total = self.duration.objects.aggregate(TOTAL=Sum("duration"))["TOTAL"]
         return total
-    ''' 
+
+    """ 
     @property
     def amt_per_plan(self):
         if self.plan=='A':
@@ -189,4 +194,4 @@ class Tracker(models.Model):
             return 120
         else:
             return 9999
-    '''
+    """

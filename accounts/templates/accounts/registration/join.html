@@ -12,7 +12,6 @@
         <h3>{{form.msg}}</h3>
         <h3>{{msg}}</h3>
       </legend>
-
       <div class="row">
         <!-- <div class="col-md-4">{{ form.category|as_crispy_field }}</div> -->
         <div class="col-md-4">
@@ -77,6 +76,9 @@
         <div class="col-md-4">{{ form.state|as_crispy_field }}</div>
         <div class="col-md-4">{{form.country|as_crispy_field }}</div>
       </div>
+      <div class="row" id="resume-field" style="display:none;">
+        <div class="col-md-4">{{form.resume|as_crispy_field }}</div>
+      </div>
     </fieldset>
     <div class="form-group">
       <button class="btn btn-outline-info" type="submit">Sign Up</button>
@@ -100,11 +102,14 @@
   }
   function checkSubCategoryValidity(){
     var p = document.getElementById("id_sub_category");
-    if (p.value == "0") {
-      p.setCustomValidity('Please Select an option');
-    } else {
-      p.setCustomValidity('');
-    }
+    var q = document.getElementById("id_category")
+    if (q.value != "1"){
+        if (p.value == "0") {
+          p.setCustomValidity('Please Select an option');
+        } else {
+          p.setCustomValidity('');
+        }
+        }
   }
 
   checkCategoryValidity();
@@ -112,6 +117,9 @@
   function toggle_sub_selection(selected_value) {
     if (selected_value == 3) {  
       //If the Value seclected is Client
+      document.getElementById("id_sub_category").style.display = "block"
+      document.getElementById("id_sub_category").disabled = false
+      document.getElementById("resume-field").style.display = "none"
       document.getElementById("sub_selection").style.display = "";
       hideSubCategoryOption(3);
       hideSubCategoryOption(4);
@@ -121,6 +129,9 @@
       selectSubCategoryOption(0);
     } else if(selected_value == 2) {
       //If the Value seclected is staff
+      document.getElementById("id_sub_category").style.display = "block"
+      document.getElementById("id_sub_category").disabled = false
+      document.getElementById("resume-field").style.display = "none"
       document.getElementById("sub_selection").style.display = "";
       hideSubCategoryOption(1);
       hideSubCategoryOption(2);
@@ -129,10 +140,11 @@
       showSubCategoryOption(5);
       selectSubCategoryOption(0);
     } 
-  
     else{
+      document.getElementById("resume-field").style.display = "block"
       document.getElementById("sub_selection").style.display = "none";
-      
+      document.getElementById("id_sub_category").disabled = true
+      document.getElementById("id_sub_category").style.display = "none"
     }
     
     checkCategoryValidity()
