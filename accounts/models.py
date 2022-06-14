@@ -146,15 +146,14 @@ class Tracker(models.Model):
         max_length=25,
         choices=TASK_CHOICES,
     )
-    # plan = models.CharField(
-    #     verbose_name=_('group'),
-    #     help_text=_('Required'),
-    #     max_length=255,
-    #     default="B"
-    #     )
+    plan = models.CharField(
+        verbose_name=_('group'),
+        help_text=_('Required'),
+        max_length=255,
+        default="B"
+        )
     author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="author")
     clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
-    author = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE)
     login_date = models.DateTimeField(auto_now_add=True)
     start_time = models.TimeField(auto_now_add=True)
     duration = models.IntegerField(choices=Duration.choices, default=2)
