@@ -7,8 +7,9 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
-          <th>Username</th>
-          <th>Full Name</th>
+          <th>Trainer</th>
+          <th>Client Username</th>
+          <th>Client Name</th>
           <th>Category</th>
           <th>Task</th>
           <th>Start Time</th>
@@ -22,9 +23,9 @@
         {% for tracker in trackers %}
             <tr>
               <td>{{tracker.login_date|date:"F d, Y"}}</td>
+              <td>{{tracker.employee}} </td>
              <td> <a class="mr-2" href="{% url 'accounts:user-list' tracker.author %}">{{tracker.author}}</a></td>
               <td>{{tracker.author.first_name}} {{tracker.author.last_name}} </td>
-              <td>{{tracker.employee}} </td>
               <td>{{tracker.category}}</td>
               <td>{{tracker.task}}</td>
               <td>{{tracker.start_time}}</td>
