@@ -156,7 +156,7 @@ class Tracker(models.Model):
         verbose_name=_('Employee Name'),
         help_text=_('Required'),
         max_length=255,
-        default="C"
+        default="CODA"
         )
     author = models.ForeignKey(
             'accounts.CustomerUser',
