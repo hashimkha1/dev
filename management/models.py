@@ -674,6 +674,44 @@ class TaskHistory(models.Model):
          editable=True,
          null=True
          ) 
+    objects=TaskManager()
+
+    @property
+    def submitted(self):
+        submitted=datetime.date(self.submission)
+        return submitted
+    
+    @property
+    def deadline(self):
+        today = datetime.today()
+        deadline_date=datetime(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+        deadline=datetime.date(deadline_date)
+        return deadline
+        
+    @property
+    def time_remaining(self):
+        today = date.today()
+        deadline_date=date(today.year, today.month, calendar.monthrange(today.year, today.month)[-1])
+        delta=deadline_date-today
+        time_remaining=delta.days
+        return time_remaining
+
+    @property
+    def late_penalty(self):
+        if self.submitted >self.deadline:
+            return 0.98
+        else:
+            return 1
+
+    @property
+    def get_pay(self):
+        if self.point>self.mxpoint:
+            return 0
+        else:
+            Earning= round(Decimal(self.point/self.mxpoint)*self.mxearning ,2)
+            compute_pay=Earning * Decimal(self.late_penalty)
+            pay=round(compute_pay,2)
+            return pay
 
 class Requirement(models.Model):
     # Apps

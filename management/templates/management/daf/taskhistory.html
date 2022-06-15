@@ -47,12 +47,12 @@
                 <td><input type="checkbox" class="checkthis" /></td>
                 {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
                 <td>
-                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                <a class="article-title" href="{% url 'management:user_task_history' task.id %}">
                   {{task.employee}}
                 </td>
                 {% else %}
                 <td>
-                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                <a class="article-title" href="{% url 'management:user_task_history' task.id %}">
                   {{task.employee.first_name}},{{task.employee.last_name}}
                 </td>
                 {% endif %}

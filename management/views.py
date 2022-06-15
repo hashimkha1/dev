@@ -1,5 +1,5 @@
 import calendar
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.http import Http404,JsonResponse
@@ -298,6 +298,86 @@ class TaskHistoryView(ListView):
   queryset=TaskHistory.objects.all()
   template_name='management/daf/taskhistory.html'
 
+def task_payslip(request, *args, **kwargs):
+    task_history = TaskHistory.objects.get(pk=kwargs.get('pk'))
+    today=date(date.today().year, date.today().month , date.today().day)
+    year=task_history.submission.strftime("%Y")
+    month=task_history.submission.strftime("%b")
+    day=task_history.submission.strftime("%d")
+    last_date = calendar.monthrange(int(year), int(task_history.submission.strftime("%m")))[1]
+    # deadline_date = year+'-'+task_history.submission.strftime("%m")+'-'+str(last_date)
+    deadline_date = datetime.strptime(year+'-'+task_history.submission.strftime("%m")+'-'+str(last_date), "%Y-%m-%d").date()
+    employee = get_object_or_404(User, username=task_history.employee.username)
+    tasks=TaskHistory.objects.all().filter(employee=employee, submission__month=task_history.submission.strftime("%m"))
+    mxearning=tasks.aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
+    GoalAmount=mxearning.get('Your_Total_AssignedAmt')
+    points=tasks.aggregate(Your_Total_Points=Sum('point'))
+    total_pay = 0
+    for task in tasks:
+        total_pay = total_pay + task.get_pay
+
+    # Deductions
+    loan=Decimal(total_pay)*Decimal('0.2')
+    computer_maintenance=500
+    food_accomodation=1000
+    health=500
+    laptop_saving=1000
+    total_deduction=Decimal(loan)+Decimal(computer_maintenance)+Decimal(food_accomodation)+Decimal(health)+Decimal(laptop_saving)
+
+    # Bonus
+    Lap_Bonus=500
+    if points.get('Your_Total_Points')==None:
+        pointsearning=0
+    else:
+        pointsearning=points.get('Your_Total_Points')
+    
+    Night_Bonus=Decimal(total_pay)*Decimal('0.02')
+    if month in (12,1) and day in (24,25,26,31,1,2):
+        holidaypay=3000.00
+    else:
+        holidaypay=0.00
+    EOM=0
+    EOQ=0
+    EOY=0
+    yearly=12000
+    total_bonus=Decimal(pointsearning)+Decimal(holidaypay)+Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+Night_Bonus
+    # Net Pay
+    try:
+        net=total_pay-total_bonus-total_deduction
+    except (TypeError, AttributeError):
+        net=total_pay
+        
+    context= {
+                #deductions
+                'laptop_saving':laptop_saving,
+                'computer_maintenance':computer_maintenance,
+                'food_accomodation':food_accomodation,
+                'health':health,
+                'loan':loan,
+                'total_deduction':total_deduction,
+                #bonus
+                'Night_Bonus':Night_Bonus,
+                'pointsearning':pointsearning,
+                'holidaypay':holidaypay,
+                'yearly':yearly,
+                #General
+                'tasks':tasks,
+                'deadline_date':deadline_date,
+                'today':today,
+                'total_pay':total_pay,
+                'net':net
+              }
+
+    if request.user == employee:
+        #return render(request, 'management/daf/paystub.html', context)
+        return render(request, 'management/daf/payslip.html', context)
+    elif request.user.is_superuser:
+        #return render(request, 'management/daf/paystub.html', context)
+        return render(request, 'management/daf/payslip.html', context)
+    else:
+        raise Http404("Login/Wrong Page: Contact Admin Please!")
+
+
 
 def usertask(request, user=None, *args, **kwargs):
     #tasks=Task.objects.all().order_by('-submission')
@@ -373,6 +453,81 @@ def usertask(request, user=None, *args, **kwargs):
         #raise Http404("Login/Wrong Page: Contact Admin Please!")
         return redirect('main:layout')
 
+def usertaskhistory(request, user=None, *args, **kwargs):
+    #tasks=Task.objects.all().order_by('-submission')
+    #user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
+    #Amount=Task.objects.all().aggregate(Your_Total_GoalAmount=Sum('mxearning'))
+    #total_duration=Task.objects.all().aggregate(Sum('duration'))
+    #mxearning=Task.objects.filter().aggregate(Your_Total_AssignedAmt=Sum('mxearning'))  
+    #paybalance=round(bal,2)
+    #balance=paybalance.quantize(Decimal('0.01'))
+    #salary = [task.pay for pay in Task.objects.all().values()]
+    computer_maintenance=500
+    food_accomodation=1000
+    deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
+    delta=deadline_date-date.today()
+    time_remaining=delta.days
+    current_user = request.user
+    task_history = TaskHistory.objects.get(pk=kwargs.get('pk'))
+    employee = get_object_or_404(User, username=task_history.employee)
+    tasks=TaskHistory.objects.all().filter(employee=employee, submission__month=task_history.submission.strftime("%m"))
+    #tasks = Task.objects.filter(user__username=request.user)
+    num_tasks = tasks.count()
+    points=tasks.aggregate(Your_Total_Points=Sum('point')) 
+    mxpoints=tasks.aggregate(Your_Total_MaxPoints=Sum('mxpoint')) 
+    earning=tasks.aggregate(Your_Total_Pay=Sum('mxearning'))
+    mxearning=tasks.aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
+    Points=points.get('Your_Total_Points')
+    MaxPoints=mxpoints.get('Your_Total_MaxPoints')
+    pay=earning.get('Your_Total_Pay')
+    GoalAmount=mxearning.get('Your_Total_AssignedAmt')
+    pay=earning.get('Your_Total_Pay')
+    total_pay = 0
+    for task in tasks:
+        total_pay = total_pay + task.get_pay
+    try:
+        paybalance=Decimal(GoalAmount)-Decimal(total_pay)
+    except (TypeError, AttributeError):
+        paybalance=0
+    
+    loan=Decimal(total_pay)*Decimal('0.2')
+
+    try:
+        net=total_pay-computer_maintenance-food_accomodation-loan
+    except (TypeError, AttributeError):
+        net=total_pay-computer_maintenance-food_accomodation
+    try:
+        pointsbalance=Decimal(MaxPoints)-Decimal(Points)
+    except (TypeError, AttributeError):
+        pointsbalance=0
+
+    context= {
+                'tasksummary':tasksummary,
+                'num_tasks':num_tasks,
+                'tasks': tasks,
+                'Points':Points,
+                'MaxPoints':MaxPoints,
+                'pay':pay,
+                'GoalAmount':GoalAmount,
+                'paybalance':paybalance,
+                'pointsbalance':pointsbalance,
+                'time_remaining':time_remaining,
+                'total_pay':total_pay,
+                'loan':loan,
+                'net':net
+              }
+    
+    # setting  up session 
+    request.session['task_id'] = kwargs.get('pk')
+
+    if request.user == employee:
+        return render(request, 'management/daf/usertasks.html', context)
+    elif request.user.is_superuser:
+        return render(request, 'management/daf/usertasks.html', context)
+    else:
+        raise Http404("Login/Wrong Page: Contact Admin Please!")
+
+
 def payslip(request, user=None, *args, **kwargs):
     deadline_date=date(date.today().year, date.today().month, calendar.monthrange(date.today().year, date.today().month)[-1])
     today=date(date.today().year, date.today().month , date.today().day)
@@ -390,33 +545,61 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
+    # if loan already paid so, no need add to the deductions
+    # currently, one of the employee from coda mannually calculate
+    # the loan amount and add to the deductions. We need to create
+    # new database table to store the loan amount and add to the database.
     loan=Decimal(total_pay)*Decimal('0.2')
+    # if employee use company computer, add the charge to the deductions.
     computer_maintenance=500
+    # if user self paid the food accomodation, no need to add to the deductions
     food_accomodation=1000
+    # same as food accomodation.
     health=500
+    # if company gave the laptop to the employee. They will charge or deduct from the total pay. We are currently charging 1000 until it gets to the 20000.
+    # if employee achieved the 20000 threshold it will then no deduction.
+    # if the employee buy a laptop in 2, or so months. Then we'll stop dedcuting and
+    # the amount that we deducted the last month will be added to the total pay.
     laptop_saving=1000
     total_deduction=Decimal(loan)+Decimal(computer_maintenance)+Decimal(food_accomodation)+Decimal(health)+Decimal(laptop_saving)
 
     # Bonus
-    Lap_Bonus=500
+    # if you have your own laptop company will give you a bonus.
+    Lap_Bonus=500 # make it 1000 later.
     if points.get('Your_Total_Points')==None:
         pointsearning=0
     else:
         pointsearning=points.get('Your_Total_Points')
     
-    Night_Bonus=Decimal(total_pay)*Decimal('0.02')
+    # if a employee working on night or different timezone will get a bonus.
+    Night_Bonus=Decimal(total_pay)*Decimal('0.02') # 2% of the total pay.
+    # we should create an attendance system, who mark an attendance of every employee.
+    # leave it for the time being.
     if month in (12,1) and day in (24,25,26,31,1,2):
         holidaypay=3000.00
     else:
         holidaypay=0.00
-    EOM=0
-    EOQ=0
-    EOY=0
+    # for employee of year, we need to filter out the most daf points of the month.
+    # for message point we need to divide the points with 10 (we need an API to get the message points)
+    # for rating points we need to divide it by 2 (we already have rating model)
+    # DAF (tasks points) points will be multiplied by 2 (we already have tasks table for tasks points)
+    # 1-1 (second level tasks) session points will be multiplied by 3
+    # total number of meetings points.
+        # mainly 'go to meetings'(1-1 meetings) and 'zoom meetings'.
+    EOM=0 # employee of month
+    EOQ=0 # employee of quarter
+    EOY=0 # employee of year
+
+    # if user.joining_date > 12 months ago he will get 12000ksh bonus.
+    # if user spent 25 months, the program will check if user already
+    # claimed the previous 12000 bonus. If not, he will get double bonus.
+    # # Transaction => will note every transaction of the employee.
+    # # if user earnt 1000 we'll add this to the transaction module.
     yearly=12000
     total_bonus=Decimal(pointsearning)+Decimal(holidaypay)+Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+Night_Bonus
     # Net Pay
     try:
-        net=total_pay-total_bonus-total_deduction
+        net=total_pay+total_bonus-total_deduction
     except (TypeError, AttributeError):
         net=total_pay
         
