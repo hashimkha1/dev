@@ -273,7 +273,18 @@ class UserTrackListView(ListView):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
 '''
+@method_decorator(login_required, name='dispatch')
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model=Tracker
+    success_url="/accounts/tracker"
+    #success_url="usertime"
+    #fields=['category','task','duration']
+    fields=['employee','author','category','task','duration','plan']
 
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)  
+''' 
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
@@ -297,7 +308,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
             messages.error(self.request, "Total duration is greater than maximum assigned points.")
             return super().form_invalid(form)
         return super().form_valid(form)  
-
+'''
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Tracker
