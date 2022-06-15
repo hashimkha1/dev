@@ -162,7 +162,8 @@ class Tracker(models.Model):
             'accounts.CustomerUser',
              verbose_name=_('Client Name'),
              on_delete=models.CASCADE,
-             related_name="author")
+             related_name="author",
+             limit_choices_to={'is_client': True})
     # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
     start_time = models.TimeField(auto_now_add=True)
