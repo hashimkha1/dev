@@ -279,6 +279,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
+    # There is need to look at the column for client to get the id
     fields=['employee','author','category','task','duration','plan']
 
     def form_valid(self,form):
@@ -287,11 +288,14 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         total_duration = 0
         for data in total_duration_fil.all():
             total_duration += data.duration
-        # print("total_duration",total_duration)
+        # Needs a validation message if the employee does not have tasks
+
+        #print("total_duration",total_duration)
+        #x=Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user)
+        #print("Values",x)
         if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
             messages.error(self.request, "Total duration is greater than maximum assigned points.")
             return super().form_invalid(form)
-            
         return super().form_valid(form)  
 
 @method_decorator(login_required, name='dispatch')
