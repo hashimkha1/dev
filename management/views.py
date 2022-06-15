@@ -521,9 +521,9 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     request.session['task_id'] = kwargs.get('pk')
 
     if request.user == employee:
-        return render(request, 'management/daf/usertasks.html', context)
+        return render(request, 'management/daf/usertaskhistory.html', context)
     elif request.user.is_superuser:
-        return render(request, 'management/daf/usertasks.html', context)
+        return render(request, 'management/daf/usertaskhistory.html', context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 

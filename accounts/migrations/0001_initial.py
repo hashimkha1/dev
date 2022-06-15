@@ -67,7 +67,6 @@ class Migration(migrations.Migration):
                 ('duration', models.IntegerField(choices=[(1, 'One Hour'), (2, 'Two Hours'), (3, 'Three Hours'), (4, 'Four Hours'), (5, 'Five Hours'), (8, 'Eight Hours'), (10, 'Ten Hours')], default=2)),
                 ('time', models.PositiveIntegerField(default=120, error_messages={'name': {' max_length': 'The maximum hours must be between 0 and 199'}}, help_text='Maximum 200')),
                 ('author', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='author', to=settings.AUTH_USER_MODEL)),
-                ('clientname', models.ForeignKey(limit_choices_to={'is_client': True}, on_delete=django.db.models.deletion.CASCADE, related_name='clientname', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'ordering': ['login_date'],

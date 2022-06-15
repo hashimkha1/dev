@@ -59,7 +59,7 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
-            login(request, account)
+        
             # If Category is Staff/employee
             if account is not None and account.category==2:
                 if account.sub_category==2:# contractual
@@ -88,11 +88,12 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect('application:firstinterview')
-            else:
+
+            elif account is not None and account.is_admin:
                 login(request, account)
                 return redirect('main:layout')
-        else:
-            messages.success(request,f'Invalid credentials.Kindly Try again!!')
+            else:
+                messages.success(request,f'Invalid credentials.Kindly Try again!!')
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================
@@ -278,7 +279,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
-    fields=['category','task','duration','clientname']
+    fields=['employee','author','category','task','duration','plan']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
@@ -298,8 +299,7 @@ class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Tracker
     success_url="/accounts/tracker"
 
-    fields=['author','clientname','plan','category','task','duration','time']
-
+    fields=['employee','author','plan','category','task','duration','time']
     def form_valid(self,form):
         #form.instance.author=self.request.user
         if self.request.user.is_superuser:
