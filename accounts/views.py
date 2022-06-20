@@ -59,7 +59,7 @@ def login_view(request):
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
             account = authenticate(username=username, password=password)
-            login(request, account)
+        
             # If Category is Staff/employee
             if account is not None and account.category==2:
                 if account.sub_category==2:# contractual
@@ -88,11 +88,12 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect('application:firstinterview')
-            else:
+
+            elif account is not None and account.is_admin:
                 login(request, account)
                 return redirect('main:layout')
-        else:
-            messages.success(request,f'Invalid credentials.Kindly Try again!!')
+            else:
+                messages.success(request,f'Invalid credentials.Kindly Try again!!')
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================
@@ -272,13 +273,25 @@ class UserTrackListView(ListView):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
 '''
-
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
-    fields=['category','task','duration','clientname']
+    #fields=['category','task','duration']
+    fields=['employee','author','category','task','duration','plan']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)  
+''' 
+@method_decorator(login_required, name='dispatch')
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model=Tracker
+    success_url="/accounts/tracker"
+    #success_url="usertime"
+    # There is need to look at the column for client to get the id
+    fields=['employee','author','category','task','duration','plan']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
@@ -286,20 +299,22 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         total_duration = 0
         for data in total_duration_fil.all():
             total_duration += data.duration
-        # print("total_duration",total_duration)
+        # Needs a validation message if the employee does not have tasks
+
+        #print("total_duration",total_duration)
+        #x=Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user)
+        #print("Values",x)
         if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
             messages.error(self.request, "Total duration is greater than maximum assigned points.")
             return super().form_invalid(form)
-            
         return super().form_valid(form)  
-
+'''
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Tracker
     success_url="/accounts/tracker"
 
-    fields=['author','clientname','plan','category','task','duration','time']
-
+    fields=['employee','author','plan','category','task','duration','time']
     def form_valid(self,form):
         #form.instance.author=self.request.user
         if self.request.user.is_superuser:

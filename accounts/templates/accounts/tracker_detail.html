@@ -21,7 +21,8 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
-          <th>Name</th>
+          <th>Employee</th>
+          <th>Client Name</th>
           <th>Category</th>
           <th>Task</th>
           <th>Duration</th>
@@ -30,6 +31,7 @@
       <tbody>
             <tr>
               <td>{{object.login_date|date:"F d, Y"}}</td>
+              <td>{{object.employee}}</td>
               <td>{{object.author}}</td>
               <td>{{object.category}}</td>
               <td>{{object.task}}</td>
