@@ -32,6 +32,9 @@
                       </ul>
                   </div>
               </div>
+              <br><br><br>
+
+              <div class="sectionA">
               <!-------------------------SECTION A: ALTERYX ----------------------------------->
               <div class="data_header">
                   <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
@@ -159,9 +162,11 @@
                       </div>
                   </div>
               </div>
+              </div>
 
               <!-------------------------SECTION B: DATABASE MANAGEMENT----------------------------------->
-              <div class="data_header">
+              <div class="sectionB" style="display: none">
+              <div class="data_header" >
                   <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
                   <h4 class="title text-center">SECTION B: DATABASE MANAGEMENT</h4>
 
@@ -262,7 +267,9 @@
                       </div>
                   </div>
               </div>
+              </div>
               <!-------------------------SECTION C : REPORT DEVELOPMENT----------------------------------->
+              <div class="sectionC" style="display: none">
               <div class="data_header">
                   <h4 class="title text-center">
                       SECTION C : REPORT DEVELOPMENT
@@ -361,8 +368,15 @@
                       </div>
                   </div>
               </div>
+              </div>
+
+              <!-- Upload works -->
+              <p>Note: Combine all the files and zip before uploading.</p>
+              <input type="file" id="applicantworks" name="applicantworks"> 
+             
+              <button class="next_section_btn" disabled>Next Section</button>
               <!-------------------------SECTION D: UPLOADING/SENDING YOUR WORK----------------------------------->
-              <div class="data_header">
+              <!-- <div class="data_header">
                   <h4 class="title text-center">
                       SECTION D: UPLOADING/SENDING YOUR WORK
                   </h4>
@@ -382,6 +396,14 @@
                           </div>
                       </div>
                   </div>
-              </div>
+              </div> -->
+
       </section>
+
+
+<script>
+
+    
+
+</script>
 {% endblock content %}
