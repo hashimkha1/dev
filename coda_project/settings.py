@@ -30,7 +30,7 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
-    "django_crontab",
+    # "django_crontab",
     #'testing.apps.TestingConfig',
     "main.apps.MainConfig",
     #'users.apps.UsersConfig',
