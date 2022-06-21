@@ -17,7 +17,6 @@
 
     <h5><i>Please make a payment to access the course/interview materials. Thank You!</i></h5>
     <hr />
-    {% for payment in payments %}
   
   
  
@@ -29,6 +28,8 @@
                 <h2 class="text-center m-4">Method 1: Paypal</h2>
                 <div id="paypal-button-container"></div>
           </div>
+         {% for payment in payments %}
+
 	      <script src="https://www.paypal.com/sdk/js?client-id=AcBwtGisC84Foj8VWFrg8_jZ5PGu1qNxYhXDXKU4cqcGNvYzlkACiI0d5oIXk6OI7lzn6_Ng5ujZwT0D&currency=USD&disable-funding=credit"></script>
 
           <script>
