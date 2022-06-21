@@ -763,7 +763,7 @@ class Requirement(models.Model):
         choices=BEN_CHOICES,
         default=Other,
     )
-    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
+    assigned_to = models.ForeignKey(User, on_delete=models.CASCADE, default=1,limit_choices_to={'is_employee': True})
     company = models.CharField(max_length=255, default="CODA")
     created_by = models.CharField(max_length=255, default="admin")
     app = models.CharField(max_length=255, default="Data Analysis")
