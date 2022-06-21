@@ -13,7 +13,7 @@ from django.views.generic import (
 )
 
 from .forms import TransactionForm
-from .models import Expenses
+from .models import Expenses, Payments
 
 # Create your views here.
 
