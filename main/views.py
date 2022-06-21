@@ -79,7 +79,7 @@ def report(request):
 
 
 def pay(request):
-    payments = Payments.objects.all()
+    payments = Payments.objects.all().first()
     return render(request, "main/pay.html", {"title": "pay", "payments": payments})
 
 
