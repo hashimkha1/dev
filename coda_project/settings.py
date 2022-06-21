@@ -17,101 +17,100 @@ import django_heroku
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
-SECRET_KEY ='!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
-#SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
+# SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
-#DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
-ALLOWED_HOSTS = ['*']
-#ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
-#ALLOWED_HOSTS = []
-AUTH_USER_MODEL='accounts.CustomerUser'
-AUTHENTICATION_BACKENDS = (
-    ('django.contrib.auth.backends.ModelBackend'),
-)
+# DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
+# ALLOWED_HOSTS = []
+AUTH_USER_MODEL = "accounts.CustomerUser"
+AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
     #'django_crontab',
     #'testing.apps.TestingConfig',
-    'main.apps.MainConfig',
+    "main.apps.MainConfig",
     #'users.apps.UsersConfig',
-    'accounts.apps.AccountsConfig',
-    'codablog.apps.CodablogConfig',
-    'data.apps.DataConfig',
-    'application.apps.ApplicationConfig',
-    'getdata.apps.GetdataConfig',
-    'projectmanagement.apps.ProjectmanagementConfig',
-    'investing.apps.InvestingConfig',
-    'management.apps.ManagementConfig',
-    'globalsearch.apps.GlobalsearchConfig',
-    'store',
-    'crispy_forms',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'storages',
-    'django_countries',
-    'mathfilters',
-    'mptt',
-    'django_filters',
+    "accounts.apps.AccountsConfig",
+    "codablog.apps.CodablogConfig",
+    "data.apps.DataConfig",
+    "application.apps.ApplicationConfig",
+    "getdata.apps.GetdataConfig",
+    "projectmanagement.apps.ProjectmanagementConfig",
+    "investing.apps.InvestingConfig",
+    "management.apps.ManagementConfig",
+    "globalsearch.apps.GlobalsearchConfig",
+    "store",
+    "crispy_forms",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "storages",
+    "django_countries",
+    "mathfilters",
+    "mptt",
+    "django_filters",
     "django_celery_beat",
     "django_celery_results",
     #'dbbackup',
 ]
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-#DBBACKUP_STORAGE='django.core.files.storage.FileSystemStorage'
-#DBBACKUP_STORAGE_OPTIONS={'location':BASE_DIR/'backup'}
-#DBBACKUP_STORAGE_OPTIONS={'location':'/codapp/backup'}
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+# DBBACKUP_STORAGE='django.core.files.storage.FileSystemStorage'
+# DBBACKUP_STORAGE_OPTIONS={'location':BASE_DIR/'backup'}
+# DBBACKUP_STORAGE_OPTIONS={'location':'/codapp/backup'}
 
-CRONJOBS=[
-    ('*1****','coda_project.cron.my_backup')
+CRONJOBS = [
+    # ("*/1 * * * *", "coda_project.cron.my_backup"),
+    ("*/5 * * * *", "management.cron.advertisement"),
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
-CSRF_COOKIE_SECURE=False
+CSRF_COOKIE_SECURE = False
 
-ROOT_URLCONF = 'coda_project.urls'
+ROOT_URLCONF = "coda_project.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-             #os.path.join(BASE_DIR, 'templates')
-             'templates'
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
+            # os.path.join(BASE_DIR, 'templates')
+            "templates"
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'management.context_processors.categories',
-                'management.context_processors.departments',
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "management.context_processors.categories",
+                "management.context_processors.departments",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'coda_project.wsgi.application'
+WSGI_APPLICATION = "coda_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-'''
+"""
 #postgresql database
 
 DATABASES = {
@@ -163,14 +162,13 @@ DATABASES = {
     }
 }
 
-'''
+"""
 import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 # DATABASES = {
@@ -185,8 +183,8 @@ DATABASES = {
 # }
 
 
-db_from_env=dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES["default"].update(db_from_env)
 
 
 # Password validation
@@ -194,29 +192,29 @@ DATABASES['default'].update(db_from_env)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 PASSWORD_HASHERS = [
-    'django.contrib.auth.hashers.MD5PasswordHasher',
+    "django.contrib.auth.hashers.MD5PasswordHasher",
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -227,28 +225,26 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-STATIC_URL = '/static/'
-STATICFILES_DIR=(
-    os.path.join(BASE_DIR,"static")
-)
+STATIC_URL = "/static/"
+STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-LOGIN_REDIRECT_URL = 'main:layout'
-LOGIN_URL = 'accounts:account-login'
+LOGIN_REDIRECT_URL = "main:layout"
+LOGIN_URL = "accounts:account-login"
 
-EMAIL_BACKEND='django.core.mail.backends.filebased.EmailBackend'
-EMAIL_FILE_PATH=BASE_DIR + '/emails'
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
 
 # Gmail Email Backend Account
-''' 
+""" 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com" 
 EMAIL_USE_TLS = True
@@ -263,48 +259,48 @@ EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = "chris.c.maghas"
 EMAIL_HOST_PASSWORD = "@ZK123sebe" #josmaetjfxtkkwls
-'''
+"""
 
 # Email Backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER ="info@codanalytics.net" #os.environ.get("EMAIL_USER") 
-EMAIL_HOST_PASSWORD ="@ZK123sebe" #os.environ.get("EMAIL_PASS")
+EMAIL_HOST_USER = "info@codanalytics.net"  # os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = "@ZK123sebe"  # os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
-AWS_S3_REGION_NAME = 'us-east-2' #change to your region
-AWS_S3_SIGNATURE_VERSION = 's3v4'
-AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-#AWS_S3_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-#AWS_S3_BUCKET_NAME_STATIC =  os.environ.get('AWS_STORAGE_BUCKET_NAME')
-AWS_S3_FILE_OVERWRITE=False
+AWS_S3_REGION_NAME = "us-east-2"  # change to your region
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
+# AWS_S3_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
+# AWS_S3_BUCKET_NAME_STATIC =  os.environ.get('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
-#session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-#s3 = session.resource('s3')
+# session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
+# s3 = session.resource('s3')
 
-DEFAULT_FILE_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
-#STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
 CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
 CELERY_RESULT_BACKEND = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_IMPORTS=("coda_project.task")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_IMPORTS = "coda_project.task"
 
 from celery.schedules import crontab
 
 CELERYBEAT_SCHEDULE = {
-    'run_on_every_1st': {
-        'task': 'task_history',
-        'schedule': crontab(0, 0, day_of_month='1'),
+    "run_on_every_1st": {
+        "task": "task_history",
+        "schedule": crontab(0, 0, day_of_month="1"),
         #'schedule': crontab(),
     },
 }
