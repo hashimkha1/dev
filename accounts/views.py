@@ -19,6 +19,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from .models import CustomerUser,Tracker
 from django.db.models import Q
 from management.models import Task
+from application.models import Applicant_Profile
 # Create your views here..
 
 #@allowed_users(allowed_roles=['admin'])
@@ -35,8 +36,25 @@ def thank(request):
 def join(request):
     if request.method== "POST":
         form=UserForm(request.POST,request.FILES)
+
         if form.is_valid():
+            print("category",form.cleaned_data.get('category'))
+
+            if form.cleaned_data.get('category') == 1:
+                form.instance.is_applicant = True
+            elif form.cleaned_data.get('category') == 2:
+                form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:
+                form.instance.is_client = True 
+            else:
+                form.instance.is_admin = True 
+
             form.save()
+
+            print("request user data",form.instance.id)
+            custom_get = CustomerUser.objects.get(id=form.instance.id)
+            Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
+
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')

@@ -13,10 +13,12 @@ from django.views.generic import (DeleteView,ListView,TemplateView, UpdateView)
 from django.utils.decorators import method_decorator
 from .forms import (ApplicantForm, PolicyForm, RatingForm, ReportingForm)
 from accounts.forms import (UserForm)
-from .models import (Application, Policy, Rated,Reporting)
+from .models import (Applicant_Profile,Application, Policy, Rated,Reporting)
 from .utils import (posts, alteryx_list,dba_list,tableau_list)
 from django.conf import settings
 from django.contrib.auth import get_user_model
+import boto3,random,string
+from django.http import JsonResponse
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -81,12 +83,45 @@ def first_interview(request):
     return render(request, 'application/interview_process/first_interview.html', {'title': 'first_interview'})
 
 def firstinterview(request):
+    section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
+
     context = {
         'alteryx_list': alteryx_list,
         'dba_list': dba_list,
-        'tableau_list': tableau_list
+        'tableau_list': tableau_list ,
+        'section': section
     }
     return render(request, 'application/interview_process/firstinterview.html', context)
+
+def uploadinterviewworks(request):
+    print(request.user,request.user.id)
+    myfile = request.FILES['myfile']
+    section  = request.POST["section"]
+    profilename  = myfile.name
+    extension = str(profilename[profilename.rindex('.'):])
+    allowed_extlist = ['.zip']
+    if extension not in allowed_extlist:
+        return JsonResponse({"success":False,"message": "Invalid file type.Formats allowed: zip."})
+
+    if(myfile.size > 50000000):
+        context["success"] = False
+        context["message"] = "File size sholud be less than 50MB"
+        return JsonResponse(context)
+
+    filename = ''.join(random.choices(string.digits, k=5))
+    des_path = "applicants/interview/"+str(request.user.id)+filename+'.zip'
+
+    s3 = boto3.resource(
+        's3',
+        aws_access_key_id      = settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key  = settings.AWS_SECRET_ACCESS_KEY,
+        region_name            = settings.AWS_S3_REGION_NAME
+    )
+    response = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME).put_object(Key=des_path, Body=myfile)
+    print("response",response)
+    print("section",section)
+    Applicant_Profile.objects.filter(applicant=request.user).update(section=section)
+    return JsonResponse({"success":True})
 
 def second_interview(request):
     return render(request, 'application/interview_process/second_interview.html', {'title': 'second_interview'})

@@ -275,6 +275,9 @@ EMAIL_HOST_PASSWORD ="@ZK123sebe" #os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
+FILE_SAVE_DIR = '/var/www/html/uploads/'
+
 AWS_S3_REGION_NAME = 'us-east-2' #change to your region
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')

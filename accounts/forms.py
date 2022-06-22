@@ -28,6 +28,8 @@ class UserForm(forms.ModelForm):
             "state",
             "country",
             "resume_file",
+            "is_employee",
+            "is_applicant"
         ]
         labels = {
             "first_name": "First Name",

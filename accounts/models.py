@@ -52,7 +52,7 @@ class CustomerUser(AbstractUser):
     is_admin = models.BooleanField("Is admin", default=False)
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
-    is_applicant = models.BooleanField("Is applicant", default=True)
+    is_applicant = models.BooleanField("Is applicant", default=False)
     resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
