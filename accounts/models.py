@@ -49,11 +49,11 @@ class CustomerUser(AbstractUser):
     # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
     # applicant=models.BooleanField('Is Job Applicant', default=True)
     # Changes Made to Model-3/29/2022
-    resume = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
     is_admin = models.BooleanField("Is admin", default=False)
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
-    is_applicant = models.BooleanField("Is applicant", default=True)
+    is_applicant = models.BooleanField("Is applicant", default=False)
+    resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
         ordering = ["date_joined"]
@@ -147,14 +147,22 @@ class Tracker(models.Model):
         choices=TASK_CHOICES,
     )
     plan = models.CharField(
-        verbose_name=_('group'),
-        help_text=_('Required'),
+        verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
+    )
+    employee = models.CharField(
+        verbose_name=_("Employee Name"),
+        help_text=_("Required"),
         max_length=255,
-        default="B"
-        )
-    author = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="author")
-    clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
-    author = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE)
+        default="CODA",
+    )
+    author = models.ForeignKey(
+        "accounts.CustomerUser",
+        verbose_name=_("Client Name"),
+        on_delete=models.CASCADE,
+        related_name="author",
+        limit_choices_to={"is_client": True},
+    )
+    # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
     start_time = models.TimeField(auto_now_add=True)
     duration = models.IntegerField(choices=Duration.choices, default=2)

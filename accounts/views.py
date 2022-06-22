@@ -19,6 +19,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from .models import CustomerUser,Tracker
 from django.db.models import Q
 from management.models import Task
+from application.models import Applicant_Profile
 # Create your views here..
 
 #@allowed_users(allowed_roles=['admin'])
@@ -35,8 +36,25 @@ def thank(request):
 def join(request):
     if request.method== "POST":
         form=UserForm(request.POST,request.FILES)
+
         if form.is_valid():
+            print("category",form.cleaned_data.get('category'))
+
+            if form.cleaned_data.get('category') == 1:
+                form.instance.is_applicant = True
+            elif form.cleaned_data.get('category') == 2:
+                form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:
+                form.instance.is_client = True 
+            else:
+                form.instance.is_admin = True 
+
             form.save()
+
+            # print("request user data",form.instance.id)
+            # custom_get = CustomerUser.objects.get(id=form.instance.id)
+            # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
+
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')
             gender = form.cleaned_data.get('gender')
@@ -88,6 +106,7 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect('application:firstinterview')
+<<<<<<< HEAD
             # else:
             #     messages.success(request, f'Invalid credentials,Kindly Try Again!!')
         # else:
@@ -96,6 +115,14 @@ def login_view(request):
         #         return redirect('main:layout')
         else:
             messages.success(request,f'Invalid credentials.Kindly Try again!!')
+=======
+
+            elif account is not None and account.is_admin:
+                login(request, account)
+                return redirect('main:layout')
+            else:
+                messages.success(request,f'Invalid credentials.Kindly Try again!!')
+>>>>>>> 659b47b9a5ad474c6b1e9aa3412be9117605de1d
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================
@@ -275,13 +302,25 @@ class UserTrackListView(ListView):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
 '''
-
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model=Tracker
     success_url="/accounts/tracker"
     #success_url="usertime"
-    fields=['category','task','duration','clientname']
+    #fields=['category','task','duration']
+    fields=['employee','author','category','task','duration','plan']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)  
+''' 
+@method_decorator(login_required, name='dispatch')
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model=Tracker
+    success_url="/accounts/tracker"
+    #success_url="usertime"
+    # There is need to look at the column for client to get the id
+    fields=['employee','author','category','task','duration','plan']
 
     def form_valid(self,form):
         form.instance.author=self.request.user
@@ -289,20 +328,22 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         total_duration = 0
         for data in total_duration_fil.all():
             total_duration += data.duration
-        # print("total_duration",total_duration)
+        # Needs a validation message if the employee does not have tasks
+
+        #print("total_duration",total_duration)
+        #x=Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user)
+        #print("Values",x)
         if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
             messages.error(self.request, "Total duration is greater than maximum assigned points.")
             return super().form_invalid(form)
-            
         return super().form_valid(form)  
-
+'''
 @method_decorator(login_required, name='dispatch')
 class TrackUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model = Tracker
     success_url="/accounts/tracker"
 
-    fields=['author','clientname','plan','category','task','duration','time']
-
+    fields=['employee','author','plan','category','task','duration','time']
     def form_valid(self,form):
         #form.instance.author=self.request.user
         if self.request.user.is_superuser:

@@ -15,7 +15,10 @@ urlpatterns = [
     path('applicants/', views.applicantlist, name='applicants'),
     path('interview/', views.interview, name='interview'),
     path('first_interview/', views.first_interview, name='first_interview'),
+
     path('firstinterview/', views.firstinterview, name='firstinterview'),
+    path('uploadinterviewworks/', views.uploadinterviewworks, name='uploadinterviewworks'),
+
     path('second_interview/', views.second_interview, name='second_interview'),
     path('orientation/', views.orientation, name='orientation'),
     path('internal_training/', views.internal_training, name='internal'),
