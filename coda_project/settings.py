@@ -21,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-<<<<<<< HEAD
 DEBUG = False
 #DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
 ALLOWED_HOSTS = ['*']
@@ -31,15 +30,7 @@ AUTH_USER_MODEL='accounts.CustomerUser'
 AUTHENTICATION_BACKENDS = (
     ('django.contrib.auth.backends.ModelBackend'),
 )
-=======
-DEBUG = True
-# DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
-ALLOWED_HOSTS = ["*"]
-# ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
-# ALLOWED_HOSTS = []
-AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
->>>>>>> 659b47b9a5ad474c6b1e9aa3412be9117605de1d
+
 
 # Application definition
 INSTALLED_APPS = [
