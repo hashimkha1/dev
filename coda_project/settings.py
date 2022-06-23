@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 # DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -243,16 +243,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = "smtp.gmail.com" 
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER") "info@codanalytics.net"
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER") 
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
 
-# Other Email Backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "mail.privateemail.com"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = "chris.c.maghas"
-EMAIL_HOST_PASSWORD = "@ZK123sebe" #josmaetjfxtkkwls
 """
 
 # Email Backend
@@ -260,11 +253,12 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER") #"info@codanalytics.net"
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER") 
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+# AWS Backend
 AWS_S3_REGION_NAME = "us-east-2"  # change to your region
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
@@ -300,4 +294,4 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
-FILE_SAVE_DIR = '/var/www/html/uploads/'
+#FILE_SAVE_DIR = '/var/www/html/uploads/'
