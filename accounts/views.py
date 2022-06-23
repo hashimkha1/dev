@@ -106,23 +106,12 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect('application:firstinterview')
-<<<<<<< HEAD
-            # else:
-            #     messages.success(request, f'Invalid credentials,Kindly Try Again!!')
-        # else:
-        #     msg='INVALID'
-        #         login(request, account)
-        #         return redirect('main:layout')
-        else:
-            messages.success(request,f'Invalid credentials.Kindly Try again!!')
-=======
 
             elif account is not None and account.is_admin:
                 login(request, account)
                 return redirect('main:layout')
             else:
                 messages.success(request,f'Invalid credentials.Kindly Try again!!')
->>>>>>> 659b47b9a5ad474c6b1e9aa3412be9117605de1d
     return render(request, 'accounts/registration/login.html', {'form': form, 'msg': msg})
 
 #================================USERS SECTION================================

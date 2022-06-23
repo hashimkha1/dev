@@ -90,11 +90,6 @@ def hr(request):
 
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
-<<<<<<< HEAD
-#----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
-=======
-
->>>>>>> 659b47b9a5ad474c6b1e9aa3412be9117605de1d
 def transact(request):
     if request.method == "POST":
         form = TransactionForm(request.POST, request.FILES)
