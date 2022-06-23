@@ -14,6 +14,7 @@ import os
 from pickle import TRUE
 
 import django_heroku
+import redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -180,6 +181,35 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
+CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS=("coda_project.task")
+
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE = {
+    'run_on_every_1st': {
+        'task': 'task_history',
+        'schedule': crontab(0, 0, day_of_month='1'),
+    },
+}
+
+# import dj_database_url
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_DEV',# Name of Database
+#         'USER':'CODA_DEV',
+#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
 
 
 db_from_env = dj_database_url.config(conn_max_age=600)
