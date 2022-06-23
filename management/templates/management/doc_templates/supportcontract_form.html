@@ -1,0 +1,83 @@
+{%extends "main/base_templates/analysis_index.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<div class="content-section">
+    <div>
+        <h3>CONTRACT</h3>
+    </div>
+<div>
+    <img
+    src="\media\banner\banner.jpg"
+    class="d-block img-fluid"
+    width="1500px"
+    alt="banner"
+  />
+</div>
+
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom  text-center">
+        <p class="lead  text-center">
+            JOB SUPPORT TRAINING CONTRACT
+        </p>
+      </legend>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <div class="row">
+        <div class="col-md-6">
+            CODA TRAINING <br>
+            DATA ANALYSIS TRAINING CONTRACT
+        </div>
+        <div class="col-md-6">
+            FEES: $3000 <br>
+            DATE: 3RD MARCH ,2022
+        </div>
+      </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <div class="row">
+        <div class="col-md-6">
+            Client Name: <br>
+            Client Address: <br>
+            Client Phone:<br>
+            Client Email:
+        </div>
+        <div class="col-md-6">
+            Chris Maghas <br>
+            3757 WEST ST <br>
+            14174137966 <br>
+            Coachofanalytics@gmail.com
+        </div>
+      </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <div class="row">
+        <div class="col-md-6">Chris</div>
+        <div class="col-md-6">Job Support</div>
+      </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+    <div class="row">
+      <div class="col-md-6">Date Signed:6/23/2022</div>
+      <div class="col-md-6">Contract Amount:3000</div>
+      <div class="col-md-6">Amount Paid:1000</div>
+      <div class="col-md-6">Balance:2000</div>
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+      <div class="row">
+        <div class="col-md-4">Accept</div>
+        <div class="col-md-4">Status:Active</div>
+        <div class="col-md-4">pdf</div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">upload</div>
+      </div>
+    </fieldset>
+    <div class="form-group">
+      <button class="btn btn-outline-info" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+{% endblock content%}
+
+
+
+
+

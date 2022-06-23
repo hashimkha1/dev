@@ -69,7 +69,7 @@ urlpatterns = [
     path('gettotalduration/', views.gettotalduration, name='gettotalduration'),
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
-    path('thank/',views.thank, name='thank-you'),
+    path('contract/',views.contract, name='contract'),
 
     path('assess/', views.assess, name='assess'),
     path('assessment/', AssessListView.as_view(), name='assessment'),

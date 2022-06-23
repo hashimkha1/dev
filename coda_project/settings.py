@@ -21,8 +21,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = False
-#DEBUG =(os.environ.get('DEBUG_VALUE')=='True'): This does not pick up
+# DEBUG = False
+DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
 ALLOWED_HOSTS = ['*']
 #ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 #ALLOWED_HOSTS = []

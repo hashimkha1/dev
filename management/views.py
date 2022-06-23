@@ -51,9 +51,15 @@ def home(request):
     )
 
 
-def thank(request):
-    return render(request, "management/daf/thank.html")
-
+def contract(request):
+    return render(request, "management/doc_templates/trainingcontract_form.html")
+    # if request.user == employee:
+    #     # return render(request, 'management/daf/paystub.html', context)
+    #     return render(request, "management/doc_templates/studentcontract_form.html")
+    # elif request.user.is_superuser:
+    #     # return render(request, 'management/daf/paystub.html', context)
+    #     return render(request, "management/doc_templates/supportcontract_form.html")
+    
 
 # ==============================PLACE HOLDER MODELS=======================================
 
