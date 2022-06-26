@@ -115,49 +115,54 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-"""
-#postgresql database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODADB_DEV',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
-#postgresql database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_DEV',# Name of Database
-        'USER':'CODA_DEV',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-        'PORT': '5432'
-    }
-}
+# #postgresql database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_DEV',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODADB_DEV',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+# #postgresql database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_DEV',# Name of Database
+#         'USER':'CODA_DEV',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_DEV',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
+
+import dj_database_url
 
 DATABASES = {
     'default': {
@@ -167,20 +172,8 @@ DATABASES = {
     }
 }
 
-"""
-import dj_database_url
-
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "CODA_DEV",  # Name of Database
-        "USER": "CODA_DEV",
-        "PASSWORD": os.environ.get("POSTGRESSPASS"),
-        "HOST": "database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com",
-        "PORT": "5432",
-    }
-}
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
@@ -197,24 +190,6 @@ CELERYBEAT_SCHEDULE = {
         'schedule': crontab(0, 0, day_of_month='1'),
     },
 }
-
-# import dj_database_url
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_DEV',# Name of Database
-#         'USER':'CODA_DEV',
-#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-#         'PORT': '5432'
-#     }
-# }
-
-
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES["default"].update(db_from_env)
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
