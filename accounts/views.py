@@ -40,15 +40,25 @@ def join(request):
         if form.is_valid():
             print("category",form.cleaned_data.get('category'))
 
-            if form.cleaned_data.get('category') == 1:
-                form.instance.is_applicant = True
-            elif form.cleaned_data.get('category') == 2:
-                form.instance.is_employee = True 
-            elif form.cleaned_data.get('category') == 3:
+            # if form.cleaned_data.get('category') == 1: # Applicant
+            #     form.instance.is_applicant = True
+            # elif form.cleaned_data.get('category') == 2:# Staff
+            #     form.instance.is_employee = True 
+            # elif form.cleaned_data.get('category') == 3:# Client
+            #     form.instance.is_client = True 
+            # else:
+            #     form.instance.is_admin = True 
+
+            if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
+                if form.cleaned_data.get('sub_category') == 6:
+                    form.instance.is_admin = True
+                    form.instance.is_superuser = True 
+                else:
+                    form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:# Client
                 form.instance.is_client = True 
             else:
-                form.instance.is_admin = True 
-
+                form.instance.is_applicant = True
             form.save()
 
             # print("request user data",form.instance.id)
@@ -66,7 +76,6 @@ def join(request):
         form=UserForm()
         print(msg)
     return render(request, 'accounts/registration/join.html', {'form': form})
-
 
 
 def login_view(request):
@@ -128,8 +137,7 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country','is_superuser',
-            'is_admin','is_employee','is_client','is_applicant',
-            
+            'is_admin','is_employee','is_client','is_applicant', 'is_active','is_staff',
             ]
     def form_valid(self,form):
         #form.instance.username=self.request.user
