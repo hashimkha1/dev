@@ -28,10 +28,11 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    # media = api.media_upload("code.png")
+    media = api.media_upload(twitter_context.image)
 
     api.update_status(
         status=twitter_context.tweet_description,
+        media_ids=[twitter_context.tweet_media],
     )
 
     """
@@ -42,7 +43,7 @@ def advertisement():
     access_token = facebook_context.facebook_access_token
     url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
     msg = facebook_context.post_description
-    image_location = "https://images.unsplash.com/photo-1655495171748-0062a08dd98d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1529&q=80"
+    image_location = facebook_context.image
     payload = {
         "url": image_location,
         "access_token": access_token,
