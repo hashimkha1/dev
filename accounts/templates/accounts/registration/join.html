@@ -1,4 +1,5 @@
-{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}{% block content %}
+{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}{% block
+content %}
 
 <div class="content-section">
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -20,9 +21,20 @@
               Registering as:<span class="asteriskField">*</span>
             </label>
             <div class="">
-              <select name="category" class="select form-control" id="id_category"
-                onchange="toggle_sub_selection(this.value)">
-                <option id="category_disabled" value="0" style="display: none;" selected>Select Category</option>
+              <select
+                name="category"
+                class="select form-control"
+                id="id_category"
+                onchange="toggle_sub_selection(this.value)"
+              >
+                <option
+                  id="category_disabled"
+                  value="0"
+                  style="display: none"
+                  selected
+                >
+                  Select Category
+                </option>
                 <option value="1">Applicant Or Job Applicant</option>
                 <option value="2">Coda Staff Member</option>
                 <option value="3">Client Or Customer Or Student</option>
@@ -31,19 +43,35 @@
           </div>
         </div>
         <!-- <div class="col-md-2" id="sub_selection" style="display: none;">{{form.sub_category|as_crispy_field}}</div> -->
-        <div class="col-md-2" id="sub_selection" style="display: none;">
+        <div class="col-md-2" id="sub_selection" style="display: none">
           <div id="div_id_sub_category" class="form-group">
-            <label for="id_sub_category" class=" requiredField">
+            <label for="id_sub_category" class="requiredField">
               Sub Category:<span class="asteriskField">*</span>
             </label>
             <div class="">
-              <select name="sub_category" class="select form-control" id="id_sub_category" onchange="checkSubCategoryValidity()">
-                <option id="subcategoryoption0" value="0" style="display: none;" selected>Select Sub Category</option>
+              <select
+                name="sub_category"
+                class="select form-control"
+                id="id_sub_category"
+                onchange="checkSubCategoryValidity()"
+              >
+                <option
+                  id="subcategoryoption0"
+                  value="0"
+                  style="display: none"
+                  selected
+                >
+                  Select Sub Category
+                </option>
                 <!--Values for Clients -->
-                <option id="subcategoryoption1" value="1" selected="">Job Support</option>
+                <option id="subcategoryoption1" value="1" selected="">
+                  Job Support
+                </option>
                 <option id="subcategoryoption2" value="2">Students</option>
                 <!--Values for Employees/Staff -->
-                <option id="subcategoryoption3" value="3" selected="">Full Time</option>
+                <option id="subcategoryoption3" value="3" selected="">
+                  Full Time
+                </option>
                 <option id="subcategoryoption4" value="4">Contractual</option>
                 <option id="subcategoryoption5" value="5">Part Time</option>
               </select>
@@ -68,7 +96,6 @@
 
       <div class="row">
         <div class="col-md-12">{{ form.address|as_crispy_field }}</div>
-
       </div>
 
       <div class="row">
@@ -76,7 +103,7 @@
         <div class="col-md-4">{{ form.state|as_crispy_field }}</div>
         <div class="col-md-4">{{form.country|as_crispy_field }}</div>
       </div>
-      <div class="row" id="resume-field" style="display:none;">
+      <div class="row" id="resume-field" style="display: none">
         <div class="col-md-4">{{form.resume_file|as_crispy_field }}</div>
       </div>
     </fieldset>
@@ -92,34 +119,34 @@
   </div>
 </div>
 <script>
-  function checkCategoryValidity(){
+  function checkCategoryValidity() {
     var p = document.getElementById("id_category");
     if (p.value == "0") {
-      p.setCustomValidity('Please Select an option');
+      p.setCustomValidity("Please Select an option");
     } else {
-      p.setCustomValidity('');
+      p.setCustomValidity("");
     }
   }
-  function checkSubCategoryValidity(){
+  function checkSubCategoryValidity() {
     var p = document.getElementById("id_sub_category");
-    var q = document.getElementById("id_category")
-    if (q.value != "1"){
-        if (p.value == "0") {
-          p.setCustomValidity('Please Select an option');
-        } else {
-          p.setCustomValidity('');
-        }
-        }
+    var q = document.getElementById("id_category");
+    if (q.value != "1") {
+      if (p.value == "0") {
+        p.setCustomValidity("Please Select an option");
+      } else {
+        p.setCustomValidity("");
+      }
+    }
   }
 
   checkCategoryValidity();
-  
+
   function toggle_sub_selection(selected_value) {
-    if (selected_value == 3) {  
+    if (selected_value == 3) {
       //If the Value seclected is Client
-      document.getElementById("id_sub_category").style.display = "block"
-      document.getElementById("id_sub_category").disabled = false
-      document.getElementById("resume-field").style.display = "none"
+      document.getElementById("id_sub_category").style.display = "block";
+      document.getElementById("id_sub_category").disabled = false;
+      document.getElementById("resume-field").style.display = "none";
       document.getElementById("sub_selection").style.display = "";
       hideSubCategoryOption(3);
       hideSubCategoryOption(4);
@@ -127,11 +154,11 @@
       showSubCategoryOption(1);
       showSubCategoryOption(2);
       selectSubCategoryOption(0);
-    } else if(selected_value == 2) {
+    } else if (selected_value == 2) {
       //If the Value seclected is staff
-      document.getElementById("id_sub_category").style.display = "block"
-      document.getElementById("id_sub_category").disabled = false
-      document.getElementById("resume-field").style.display = "none"
+      document.getElementById("id_sub_category").style.display = "block";
+      document.getElementById("id_sub_category").disabled = false;
+      document.getElementById("resume-field").style.display = "none";
       document.getElementById("sub_selection").style.display = "";
       hideSubCategoryOption(1);
       hideSubCategoryOption(2);
@@ -139,29 +166,28 @@
       showSubCategoryOption(4);
       showSubCategoryOption(5);
       selectSubCategoryOption(0);
-    } 
-    else{
-      document.getElementById("resume-field").style.display = "block"
+    } else {
+      document.getElementById("resume-field").style.display = "block";
       document.getElementById("sub_selection").style.display = "none";
-      document.getElementById("id_sub_category").disabled = true
-      document.getElementById("id_sub_category").style.display = "none"
+      document.getElementById("id_sub_category").disabled = true;
+      document.getElementById("id_sub_category").style.display = "none";
     }
-    
-    checkCategoryValidity()
+
+    checkCategoryValidity();
     checkSubCategoryValidity();
   }
 
-  function hideSubCategoryOption(option){
-    document.getElementById("subcategoryoption" + option).style.display = "none";
+  function hideSubCategoryOption(option) {
+    document.getElementById("subcategoryoption" + option).style.display =
+      "none";
   }
-  function showSubCategoryOption(option){
+  function showSubCategoryOption(option) {
     document.getElementById("subcategoryoption" + option).style.display = "";
   }
-  function selectSubCategoryOption(option){
+  function selectSubCategoryOption(option) {
     document.getElementById("subcategoryoption" + option).selected = true;
   }
   document.getElementById("category_disabled").selected = true;
   document.getElementById("subcategoryoption0").selected = true;
-  
 </script>
 {% endblock content%}
