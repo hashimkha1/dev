@@ -1,26 +1,28 @@
 {%extends "main/base_templates/base.html"%} {%block content%}
-<div class="description">
-  <img
-    src="\media\banner\banner.jpg"
-    class="d-block img-fluid"
-    width="1500px"
-    alt="banner"
-  />
+<div class="container col-12">
   <hr />
-  <div class="row text-justify">
-    <div class="col-md-6">
+  <div class="row text-justify pr-4 pl-4">
+    <div class="col-md-4 vertline">
+      <img
+        src="\media\banner\banner.jpg"
+        class="d-block img-fluid"
+        width="1500px"
+        alt="banner"
+      />
+    </div>
+    <div class="col-md-4 pl-4">
       <p>Job Title :</p>
       <p>Company :</p>
       <p>Duty Station :</p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
       <p>Assistant Data Analyst (5 Positions) Organization</p>
       <p>Crown Data Analysis and Consultancy Ltd (CODA)</p>
       <p>Kitui and Makutano, Kenya</p>
     </div>
   </div>
 
-  <div class="row text-justify" style="border-top: 1px solid">
+  <div class="row text-center p-4" style="border-top: 1px solid">
     <div class="col-md-12">
       <h4 class="text-center">About US</h4>
       <p>
@@ -33,7 +35,7 @@
     </div>
   </div>
 
-  <div class="row text-justify vertline" style="border-top: 1px solid">
+  <div class="row text-start pl-4 vertline" style="border-top: 1px solid">
     <div class="col-md-6" style="border-right: 1px solid">
       <p class="text-center"><b>Qualifications</b></p>
       <p>
@@ -66,19 +68,19 @@
     </div>
   </div>
 
-  <h5 class="text-center">Benefits</h5>
-  <div class="row text-justify" style="border-top: 1px solid">
-    <div class="col-md-6">
-      <p>Health Care coverage and accommodation provided.</p>
-    </div>
-    <div class="col-md-6">
-      <p>Salary competitive and compensated through DAF System.</p>
+  <div class="row text-center p-4" style="border-top: 1px solid">
+    <div class="col-md-12">
+      <h5 class="p-2 text-dark">Benefits</h5>
+      <div class="col-md-12">
+        <p>Health Care coverage and accommodation provided.</p>
+        <p>Salary competitive and compensated through DAF System.</p>
+      </div>
     </div>
   </div>
 
-  <h5 class="text-center">How to Apply:</h5>
-  <div class="row text-justify" style="border-top: 1px solid">
+  <div class="row text-center p-4" style="border-top: 1px solid">
     <div class="col-md-12">
+      <h5 class="text-center text-dark">How to Apply:</h5>
       <p>
         All applications should be accompanied by one merged document with a
         cover letter and Resume/CV .All successful candidates will be required
@@ -88,10 +90,11 @@
       </p>
     </div>
   </div>
-  <div class="text-center">
+
+  <div class="text-center pb-2">
     <a href="{% url 'application:apply' %}">
-      <button type="button" class="btn btn-primary text-center">Apply</button>
+      <button type="button" class="btn btn-primary w-25">Apply</button>
     </a>
   </div>
 </div>
-{% endblock content %}
+{% include 'main/footer_templates/footer.html' %} {% endblock content %}
