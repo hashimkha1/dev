@@ -25,35 +25,67 @@ from django.contrib.auth import views as auth_views
 from accounts import views as account_views
 from coda_project import settings
 
-#===========ERROR HANDLING SECTION================
-handler400='main.views.hendler400'
-handler403='main.views.hendler403'
-handler300='main.views.hendler300'
-handler500='main.views.hendler500'
+# ===========ERROR HANDLING SECTION================
+handler400 = "main.views.hendler400"
+handler403 = "main.views.hendler403"
+handler300 = "main.views.hendler300"
+handler500 = "main.views.hendler500"
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path(r'^static/(?P<path>.*)$', serve,{'document_root': settings.STATIC_ROOT}),
-    re_path(r'^media/(?P<path>.*)$', serve,{'document_root': settings.MEDIA_ROOT}),
-    path('logout/', auth_views.LogoutView.as_view(template_name='accounts/registration/logout.html'), name='account-logout'),
-    path('password-reset/', auth_views.PasswordResetView.as_view(template_name='accounts/registration/password_reset.html'), name='password_reset'),
-    path('password-reset/done', auth_views.PasswordResetDoneView.as_view(template_name='accounts/registration/password_reset_done.html'), name='password_reset_done'),
-    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(template_name='accounts/registration/password_reset_confirm.html'), name='password_reset_confirm'),
-    path('password-reset-complete/', account_views.PasswordResetCompleteView, name='password_reset_complete'),
-    path('', include('main.urls', namespace='main')),
-    path('accounts/', include('accounts.urls')),
-    path('data/', include('data.urls', namespace='data')),
-    path('getdata/', include('getdata.urls', namespace='getdata')),
-    path('application/', include('application.urls', namespace='application')),
-    path('projectmanagement/', include('projectmanagement.urls', namespace='projectmanagement')),
-    path('blog/', include('codablog.urls', namespace='blog')),
-    path('investing/', include('investing.urls', namespace='investing')),
-    path('management/', include('management.urls',namespace='management')),
-    path('globalsearch/', include('globalsearch.urls'),name='search'),
-    #path('admindashboard/',include("testing.adminurls"))
-
+    path("admin/", admin.site.urls),
+    re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
+    re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
+    path(
+        "logout/",
+        auth_views.LogoutView.as_view(
+            template_name="accounts/registration/logout.html"
+        ),
+        name="account-logout",
+    ),
+    path(
+        "password-reset/",
+        auth_views.PasswordResetView.as_view(
+            template_name="accounts/registration/password_reset.html"
+        ),
+        name="password_reset",
+    ),
+    path(
+        "password-reset/done",
+        auth_views.PasswordResetDoneView.as_view(
+            template_name="accounts/registration/password_reset_done.html"
+        ),
+        name="password_reset_done",
+    ),
+    path(
+        "password-reset-confirm/<uidb64>/<token>/",
+        auth_views.PasswordResetConfirmView.as_view(
+            template_name="accounts/registration/password_reset_confirm.html"
+        ),
+        name="password_reset_confirm",
+    ),
+    path(
+        "password-reset-complete/",
+        account_views.PasswordResetCompleteView,
+        name="password_reset_complete",
+    ),
+    path("", include("main.urls", namespace="main")),
+    path("accounts/", include("accounts.urls")),
+    path("data/", include("data.urls", namespace="data")),
+    path("getdata/", include("getdata.urls", namespace="getdata")),
+    path("application/", include("application.urls", namespace="application")),
+    path(
+        "projectmanagement/",
+        include("projectmanagement.urls", namespace="projectmanagement"),
+    ),
+    path("blog/", include("codablog.urls", namespace="blog")),
+    path("investing/", include("investing.urls", namespace="investing")),
+    path("management/", include("management.urls", namespace="management")),
+    path("globalsearch/", include("globalsearch.urls"), name="search"),
+    # path('admindashboard/',include("testing.adminurls"))
 ]
 
 if settings.DEBUG:
-    urlpatterns +=static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
