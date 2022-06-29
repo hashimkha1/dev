@@ -54,9 +54,10 @@ class CustomerUser(AbstractUser):
     is_client = models.BooleanField("Is Client", default=False)
     is_applicant = models.BooleanField("Is applicant", default=False)
     resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
+
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
-        ordering = ["date_joined"]
+        ordering = ["-date_joined"]
 
 
 """ 
