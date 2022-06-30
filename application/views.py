@@ -84,13 +84,13 @@ def first_interview(request):
     return render(request, 'application/interview_process/first_interview.html', {'title': 'first_interview'})
 
 def firstinterview(request):
-    section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
+    # section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
 
     context = {
         'alteryx_list': alteryx_list,
-        'dba_list': dba_list,
+        'dba_list': dba_list,   
         'tableau_list': tableau_list ,
-        'section': section
+        # 'section': section
     }
     return render(request, 'application/interview_process/firstinterview.html', context)
 

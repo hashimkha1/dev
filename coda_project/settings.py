@@ -23,14 +23,12 @@ SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # DEBUG = False
-DEBUG =(os.environ.get('DEBUG_VALUE')=='True')
-ALLOWED_HOSTS = ['*']
-#ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
-#ALLOWED_HOSTS = []
-AUTH_USER_MODEL='accounts.CustomerUser'
-AUTHENTICATION_BACKENDS = (
-    ('django.contrib.auth.backends.ModelBackend'),
-)
+DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
+# ALLOWED_HOSTS = []
+AUTH_USER_MODEL = "accounts.CustomerUser"
+AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 
 # Application definition
@@ -166,7 +164,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CODA_UAT',# Name of Database 
         'USER':'postgres',
-        'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
+        'PASSWORD': os.environ.get('POSTGRESSPASS'),
         'HOST': 'localhost',
     }
 }
@@ -263,8 +261,8 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "mail.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER") #"info@codanalytics.net"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -303,4 +301,4 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
-#FILE_SAVE_DIR = '/var/www/html/uploads/'
+# FILE_SAVE_DIR = '/var/www/html/uploads/'
