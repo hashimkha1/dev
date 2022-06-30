@@ -15,6 +15,5 @@ app.conf.beat_schedule = {
     'run_on_every_1st': {
         'task': 'task_history',
         'schedule': crontab(0, 0, day_of_month='1'),
-        #'schedule': crontab(),
     },
 }
