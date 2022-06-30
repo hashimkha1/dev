@@ -138,6 +138,7 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #         'HOST': 'localhost',
 #     }
 # }
+
 # #postgresql database
 # DATABASES = {
 #     'default': {
@@ -150,29 +151,28 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_DEV',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        
 #     }
 # }
-
 
 import dj_database_url
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODA_UAT',# Name of Database 
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
     }
 }
 
 db_from_env = dj_database_url.config(conn_max_age=600)
+
 DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"

@@ -13,10 +13,8 @@
           <th>Last Name</th>
           <th>Phone Number</th>
           <th>Country</th>
-          <!--
             <th>Resume</th>
             <th>Delete</th>
-          -->
         </tr>
       </thead>
       <tbody>
@@ -29,7 +27,6 @@
           <td>{{applicant.last_name}}</td>
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
-          <!-- 
           <td>
             <button>
               <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
@@ -38,7 +35,6 @@
             </button>
           </td>
          <td><h4 ><a href="{%url 'application:applicant-delete' applicant.id %}">❌</H4></a></p></td>  
-        -->
       </tr>
         {% endfor %}
       </tbody>
