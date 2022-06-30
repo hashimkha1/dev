@@ -40,14 +40,25 @@ def join(request):
         if form.is_valid():
             print("category",form.cleaned_data.get('category'))
 
-            if form.cleaned_data.get('category') == 1:
-                form.instance.is_applicant = True
-            elif form.cleaned_data.get('category') == 2:
-                form.instance.is_employee = True 
-            elif form.cleaned_data.get('category') == 3:
+            # if form.cleaned_data.get('category') == 1:
+            #     form.instance.is_applicant = True
+            # elif form.cleaned_data.get('category') == 2:
+            #     form.instance.is_employee = True 
+            # elif form.cleaned_data.get('category') == 3:
+            #     form.instance.is_client = True 
+            # else:
+            #     form.instance.is_admin = True 
+
+            if form.cleaned_data.get('category') == 2: # Staff
+                if form.cleaned_data.get('sub_category') == 6:
+                    form.instance.is_admin = True 
+                else:
+                    form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:# Client
                 form.instance.is_client = True 
             else:
-                form.instance.is_admin = True 
+                 form.instance.is_applicant = True
+               
 
             form.save()
 
