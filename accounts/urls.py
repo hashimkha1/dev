@@ -1,10 +1,10 @@
 from django.urls import path
 from . import views
 from .views import (
-                    UserUpdateView,UserDeleteView, #PasswordsChangeView,
+                    UserUpdateView,UserDeleteView,SuperuserUpdateView,
                     ClientUpdateView,ClientDeleteView,ClientDetailView,
                     TrackCreateView, TrackDeleteView, TrackDetailView,
-                    TrackListView, TrackUpdateView #,UserTrackListView
+                    TrackListView, TrackUpdateView,
                     )
 app_name = 'accounts'
 urlpatterns = [
@@ -16,6 +16,7 @@ urlpatterns = [
     path('profile/', views.profile, name='account-profile'),
     path('users/', views.users, name='accounts-users'),
     path('user/<int:pk>/update/', UserUpdateView.as_view(template_name='accounts/admin/user_update_form.html'), name='user-update'),
+    path('superuser/<int:pk>/update/', SuperuserUpdateView.as_view(template_name='accounts/admin/user_update_form.html'), name='superuser-update'),
     #path('user/<int:pk>/update/', UserUpdateView.as_view(template_name='accounts/registration/join.html'), name='user-update'),
     path('user/<int:pk>/delete/', UserDeleteView.as_view(template_name='accounts/admin/user_delete.html'), name='user-delete'),
 

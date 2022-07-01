@@ -514,7 +514,10 @@ class Task(models.Model):
     )
     # category = models.ManyToManyField(Tag, blank=True)
     employee = models.ForeignKey(
-        User, on_delete=models.RESTRICT, related_name="user_assiged", default=999
+        User, on_delete=models.RESTRICT,
+        related_name="user_assiged",
+        limit_choices_to=Q(is_employee=True) | Q(is_admin=True)| Q(is_superuser=True),
+        default=999
     )
     activity_name = models.CharField(
         verbose_name=_("Activity Name"),
