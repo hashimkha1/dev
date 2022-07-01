@@ -40,14 +40,25 @@ def join(request):
         if form.is_valid():
             print("category",form.cleaned_data.get('category'))
 
-            if form.cleaned_data.get('category') == 1:
-                form.instance.is_applicant = True
-            elif form.cleaned_data.get('category') == 2:
-                form.instance.is_employee = True 
-            elif form.cleaned_data.get('category') == 3:
+            # if form.cleaned_data.get('category') == 1:
+            #     form.instance.is_applicant = True
+            # elif form.cleaned_data.get('category') == 2:
+            #     form.instance.is_employee = True 
+            # elif form.cleaned_data.get('category') == 3:
+            #     form.instance.is_client = True 
+            # else:
+            #     form.instance.is_admin = True 
+
+            if form.cleaned_data.get('category') == 2: # Staff
+                if form.cleaned_data.get('sub_category') == 6:
+                    form.instance.is_admin = True 
+                else:
+                    form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:# Client
                 form.instance.is_client = True 
             else:
-                form.instance.is_admin = True 
+                 form.instance.is_applicant = True
+               
 
             form.save()
 
@@ -118,17 +129,21 @@ def login_view(request):
 def users(request):
     users=CustomerUser.objects.all().order_by('-date_joined')
     if request.user.is_superuser:
-        return render(request, 'accounts/admin/users.html', {'users': users})
+        return render(request, 'accounts/admin/superpage.html', {'users': users})
+    
+    if request.user.is_admin:
+        return render(request, 'accounts/admin/adminpage.html', {'users': users})
     else:
-        return redirect('accounts:account-login')
-class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+        return redirect('main:layout')
+
+class SuperuserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=CustomerUser
     success_url="/accounts/users"
     #fields=['category','address','city','state','country']
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country','is_superuser',
-            'is_admin','is_employee','is_client','is_applicant',
+            'is_admin','is_employee','is_client','is_applicant','is_active', 'is_staff'
             
             ]
     def form_valid(self,form):
@@ -145,6 +160,33 @@ class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
         # if self.request.user == client.username:
         #     return True
         if self.request.user.is_superuser: #or self.request.user == user.username:
+            return True
+        return False
+
+class UserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=CustomerUser
+    success_url="/accounts/users"
+    #fields=['category','address','city','state','country']
+    fields=[
+            'category','sub_category','first_name','last_name','date_joined',
+            'email','gender','phone','address','city','state','country',
+            'is_admin','is_employee','is_client','is_applicant',
+            
+            ]
+    def form_valid(self,form):
+        #form.instance.username=self.request.user
+        # if request.user.is_authenticated:
+         if self.request.user.is_superuser or self.request.user.is_admin:
+             return super().form_valid(form)
+        #  elif self.request.user.is_admin:
+        #       return super().form_valid(form)
+         return False
+
+    def test_func(self):
+        user = self.get_object()
+        # if self.request.user == client.username:
+        #     return True
+        if self.request.user.is_superuser or self.request.user.is_admin:
             return True
         return False
 

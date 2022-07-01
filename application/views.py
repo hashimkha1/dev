@@ -48,8 +48,9 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def applicantlist(request):
-    applications = Application.objects.filter().order_by("-application_date")
-    applicants = User.objects.filter(is_applicant=True).order_by("-date_joined")
+    applications=Application.objects.filter().order_by('-application_date')
+    applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
+     
 
     # applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     context = {"applications": applications, "applicants": applicants}
@@ -93,15 +94,13 @@ def first_interview(request):
 
 
 def firstinterview(request):
-    section = Applicant_Profile.objects.values_list("section", flat=True).get(
-        applicant=request.user
-    )
+    # section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
 
     context = {
-        "alteryx_list": alteryx_list,
-        "dba_list": dba_list,
-        "tableau_list": tableau_list,
-        "section": section,
+        'alteryx_list': alteryx_list,
+        'dba_list': dba_list,   
+        'tableau_list': tableau_list ,
+        # 'section': section
     }
     return render(request, "application/interview_process/firstinterview.html", context)
 

@@ -1,4 +1,5 @@
-{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}{% block content %}
+{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}
+{% block content %}
 
 <div class="content-section">
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -72,7 +73,8 @@
                   Full Time
                 </option>
                 <option id="subcategoryoption4" value="4">Contractual</option>
-                <option id="subcategoryoption5" value="5">Part Time</option>
+                <option id="subcategoryoption5" value="5">Agent</option>
+                <option id="subcategoryoption5" value="6">Other</option>
               </select>
             </div>
           </div>
@@ -150,6 +152,7 @@
       hideSubCategoryOption(3);
       hideSubCategoryOption(4);
       hideSubCategoryOption(5);
+      hideSubCategoryOption(6);
       showSubCategoryOption(1);
       showSubCategoryOption(2);
       selectSubCategoryOption(0);
@@ -164,6 +167,7 @@
       showSubCategoryOption(3);
       showSubCategoryOption(4);
       showSubCategoryOption(5);
+      showSubCategoryOption(6);
       selectSubCategoryOption(0);
     } else {
       document.getElementById("resume-field").style.display = "block";

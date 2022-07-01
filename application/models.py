@@ -14,6 +14,8 @@ class Applicant_Profile(models.Model):
         return f"{self.applicant.username} Applicant_Profile"
 
 
+
+
 class Application(models.Model):
     class Sex(models.IntegerChoices):
         Male = 1

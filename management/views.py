@@ -348,7 +348,7 @@ def benefits(request):
 # ======================TAG=======================
 class TagCreateView(LoginRequiredMixin, CreateView):
     model = Tag
-    success_url = "/management/newcategory"
+    success_url = "/management/newtask"
     fields = ["title", "description"]
 
     def form_valid(self, form):
@@ -373,7 +373,7 @@ def task(request, slug=None, *args, **kwargs):
 
 class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
-    success_url = "/management/newtask"
+    success_url = "/management/tasks"
     fields = [
         "group",
         "category",
@@ -840,8 +840,8 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         task = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == task.employee:
-            return True
+        # elif self.request.user == task.employee:
+        #     return True
         return False
 
 
@@ -862,12 +862,11 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         task = self.get_object()
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_admin:
             return True
         elif self.request.user == task.employee:
             return True
         return False
-
 
 @login_required
 def gettotalduration(request):

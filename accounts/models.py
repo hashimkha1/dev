@@ -23,7 +23,8 @@ class CustomerUser(AbstractUser):
         Student = 2
         Full_time = 3
         Contractual = 4
-        Part_time = 5
+        Agent = 5
+        Other = 6
 
     class Score(models.IntegerChoices):
         Male = 1
@@ -53,9 +54,10 @@ class CustomerUser(AbstractUser):
     is_client = models.BooleanField("Is Client", default=False)
     is_applicant = models.BooleanField("Is applicant", default=False)
     resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
+
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
-        ordering = ["date_joined"]
+        ordering = ["-date_joined"]
 
 
 """ 
@@ -159,7 +161,7 @@ class Tracker(models.Model):
         verbose_name=_("Client Name"),
         on_delete=models.CASCADE,
         related_name="author",
-        limit_choices_to={"is_client": True},
+        limit_choices_to={"is_client": True,"is_active": True},
     )
     # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
