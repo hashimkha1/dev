@@ -241,20 +241,100 @@
 
         </div>
       </div>
-     <!--
-      <div class="row text-center">
-        <div class="col-md-12">
-          <a
-          class="dropdown-item"
-          href="{% url 'application:firstupload' %}"
-          target="_blank"
-          ><button type="submit " class="btn btn-secondary">
-            <i class="fas fa-database"></i>Please Proceed
-          </button></a
-        >
-        </div>
-      </div>
-      -->
+             <div class="uploads_submission">
+                <p>Note: Combine all the files and zip before uploading.</p>
+                <input type="file" id="applicantworks" name="applicantworks"> 
+                
+              <a href="{% url 'application:third_interview' %}">
+                    <button id="next_section_btn" >Next Section</button>
+             </a>
+                
+            </div>
   </div>
 </section>
+
+<script>
+    //  siteurl = "http://localhost:8000"
+    siteurl = "https://www.codanalytics.net"
+
+    if('{{section}}' == "A"){
+        $(".sectionA").css("display","none")
+        $(".sectionB").css("display","block")
+    }
+    else if('{{section}}' == "B"){
+        $(".sectionA,.sectionB").css("display","none")
+        $(".sectionC").css("display","block")
+    }
+    else if('{{section}}' == "C"){
+        window.location.href = siteurl+"/application/policies/"
+    }
+
+   
+    function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+        }
+    var csrftoken = getCookie('csrftoken');
+
+    $('#applicantworks').on('click', function() {
+        document.getElementById("next_section_btn").disabled = false;
+    })
+
+    $('#next_section_btn').on('click', function() {
+      
+        var form = new FormData();
+        form.set('myfile', $("#applicantworks")[0].files[0]);
+        if($(".sectionA").css("display") == "block"){
+            form.set('section', 'A');
+        }
+        else if($(".sectionB").css("display") == "block"){
+            form.set('section', 'B');
+        }
+        else if($(".sectionC").css("display") == "block"){
+            form.set('section', 'C');
+        }
+
+        $.ajax({
+            type: "POST",
+            url:  siteurl+"/application/uploadinterviewworks/",
+            mode: 'cors',
+            withCredentials: false, 
+            headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
+            xsrfHeaderName: "X-CSRFToken",
+            data : form,
+            processData: false,
+            contentType: false,
+            success: function(result){
+                
+                console.log("result",result);
+
+                $("#applicantworks").val(null)
+
+                function getNextChar(char) {
+                    return String.fromCharCode(char.charCodeAt(0) + 1);
+                }
+
+                $(".section"+form.get('section')).css("display","none")
+                $(".section"+getNextChar(form.get('section'))).css("display","block")
+
+                if(form.get('section') == "C"){
+                    window.location.href = siteurl+"/application/policies/"
+                }
+              
+            }
+        });
+    })  
+
+</script>
 {% endblock content %}

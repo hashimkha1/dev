@@ -1,5 +1,6 @@
-{%extends "main/base_templates/application_base.html"%} {%load
-crispy_forms_tags%} {%block content %}
+{%extends "main/base_templates/application_base.html"%}
+ {%load crispy_forms_tags%} 
+ {%block content %}
 <section id="career">
   <div class="career text-center">
     <h2>All Applicants</h2>
@@ -13,6 +14,7 @@ crispy_forms_tags%} {%block content %}
           <th>Last Name</th>
           <th>Phone Number</th>
           <th>Country</th>
+          <th>Section</th>
             <th>Resume</th>
             <th>Delete</th>
         </tr>
@@ -27,6 +29,7 @@ crispy_forms_tags%} {%block content %}
           <td>{{applicant.last_name}}</td>
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
+          <td>{{applicant.applicant_profile.section}}</td>
           <td>
             <button>
               {% comment %} <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm" {% endcomment %}
@@ -60,6 +63,7 @@ crispy_forms_tags%} {%block content %}
             <th>Last Name</th>
             <th>Phone Number</th>
             <th>Country</th>
+            <th>Section</th>
             <!--
           <th>Resume</th>
           <th>Delete</th>
@@ -76,6 +80,7 @@ crispy_forms_tags%} {%block content %}
             <td>{{applicant.last_name}}</td>
             <td>{{applicant.phone}}</td>
             <td>{{applicant.country}}</td>
+            <td>{{applicant.applicant_profile.section}}</td>
             <!-- 
         <td>
           <button>

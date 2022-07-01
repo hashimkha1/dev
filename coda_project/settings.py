@@ -153,19 +153,19 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     'default': {
 #         'ENGINE': 'django.db.backends.sqlite3',
 #         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        
+
 #     }
 # }
 
 import dj_database_url
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',# Name of Database 
-        'USER':'postgres',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "CODA_UAT",  # Name of Database
+        "USER": "postgres",
+        "PASSWORD": os.environ.get("POSTGRESSPASS"),
+        "HOST": "localhost",
     }
 }
 
@@ -175,17 +175,17 @@ DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_IMPORTS=("coda_project.task")
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_IMPORTS = "coda_project.task"
 
 from celery.schedules import crontab
 
 CELERYBEAT_SCHEDULE = {
-    'run_on_every_1st': {
-        'task': 'task_history',
-        'schedule': crontab(0, 0, day_of_month='1'),
+    "run_on_every_1st": {
+        "task": "task_history",
+        "schedule": crontab(0, 0, day_of_month="1"),
     },
 }
 

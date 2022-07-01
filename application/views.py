@@ -1,3 +1,4 @@
+from calendar import c
 import random
 import string
 from datetime import date, timedelta
@@ -13,7 +14,7 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-
+from accounts.models import CustomerUser
 from .forms import PolicyForm, RatingForm, ReportingForm
 from .models import Applicant_Profile, Application, Policy, Rated, Reporting
 from .utils import alteryx_list, dba_list, posts, tableau_list
@@ -48,9 +49,8 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def applicantlist(request):
-    applications=Application.objects.filter().order_by('-application_date')
-    applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
-     
+    applications = Application.objects.filter().order_by("-application_date")
+    applicants = CustomerUser.objects.filter(is_applicant=True).order_by("-date_joined")
 
     # applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     context = {"applications": applications, "applicants": applicants}
@@ -85,24 +85,45 @@ def interview(request):
     return render(request, "application/interview_process/interview.html", context)
 
 
+# def first_interview(request):
+#     return render(
+#         request,
+#         "application/interview_process/first_interview.html",
+#         {"title": "first_interview"},
+#     )
+
+
 def first_interview(request):
+    section = Applicant_Profile.objects.values_list("section", flat=True).get(
+        user=request.user
+    )
+
+    context = {
+        "alteryx_list": alteryx_list,
+        "dba_list": dba_list,
+        "tableau_list": tableau_list,
+        # 'section': section
+    }
+
     return render(
-        request,
-        "application/interview_process/first_interview.html",
-        {"title": "first_interview"},
+        request, "application/interview_process/first_interview.html", context
     )
 
 
-def firstinterview(request):
-    # section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
+def second_interview(request):
+    return render(
+        request,
+        "application/interview_process/second_interview.html",
+        {"title": "second_interview"},
+    )
 
-    context = {
-        'alteryx_list': alteryx_list,
-        'dba_list': dba_list,   
-        'tableau_list': tableau_list ,
-        # 'section': section
-    }
-    return render(request, "application/interview_process/firstinterview.html", context)
+
+def third_interview(request):
+    return render(
+        request,
+        "application/interview_process/third_interview.html",
+        {"title": "second_interview"},
+    )
 
 
 def uploadinterviewworks(request):
