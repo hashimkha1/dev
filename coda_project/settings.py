@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "investing.apps.InvestingConfig",
     "management.apps.ManagementConfig",
     "globalsearch.apps.GlobalsearchConfig",
+    "finance.apps.FinanceConfig",
     "store",
     "crispy_forms",
     "django.contrib.admin",
