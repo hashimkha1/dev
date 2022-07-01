@@ -771,7 +771,7 @@ class Requirement(models.Model):
         User,
         on_delete=models.CASCADE,
         default=1,
-        limit_choices_to={"is_employee": True},
+        limit_choices_to={"is_active": True,"is_employee": True},
     )
     company = models.CharField(max_length=255, default="CODA")
     created_by = models.CharField(max_length=255, default="admin")

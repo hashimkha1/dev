@@ -49,17 +49,16 @@ def join(request):
             # else:
             #     form.instance.is_admin = True 
 
-            if form.cleaned_data.get('category') == 2: # Staff
+            if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
                 if form.cleaned_data.get('sub_category') == 6:
-                    form.instance.is_admin = True 
+                    form.instance.is_admin = True
+                    form.instance.is_superuser = True 
                 else:
                     form.instance.is_employee = True 
             elif form.cleaned_data.get('category') == 3:# Client
                 form.instance.is_client = True 
             else:
-                 form.instance.is_applicant = True
-               
-
+                form.instance.is_applicant = True
             form.save()
 
             # print("request user data",form.instance.id)
@@ -77,7 +76,6 @@ def join(request):
         form=UserForm()
         print(msg)
     return render(request, 'accounts/registration/join.html', {'form': form})
-
 
 
 def login_view(request):
