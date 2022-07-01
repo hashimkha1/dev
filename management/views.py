@@ -862,7 +862,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         task = self.get_object()
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_admin:
             return True
         elif self.request.user == task.employee:
             return True
