@@ -44,7 +44,8 @@ class ApplicantDeleteView(LoginRequiredMixin,DeleteView):
 
 def applicantlist(request):
     applications=Application.objects.filter().order_by('-application_date')
-    applicants=User.objects.filter(is_applicant=True).order_by('-date_joined') 
+    applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
+     
 
     #applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     context={
