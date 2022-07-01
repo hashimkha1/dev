@@ -46,13 +46,15 @@ urlpatterns = [
     ),
     path("rating/", views.rating, name="rating"),
     path("rate/", views.rate, name="rate"),
+   
+    
     # path('firstupload/', views.firstupload, name='firstupload'),
     # path('fupload/', views.fupload, name='fupload'),
     # path('uploaded/', views.uploaded, name='uploaded'),
     # path('<int:id>/', views.employee_form, name='emp_update'),
     # path('<int:id>/', views.employee_delete, name='emp_delete'),
     # path('employee_list/', views.employee_list, name='emp_list'),
-    # path('test/', views.test, name='test'),
+    # path("tinterview/", views.testinterview, name="tinterview"),
     # API data
     # path('applicants', views.applicants, name='applicants'),
     # path('applicationapi/', views.ApplicationDataAPI),

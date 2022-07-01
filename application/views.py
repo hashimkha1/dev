@@ -73,6 +73,8 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 def applicant_profile(request):
     return render(request, "application/applications/applicant_profile.html")
 
+# def testinterview(request):
+#     return render(request, "application/interview_process/firstinterview/sectionB.html")
 
 # ------------------------Interview Section-------------------------------------#.
 def career(request):
