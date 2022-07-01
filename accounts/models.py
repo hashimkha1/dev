@@ -1,14 +1,13 @@
-from decimal import *
 import datetime
-from datetime import date, timedelta
+from decimal import *
+
 from django.contrib.auth.models import AbstractUser
-from django.urls import reverse
 from django.db import models
-from django.utils.translation import gettext_lazy as _
-from django.db.models import Sum
+from django.urls import reverse
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
-import requests
+
 
 # Create your models here.
 class CustomerUser(AbstractUser):
