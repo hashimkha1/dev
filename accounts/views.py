@@ -143,7 +143,7 @@ class SuperuserUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     fields=[
             'category','sub_category','first_name','last_name','date_joined',
             'email','gender','phone','address','city','state','country','is_superuser',
-            'is_admin','is_employee','is_client','is_applicant',
+            'is_admin','is_employee','is_client','is_applicant','is_active', 'is_staff'
             
             ]
     def form_valid(self,form):
