@@ -110,13 +110,13 @@ def login_view(request):
                 if account.country in ('KE','UG','RW','TZ'):# Male
                     if account.gender==1:
                         login(request, account)
-                        return redirect('application:firstinterview')
+                        return redirect('application:first_interview')
                     else:
                         login(request, account)
                         return redirect('application:first_interview')
                 else:
                     login(request, account)
-                    return redirect('application:firstinterview')
+                    return redirect('application:first_interview')
 
             elif account is not None and account.is_admin:
                 login(request, account)
