@@ -191,9 +191,15 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
 ''' 
+
+#================================EMPLOYEE SECTION================================
+def Employeelist(request):
+    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
+    return render(request, 'accounts/employees/employees.html', {'employees': employees})
+
 #================================CLIENT SECTION================================
 def clientlist(request):
-    clients=CustomerUser.objects.filter(category = 3).order_by('-date_joined')
+    clients=CustomerUser.objects.filter(Q(category = 3)|Q(is_client=True)).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
 
 @method_decorator(login_required, name='dispatch')
