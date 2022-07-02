@@ -133,7 +133,7 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'CODADB_DEV',# Name of Database
 #         'USER':'postgres',
-#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
 #         'HOST': 'localhost',
 #     }
 # }
