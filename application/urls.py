@@ -24,12 +24,13 @@ urlpatterns = [
     path("applicants/", views.applicantlist, name="applicants"),
     path("interview/", views.interview, name="interview"),
     path("first_interview/", views.first_interview, name="first_interview"),
-    path("second_interview/", views.second_interview, name="second_interview"),
-    path("third_interview/", views.third_interview, name="third_interview"),
+    path("first_interview/section_a/", views.FI_sectionA, name="section_a"),
+    path("first_interview/section_b/", views.FI_sectionB, name="section_b"),
+    path("first_interview/section_c/", views.FI_sectionC, name="section_c"),
     path(
         "uploadinterviewworks/", views.uploadinterviewworks, name="uploadinterviewworks"
     ),
-    path("second_interview/", views.second_interview, name="second_interview"),
+    # path("second_interview/", views.second_interview, name="second_interview"),
     path("orientation/", views.orientation, name="orientation"),
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
@@ -46,8 +47,6 @@ urlpatterns = [
     ),
     path("rating/", views.rating, name="rating"),
     path("rate/", views.rate, name="rate"),
-   
-    
     # path('firstupload/', views.firstupload, name='firstupload'),
     # path('fupload/', views.fupload, name='fupload'),
     # path('uploaded/', views.uploaded, name='uploaded'),

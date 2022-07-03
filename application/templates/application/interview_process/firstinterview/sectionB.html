@@ -142,7 +142,8 @@
                 <p>Note: Combine all the files and zip before uploading.</p>
                 <input type="file" id="applicantworks" name="applicantworks"> 
                 
-                <button id="next_section_btn" disabled>Next Section</button>
-            </div>
+    <a href="{% url 'application:section_c' %}">
+                    <button id="next_section_btn">Next Section</button>
+             </a>            </div>
       </section>
 {% endblock content %}
