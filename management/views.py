@@ -17,6 +17,7 @@ from .forms import (
     PolicyForm,
     ManagementForm,
     RequirementForm,
+    EvidenceForm,
 )
 from django.views.generic import (
     CreateView,
@@ -26,13 +27,14 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    TaskHistory,
     Transaction,
     Inflow,
     Outflow,
     Policy,
-    Task,
     Tag,
+    Task,
+    TaskHistory,
+    TaskLinks,
     Requirement,
 )
 from data.models import DSU
@@ -890,7 +892,50 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+# =============================EMPLOYEE EVIDENCE========================================
+def newevidence(request):
+    if request.method == "POST":
+        form = EvidenceForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("management:evidence")
+    else:
+        form = EvidenceForm()
+    return render(request, "management/daf/evidence_form.html", {"form": form})
 
+def evidence(request):
+    links = TaskLinks.objects.all().order_by("-created_at")
+    return render(request, "management/daf/evidence.html", {"links": links})
+
+def userevidence(request, user=None, *args, **kwargs):
+    # current_user = request.user
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
+    return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
+
+def evidence_update_view(request, id, *args, **kwargs):
+    context ={}
+
+    # fetch the object related to passed id
+    obj = get_object_or_404(TaskLinks, id = id)
+
+    # pass the object as instance in form
+    form = EvidenceForm(request.POST or None, instance = obj)
+
+    # save the data from the form and
+    # redirect to detail_view
+    if form.is_valid():
+        form.save()
+        # try:
+        #     username=kwargs.get("username")
+        #     return redirect("management:user_evidence", username)
+        # except:
+        return redirect('management:evidence')
+
+    # add form dictionary to context
+    context["form"] = form
+ 
+    return render(request, "management\daf\evidence_form.html", context)
 
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required

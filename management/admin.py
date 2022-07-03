@@ -12,6 +12,7 @@ from .models import (
     Policy,
     Tag,
     Task,
+    TaskLinks,
     TaskHistory,
     Twitter,
     Facebook,
@@ -79,6 +80,7 @@ admin.site.register(Inflow)
 admin.site.register(Outflow)
 admin.site.register(Policy)
 admin.site.register(Task)
+admin.site.register(TaskLinks)
 admin.site.register(TaskHistory)
 admin.site.register(Tag)
 admin.site.register(Requirement)

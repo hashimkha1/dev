@@ -3,7 +3,7 @@ from django.forms import ModelForm, Textarea
 from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
-from .models import Transaction, Outflow, Inflow, Policy, Requirement
+from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement
 
 """
 class EmployeeForm(forms.ModelForm):  
@@ -230,4 +230,38 @@ class RequirementForm(forms.ModelForm):
             # Q(is_employee=True)
 
         )
+
+class EvidenceForm(forms.ModelForm):
+    class Meta:
+        model = TaskLinks
+        fields = [
+                    "task",
+                    "added_by",
+                    "link_name",
+                    "description",
+                    "doc",
+                    "link",
+                    "is_active",
+                    "is_featured",
+        ]
+
+        labels = {
+                "task ":"Task Name",
+                "added_by":"Your Username",
+                "link_name":"Enter link name",
+                "description":"Describe the link/Evidence",
+                "doc":"Upload file/document if possible",
+                "link":"Upload link/paste your link below",
+                # "is_active ":"Is this link still active "
+        }
+        #  If you have to exclude some features you put them here
+        # exclude = (
+        #     "user",
+        #     "recurring",
+        # )
+
+        # Forms updated by Karki
+    # def __init__(self, **kwargs):
+    #     super(EvidenceForm, self).__init__(**kwargs)
+    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
 
