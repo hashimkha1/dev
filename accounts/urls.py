@@ -27,7 +27,8 @@ urlpatterns = [
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
     #path('applicants/', views.applicantlist, name='applicants'),
-    #=============================EMPLOYEES VIEWS=====================================
+
+     #=============================EMPLOYEES VIEWS=====================================
     path('employees/', views.Employeelist, name='employees'),
     # path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     # path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),

@@ -261,8 +261,6 @@ def Employeelist(request):
     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
     return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
-
-
 #================================CLIENT SECTION================================
 def clientlist(request):
     clients=CustomerUser.objects.filter(Q(category = 3)|Q(is_client=True)).order_by('-date_joined')
