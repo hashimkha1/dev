@@ -150,7 +150,7 @@
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Support</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                    {% if user.is_admin or  user.is_employee %}
+                    {% if user.is_superuser or user.is_admin or user.is_employee %}
                           <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:requirements'%}" target="" >Requirements</a>

@@ -55,8 +55,15 @@ urlpatterns = [
 
     #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
+    path('newlink/', TaskCreateView.as_view(), name='newtask'),
+    path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
+    path('newevidence', views.newevidence, name='new_evidence'),
+    path('evidence/',views.evidence, name='evidence'),
+    path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
+    path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
-    #path('historytask/<str:username>/',views.historytask, name='history_task'),
+    path('newtask/', TaskCreateView.as_view(), name='newtask'),
+
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
     path('payslip/<str:username>/',views.payslip, name='user_payslip'),

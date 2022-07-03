@@ -2,21 +2,21 @@
 <section id="career">
   <div class="career text-center">
     <h2>All Clients</h2>
-    {% if user.is_active or user.is_superuser %}
+    {% if user.is_active or user.is_admin or user.is_employee%}
+    <a
+      class="btn btn-secondary btn-sm mt-1 mb-1"
+      href="{%url 'management:userupdatetask' object.id%}"
+    >Update</a>
+    {% else %}
     <a
       class="btn btn-secondary btn-sm mt-1 mb-1"
       href="{%url 'management:updatetask' object.id%}"
-    >
-      Update</a
-    >
+    >Update</a>
     <a
       class="btn btn-danger btn-sm mt-1 mb-1"
       href="{%url 'management:deletetask' object.id%}"
-    >
-      Delete</a
-    >
+    >Delete</a>
     {% endif %}
-
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
