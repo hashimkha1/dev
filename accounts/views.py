@@ -69,32 +69,45 @@ def join(request):
             if form.is_valid():
                 print("category",form.cleaned_data.get('category'))
 
-                if form.cleaned_data.get('category') == 1:
-                    form.instance.is_applicant = True
-                elif form.cleaned_data.get('category') == 2:
-                    form.instance.is_employee = True 
-                elif form.cleaned_data.get('category') == 3:
-                    form.instance.is_client = True 
-                else:
+        if form.is_valid():
+            print("category",form.cleaned_data.get('category'))
+
+            # if form.cleaned_data.get('category') == 1:
+            #     form.instance.is_applicant = True
+            # elif form.cleaned_data.get('category') == 2:
+            #     form.instance.is_employee = True 
+            # elif form.cleaned_data.get('category') == 3:
+            #     form.instance.is_client = True 
+            # else:
+            #     form.instance.is_admin = True 
+
+            if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
+                if form.cleaned_data.get('sub_category') == 6:
                     form.instance.is_admin = True
-                form.save()
+                    form.instance.is_superuser = True 
+                else:
+                    form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:# Client
+                form.instance.is_client = True 
+            else:
+                form.instance.is_applicant = True
+            form.save()
 
-                # print("request user data",form.instance.id)
-                # custom_get = CustomerUser.objects.get(id=form.instance.id)
-                # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
+            # print("request user data",form.instance.id)
+            # custom_get = CustomerUser.objects.get(id=form.instance.id)
+            # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
 
-                username = form.cleaned_data.get('username')
-                category = form.cleaned_data.get('category')
-                gender = form.cleaned_data.get('gender')
-                country = form.cleaned_data.get('country')
-                messages.success(request, f'Account created for {username}!')
-                return redirect('accounts:account-login')
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('accounts:account-login')
     else:
         msg = 'error validating form'
         form=UserForm()
         print(msg)
     return render(request, 'accounts/registration/join.html', {'form': form})
-
 
 
 def login_view(request):
@@ -247,8 +260,6 @@ def reset_password(email, from_email, template='registration/password_reset_emai
 def Employeelist(request):
     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
     return render(request, 'accounts/employees/employees.html', {'employees': employees})
-
-
 
 #================================CLIENT SECTION================================
 def clientlist(request):
