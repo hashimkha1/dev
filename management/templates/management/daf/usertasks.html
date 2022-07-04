@@ -95,8 +95,12 @@
                       </div>
                     </div>
       </div>
+
+
+      
     </div> 
 </div> 
+
 </section>
 
 
@@ -152,11 +156,12 @@
                 <td>{{task.get_pay}}</td>
                <td>
                 <button>
-                  <a href="https://docs.google.com/spreadsheets/d/1Uiz7k6uP6ifoyiWp073rwliPw1CqVFVJUbKGyqJ-58s/edit?pli=1#gid=0" class="btn btn-secondary btn-sm"
-                  >Button
-                </a>
+                  <a href="{% url 'management:new_evidence' %}">
+                    Upload Evidence
+                  </a>
                 </button>
               </td>
+              <!-- <td> <a class="article-title" href="https://docs.google.com/spreadsheets/d/1Uiz7k6uP6ifoyiWp073rwliPw1CqVFVJUbKGyqJ-58s/edit?pli=1#gid=0">Excel Evidence</a></td> -->
               <td> <a class="article-title" href="{% url 'management:userupdatetask' task.id %}">Edit</a></td>
             </tr>
         {% endfor %}

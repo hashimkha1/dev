@@ -421,7 +421,11 @@ class DSU(models.Model):
     )
     #category = models.ManyToManyField(FeaturedActivity, blank=True,related_name='activity_featured')
     #category= models.ManyToManyField(User, on_delete=models.CASCADE)
-    trained_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    trained_by= models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(is_employee=True)|Q(is_client=True) |Q(is_admin=True) | Q(is_superuser=True)
+        )
     client_name=models.CharField(max_length=255, default='admin')
     task=models.TextField()
     plan=models.TextField()

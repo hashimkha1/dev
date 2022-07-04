@@ -3,6 +3,7 @@ from . import views
 from .views import (
                     UserUpdateView,UserDeleteView,SuperuserUpdateView,
                     ClientUpdateView,ClientDeleteView,ClientDetailView,
+                    Employeelist,
                     TrackCreateView, TrackDeleteView, TrackDetailView,
                     TrackListView, TrackUpdateView,
                     )
@@ -25,6 +26,13 @@ urlpatterns = [
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
+    #path('applicants/', views.applicantlist, name='applicants'),
+
+     #=============================EMPLOYEES VIEWS=====================================
+    path('employees/', views.Employeelist, name='employees'),
+    # path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
+    # path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
+    # path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
     #path('applicants/', views.applicantlist, name='applicants'),
     #=============================CLIENTS WORK=====================================
     path('tracker/', TrackListView.as_view(), name='tracker-list'),
