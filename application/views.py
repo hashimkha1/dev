@@ -1,9 +1,13 @@
-from calendar import c
+from configparser import SectionProxy
 import random
 import string
 from datetime import date, timedelta
 from multiprocessing import context
+from django.views.decorators.csrf import csrf_exempt
+
 import boto3
+from tomlkit import item
+from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
@@ -14,8 +18,15 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-from accounts.models import CustomerUser
-from .forms import PolicyForm, RatingForm, ReportingForm
+
+from .forms import (
+    PolicyForm,
+    RatingForm,
+    ReportingForm,
+    ApplicantProfileFormA,
+    ApplicantProfileFormB,
+    ApplicantProfileFormC,
+)
 from .models import Applicant_Profile, Application, Policy, Rated, Reporting
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
@@ -47,6 +58,7 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse("applicant-list")
 
+
 def applicantlist(request):
     applications = Application.objects.filter().order_by("-application_date")
     applicants = CustomerUser.objects.filter(is_applicant=True).order_by("-date_joined")
@@ -74,11 +86,15 @@ def applicant_profile(request):
     return render(request, "application/applications/applicant_profile.html")
 
 
+# def testinterview(request):
+#     return render(request, "application/interview_process/firstinterview/sectionB.html")
+
 # ------------------------Interview Section-------------------------------------#.
 def career(request):
     return render(request, "application/applications/career.html", {"title": "career"})
 
 
+@login_required
 def interview(request):
     context = {"posts": posts}
     return render(request, "application/interview_process/interview.html", context)
@@ -90,6 +106,74 @@ def interview(request):
 #         "application/interview_process/first_interview.html",
 #         {"title": "first_interview"},
 #     )
+@csrf_exempt
+@login_required
+def FI_sectionA(request):
+    form = ApplicantProfileFormA(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
+    if request.method == "POST":
+        form = ApplicantProfileFormA(
+            request.POST, request.FILES or None, instance=request.user
+        )
+        if form.is_valid():
+            data = form.cleaned_data["user"] = request.user
+            section = data.applicant_profile.section
+            if section == "A" or section == "":
+                data.applicant_profile.section = "B"
+                data.applicant_profile.save()
+            form.save()
+            return redirect("application:section_b")
+    return render(
+        request,
+        "application/interview_process/firstinterview/sectionA.html",
+        {"title": "First Section", "form": form},
+    )
+
+
+@login_required
+def FI_sectionB(request):
+    form = ApplicantProfileFormB(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
+    if request.method == "POST":
+        form = ApplicantProfileFormB(
+            request.POST, request.FILES, instance=request.user.applicant_profile
+        )
+        if form.is_valid():
+            data = form.cleaned_data["user"] = request.user
+            section = data.applicant_profile.section
+            if section == "B":
+                data.applicant_profile.section = "C"
+                data.applicant_profile.save()
+            form.save()
+        return redirect("application:section_c")
+
+    return render(
+        request,
+        "application/interview_process/firstinterview/sectionB.html",
+        {"title": "First Section", "form": form},
+    )
+
+
+@login_required
+def FI_sectionC(request):
+    form = ApplicantProfileFormC(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
+    if request.method == "POST":
+        form = ApplicantProfileFormC(
+            request.POST, request.FILES, instance=request.user.applicant_profile
+        )
+        if form.is_valid():
+            form.save()
+            return redirect("main:layout")
+
+    return render(
+        request,
+        "application/interview_process/firstinterview/sectionC.html",
+        {"title": "First Section", "form": form},
+    )
 
 
 def first_interview(request):
@@ -106,22 +190,6 @@ def first_interview(request):
 
     return render(
         request, "application/interview_process/first_interview.html", context
-    )
-
-
-def second_interview(request):
-    return render(
-        request,
-        "application/interview_process/second_interview.html",
-        {"title": "second_interview"},
-    )
-
-
-def third_interview(request):
-    return render(
-        request,
-        "application/interview_process/third_interview.html",
-        {"title": "second_interview"},
     )
 
 
@@ -158,14 +226,6 @@ def uploadinterviewworks(request):
     print("section", section)
     Applicant_Profile.objects.filter(applicant=request.user).update(section=section)
     return JsonResponse({"success": True})
-
-
-def second_interview(request):
-    return render(
-        request,
-        "application/interview_process/second_interview.html",
-        {"title": "second_interview"},
-    )
 
 
 def orientation(request):
