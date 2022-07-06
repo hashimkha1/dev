@@ -24,6 +24,7 @@ urlpatterns = [
     path("applicants/", views.applicantlist, name="applicants"),
     path("interview/", views.interview, name="interview"),
     path("first_interview/", views.first_interview, name="first_interview"),
+    # interview sections by karki
     path("first_interview/section_a/", views.FI_sectionA, name="section_a"),
     path("first_interview/section_b/", views.FI_sectionB, name="section_b"),
     path("first_interview/section_c/", views.FI_sectionC, name="section_c"),

@@ -1,5 +1,4 @@
 {%extends "main/base_templates/application_base.html"%} {%load crispy_forms_tags%} {% block content %}
-      <!-------------------Our Services Section------------------------->
       <section id="project">
           <div class="project text-center">
               <div class="business_header">
@@ -35,13 +34,11 @@
               <br><br><br>
 
               <div class="sectionA" style="display: block">
-              <!-------------------------SECTION A: ALTERYX ----------------------------------->
               <div class="data_header">
                   <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
                   <h4 class="title text-center">SECTION A : WORKFLOW-DATA CLEANING</h4>
 
               </div>
-              <!-------------------------Reporting Section----------------------------------->
               <div class="row text-center">
                   <div class="col-md-9 services">
                       <table class="tg">
@@ -163,16 +160,33 @@
                   </div>
               </div>
               </div>
-              <!--------------------------- Upload works ------------------------------------->
                             
             <div class="uploads_submission">
+                <form action="{% url "application:section_a" %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
                 <p>Note: Combine all the files and zip before uploading.</p>
-                <input type="file" id="applicantworks" name="applicantworks"> 
+            
+                <div class="col-md-3">{{ form.upload_a|as_crispy_field }}</div>
+                <div ><a href="{% url 'application:section_b' %}">
+                  <button id="next_section_btn">Next Section</button>
+                </a></div>
                 
-              <a href="{% url 'application:section_b' %}">
-                    <button id="next_section_btn">Next Section</button>
-             </a>
+                </form>
+                
+          
             </div>
 
       </section>
+
+      <script>
+            $(document).ready(function() {
+                $('#next_section_btn').click(function() {
+                    var applicantworks = $('#applicantworks').val();
+                    if (applicantworks == '') {
+                        alert('Please upload your files');
+                        return false;
+                    }
+                });
+            });
+        </script>
 {% endblock content %}

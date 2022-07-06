@@ -1,9 +1,12 @@
+from configparser import SectionProxy
 import random
 import string
 from datetime import date, timedelta
 from multiprocessing import context
+from django.views.decorators.csrf import csrf_exempt
 
 import boto3
+from tomlkit import item
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -16,7 +19,14 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 
-from .forms import PolicyForm, RatingForm, ReportingForm
+from .forms import (
+    PolicyForm,
+    RatingForm,
+    ReportingForm,
+    ApplicantProfileFormA,
+    ApplicantProfileFormB,
+    ApplicantProfileFormC,
+)
 from .models import Applicant_Profile, Application, Policy, Rated, Reporting
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
@@ -96,36 +106,73 @@ def interview(request):
 #         "application/interview_process/first_interview.html",
 #         {"title": "first_interview"},
 #     )
+@csrf_exempt
 @login_required
 def FI_sectionA(request):
+    form = ApplicantProfileFormA(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
     if request.method == "POST":
-        return render(
-            request,
-            "application/interview_process/firstinterview/sectionA.html",
-            {"title": "First Section"},
+        form = ApplicantProfileFormA(
+            request.POST, request.FILES or None, instance=request.user
         )
+        if form.is_valid():
+            data = form.cleaned_data["user"] = request.user
+            section = data.applicant_profile.section
+            if section == "A" or section == "":
+                data.applicant_profile.section = "B"
+                data.applicant_profile.save()
+            form.save()
+            return redirect("application:section_b")
     return render(
         request,
         "application/interview_process/firstinterview/sectionA.html",
-        {"title": "First Section"},
+        {"title": "First Section", "form": form},
     )
 
 
 @login_required
 def FI_sectionB(request):
+    form = ApplicantProfileFormB(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
+    if request.method == "POST":
+        form = ApplicantProfileFormB(
+            request.POST, request.FILES, instance=request.user.applicant_profile
+        )
+        if form.is_valid():
+            data = form.cleaned_data["user"] = request.user
+            section = data.applicant_profile.section
+            if section == "B":
+                data.applicant_profile.section = "C"
+                data.applicant_profile.save()
+            form.save()
+        return redirect("application:section_c")
+
     return render(
         request,
         "application/interview_process/firstinterview/sectionB.html",
-        {"title": "Second Section"},
+        {"title": "First Section", "form": form},
     )
 
 
 @login_required
 def FI_sectionC(request):
+    form = ApplicantProfileFormC(
+        request.POST, request.FILES, instance=request.user.applicant_profile
+    )
+    if request.method == "POST":
+        form = ApplicantProfileFormC(
+            request.POST, request.FILES, instance=request.user.applicant_profile
+        )
+        if form.is_valid():
+            form.save()
+            return redirect("main:layout")
+
     return render(
         request,
         "application/interview_process/firstinterview/sectionC.html",
-        {"title": "Third Section"},
+        {"title": "First Section", "form": form},
     )
 
 

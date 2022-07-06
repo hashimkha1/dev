@@ -1,16 +1,33 @@
+from pyexpat import model
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Application, InteviewUploads, Policy, Rated, Reporting
+from .models import (
+    Applicant_Profile,
+    Application,
+    InteviewUploads,
+    Policy,
+    Rated,
+    Reporting,
+)
 
 
-class ApplicationForm(UserCreationForm):
-    pass
-    # email = forms.EmailField()
-    # class Meta:
-    # model = User
-    # model=Application
-    # fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+class ApplicantProfileFormA(forms.ModelForm):
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_a"]
+
+
+class ApplicantProfileFormB(forms.ModelForm):
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_b"]
+
+
+class ApplicantProfileFormC(forms.ModelForm):
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_c"]
 
 
 class ApplicantForm(forms.ModelForm):

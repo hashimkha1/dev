@@ -1,5 +1,6 @@
 import datetime
 from datetime import date, timedelta
+import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -117,11 +118,34 @@ def login_view(request):
                     login(request, account)
                     return redirect("data:bitraining")
             # If Category is applicant
+            elif account is not None and account.applicant_profile.section is not None:
+                if account.applicant_profile.section == "A":
+                    login(request, account)
+                    return redirect("application:section_a")
+                elif account.applicant_profile.section == "B":
+                    login(request, account)
+                    return redirect("application:section_b")
+                elif account.applicant_profile.section == "C":
+                    login(request, account)
+                    return redirect("application:section_c")
+                else:
+                    login(request, account)
+                    return redirect("application:first_interview")
+
             elif account is not None and account.category == 1:
                 if account.country in ("KE", "UG", "RW", "TZ"):  # Male
                     if account.gender == 1:
                         login(request, account)
                         return redirect("application:first_interview")
+                    if account.account_profile.section == "A":
+                        login(request, account)
+                        return redirect("application:sectionA")
+                    elif account.account_profile.section == "B":
+                        login(request, account)
+                        return redirect("application:sectionB")
+                    elif account.account_profile.section == "C":
+                        login(request, account)
+                        return redirect("application:sectionC")
                     else:
                         login(request, account)
                         return redirect("application:first_interview")
@@ -134,6 +158,18 @@ def login_view(request):
                 return redirect("main:layout")
             else:
                 messages.success(request, f"Invalid credentials.Kindly Try again!!")
+
+            # elif section is not None:
+            #         if section == "B":
+            #         login(request, account)
+            #         return redirect("application:sectionA")
+            #     elif section == "C":
+            #         login(request, account)
+            #         return redirect("application:sectionB")
+            #     else:
+            #         login(request, account)
+            #         return redirect("application:sectionC")
+
     return render(
         request, "accounts/registration/login.html", {"form": form, "msg": msg}
     )
