@@ -1,12 +1,8 @@
 import datetime
-<<<<<<< HEAD
 import json
 import ast
 from datetime import date ,timedelta
-=======
-from datetime import date, timedelta
 import re
->>>>>>> 7a57a7ba7a3b9d059c043e0df9b94568e8f4d88d
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -36,12 +32,8 @@ from .models import CustomerUser, Tracker
 from django.db.models import Q
 from management.models import Task
 from application.models import Applicant_Profile
-<<<<<<< HEAD
 from finance.models import Default_Payment_Fees
 from django.http import QueryDict
-=======
-
->>>>>>> 7a57a7ba7a3b9d059c043e0df9b94568e8f4d88d
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -60,7 +52,6 @@ def thank(request):
 
 @unauthenticated_user
 def join(request):
-<<<<<<< HEAD
     if request.method== "POST":
         if request.POST.get('category') == '3':
             student_data={}
@@ -90,11 +81,8 @@ def join(request):
             form=UserForm(request.POST,request.FILES)
             if form.is_valid():
                 print("category",form.cleaned_data.get('category'))
-=======
     if request.method == "POST":
         form = UserForm(request.POST, request.FILES)
->>>>>>> 7a57a7ba7a3b9d059c043e0df9b94568e8f4d88d
-
         if form.is_valid():
             print("category", form.cleaned_data.get("category"))
 
@@ -219,11 +207,7 @@ def login_view(request):
     )
 
 
-<<<<<<< HEAD
 #================================USERS SECTION================================
-=======
-# ================================USERS SECTION================================
->>>>>>> 7a57a7ba7a3b9d059c043e0df9b94568e8f4d88d
 def users(request):
     users = CustomerUser.objects.all().order_by("-date_joined")
     if request.user.is_superuser:
@@ -356,7 +340,6 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-<<<<<<< HEAD
 ''' 
 #================================EMPLOYEE SECTION================================
 def Employeelist(request):
@@ -367,13 +350,6 @@ def Employeelist(request):
 def clientlist(request):
     clients=CustomerUser.objects.filter(Q(category = 3)|Q(is_client=True)).order_by('-date_joined')
     return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
-=======
-'''
-# ================================CLIENT SECTION================================
-def clientlist(request):
-    clients = CustomerUser.objects.filter(category=3).order_by("-date_joined")
-    return render(request, "accounts/clients/clientlist.html", {"clients": clients})
->>>>>>> 7a57a7ba7a3b9d059c043e0df9b94568e8f4d88d
 
 
 @method_decorator(login_required, name="dispatch")
