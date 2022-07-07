@@ -341,10 +341,6 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
 ''' 
-<<<<<<< HEAD
-
-=======
->>>>>>> d17b85afee3f2e68d2228ce39218044690d0ca24
 #================================EMPLOYEE SECTION================================
 def Employeelist(request):
     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')

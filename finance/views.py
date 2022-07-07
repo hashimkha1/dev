@@ -121,8 +121,6 @@ def contract_form_submission(request):
 				return redirect('data:bitraining')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
-<<<<<<< HEAD
-=======
 
 
 
@@ -176,4 +174,3 @@ class DefaultPaymentUpdateView(UpdateView):
         # elif self.request.user == task.employee:
         #     return True
         return False
->>>>>>> d17b85afee3f2e68d2228ce39218044690d0ca24
