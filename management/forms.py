@@ -239,7 +239,7 @@ class EvidenceForm(forms.ModelForm):
                     "added_by",
                     "link_name",
                     "description",
-                    "doc",
+                    # "doc",
                     "link",
                     "is_active",
                     "is_featured",
@@ -250,7 +250,7 @@ class EvidenceForm(forms.ModelForm):
                 "added_by":"Your Username",
                 "link_name":"Enter link name",
                 "description":"Describe the link/Evidence",
-                "doc":"Upload file/document if possible",
+                # "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
                 # "is_active ":"Is this link still active "
         }

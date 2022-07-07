@@ -894,14 +894,22 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 # =============================EMPLOYEE EVIDENCE========================================
-def newevidence(request):
+def newevidence(request,taskid):
     if request.method == "POST":
-        form = EvidenceForm(request.POST, request.FILES)
+        form = EvidenceForm(request.POST)
+
         if form.is_valid():
+            points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
+        
+            if points != maxpoints:
+                Task.objects.filter(employee=request.user,id=taskid).update(point=points+1)
+
+            # User will taken from the request 
             form.save()
             return redirect("management:evidence")
     else:
         form = EvidenceForm()
+
     return render(request, "management/daf/evidence_form.html", {"form": form})
 
 def evidence(request):
