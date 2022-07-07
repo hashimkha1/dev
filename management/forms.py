@@ -241,6 +241,10 @@ class EvidenceForm(forms.ModelForm):
                     "description",
                     "doc",
                     "link",
+<<<<<<< HEAD
+=======
+                    "linkpassword",
+>>>>>>> d17b85afee3f2e68d2228ce39218044690d0ca24
                     "is_active",
                     "is_featured",
         ]
@@ -252,6 +256,10 @@ class EvidenceForm(forms.ModelForm):
                 "description":"Describe the link/Evidence",
                 "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
+<<<<<<< HEAD
+=======
+                "linkpassword":"Provide Password if necessary",
+>>>>>>> d17b85afee3f2e68d2228ce39218044690d0ca24
                 # "is_active ":"Is this link still active "
         }
         #  If you have to exclude some features you put them here

@@ -121,3 +121,59 @@ def contract_form_submission(request):
 				return redirect('data:bitraining')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
+<<<<<<< HEAD
+=======
+
+
+
+
+class PaymentCreateView(LoginRequiredMixin, CreateView):
+    model = Default_Payment_Fees
+    success_url = "/finance/contract_form"
+    fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+    ]
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class PaymentListView(ListView):
+    model = Payment_History
+    template_name = "finance/payments/payments.html"
+    context_object_name = "payments"
+
+class DefaultPaymentListView(ListView):
+    model = Default_Payment_Fees
+    template_name = "finance/payments/defaultpayments.html"
+    context_object_name = "defaultpayments"
+
+class DefaultPaymentUpdateView(UpdateView):
+    model = Default_Payment_Fees
+    success_url = "/finance/payments"
+	
+    fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+    ]
+    # fields=['user','activity_name','description','point']
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            # return redirect("management:tasks")
+            return render(request,"management/doc_templates/supportcontract_form.html")
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        # elif self.request.user == task.employee:
+        #     return True
+        return False
+>>>>>>> d17b85afee3f2e68d2228ce39218044690d0ca24
