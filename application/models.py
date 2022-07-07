@@ -7,7 +7,7 @@ from django.utils import timezone
 
 # Create your models here.
 class Applicant_Profile(models.Model):
-    user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE)
+    user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE,blank=True)
     section = models.CharField(max_length=2, default="A", blank=True)
     image = models.ImageField(
         default="default.jpg", upload_to="applicant_profile_pics", blank=True
