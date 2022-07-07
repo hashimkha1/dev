@@ -73,8 +73,13 @@
                 <td>{{task.mxearning}}</td>
                 <td>{{task.get_pay}}</td>
                <td>
-                <button>
+                <!-- <button>
                   <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                  >Button
+                </a>
+                </button> -->
+                <button>
+                  <a href="{% url 'management:new_evidence' %}"
                   >Button
                 </a>
                 </button>
