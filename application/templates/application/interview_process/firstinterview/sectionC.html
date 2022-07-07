@@ -139,7 +139,7 @@
                 <form action="{% url "application:section_c" %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="col-md-3">{{ form.upload_c|as_crispy_field }}</div>
-                <a href="{% url 'main:layout' %}">
+                <a href="{% url 'application:policies' %}">
                   <button id="next_section_btn">Next Section</button>
                 </a>
                 </form>

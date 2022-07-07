@@ -167,7 +167,7 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
-            return redirect("main:layout")
+            return redirect("application:policies")
 
     return render(
         request,
@@ -247,10 +247,12 @@ def policy(request):
         form = PolicyForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect("application-policies")
+            return redirect("application:policies")
     else:
         form = PolicyForm()
     return render(request, "application/orientation/policy.html", {"form": form})
+
+
 
 
 def policies(request):
@@ -259,6 +261,41 @@ def policies(request):
     context = {"uploads": uploads, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
 
+
+class PolicyUpdateView(LoginRequiredMixin, UpdateView):
+    model = Policy
+    fields = [
+        "first_name",
+        "last_name",
+        "upload_date",
+        "method",
+        "policy_type",
+        "description",
+    ]
+
+    form = PolicyForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("application:policies")
+
+    def test_func(self):
+        # employee = self.get_object()
+        if self.request.is_admin:
+            return True
+        if self.request.is_superuser:
+            return True
+        return False
+
+
+class TraineeDeleteView(LoginRequiredMixin, DeleteView):
+    model = Reporting
+
+    def get_success_url(self):
+        return reverse("application:trainees")
 
 def info(request):
     reporting_date = date.today() + timedelta(days=7)
