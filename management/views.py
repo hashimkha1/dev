@@ -396,6 +396,10 @@ class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
+# def tasklist(request):
+#     context = Task.objects.all()
+    
+#     return render(request, "management/daf/tasklist.html", context)
 
 class TaskHistoryView(ListView):
     queryset = TaskHistory.objects.all()
