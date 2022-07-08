@@ -252,7 +252,7 @@ class EvidenceForm(forms.ModelForm):
                 "added_by":"Your Username",
                 "link_name":"Enter link name",
                 "linkpassword":"If Links Needs Password Enter Password here:",
-                "description":"Describe the link/Evidence",
+                "description":"What is this link/Evidence about",
                 "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
                 "linkpassword":"Provide Password if necessary",
