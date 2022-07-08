@@ -59,7 +59,16 @@ def join(request):
             student_data['resume_file'] = request.POST.get("resume_file")
             today = date.today()
             contract_date = today.strftime("%d %B, %Y")
-            default_fee = Default_Payment_Fees.objects.get(id=1)
+            check_default_fee = Default_Payment_Fees.objects.all()
+            if check_default_fee:
+                default_fee = Default_Payment_Fees.objects.get(id=1)
+            else:
+                default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
+                        job_plan_hours_per_month=40,
+                        student_down_payment_per_month=500,
+                        student_bonus_payment_per_month=100)
+                default_payment_fees.save()
+                default_fee = Default_Payment_Fees.objects.get(id=1)
             if request.POST.get("category") == '3' and request.POST.get("sub_category") == '1':
                 return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
             if request.POST.get("category") == '3' and request.POST.get("sub_category") == '2':
