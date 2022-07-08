@@ -3,24 +3,25 @@
   <div class="data_training text-center">
     <h3 class="title">DAF ACTIVITIES</h3>
     <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
-  <div class="container-fluid mr-auto">
-        <div class="row text-center">
-          {% for task in  tasksummary  %}
-              <div class="col-md-2" id="bada">
-                <div class="card">
-                  <div class="card-body">
-                    <h5><b>task.Target</b></h5>
-                    <hr/>
-                    <i><h6>task.Description</h6></i>
-                    <hr/>
-                  </div>
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">
+        {% for task in  tasksummary  %}
+            <div class="col-md-2" id="bada">
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>task.Target</b></h5>
+                  <hr/>
+                  <i><h6>task.Description</h6></i>
+                  <hr/>
                 </div>
               </div>
-            {% endfor %}
-        </div>
-      </div> 
+            </div>
+          {% endfor %}
+      </div>
+    </div> 
   </div> 
-<hr>
+  <hr>
+  
   <div class="career text-center">
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
@@ -40,52 +41,298 @@
         </tr>
       </thead>
       <tbody>
-
+        <h4 class="title">Meetings</h4>
         {% for task in  object_list  %}
-            <tr>
-
-                <td><input type="checkbox" class="checkthis" /></td>
-                {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
-                <td>
-                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
-                  {{task.employee}}
-                </td>
-
-                {% else %}
-                <td>
-                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
-                  {{task.employee.first_name}},{{task.employee.last_name}}
-                </td>
-                {% endif %}
-                <td>
-                    <a class="text-dark  text-decoration-none" 
-                    data-toggle="tooltip" title="{{  task.description  }}"
-                    href="{{ category.get_absolute_url }}">
-                    {{  task.activity_name  }}
-                    </a>
-                </td>
-                <!--<td>{{task.employee}}</td>-->
-                <td>{{task.group}}</td>
-                <td>{{task.deadline}}</td>
-                <td>{{task.submission|date:"F d, Y"}}</td>
-                <td>{{task.point}}</td>
-                <td>{{task.mxpoint}}</td>
-                <td>{{task.mxearning}}</td>
-                <td>{{task.get_pay}}</td>
-               <td>
-                <!-- <button>
-                  <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
-                  >Button
-                </a>
-                </button> -->
-                <button>
-                  <a href="{% url 'management:new_evidence' task.id %}"
-                  >Button
-                </a>
-                </button>
+          {% if task.category.title == "Meetings" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
               </td>
-              <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
-            </tr>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+
+        <h4 class="title">Data Analysis</h4>
+        {% for task in  object_list  %}
+          {% if task.category.title == "Data Analysis" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
+              </td>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+        {% endif %}
+      {% endfor %}
+
+      <h4 class="title">Stocks & Options</h4>
+       {% for task in  object_list  %}
+          {% if task.category.title == "Stocks & Options" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
+              </td>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+
+        <h4 class="title">Website Development</h4>
+        {% for task in  object_list  %}
+          {% if task.category.title == "Website Development" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
+              </td>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+
+        <h4 class="title">Department</h4>
+        {% for task in  object_list  %}
+          {% if task.category.title == "Department" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
+              </td>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+          {% endif %}
+        {% endfor %}
+
+        <h4 class="title">Other</h4>
+        {% for task in  object_list  %}
+          {% if task.category.title == "Other" %}
+          <tr>
+              <td><input type="checkbox" class="checkthis" /></td>
+              {% if task.employee.first_name == "" or  task.employee.last_name == "" %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee}}
+              </td>
+
+              {% else %}
+              <td>
+              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+                {{task.employee.first_name}},{{task.employee.last_name}}
+              </td>
+              {% endif %}
+              <td>
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="{{ category.get_absolute_url }}">
+                  {{  task.activity_name  }}
+                  </a>
+              </td>
+              <!--<td>{{task.employee}}</td>-->
+              <td>{{task.group}}</td>
+              <td>{{task.deadline}}</td>
+              <td>{{task.submission|date:"F d, Y"}}</td>
+              <td>{{task.point}}</td>
+              <td>{{task.mxpoint}}</td>
+              <td>{{task.mxearning}}</td>
+              <td>{{task.get_pay}}</td>
+              <td>
+              <!-- <button>
+                <a href="https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE" class="btn btn-secondary btn-sm"
+                >Button
+              </a>
+              </button> -->
+              <button>
+                <a href="{% url 'management:new_evidence' task.id %}"
+                >Button
+              </a>
+              </button>
+            </td>
+            <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+          </tr>
+          {% endif %}
         {% endfor %}
       </tbody>
     </table>
