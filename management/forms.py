@@ -209,35 +209,15 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
-        #  If you have to exclude some features you put them here
-        # exclude = (
-        #     "user",
-        #     "recurring",
-        # )
-
-        # Forms updated by Karki
-    # def __init__(self, **kwargs):
-    #     super(RequirementForm, self).__init__(**kwargs)
-    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-    #         Q(is_admin=True) | Q(is_employee=True)
-    #         # Q(is_client=True)
-    #     )
-
-    # def __init__(self, **kwargs):
-    #     super(RequirementForm, self).__init__(**kwargs)
-    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-    #         is_employee=True 
-    #         # Q(is_employee=True)
-
-    #     )
 
 class EvidenceForm(forms.ModelForm):
     class Meta:
         model = TaskLinks
         fields = [
                     "task",
-                    # "added_by",
+                    "added_by",
                     "link_name",
+                    "linkpassword",
                     "description",
                     "doc",
                     "link",
@@ -247,14 +227,16 @@ class EvidenceForm(forms.ModelForm):
 
         labels = {
                 "task ":"Task Name",
-                # "added_by":"Your Username",
+                "added_by":"Your Username",
                 "link_name":"Enter link name",
+                "linkpassword":"If Links Needs Password Enter Password here:",
                 "description":"Describe the link/Evidence",
                 "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
-                "is_active":"Is this link still active ",
-                "is_featured":"Is this link still active "
+                # "is_active ":"Is this link still active "
         }
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
         #  If you have to exclude some features you put them here
         # exclude = (
         #     "user",
