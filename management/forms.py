@@ -236,10 +236,10 @@ class EvidenceForm(forms.ModelForm):
         model = TaskLinks
         fields = [
                     "task",
-                    "added_by",
+                    # "added_by",
                     "link_name",
                     "description",
-                    # "doc",
+                    "doc",
                     "link",
                     "is_active",
                     "is_featured",
@@ -247,12 +247,13 @@ class EvidenceForm(forms.ModelForm):
 
         labels = {
                 "task ":"Task Name",
-                "added_by":"Your Username",
+                # "added_by":"Your Username",
                 "link_name":"Enter link name",
                 "description":"Describe the link/Evidence",
-                # "doc":"Upload file/document if possible",
+                "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
-                # "is_active ":"Is this link still active "
+                "is_active":"Is this link still active ",
+                "is_featured":"Is this link still active "
         }
         #  If you have to exclude some features you put them here
         # exclude = (
