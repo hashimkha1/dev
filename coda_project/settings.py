@@ -14,6 +14,7 @@ import os
 from pickle import TRUE
 
 import django_heroku
+import redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -21,8 +22,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# DEBUG = False
-DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+DEBUG = True
+# DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 # ALLOWED_HOSTS = []
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     "investing.apps.InvestingConfig",
     "management.apps.ManagementConfig",
     "globalsearch.apps.GlobalsearchConfig",
+    "finance.apps.FinanceConfig",
     "store",
     "crispy_forms",
     "django.contrib.admin",
@@ -112,49 +114,54 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-"""
-#postgresql database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODADB_DEV',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
-#postgresql database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_DEV',# Name of Database
-        'USER':'CODA_DEV',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-        'PORT': '5432'
-    }
-}
+# #postgresql database
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_DEV',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODADB_DEV',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
+# #postgresql database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_DEV',# Name of Database
+#         'USER':'CODA_DEV',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
+#         'PORT': '5432'
+#     }
+# }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database 
+#         'USER':'postgres',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
+
+import dj_database_url
 
 DATABASES = {
     'default': {
@@ -164,31 +171,25 @@ DATABASES = {
     }
 }
 
-"""
-import dj_database_url
-
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "CODA_DEV",  # Name of Database
-#         "USER": "CODA_DEV",
-#         "PASSWORD": os.environ.get("POSTGRESSPASS"),
-#         "HOST": "database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com",
-#         "PORT": "5432",
-#     }
-# }
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
-
 db_from_env = dj_database_url.config(conn_max_age=600)
+
 DATABASES["default"].update(db_from_env)
 
+CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
+CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_IMPORTS = "coda_project.task"
+
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE = {
+    "run_on_every_1st": {
+        "task": "task_history",
+        "schedule": crontab(0, 0, day_of_month="1"),
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -280,7 +281,7 @@ AWS_DEFAULT_ACL = None
 # session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 # s3 = session.resource('s3')
 
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
