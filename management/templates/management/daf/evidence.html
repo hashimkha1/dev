@@ -1,4 +1,7 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{%extends "main/base_templates/base.html"%} 
+
+{% block content %}
+
 <section id="career">
   <div class="career text-center">
     <h2>DAF EVIDENCE</h2>
@@ -24,9 +27,9 @@
              </td>
 
             <td>
-                 {% for task in link.task.all %}
-                    <p>{{ task.activity_name }}</p>
-                 {% endfor %}
+                <p>{{ link.task.activity_name }}</p>
+                 <!-- {% for task in link.task.all %}
+                 {% endfor %} -->
              </td>
             <td>
                 <a class="text-dark  text-decoration-none" 

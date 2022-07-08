@@ -12,6 +12,7 @@ from .models import (
     Policy,
     Tag,
     Task,
+    TaskLinks,
     TaskHistory,
     Twitter,
     Facebook,

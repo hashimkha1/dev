@@ -238,6 +238,7 @@ class EvidenceForm(forms.ModelForm):
                     "task",
                     "added_by",
                     "link_name",
+                    "linkpassword",
                     "description",
                     "doc",
                     "link",
@@ -249,11 +250,14 @@ class EvidenceForm(forms.ModelForm):
                 "task ":"Task Name",
                 "added_by":"Your Username",
                 "link_name":"Enter link name",
+                "linkpassword":"If Links Needs Password Enter Password here:",
                 "description":"Describe the link/Evidence",
                 "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
                 # "is_active ":"Is this link still active "
         }
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
         #  If you have to exclude some features you put them here
         # exclude = (
         #     "user",

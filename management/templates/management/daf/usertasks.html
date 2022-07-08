@@ -156,7 +156,7 @@
                 <td>{{task.get_pay}}</td>
                <td>
                 <button>
-                  <a href="{% url 'management:new_evidence' %}">
+                  <a href="{% url 'management:new_evidence' task.id %}">
                     Upload Evidence
                   </a>
                 </button>

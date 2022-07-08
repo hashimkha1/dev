@@ -895,15 +895,22 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 # =============================EMPLOYEE EVIDENCE========================================
-def newevidence(request):
+def newevidence(request,taskid):
     if request.method == "POST":
         form = EvidenceForm(request.POST, request.FILES)
         if form.is_valid():
+            points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
+        
+            if points != maxpoints:
+                Task.objects.filter(employee=request.user,id=taskid).update(point=points+1)
+
+            # User will taken from the request 
             form.save()
             return redirect("management:evidence")
     else:
         form = EvidenceForm()
     return render(request, "management/daf/evidence_form.html", {"form": form})
+
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
@@ -917,13 +924,10 @@ def userevidence(request, user=None, *args, **kwargs):
 
 def evidence_update_view(request, id, *args, **kwargs):
     context ={}
-
     # fetch the object related to passed id
     obj = get_object_or_404(TaskLinks, id = id)
-
     # pass the object as instance in form
     form = EvidenceForm(request.POST or None, instance = obj)
-
     # save the data from the form and
     # redirect to detail_view
     if form.is_valid():
@@ -933,10 +937,8 @@ def evidence_update_view(request, id, *args, **kwargs):
         #     return redirect("management:user_evidence", username)
         # except:
         return redirect('management:evidence')
-
     # add form dictionary to context
     context["form"] = form
- 
     return render(request, "management\daf\evidence_form.html", context)
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required

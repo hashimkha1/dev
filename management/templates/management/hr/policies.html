@@ -32,11 +32,11 @@
             </thead>
       
             <tbody>
+              <p>
+                Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies.
+             </p>
               {% for upload in uploads %}
               {% if upload.department == "HR" and day_name == "Monday" %} 
-              <p>
-                Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
