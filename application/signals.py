@@ -6,10 +6,12 @@ from django.dispatch import receiver
 
 @receiver(post_save, sender=CustomerUser)
 def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Applicant_Profile.objects.create(user=instance)
+    pass
+    # if created:
+    #     Applicant_Profile.objects.create(user=instance)
 
 
 @receiver(post_save, sender=CustomerUser)
 def save_profile(sender, instance, **kwargs):
-    instance.applicant_profile.save()
+    pass
+    # instance.applicant_profile.save()
