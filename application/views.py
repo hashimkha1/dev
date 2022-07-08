@@ -100,12 +100,13 @@ def interview(request):
     return render(request, "application/interview_process/interview.html", context)
 
 
-# def first_interview(request):
-#     return render(
-#         request,
-#         "application/interview_process/first_interview.html",
-#         {"title": "first_interview"},
-#     )
+def firstinterview(request):
+    return render(
+        request,
+        "application/interview_process/firstinterview.html",
+        {"title": "first_interview"},
+    )
+
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
