@@ -380,8 +380,9 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self,form):
         form.instance.author=self.request.user
         try:
+            
             if form.instance.category == "Job_Support":
-                points,targetpoints = Task.objects.values_list("point","mxpoint").filter(employee=self.request.user,activity_name=form.instance.category)[0]
+                points,targetpoints = Task.objects.values_list("point","mxpoint").filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user)[0]
                 
                 if form.instance.sub_category == "Development" or form.instance.sub_category == "Testing":
                     points = float(points)+(0.5*form.instance.duration)
@@ -390,7 +391,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 
                 if points >= targetpoints:
                     targetpoints += 10
-                Task.objects.filter(employee=self.request.user,activity_name=form.instance.category).update(point=points,mxpoint=targetpoints)
+
+                Task.objects.filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user).update(point=points,mxpoint=targetpoints)
         except:
             pass
 
