@@ -612,6 +612,29 @@ def usertask(request, user=None, *args, **kwargs):
     except (TypeError, AttributeError):
         pointsbalance = 0
 
+    # 1st month
+    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
+
+    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
+
+    # 3rd month
+    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
+
+    history = TaskHistory.objects.filter(Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+
+    average_earnings = 0
+    counter = 0
+    for data in history.all():
+        average_earnings += data.get_pay
+        counter = counter+1
+    try:
+        average_earnings = average_earnings / counter
+    except Exception as ZeroDivisionError:
+        average_earnings = 0.0
+
     context = {
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
@@ -626,6 +649,7 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
+        "average_earnings":average_earnings
     }
 
     # setting  up session
