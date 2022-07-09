@@ -50,7 +50,6 @@ def thank(request):
 
 
 
-@unauthenticated_user
 def join(request):
     if request.method== "POST":
         if request.POST.get('category') == '3':
@@ -72,7 +71,16 @@ def join(request):
             student_data['resume_file'] = request.POST.get("resume_file")
             today = date.today()
             contract_date = today.strftime("%d %B, %Y")
-            default_fee = Default_Payment_Fees.objects.get(id=1)
+            check_default_fee = Default_Payment_Fees.objects.all()
+            if check_default_fee:
+                default_fee = Default_Payment_Fees.objects.get(id=1)
+            else:
+                default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
+                        job_plan_hours_per_month=40,
+                        student_down_payment_per_month=500,
+                        student_bonus_payment_per_month=100)
+                default_payment_fees.save()
+                default_fee = Default_Payment_Fees.objects.get(id=1)
             if request.POST.get("category") == '3' and request.POST.get("sub_category") == '1':
                 return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
             if request.POST.get("category") == '3' and request.POST.get("sub_category") == '2':
@@ -81,48 +89,46 @@ def join(request):
             form=UserForm(request.POST,request.FILES)
             if form.is_valid():
                 print("category",form.cleaned_data.get('category'))
-    if request.method == "POST":
-        form = UserForm(request.POST, request.FILES)
+
         if form.is_valid():
-            print("category", form.cleaned_data.get("category"))
+            print("category",form.cleaned_data.get('category'))
 
-            # if form.cleaned_data.get('category') == 1:
-            #     form.instance.is_applicant = True
-            # elif form.cleaned_data.get('category') == 2:
-            #     form.instance.is_employee = True
-            # elif form.cleaned_data.get('category') == 3:
-            #     form.instance.is_client = True
+            # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
+            #     if form.cleaned_data.get('sub_category') == 6:
+            #         form.instance.is_admin = True
+            #         form.instance.is_superuser = True 
+            #     else:
+            #         form.instance.is_employee = True 
+            # elif form.cleaned_data.get('category') == 3:# Client
+            #     form.instance.is_client = True 
             # else:
-            #     form.instance.is_admin = True
-
-            if form.cleaned_data.get("category") == 2:  # Staff-->Full,Agent,Other
-                if form.cleaned_data.get("sub_category") == 6:
-                    form.instance.is_admin = True
-                    form.instance.is_superuser = True
-                else:
-                    form.instance.is_employee = True
-            elif form.cleaned_data.get("category") == 3:  # Client
-                form.instance.is_client = True
-            else:
+            #     form.instance.is_applicant = True
+            if form.cleaned_data.get('category') == 1:
                 form.instance.is_applicant = True
+            elif form.cleaned_data.get('category') == 2:
+                form.instance.is_employee = True 
+            elif form.cleaned_data.get('category') == 3:
+                form.instance.is_client = True 
+            else:
+                form.instance.is_admin = True 
+
             form.save()
 
             # print("request user data",form.instance.id)
             # custom_get = CustomerUser.objects.get(id=form.instance.id)
             # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
 
-            username = form.cleaned_data.get("username")
-            category = form.cleaned_data.get("category")
-            gender = form.cleaned_data.get("gender")
-            country = form.cleaned_data.get("country")
-            messages.success(request, f"Account created for {username}!")
-            return redirect("accounts:account-login")
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('accounts:account-login')
     else:
-        msg = "error validating form"
-        form = UserForm()
+        msg = 'error validating form'
+        form=UserForm()
         print(msg)
-    return render(request, "accounts/registration/join.html", {"form": form})
-
+    return render(request, 'accounts/registration/join.html', {'form': form})
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -178,7 +184,7 @@ def login_view(request):
                     # elif account.account_profile.section == "C":
                     #     login(request, account)
                     #     return redirect("application:sectionC")
-                    else: #Female candidates in East Africa will be directed to femaleinterview
+                    else: #Female candidates in East Africa will be directed
                         login(request, account)
                         return redirect("application:firstinterview")
                 else: # Employees outside East Africa will be redirected to do 1-1 Session

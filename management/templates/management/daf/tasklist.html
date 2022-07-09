@@ -98,7 +98,9 @@
                 </a>
                 </button>
               </td>
+              {%if user.is_admin or user.is_superuser%}
               <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+              {%endif%}
             </tr>
         {% endfor %}
       </tbody>

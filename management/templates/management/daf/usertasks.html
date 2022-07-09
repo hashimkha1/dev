@@ -162,7 +162,9 @@
                 </button>
               </td>
               <!-- <td> <a class="article-title" href="https://docs.google.com/spreadsheets/d/1Uiz7k6uP6ifoyiWp073rwliPw1CqVFVJUbKGyqJ-58s/edit?pli=1#gid=0">Excel Evidence</a></td> -->
+              {%if user.is_admin or user.is_superuser%}
               <td> <a class="article-title" href="{% url 'management:userupdatetask' task.id %}">Edit</a></td>
+              {%endif%}
             </tr>
         {% endfor %}
       </tbody>
