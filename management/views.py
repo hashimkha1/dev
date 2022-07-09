@@ -391,15 +391,70 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+from datetime import date, timedelta
+from django.db.models import Q
+
+def getaveragetargets(request):
+    print("+++++++++getaveragetargets+++++++++")
+    taskname = request.POST["taskname"]
+    # 1st month
+    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
+
+    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
+
+    # 3rd month
+    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
+
+    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+
+    results = { "target_points":0, "target_amount":0 }
+    counter = 0
+    for data in history.all():
+        results["target_points"] += data.mxpoint
+        results["target_amount"] += data.mxearning
+        counter = counter+1
+    try:
+        results["target_points"] = results["target_points"] / counter
+        results["target_amount"] = results["target_amount"] / counter
+    except Exception as ZeroDivisionError:
+        results["target_points"] = 0.0
+        results["target_amount"] = 0.0
+
+    return JsonResponse(results)
 
 class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
-# def tasklist(request):
-#     context = Task.objects.all()
+def filterbycategory(request):
+    category = request.POST["category"]
+    print("category",category)
+
+    tasks = Task.objects.filter(category__title=category)
+    result = []
+    details = {}
+    for data in tasks.all():
+        details["group"] = data.group
+        details["deadline"] = data.deadline.strftime("%d %b %Y")
+        details["submission"] = data.submission.strftime("%d %b %Y")
+        details["point"] = data.point
+        details["mxpoint"] = data.mxpoint
+        details["mxearning"] = float(data.mxearning)
+        details["get_pay"] = float(data.get_pay)
+        details["id"] = data.id
+        details["employee"] = data.employee.username
+        details["first_name"] = data.employee.first_name
+        details["last_name"] = data.employee.last_name
+        details["description"] = data.description
+        details["activity_name"] = data.activity_name
+        details["get_absolute_url"] = str(data.category.get_absolute_url)
+        result.append(details.copy())
     
-#     return render(request, "management/daf/tasklist.html", context)
+    print(result)
+    return JsonResponse({"result":result},safe =False)
 
 class TaskHistoryView(ListView):
     queryset = TaskHistory.objects.all()

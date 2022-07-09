@@ -538,19 +538,21 @@ class Task(models.Model):
         },
         default=1,
     )
-    point = models.PositiveIntegerField(
-        # max_digits=3,
+    point = models.DecimalField(
+        max_digits=10,
         help_text=_("Should be less than Maximum Points assigned"),
         error_messages={
             "name": {" max_length": ("Points must be less than Maximum Points")}
         },
+        decimal_places=2,
     )
-    mxpoint = models.PositiveIntegerField(
-        # max_digits=3,
+    mxpoint = models.DecimalField(
+        max_digits=10,
         help_text=_("Maximum 200"),
         error_messages={
             "name": {" max_length": ("The maximum points must be between 0 and 199")}
         },
+        decimal_places=2,
     )
     mxearning = models.DecimalField(
         max_digits=10,
@@ -694,19 +696,21 @@ class TaskHistory(models.Model):
         },
         default=1,
     )
-    point = models.PositiveIntegerField(
-        # max_digits=3,
+    point = models.DecimalField(
+        max_digits=10,
         help_text=_("Should be less than Maximum Points assigned"),
         error_messages={
             "name": {" max_length": ("Points must be less than Maximum Points")}
         },
+        decimal_places=2,
     )
-    mxpoint = models.PositiveIntegerField(
-        # max_digits=3,
+    mxpoint = models.DecimalField(
+        max_digits=10,
         help_text=_("Maximum 200"),
         error_messages={
             "name": {" max_length": ("The maximum points must be between 0 and 199")}
         },
+        decimal_places=2,
     )
     mxearning = models.DecimalField(
         max_digits=10,

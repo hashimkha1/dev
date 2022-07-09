@@ -17,7 +17,7 @@
                     <div class="col-md-2" id="bada">
                       <div class="card">
                         <div class="card-body">
-                          <h5><b>Target</b></h5>
+                          <h5><b>Total Target</b></h5>
                           <hr/>
                           <i><h6>Ksh. {{GoalAmount}}</h6></i>
                           <hr/>
@@ -156,7 +156,7 @@
                 <td>{{task.get_pay}}</td>
                <td>
                 <button>
-                  <a href="{% url 'management:new_evidence' %}">
+                  <a href="{% url 'management:new_evidence' task.id %}">
                     Upload Evidence
                   </a>
                 </button>

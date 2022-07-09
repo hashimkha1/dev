@@ -133,6 +133,14 @@ class Tracker(models.Model):
         (Mentorship, "Mentorship"),
         (Other, "Other"),
     ]
+
+    SUBCAT_CHOICES = [
+        ("Requirements", "Requirements"),
+        ( "Troubleshooting", "Troubleshooting"),
+        ("Development", "Development"),
+        ("Testing", "Testing"),
+        ("Other", "Other"),
+    ]
     TASK_CHOICES = [
         (Reporting, "reporting"),
         (Database, "database"),
@@ -143,6 +151,10 @@ class Tracker(models.Model):
     category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
+    )
+    sub_category = models.CharField(
+        max_length=25,
+        choices=SUBCAT_CHOICES
     )
     task = models.CharField(
         max_length=25,
