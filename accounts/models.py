@@ -114,35 +114,37 @@ class Tracker(models.Model):
     # Other = 999
 
     # Job Category.
-    Job_Support = "Job_Support"
-    Interview = "Interview"
-    Training = "Training"
-    Mentorship = "Mentorship"
-    Other = "Other"
-    # Task/Activities
-    Reporting = "reporting"
-    Database = "database"
-    Business_Analysis = "Business Analysis"
-    ETL = "Data Cleaning"
-    Other = "Any Other"
-
     CAT_CHOICES = [
-        (Job_Support, "Job_Support"),
-        (Interview, "Interview"),
-        (Training, "Training"),
-        (Mentorship, "Mentorship"),
-        (Other, "Other"),
+        ("Job_Support", "Job_Support"),
+        ("Interview", "Interview"),
+        ("Training", "Training"),
+        ("Mentorship", "Mentorship"),
+        ("Other", "Other"),
     ]
+    # Sub Category.
+    SUBCAT_CHOICES = [
+        ("Requirements", "Requirements"),
+        ( "Troubleshooting", "Troubleshooting"),
+        ("Development", "Development"),
+        ("Testing", "Testing"),
+        ("Other", "Other"),
+    ]
+    # Task/Activities
     TASK_CHOICES = [
-        (Reporting, "reporting"),
-        (Database, "database"),
-        (Business_Analysis, "Business Analysis"),
-        (ETL, "Data Cleaning"),
-        (Other, "Other"),
+        ("reporting", "reporting"),
+        ("database", "database"),
+        ("Business Analysis", "Business Analysis"),
+        ("Data Cleaning", "Data Cleaning"),
+        ("Other", "Other"),
     ]
     category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
+    )
+    sub_category = models.CharField(
+        max_length=25,
+        choices=SUBCAT_CHOICES,
+        default="Other"
     )
     task = models.CharField(
         max_length=25,

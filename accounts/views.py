@@ -469,8 +469,6 @@ class UserTrackListView(ListView):
     def get_queryset(self):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
-"""
-
 
 @method_decorator(login_required, name="dispatch")
 class TrackCreateView(LoginRequiredMixin, CreateView):
@@ -483,8 +481,33 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
+"""
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model=Tracker
+    success_url="/accounts/tracker"
+    #success_url="usertime"
+    #fields=['category','task','duration']
+    fields=['employee','author','category','sub_category','task','duration','plan']
 
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        try:
+            if form.instance.category == "Job_Support":
+                points,targetpoints = Task.objects.values_list("point","mxpoint").filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user)[0]
+                
+                if form.instance.sub_category == "Development" or form.instance.sub_category == "Testing":
+                    points = float(points)+(0.5*form.instance.duration)
+                else:
+                    points = float(points)+form.instance.duration
 
+                if points >= targetpoints:
+                    targetpoints += 10
+
+                Task.objects.filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user).update(point=points,mxpoint=targetpoints)
+        except:
+            pass
+
+        return super().form_valid(form)  
 """ 
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
@@ -510,7 +533,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
             return super().form_invalid(form)
         return super().form_valid(form)  
 """
-
 
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

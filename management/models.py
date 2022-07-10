@@ -538,20 +538,23 @@ class Task(models.Model):
         },
         default=1,
     )
-    point = models.PositiveIntegerField(
-        # max_digits=3,
+    point = models.DecimalField(
+        max_digits=10,
         help_text=_("Should be less than Maximum Points assigned"),
         error_messages={
             "name": {" max_length": ("Points must be less than Maximum Points")}
         },
+        decimal_places=2,
     )
-    mxpoint = models.PositiveIntegerField(
-        # max_digits=3,
+    mxpoint = models.DecimalField(
+        max_digits=10,
         help_text=_("Maximum 200"),
         error_messages={
             "name": {" max_length": ("The maximum points must be between 0 and 199")}
         },
+        decimal_places=2,
     )
+
     mxearning = models.DecimalField(
         max_digits=10,
         help_text=_("Maximum 4999.99"),
@@ -604,7 +607,10 @@ class Task(models.Model):
         if self.point > self.mxpoint:
             return 0
         else:
-            Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            try:
+                Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            except Exception as ZeroDivisionError:
+                Earning = 0
             compute_pay = Earning * Decimal(self.late_penalty)
             pay = round(compute_pay, 2)
             return pay

@@ -8,7 +8,7 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-
+from django.db.models import Q
 from management.utils import email_template
 from .forms import (
     TransactionForm,
@@ -226,8 +226,6 @@ class OutflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ----------------------CASH INFLOW CLASS-BASED VIEWS--------------------------------
-
-
 def inflow(request):
     if request.method == "POST":
         form = InflowForm(request.POST, request.FILES)
@@ -240,7 +238,6 @@ def inflow(request):
     return render(
         request, "management/company_finances/inflow_entry.html", {"form": form}
     )
-
 
 @method_decorator(login_required, name="dispatch")
 class InflowDetailView(DetailView):
@@ -896,7 +893,8 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 # =============================EMPLOYEE EVIDENCE========================================
 def newevidence(request,taskid):
     if request.method == "POST":
-        form = EvidenceForm(request.POST, request.FILES)
+        form = EvidenceForm(request.POST)
+
         if form.is_valid():
             points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
         
@@ -908,8 +906,8 @@ def newevidence(request,taskid):
             return redirect("management:evidence")
     else:
         form = EvidenceForm()
-    return render(request, "management/daf/evidence_form.html", {"form": form})
 
+    return render(request, "management/daf/evidence_form.html", {"form": form})
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
@@ -1084,3 +1082,62 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+
+
+def getaveragetargets(request):
+    print("+++++++++getaveragetargets+++++++++")
+    taskname = request.POST["taskname"]
+    # 1st month
+    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
+
+    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
+
+    # 3rd month
+    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
+
+    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+
+    results = { "target_points":0, "target_amount":0 }
+    counter = 0
+    for data in history.all():
+        results["target_points"] += data.mxpoint
+        results["target_amount"] += data.mxearning
+        counter = counter+1
+    try:
+        results["target_points"] = results["target_points"] / counter
+        results["target_amount"] = results["target_amount"] / counter
+    except Exception as ZeroDivisionError:
+        results["target_points"] = 0.0
+        results["target_amount"] = 0.0
+
+    return JsonResponse(results)
+
+def filterbycategory(request):
+    category = request.POST["category"]
+    print("category",category)
+
+    tasks = Task.objects.filter(category__title=category)
+    result = []
+    details = {}
+    for data in tasks.all():
+        details["group"] = data.group
+        details["deadline"] = data.deadline.strftime("%d %b %Y")
+        details["submission"] = data.submission.strftime("%d %b %Y")
+        details["point"] = data.point
+        details["mxpoint"] = data.mxpoint
+        details["mxearning"] = float(data.mxearning)
+        details["get_pay"] = float(data.get_pay)
+        details["id"] = data.id
+        details["employee"] = data.employee.username
+        details["first_name"] = data.employee.first_name
+        details["last_name"] = data.employee.last_name
+        details["description"] = data.description
+        details["activity_name"] = data.activity_name
+        details["get_absolute_url"] = str(data.category.get_absolute_url)
+        result.append(details.copy())
+    # print(result)
+    return JsonResponse({"result":result},safe =False)

@@ -55,6 +55,7 @@ urlpatterns = [
 
     #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
+    path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
     path('newlink/', TaskCreateView.as_view(), name='newtask'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
@@ -63,7 +64,7 @@ urlpatterns = [
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
-
+    path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
 
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
