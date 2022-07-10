@@ -406,8 +406,12 @@ class Policy(models.Model):
 
     def __str__(self):
         return f"{self.id} policy"
+#
 
-
+    # def get_absolute_url(self):
+    #     return reverse('management:department_list', args=[self.slug])
+    def __str__(self):
+        return self.name   
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
     # Tasks Category.
