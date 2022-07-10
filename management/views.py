@@ -995,6 +995,11 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 def newevidence(request,taskid):
     if request.method == "POST":
         form = EvidenceForm(request.POST)
+        # Check whether the task exist then only we allow to create evidence
+        try:
+            Task.objects.get(id=taskid)
+        except:
+            return render(request, "errors/404.html")
 
         if form.is_valid():
             points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
@@ -1005,6 +1010,7 @@ def newevidence(request,taskid):
             # User will taken from the request 
             form.save()
             return redirect("management:evidence")
+
     else:
         form = EvidenceForm()
 
