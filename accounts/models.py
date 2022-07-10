@@ -136,7 +136,8 @@ class CredentialCategory(models.Model):
         verbose_name_plural=_('Categories')
 
     def __str__(self):
-        return f"{self.category} Categories"
+        # return f"{self.category} Categories"
+        return f"{self.category}"
 
 class Credential(models.Model):
     category = models.ManyToManyField(CredentialCategory, blank=True,related_name='credentialcategory')
