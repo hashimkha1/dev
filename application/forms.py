@@ -13,24 +13,21 @@ from .models import (
 
 
 class ApplicantProfileFormA(forms.ModelForm):
-    pass
-#     class Meta:
-#         model = Applicant_Profile
-#         fields = ["section", "upload_a"]
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_a"]
 
 
 class ApplicantProfileFormB(forms.ModelForm):
-    pass
-#     class Meta:
-#         model = Applicant_Profile
-#         fields = ["section", "upload_b"]
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_b"]
 
 
 class ApplicantProfileFormC(forms.ModelForm):
-    pass
-#     class Meta:
-#         model = Applicant_Profile
-#         fields = ["section", "upload_c"]
+    class Meta:
+        model = Applicant_Profile
+        fields = ["section", "upload_c"]
 
 
 class ApplicantForm(forms.ModelForm):

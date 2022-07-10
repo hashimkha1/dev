@@ -7,19 +7,17 @@ from django.utils import timezone
 
 # Create your models here.
 class Applicant_Profile(models.Model):
-    pass
-    # user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE,blank=True)
-    # section = models.CharField(max_length=2, default="A", blank=True)
-    # image = models.ImageField(
-    #     default="default.jpg", upload_to="applicant_profile_pics", blank=True
-    # )
-    # upload_a = models.FileField(upload_to="applicant_profile/uploads")
-    # upload_b = models.FileField(upload_to="applicant_profile/uploads")
-    # upload_c = models.FileField(upload_to="applicant_profile/uploads")
+    user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE)
+    section = models.CharField(max_length=2, default="A", blank=True)
+    image = models.ImageField(
+        default="default.jpg", upload_to="applicant_profile_pics", blank=True
+    )
+    upload_a = models.FileField(upload_to="applicant_profile/uploads")
+    upload_b = models.FileField(upload_to="applicant_profile/uploads")
+    upload_c = models.FileField(upload_to="applicant_profile/uploads")
 
-    # def __str__(self):
-    #     return f"{self.user.username} Applicant Profile"
-
+    def __str__(self):
+        return f"{self.user.username} Applicant Profile"
 
 class Application(models.Model):
     class Sex(models.IntegerChoices):
@@ -58,7 +56,6 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.username} application"
-
 
 class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)

@@ -150,6 +150,7 @@ def login_view(request):
                 else:  # parttime (agents) & Fulltime
                     login(request, account)
                     return redirect("management:user_task", username=request.user)
+                    
             # If Category is client/customer
             elif account is not None and account.category == 3:
                 if account.sub_category == 1:  # Job Support
@@ -158,39 +159,40 @@ def login_view(request):
                 else:  # Student
                     login(request, account)
                     return redirect("data:bitraining")
+
             # If Category is applicant
-            # elif account is not None and account.applicant_profile.section is not None:
-            #     if account.applicant_profile.section == "A":
-            #         login(request, account)
-            #         return redirect("application:section_a")
-            #     elif account.applicant_profile.section == "B":
-            #         login(request, account)
-            #         return redirect("application:section_b")
-            #     elif account.applicant_profile.section == "C":
-            #         login(request, account)
-            #         return redirect("application:section_c")
-            #     else:
-            #         login(request, account)
-            #         return redirect("application:first_interview")
+            elif account is not None and account.applicant_profile.section is not None:
+                if account.applicant_profile.section == "A":
+                    login(request, account)
+                    return redirect("application:section_a")
+                elif account.applicant_profile.section == "B":
+                    login(request, account)
+                    return redirect("application:section_b")
+                elif account.applicant_profile.section == "C":
+                    login(request, account)
+                    return redirect("application:section_c")
+                else:
+                    login(request, account)
+                    return redirect("application:first_interview")
 
             elif account is not None and account.category == 1:
                 if account.country in ("KE", "UG", "RW", "TZ"):  # Male
                     if account.gender == 1:
                         login(request, account)
-                        return redirect("application:firstinterview")
-                    # if account.account_profile.section == "A":
-                    #     login(request, account)
-                    #     return redirect("application:sectionA")
-                    # elif account.account_profile.section == "B":
-                    #     login(request, account)
-                    #     return redirect("application:sectionB")
-                    # elif account.account_profile.section == "C":
-                    #     login(request, account)
-                    #     return redirect("application:sectionC")
-                    else: #Female candidates in East Africa will be directed
+                        return redirect("application:first_interview")
+                    if account.account_profile.section == "A":
                         login(request, account)
-                        return redirect("application:firstinterview")
-                else: # Employees outside East Africa will be redirected to do 1-1 Session
+                        return redirect("application:sectionA")
+                    elif account.account_profile.section == "B":
+                        login(request, account)
+                        return redirect("application:sectionB")
+                    elif account.account_profile.section == "C":
+                        login(request, account)
+                        return redirect("application:sectionC")
+                    else:
+                        login(request, account)
+                        return redirect("application:first_interview")
+                else:
                     login(request, account)
                     return redirect("application:first_interview")
 

@@ -28,6 +28,7 @@ from .forms import (
     ApplicantProfileFormC,
 )
 from .models import Applicant_Profile, Application, Policy, Rated, Reporting
+from application.models import Applicant_Profile
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -115,16 +116,17 @@ def FI_sectionA(request):
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES or None, instance=request.user
+            request.POST, request.FILES, instance=request.user.applicant_profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
             section = data.applicant_profile.section
-            if section == "A" or section == "":
+            if section == "A":
                 data.applicant_profile.section = "B"
                 data.applicant_profile.save()
             form.save()
-            return redirect("application:section_b")
+        return redirect("application:section_b")
+
     return render(
         request,
         "application/interview_process/firstinterview/sectionA.html",
@@ -168,13 +170,14 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
-            return redirect("application:policies")
+            return redirect("main:layout")
 
     return render(
         request,
         "application/interview_process/firstinterview/sectionC.html",
         {"title": "First Section", "form": form},
     )
+
 
 
 def first_interview(request):
