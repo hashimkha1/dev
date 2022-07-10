@@ -22,7 +22,7 @@
         <tr>
             <td>{{link.created_at}}</td>
             <td>
-                <a href="{% url 'management:user_evidence' link.added_by %}" >{{link.added_by}}
+                <a href="{% url 'management:user_evidence' link.task.employee %}" >{{link.task.employee}}
                 </a>
              </td>
 
