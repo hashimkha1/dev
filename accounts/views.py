@@ -10,20 +10,25 @@ from django.urls import reverse, reverse_lazy
 #from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
 #from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
+from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
-from .forms import UserForm,LoginForm # , TimeForm  , SignUpForm, UserLoginForm, UserRegisterForm
-
+from .forms import (
+                    UserForm,LoginForm,
+                    CredentialCategoryForm,
+                    CredentialForm
+)
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect,render
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
-from .models import CustomerUser,Tracker
+from .models import CustomerUser,Tracker,CredentialCategory,Credential,Department
 from django.db.models import Q
 from management.models import Task
 from application.models import Applicant_Profile
 from finance.models import Default_Payment_Fees
 from django.http import QueryDict
+import string,random
 # Create your views here..
 
 #@allowed_users(allowed_roles=['admin'])
@@ -256,6 +261,63 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
 ''' 
+
+#================================CREDENTIALS SECTION================================
+
+def newcredentialCategory(request):
+    if request.method == "POST":
+        form = CredentialCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:account-crendentials')
+    else:
+        form=CredentialCategoryForm()
+    return render(request, "accounts/admin/forms/credentialCategory_form.html", {"form":form})
+    
+def newcredential(request):
+    if request.method == "POST":
+        form = CredentialForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:account-crendentials')
+    else:
+        form=CredentialForm()
+    return render(request, "accounts/admin/forms/credential_form.html", {"form":form})
+
+def credential_view(request):
+    categories=CredentialCategory.objects.all().order_by('-entry_date')
+    credentials=Credential.objects.all().order_by('-entry_date')
+    departments= Department(request)
+    context={
+                "departments":departments,
+                "categories":categories,
+                "credentials":credentials,
+                "show_password":False
+            }
+
+    try:
+        otp = request.POST["otp"] 
+        if otp == request.session["security_otp"]:
+            del request.session["security_otp"]
+            context["show_password"]=True
+            return render(request, 'accounts/admin/credentials.html', context)
+        else:
+            error_context={"message":"Invalid OTP"}
+            return render(request, 'accounts/admin/email_verification.html', error_context)
+
+    except:
+        return render(request, 'accounts/admin/credentials.html', context)
+
+def security_verification(request):
+    subject = "One time verification code to view passwords"
+    to = request.user.email
+    otp=''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    request.session["security_otp"] = otp
+    html_content = "Your One time verification code is "+otp
+    print(to,otp)
+    email_template(subject, to, html_content)
+    return render(request, 'accounts/admin/email_verification.html')
+
 #================================EMPLOYEE SECTION================================
 def Employeelist(request):
     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')

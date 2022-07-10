@@ -20,7 +20,14 @@ urlpatterns = [
     path('superuser/<int:pk>/update/', SuperuserUpdateView.as_view(template_name='accounts/admin/user_update_form.html'), name='superuser-update'),
     #path('user/<int:pk>/update/', UserUpdateView.as_view(template_name='accounts/registration/join.html'), name='user-update'),
     path('user/<int:pk>/delete/', UserDeleteView.as_view(template_name='accounts/admin/user_delete.html'), name='user-delete'),
-
+    
+    #=============================CREDENTIALS VIEWS=====================================
+    path('credentials/', views.credential_view, name='account-crendentials'),
+    path('newcredentialcategory/', views.newcredentialCategory, name='account-newcredentialcategory'),
+    path('newcredential/', views.newcredential, name='account-newcredentials'),
+    
+    path('security_verification/', views.security_verification, name='security_verification'),
+    
     #=============================CLIENTS VIEWS=====================================
     path('clients/', views.clientlist, name='clients'),
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),

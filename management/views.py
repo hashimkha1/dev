@@ -11,6 +11,7 @@ from django.urls import reverse
 
 from management.utils import email_template
 from .forms import (
+    DepartmentForm,
     TransactionForm,
     OutflowForm,
     InflowForm,
@@ -41,7 +42,7 @@ from data.models import DSU
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from accounts.models import Tracker
+from accounts.models import Tracker,Department
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -51,6 +52,20 @@ def home(request):
     return render(
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
+
+def department(request):
+    departments=Department.objects.all()
+    return render(request, "management/doc_templates/departmentlist.html" , {'departments':departments})
+
+def newdepartment(request):
+    if request.method == "POST":
+        form = DepartmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:management-department')
+    else:
+        form=DepartmentForm()
+    return render(request, "management/doc_templates/department_form.html", {"form":form})
 
 
 def contract(request):
