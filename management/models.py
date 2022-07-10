@@ -766,7 +766,10 @@ class TaskHistory(models.Model):
         if self.point > self.mxpoint:
             return 0
         else:
-            Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            try:
+                Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            except Exception as ZeroDivisionError:
+                Earning = 0.0
             compute_pay = Earning * Decimal(self.late_penalty)
             pay = round(compute_pay, 2)
             return pay
