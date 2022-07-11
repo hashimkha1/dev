@@ -161,14 +161,14 @@ def login_view(request):
                     return redirect("data:bitraining")
 
             # If Category is applicant
-            elif account is not None and account.Application_Profile.section is not None:
-                if account.Application_Profile.section == "A":
+            elif account is not None and account.application_profile.section is not None:
+                if account.application_profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
-                elif account.Application_Profile.section == "B":
+                elif account.application_profile.section == "B":
                     login(request, account)
                     return redirect("application:section_b")
-                elif account.Application_Profile.section == "C":
+                elif account.application_profile.section == "C":
                     login(request, account)
                     return redirect("application:section_c")
                 else:

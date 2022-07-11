@@ -112,18 +112,18 @@ def firstinterview(request):
 @login_required
 def FI_sectionA(request):
     form = ApplicantProfileFormA(
-        request.POST, request.FILES, instance=request.user.Application_Profile
+        request.POST, request.FILES, instance=request.user.application_profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES, instance=request.user.Application_Profile
+            request.POST, request.FILES, instance=request.user.application_profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.Application_Profile.section
+            section = data.application_profile.section
             if section == "A":
-                data.Application_Profile.section = "B"
-                data.Application_Profile.save()
+                data.application_profile.section = "B"
+                data.application_profile.save()
             form.save()
         return redirect("application:section_b")
 
@@ -137,18 +137,18 @@ def FI_sectionA(request):
 @login_required
 def FI_sectionB(request):
     form = ApplicantProfileFormB(
-        request.POST, request.FILES, instance=request.user.Application_Profile
+        request.POST, request.FILES, instance=request.user.application_profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormB(
-            request.POST, request.FILES, instance=request.user.Application_Profile
+            request.POST, request.FILES, instance=request.user.application_profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.Application_Profile.section
+            section = data.application_profile.section
             if section == "B":
-                data.Application_Profile.section = "C"
-                data.Application_Profile.save()
+                data.application_profile.section = "C"
+                data.application_profile.save()
             form.save()
         return redirect("application:section_c")
 
@@ -162,11 +162,11 @@ def FI_sectionB(request):
 @login_required
 def FI_sectionC(request):
     form = ApplicantProfileFormC(
-        request.POST, request.FILES, instance=request.user.Application_Profile
+        request.POST, request.FILES, instance=request.user.application_profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormC(
-            request.POST, request.FILES, instance=request.user.Application_Profile
+            request.POST, request.FILES, instance=request.user.application_profile
         )
         if form.is_valid():
             form.save()
