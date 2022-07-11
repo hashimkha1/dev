@@ -17,17 +17,29 @@ class ApplicantProfileFormA(forms.ModelForm):
         model = Application_Profile
         fields = ["section", "upload_a"]
 
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormA, self).__init__(*args, **kwargs)
+        self.fields["upload_a"].label = ""
+
 
 class ApplicantProfileFormB(forms.ModelForm):
     class Meta:
         model = Application_Profile
         fields = ["section", "upload_b"]
 
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormB, self).__init__(*args, **kwargs)
+        self.fields["upload_b"].label = ""
+
 
 class ApplicantProfileFormC(forms.ModelForm):
     class Meta:
         model = Application_Profile
         fields = ["section", "upload_c"]
+
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormC, self).__init__(*args, **kwargs)
+        self.fields["upload_c"].label = ""
 
 
 class ApplicantForm(forms.ModelForm):

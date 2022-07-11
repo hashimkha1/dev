@@ -133,24 +133,18 @@
                   </div>
               </div>
               <!-- Upload works -->
-                <p class="text-start display-5">Note: Combine all the files and zip before uploading.</p>
-
-            <div class="uploads_submission text-center d-flex flex-around">
+              <hr>
+            <div class="uploads_submission">
                 <form action="{% url "application:section_c" %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
+                <p>Note: Combine all the files and zip before uploading.</p>
+                <div class="d-flex justify-content-around">
                 <div class="col-md-3">{{ form.upload_c|as_crispy_field }}</div>
-                <a href="{% url 'application:policies' %}">
+                <div ><a href="{% url 'main:layout' %}">
                   <button id="next_section_btn">Next Section</button>
-                </a>
-                </form>
+                </a></div>
             </div>
-              <div class="sectionD">
-                    <div class="data_header">
-                        <h4 class="title text-center">
-                            Your uploads will be evaluated by our team and will get back you.
-                        </h4>
-                    </div>
-             </div>
+              
       </section>
       <script>
             $(document).ready(function() {

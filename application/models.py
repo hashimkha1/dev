@@ -35,6 +35,7 @@ class Application_Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
 
+
 class Application(models.Model):
     class Sex(models.IntegerChoices):
         Male = 1
@@ -72,6 +73,7 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.username} application"
+
 
 class InteviewUploads(models.Model):
     Id = models.AutoField(primary_key=True)
