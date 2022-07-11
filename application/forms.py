@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 from .models import (
-    Applicant_Profile,
+    Application_Profile,
     Application,
     InteviewUploads,
     Policy,
@@ -14,19 +14,19 @@ from .models import (
 
 class ApplicantProfileFormA(forms.ModelForm):
     class Meta:
-        model = Applicant_Profile
+        model = Application_Profile
         fields = ["section", "upload_a"]
 
 
 class ApplicantProfileFormB(forms.ModelForm):
     class Meta:
-        model = Applicant_Profile
+        model = Application_Profile
         fields = ["section", "upload_b"]
 
 
 class ApplicantProfileFormC(forms.ModelForm):
     class Meta:
-        model = Applicant_Profile
+        model = Application_Profile
         fields = ["section", "upload_c"]
 
 

@@ -27,8 +27,8 @@ from .forms import (
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )
-from .models import Applicant_Profile, Application, Policy, Rated, Reporting
-from application.models import Applicant_Profile
+from .models import Application_Profile, Application, Policy, Rated, Reporting
+from application.models import Application_Profile
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -83,8 +83,8 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
 
 @login_required
-def applicant_profile(request):
-    return render(request, "application/applications/applicant_profile.html")
+def Application_Profile(request):
+    return render(request, "application/applications/Application_Profile.html")
 
 
 # def testinterview(request):
@@ -112,18 +112,18 @@ def firstinterview(request):
 @login_required
 def FI_sectionA(request):
     form = ApplicantProfileFormA(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.Application_Profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.Application_Profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.applicant_profile.section
+            section = data.Application_Profile.section
             if section == "A":
-                data.applicant_profile.section = "B"
-                data.applicant_profile.save()
+                data.Application_Profile.section = "B"
+                data.Application_Profile.save()
             form.save()
         return redirect("application:section_b")
 
@@ -137,18 +137,18 @@ def FI_sectionA(request):
 @login_required
 def FI_sectionB(request):
     form = ApplicantProfileFormB(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.Application_Profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormB(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.Application_Profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.applicant_profile.section
+            section = data.Application_Profile.section
             if section == "B":
-                data.applicant_profile.section = "C"
-                data.applicant_profile.save()
+                data.Application_Profile.section = "C"
+                data.Application_Profile.save()
             form.save()
         return redirect("application:section_c")
 
@@ -162,11 +162,11 @@ def FI_sectionB(request):
 @login_required
 def FI_sectionC(request):
     form = ApplicantProfileFormC(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.Application_Profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormC(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.Application_Profile
         )
         if form.is_valid():
             form.save()
@@ -181,7 +181,7 @@ def FI_sectionC(request):
 
 
 def first_interview(request):
-    section = Applicant_Profile.objects.values_list("section", flat=True).get(
+    section = Application_Profile.objects.values_list("section", flat=True).get(
         user=request.user
     )
 
@@ -228,7 +228,7 @@ def uploadinterviewworks(request):
     )
     print("response", response)
     print("section", section)
-    Applicant_Profile.objects.filter(applicant=request.user).update(section=section)
+    Application_Profile.objects.filter(applicant=request.user).update(section=section)
     return JsonResponse({"success": True})
 
 
