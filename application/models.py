@@ -15,6 +15,7 @@ class Applicant_Profile(models.Model):
     upload_a = models.FileField(upload_to="applicant_profile/uploads")
     upload_b = models.FileField(upload_to="applicant_profile/uploads")
     upload_c = models.FileField(upload_to="applicant_profile/uploads")
+    is_active = models.BooleanField("Is featured", default=True)
 
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
