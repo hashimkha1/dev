@@ -16,96 +16,262 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Application',
+            name="Application",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('username', models.CharField(max_length=100)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('gender', models.IntegerField(choices=[(1, 'Male'), (2, 'Female')], default=9999)),
-                ('application_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('phone', models.CharField(blank=True, max_length=100, null=True)),
-                ('country', models.CharField(blank=True, max_length=100, null=True)),
-                ('resume', models.FileField(blank=True, null=True, upload_to='resumes/doc/')),
-                ('type', models.CharField(choices=[('Applicant', 'Applicant'), ('Other', 'Other')], default='Other', max_length=25)),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("username", models.CharField(max_length=100)),
+                ("first_name", models.CharField(max_length=100)),
+                ("last_name", models.CharField(max_length=100)),
+                (
+                    "gender",
+                    models.IntegerField(
+                        choices=[(1, "Male"), (2, "Female")], default=9999
+                    ),
+                ),
+                (
+                    "application_date",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                ("phone", models.CharField(blank=True, max_length=100, null=True)),
+                ("country", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "resume",
+                    models.FileField(blank=True, null=True, upload_to="resumes/doc/"),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("Applicant", "Applicant"), ("Other", "Other")],
+                        default="Other",
+                        max_length=25,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Policy',
+            name="Policy",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('first_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('last_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('upload_date', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('policy_type', models.CharField(choices=[('Leave', 'Leave'), ('Working Hours', 'Working Hours'), ('Working Days', 'Working Days'), ('Unpaid Training', 'Unpaid_Training'), ('Location', 'Location'), ('Other', 'Other')], default='Other', max_length=25)),
-                ('description', models.TextField()),
-                ('policy_doc', models.FileField(blank=True, default=None, null=True, upload_to='policy/doc/')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("first_name", models.CharField(blank=True, max_length=100, null=True)),
+                ("last_name", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "upload_date",
+                    models.DateTimeField(
+                        blank=True, default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                (
+                    "policy_type",
+                    models.CharField(
+                        choices=[
+                            ("Leave", "Leave"),
+                            ("Working Hours", "Working Hours"),
+                            ("Working Days", "Working Days"),
+                            ("Unpaid Training", "Unpaid_Training"),
+                            ("Location", "Location"),
+                            ("Other", "Other"),
+                        ],
+                        default="Other",
+                        max_length=25,
+                    ),
+                ),
+                ("description", models.TextField()),
+                (
+                    "policy_doc",
+                    models.FileField(
+                        blank=True, default=None, null=True, upload_to="policy/doc/"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Rated',
+            name="Rated",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('first_name', models.CharField(max_length=100)),
-                ('last_name', models.CharField(max_length=100)),
-                ('topic', models.CharField(default=None, max_length=100)),
-                ('rating_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('punctuality', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
-                ('communication', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
-                ('understanding', models.IntegerField(choices=[(1, 'Very Poor'), (2, 'Poor'), (3, 'Good'), (4, 'Very Good'), (5, 'Excellent')])),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("first_name", models.CharField(max_length=100)),
+                ("last_name", models.CharField(max_length=100)),
+                ("topic", models.CharField(default=None, max_length=100)),
+                (
+                    "rating_date",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                (
+                    "punctuality",
+                    models.IntegerField(
+                        choices=[
+                            (1, "Very Poor"),
+                            (2, "Poor"),
+                            (3, "Good"),
+                            (4, "Very Good"),
+                            (5, "Excellent"),
+                        ]
+                    ),
+                ),
+                (
+                    "communication",
+                    models.IntegerField(
+                        choices=[
+                            (1, "Very Poor"),
+                            (2, "Poor"),
+                            (3, "Good"),
+                            (4, "Very Good"),
+                            (5, "Excellent"),
+                        ]
+                    ),
+                ),
+                (
+                    "understanding",
+                    models.IntegerField(
+                        choices=[
+                            (1, "Very Poor"),
+                            (2, "Poor"),
+                            (3, "Good"),
+                            (4, "Very Good"),
+                            (5, "Excellent"),
+                        ]
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Reporting',
+            name="Reporting",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('first_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('last_name', models.CharField(blank=True, max_length=100, null=True)),
-                ('interview_type', models.CharField(choices=[('Internal Interview', 'Internal Interview'), ('First Interview', 'First Interview'), ('Second Interview', 'Second Interview'), ('Third Interview', 'Third Interview')], max_length=25)),
-                ('gender', models.CharField(blank=True, choices=[('Male', 'Male'), ('Female', 'Female')], max_length=25, null=True)),
-                ('method', models.CharField(blank=True, choices=[('Direct', 'Direct'), ('Indirect', 'Indirect')], max_length=25, null=True)),
-                ('reporting_date', models.DateTimeField(blank=True, null=True, verbose_name='Reporting Date(mm/dd/yyyy)')),
-                ('update_date', models.DateTimeField(blank=True, default=django.utils.timezone.now, null=True)),
-                ('comment', models.TextField()),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                ("first_name", models.CharField(blank=True, max_length=100, null=True)),
+                ("last_name", models.CharField(blank=True, max_length=100, null=True)),
+                (
+                    "interview_type",
+                    models.CharField(
+                        choices=[
+                            ("Internal Interview", "Internal Interview"),
+                            ("First Interview", "First Interview"),
+                            ("Second Interview", "Second Interview"),
+                            ("Third Interview", "Third Interview"),
+                        ],
+                        max_length=25,
+                    ),
+                ),
+                (
+                    "gender",
+                    models.CharField(
+                        blank=True,
+                        choices=[("Male", "Male"), ("Female", "Female")],
+                        max_length=25,
+                        null=True,
+                    ),
+                ),
+                (
+                    "method",
+                    models.CharField(
+                        blank=True,
+                        choices=[("Direct", "Direct"), ("Indirect", "Indirect")],
+                        max_length=25,
+                        null=True,
+                    ),
+                ),
+                (
+                    "reporting_date",
+                    models.DateTimeField(
+                        blank=True, null=True, verbose_name="Reporting Date(mm/dd/yyyy)"
+                    ),
+                ),
+                (
+                    "update_date",
+                    models.DateTimeField(
+                        blank=True, default=django.utils.timezone.now, null=True
+                    ),
+                ),
+                ("comment", models.TextField()),
             ],
         ),
         migrations.CreateModel(
-            name='InteviewUploads',
+            name="InteviewUploads",
             fields=[
-                ('Id', models.AutoField(primary_key=True, serialize=False)),
-                ('username', models.CharField(max_length=30, null=True)),
-                ('upload_date', models.DateTimeField(default=django.utils.timezone.now)),
-                ('ppt', models.FileField(default=None, upload_to='Powerpoints/doc/')),
-                ('report', models.FileField(default=None, upload_to='Reports/doc/')),
-                ('workflow', models.FileField(default=None, upload_to='Workflows/doc/')),
-                ('proc', models.FileField(default=None, upload_to='Procedures/doc/')),
-                ('other', models.FileField(default=None, upload_to='Others/doc/')),
-                ('Applicant', models.ManyToManyField(to='application.Application')),
+                ("Id", models.AutoField(primary_key=True, serialize=False)),
+                ("username", models.CharField(max_length=30, null=True)),
+                (
+                    "upload_date",
+                    models.DateTimeField(default=django.utils.timezone.now),
+                ),
+                ("ppt", models.FileField(default=None, upload_to="Powerpoints/doc/")),
+                ("report", models.FileField(default=None, upload_to="Reports/doc/")),
+                (
+                    "workflow",
+                    models.FileField(default=None, upload_to="Workflows/doc/"),
+                ),
+                ("proc", models.FileField(default=None, upload_to="Procedures/doc/")),
+                ("other", models.FileField(default=None, upload_to="Others/doc/")),
+                ("Applicant", models.ManyToManyField(to="application.Application")),
             ],
         ),
         migrations.CreateModel(
-            name='Application_Profile',
+            name="Application_Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('section', models.CharField(blank=True, default='A', max_length=2)),
-                ('image', models.ImageField(blank=True, default='default.jpg', upload_to='Application_Profile_pics')),
-                ('upload_a', models.FileField(upload_to='Application_Profile/uploads')),
-                ('upload_b', models.FileField(upload_to='Application_Profile/uploads')),
-                ('upload_c', models.FileField(upload_to='Application_Profile/uploads')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("section", models.CharField(blank=True, default="A", max_length=2)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        default="default.jpg",
+                        upload_to="Application_Profile_pics",
+                    ),
+                ),
+                ("upload_a", models.FileField(upload_to="Application_Profile/uploads")),
+                ("upload_b", models.FileField(upload_to="Application_Profile/uploads")),
+                ("upload_c", models.FileField(upload_to="Application_Profile/uploads")),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Applicant_Profile',
+            name="Applicant_Profile",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('section', models.CharField(blank=True, default='A', max_length=2)),
-                ('image', models.ImageField(blank=True, default='default.jpg', upload_to='Application_Profile_pics')),
-                ('upload_a', models.FileField(upload_to='Application_Profile/uploads')),
-                ('upload_b', models.FileField(upload_to='Application_Profile/uploads')),
-                ('upload_c', models.FileField(upload_to='Application_Profile/uploads')),
-                ('is_active', models.BooleanField(default=True, verbose_name='Is featured')),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("section", models.CharField(blank=True, default="A", max_length=2)),
+                (
+                    "image",
+                    models.ImageField(
+                        blank=True,
+                        default="default.jpg",
+                        upload_to="Application_Profile_pics",
+                    ),
+                ),
+                ("upload_a", models.FileField(upload_to="Application_Profile/uploads")),
+                ("upload_b", models.FileField(upload_to="Application_Profile/uploads")),
+                ("upload_c", models.FileField(upload_to="Application_Profile/uploads")),
+                (
+                    "is_active",
+                    models.BooleanField(default=True, verbose_name="Is featured"),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]
