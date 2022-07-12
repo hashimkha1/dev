@@ -6,7 +6,6 @@
    -----  call api with -----
     {{ message }}
   {% else %}
-    <div> enter your details here </div>
   {% endif %}
 
 
@@ -14,16 +13,19 @@
 <form target="_blank" action = "" method = "POST">
   {% csrf_token %}
     <div id="myForm" style="display: grid;grid-template-rows: 1fr;align-items:center;justify-content:center;align-self: center;">
-        <div> 
-            <label for="startDate">Start Date: </label>
-            <input id="startDate" type="date" name="startDate">
+        <div><h1>Get your gotomeeting meetings here</h1></div>
+
+        <div style="display: grid; grid-template-columns:1fr 1fr;justify-items:center;justify-content:space-around;"> 
+            <label for="startDate">Start Date </label>
+            <label for="endDate">End Date </label>
+
         </div>
         
-        <div>
-            <label for="endDate">End Date: </label>
+        <div style="display: grid; grid-template-columns:1fr 1fr;align-items:center;">
+            <input id="startDate" type="date" name="startDate">
             <input id="endDate" type="date" name="endDate">
         </div>
-        <div style="justify-self: center;"><input type="submit" value="OK"></div>
+        <div style="padding: 10px 10px 10px 10px ;justify-self: center;"><input type="submit" value="OK"></div>
 
     </div>
     
