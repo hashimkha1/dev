@@ -20,6 +20,7 @@ class Applicant_Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
 
+
 # Create your models here.
 class Application_Profile(models.Model):
     user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE)
@@ -30,7 +31,7 @@ class Application_Profile(models.Model):
     upload_a = models.FileField(upload_to="Application_Profile/uploads")
     upload_b = models.FileField(upload_to="Application_Profile/uploads")
     upload_c = models.FileField(upload_to="Application_Profile/uploads")
-    # is_active = models.BooleanField("Is featured", default=True)
+    is_active = models.BooleanField("Is featured", default=True, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
