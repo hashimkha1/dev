@@ -84,7 +84,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Application_Profile',
+            name='Applicant_Profile',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('section', models.CharField(blank=True, default='A', max_length=2)),

@@ -7,19 +7,19 @@ from django.utils import timezone
 from accounts.models import CustomerUser
 
 # # Create your models here.
-# class Applicant_Profile(models.Model):
-#     user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE)
-#     section = models.CharField(max_length=2, default="A", blank=True)
-#     image = models.ImageField(
-#         default="default.jpg", upload_to="Application_Profile_pics", blank=True
-#     )
-#     upload_a = models.FileField(upload_to="Application_Profile/uploads")
-#     upload_b = models.FileField(upload_to="Application_Profile/uploads")
-#     upload_c = models.FileField(upload_to="Application_Profile/uploads")
-#     is_active = models.BooleanField("Is featured", default=True)
+class Applicant_Profile(models.Model):
+    user = models.OneToOneField("accounts.CustomerUser", on_delete=models.CASCADE)
+    section = models.CharField(max_length=2, default="A", blank=True)
+    image = models.ImageField(
+        default="default.jpg", upload_to="Application_Profile_pics", blank=True
+    )
+    upload_a = models.FileField(upload_to="Application_Profile/uploads")
+    upload_b = models.FileField(upload_to="Application_Profile/uploads")
+    upload_c = models.FileField(upload_to="Application_Profile/uploads")
+    is_active = models.BooleanField("Is featured", default=True)
 
-#     def __str__(self):
-#         return f"{self.user.username} Applicant Profile"
+    def __str__(self):
+        return f"{self.user.username} Applicant Profile"
 
 
 # Create your models here.

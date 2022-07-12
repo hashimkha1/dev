@@ -33,7 +33,7 @@ from django.views.generic import (
 from .models import CustomerUser,Tracker,CredentialCategory,Credential,Department
 from django.db.models import Q
 from management.models import Task
-from application.models import Application_Profile
+from application.models import Applicant_Profile
 from finance.models import Default_Payment_Fees
 from django.http import QueryDict
 import string,random
@@ -161,14 +161,14 @@ def login_view(request):
                     return redirect("data:bitraining")
 
             # If Category is applicant
-            elif account is not None and account.application_profile.section is not None:
-                if account.application_profile.section == "A":
+            elif account is not None and account.applicant_profile.section is not None:
+                if account.applicant_profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
-                elif account.application_profile.section == "B":
+                elif account.applicant_profile.section == "B":
                     login(request, account)
                     return redirect("application:section_b")
-                elif account.application_profile.section == "C":
+                elif account.applicant_profile.section == "C":
                     login(request, account)
                     return redirect("application:section_c")
                 else:
