@@ -162,12 +162,18 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 import dj_database_url
 
+# postgresql database
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "CODA_DEV",  # Name of Database
+        "USER": "CODA_DEV",
+        "PASSWORD": os.environ.get("POSTGRESSPASS"),
+        "HOST": "database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com",
+        "PORT": "5432",
     }
 }
+
 db_from_env = dj_database_url.config(conn_max_age=600)
 
 DATABASES["default"].update(db_from_env)
