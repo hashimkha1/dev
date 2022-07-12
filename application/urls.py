@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path("applicants/", views.applicantlist, name="applicants"),
     path("interview/", views.interview, name="interview"),
-    path("first_interview/", views.first_interview, name="first_interview"),
+    # path("first_interview/", views.first_interview, name="first_interview"),
     path("firstinterview/", views.firstinterview, name="firstinterview"),
     # interview sections by karki Nirajan
     path("first_interview/section_a/", views.FI_sectionA, name="section_a"),

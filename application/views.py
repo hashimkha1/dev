@@ -178,22 +178,19 @@ def FI_sectionC(request):
         {"title": "First Section", "form": form},
     )
 
-
-def first_interview(request):
-    section = Application_Profile.objects.values_list("section", flat=True).get(
-        user=request.user
-    )
-
-    context = {
-        "alteryx_list": alteryx_list,
-        "dba_list": dba_list,
-        "tableau_list": tableau_list,
-        # 'section': section
-    }
-
-    return render(
-        request, "application/interview_process/first_interview.html", context
-    )
+# def first_interview(request):
+#     section = Application_Profile.objects.values_list("section", flat=True).get(
+#         user=request.user
+#     )
+#     context = {
+#         "alteryx_list": alteryx_list,
+#         "dba_list": dba_list,
+#         "tableau_list": tableau_list,
+#         # 'section': section
+#     }
+#     return render(
+#         request, "application/interview_process/first_interview.html", context
+#     )
 
 def uploadinterviewworks(request):
     print(request.user, request.user.id)
