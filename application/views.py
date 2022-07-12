@@ -179,7 +179,6 @@ def FI_sectionC(request):
     )
 
 
-
 def first_interview(request):
     section = Application_Profile.objects.values_list("section", flat=True).get(
         user=request.user
@@ -195,7 +194,6 @@ def first_interview(request):
     return render(
         request, "application/interview_process/first_interview.html", context
     )
-
 
 def uploadinterviewworks(request):
     print(request.user, request.user.id)
