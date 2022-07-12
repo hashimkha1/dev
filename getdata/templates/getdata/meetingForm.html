@@ -1,0 +1,32 @@
+{% extends "main/base_templates/base.html" %}
+
+{% block content %}
+
+  {% if result %}
+   -----  call api with -----
+    {{ message }}
+  {% else %}
+    <div> enter your details here </div>
+  {% endif %}
+
+
+
+<form target="_blank" action = "" method = "POST">
+  {% csrf_token %}
+    <div id="myForm" style="display: grid;grid-template-rows: 1fr;align-items:center;justify-content:center;align-self: center;">
+        <div> 
+            <label for="startDate">Start Date: </label>
+            <input id="startDate" type="date" name="startDate">
+        </div>
+        
+        <div>
+            <label for="endDate">End Date: </label>
+            <input id="endDate" type="date" name="endDate">
+        </div>
+        <div style="justify-self: center;"><input type="submit" value="OK"></div>
+
+    </div>
+    
+</form>
+
+{% endblock content%}
