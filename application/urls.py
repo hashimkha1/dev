@@ -24,17 +24,20 @@ urlpatterns = [
     path("applicants/", views.applicantlist, name="applicants"),
     path("interview/", views.interview, name="interview"),
     path("first_interview/", views.first_interview, name="first_interview"),
-    path("second_interview/", views.second_interview, name="second_interview"),
-    path("third_interview/", views.third_interview, name="third_interview"),
+    # interview sections by karki
+    path("first_interview/section_a/", views.FI_sectionA, name="section_a"),
+    path("first_interview/section_b/", views.FI_sectionB, name="section_b"),
+    path("first_interview/section_c/", views.FI_sectionC, name="section_c"),
     path(
         "uploadinterviewworks/", views.uploadinterviewworks, name="uploadinterviewworks"
     ),
-    path("second_interview/", views.second_interview, name="second_interview"),
+    # path("second_interview/", views.second_interview, name="second_interview"),
     path("orientation/", views.orientation, name="orientation"),
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
     path("policy/", views.policy, name="policy"),
     path("policies/", views.policies, name="policies"),
+    path("policy/<int:pk>/update/", views.policies, name="policy-update"),
     path("info/", views.info, name="applicant_info"),
     path("trainee/", views.trainee, name="trainee"),
     path("trainees/", views.trainees, name="trainees"),
@@ -52,7 +55,7 @@ urlpatterns = [
     # path('<int:id>/', views.employee_form, name='emp_update'),
     # path('<int:id>/', views.employee_delete, name='emp_delete'),
     # path('employee_list/', views.employee_list, name='emp_list'),
-    # path('test/', views.test, name='test'),
+    # path("tinterview/", views.testinterview, name="tinterview"),
     # API data
     # path('applicants', views.applicants, name='applicants'),
     # path('applicationapi/', views.ApplicationDataAPI),

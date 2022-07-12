@@ -1,15 +1,11 @@
 import datetime
 import json
 import ast
-from datetime import date ,timedelta
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from django.http import Http404
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect,render
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-								  UpdateView)
+from requests import request
 from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from .models import Payment_Information,Payment_History,Default_Payment_Fees
@@ -17,6 +13,43 @@ from django.db.models import Q
 from django.http import QueryDict
 from django.shortcuts import render
 from django.db.models import Count
+from datetime import date, datetime, timedelta
+from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.http import Http404, JsonResponse
+from django.utils.decorators import method_decorator
+from django.db.models import Sum
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+
+from management.utils import email_template
+# from .forms import (
+#     # TransactionForm,
+#     OutflowForm,
+#     InflowForm,
+#     PolicyForm,
+#     ManagementForm,
+#     RequirementForm,
+#     EvidenceForm,
+# )
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
+
+from data.models import DSU
+
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from accounts.models import Tracker
+
+# User=settings.AUTH_USER_MODEL
+User = get_user_model()
+
 
 
 # Create your views here.
@@ -88,3 +121,56 @@ def contract_form_submission(request):
 				return redirect('data:bitraining')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
+
+
+
+
+class PaymentCreateView(LoginRequiredMixin, CreateView):
+    model = Default_Payment_Fees
+    success_url = "/finance/contract_form"
+    fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+    ]
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class PaymentListView(ListView):
+    model = Payment_History
+    template_name = "finance/payments/payments.html"
+    context_object_name = "payments"
+
+class DefaultPaymentListView(ListView):
+    model = Default_Payment_Fees
+    template_name = "finance/payments/defaultpayments.html"
+    context_object_name = "defaultpayments"
+
+class DefaultPaymentUpdateView(UpdateView):
+    model = Default_Payment_Fees
+    success_url = "/finance/payments"
+	
+    fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+    ]
+    # fields=['user','activity_name','description','point']
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            # return redirect("management:tasks")
+            return render(request,"management/doc_templates/supportcontract_form.html")
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        # elif self.request.user == task.employee:
+        #     return True
+        return False

@@ -16,6 +16,10 @@
           <th>Phone Number</th>
           <th>Country</th>
           <th>Section</th>
+          <th>Upload A</th>
+          <th>Upload B</th>
+          <th>Upload C</th>
+
             <th>Resume</th>
             <th>Delete</th>
         </tr>
@@ -32,9 +36,42 @@
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
           <td>{{applicant.applicant_profile.section}}</td>
+          {% if applicant.applicant_profile.upload_a %}
+             <td>
+            <button>
+              <a href="{{applicant.applicant_profile.upload_a.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+            </button>
+          </td>
+          {% else %}
+          <td>N/A</td>
+          {% endif %}
+           {% if applicant.applicant_profile.upload_b %}
+             <td>
+            <button>
+              <a href="{{applicant.applicant_profile.upload_b.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+            </button>
+          </td>
+          {% else %}
+          <td>N/A</td>
+          {% endif %}
+           {% if applicant.applicant_profile.upload_c %}
+             <td>
+            <button>
+              <a href="{{applicant.applicant_profile.upload_c.url}}" class="btn btn-secondary btn-sm"
+              >Download
+            </a>
+            </button>
+          </td>
+          {% else %}
+          <td>N/A</td>
+          {% endif %}
           <td>
             <button>
-              {% comment %} <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm" {% endcomment %}
+              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
               >Download
             </a>
             </button>
