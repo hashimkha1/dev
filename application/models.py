@@ -37,6 +37,8 @@ class Application_Profile(models.Model):
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
 
+class Profile(models.Model):
+    pass
 
 class Application(models.Model):
     class Sex(models.IntegerChoices):
