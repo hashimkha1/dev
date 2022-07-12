@@ -62,7 +62,7 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 def applicantlist(request):
     applications = Application.objects.filter().order_by("-application_date")
-    applicants = CustomerUser.objects.filter(is_applicant=True).order_by("-date_joined")
+    applicants = CustomerUser.objects.filter(is_applicant=True)
 
     # applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     context = {"applications": applications, "applicants": applicants}
@@ -116,14 +116,14 @@ def FI_sectionA(request):
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES, instance=request.user.application_profile
+            request.POST, request.FILES, instance=request.user.applicant_profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.application_profile.section
+            section = data.applicant_profile.section
             if section == "A":
-                data.application_profile.section = "B"
-                data.application_profile.save()
+                data.applicant_profile.section = "B"
+                data.applicant_profile.save()
             form.save()
         return redirect("application:section_b")
 
