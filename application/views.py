@@ -6,7 +6,6 @@ from multiprocessing import context
 from django.views.decorators.csrf import csrf_exempt
 
 import boto3
-from tomlkit import item
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
