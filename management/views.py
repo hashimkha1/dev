@@ -40,9 +40,9 @@ from .models import (
 )
 from data.models import DSU
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
+from coda_project import settings
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -100,15 +100,45 @@ tasksummary = [
 
 # ----------------------REPORTS--------------------------------
 
+import json
+def companyagenda(request):
+    # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
+    # data = json.load(f)
+    # f.close()
+    with open(settings.STATIC_ROOT+'/companyagenda.json','r') as file:
+        data = json.load(file)
+
+    return render(request, "management/companyagenda.html", {"title": "Company Agenda","data":data})
+
+
+def updatelinks_companyagenda(request):
+    department = request.POST["department"]
+    subdepartment = request.POST["subdepartment"]
+    linkname = request.POST["linkname"]
+    link_url = request.POST["link_url"]
+   
+    with open(settings.STATIC_ROOT+'/companyagenda.json', "r") as jsonFile:
+        data = json.load(jsonFile)
+
+    if subdepartment == "":
+        data[department][linkname] = link_url
+    else:
+        data[department][subdepartment][linkname] = link_url
+
+    with open(settings.STATIC_ROOT+'/companyagenda.json', "w") as jsonFile:
+        json.dump(data, jsonFile)
+
+    return JsonResponse({"success":True})
+
 
 def finance(request):
     return render(
-        request, "management/company_finances/finance.html", {"title": "finance"}
+        request, "management/company_finances/finance.html", {"title": "Finance"}
     )
 
 
 def hr(request):
-    return render(request, "management/company_finances/hr.html", {"title": "hr"})
+    return render(request, "management/company_finances/hr.html", {"title": "HR"})
 
 
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
@@ -638,7 +668,7 @@ def usertask(request, user=None, *args, **kwargs):
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
 
-    history = TaskHistory.objects.filter(Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+    history = TaskHistory.objects.filter(Q(submission__gte=start_day_of_prev_month3) , Q(submission__lte=last_day_of_prev_month1))
 
     average_earnings = 0
     counter = 0
