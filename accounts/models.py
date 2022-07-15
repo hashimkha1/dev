@@ -140,6 +140,12 @@ class CredentialCategory(models.Model):
         return f"{self.category}"
 
 class Credential(models.Model):
+    USER_CHOICES = [
+        ("Superuser", "Superuser"),
+        ("Admin", "Admin"),
+        ("Employee", "Employee"),
+        ("Other", "Other")
+    ]
     category = models.ManyToManyField(CredentialCategory, blank=True,related_name='credentialcategory')
     added_by= models.ForeignKey(CustomerUser, on_delete=models.RESTRICT)
     name = models.CharField(
@@ -155,6 +161,12 @@ class Credential(models.Model):
     entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
+    # user_type = models.CharField(
+    #     max_length=25,
+    #     choices=USER_CHOICES,
+    #     default="Other",
+    # )
+    
     class Meta:
         verbose_name_plural = "credentials"
 
