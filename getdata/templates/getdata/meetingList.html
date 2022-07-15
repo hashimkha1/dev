@@ -1,129 +1,63 @@
-
 <html>
-    <style>
-
-            #tableData{
-                background-color: rgb(247, 221, 175);
-                padding-top: 20px;
-                padding-bottom: 20px;
-                padding-left: 1%;
-                padding-right: 1%;
-                margin-left: 2%;
-                margin-right: 2%;
-            }                    
-            #tableTopic_wrapper , #tableTopic_length{
-                margin-right: 10px;
-                margin-bottom: 20px;
-            }
-            #tableTopic tr{
-                background-color: antiquewhite;
-                font-size: smaller;
-            }
-            #tableTopic td{
-                background-color: rgb(253, 245, 245);
-                color: #000000;
-                font-size: smaller;
-                white-space: pre;
-            }
-
-            
-
-    </style>
-
-    <title>Meetings List</title>
-  
-    <h1> 
-        
-        not extending base template -- 
-        <br>has multiple versions of jquery which results in datatables rendering error
-
-    </h1>
-
-    <!-- datatables cdn -->
-    
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/r/dt/dt-1.10.22/datatables.min.css"/>
-    <!-- ✅ load jQuery ✅ -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- ✅ load DataTables ✅ -->
-    <script type="text/javascript" src="https://cdn.datatables.net/r/dt/dt-1.10.22/datatables.min.js"></script>
-
-
-    <!-- datatables cdn end -->
+<style>
 
     
-    <script>
+    #message{
+        text-align: center;
+        font-size: 1.22em;
 
-        $(document).ready(function() {
-                getDataForDatatables();
-            });
+    }
+    #item{
+        font-size: 1.11rem;
+        display: grid;
+        grid-template-columns: repeat(7,1fr);
+        justify-content:space-around;
+        padding: 10px 10px 10px 5px;
+        background-color: rgb(134, 243, 166);
+        color: rgb(12, 7, 7);
+    }
 
-        console.log("---running this---");
-        var myMeetingsJson = "{{data}}";
-        const enocodedjson = myMeetingsJson;
-        const json = enocodedjson.replace(/&#x27;/gm, '"');
-        const myData = JSON.parse(json);
-    
-        function getDataForDatatables(){
-    
-            var jsonData = {
-                    "data" :   myData
-                    };
-                setDataToTable(jsonData);
-            }
-                    
-            
-            /* set data tables */
-            function setDataToTable(jsonData){
-                    console.log("__________1__________");
-                    console.log(jsonData);
-                    console.log("\n\n ......................... 2 ......................... \n\n");
-                    $('#tableTopic').DataTable( {
-                    pagination: "bootstrap",
-                    filter:true,
-                    data: jsonData.data,
-                    destroy: true,
-                    lengthMenu:[5,10],
-                    pageLength: 50,
-                        "columns":[  
-                            {     "data"     :     "subject"    },                            
-                            {     "data"     :     "meetingId"    },
-                            {     "data"     :     "duration"      },  
-                            {     "data"     :     "numAttendees"    },
-                            {     "data"     :     "startTime"    },
-                            {     "data"     :     "endTime"    },
-                            {     "data"     :     "recording"    },
-                
-                            ]
-                    } );
-                }
-        </script>
+    #item div{
+        text-align: center;
+    }
+    .meeting{
+        font-size: 1.05em;
+    }
 
-    <div id="proper-rendering">
-             here proper rendering of data
+</style>
+
+
+<div id="message">---- {{message}} ----</div>
+
+<br>
+<div>
+    <div id="item">
+        <div>Name</div>
+        <div>MeetingType</div>
+        <div>MeetingID</div>
+        <div>Attendance</div>
+        <div>start</div>
+        <div>end</div>
+        <div>more details</div>
     </div>
-    <div>
-            Message : {{message}}
-            <br><hr>
-        <div> using datatables to render </div><br><hr><br>
-        <div id="body">
-        
-            <div id="tableData">
-                    <table id="tableTopic" class="display" cellspacing="0" width="100%">
-                    <thead>
-                        <tr>
-                            <th>Subject</th>
-                            <th>ID</th>
-                            <th>Duration</th>
-                            <th>Number of Attendees</th>
-                            <th>Start</th>
-                            <th>End</th>
-                            <th>recording</th>
-                        </tr>
-                    </thead>
-                    </table>
-                </div>
 
+    {% for item in data %}
+    <hr>
+        <div id="item">
+            <div>{{item.subject}}</div>
+            <div>{{item.meetingType}}</div>
+            <div> {{item.meetingId}}  </div>
+            <div>{{item.numAttendees}}</div>
+            <div>{{item.startTime}}</div>
+            <div>{{item.endTime}}</div>
+            <div> <a href="{{item.meetingId}}" class="meeting" target="_blank" id={{item.meetingId}}> more </a></div>
         </div>
+    {% endfor %}
+    <hr>
 
-    </div>
+</div>
+
+
 </html>
+
+

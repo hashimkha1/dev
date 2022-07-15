@@ -25,7 +25,7 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 print('---dir_path-- : ',dir_path)
 urlGotoMeeting = "https://api.getgo.com/G2M/rest/historicalMeetings?startDate={}&endDate={}"
 urlToRefresh = 'https://api.getgo.com/oauth/v2/token'
-urlMeetingAttendee = "https://api.getgo.com/G2M/rest/meetings/{}}/attendees"
+urlMeetingAttendee = "https://api.getgo.com/G2M/rest/meetings/{}/attendees"
 grant_type = 'refresh_token'
 refresh_token = None
 client_code = None
@@ -36,7 +36,7 @@ def refresh_token_function():
     global refresh_token , client_code
 
     # myRefreshJSON =None
-    print('1. reading client code and refresh token')
+    # print('1. reading client code and refresh token')
 
     with open(dir_path+'/gotomeeting/credentialsForRefresh.json','r') as f:
         myJson = json.load(f)
@@ -49,16 +49,16 @@ def refresh_token_function():
     }
     myPayload = "grant_type={}&refresh_token={}".format(grant_type , refresh_token)
 
-    print('2. making refresh token request to',urlToRefresh)
+    # print('2. making refresh token request to',urlToRefresh)
 
     response = requests.post(url=urlToRefresh , data=myPayload , headers=headers)
-    print('3. response-code: ',response.status_code)
-    print("4. saving new tokens in file")
+    # print('3. response-code: ',response.status_code)
+    # print("4. saving new tokens in file")
     with open(dir_path+'/gotomeeting/refresh_tokens.json',"w") as f:
         f.write(response.text)
-        print("written to ",'refresh_tokens.json')
+        # print("written to ",'refresh_tokens.json')
     
-    print('\n---------------done-----------------')
+    # print('\n---------------done-----------------')
 
     ## refreshing tokens every 30 minutes
     threading.Timer(1800.0, refresh_token_function).start()
@@ -72,7 +72,7 @@ refresh_token_function()
 def getmeetingresponse(startDate , endDate):
     access_token = None
     print('-'*50)
-    print("1. getting access tokens")
+    # print("1. getting access tokens")
     with open(dir_path+'/gotomeeting/refresh_tokens.json','r') as f:
         myJson = json.load(f)
         access_token = myJson['access_token']
@@ -80,12 +80,12 @@ def getmeetingresponse(startDate , endDate):
     headers = {
     'Authorization': 'Bearer '+access_token
     }
-    print("2. getting meetings from {} to {}\n".format(startDate , endDate))
+    # print("2. getting meetings from {} to {}\n".format(startDate , endDate))
     urlMeeting = urlGotoMeeting.format(''.join([str(startDate),'T12:00:00Z']) ,''.join([str(endDate),'T12:00:00Z']))
-    print("3. request made : ",urlMeeting)
+    # print("3. request made : ",urlMeeting)
     response = requests.request("GET" , url=urlMeeting , headers=headers)
-    print('4.  response-code: ',response.status_code)
-    print('5.  rendering with variable data')
+    # print('4.  response-code: ',response.status_code)
+    # print('5.  rendering with variable data')
     print('-'*50)
     # return [response.text]
     jsonResponse = json.loads(response.text)
@@ -145,7 +145,7 @@ def meetingFormView(request):
         allDataJsons = getmeetingresponse(startDate , endDate)
         result = {
             'data' : allDataJsons,
-            'message' : "getting meetings between {} and {}".format( ''.join([str(startDate),'T12:00:00Z']), ''.join([str(endDate),'T12:00:00Z']))
+            'message' : "meetings between {} and {}".format( startDate , endDate)
         }
         # print('5-> result : ',result)
 
@@ -160,3 +160,41 @@ def gotomeetingresult(request):
 
 
 # ends here --------
+
+## additions to view gotomeeting meeting in detail
+
+# meetingView6
+def meetingView6(request,meeting_id):
+    print("\n\n view6 : you have request meeting details for path  : ",request.path)
+    mID = int(meeting_id)
+    with open(dir_path+'/gotomeeting/refresh_tokens.json','r') as f:
+        myJson = json.load(f)
+        access_token = myJson['access_token']
+    strResponse = None
+    headers = {
+    'Authorization': 'Bearer '+access_token
+    }
+    meeting = urlMeetingAttendee.format(mID)
+    print(f"fetching meeting {mID} details ->> {meeting} ")
+
+    responseMeeting = requests.get(url=meeting,headers=headers)
+    jsonResp = json.loads(responseMeeting.text)
+    # print("-->> foo : ",foo)
+    template_name = 'getdata/meetingDetails.html'
+    # context_object_name = 'result'
+    result = {"data":'meeting details id = {}'.format(meeting_id)}
+    # myQuerySet = meetingView3.get_queryset()
+    # {{ request.GET.urlencode }}
+    cleanResponse = []
+    for meeting in jsonResp:
+        temp = {}
+        meetingItems = meeting.items()
+        temp.update(meetingItems)
+        temp['joinTime'] = temp['joinTime'].replace('T',' ')
+        temp['leaveTime'] = temp['leaveTime'].replace('T',' ')
+
+        cleanResponse.append(temp)
+
+    result['info'] = cleanResponse
+
+    return render(request , template_name , result)
