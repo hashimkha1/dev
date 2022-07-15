@@ -120,6 +120,10 @@ def join(request):
             # print("request user data",form.instance.id)
             # custom_get = CustomerUser.objects.get(id=form.instance.id)
             # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
+            # #print("request user data",form.instance.id)
+            # if form.cleaned_data.get('category') == 1: #applicant
+            #     custom_get = CustomerUser.objects.get(id=form.instance.id)
+            #     Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
 
             username = form.cleaned_data.get('username')
             category = form.cleaned_data.get('category')

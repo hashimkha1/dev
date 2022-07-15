@@ -102,11 +102,14 @@ def interview(request):
 
 
 def firstinterview(request):
-    return render(
-        request,
-        "application/interview_process/firstinterview.html",
-        {"title": "first_interview"},
-    )
+    #section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
+    context = {
+        'alteryx_list': alteryx_list,
+        'dba_list': dba_list,
+        'tableau_list': tableau_list ,
+        #'section': section
+    }
+    return render(request, 'application/interview_process/firstinterview.html', context)
 
 @csrf_exempt
 @login_required
@@ -191,6 +194,7 @@ def FI_sectionC(request):
 #     return render(
 #         request, "application/interview_process/first_interview.html", context
 #     )
+
 
 def uploadinterviewworks(request):
     print(request.user, request.user.id)
