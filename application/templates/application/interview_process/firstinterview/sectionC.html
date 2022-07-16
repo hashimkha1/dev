@@ -34,10 +34,10 @@
               <br><br><br>
 
               <div class="sectionA" style="display: block">
-              <div class="data_header">
-                <h4 class="title text-center">
-                    SECTION C : REPORT DEVELOPMENT
-                </h4>
+              </div>
+              <div class="data_header" >
+                  <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
+                  <h4 class="title text-center">SECTION C: DATABASE MANAGEMENT</h4>
               </div>
               <div class="row text-center">
                   <div class="col-md-9 services">
@@ -65,31 +65,12 @@
                                   <td class="tg-7zrl">
                                       <span
                                           style="font-weight: 400; text-decoration: none; color: black">Installing
-                                          Tableau</span>
-                                  </td>
-                                  <td class="tg-7zrl">
-                                      <span style="font-weight: 400; text-decoration: none; color: black">
-                                          <a href="https://www.youtube.com/watch?v=QYnkudCxbmE ">
-                                              Click
-                                          </a>
-                                      </span>
-                                  </td>
-                              </tr>
-
-                              <tr>
-                                  <td class="tg-7zrl">
-                                      <span
-                                          style="font-weight: 400; text-decoration: none; color: black">Reporting</span>
-                                  </td>
-                                  <td class="tg-7zrl">
-                                      <span
-                                          style="font-weight: 400; text-decoration: none; color: black">Developing
-                                          an Executive Overview Report</span>
+                                          SQL Database</span>
                                   </td>
                                   <td class="tg-7zrl">
                                       <span style="font-weight: 400; text-decoration: none; color: black">
                                           <a
-                                              href="https://drive.google.com/file/d/1yQBiDgt3y1faTfglDtVITEEnyyYIewui/view ">
+                                              href="https://drive.google.com/file/d/148J8xhikG5CqroObDjUtNC3r7vk9HmxF/view?usp=drivesdk ">
                                               Click
                                           </a>
                                       </span>
@@ -98,7 +79,27 @@
 
                               <tr>
                                   <td class="tg-7zrl">
-                                      <span style="font-weight: 400; text-decoration: none; color: black">Tableau
+                                      <span style="font-weight: 400; text-decoration: none; color: black">End to
+                                          End-SQL</span>
+                                  </td>
+                                  <td class="tg-7zrl">
+                                      <span
+                                          style="font-weight: 400; text-decoration: none; color: black">Normalization,
+                                          Creation and Retrieval of Data</span>
+                                  </td>
+                                  <td class="tg-7zrl">
+                                      <span style="font-weight: 400; text-decoration: none; color: black">
+                                          <a
+                                              href="https://onedrive.live.com/?cid=2E99D0A0ADEC9287&id=2E99D0A0ADEC9287%213210&parId=2E99D0A0ADEC9287%213207&o=OneUp">
+                                              Click
+                                          </a>
+                                      </span>
+                                  </td>
+                              </tr>
+
+                              <tr>
+                                  <td class="tg-7zrl">
+                                      <span style="font-weight: 400; text-decoration: none; color: black">SQL
                                           PPT</span>
                                   </td>
                                   <td class="tg-7zrl">
@@ -109,7 +110,7 @@
                                   <td class="tg-7zrl">
                                       <span style="font-weight: 400; text-decoration: none; color: black">
                                           <a
-                                              href="https://docs.google.com/presentation/d/1ASZkzSJBSoOqH6R83ZznChL6ISi5SC5_YI5N2XTZD1w/edit?usp=sharing ">
+                                              href="https://docs.google.com/presentation/d/13IQKwFjkkxJckPQWG-Q1ydZPv6tDfhpWUOt6j9mNgvQ/edit ">
                                               Click
                                           </a>
                                       </span>
@@ -122,31 +123,33 @@
                   <div class="col-md-3 services">
                       <div class="card">
                           <div class="card-body">
-                              <h6>Tableau Instructions</h6>
+                              <h6>Database Instructions</h6>
                               <hr />
                               <p class="gi">
-                                  Go through the video and use the datasets from the workflow(Alteryx) in section
-                                  A to create a report in tableau.
+                                  Go through the end to end video on SQL Database. Practice along and send your
+                                  snippets/your work in the email below.Prepare adequately for your incoming
+                                  presentation.
                               </p>
                           </div>
                       </div>
                   </div>
               </div>
-              <!-- Upload works -->
-              <hr>
-            <div class="uploads_submission">
+            <hr>
+              
+        <div class="uploads_submission">
                 <form action="{% url "application:section_c" %}" method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <p>Note: Combine all the files and zip before uploading.</p>
                 <div class="d-flex justify-content-around">
                 <div class="col-md-3">{{ form.upload_c|as_crispy_field }}</div>
-                <div ><a href="{% url 'main:layout' %}">
+                <div ><a href="{% url 'application:policies' %}">
                   <button id="next_section_btn">Next Section</button>
                 </a></div>
             </div>
               
-      </section>
-      <script>
+            </section>
+        
+            <script>
             $(document).ready(function() {
                 $('#next_section_btn').click(function() {
                     var applicantworks = $('#applicantworks').val();

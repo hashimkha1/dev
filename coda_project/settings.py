@@ -166,12 +166,8 @@ import dj_database_url
 # postgresql database
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "CODA_DEV",  # Name of Database
-        "USER": "CODA_DEV",
-        "PASSWORD": os.environ.get("POSTGRESSPASS"),
-        "HOST": "database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com",
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -285,7 +281,7 @@ AWS_DEFAULT_ACL = None
 # session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 # s3 = session.resource('s3')
 
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
