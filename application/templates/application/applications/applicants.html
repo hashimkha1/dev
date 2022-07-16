@@ -33,11 +33,11 @@
           <td>{{applicant.last_name}}</td>
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
-          <td>{{applicant.applicant_profile.section}}</td>
-          {% if applicant.applicant_profile.upload_a %}
+          <td>{{applicant.profile.section}}</td>
+          {% if applicant.profile.upload_a %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_a.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_a.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -45,10 +45,10 @@
           {% else %}
           <td>N/A</td>
           {% endif %}
-           {% if applicant.applicant_profile.upload_b %}
+           {% if applicant.profile.upload_b %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_b.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_b.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -56,10 +56,10 @@
           {% else %}
           <td>N/A</td>
           {% endif %}
-           {% if applicant.applicant_profile.upload_c %}
+           {% if applicant.profile.upload_c %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_c.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_c.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -69,7 +69,7 @@
           {% endif %}
           <td>
             <button>
-              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
+              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -117,7 +117,7 @@
             <td>{{applicant.last_name}}</td>
             <td>{{applicant.phone}}</td>
             <td>{{applicant.country}}</td>
-            <td>{{applicant.applicant_profile.section}}</td>
+            <td>{{applicant.profile.section}}</td>
             <!-- 
         <td>
           <button>

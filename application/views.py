@@ -6,6 +6,7 @@ from multiprocessing import context
 from django.views.decorators.csrf import csrf_exempt
 
 import boto3
+
 # from tomlkit import item
 from accounts.models import CustomerUser
 from django.conf import settings
@@ -27,8 +28,7 @@ from .forms import (
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )
-from .models import Application_Profile, Application, Policy, Rated, Reporting
-from application.models import Application_Profile
+from .models import UserProfile, Application, Policy, Rated, Reporting
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -83,7 +83,7 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
 
 @login_required
-def Application_Profile(request):
+def UserProfile(request):
     return render(request, "application/applications/Application_Profile.html")
 
 
@@ -102,31 +102,29 @@ def interview(request):
 
 
 def firstinterview(request):
-    #section = Applicant_Profile.objects.values_list("section",flat=True).get(applicant=request.user)
-    context = {
-        'alteryx_list': alteryx_list,
-        'dba_list': dba_list,
-        'tableau_list': tableau_list ,
-        #'section': section
-    }
-    return render(request, 'application/interview_process/firstinterview.html', context)
+    return render(
+        request,
+        "application/interview_process/firstinterview.html",
+        {"title": "first_interview"},
+    )
+
 
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
     form = ApplicantProfileFormA(
-        request.POST, request.FILES, instance=request.user.application_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.applicant_profile.section
+            section = data.profile.section
             if section == "A":
-                data.applicant_profile.section = "B"
-                data.applicant_profile.save()
+                data.profile.section = "B"
+                data.profile.save()
             form.save()
         return redirect("application:section_b")
 
@@ -140,18 +138,18 @@ def FI_sectionA(request):
 @login_required
 def FI_sectionB(request):
     form = ApplicantProfileFormB(
-        request.POST, request.FILES, instance=request.user.application_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormB(
-            request.POST, request.FILES, instance=request.user.application_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.application_profile.section
+            section = data.profile.section
             if section == "B":
-                data.application_profile.section = "C"
-                data.application_profile.save()
+                data.profile.section = "C"
+                data.profile.save()
             form.save()
         return redirect("application:section_c")
 
@@ -165,15 +163,15 @@ def FI_sectionB(request):
 @login_required
 def FI_sectionC(request):
     form = ApplicantProfileFormC(
-        request.POST, request.FILES, instance=request.user.application_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormC(
-            request.POST, request.FILES, instance=request.user.application_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             form.save()
-            return redirect("main:layout")
+            return redirect("application:policies")
 
     return render(
         request,
@@ -181,19 +179,22 @@ def FI_sectionC(request):
         {"title": "First Section", "form": form},
     )
 
-# def first_interview(request):
-#     section = Application_Profile.objects.values_list("section", flat=True).get(
-#         user=request.user
-#     )
-#     context = {
-#         "alteryx_list": alteryx_list,
-#         "dba_list": dba_list,
-#         "tableau_list": tableau_list,
-#         # 'section': section
-#     }
-#     return render(
-#         request, "application/interview_process/first_interview.html", context
-#     )
+
+def first_interview(request):
+    section = UserProfile.objects.values_list("section", flat=True).get(
+        user=request.user
+    )
+
+    context = {
+        "alteryx_list": alteryx_list,
+        "dba_list": dba_list,
+        "tableau_list": tableau_list,
+        # 'section': section
+    }
+
+    return render(
+        request, "application/interview_process/first_interview.html", context
+    )
 
 
 def uploadinterviewworks(request):
@@ -227,7 +228,7 @@ def uploadinterviewworks(request):
     )
     print("response", response)
     print("section", section)
-    Application_Profile.objects.filter(applicant=request.user).update(section=section)
+    UserProfile.objects.filter(applicant=request.user).update(section=section)
     return JsonResponse({"success": True})
 
 
@@ -254,8 +255,6 @@ def policy(request):
     else:
         form = PolicyForm()
     return render(request, "application/orientation/policy.html", {"form": form})
-
-
 
 
 def policies(request):
@@ -299,6 +298,7 @@ class TraineeDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("application:trainees")
+
 
 def info(request):
     reporting_date = date.today() + timedelta(days=7)

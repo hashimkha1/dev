@@ -1,7 +1,7 @@
 import datetime
 import json
 import ast
-from datetime import date ,timedelta
+from datetime import date, timedelta
 import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -15,11 +15,7 @@ from django.utils.decorators import method_decorator
 from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
-from .forms import (
-                    UserForm,LoginForm,
-                    CredentialCategoryForm,
-                    CredentialForm
-)
+from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
@@ -30,13 +26,14 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import CustomerUser,Tracker,CredentialCategory,Credential,Department
+from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from django.db.models import Q
 from management.models import Task
-from application.models import Application_Profile
+from application.models import UserProfile
 from finance.models import Default_Payment_Fees
 from django.http import QueryDict
-import string,random
+import string, random
+
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -52,92 +49,116 @@ def thank(request):
 # ---------------ACCOUNTS VIEWS----------------------
 
 
-
 def join(request):
-    if request.method== "POST":
-        if request.POST.get('category') == '3':
-            student_data={}
-            student_data['first_name'] = request.POST.get("first_name")
-            student_data['last_name'] = request.POST.get("last_name")
-            student_data['address'] = request.POST.get("address")
-            student_data['category'] = request.POST.get("category")
-            student_data['sub_category'] = request.POST.get("sub_category")
-            student_data['username'] = request.POST.get("username")
-            student_data['password1'] = request.POST.get("password1")
-            student_data['password2'] = request.POST.get("password2")
-            student_data['email'] = request.POST.get("email")
-            student_data['phone'] = request.POST.get("phone")
-            student_data['gender'] = request.POST.get("gender")
-            student_data['city'] = request.POST.get("city")
-            student_data['state'] = request.POST.get("state")
-            student_data['country'] = request.POST.get("country")
-            student_data['resume_file'] = request.POST.get("resume_file")
+    if request.method == "POST":
+        if request.POST.get("category") == "3":
+            student_data = {}
+            student_data["first_name"] = request.POST.get("first_name")
+            student_data["last_name"] = request.POST.get("last_name")
+            student_data["address"] = request.POST.get("address")
+            student_data["category"] = request.POST.get("category")
+            student_data["sub_category"] = request.POST.get("sub_category")
+            student_data["username"] = request.POST.get("username")
+            student_data["password1"] = request.POST.get("password1")
+            student_data["password2"] = request.POST.get("password2")
+            student_data["email"] = request.POST.get("email")
+            student_data["phone"] = request.POST.get("phone")
+            student_data["gender"] = request.POST.get("gender")
+            student_data["city"] = request.POST.get("city")
+            student_data["state"] = request.POST.get("state")
+            student_data["country"] = request.POST.get("country")
+            student_data["resume_file"] = request.POST.get("resume_file")
             today = date.today()
+
             contract_date = today.strftime("%d %B, %Y")
             check_default_fee = Default_Payment_Fees.objects.all()
             if check_default_fee:
                 default_fee = Default_Payment_Fees.objects.get(id=1)
             else:
-                default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-                        job_plan_hours_per_month=40,
-                        student_down_payment_per_month=500,
-                        student_bonus_payment_per_month=100)
+                default_payment_fees = Default_Payment_Fees(
+                    job_down_payment_per_month=500,
+                    job_plan_hours_per_month=40,
+                    student_down_payment_per_month=500,
+                    student_bonus_payment_per_month=100,
+                )
                 default_payment_fees.save()
                 default_fee = Default_Payment_Fees.objects.get(id=1)
-            if request.POST.get("category") == '3' and request.POST.get("sub_category") == '1':
-                return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
-            if request.POST.get("category") == '3' and request.POST.get("sub_category") == '2':
-                return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
+            if (
+                request.POST.get("category") == "3"
+                and request.POST.get("sub_category") == "1"
+            ):
+                return render(
+                    request,
+                    "management/doc_templates/supportcontract_form.html",
+                    {
+                        "job_support_data": student_data,
+                        "contract_date": contract_date,
+                        "default_fee": default_fee,
+                    },
+                )
+            if (
+                request.POST.get("category") == "3"
+                and request.POST.get("sub_category") == "2"
+            ):
+                return render(
+                    request,
+                    "management/doc_templates/trainingcontract_form.html",
+                    {
+                        "student_data": student_data,
+                        "contract_date": contract_date,
+                        "default_fee": default_fee,
+                    },
+                )
         else:
-            form=UserForm(request.POST,request.FILES)
+            form = UserForm(request.POST, request.FILES)
             if form.is_valid():
-                print("category",form.cleaned_data.get('category'))
+                print("category", form.cleaned_data.get("category"))
 
         if form.is_valid():
-            print("category",form.cleaned_data.get('category'))
+            print("category", form.cleaned_data.get("category"))
 
             # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
             #     if form.cleaned_data.get('sub_category') == 6:
             #         form.instance.is_admin = True
-            #         form.instance.is_superuser = True 
+            #         form.instance.is_superuser = True
             #     else:
-            #         form.instance.is_employee = True 
+            #         form.instance.is_employee = True
             # elif form.cleaned_data.get('category') == 3:# Client
-            #     form.instance.is_client = True 
+            #     form.instance.is_client = True
             # else:
             #     form.instance.is_applicant = True
-            if form.cleaned_data.get('category') == 1:
+            if form.cleaned_data.get("category") == 1:
                 form.instance.is_applicant = True
-            elif form.cleaned_data.get('category') == 2:
-                form.instance.is_employee = True 
-            elif form.cleaned_data.get('category') == 3:
-                form.instance.is_client = True 
+            elif form.cleaned_data.get("category") == 2:
+                form.instance.is_employee = True
+            elif form.cleaned_data.get("category") == 3:
+                form.instance.is_client = True
             else:
-                form.instance.is_admin = True 
+                form.instance.is_admin = True
 
             form.save()
 
-            # print("request user data",form.instance.id)
-            # custom_get = CustomerUser.objects.get(id=form.instance.id)
-            # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
-            # #print("request user data",form.instance.id)
-            # if form.cleaned_data.get('category') == 1: #applicant
-            #     custom_get = CustomerUser.objects.get(id=form.instance.id)
-            #     Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
-
-            username = form.cleaned_data.get('username')
-            category = form.cleaned_data.get('category')
-            gender = form.cleaned_data.get('gender')
-            country = form.cleaned_data.get('country')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('accounts:account-login')
+            username = form.cleaned_data.get("username")
+            category = form.cleaned_data.get("category")
+            gender = form.cleaned_data.get("gender")
+            country = form.cleaned_data.get("country")
+            messages.success(request, f"Account created for {username}!")
+            return redirect("accounts:account-login")
     else:
-        msg = 'error validating form'
-        form=UserForm()
+        msg = "error validating form"
+        form = UserForm()
         print(msg)
-    return render(request, 'accounts/registration/join.html', {'form': form})
+    return render(request, "accounts/registration/join.html", {"form": form})
+
+
+def CreateProfile():
+    users = CustomerUser.objects.filter(profile=None)
+    for user in users:
+        UserProfile.objects.create(user=user)
+
 
 def login_view(request):
+
     form = LoginForm(request.POST or None)
     msg = None
     if request.method == "POST":
@@ -145,7 +166,7 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-
+            CreateProfile()
             # If Category is Staff/employee
             if account is not None and account.category == 2:
                 if account.sub_category == 2:  # contractual
@@ -165,16 +186,16 @@ def login_view(request):
                     return redirect("data:bitraining")
 
             # If Category is applicant
-            elif account is not None and account.application_profile.section is not None:
-                if account.application_profile.section == "A":
+            elif account is not None and account.profile.section is not None:
+                if account.profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
-                elif account.application_profile.section == "B":
+                elif account.profile.section == "B":
                     login(request, account)
                     return redirect("application:section_b")
-                elif account.application_profile.section == "C":
+                elif account.profile.section == "C":
                     login(request, account)
-                    return redirect("application:section_c")
+                    return redirect("application:policies")
                 else:
                     login(request, account)
                     return redirect("application:first_interview")
@@ -192,7 +213,7 @@ def login_view(request):
                         return redirect("application:sectionB")
                     elif account.account_profile.section == "C":
                         login(request, account)
-                        return redirect("application:sectionC")
+                        return redirect("application:policies")
                     else:
                         login(request, account)
                         return redirect("application:first_interview")
@@ -222,7 +243,7 @@ def login_view(request):
     )
 
 
-#================================USERS SECTION================================
+# ================================USERS SECTION================================
 def users(request):
     users = CustomerUser.objects.all().order_by("-date_joined")
     if request.user.is_superuser:
@@ -355,72 +376,88 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-''' 
-#================================CREDENTIALS SECTION================================
+'''
+# ================================CREDENTIALS SECTION================================
+
 
 def newcredentialCategory(request):
     if request.method == "POST":
         form = CredentialCategoryForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('accounts:account-crendentials')
+            return redirect("accounts:account-crendentials")
     else:
-        form=CredentialCategoryForm()
-    return render(request, "accounts/admin/forms/credentialCategory_form.html", {"form":form})
-    
+        form = CredentialCategoryForm()
+    return render(
+        request, "accounts/admin/forms/credentialCategory_form.html", {"form": form}
+    )
+
+
 def newcredential(request):
     if request.method == "POST":
         form = CredentialForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('accounts:account-crendentials')
+            return redirect("accounts:account-crendentials")
     else:
-        form=CredentialForm()
-    return render(request, "accounts/admin/forms/credential_form.html", {"form":form})
+        form = CredentialForm()
+    return render(request, "accounts/admin/forms/credential_form.html", {"form": form})
+
 
 def credential_view(request):
-    categories=CredentialCategory.objects.all().order_by('-entry_date')
-    credentials=Credential.objects.all().order_by('-entry_date')
-    departments= Department(request)
-    context={
-                "departments":departments,
-                "categories":categories,
-                "credentials":credentials,
-                "show_password":False
-            }
+    categories = CredentialCategory.objects.all().order_by("-entry_date")
+    credentials = Credential.objects.all().order_by("-entry_date")
+    departments = Department(request)
+    context = {
+        "departments": departments,
+        "categories": categories,
+        "credentials": credentials,
+        "show_password": False,
+    }
 
     try:
-        otp = request.POST["otp"] 
+        otp = request.POST["otp"]
         if otp == request.session["security_otp"]:
             del request.session["security_otp"]
-            context["show_password"]=True
-            return render(request, 'accounts/admin/credentials.html', context)
+            context["show_password"] = True
+            return render(request, "accounts/admin/credentials.html", context)
         else:
-            error_context={"message":"Invalid OTP"}
-            return render(request, 'accounts/admin/email_verification.html', error_context)
+            error_context = {"message": "Invalid OTP"}
+            return render(
+                request, "accounts/admin/email_verification.html", error_context
+            )
 
     except:
-        return render(request, 'accounts/admin/credentials.html', context)
+        return render(request, "accounts/admin/credentials.html", context)
+
 
 def security_verification(request):
     subject = "One time verification code to view passwords"
     to = request.user.email
-    otp=''.join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
     request.session["security_otp"] = otp
-    html_content = "Your One time verification code is "+otp
-    print(to,otp)
+    html_content = "Your One time verification code is " + otp
+    print(to, otp)
     email_template(subject, to, html_content)
-    return render(request, 'accounts/admin/email_verification.html')
+    return render(request, "accounts/admin/email_verification.html")
 
-#================================EMPLOYEE SECTION================================
+
+# ================================EMPLOYEE SECTION================================
 def Employeelist(request):
-    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
-    return render(request, 'accounts/employees/employees.html', {'employees': employees})
+    employees = CustomerUser.objects.filter(
+        Q(category=2) | Q(is_employee=True)
+    ).order_by("-date_joined")
+    return render(
+        request, "accounts/employees/employees.html", {"employees": employees}
+    )
 
-#================================CLIENT SECTION================================
+
+# ================================CLIENT SECTION================================
 def clientlist(request):
-    clients=CustomerUser.objects.filter(Q(category = 3)|Q(is_client=True)).order_by('-date_joined')
-    return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
+    clients = CustomerUser.objects.filter(Q(category=3) | Q(is_client=True)).order_by(
+        "-date_joined"
+    )
+    return render(request, "accounts/clients/clientlist.html", {"clients": clients})
 
 
 @method_decorator(login_required, name="dispatch")
@@ -547,32 +584,65 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 """
-class TrackCreateView(LoginRequiredMixin, CreateView):
-    model=Tracker
-    success_url="/accounts/tracker"
-    #success_url="usertime"
-    #fields=['category','task','duration']
-    fields=['employee','author','category','sub_category','task','duration','plan']
 
-    def form_valid(self,form):
-        form.instance.author=self.request.user
+
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model = Tracker
+    success_url = "/accounts/tracker"
+    # success_url="usertime"
+    # fields=['category','task','duration']
+    fields = [
+        "employee",
+        "author",
+        "category",
+        "sub_category",
+        "task",
+        "duration",
+        "plan",
+    ]
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
         try:
             if form.instance.category == "Job_Support":
-                points,targetpoints = Task.objects.values_list("point","mxpoint").filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user)[0]
-                
-                if form.instance.sub_category == "Development" or form.instance.sub_category == "Testing":
-                    points = float(points)+(0.5*form.instance.duration)
+                points, targetpoints = Task.objects.values_list(
+                    "point", "mxpoint"
+                ).filter(
+                    Q(activity_name=form.instance.category)
+                    | Q(activity_name="job_support")
+                    | Q(activity_name="jobsupport")
+                    | Q(activity_name="Jobsupport")
+                    | Q(activity_name="JobSupport"),
+                    employee=self.request.user,
+                )[
+                    0
+                ]
+
+                if (
+                    form.instance.sub_category == "Development"
+                    or form.instance.sub_category == "Testing"
+                ):
+                    points = float(points) + (0.5 * form.instance.duration)
                 else:
-                    points = float(points)+form.instance.duration
+                    points = float(points) + form.instance.duration
 
                 if points >= targetpoints:
                     targetpoints += 10
 
-                Task.objects.filter(Q(activity_name=form.instance.category) | Q(activity_name="job_support") | Q(activity_name="jobsupport") | Q(activity_name="Jobsupport") | Q(activity_name="JobSupport"),employee=self.request.user).update(point=points,mxpoint=targetpoints)
+                Task.objects.filter(
+                    Q(activity_name=form.instance.category)
+                    | Q(activity_name="job_support")
+                    | Q(activity_name="jobsupport")
+                    | Q(activity_name="Jobsupport")
+                    | Q(activity_name="JobSupport"),
+                    employee=self.request.user,
+                ).update(point=points, mxpoint=targetpoints)
         except:
             pass
 
-        return super().form_valid(form)  
+        return super().form_valid(form)
+
+
 """ 
 @method_decorator(login_required, name='dispatch')
 class TrackCreateView(LoginRequiredMixin, CreateView):
@@ -598,6 +668,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
             return super().form_invalid(form)
         return super().form_valid(form)  
 """
+
 
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
