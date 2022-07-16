@@ -12,7 +12,6 @@ from django.urls import reverse, reverse_lazy
 # from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
 # from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
-from platformdirs import user_cache_dir
 from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
