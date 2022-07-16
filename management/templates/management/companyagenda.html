@@ -38,6 +38,7 @@
 </head>
 <main>
     <br>
+    <h2 id="demo"></h2>
     <h4 class="text-center text-dark">Company Agenda</h4>
     <div class="album py-5 bg-light">
         <div class="container">
@@ -109,6 +110,7 @@
     </div>
 </div>
 <!-- <script type="text/javascript" src="{% static 'companyagenda.json' %}"></script> -->
+<script type="text/javascript" src="https://www.thetimenow.com/ttn-embed.min.js"></script>
 <script>
      siteurl = "http://localhost:8000"
     // siteurl = "https://www.codanalytics.net"
@@ -204,4 +206,64 @@
         $("#link_url").val("")
     })
 </script>
+
+
+<script>
+const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+
+// Set the date we're counting down to
+// var today = new Date(new Date().toLocaleString('en-US', {timeZone: 'Africa/Djibouti',}))
+var today = new Date()
+var nextDay = new Date(today);
+nextDay.setDate(today.getDate() + 1);
+
+if(today.getHours() == 19 && today.getMinutes() >= 00 && today.getSeconds() >= 00 ){
+    var countDownDate = new Date(monthNames[nextDay.getMonth()]+" "+nextDay.getDate()+", "+nextDay.getFullYear()+" 19:00:00").getTime();
+}
+else{
+    var countDownDate = new Date("Jul 17, 2022 19:00:00").getTime();
+}
+
+// var countDownDate = new Date("Jul 17, 2022 19:00:00").getTime();
+
+// Update the count down every 1 second
+var x = setInterval(function() {
+
+  // Get today's date and time
+  var now = Date.parse(new Date().toLocaleString('en-US', {timeZone: 'Africa/Djibouti',}).slice(0, 19).replace('T', ' '))
+    
+  // Find the distance between now and the count down date
+  var distance = countDownDate - now;
+    
+  // Time calculations for days, hours, minutes and seconds
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    
+  // Output the result in an element with id="demo"
+  document.getElementById("demo").innerHTML = "Countdown:&nbsp;"+ hours + "h "
+  + minutes + "m " + seconds + "s ";
+   
+  // If the count down is over, write some text 
+  if (distance <= 0) {
+   
+        // clearInterval(x);
+        // document.getElementById("demo").innerHTML = "EXPIRED";
+        today = new Date()
+        nextDay = new Date(today);
+        nextDay.setDate(today.getDate() + 1);
+
+        if(today.getHours() == 19 && today.getMinutes() >= 00 && today.getSeconds() >= 00 ){
+            countDownDate = new Date(monthNames[nextDay.getMonth()]+" "+nextDay.getDate()+", "+nextDay.getFullYear()+" 19:00:00").getTime();
+        }
+        else{
+            countDownDate = new Date("Jul 17, 2022 19:00:00").getTime();
+        }
+  }
+}, 1000);
+
+</script>
+
+
 {% endblock %}
