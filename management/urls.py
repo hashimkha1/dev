@@ -1,13 +1,14 @@
 from django.urls import path
 from . import views
 from .views import (
-                        TaskListView,TaskDetailView,TaskCreateView,
+                        TaskListView,
+                        TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         TaskHistoryView,
                         UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
-                        #OutflowCreateView,#OutflowListView,
+                        PolicyUpdateView,#OutflowListView,
                         OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
                         TransactionUpdateView,TransactionListView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
@@ -44,6 +45,8 @@ urlpatterns = [
 
 
     #-----------COMPANY REPORTS---------------------------------------
+    path('companyagenda/', views.companyagenda, name='companyagenda'),
+    path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
     path('finance/', views.finance, name='finance'),
     path('hr/', views.hr, name='hr'),
     #path('other/', views.transact, name='management-transact'), 
@@ -51,18 +54,21 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(), name="policy-update"),
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
+    path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
     path('newlink/', TaskCreateView.as_view(), name='newtask'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
-    path('newevidence', views.newevidence, name='new_evidence'),
+    path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
     path('evidence/',views.evidence, name='evidence'),
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
+    path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
 
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),

@@ -4,6 +4,7 @@ from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
 from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement
+from accounts.models import Department
 
 """
 class EmployeeForm(forms.ModelForm):  
@@ -17,6 +18,15 @@ class EmployeeForm(forms.ModelForm):
 
 """
 
+class DepartmentForm(forms.ModelForm):  
+    class Meta:  
+        model = Department  
+        fields = ['name', 'slug','description', 'is_active','is_featured']
+        widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
+
+    def __init__(self, *args, **kwargs):
+        super(DepartmentForm, self).__init__(*args, **kwargs)
+        self.fields["name"].empty_label = "Select"
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -133,22 +143,26 @@ class PolicyForm(forms.ModelForm):
     class Meta:
         model = Policy
         fields = [
-            "first_name",
-            "last_name",
+            "staff",
+            # "first_name",
+            # "last_name",
             "department",
             "type",
             "description",
+            "link",
             "policy_doc",
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
+            "staff": "User Name",
+            "link": "Paste Link",
+            # "first_name": "First Name",
+            # "last_name": "Last Name",
             "type": "Policy Type",
             "department": "Department",
             "description": "Description",
             "policy_doc": "Attach Policy",
         }
-
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
 
 class ManagementForm(forms.ModelForm):
     class Meta:
@@ -209,27 +223,6 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
-        #  If you have to exclude some features you put them here
-        # exclude = (
-        #     "user",
-        #     "recurring",
-        # )
-
-        # Forms updated by Karki
-    # def __init__(self, **kwargs):
-    #     super(RequirementForm, self).__init__(**kwargs)
-    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-    #         Q(is_admin=True) | Q(is_employee=True)
-    #         # Q(is_client=True)
-    #     )
-
-    # def __init__(self, **kwargs):
-    #     super(RequirementForm, self).__init__(**kwargs)
-    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
-    #         is_employee=True 
-    #         # Q(is_employee=True)
-
-    #     )
 
 class EvidenceForm(forms.ModelForm):
     class Meta:
@@ -238,6 +231,7 @@ class EvidenceForm(forms.ModelForm):
                     "task",
                     "added_by",
                     "link_name",
+                    "linkpassword",
                     "description",
                     "doc",
                     "link",
@@ -250,12 +244,15 @@ class EvidenceForm(forms.ModelForm):
                 "task ":"Task Name",
                 "added_by":"Your Username",
                 "link_name":"Enter link name",
-                "description":"Describe the link/Evidence",
+                "linkpassword":"If Links Needs Password Enter Password here:",
+                "description":"What is this link/Evidence about",
                 "doc":"Upload file/document if possible",
                 "link":"Upload link/paste your link below",
                 "linkpassword":"Provide Password if necessary",
                 # "is_active ":"Is this link still active "
         }
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
         #  If you have to exclude some features you put them here
         # exclude = (
         #     "user",

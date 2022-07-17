@@ -12,7 +12,6 @@
           <th>Application Date</th>
           <th>First Name</th>
           <th>Last Name</th>
-          <th>Email</th>
           <th>Phone Number</th>
           <th>Country</th>
           <th>Section</th>
@@ -32,14 +31,13 @@
           <!--<td>{{applicant.date_joined|date:"F d, Y"}}</td>-->
           <td>{{applicant.first_name}}</td>
           <td>{{applicant.last_name}}</td>
-          <td>{{applicant.email}}</td>
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
-          <td>{{applicant.applicant_profile.section}}</td>
-          {% if applicant.applicant_profile.upload_a %}
+          <td>{{applicant.profile.section}}</td>
+          {% if applicant.profile.upload_a %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_a.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_a.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -47,10 +45,10 @@
           {% else %}
           <td>N/A</td>
           {% endif %}
-           {% if applicant.applicant_profile.upload_b %}
+           {% if applicant.profile.upload_b %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_b.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_b.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -58,10 +56,10 @@
           {% else %}
           <td>N/A</td>
           {% endif %}
-           {% if applicant.applicant_profile.upload_c %}
+           {% if applicant.profile.upload_c %}
              <td>
             <button>
-              <a href="{{applicant.applicant_profile.upload_c.url}}" class="btn btn-secondary btn-sm" target="_blank"
+              <a href="{{applicant.profile.upload_c.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -71,7 +69,7 @@
           {% endif %}
           <td>
             <button>
-              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm"
+              <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm" target="_blank"
               >Download
             </a>
             </button>
@@ -85,7 +83,7 @@
   </div>
 </section>
 
-<section id="career">
+<!-- <section id="career">
   <div class="career text-center">
     <h2>OLD LIST</h2>
     <div class="table-responsive">
@@ -103,10 +101,6 @@
             <th>Phone Number</th>
             <th>Country</th>
             <th>Section</th>
-            <!--
-          <th>Resume</th>
-          <th>Delete</th>
-        -->
           </tr>
         </thead>
         <tbody>
@@ -114,26 +108,16 @@
           <tr>
             <td>{{applicant.id}}</td>
             <td>{{applicant.application_date|date:"n/d/Y"}}</td>
-            <!--<td>{{applicant.date_joined|date:"F d, Y"}}</td>-->
             <td>{{applicant.first_name}}</td>
             <td>{{applicant.last_name}}</td>
             <td>{{applicant.phone}}</td>
             <td>{{applicant.country}}</td>
-            <td>{{applicant.applicant_profile.section}}</td>
-            <!-- 
-        <td>
-          <button>
-            >Download
-          </a>
-          </button>
-        </td>
-       <td><h4 ><a href="{%url 'application:applicant-delete' applicant.id %}">❌</H4></a></p></td>  
-      -->
+            <td>{{applicant.profile.section}}</td>
           </tr>
           {% endfor %}
         </tbody>
       </table>
     </div>
   </div>
-</section>
+</section> -->
 {%endblock content %}

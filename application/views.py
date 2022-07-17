@@ -6,7 +6,7 @@ from multiprocessing import context
 from django.views.decorators.csrf import csrf_exempt
 
 import boto3
-from tomlkit import item
+
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -18,16 +18,17 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-
+from django.db.models import Q
 from .forms import (
-    PolicyForm,
+    # PolicyForm,
     RatingForm,
     ReportingForm,
     ApplicantProfileFormA,
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )
-from .models import Applicant_Profile, Application, Policy, Rated, Reporting
+from .models import UserProfile, Application,Rated, Reporting
+from management.models import Policy
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -61,7 +62,7 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 def applicantlist(request):
     applications = Application.objects.filter().order_by("-application_date")
-    applicants = CustomerUser.objects.filter(is_applicant=True)
+    applicants = CustomerUser.objects.filter(is_applicant=True,is_active=True)
 
     # applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
     context = {"applications": applications, "applicants": applicants}
@@ -82,8 +83,8 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
 
 @login_required
-def applicant_profile(request):
-    return render(request, "application/applications/applicant_profile.html")
+def UserProfile(request):
+    return render(request, "application/applications/Application_Profile.html")
 
 
 # def testinterview(request):
@@ -100,28 +101,30 @@ def interview(request):
     return render(request, "application/interview_process/interview.html", context)
 
 
-# def first_interview(request):
-#     return render(
-#         request,
-#         "application/interview_process/first_interview.html",
-#         {"title": "first_interview"},
-#     )
+def firstinterview(request):
+    return render(
+        request,
+        "application/interview_process/firstinterview.html",
+        {"title": "first_interview"},
+    )
+
+
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
     form = ApplicantProfileFormA(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormA(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.applicant_profile.section
+            section = data.profile.section
             if section == "A":
-                data.applicant_profile.section = "B"
-                data.applicant_profile.save()
+                data.profile.section = "B"
+                data.profile.save()
             form.save()
         return redirect("application:section_b")
 
@@ -135,18 +138,18 @@ def FI_sectionA(request):
 @login_required
 def FI_sectionB(request):
     form = ApplicantProfileFormB(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormB(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             data = form.cleaned_data["user"] = request.user
-            section = data.applicant_profile.section
+            section = data.profile.section
             if section == "B":
-                data.applicant_profile.section = "C"
-                data.applicant_profile.save()
+                data.profile.section = "C"
+                data.profile.save()
             form.save()
         return redirect("application:section_c")
 
@@ -160,11 +163,11 @@ def FI_sectionB(request):
 @login_required
 def FI_sectionC(request):
     form = ApplicantProfileFormC(
-        request.POST, request.FILES, instance=request.user.applicant_profile
+        request.POST, request.FILES, instance=request.user.profile
     )
     if request.method == "POST":
         form = ApplicantProfileFormC(
-            request.POST, request.FILES, instance=request.user.applicant_profile
+            request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
             form.save()
@@ -178,7 +181,7 @@ def FI_sectionC(request):
 
 
 def first_interview(request):
-    section = Applicant_Profile.objects.values_list("section", flat=True).get(
+    section = UserProfile.objects.values_list("section", flat=True).get(
         user=request.user
     )
 
@@ -225,7 +228,7 @@ def uploadinterviewworks(request):
     )
     print("response", response)
     print("section", section)
-    Applicant_Profile.objects.filter(applicant=request.user).update(section=section)
+    UserProfile.objects.filter(applicant=request.user).update(section=section)
     return JsonResponse({"success": True})
 
 
@@ -243,67 +246,21 @@ def internal_training(request):
     )
 
 
-def policy(request):
-    if request.method == "POST":
-        form = PolicyForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("application:policies")
-    else:
-        form = PolicyForm()
-    return render(request, "application/orientation/policy.html", {"form": form})
-
-
-
+# def policy(request):
+#     if request.method == "POST":
+#         form = PolicyForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("application:policies")
+#     else:
+#         form = PolicyForm()
+#     return render(request, "application/orientation/policy.html", {"form": form})
 
 def policies(request):
     reporting_date = date.today() + timedelta(days=7)
-    uploads = Policy.objects.all().order_by("upload_date")
-    context = {"uploads": uploads, "reporting_date": reporting_date}
+    policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=True)).order_by("upload_date")
+    context = {"policies": policies, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
-
-
-class PolicyUpdateView(LoginRequiredMixin, UpdateView):
-    model = Policy
-    fields = [
-        "first_name",
-        "last_name",
-        "upload_date",
-        "method",
-        "policy_type",
-        "description",
-    ]
-
-    form = PolicyForm()
-
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("application:policies")
-
-    def test_func(self):
-        # employee = self.get_object()
-        if self.request.is_admin:
-            return True
-        if self.request.is_superuser:
-            return True
-        return False
-
-
-class TraineeDeleteView(LoginRequiredMixin, DeleteView):
-    model = Reporting
-
-    def get_success_url(self):
-        return reverse("application:trainees")
-
-def info(request):
-    reporting_date = date.today() + timedelta(days=7)
-    uploads = Policy.objects.all().order_by("upload_date")
-    context = {"uploads": uploads, "reporting_date": reporting_date}
-    return render(request, "application/orientation/applicant_info.html", context)
-
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):
@@ -315,7 +272,6 @@ def rate(request):
     else:
         form = RatingForm()
     return render(request, "application/orientation/rate.html", {"form": form})
-
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")
@@ -351,7 +307,6 @@ def trainees(request):
         request, "application/orientation/trainees.html", {"trainees": trainees}
     )
 
-
 class TraineeUpdateView(LoginRequiredMixin, UpdateView):
     model = Reporting
     fields = [
@@ -377,7 +332,6 @@ class TraineeUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.firstname == employee.name:
             return True
         return False
-
 
 class TraineeDeleteView(LoginRequiredMixin, DeleteView):
     model = Reporting

@@ -1,7 +1,7 @@
 import datetime
 import json
 import ast
-from datetime import date ,timedelta
+from datetime import date, timedelta
 import re
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -12,13 +12,11 @@ from django.urls import reverse, reverse_lazy
 # from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
 # from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
+from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
-from .forms import (
-    UserForm,
-    LoginForm,
-)  # , TimeForm  , SignUpForm, UserLoginForm, UserRegisterForm
-
+from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
+from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (
@@ -28,12 +26,14 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import CustomerUser, Tracker
+from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from django.db.models import Q
 from management.models import Task
-from application.models import Applicant_Profile
+from application.models import UserProfile
 from finance.models import Default_Payment_Fees
 from django.http import QueryDict
+import string, random
+
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -49,67 +49,94 @@ def thank(request):
 # ---------------ACCOUNTS VIEWS----------------------
 
 
-
-@unauthenticated_user
 def join(request):
-    if request.method== "POST":
-        if request.POST.get('category') == '3':
-            student_data={}
-            student_data['first_name'] = request.POST.get("first_name")
-            student_data['last_name'] = request.POST.get("last_name")
-            student_data['address'] = request.POST.get("address")
-            student_data['category'] = request.POST.get("category")
-            student_data['sub_category'] = request.POST.get("sub_category")
-            student_data['username'] = request.POST.get("username")
-            student_data['password1'] = request.POST.get("password1")
-            student_data['password2'] = request.POST.get("password2")
-            student_data['email'] = request.POST.get("email")
-            student_data['phone'] = request.POST.get("phone")
-            student_data['gender'] = request.POST.get("gender")
-            student_data['city'] = request.POST.get("city")
-            student_data['state'] = request.POST.get("state")
-            student_data['country'] = request.POST.get("country")
-            student_data['resume_file'] = request.POST.get("resume_file")
-            today = date.today()
-            contract_date = today.strftime("%d %B, %Y")
-            default_fee = Default_Payment_Fees.objects.get(id=1)
-            if request.POST.get("category") == '3' and request.POST.get("sub_category") == '1':
-                return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
-            if request.POST.get("category") == '3' and request.POST.get("sub_category") == '2':
-                return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': student_data,'contract_date':contract_date,'default_fee':default_fee})
-        else:
-            form=UserForm(request.POST,request.FILES)
-            if form.is_valid():
-                print("category",form.cleaned_data.get('category'))
     if request.method == "POST":
-        form = UserForm(request.POST, request.FILES)
+        if request.POST.get("category") == "3":
+            student_data = {}
+            student_data["first_name"] = request.POST.get("first_name")
+            student_data["last_name"] = request.POST.get("last_name")
+            student_data["address"] = request.POST.get("address")
+            student_data["category"] = request.POST.get("category")
+            student_data["sub_category"] = request.POST.get("sub_category")
+            student_data["username"] = request.POST.get("username")
+            student_data["password1"] = request.POST.get("password1")
+            student_data["password2"] = request.POST.get("password2")
+            student_data["email"] = request.POST.get("email")
+            student_data["phone"] = request.POST.get("phone")
+            student_data["gender"] = request.POST.get("gender")
+            student_data["city"] = request.POST.get("city")
+            student_data["state"] = request.POST.get("state")
+            student_data["country"] = request.POST.get("country")
+            student_data["resume_file"] = request.POST.get("resume_file")
+            today = date.today()
+
+            contract_date = today.strftime("%d %B, %Y")
+            check_default_fee = Default_Payment_Fees.objects.all()
+            if check_default_fee:
+                default_fee = Default_Payment_Fees.objects.get(id=1)
+            else:
+                default_payment_fees = Default_Payment_Fees(
+                    job_down_payment_per_month=500,
+                    job_plan_hours_per_month=40,
+                    student_down_payment_per_month=500,
+                    student_bonus_payment_per_month=100,
+                )
+                default_payment_fees.save()
+                default_fee = Default_Payment_Fees.objects.get(id=1)
+            if (
+                request.POST.get("category") == "3"
+                and request.POST.get("sub_category") == "1"
+            ):
+                return render(
+                    request,
+                    "management/doc_templates/supportcontract_form.html",
+                    {
+                        "job_support_data": student_data,
+                        "contract_date": contract_date,
+                        "default_fee": default_fee,
+                    },
+                )
+            if (
+                request.POST.get("category") == "3"
+                and request.POST.get("sub_category") == "2"
+            ):
+                return render(
+                    request,
+                    "management/doc_templates/trainingcontract_form.html",
+                    {
+                        "student_data": student_data,
+                        "contract_date": contract_date,
+                        "default_fee": default_fee,
+                    },
+                )
+        else:
+            form = UserForm(request.POST, request.FILES)
+            if form.is_valid():
+                print("category", form.cleaned_data.get("category"))
+
         if form.is_valid():
             print("category", form.cleaned_data.get("category"))
 
-            # if form.cleaned_data.get('category') == 1:
-            #     form.instance.is_applicant = True
-            # elif form.cleaned_data.get('category') == 2:
-            #     form.instance.is_employee = True
-            # elif form.cleaned_data.get('category') == 3:
+            # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
+            #     if form.cleaned_data.get('sub_category') == 6:
+            #         form.instance.is_admin = True
+            #         form.instance.is_superuser = True
+            #     else:
+            #         form.instance.is_employee = True
+            # elif form.cleaned_data.get('category') == 3:# Client
             #     form.instance.is_client = True
             # else:
-            #     form.instance.is_admin = True
-
-            if form.cleaned_data.get("category") == 2:  # Staff-->Full,Agent,Other
-                if form.cleaned_data.get("sub_category") == 6:
-                    form.instance.is_admin = True
-                    form.instance.is_superuser = True
-                else:
-                    form.instance.is_employee = True
-            elif form.cleaned_data.get("category") == 3:  # Client
+            #     form.instance.is_applicant = True
+            if form.cleaned_data.get("category") == 1:
+                form.instance.is_applicant = True
+            elif form.cleaned_data.get("category") == 2:
+                form.instance.is_employee = True
+            elif form.cleaned_data.get("category") == 3:
                 form.instance.is_client = True
             else:
-                form.instance.is_applicant = True
-            form.save()
+                form.instance.is_admin = True
 
-            # print("request user data",form.instance.id)
-            # custom_get = CustomerUser.objects.get(id=form.instance.id)
-            # Applicant_Profile.objects.create(applicant=custom_get,section="",image="")
+            form.save()
 
             username = form.cleaned_data.get("username")
             category = form.cleaned_data.get("category")
@@ -124,15 +151,23 @@ def join(request):
     return render(request, "accounts/registration/join.html", {"form": form})
 
 
+def CreateProfile():
+    users = CustomerUser.objects.filter(profile=None)
+    for user in users:
+        UserProfile.objects.create(user=user)
+
+
 def login_view(request):
+
     form = LoginForm(request.POST or None)
     msg = None
     if request.method == "POST":
         if form.is_valid():
+            request.session["siteurl"] = settings.SITEURL
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-
+            CreateProfile()
             # If Category is Staff/employee
             if account is not None and account.category == 2:
                 if account.sub_category == 2:  # contractual
@@ -141,6 +176,7 @@ def login_view(request):
                 else:  # parttime (agents) & Fulltime
                     login(request, account)
                     return redirect("management:user_task", username=request.user)
+
             # If Category is client/customer
             elif account is not None and account.category == 3:
                 if account.sub_category == 1:  # Job Support
@@ -149,17 +185,18 @@ def login_view(request):
                 else:  # Student
                     login(request, account)
                     return redirect("data:bitraining")
+
             # If Category is applicant
-            elif account is not None and account.applicant_profile.section is not None:
-                if account.applicant_profile.section == "A":
+            elif account is not None and account.profile.section is not None:
+                if account.profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
-                elif account.applicant_profile.section == "B":
+                elif account.profile.section == "B":
                     login(request, account)
                     return redirect("application:section_b")
-                elif account.applicant_profile.section == "C":
+                elif account.profile.section == "C":
                     login(request, account)
-                    return redirect("application:section_c")
+                    return redirect("application:policies")
                 else:
                     login(request, account)
                     return redirect("application:first_interview")
@@ -177,7 +214,7 @@ def login_view(request):
                         return redirect("application:sectionB")
                     elif account.account_profile.section == "C":
                         login(request, account)
-                        return redirect("application:sectionC")
+                        return redirect("application:policies")
                     else:
                         login(request, account)
                         return redirect("application:first_interview")
@@ -207,9 +244,9 @@ def login_view(request):
     )
 
 
-#================================USERS SECTION================================
+# ================================USERS SECTION================================
 def users(request):
-    users = CustomerUser.objects.all().order_by("-date_joined")
+    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", {"users": users})
 
@@ -340,16 +377,88 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-''' 
-#================================EMPLOYEE SECTION================================
-def Employeelist(request):
-    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
-    return render(request, 'accounts/employees/employees.html', {'employees': employees})
+'''
+# ================================CREDENTIALS SECTION================================
 
-#================================CLIENT SECTION================================
+
+def newcredentialCategory(request):
+    if request.method == "POST":
+        form = CredentialCategoryForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts:account-crendentials")
+    else:
+        form = CredentialCategoryForm()
+    return render(
+        request, "accounts/admin/forms/credentialCategory_form.html", {"form": form}
+    )
+
+
+def newcredential(request):
+    if request.method == "POST":
+        form = CredentialForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("accounts:account-crendentials")
+    else:
+        form = CredentialForm()
+    return render(request, "accounts/admin/forms/credential_form.html", {"form": form})
+
+
+def credential_view(request):
+    categories = CredentialCategory.objects.all().order_by("-entry_date")
+    credentials = Credential.objects.all().order_by("-entry_date")
+    departments = Department(request)
+    context = {
+        "departments": departments,
+        "categories": categories,
+        "credentials": credentials,
+        "show_password": False,
+    }
+
+    try:
+        otp = request.POST["otp"]
+        if otp == request.session["security_otp"]:
+            del request.session["security_otp"]
+            context["show_password"] = True
+            return render(request, "accounts/admin/credentials.html", context)
+        else:
+            error_context = {"message": "Invalid OTP"}
+            return render(
+                request, "accounts/admin/email_verification.html", error_context
+            )
+
+    except:
+        return render(request, "accounts/admin/credentials.html", context)
+
+
+def security_verification(request):
+    subject = "One time verification code to view passwords"
+    to = request.user.email
+    otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    request.session["security_otp"] = otp
+    html_content = "Your One time verification code is " + otp
+    print(to, otp)
+    email_template(subject, to, html_content)
+    return render(request, "accounts/admin/email_verification.html")
+
+
+# ================================EMPLOYEE SECTION================================
+def Employeelist(request):
+    employees = CustomerUser.objects.filter(
+        Q(category=2) | Q(is_employee=True)
+    ).order_by("-date_joined")
+    return render(
+        request, "accounts/employees/employees.html", {"employees": employees}
+    )
+
+
+# ================================CLIENT SECTION================================
 def clientlist(request):
-    clients=CustomerUser.objects.filter(Q(category = 3)|Q(is_client=True)).order_by('-date_joined')
-    return render(request, 'accounts/clients/clientlist.html', {'clients': clients})
+    clients = CustomerUser.objects.filter(Q(category=3) | Q(is_client=True)).order_by(
+        "-date_joined"
+    )
+    return render(request, "accounts/clients/clientlist.html", {"clients": clients})
 
 
 @method_decorator(login_required, name="dispatch")
@@ -463,8 +572,6 @@ class UserTrackListView(ListView):
     def get_queryset(self):
         user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
         return Tracker.objects.filter(author=user).order_by('-login_date')
-"""
-
 
 @method_decorator(login_required, name="dispatch")
 class TrackCreateView(LoginRequiredMixin, CreateView):
@@ -476,6 +583,64 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.author = self.request.user
+        return super().form_valid(form)
+"""
+
+
+class TrackCreateView(LoginRequiredMixin, CreateView):
+    model = Tracker
+    success_url = "/accounts/tracker"
+    # success_url="usertime"
+    # fields=['category','task','duration']
+    fields = [
+        "employee",
+        "author",
+        "category",
+        "sub_category",
+        "task",
+        "duration",
+        "plan",
+    ]
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        try:
+            if form.instance.category == "Job_Support":
+                points, targetpoints = Task.objects.values_list(
+                    "point", "mxpoint"
+                ).filter(
+                    Q(activity_name=form.instance.category)
+                    | Q(activity_name="job_support")
+                    | Q(activity_name="jobsupport")
+                    | Q(activity_name="Jobsupport")
+                    | Q(activity_name="JobSupport"),
+                    employee=self.request.user,
+                )[
+                    0
+                ]
+
+                if (
+                    form.instance.sub_category == "Development"
+                    or form.instance.sub_category == "Testing"
+                ):
+                    points = float(points) + (0.5 * form.instance.duration)
+                else:
+                    points = float(points) + form.instance.duration
+
+                if points >= targetpoints:
+                    targetpoints += 10
+
+                Task.objects.filter(
+                    Q(activity_name=form.instance.category)
+                    | Q(activity_name="job_support")
+                    | Q(activity_name="jobsupport")
+                    | Q(activity_name="Jobsupport")
+                    | Q(activity_name="JobSupport"),
+                    employee=self.request.user,
+                ).update(point=points, mxpoint=targetpoints)
+        except:
+            pass
+
         return super().form_valid(form)
 
 
@@ -523,6 +688,8 @@ class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         track = self.get_object()
         if self.request.user.is_superuser:
+            return True
+        elif self.request.user.admin:
             return True
         elif self.request.user == track.author:
             return True

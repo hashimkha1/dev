@@ -1,6 +1,4 @@
 from django.urls import path
-
-
 from . import views
 from .views import (
     ApplicantDeleteView,
@@ -8,7 +6,6 @@ from .views import (
     TraineeDeleteView,
     TraineeUpdateView,
 )
-
 app_name = "application"
 urlpatterns = [
     # =============================APPLICATIONS VIEWS=====================================
@@ -23,7 +20,8 @@ urlpatterns = [
     ),
     path("applicants/", views.applicantlist, name="applicants"),
     path("interview/", views.interview, name="interview"),
-    path("first_interview/", views.first_interview, name="first_interview"),
+    # path("first_interview/", views.first_interview, name="first_interview"),
+    path("firstinterview/", views.firstinterview, name="firstinterview"),
     # interview sections by karki
     path("first_interview/section_a/", views.FI_sectionA, name="section_a"),
     path("first_interview/section_b/", views.FI_sectionB, name="section_b"),
@@ -35,10 +33,8 @@ urlpatterns = [
     path("orientation/", views.orientation, name="orientation"),
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
-    path("policy/", views.policy, name="policy"),
+    # path("policy/", views.policy, name="policy"),
     path("policies/", views.policies, name="policies"),
-    path("policy/<int:pk>/update/", views.policies, name="policy-update"),
-    path("info/", views.info, name="applicant_info"),
     path("trainee/", views.trainee, name="trainee"),
     path("trainees/", views.trainees, name="trainees"),
     path(
