@@ -245,7 +245,7 @@ def login_view(request):
 
 # ================================USERS SECTION================================
 def users(request):
-    users = CustomerUser.objects.all().order_by("-date_joined")
+    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", {"users": users})
 
@@ -687,6 +687,8 @@ class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         track = self.get_object()
         if self.request.user.is_superuser:
+            return True
+        elif self.request.user.admin:
             return True
         elif self.request.user == track.author:
             return True
