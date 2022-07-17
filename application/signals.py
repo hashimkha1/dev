@@ -7,7 +7,7 @@
 # @receiver(post_save, sender=CustomerUser)
 # def create_profile(sender, instance, created, **kwargs):
 #     if created:
-#         Application_Profile.objects.create(user=instance)
+#         UserProfile.objects.create(user=instance)
 
 
 # @receiver(post_save, sender=CustomerUser)
