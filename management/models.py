@@ -406,8 +406,12 @@ class Policy(models.Model):
 
     def __str__(self):
         return f"{self.id} policy"
+#
 
-
+    # def get_absolute_url(self):
+    #     return reverse('management:department_list', args=[self.slug])
+    def __str__(self):
+        return self.name   
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
     # Tasks Category.
@@ -554,6 +558,7 @@ class Task(models.Model):
         },
         decimal_places=2,
     )
+
     mxearning = models.DecimalField(
         max_digits=10,
         help_text=_("Maximum 4999.99"),
@@ -613,7 +618,10 @@ class Task(models.Model):
         if self.point > self.mxpoint:
             return 0
         else:
-            Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            try:
+                Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            except Exception as ZeroDivisionError:
+                Earning = 0
             compute_pay = Earning * Decimal(self.late_penalty)
             pay = round(compute_pay, 2)
             return pay

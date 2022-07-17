@@ -1,6 +1,6 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm, Textarea
+from django.contrib.auth.forms import UserCreationForm
 from .models import CustomerUser, Tracker,CredentialCategory,Credential
 from django.utils.translation import gettext_lazy as _
 
@@ -29,7 +29,7 @@ class UserForm(forms.ModelForm):
             "country",
             "resume_file",
             "is_employee",
-            "is_applicant"
+            "is_applicant",
         ]
         labels = {
             "first_name": "First Name",
@@ -80,7 +80,6 @@ class CredentialForm(forms.ModelForm):
         model = Credential
         fields = ['category','name', 'added_by','slug','description','password','link_name','link','is_active','is_featured']
         widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
-
 """ 
 #==========================APPLICATION FORM-APPLICANTS================================
 
@@ -127,11 +126,13 @@ class ApplicationForm(forms.ModelForm):
 
 """
 
+
 class LoginForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={"class": "form-control"})
     )
+
 
 """
 username_validator = UnicodeUsernameValidator()

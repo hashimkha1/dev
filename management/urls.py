@@ -68,7 +68,6 @@ urlpatterns = [
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
-    
 
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),

@@ -236,26 +236,14 @@ class Tracker(models.Model):
     # Other = 999
 
     # Job Category.
-    Job_Support = "Job_Support"
-    Interview = "Interview"
-    Training = "Training"
-    Mentorship = "Mentorship"
-    Other = "Other"
-    # Task/Activities
-    Reporting = "reporting"
-    Database = "database"
-    Business_Analysis = "Business Analysis"
-    ETL = "Data Cleaning"
-    Other = "Any Other"
-
     CAT_CHOICES = [
-        (Job_Support, "Job_Support"),
-        (Interview, "Interview"),
-        (Training, "Training"),
-        (Mentorship, "Mentorship"),
-        (Other, "Other"),
+        ("Job_Support", "Job_Support"),
+        ("Interview", "Interview"),
+        ("Training", "Training"),
+        ("Mentorship", "Mentorship"),
+        ("Other", "Other"),
     ]
-
+    # Sub Category.
     SUBCAT_CHOICES = [
         ("Requirements", "Requirements"),
         ( "Troubleshooting", "Troubleshooting"),
@@ -263,12 +251,13 @@ class Tracker(models.Model):
         ("Testing", "Testing"),
         ("Other", "Other"),
     ]
+    # Task/Activities
     TASK_CHOICES = [
-        (Reporting, "reporting"),
-        (Database, "database"),
-        (Business_Analysis, "Business Analysis"),
-        (ETL, "Data Cleaning"),
-        (Other, "Other"),
+        ("reporting", "reporting"),
+        ("database", "database"),
+        ("Business Analysis", "Business Analysis"),
+        ("Data Cleaning", "Data Cleaning"),
+        ("Other", "Other"),
     ]
     category = models.CharField(
         max_length=25,
@@ -277,7 +266,7 @@ class Tracker(models.Model):
     sub_category = models.CharField(
         max_length=25,
         choices=SUBCAT_CHOICES,
-        blank=True, null=True
+        default="Other"
     )
     task = models.CharField(
         max_length=25,
@@ -297,7 +286,7 @@ class Tracker(models.Model):
         verbose_name=_("Client Name"),
         on_delete=models.CASCADE,
         related_name="author",
-        limit_choices_to={"is_client": True,"is_active": True},
+        limit_choices_to={"is_client": True, "is_active": True},
     )
     # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
@@ -340,3 +329,96 @@ class Tracker(models.Model):
         else:
             return 9999
     """
+
+#  ==================================Departments====================================
+class Department(models.Model):
+    """Department Table will provide a list of the different departments in CODA"""
+    # Department
+    DEPARTMENT_CHOICES = [
+        ("HR Department", "HR Department"),
+        ("IT Department", "IT Department"),
+        ("Marketing Department", "Marketing Department"),
+        ("Finance Department", "Finance Department"),
+        ("Security Department", "Security Department"),
+        ("Management Department", "Management Department"),
+        ("Health Department", "Health Department"),
+        ("Other", "Other"),
+    ]
+    name = models.CharField(
+        max_length=100,
+        choices=DEPARTMENT_CHOICES,
+        default="Other",
+        )
+    description = models.TextField(max_length=500,null=True, blank=True)
+    slug = models.SlugField(verbose_name=_('Department safe URL'), max_length=255, unique=True)
+    is_featured = models.BooleanField("Is featured", default=True)
+    is_active=models.BooleanField(default=True)
+
+    # @classmethod
+    # def get_default_pk(cls):
+    #     cat, created = cls.objects.get_or_create(
+    #         name="Other", defaults=dict(description="this is not an department")
+    #     )
+    #     return cat.pk
+
+    class Meta:
+        verbose_name=_('Department')
+        verbose_name_plural=_('Departments')
+# =========================CREDENTIALS TABLE======================================
+class CredentialCategory(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, default="Other"
+        )
+    # created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(
+        verbose_name=_('Category Name'),
+        help_text=_('Required'),
+        max_length=255, 
+        unique=True,
+    )
+    slug = models.SlugField(verbose_name=_('category safe URL'), max_length=255, unique=True)
+    description = models.TextField(max_length=1000, default=None)
+    entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('management:credentialcategorylist', args=[self.slug])
+    class Meta:
+        verbose_name=_('Category')
+        verbose_name_plural=_('Categories')
+
+    def __str__(self):
+        # return f"{self.category} Categories"
+        return f"{self.category}"
+
+class Credential(models.Model):
+    category = models.ManyToManyField(CredentialCategory, blank=True,related_name='credentialcategory')
+    added_by= models.ForeignKey(CustomerUser, on_delete=models.RESTRICT)
+    name = models.CharField(
+        verbose_name=_('credential Name'),
+        help_text=_('Required'),
+        max_length=255, 
+    )
+    slug = models.SlugField(verbose_name=_('credential safe URL'), max_length=255, unique=True)
+    description = models.TextField(max_length=1000, default=None)
+    link_name=models.CharField(max_length=255, default='General')
+    link=models.CharField(max_length=100,blank=True, null=True)
+    password=models.CharField(max_length=255,blank=True, null=True, default='No Password Needed')
+    entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+    class Meta:
+        verbose_name_plural = "credentials"
+
+    def get_absolute_url(self):
+        return reverse("management:credential")
+
+    def __str__(self):
+        return self.name
+
+# ========================================SLUGS GENERATOR====================================================
+def credentialcategory_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(credentialcategory_pre_save_receiver, sender=CredentialCategory)

@@ -3,6 +3,19 @@
   <div class="data_training text-center">
     <h3 class="title">DAF ACTIVITIES</h3>
     <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-6">
+        <p><a href="{% url 'management:newcategory'%}" class="btn btn-secondary btn-sm"
+          >ADD CATEGORY
+        </a></p>
+
+      </div>
+      <div class="col-md-6">
+        <p><a href="{% url 'management:newtask'%}" class="btn btn-secondary btn-sm"
+          >ADD TASK
+        </a></p>
+      </div>
+    </div>
     <div class="container-fluid mr-auto">
       <div class="row text-center">
         {% for task in  tasksummary  %}
@@ -89,7 +102,9 @@
                   <a href="{% url 'management:new_evidence' task.id %}">Button</a>
                 </button>
               </td>
+              {%if user.is_admin or user.is_superuser%}
               <td> <a class="article-title" href="{% url 'management:taskdetail' task.id %}">Edit</a></td>
+              {%endif%}
           </tr>
           
         {% endfor %}
@@ -170,6 +185,5 @@
         }
     });
   });
-
 </script>
 {% endblock content %}
