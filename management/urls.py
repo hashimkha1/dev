@@ -8,7 +8,7 @@ from .views import (
                         UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
-                        #OutflowCreateView,#OutflowListView,
+                        PolicyUpdateView,#OutflowListView,
                         OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
                         TransactionUpdateView,TransactionListView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
@@ -54,6 +54,7 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(), name="policy-update"),
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================

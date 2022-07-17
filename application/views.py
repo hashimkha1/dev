@@ -7,7 +7,6 @@ from django.views.decorators.csrf import csrf_exempt
 
 import boto3
 
-# from tomlkit import item
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -19,16 +18,17 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-
+from django.db.models import Q
 from .forms import (
-    PolicyForm,
+    # PolicyForm,
     RatingForm,
     ReportingForm,
     ApplicantProfileFormA,
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )
-from .models import UserProfile, Application, Policy, Rated, Reporting
+from .models import UserProfile, Application,Rated, Reporting
+from management.models import Policy
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -246,66 +246,21 @@ def internal_training(request):
     )
 
 
-def policy(request):
-    if request.method == "POST":
-        form = PolicyForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("application:policies")
-    else:
-        form = PolicyForm()
-    return render(request, "application/orientation/policy.html", {"form": form})
-
+# def policy(request):
+#     if request.method == "POST":
+#         form = PolicyForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             return redirect("application:policies")
+#     else:
+#         form = PolicyForm()
+#     return render(request, "application/orientation/policy.html", {"form": form})
 
 def policies(request):
     reporting_date = date.today() + timedelta(days=7)
-    uploads = Policy.objects.all().order_by("upload_date")
-    context = {"uploads": uploads, "reporting_date": reporting_date}
+    policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=True)).order_by("upload_date")
+    context = {"policies": policies, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
-
-
-class PolicyUpdateView(LoginRequiredMixin, UpdateView):
-    model = Policy
-    fields = [
-        "first_name",
-        "last_name",
-        "upload_date",
-        "method",
-        "policy_type",
-        "description",
-    ]
-
-    form = PolicyForm()
-
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("application:policies")
-
-    def test_func(self):
-        # employee = self.get_object()
-        if self.request.is_admin:
-            return True
-        if self.request.is_superuser:
-            return True
-        return False
-
-
-class TraineeDeleteView(LoginRequiredMixin, DeleteView):
-    model = Reporting
-
-    def get_success_url(self):
-        return reverse("application:trainees")
-
-
-def info(request):
-    reporting_date = date.today() + timedelta(days=7)
-    uploads = Policy.objects.all().order_by("upload_date")
-    context = {"uploads": uploads, "reporting_date": reporting_date}
-    return render(request, "application/orientation/applicant_info.html", context)
-
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):
@@ -317,7 +272,6 @@ def rate(request):
     else:
         form = RatingForm()
     return render(request, "application/orientation/rate.html", {"form": form})
-
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")
@@ -353,7 +307,6 @@ def trainees(request):
         request, "application/orientation/trainees.html", {"trainees": trainees}
     )
 
-
 class TraineeUpdateView(LoginRequiredMixin, UpdateView):
     model = Reporting
     fields = [
@@ -379,7 +332,6 @@ class TraineeUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.firstname == employee.name:
             return True
         return False
-
 
 class TraineeDeleteView(LoginRequiredMixin, DeleteView):
     model = Reporting

@@ -29,9 +29,9 @@ from django.views.generic import (
 )
 from .models import (
     Transaction,
+    Policy,
     Inflow,
     Outflow,
-    Policy,
     Tag,
     Task,
     TaskHistory,
@@ -39,7 +39,6 @@ from .models import (
     Requirement,
 )
 from data.models import DSU
-
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
@@ -366,14 +365,33 @@ def policy(request):
 def policies(request):
     reporting_date = date.today()
     day_name = date.today().strftime("%A")
-    uploads = Policy.objects.all().order_by("upload_date")
+    #policies from management app
+    policies = Policy.objects.filter(is_active=True).order_by("upload_date")
     context = {
-        "uploads": uploads,
+        "policies": policies,
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
     return render(request, "management/hr/policies.html", context)
 
+class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Policy
+    # success_url="/management/transaction"
+    fields = ["staff","type","department","description","link"]
+    form = PolicyForm()
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("management:policies")
+    
+    def test_func(self):
+        if self.request.is_admin:
+            return True
+        if self.request.is_superuser:
+            return True
+        return False
 
 def benefits(request):
     reporting_date = date.today()

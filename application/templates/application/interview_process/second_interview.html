@@ -221,7 +221,6 @@
           </ul>
         </div>
     </div>
-
                 <!-------------------------Uploading work----------------------------------->
     <div class="data_header">
       <!-- <img src="static/img/background/data_training.jpg" class="training_img" />-->
@@ -254,9 +253,7 @@
 </section>
 
 <script>
-    //  siteurl = "http://localhost:8000"
-    siteurl = "https://www.codanalytics.net"
-
+    siteurl ="{{request.session.siteurl}}"
     if('{{section}}' == "A"){
         $(".sectionA").css("display","none")
         $(".sectionB").css("display","block")
@@ -268,8 +265,6 @@
     else if('{{section}}' == "C"){
         window.location.href = siteurl+"/application/policies/"
     }
-
-   
     function getCookie(name) {
                 var cookieValue = null;
                 if (document.cookie && document.cookie !== '') {

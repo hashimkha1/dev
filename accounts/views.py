@@ -16,7 +16,7 @@ from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
-
+from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (
@@ -163,6 +163,7 @@ def login_view(request):
     msg = None
     if request.method == "POST":
         if form.is_valid():
+            request.session["siteurl"] = settings.SITEURL
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)

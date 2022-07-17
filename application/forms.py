@@ -132,17 +132,17 @@ class InterviewForm(forms.ModelForm):
 """
 
 
-class PolicyForm(forms.ModelForm):
-    class Meta:
-        model = Policy
-        fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
-        labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "policy_type": "Policy Type",
-            "description": "Description",
-            "policy_doc": "Attach Policy",
-        }
+# class PolicyForm(forms.ModelForm):
+#     class Meta:
+#         model = Policy
+#         fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
+#         labels = {
+#             "first_name": "First Name",
+#             "last_name": "Last Name",
+#             "policy_type": "Policy Type",
+#             "description": "Description",
+#             "policy_doc": "Attach Policy",
+#         }
 
 
 class ReportingForm(forms.ModelForm):

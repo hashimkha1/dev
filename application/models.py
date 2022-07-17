@@ -6,6 +6,8 @@ from django.db import models
 from django.utils import timezone
 from accounts.models import CustomerUser
 
+
+
 # Create your models here.
 class UserProfile(models.Model):
 

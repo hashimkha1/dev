@@ -385,15 +385,16 @@ class Policy(models.Model):
         (Other, "Other"),
     ]
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
+    staff = models.ForeignKey(
+        User, on_delete=models.RESTRICT, related_name="staff_entry",
+        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+        default=999
+    )
+    # first_name = models.CharField(max_length=100, null=True, blank=True)
+    # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
-    """policy_type= models.CharField(
-        max_length=25,
-        choices=CHOICES,
-        default=Other,
-    )"""
+    link=models.CharField(max_length=1000,blank=True, null=True)
     department = models.CharField(
         max_length=100,
         choices=DEPARTMENT_CHOICES,
@@ -403,15 +404,13 @@ class Policy(models.Model):
     policy_doc = models.FileField(
         upload_to="policy/doc/", default=None, null=True, blank=True
     )
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
+    is_internal= models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id} policy"
-#
 
-    # def get_absolute_url(self):
-    #     return reverse('management:department_list', args=[self.slug])
-    def __str__(self):
-        return self.name   
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
     # Tasks Category.

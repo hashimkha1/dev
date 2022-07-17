@@ -33,10 +33,8 @@ urlpatterns = [
     path("orientation/", views.orientation, name="orientation"),
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
-    path("policy/", views.policy, name="policy"),
+    # path("policy/", views.policy, name="policy"),
     path("policies/", views.policies, name="policies"),
-    path("policy/<int:pk>/update/", views.policies, name="policy-update"),
-    path("info/", views.info, name="applicant_info"),
     path("trainee/", views.trainee, name="trainee"),
     path("trainees/", views.trainees, name="trainees"),
     path(
