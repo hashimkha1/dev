@@ -2,6 +2,7 @@ import calendar
 from datetime import datetime, date
 from decimal import *
 from enum import unique
+from unittest.mock import DEFAULT
 from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
@@ -370,6 +371,7 @@ class Policy(models.Model):
         (HEALTH, "Health"),
         (Other, "Other"),
     ]
+
     Leave = "Leave"
     Working_Hours = "Working Hours"
     Working_Days = "Working Days"
@@ -383,6 +385,15 @@ class Policy(models.Model):
         (Unpaid_Training, "Unpaid_Training"),
         (Location, "Location"),
         (Other, "Other"),
+    ]
+    DAY_CHOICES = [
+        ("Sunday", "Sunday"),
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
     ]
     id = models.AutoField(primary_key=True)
     staff = models.ForeignKey(
@@ -400,10 +411,16 @@ class Policy(models.Model):
         choices=DEPARTMENT_CHOICES,
         default=Other,
     )
+    day = models.CharField(
+        max_length=25,
+        choices=DAY_CHOICES,
+        default='Sunday'
+    )
     description = models.TextField()
     policy_doc = models.FileField(
         upload_to="policy/doc/", default=None, null=True, blank=True
     )
+
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     is_internal= models.BooleanField(default=True)

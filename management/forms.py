@@ -147,14 +147,19 @@ class PolicyForm(forms.ModelForm):
             # "first_name",
             # "last_name",
             "department",
+            "day",
             "type",
             "description",
             "link",
             "policy_doc",
+            "is_active",
+            "is_featured",
+            "is_internal",
         ]
         labels = {
             "staff": "User Name",
             "link": "Paste Link",
+            "day": "Review Day",
             # "first_name": "First Name",
             # "last_name": "Last Name",
             "type": "Policy Type",
@@ -162,7 +167,7 @@ class PolicyForm(forms.ModelForm):
             "description": "Description",
             "policy_doc": "Attach Policy",
         }
-        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+        widgets = {"description": Textarea(attrs={"cols": 75, "rows": 3})}
 
 class ManagementForm(forms.ModelForm):
     class Meta:
