@@ -399,7 +399,7 @@ class Policy(models.Model):
     staff = models.ForeignKey(
         User, on_delete=models.RESTRICT, related_name="staff_entry",
         limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
-        default=999
+        default=1
     )
     # first_name = models.CharField(max_length=100, null=True, blank=True)
     # last_name = models.CharField(max_length=100, null=True, blank=True)
