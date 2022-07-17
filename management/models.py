@@ -396,12 +396,12 @@ class Policy(models.Model):
         ("Saturday", "Saturday"),
     ]
     id = models.AutoField(primary_key=True)
-    staff = models.ForeignKey(
-        User, on_delete=models.RESTRICT, related_name="staff_entry",
-        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
-        default=1
-    )
-    # first_name = models.CharField(max_length=100, null=True, blank=True)
+    # staff = models.ForeignKey(
+    #     User, on_delete=models.RESTRICT, related_name="staff_entry",
+    #     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+    #     default=1
+    # )
+    staff = models.CharField(max_length=100, null=True, blank=True,default="admin")
     # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
