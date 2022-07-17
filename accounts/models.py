@@ -6,9 +6,10 @@ from django.db import models
 from django.db.models import Sum
 from django.urls import reverse
 from django.utils import timezone
+from django.db.models.signals import pre_save, post_save
 from django.utils.translation import gettext_lazy as _
+from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
-
 
 # Create your models here.
 class CustomerUser(AbstractUser):
@@ -60,6 +61,127 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering = ["-date_joined"]
 
+
+class Department(models.Model):
+    """Department Table will provide a list of the different departments in CODA"""
+    # Department
+    HR = "HR Department"
+    IT = "IT Department"
+    MKT = "Marketing Department"
+    FIN = "Finance Department"
+    SECURITY = "Security Department"
+    MANAGEMENT = "Management Department"
+    HEALTH = "Health Department"
+    Other = "Other"
+    DEPARTMENT_CHOICES = [
+        (HR, "HR Department"),
+        (IT, "IT Department"),
+        (MKT, "Marketing Department"),
+        (FIN, "Finance Department"),
+        (SECURITY, "Security Department"),
+        (MANAGEMENT, "Management Department"),
+        (HEALTH, "Health Department"),
+        (Other, "Other"),
+    ]
+   
+    name = models.CharField(
+        max_length=100,
+        choices=DEPARTMENT_CHOICES,
+        default=Other,
+        )
+
+    description = models.TextField(max_length=500,null=True, blank=True)
+    slug = models.SlugField(verbose_name=_('Department safe URL'), max_length=255, unique=True)
+    is_featured = models.BooleanField("Is featured", default=True)
+    is_active=models.BooleanField(default=True)
+
+    @classmethod
+    def get_default_pk(cls):
+        cat, created = cls.objects.get_or_create(
+            name="Other", defaults=dict(description="this is not an cat")
+        )
+        return cat.pk
+
+    class Meta:
+        verbose_name=_('Department')
+        verbose_name_plural=_('Departments')
+
+    # def get_absolute_url(self):
+    #     return reverse('management:department_list', args=[self.slug])
+    def __str__(self):
+        return self.name   
+
+# =========================CREDENTIALS TABLE======================================
+class CredentialCategory(models.Model):
+    department = models.ForeignKey(
+        to=Department, on_delete=models.CASCADE, default=Department.get_default_pk
+        )
+    # created_by= models.ForeignKey(User, on_delete=models.CASCADE)
+    category = models.CharField(
+        verbose_name=_('Category Name'),
+        help_text=_('Required'),
+        max_length=255, 
+        unique=True,
+    )
+    slug = models.SlugField(verbose_name=_('category safe URL'), max_length=255, unique=True)
+    description = models.TextField(max_length=1000, default=None)
+    entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    def get_absolute_url(self):
+        return reverse('management:credentialcategorylist', args=[self.slug])
+    class Meta:
+        verbose_name=_('Category')
+        verbose_name_plural=_('Categories')
+
+    def __str__(self):
+        # return f"{self.category} Categories"
+        return f"{self.category}"
+
+class Credential(models.Model):
+    USER_CHOICES = [
+        ("Superuser", "Superuser"),
+        ("Admin", "Admin"),
+        ("Employee", "Employee"),
+        ("Other", "Other")
+    ]
+    category = models.ManyToManyField(CredentialCategory, blank=True,related_name='credentialcategory')
+    added_by= models.ForeignKey(CustomerUser, on_delete=models.RESTRICT)
+    name = models.CharField(
+        verbose_name=_('credential Name'),
+        help_text=_('Required'),
+        max_length=255, 
+    )
+    slug = models.SlugField(verbose_name=_('credential safe URL'), max_length=255, unique=True)
+    description = models.TextField(max_length=1000, default=None)
+    link_name=models.CharField(max_length=255, default='General')
+    link=models.CharField(max_length=100,blank=True, null=True)
+    password=models.CharField(max_length=255,blank=True, null=True, default='No Password Needed')
+    entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+    user_type = models.CharField(
+        max_length=25,
+        choices=USER_CHOICES,
+        default="Other",
+    )
+    
+    class Meta:
+        verbose_name_plural = "credentials"
+
+    def get_absolute_url(self):
+        return reverse("management:credential")
+
+    def __str__(self):
+        return self.name
+
+# ========================================SLUGS GENERATOR====================================================
+def credentialcategory_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(credentialcategory_pre_save_receiver, sender=CredentialCategory)
 
 """ 
 #Applicant Table
@@ -114,35 +236,37 @@ class Tracker(models.Model):
     # Other = 999
 
     # Job Category.
-    Job_Support = "Job_Support"
-    Interview = "Interview"
-    Training = "Training"
-    Mentorship = "Mentorship"
-    Other = "Other"
-    # Task/Activities
-    Reporting = "reporting"
-    Database = "database"
-    Business_Analysis = "Business Analysis"
-    ETL = "Data Cleaning"
-    Other = "Any Other"
-
     CAT_CHOICES = [
-        (Job_Support, "Job_Support"),
-        (Interview, "Interview"),
-        (Training, "Training"),
-        (Mentorship, "Mentorship"),
-        (Other, "Other"),
+        ("Job_Support", "Job_Support"),
+        ("Interview", "Interview"),
+        ("Training", "Training"),
+        ("Mentorship", "Mentorship"),
+        ("Other", "Other"),
     ]
+    # Sub Category.
+    SUBCAT_CHOICES = [
+        ("Requirements", "Requirements"),
+        ( "Troubleshooting", "Troubleshooting"),
+        ("Development", "Development"),
+        ("Testing", "Testing"),
+        ("Other", "Other"),
+    ]
+    # Task/Activities
     TASK_CHOICES = [
-        (Reporting, "reporting"),
-        (Database, "database"),
-        (Business_Analysis, "Business Analysis"),
-        (ETL, "Data Cleaning"),
-        (Other, "Other"),
+        ("reporting", "reporting"),
+        ("database", "database"),
+        ("Business Analysis", "Business Analysis"),
+        ("Data Cleaning", "Data Cleaning"),
+        ("Other", "Other"),
     ]
     category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
+    )
+    sub_category = models.CharField(
+        max_length=25,
+        choices=SUBCAT_CHOICES,
+        default="Other"
     )
     task = models.CharField(
         max_length=25,
@@ -205,3 +329,4 @@ class Tracker(models.Model):
         else:
             return 9999
     """
+

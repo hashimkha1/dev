@@ -406,8 +406,12 @@ class Policy(models.Model):
 
     def __str__(self):
         return f"{self.id} policy"
+#
 
-
+    # def get_absolute_url(self):
+    #     return reverse('management:department_list', args=[self.slug])
+    def __str__(self):
+        return self.name   
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
     # Tasks Category.
@@ -538,20 +542,23 @@ class Task(models.Model):
         },
         default=1,
     )
-    point = models.PositiveIntegerField(
-        # max_digits=3,
+    point = models.DecimalField(
+        max_digits=10,
         help_text=_("Should be less than Maximum Points assigned"),
         error_messages={
             "name": {" max_length": ("Points must be less than Maximum Points")}
         },
+        decimal_places=2,
     )
-    mxpoint = models.PositiveIntegerField(
-        # max_digits=3,
+    mxpoint = models.DecimalField(
+        max_digits=10,
         help_text=_("Maximum 200"),
         error_messages={
             "name": {" max_length": ("The maximum points must be between 0 and 199")}
         },
+        decimal_places=2,
     )
+
     mxearning = models.DecimalField(
         max_digits=10,
         help_text=_("Maximum 4999.99"),
@@ -567,6 +574,13 @@ class Task(models.Model):
     featured = models.BooleanField(default=True)
 
     objects = TaskManager()
+
+    @classmethod
+    def get_default_pk(cls):
+        tak, created = cls.objects.get_or_create(
+            title="Other", defaults=dict(description="this is not an task")
+        )
+        return tak.pk
 
     @property
     def submitted(self):
@@ -604,7 +618,10 @@ class Task(models.Model):
         if self.point > self.mxpoint:
             return 0
         else:
-            Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            try:
+                Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            except Exception as ZeroDivisionError:
+                Earning = 0
             compute_pay = Earning * Decimal(self.late_penalty)
             pay = round(compute_pay, 2)
             return pay
@@ -622,19 +639,20 @@ class Task(models.Model):
 
 # Adding the evidence table/model
 class TaskLinks(models.Model):
-    task = models.ManyToManyField(Task, blank=True,
-    related_name='task_featured')
+    # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name='task_featured',default=1)
     added_by= models.ForeignKey(
     User, 
     on_delete=models.CASCADE,
     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+    default=1
     )
     link_name=models.CharField(max_length=255, default='General')
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
     doc=models.FileField(default="None",upload_to='evidence/docs/')
-    link=models.CharField(max_length=255,blank=True, null=True)
+    link=models.CharField(max_length=1000,blank=True, null=True)
     linkpassword=models.CharField(max_length=255, default='No Password Needed')
     is_active = models.BooleanField("Is active", default=True)
     is_featured = models.BooleanField("Is featured", default=False)
@@ -686,19 +704,21 @@ class TaskHistory(models.Model):
         },
         default=1,
     )
-    point = models.PositiveIntegerField(
-        # max_digits=3,
+    point = models.DecimalField(
+        max_digits=10,
         help_text=_("Should be less than Maximum Points assigned"),
         error_messages={
             "name": {" max_length": ("Points must be less than Maximum Points")}
         },
+        decimal_places=2,
     )
-    mxpoint = models.PositiveIntegerField(
-        # max_digits=3,
+    mxpoint = models.DecimalField(
+        max_digits=10,
         help_text=_("Maximum 200"),
         error_messages={
             "name": {" max_length": ("The maximum points must be between 0 and 199")}
         },
+        decimal_places=2,
     )
     mxearning = models.DecimalField(
         max_digits=10,
@@ -754,7 +774,10 @@ class TaskHistory(models.Model):
         if self.point > self.mxpoint:
             return 0
         else:
-            Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            try:
+                Earning = round(Decimal(self.point / self.mxpoint) * self.mxearning, 2)
+            except Exception as ZeroDivisionError:
+                Earning = 0.0
             compute_pay = Earning * Decimal(self.late_penalty)
             pay = round(compute_pay, 2)
             return pay
@@ -944,3 +967,4 @@ class Facebook(models.Model):
 #          editable=True,
 #          null=True
 #          )
+# ==================================ACTIVITIES====================================
