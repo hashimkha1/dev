@@ -32,9 +32,9 @@
             </thead>
       
             <tbody>
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies.
-             </p>
+             </p> -->
               {% for upload in uploads %}
               {% if upload.department == "HR" and day_name == "Monday" %} 
               <tr>
@@ -68,9 +68,9 @@
                 --->
               </tr>
               {% elif upload.department == "Finance" and day_name == "Tuesday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
@@ -103,9 +103,9 @@
               </tr>
 
               {% elif upload.department == "IT" and day_name == "Wednesday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
@@ -139,9 +139,9 @@
 
 
               {% elif upload.department == "Management" and day_name == "Thursday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
@@ -176,9 +176,9 @@
 
 
               {% elif upload.department == "Marketing" and day_name == "Friday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
@@ -211,9 +211,9 @@
               </tr>
 
               {% elif upload.department == "Security" and day_name == "Saturday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
@@ -245,9 +245,9 @@
                 --->
               </tr>
               {% elif upload.department == "Health" and day_name == "Sunday" %} 
-              <p>
+              <!-- <p>
                 Today is <b>{{day_name}}</b>,<b>{{reporting_date}}</b>.We will focus our attention on the following policies under {{upload.department}}  .
-             </p>
+             </p> -->
               <tr>
                 <td class="tg-7zrl">
                   <span style="font-weight: 400; text-decoration: none; color: black"
