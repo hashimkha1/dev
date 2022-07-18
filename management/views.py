@@ -366,7 +366,7 @@ def policies(request):
     reporting_date = date.today()
     day_name = date.today().strftime("%A")
     #policies from management app
-    policies = Policy.objects.filter(is_active=True).order_by("upload_date")
+    policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
     context = {
         "policies": policies,
         "reporting_date": reporting_date,
@@ -377,7 +377,7 @@ def policies(request):
 class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Policy
     # success_url="/management/transaction"
-    fields = ["staff","type","department","description","link"]
+    fields = ["staff","type","department","day","description","link","is_active","is_featured","is_internal"]
     form = PolicyForm()
     def form_valid(self, form):
         form.instance.username = self.request.user
@@ -387,9 +387,10 @@ class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("management:policies")
     
     def test_func(self):
-        if self.request.is_admin:
+        policy = self.get_object()
+        if self.request.user.is_superuser:
             return True
-        if self.request.is_superuser:
+        elif self.request.user == policy.staff:
             return True
         return False
 

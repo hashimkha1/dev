@@ -54,7 +54,8 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
-    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(), name="policy-update"),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/hr/policy_form.html"), name="policy-update"),
+    
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
