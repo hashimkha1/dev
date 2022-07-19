@@ -19,6 +19,7 @@ from .forms import (
     ManagementForm,
     RequirementForm,
     EvidenceForm,
+    TaskForm
 )
 from django.views.generic import (
     CreateView,
@@ -43,6 +44,8 @@ from data.models import DSU
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
+from datetime import date, timedelta
+from django.db.models import Q
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -433,8 +436,36 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-from datetime import date, timedelta
-from django.db.models import Q
+def newtaskcreation(request):
+    if request.method == "POST":
+        group = request.POST["group"]
+        category = request.POST["category"]
+        description = request.POST["description"]
+        point = request.POST["point"]
+        mxpoint = request.POST["mxpoint"]
+        mxearning = request.POST["mxearning"]
+
+        employee = request.POST["employee"].split(",")
+        activitys = request.POST["activitys"].split(",")
+        # print(type(employee),type(activitys))
+        # print(employee,activitys)
+        for emp in employee:
+            for act in activitys:
+                Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+
+        # return redirect("management:tasks")
+        return JsonResponse({"success":True})
+
+    else:
+        tag = Tag.objects.all()
+        employess = User.objects.filter(Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True)).all()
+
+    return render(request, "management/tasknew_form.html", {"category": tag,"employess":employess})
+
+def gettasksuggestions(request):
+    category = request.POST["category"]
+    tasks = list(Task.objects.values_list("activity_name",flat=True).filter(category__id = category))
+    return JsonResponse({"tasklist":tasks})
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
@@ -982,7 +1013,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("management:user_task", kwargs={"username": str(task.employee)})
 
     # fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
-    fields = ["employee", "activity_name", "description", "point"]
+    fields = ["category","employee", "activity_name", "description", "point"]
 
     def form_valid(self, form):
         return super().form_valid(form)

@@ -3,7 +3,7 @@ from django.forms import ModelForm, Textarea
 from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
-from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement
+from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement,Task
 from accounts.models import Department
 
 """
@@ -259,4 +259,20 @@ class EvidenceForm(forms.ModelForm):
     # def __init__(self, **kwargs):
     #     super(EvidenceForm, self).__init__(**kwargs)
     #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = [
+                   "group",
+                    "category",
+                    "employee",
+                    "activity_name",
+                    "description",
+                    "point",
+                    "mxpoint",
+                    "mxearning",
+        ]
+
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
 
