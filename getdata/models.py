@@ -1,4 +1,5 @@
 from django.db import models
+<<<<<<< HEAD
 
 
 from datetime import datetime
@@ -77,3 +78,5 @@ class Air_Quality_Data(models.Model):
 
 
 
+=======
+>>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f

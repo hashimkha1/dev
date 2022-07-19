@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = True  # False
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -152,18 +152,22 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
 #     }
 # }
 
-import dj_database_url
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 
+import dj_database_url
+
+# postgresql database
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
 
@@ -256,7 +260,7 @@ EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 
 # Email Backend
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "mail.privateemail.com"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
@@ -277,6 +281,7 @@ AWS_DEFAULT_ACL = None
 # session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
 # s3 = session.resource('s3')
 
+# ! Make sure the below line of code is not commented on the production for media uploads
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 # STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
@@ -300,3 +305,5 @@ CELERYBEAT_SCHEDULE = {
 
 # FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
 # FILE_SAVE_DIR = '/var/www/html/uploads/'
+# SITEURL="localhost:8000"
+SITEURL="https://www.codanalytics.net"

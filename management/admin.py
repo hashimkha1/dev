@@ -15,7 +15,7 @@ from .models import (
     TaskLinks,
     TaskHistory,
     Twitter,
-    Facebook,
+    Facebook
 )
 
 # from .models import Activity, Category, Employee, Transaction , Department
@@ -86,6 +86,10 @@ admin.site.register(Tag)
 admin.site.register(Requirement)
 admin.site.register(Twitter)
 admin.site.register(Facebook)
+
+admin.site.register(TaskLinks)
+
+
 
 """
 admin.site.register(Employee)

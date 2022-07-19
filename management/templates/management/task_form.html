@@ -18,7 +18,8 @@
 
 <script>
   // siteurl = "http://localhost:8000"
-  siteurl = "https://www.codanalytics.net"
+  // siteurl = "https://www.codanalytics.net"
+  siteurl ="{{request.session.siteurl}}"
   function getCookie(name) {
               var cookieValue = null;
               if (document.cookie && document.cookie !== '') {
@@ -55,7 +56,29 @@
 
           }
       });
-  })  
+  })
+  
+  $("#id_activity_name").focusout(function() {
+      console.log("+++++++focusout+++++++++++",$(this).val());
+      $.ajax({
+            type: "POST",
+            url:  siteurl+"/management/getaveragetargets/",
+            mode: 'cors',
+            withCredentials: false, 
+            headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
+            xsrfHeaderName: "X-CSRFToken",
+            data : {"taskname":$(this).val()},
+            success: function(result){
+              
+              console.log(result);
+              $("#id_mxpoint").val(result["target_points"]);
+              $("#id_mxearning").val(result["target_amount"])
+              
+            }
+        });
+
+  })
+
 </script>
 
 {% endblock content%}

@@ -375,7 +375,7 @@
                 <p>Note: Combine all the files and zip before uploading.</p>
                 <input type="file" id="applicantworks" name="applicantworks"> 
                 
-              <a href="{% url 'application:second_interview' %}">
+              <a href="{% url 'application:section_b' %}">
                     <button id="next_section_btn" disabled>Next Section</button>
              </a>
                 
@@ -415,8 +415,9 @@
 
 
 <script>
+     siteurl ="{{request.session.siteurl}}"
     //  siteurl = "http://localhost:8000"
-    siteurl = "https://www.codanalytics.net"
+    // siteurl = "https://www.codanalytics.net"
 
     if('{{section}}' == "A"){
         $(".sectionA").css("display","none")

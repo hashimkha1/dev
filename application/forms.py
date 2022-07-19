@@ -1,16 +1,45 @@
+from pyexpat import model
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
-from .models import Application, InteviewUploads, Policy, Rated, Reporting
+from .models import (
+    UserProfile,
+    Application,
+    InteviewUploads,
+    Policy,
+    Rated,
+    Reporting,
+)
 
 
-class ApplicationForm(UserCreationForm):
-    pass
-    # email = forms.EmailField()
-    # class Meta:
-    # model = User
-    # model=Application
-    # fields = ['first_name','last_name','username', 'email', 'password1', 'password2']
+class ApplicantProfileFormA(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ["section", "upload_a"]
+
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormA, self).__init__(*args, **kwargs)
+        self.fields["upload_a"].label = ""
+
+
+class ApplicantProfileFormB(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ["section", "upload_b"]
+
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormB, self).__init__(*args, **kwargs)
+        self.fields["upload_b"].label = ""
+
+
+class ApplicantProfileFormC(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ["section", "upload_c"]
+
+    def __init__(self, *args, **kwargs):
+        super(ApplicantProfileFormC, self).__init__(*args, **kwargs)
+        self.fields["upload_c"].label = ""
 
 
 class ApplicantForm(forms.ModelForm):
@@ -103,17 +132,17 @@ class InterviewForm(forms.ModelForm):
 """
 
 
-class PolicyForm(forms.ModelForm):
-    class Meta:
-        model = Policy
-        fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
-        labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "policy_type": "Policy Type",
-            "description": "Description",
-            "policy_doc": "Attach Policy",
-        }
+# class PolicyForm(forms.ModelForm):
+#     class Meta:
+#         model = Policy
+#         fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
+#         labels = {
+#             "first_name": "First Name",
+#             "last_name": "Last Name",
+#             "policy_type": "Policy Type",
+#             "description": "Description",
+#             "policy_doc": "Attach Policy",
+#         }
 
 
 class ReportingForm(forms.ModelForm):

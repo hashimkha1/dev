@@ -1,0 +1,52 @@
+{%extends "main/base_templates/base.html"%} {% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">DEPARTMENTS</h3>
+  </div> 
+<hr>
+  <div class="career text-center">
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">  
+        <tr>
+          <th>Check</th>
+          <th>Name</th>
+          <th>slug</th>
+          <th>Date Added</th>
+          <th>is active</th>
+          <th>is featured</th>
+          <th>Update</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        {% for department in  departments  %}
+            <tr>
+
+                <td><input type="checkbox" class="checkthis" /></td>
+                <td>
+                    <a class="text-dark  text-decoration-none" 
+                    data-toggle="tooltip" title="{{  department.description  }}"
+                    href="{{ category.get_absolute_url }}">
+                    {{  department.name  }}
+                    </a>
+                </td>
+                <td>{{department.slug}}</td>
+                <td>{{department.entry_date|date:"F d, Y"}}</td>
+                <td>{{department.is_active}}</td>
+                <td>{{department.is_featured}}</td>
+               <td>
+                <button>
+                  <a href="#"
+                  >Edit
+                </a>
+                </button>
+              </td>
+              <td> <a class="article-title" href="#">Edit</a></td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

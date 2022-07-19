@@ -128,10 +128,6 @@
                           <a class="dropdown-item" href="{% url 'management:user_task_history' user.id %}" target="" >Last DAF</a>
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
-                            <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="{% url 'management:newcategory'%}" target="" >Add Task Category</a>
-                            <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="{% url 'management:newtask'%}" target="" >Add Task</a>
                           <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
                             <div class="dropdown-divider"></div>
@@ -161,7 +157,7 @@
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Support</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                    {% if user.is_superuser or user.is_admin or user.is_employee %}
+                    {% if user.is_admin or  user.is_employee %}
                           <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:requirements'%}" target="" >Requirements</a>
