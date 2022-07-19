@@ -39,6 +39,7 @@ from .models import (
 )
 from data.models import DSU
 
+from finance.models import Transaction,Inflow,Outflow
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker
@@ -524,6 +525,8 @@ def usertask(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
     # tasks = Task.objects.filter(user__username=request.user)
+    points_count = Task.objects.filter(description__in=['Meetings','General','Sprint','DAF','Recruitment','Job Support','BI Support'],employee=employee)
+    point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -567,6 +570,7 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
+        "point_check":point_check,
     }
 
     # setting  up session

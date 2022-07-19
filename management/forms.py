@@ -215,6 +215,13 @@ class RequirementForm(forms.ModelForm):
         #     "recurring",
         # )
 
+    def __init__(self, **kwargs):
+        super(RequirementForm, self).__init__(**kwargs)
+        self.fields["created_by"].queryset = CustomerUser.objects.filter(
+            is_employee=True 
+            # Q(is_employee=True)
+
+        )
         # Forms updated by Karki
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)

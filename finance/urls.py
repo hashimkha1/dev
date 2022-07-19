@@ -5,5 +5,7 @@ app_name = 'finance'
 urlpatterns = [
     #=============================CLIENT CONTRACT FORM SUBMISSIONS=====================================
     path('contract_form/', views.contract_form_submission, name='finance-contract_form_submission'),
+    path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
+    path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
 
 ]
