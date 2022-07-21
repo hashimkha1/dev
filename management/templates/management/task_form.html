@@ -129,6 +129,8 @@
               return result["tasklist"].indexOf(c) === index;
           });
 
+          $("#tasks_suggestions").html("")
+          
           for(task in alltaskslist){
               $("#tasks_suggestions").append(`<div class="tasksug_dropdown_list"><span>`+alltaskslist[task]+`</span></div>`)
           }
