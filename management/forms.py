@@ -3,7 +3,8 @@ from django.forms import ModelForm, Textarea
 from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
-from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement
+from .models import TaskLinks, Policy, Requirement
+from finance.models import Transaction,Inflow,Outflow
 from accounts.models import Department
 
 """
@@ -228,6 +229,12 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
+    def __init__(self, **kwargs):
+        super(RequirementForm, self).__init__(**kwargs)
+        self.fields["created_by"].queryset = CustomerUser.objects.filter(
+            is_employee=True 
+            # Q(is_employee=True)
+        )
 
 class EvidenceForm(forms.ModelForm):
     class Meta:

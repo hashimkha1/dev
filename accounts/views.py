@@ -30,9 +30,10 @@ from .models import CustomerUser, Tracker, CredentialCategory, Credential, Depar
 from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
-from finance.models import Default_Payment_Fees
+from finance.models import Default_Payment_Fees,Payment_History
 from django.http import QueryDict
 import string, random
+from management.utils import email_template
 
 # Create your views here..
 
@@ -524,6 +525,24 @@ class TrackListView(ListView):
     context_object_name = "trackers"
     ordering = ["-login_date"]
     # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
+    def get_queryset(self, *args, **kwargs):
+        qs = super(TrackListView, self).get_queryset(*args, **kwargs)
+        em = Tracker.objects.all().values().order_by('-pk')[0]
+        trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
+        num =trackers.count()
+        Used=trackers.aggregate(Used_Time=Sum('duration'))  
+        Usedtime=Used.get('Used_Time')
+        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+        if Usedtime < 30:
+            subject = "New Contract Alert"
+            to = customer_get[1]
+            html_content = f"""
+                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+                <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
+                </span>"""
+            email_template(subject, to, html_content)
+
+        return qs
 
 
 def usertracker(request, user=None, *args, **kwargs):
@@ -536,7 +555,16 @@ def usertracker(request, user=None, *args, **kwargs):
     my_time = trackers.aggregate(Assigned_Time=Avg("time"))
     Used = trackers.aggregate(Used_Time=Sum("duration"))
     Usedtime = Used.get("Used_Time")
-    plantime = my_time.get("Assigned_Time")
+    # plantime = my_time.get("Assigned_Time")
+    payment_details = Payment_History.objects.filter(customer= user)
+    contract_plan_hours = payment_details.aggregate(Sum('plan'))
+    print(contract_plan_hours) 
+    assigned_hours =0
+    if contract_plan_hours.get('plan__sum'):
+        assigned_hours = contract_plan_hours.get('plan__sum') * 40
+    if my_time.get('Assigned_Time'):
+        plantime=my_time.get('Assigned_Time') + assigned_hours
+    plantime = assigned_hours
     try:
         delta = round(plantime - Usedtime)
     except (TypeError, AttributeError):
