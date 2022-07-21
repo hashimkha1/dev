@@ -258,7 +258,7 @@ def internal_training(request):
 
 def policies(request):
     reporting_date = date.today() + timedelta(days=7)
-    policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=True)).order_by("upload_date")
+    policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
     context = {"policies": policies, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
 
