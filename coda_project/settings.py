@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True  # False
+DEBUG = True
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -305,3 +305,5 @@ CELERYBEAT_SCHEDULE = {
 
 # FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
 # FILE_SAVE_DIR = '/var/www/html/uploads/'
+# SITEURL="localhost:8000"
+SITEURL="https://www.codanalytics.net"

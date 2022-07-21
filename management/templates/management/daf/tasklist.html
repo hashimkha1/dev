@@ -117,8 +117,9 @@
 
 
 <script>
-  siteurl = "http://localhost:8000"
+  // siteurl = "http://localhost:8000"
   // siteurl = "https://www.codanalytics.net"
+  siteurl ="{{request.session.siteurl}}"
 
   function getCookie(name) {
           var cookieValue = null;

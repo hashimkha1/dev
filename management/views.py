@@ -29,10 +29,10 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    Transaction,
-    Inflow,
-    Outflow,
+    # Transaction,
     Policy,
+    # Inflow,
+    # Outflow,
     Tag,
     Task,
     TaskHistory,
@@ -40,12 +40,12 @@ from .models import (
     Requirement,
 )
 from data.models import DSU
-
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
+from finance.models import Transaction,Inflow,Outflow
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -369,14 +369,34 @@ def policy(request):
 def policies(request):
     reporting_date = date.today()
     day_name = date.today().strftime("%A")
-    uploads = Policy.objects.all().order_by("upload_date")
+    #policies from management app
+    policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
     context = {
-        "uploads": uploads,
+        "policies": policies,
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
     return render(request, "management/hr/policies.html", context)
 
+class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Policy
+    # success_url="/management/transaction"
+    fields = ["staff","type","department","day","description","link","is_active","is_featured","is_internal"]
+    form = PolicyForm()
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("management:policies")
+    
+    def test_func(self):
+        policy = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == policy.staff:
+            return True
+        return False
 
 def benefits(request):
     reporting_date = date.today()
@@ -656,6 +676,8 @@ def usertask(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
     # tasks = Task.objects.filter(user__username=request.user)
+    points_count = Task.objects.filter(description__in=['Meetings','General','Sprint','DAF','Recruitment','Job Support','BI Support'],employee=employee)
+    point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -722,6 +744,7 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
+        "point_check":point_check,
         "average_earnings":average_earnings
     }
 

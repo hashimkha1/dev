@@ -2,6 +2,7 @@ import calendar
 from datetime import datetime, date
 from decimal import *
 from enum import unique
+from unittest.mock import DEFAULT
 from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
@@ -370,6 +371,7 @@ class Policy(models.Model):
         (HEALTH, "Health"),
         (Other, "Other"),
     ]
+
     Leave = "Leave"
     Working_Hours = "Working Hours"
     Working_Days = "Working Days"
@@ -384,34 +386,48 @@ class Policy(models.Model):
         (Location, "Location"),
         (Other, "Other"),
     ]
+    DAY_CHOICES = [
+        ("Sunday", "Sunday"),
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+    ]
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
+    # staff = models.ForeignKey(
+    #     User, on_delete=models.RESTRICT, related_name="staff_entry",
+    #     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+    #     default=1
+    # )
+    staff = models.CharField(max_length=100, null=True, blank=True,default="admin")
+    # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
-    """policy_type= models.CharField(
-        max_length=25,
-        choices=CHOICES,
-        default=Other,
-    )"""
+    link=models.CharField(max_length=1000,blank=True, null=True)
     department = models.CharField(
         max_length=100,
         choices=DEPARTMENT_CHOICES,
         default=Other,
+    )
+    day = models.CharField(
+        max_length=25,
+        choices=DAY_CHOICES,
+        default='Sunday'
     )
     description = models.TextField()
     policy_doc = models.FileField(
         upload_to="policy/doc/", default=None, null=True, blank=True
     )
 
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
+    is_internal= models.BooleanField(default=True)
+
     def __str__(self):
         return f"{self.id} policy"
-#
 
-    # def get_absolute_url(self):
-    #     return reverse('management:department_list', args=[self.slug])
-    def __str__(self):
-        return self.name   
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
     # Tasks Category.
