@@ -228,6 +228,37 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
+<<<<<<< HEAD
+        #  If you have to exclude some features you put them here
+        # exclude = (
+        #     "user",
+        #     "recurring",
+        # )
+
+    def __init__(self, **kwargs):
+        super(RequirementForm, self).__init__(**kwargs)
+        self.fields["created_by"].queryset = CustomerUser.objects.filter(
+            is_employee=True 
+            # Q(is_employee=True)
+
+        )
+        # Forms updated by Karki
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
+    #         Q(is_admin=True) | Q(is_employee=True)
+    #         # Q(is_client=True)
+    #     )
+
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["assigned_to"].queryset = CustomerUser.objects.filter(
+    #         is_employee=True 
+    #         # Q(is_employee=True)
+
+    #     )
+=======
+>>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f
 
 class EvidenceForm(forms.ModelForm):
     class Meta:
@@ -258,6 +289,40 @@ class EvidenceForm(forms.ModelForm):
         }
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
 
+        #  If you have to exclude some features you put them here
+        # exclude = (
+        #     "user",
+        #     "recurring",
+        # )
+
+        # Forms updated by Karki
+    # def __init__(self, **kwargs):
+    #     super(EvidenceForm, self).__init__(**kwargs)
+    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
+
+class EvidenceForm(forms.ModelForm):
+    class Meta:
+        model = TaskLinks
+        fields = [
+                    "task",
+                    "added_by",
+                    "link_name",
+                    "description",
+                    "doc",
+                    "link",
+                    "is_active",
+                    "is_featured",
+        ]
+
+        labels = {
+                "task ":"Task Name",
+                "added_by":"Your Username",
+                "link_name":"Enter link name",
+                "description":"Describe the link/Evidence",
+                "doc":"Upload file/document if possible",
+                "link":"Upload link/paste your link below",
+                # "is_active ":"Is this link still active "
+        }
         #  If you have to exclude some features you put them here
         # exclude = (
         #     "user",

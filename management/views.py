@@ -39,6 +39,12 @@ from .models import (
     Requirement,
 )
 from data.models import DSU
+<<<<<<< HEAD
+
+from finance.models import Transaction,Inflow,Outflow
+from django.conf import settings
+=======
+>>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
@@ -644,6 +650,8 @@ def usertask(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
     # tasks = Task.objects.filter(user__username=request.user)
+    points_count = Task.objects.filter(description__in=['Meetings','General','Sprint','DAF','Recruitment','Job Support','BI Support'],employee=employee)
+    point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -710,6 +718,7 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
+        "point_check":point_check,
         "average_earnings":average_earnings
     }
 
@@ -1036,7 +1045,6 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
 # =============================EMPLOYEE EVIDENCE========================================
 def newevidence(request,taskid):
     if request.method == "POST":
@@ -1090,6 +1098,7 @@ def evidence_update_view(request, id, *args, **kwargs):
     # add form dictionary to context
     context["form"] = form
     return render(request, "management\daf\evidence_form.html", context)
+
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
 def assess(request):
