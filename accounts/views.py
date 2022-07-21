@@ -641,7 +641,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job_support")
                     | Q(activity_name="jobsupport")
                     | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport"),
+                    | Q(activity_name="JobSupport")
+                    | Q(activity_name="Job Support"),
                     employee=self.request.user,
                 )[
                     0
