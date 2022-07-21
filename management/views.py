@@ -728,7 +728,7 @@ def usertask(request, user=None, *args, **kwargs):
     try:
         average_earnings = average_earnings / counter
     except Exception as ZeroDivisionError:
-        average_earnings = 0.0
+        average_earnings = GoalAmount
 
     context = {
         "tasksummary": tasksummary,
