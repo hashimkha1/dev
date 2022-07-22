@@ -40,6 +40,12 @@ from .models import (
     Requirement,
 )
 from data.models import DSU
+<<<<<<< HEAD
+
+from finance.models import Transaction,Inflow,Outflow
+from django.conf import settings
+=======
+>>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
@@ -1071,7 +1077,6 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
 # =============================EMPLOYEE EVIDENCE========================================
 def newevidence(request,taskid):
     if request.method == "POST":
@@ -1125,6 +1130,7 @@ def evidence_update_view(request, id, *args, **kwargs):
     # add form dictionary to context
     context["form"] = form
     return render(request, "management\daf\evidence_form.html", context)
+
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
 def assess(request):

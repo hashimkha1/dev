@@ -535,7 +535,7 @@ class Task(models.Model):
     # category = models.ManyToManyField(Tag, blank=True)
     employee = models.ForeignKey(
         User, on_delete=models.RESTRICT, related_name="user_assiged",
-        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         default=999
     )
     activity_name = models.CharField(
@@ -652,10 +652,16 @@ class Task(models.Model):
     def __str__(self):
         return self.activity_name
 
-
 # Adding the evidence table/model
 class TaskLinks(models.Model):
     # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
+<<<<<<< HEAD
+    task= models.ForeignKey(Task,on_delete=models.CASCADE)
+    added_by= models.ForeignKey(
+    User, 
+    on_delete=models.CASCADE,
+    limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),)
+=======
     task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name='task_featured',default=1)
     added_by= models.ForeignKey(
     User, 
@@ -663,6 +669,7 @@ class TaskLinks(models.Model):
     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
     default=1
     )
+>>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f
     link_name=models.CharField(max_length=255, default='General')
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
@@ -681,6 +688,35 @@ class TaskLinks(models.Model):
 
     def __str__(self):
         return self.link_name
+
+
+# Adding the evidence table/model
+# class TaskLinks(models.Model):
+#     task = models.ManyToManyField(Task, blank=True,
+#     related_name='task_featured')
+#     added_by= models.ForeignKey(
+#     User, 
+#     on_delete=models.CASCADE,
+#     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+#     )
+#     link_name=models.CharField(max_length=255, default='General')
+#     description=models.TextField()
+#     created_at=models.DateTimeField(auto_now_add=True)
+#     updated_at=models.DateTimeField(auto_now=True)
+#     doc=models.FileField(default="None",upload_to='evidence/docs/')
+#     link=models.CharField(max_length=255,blank=True, null=True)
+#     linkpassword=models.CharField(max_length=255, default='No Password Needed')
+#     is_active = models.BooleanField("Is active", default=True)
+#     is_featured = models.BooleanField("Is featured", default=False)
+
+#     class Meta:
+#         verbose_name_plural = "links"
+
+#     def get_absolute_url(self):
+#         return reverse("tasks")
+
+#     def __str__(self):
+#         return self.link_name
 
 
 class TaskHistory(models.Model):
