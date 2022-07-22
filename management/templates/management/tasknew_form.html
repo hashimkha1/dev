@@ -37,6 +37,10 @@
     margin: 5px;
     padding: 5px;
 }
+#div_id_description,#div_id_point,#div_id_mxpoint,#div_id_mxearning{
+    display: none;
+}
+
 </style>
 <div class="content-section">
   <!-- <form method="POST"> -->
@@ -229,9 +233,21 @@
         var val = $(this).val();
         keypress(charCode, val);
     });
+    var counter = 0
     function keypress(charCode, val){
         if(charCode == 13 ) {
-            $("#add_activity_boxes").append(`<span class="share_tag">`+val+`</span>`)
+            
+            if(alltaskslist.includes(val)){
+                $("#add_activity_boxes").append(`<span class="share_tag">`+val+`</span>`)
+            }
+            else if(counter < 1){
+                counter = counter+1
+                $("#add_activity_boxes").append(`<span class="share_tag">`+val+`</span>`)
+                $("#div_id_description,#div_id_point,#div_id_mxpoint,#div_id_mxearning").css("display","block")
+            }
+            else{
+                alert("You cannot add more than one new task,but instead you can select from existing task names.")
+            }
         }
         else{
             console.log("alltaskslist",alltaskslist)

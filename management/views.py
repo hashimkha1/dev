@@ -471,7 +471,12 @@ def newtaskcreation(request):
         # print(employee,activitys)
         for emp in employee:
             for act in activitys:
-                Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+                if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
+                    # print("activity existing",act)
+                    des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
+                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=po,mxpoint=maxpo,mxearning=maxear)
+                else:
+                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
 
         # return redirect("management:tasks")
         return JsonResponse({"success":True})
@@ -1083,10 +1088,10 @@ def newevidence(request,taskid):
             return render(request, "errors/404.html")
 
         if form.is_valid():
-            points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
-        
-            if points != maxpoints:
-                Task.objects.filter(employee=request.user,id=taskid).update(point=points+1)
+            points,maxpoints,taskname = Task.objects.values_list("point","mxpoint","activity_name").filter(id=taskid)[0]
+            jobsup_list = ["job support","job_support","jobsupport" ]
+            if points != maxpoints and taskname.lower() not in jobsup_list:
+                Task.objects.filter(id=taskid).update(point=points+1)
 
             # User will taken from the request 
             form.save()

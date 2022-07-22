@@ -641,7 +641,10 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job_support")
                     | Q(activity_name="jobsupport")
                     | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport"),
+                    | Q(activity_name="JobSupport")
+                    | Q(activity_name="Job Support")
+                    | Q(activity_name="Job support")
+                    | Q(activity_name="job support"),
                     employee=self.request.user,
                 )[
                     0
@@ -663,7 +666,10 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job_support")
                     | Q(activity_name="jobsupport")
                     | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport"),
+                    | Q(activity_name="JobSupport")
+                    | Q(activity_name="Job Support")
+                    | Q(activity_name="Job support")
+                    | Q(activity_name="job support"),
                     employee=self.request.user,
                 ).update(point=points, mxpoint=targetpoints)
         except:
