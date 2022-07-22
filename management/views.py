@@ -40,12 +40,9 @@ from .models import (
     Requirement,
 )
 from data.models import DSU
-<<<<<<< HEAD
 
 from finance.models import Transaction,Inflow,Outflow
 from django.conf import settings
-=======
->>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings

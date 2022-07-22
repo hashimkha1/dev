@@ -184,27 +184,6 @@ def newcontract(request, *args, **kwargs):
 	if client_data.category == 3 and client_data.sub_category == 2:
 		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 
-<<<<<<< HEAD
-def mycontract(request, *args, **kwargs):
-	username = kwargs.get('username')
-	client_data=CustomerUser.objects.get(username=username)
-	check_default_fee = Default_Payment_Fees.objects.all()
-	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.get(id=1)
-	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=1)
-	payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
-	contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
-	if client_data.category == 3 and client_data.sub_category == 1:
-		return render(request, 'my_supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
-	if client_data.category == 3 and client_data.sub_category == 2:
-		return render(request, 'my_trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
-
 
 @login_required
 def newcontract(request, *args, **kwargs):
@@ -227,7 +206,6 @@ def newcontract(request, *args, **kwargs):
 		return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 	if client_data.category == 3 and client_data.sub_category == 2:
 		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
-=======
 
 class PaymentCreateView(LoginRequiredMixin, CreateView):
     model = Default_Payment_Fees
@@ -278,4 +256,3 @@ class DefaultPaymentUpdateView(UpdateView):
         # elif self.request.user == task.employee:
         #     return True
         return False
->>>>>>> 6311662b55fdcd864fa43857435848553ff16e1f

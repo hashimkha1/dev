@@ -87,10 +87,6 @@ admin.site.register(Requirement)
 admin.site.register(Twitter)
 admin.site.register(Facebook)
 
-admin.site.register(TaskLinks)
-
-
-
 """
 admin.site.register(Employee)
 
