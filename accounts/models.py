@@ -161,7 +161,7 @@ class Credential(models.Model):
     entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
-    user_type = models.CharField(
+    user_types = models.CharField(
         max_length=25,
         choices=USER_CHOICES,
         default="Other",
