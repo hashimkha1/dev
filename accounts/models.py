@@ -290,7 +290,6 @@ class Tracker(models.Model):
     #     default=1,
     #     limit_choices_to={"is_employee": True,"is_active": True}
     # )
-
     author = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=_("Client Name"),
