@@ -68,8 +68,8 @@ urlpatterns = [
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
+    path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
-
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
     path('payslip/<str:username>/',views.payslip, name='user_payslip'),
@@ -77,7 +77,7 @@ urlpatterns = [
     # path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('newtask/', views.newtaskcreation, name='newtask'),
     path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
-    path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
+
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
     path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),

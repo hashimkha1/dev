@@ -1,8 +1,16 @@
 from django.contrib import admin
+from django import forms
+from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 
 # Register your models here.
 from django.urls import path, reverse
 from .models import  Payment_History,Default_Payment_Fees,Payment_Information,Transaction,Inflow,Outflow #, DocUpload
+
+
+class CsvImportForm(forms.Form):
+    csv_upload = forms.FileField()
 
 class TransactionAdmin(admin.ModelAdmin):
     list_display = ("sender", "receiver", "amount")
@@ -53,9 +61,9 @@ class TransactionAdmin(admin.ModelAdmin):
         return render(request, "admin/csv_upload.html", data)
 
 
-admin.site.register(Payment_History)
-admin.site.register(Payment_Information)
-admin.site.register(Default_Payment_Fees)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Outflow)
+admin.site.register(Payment_History)
+admin.site.register(Payment_Information)
+admin.site.register(Default_Payment_Fees)

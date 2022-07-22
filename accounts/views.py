@@ -31,6 +31,7 @@ from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
+from management.utils import email_template
 from django.http import QueryDict
 import string, random
 from management.utils import email_template
@@ -139,12 +140,12 @@ def join(request):
 
             form.save()
 
-            username = form.cleaned_data.get("username")
-            category = form.cleaned_data.get("category")
-            gender = form.cleaned_data.get("gender")
-            country = form.cleaned_data.get("country")
-            messages.success(request, f"Account created for {username}!")
-            return redirect("accounts:account-login")
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('accounts:account-login')
     else:
         msg = "error validating form"
         form = UserForm()
@@ -378,9 +379,13 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-'''
-# ================================CREDENTIALS SECTION================================
+''' 
+#================================EMPLOYEE SECTION================================
+def Employeelist(request):
+    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
+    return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
+#================================CLIENT SECTION================================
 
 def newcredentialCategory(request):
     if request.method == "POST":
@@ -544,6 +549,7 @@ class TrackListView(ListView):
 
         return qs
 
+        # return tarcker_data
 
 def usertracker(request, user=None, *args, **kwargs):
     # trackers=Tracker.objects.all().order_by('-login_date')
@@ -579,40 +585,6 @@ def usertracker(request, user=None, *args, **kwargs):
     }
 
     return render(request, "accounts/usertracker.html", context)
-
-
-"""     if request.user == user:
-        return render(request, 'accounts/usertracker.html', context)
-    elif request.user.is_superuser:
-        return render(request, 'accounts/usertracker.html', context)
-    else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
- """
-
-"""
-@method_decorator(login_required, name='dispatch')
-class UserTrackListView(ListView):
-    model=Tracker
-    template_name='accounts/user_tracker.html'
-    context_object_name='trackers'
-    ordering=['-login_date']
-
-    def get_queryset(self):
-        user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-        return Tracker.objects.filter(author=user).order_by('-login_date')
-
-@method_decorator(login_required, name="dispatch")
-class TrackCreateView(LoginRequiredMixin, CreateView):
-    model = Tracker
-    success_url = "/accounts/tracker"
-    # success_url="usertime"
-    # fields=['category','task','duration']
-    fields = ["employee", "author", "category", "task", "duration", "plan"]
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-"""
 
 
 class TrackCreateView(LoginRequiredMixin, CreateView):

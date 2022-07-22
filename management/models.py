@@ -535,7 +535,7 @@ class Task(models.Model):
     # category = models.ManyToManyField(Tag, blank=True)
     employee = models.ForeignKey(
         User, on_delete=models.RESTRICT, related_name="user_assiged",
-        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         default=999
     )
     activity_name = models.CharField(
@@ -652,17 +652,14 @@ class Task(models.Model):
     def __str__(self):
         return self.activity_name
 
-
 # Adding the evidence table/model
 class TaskLinks(models.Model):
     # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
-    task = models.ForeignKey(Task, on_delete=models.CASCADE,related_name='task_featured',default=1)
+    task= models.ForeignKey(Task,on_delete=models.CASCADE)
     added_by= models.ForeignKey(
     User, 
     on_delete=models.CASCADE,
-    limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
-    default=1
-    )
+    limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),)
     link_name=models.CharField(max_length=255, default='General')
     description=models.TextField()
     created_at=models.DateTimeField(auto_now_add=True)
@@ -681,7 +678,6 @@ class TaskLinks(models.Model):
 
     def __str__(self):
         return self.link_name
-
 
 class TaskHistory(models.Model):
     group = models.CharField(
@@ -905,82 +901,3 @@ class Facebook(models.Model):
     def __str__(self):
         return self.page_name
 
-
-# class TaskHistory(models.Model):
-#     group = models.CharField(
-#         verbose_name=_('group'),
-#         help_text=_('Required'),
-#         max_length=255,
-#         default="Group A"
-#         )
-#     category = models.ForeignKey(to=Tag, on_delete=models.CASCADE,default=Tag.get_default_pk)
-#     #category = models.ManyToManyField(Tag, blank=True)
-#     employee = models.ForeignKey(User, on_delete=models.RESTRICT, related_name='history_user_assiged',default=999)
-#     activity_name = models.CharField(
-#         verbose_name=_('Activity Name'),
-#         help_text=_('Required'),
-#         max_length=255,
-#         )
-#     description = models.TextField(
-#         verbose_name=_('description'),
-#         help_text=_('Not Required'),
-#         default='Add description on this activity'
-#         )
-#     #task_date=models.DateField(auto_now_add=Tru, default=)
-#     slug = models.SlugField(max_length=255,blank=True,default='slug')
-#     duration = models.PositiveIntegerField(
-#             #max_digits=3,
-#             help_text=_('Should be less than Maximum Points assigned'),
-#             error_messages={
-#                 "name":{
-#                    ' max_length':("Points must be less than Maximum Points")
-
-#                 }
-#             },
-#             default=1
-#             )
-#     point = models.PositiveIntegerField(
-#             #max_digits=3,
-#             help_text=_('Should be less than Maximum Points assigned'),
-#             error_messages={
-#                 "name":{
-#                    ' max_length':("Points must be less than Maximum Points")
-
-#                 }
-#             },
-#             )
-#     mxpoint = models.PositiveIntegerField(
-#             #max_digits=3,
-#             help_text=_('Maximum 200'),
-#             error_messages={
-#                 "name":{
-#                    ' max_length':("The maximum points must be between 0 and 199")
-
-#                 }
-#             },
-#             )
-#     mxearning = models.DecimalField(
-#             max_digits=10,
-#             help_text=_('Maximum 4999.99'),
-#             error_messages={
-#                 "name":{
-#                    ' max_length':("The earning must be between 0 and 4999.99")
-#                 }
-#             },
-#             decimal_places=2
-#             )
-#     submission = models.DateTimeField(
-#          help_text=_('Date formart :mm/dd/yyyy'),
-#          auto_now=True,
-#          editable=True,
-#          null=True
-#          )
-#     is_active=models.BooleanField(default=True)
-#     featured=models.BooleanField(default=True)
-#     created_at = models.DateTimeField(
-#          help_text=_('Date formart :mm/dd/yyyy'),
-#          auto_now=True,
-#          editable=True,
-#          null=True
-#          )
-# ==================================ACTIVITIES====================================

@@ -185,6 +185,28 @@ def newcontract(request, *args, **kwargs):
 		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 
 
+@login_required
+def newcontract(request, *args, **kwargs):
+	username = kwargs.get('username')
+	client_data=CustomerUser.objects.get(username=username)
+	check_default_fee = Default_Payment_Fees.objects.all()
+	if check_default_fee:
+		default_fee = Default_Payment_Fees.objects.get(id=1)
+	else:
+		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
+				job_plan_hours_per_month=40,
+				student_down_payment_per_month=500,
+				student_bonus_payment_per_month=100)
+		default_payment_fees.save()
+		default_fee = Default_Payment_Fees.objects.get(id=1)
+	today = date.today()
+	contract_date = today.strftime("%d %B, %Y")
+
+	if client_data.category == 3 and client_data.sub_category == 1:
+		return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
+	if client_data.category == 3 and client_data.sub_category == 2:
+		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
+
 class PaymentCreateView(LoginRequiredMixin, CreateView):
     model = Default_Payment_Fees
     success_url = "/finance/contract_form"
