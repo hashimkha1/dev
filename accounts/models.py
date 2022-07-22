@@ -275,21 +275,21 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
-    # employee = models.CharField(
-    #     verbose_name=_("Employee Name"),
-    #     help_text=_("Required"),
-    #     max_length=255,
-    #     default="CODA",
-    # )
-    employee = models.ForeignKey(
-        "accounts.CustomerUser",
+    employee = models.CharField(
         verbose_name=_("Employee Name"),
         help_text=_("Required"),
-        on_delete=models.CASCADE,
-        related_name="employee",
-        default=1,
-        limit_choices_to={"is_employee": True,"is_active": True}
+        max_length=255,
+        default="CODA",
     )
+    # employee = models.ForeignKey(
+    #     "accounts.CustomerUser",
+    #     verbose_name=_("Employee Name"),
+    #     help_text=_("Required"),
+    #     on_delete=models.CASCADE,
+    #     related_name="employee",
+    #     default=1,
+    #     limit_choices_to={"is_employee": True,"is_active": True}
+    # )
     author = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=_("Client Name"),
