@@ -230,12 +230,12 @@ class RequirementForm(forms.ModelForm):
             "doc": "Upload Supporting Document",
         }
 
-    def __init__(self, **kwargs):
-        super(RequirementForm, self).__init__(**kwargs)
-        self.fields["created_by"].queryset = CustomerUser.objects.filter(
-            is_employee=True 
-            # Q(is_employee=True)
-        )
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["created_by"].queryset = CustomerUser.objects.filter(
+    #         is_employee=True 
+    #         # Q(is_employee=True)
+    #     )
 
 class EvidenceForm(forms.ModelForm):
     class Meta:
