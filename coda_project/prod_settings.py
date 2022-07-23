@@ -304,5 +304,5 @@ CELERYBEAT_SCHEDULE = {
 
 # FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
 # FILE_SAVE_DIR = '/var/www/html/uploads/'
-# SITEURL="localhost:8000"
+
 SITEURL="https://www.codanalytics.net"

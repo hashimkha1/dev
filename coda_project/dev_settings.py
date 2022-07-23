@@ -266,4 +266,5 @@ CELERYBEAT_SCHEDULE = {
         #'schedule': crontab(),
     },
 }
-SITEURL="localhost:8000"
+
+SITEURL="http://localhost:8000"
