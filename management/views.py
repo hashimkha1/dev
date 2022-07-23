@@ -477,7 +477,7 @@ def newtaskcreation(request):
                 if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
                     # print("activity existing",act)
                     des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
-                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=po,mxpoint=maxpo,mxearning=maxear)
+                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
                 else:
                     Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
 
