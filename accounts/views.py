@@ -617,7 +617,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=self.request.user,
+                    employee=form.instance.employee,
                 )[
                     0
                 ]
@@ -642,7 +642,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=self.request.user,
+                    employee=form.instance.employee,
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
