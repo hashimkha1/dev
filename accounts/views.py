@@ -686,20 +686,19 @@ class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         # form.instance.author=self.request.user
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.is_staff:
             return super().form_valid(form)
         else:
             return False
 
     def test_func(self):
         track = self.get_object()
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.is_staff:
             return True
-        elif self.request.user.admin:
-            return True
-        elif self.request.user == track.author:
-            return True
-        return False
+        # elif self.request.user ==track.author:
+        #     return True
+        else:
+            return False
 
 
 @method_decorator(login_required, name="dispatch")
