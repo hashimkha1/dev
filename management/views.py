@@ -379,7 +379,7 @@ def policy(request):
             return redirect("management:policies")
     else:
         form = PolicyForm()
-    return render(request, "management/hr/policy.html", {"form": form})
+    return render(request, "management/departments/hr/policy.html", {"form": form})
 
 def policies(request):
     day_name = date.today().strftime("%A")
@@ -1163,13 +1163,13 @@ def assess(request):
             return redirect("management:assessment")
     else:
         form = ManagementForm()
-    return render(request, "management/hr/assess_form.html", {"form": form})
+    return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
 
 class AssessListView(ListView):
     queryset = DSU.objects.filter(type="Staff").order_by("-created_at")
     # queryset=DSU.objects.all()
-    template_name = "management/hr/assessment.html"
+    template_name = "management/departments/hr/assess_form.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
 
