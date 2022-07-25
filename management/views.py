@@ -55,19 +55,36 @@ def home(request):
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
 
+# ================================DEPARTMENT SECTION================================
 def department(request):
-    departments=Department.objects.all()
-    return render(request, "management/doc_templates/departmentlist.html" , {'departments':departments})
+    departments=Department.objects.all().order_by('-created_date')
+    return render(request, "management/departments/departments.html" , {'departments':departments})
 
 def newdepartment(request):
     if request.method == "POST":
         form = DepartmentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('management:management-department')
+            return redirect('management:departments')
     else:
         form=DepartmentForm()
-    return render(request, "management/doc_templates/department_form.html", {"form":form})
+    return render(request, "management/tag_form.html", {"form":form})
+
+class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Department
+    success_url="/management/departments"
+    fields = ["name","slug","description","is_active","is_featured"]
+    form = DepartmentForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+
 
 
 def contract(request):
@@ -364,18 +381,22 @@ def policy(request):
         form = PolicyForm()
     return render(request, "management/hr/policy.html", {"form": form})
 
-
 def policies(request):
-    reporting_date = date.today()
     day_name = date.today().strftime("%A")
-    #policies from management app
     policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
+    applicant_policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
+    reporting_date = date.today() + timedelta(days=7)
     context = {
         "policies": policies,
+        "applicant_policies": applicant_policies,
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    return render(request, "management/hr/policies.html", context)
+    if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
+        return render(request, "application/orientation/policies.html", context)
+    else:
+        return render(request, "management/departments/hr/policies.html", context)
+
 
 class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Policy

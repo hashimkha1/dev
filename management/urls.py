@@ -8,7 +8,7 @@ from .views import (
                         UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
-                        PolicyUpdateView,#OutflowListView,
+                        PolicyUpdateView,DepartmentUpdateView,
                         OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
                         TransactionUpdateView,TransactionListView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
@@ -48,13 +48,13 @@ urlpatterns = [
     path('companyagenda/', views.companyagenda, name='companyagenda'),
     path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
     path('finance/', views.finance, name='finance'),
-    path('hr/', views.companyagenda, name='hr'),
+    path('hr/', views.hr, name='hr'),
     #path('other/', views.transact, name='management-transact'), 
 
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
-    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/hr/policy_form.html"), name="policy-update"),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/departments/hr/policy_form.html"), name="policy-update"),
     
     path('benefits/', views.benefits, name='benefits'),
 
@@ -68,6 +68,7 @@ urlpatterns = [
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
+    path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
@@ -88,6 +89,10 @@ urlpatterns = [
     path('assess/', views.assess, name='assess'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
 
+    path('department/newdepartment', views.newdepartment, name='newdepartment'),
+    path('departments/', views.department, name='departments'),
+    path('department/<int:pk>/', DepartmentUpdateView.as_view(template_name='management/tag_form.html'), name='department-update'),
+    
     path('requirement/new', views.newrequirement, name='new_requirement'),
     path('requirements/', views.requirements, name='requirements'),
     path('activerequirements/', views.active_requirements, name='requirements-active'),

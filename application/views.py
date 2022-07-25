@@ -171,7 +171,7 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
-            return redirect("application:policies")
+            return redirect("management:policies")
 
     return render(
         request,
@@ -256,11 +256,11 @@ def internal_training(request):
 #         form = PolicyForm()
 #     return render(request, "application/orientation/policy.html", {"form": form})
 
-def policies(request):
-    reporting_date = date.today() + timedelta(days=7)
-    policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
-    context = {"policies": policies, "reporting_date": reporting_date}
-    return render(request, "application/orientation/policies.html", context)
+# def policies(request):
+#     reporting_date = date.today() + timedelta(days=7)
+#     policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
+#     context = {"policies": policies, "reporting_date": reporting_date}
+#     return render(request, "application/orientation/policies.html", context)
 
 # -------------------------rating Section-------------------------------------#
 def rate(request):
