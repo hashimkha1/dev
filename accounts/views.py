@@ -497,7 +497,6 @@ class ClientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
-
 @method_decorator(login_required, name="dispatch")
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = CustomerUser
@@ -529,42 +528,38 @@ class TrackListView(ListView):
     template_name = "accounts/tracker.html"
     context_object_name = "trackers"
     ordering = ["-login_date"]
-    # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
-    def get_queryset(self, *args, **kwargs):
-        qs = super(TrackListView, self).get_queryset(*args, **kwargs)
-        em = Tracker.objects.all().values().order_by('-pk')[0]
-        trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
-        num =trackers.count()
-        Used=trackers.aggregate(Used_Time=Sum('duration'))  
-        Usedtime=Used.get('Used_Time')
-        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
-        if Usedtime < 30:
-            subject = "New Contract Alert"
-            to = customer_get[1]
-            html_content = f"""
-                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-                <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
-                </span>"""
-            email_template(subject, to, html_content)
+    # # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super(TrackListView, self).get_queryset(*args, **kwargs)
+    #     em = Tracker.objects.all().values().order_by('-pk')[0]
+    #     trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
+    #     num =trackers.count()
+    #     Used=trackers.aggregate(Used_Time=Sum('duration'))  
+    #     Usedtime=Used.get('Used_Time')
+    #     customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+    #     if Usedtime < 30:
+    #         subject = "New Contract Alert"
+    #         to = customer_get[1]
+    #         html_content = f"""
+    #             <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+    #             <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
+    #             </span>"""
+    #         email_template(subject, to, html_content)
 
-        return qs
-
-        # return tarcker_data
+    #     return qs
 
 def usertracker(request, user=None, *args, **kwargs):
-    # trackers=Tracker.objects.all().order_by('-login_date')
-    # user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-    # trackers=Tracker.objects.filter(author=request.user).order_by('-login_date')
     user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
     trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
+    em = Tracker.objects.all().values().order_by('-pk')[0]
     num = trackers.count()
+    # Check on my_time=avg("time")
     my_time = trackers.aggregate(Assigned_Time=Avg("time"))
     Used = trackers.aggregate(Used_Time=Sum("duration"))
     Usedtime = Used.get("Used_Time")
     # plantime = my_time.get("Assigned_Time")
     payment_details = Payment_History.objects.filter(customer= user)
     contract_plan_hours = payment_details.aggregate(Sum('plan'))
-    print(contract_plan_hours) 
     assigned_hours =0
     if contract_plan_hours.get('plan__sum'):
         assigned_hours = contract_plan_hours.get('plan__sum') * 40
@@ -575,7 +570,17 @@ def usertracker(request, user=None, *args, **kwargs):
         delta = round(plantime - Usedtime)
     except (TypeError, AttributeError):
         delta = 0
-        return render(request, "accounts/tracker.html")
+    customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+    if delta < 30:
+        subject = "New Contract Alert"
+        to = customer_get[1]
+        html_content = f"""
+            <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+            <a href='http://127.0.0.1:8000/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+            
+            </span>"""
+        email_template(subject, to, html_content)
+
     context = {
         "trackers": trackers,
         "num": num,
@@ -583,7 +588,6 @@ def usertracker(request, user=None, *args, **kwargs):
         "Usedtime": Usedtime,
         "delta": delta,
     }
-
     return render(request, "accounts/usertracker.html", context)
 
 
@@ -676,7 +680,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)  
 """
 
-
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tracker
@@ -700,7 +703,6 @@ class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         else:
             return False
 
-
 @method_decorator(login_required, name="dispatch")
 class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Tracker
@@ -715,47 +717,3 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 
-# =======================TESTING=======================
-"""
-@method_decorator(login_required, name='dispatch')
-class CustomerUserCreateView(LoginRequiredMixin, CreateView):
-    model=CustomerUser
-    success_url="/accounts/tracker"
-    #success_url="usertime"
-    #fields=['username','task','duration']
-    fields=['first_name','last_name','date_joined','email','gender','phone','address','city','state','country','category']
-    
-    def form_valid(self,form):
-        form.instance.author=self.request.user
-        return super().form_valid(form)  
-
-@login_required
-def register(request):
-    if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('accounts:account-login')
-    else:
-        form = SignUpForm(request.POST)
-    return render(request, 'users/register.html',{'form':form})
-
-def register(request):
-    if request.method == 'POST':
-        form = UserRegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            category = form.cleaned_data.get('category')
-            messages.success(request, f'Account created for {username}!')
-            if category == Applicant:
-                return render(request, 'users/register.html', {'form': form})
-            else:
-                return redirect('accounts:account-login')
-    else:
-        form = UserRegisterForm()
-    return render(request, 'users/register.html', {'form': form})
-
-"""
