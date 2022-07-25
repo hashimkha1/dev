@@ -24,33 +24,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
 from management.utils import email_template
-# from .forms import (
-#     # TransactionForm,
-#     OutflowForm,
-#     InflowForm,
-#     PolicyForm,
-#     ManagementForm,
-#     RequirementForm,
-#     EvidenceForm,
-# )
 from django.views.generic import (
     CreateView,
-    DeleteView,
-    DetailView,
     ListView,
     UpdateView,
 )
-
-from data.models import DSU
-
+from .models import TrainingLoan
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from accounts.models import Tracker
+
+from .forms import LoanForm
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
-
-
 
 # Create your views here.
 
@@ -161,7 +147,10 @@ def mycontract(request, *args, **kwargs):
 		return render(request, 'my_supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
 	if client_data.category == 3 and client_data.sub_category == 2:
 		return render(request, 'my_trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
-
+	else:
+        # return render(request, 'templates\errors\403.html')
+	    raise Http404("Login/Wrong Page: Are You a Client?")
+		
 @login_required
 def newcontract(request, *args, **kwargs):
 	username = kwargs.get('username')
@@ -183,29 +172,10 @@ def newcontract(request, *args, **kwargs):
 		return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 	if client_data.category == 3 and client_data.sub_category == 2:
 		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
-
-
-@login_required
-def newcontract(request, *args, **kwargs):
-	username = kwargs.get('username')
-	client_data=CustomerUser.objects.get(username=username)
-	check_default_fee = Default_Payment_Fees.objects.all()
-	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.get(id=1)
 	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=1)
-	today = date.today()
-	contract_date = today.strftime("%d %B, %Y")
+        # return render(request, 'templates\errors\403.html')
+	    raise Http404("Login/Wrong Page: Are You a Client?")
 
-	if client_data.category == 3 and client_data.sub_category == 1:
-		return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
-	if client_data.category == 3 and client_data.sub_category == 2:
-		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 
 class PaymentCreateView(LoginRequiredMixin, CreateView):
     model = Default_Payment_Fees
@@ -256,3 +226,43 @@ class DefaultPaymentUpdateView(UpdateView):
         # elif self.request.user == task.employee:
         #     return True
         return False
+
+
+# ============LOAN VIEWS========================
+def loan(request):
+    if request.method == "POST":
+        form = LoanForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('finance:trainingloans')
+    else:
+        form=LoanForm()
+    return render(request, "finance/payments/payment_form.html", {"form":form})
+	
+
+class LoanUpdateView(UpdateView):
+    model = TrainingLoan
+    success_url = "/finance/payments"
+	
+    fields = [ "user","category","amount","is_active"]
+   
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        if self.request.user.is_superuser:
+            return super().form_valid(form)
+        else:
+            return redirect("finance:trainingloans")
+            # return render(request,"management/doc_templates/supportcontract_form.html")
+
+    def test_func(self):
+        task = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        # elif self.request.user == task.employee:
+        #     return True
+        return False
+
+class LoanListView(ListView):
+    model = TrainingLoan
+    template_name = "finance/payments/loans.html"
+    context_object_name = "payments"
