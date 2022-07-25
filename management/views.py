@@ -29,10 +29,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    # Transaction,
     Policy,
-    # Inflow,
-    # Outflow,
     Tag,
     Task,
     TaskHistory,
@@ -41,14 +38,13 @@ from .models import (
 )
 from data.models import DSU
 
-from finance.models import Transaction,Inflow,Outflow
+from finance.models import Transaction,Inflow,Outflow,TrainingLoan
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
-from finance.models import Transaction,Inflow,Outflow
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -144,7 +140,7 @@ def finance(request):
 
 
 def hr(request):
-    return render(request, "management/company_finances/hr.html", {"title": "HR"})
+    return render(request, "management/companyagenda.html", {"title": "HR"})
 
 
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
@@ -588,6 +584,7 @@ def task_payslip(request, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
+
     loan = Decimal(total_pay) * Decimal("0.2")
     computer_maintenance = 500
     food_accomodation = 1000
@@ -875,6 +872,7 @@ def payslip(request, user=None, *args, **kwargs):
     # the loan amount and add to the deductions. We need to create
     # new database table to store the loan amount and add to the database.
     loan = Decimal(total_pay) * Decimal("0.2")
+    kra = Decimal(total_pay) * Decimal("0.30")
     # if employee use company computer, add the charge to the deductions.
     computer_maintenance = 500
     # if user self paid the food accomodation, no need to add to the deductions
@@ -948,6 +946,7 @@ def payslip(request, user=None, *args, **kwargs):
         "food_accomodation": food_accomodation,
         "health": health,
         "loan": loan,
+        "kra": kra,
         "total_deduction": total_deduction,
         # bonus
         "Night_Bonus": Night_Bonus,

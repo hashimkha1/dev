@@ -73,7 +73,7 @@
           </div>
         </li>
         {% if user.is_authenticated %}
-        {% if user.is_admin or  user.is_employee %}
+        {% if user.is_admin or  user.is_employee or  user.is_superuser%}
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Reports</a>
