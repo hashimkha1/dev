@@ -417,3 +417,16 @@ class Inflow(models.Model):
     def total_payment(self):
         total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
         return total
+
+
+class TrainingLoan(models.Model):
+    LOAN_CHOICES = [
+        ("Debit", "Debit"),
+        ("Credit", "Credit"),
+    ]
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    category = models.CharField(max_length=25, choices=LOAN_CHOICES,)
+    amount = models.BigIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField('Is complete', default=True)

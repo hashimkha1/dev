@@ -3,7 +3,7 @@ from . import views
 from .views import (
                     PaymentCreateView,PaymentListView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    #FeaturedActivityCreateView,FeaturedActivityLinksCreateView,PaymentUpdateView
+                    LoanListView,LoanUpdateView
 )
 app_name = 'finance'
 urlpatterns = [
@@ -15,5 +15,9 @@ urlpatterns = [
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
     path('newpayment/', PaymentCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpayment'),
     path('payment/<int:pk>/update/', DefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
+     # Loans URLS
+    path('loans/', LoanListView.as_view(template_name='finance/payments/loans.html'), name='trainingloans'),
+    path('newpay/', views.loan, name='newpay'),
+    path('loan/<int:pk>/update/', LoanUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='loan-update'),
  
 ]
