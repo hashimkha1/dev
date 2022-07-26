@@ -282,7 +282,7 @@ class Tracker(models.Model):
         default=1
     )
     employee= models.CharField(
-        verbose_name=_("Company/End Client"),
+        verbose_name='Employee Name',
         help_text=_("Required"),
         max_length=255,
         default="CODA",
