@@ -1,3 +1,4 @@
+from turtle import down
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -11,6 +12,12 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django.shortcuts import render
+from django.http import JsonResponse
+import json
+
+from stripe import Plan
+from finance.models import Payment_History
 
 from .forms import TransactionForm
 from .models import Expenses, Payments
@@ -81,6 +88,37 @@ def report(request):
 def pay(request):
     payments = Payments.objects.all().first()
     return render(request, "main/pay.html", {"title": "pay", "payments": payments})
+
+
+def paymentComplete(request):
+    body = json.loads(request.body)
+    print("BODY:", body)
+    customer = body["customer"]
+    payment_fees = body["payment_fees"]
+    down_payment = body["down_payment"]
+    studend_bonus = body["student_bonus"]
+    plan = body["plan"]
+    payment_mothod = body["payment_method"]
+    contract_submitted_date = body["contract_sub_date"]
+    client_signature = body["client_signature"]
+    company_rep = body["company-rep"]
+    client_date = body["client_date"]
+    rep_date = body["rep_date"]
+    Payment_History.objects.create(
+        customer=customer,
+        payment_fees=payment_fees,
+        down_payment=down_payment,
+        student_bonus=studend_bonus,
+        plan=plan,
+        payment_method=payment_mothod,
+        contract_submitted_date=contract_submitted_date,
+        client_signature=client_signature,
+        company_rep=company_rep,
+        client_date=client_date,
+        rep_date=rep_date,
+    )
+
+    return JsonResponse("Payment completed!", safe=False)
 
 
 def training(request):
