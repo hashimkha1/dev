@@ -16,9 +16,6 @@
 
     <h5><i>Please make a payment to access the course/interview materials. Thank You!</i></h5>
     <hr />
-  
-  
- 
     <div class="pay text-center padding-auto">
       <div class="pay_header">
         <div>
@@ -28,7 +25,6 @@
         </div>
       </div>
     </div>
-       <input type="text" id="myText" value={{payments.payment_fees}}>
         <div id="paypal-button-container"></div>
   </div>
 	    <!-- Set up a container element for the button -->
@@ -38,10 +34,9 @@
     <script src="https://www.paypal.com/sdk/js?client-id=AemSepU21NzcaMEfxSeOLtbQXldABFn6c7Oe8rPYTMROlEaPUvfFifzL3xc8SVqb_7wLF0RNQ2U8UWlW&currency=USD"></script>
 
     <script>
-      var price = document.getElementById("myText").value;
-      const customer="{{request.user}}";
-      const down_payment="{{payments.down_payment}}";
 
+      const customer="{{request.user}}";
+      const price="{{payments.payment_fees}}";
       function getCookie(name) {
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
@@ -59,18 +54,18 @@
         }
         var csrftoken = getCookie('csrftoken');
 
-      function completeOrder(){
-        var url = "{% url 'main:payment_complete' %}"
+          function completeOrder(){
+            var url = "{% url 'main:payment_complete' %}"
 
-        fetch(url, {
-          method:'POST',
-          headers:{
-            'Content-type':'application/json',
-            'X-CSRFToken':csrftoken,
-          },
-          body:JSON.stringify({'customer':customer,'down_payment':down_payment,'student_bonus':student_bonus,'fee_balance':fee_balance,'plan':plan,'payment_method':payment_method,'contract_submitted_date':contract_submitted_date,'client_signature':client_signature,'company_rep':company_rep,'client_date':client_date,'rep_date':rep_date,})
-        })
-      }
+            fetch(url, {
+              method:'POST',
+              headers:{
+                'Content-type':'application/json',
+                'X-CSRFToken':csrftoken,
+              },
+              body:JSON.stringify({"payment_fees":price})
+            })
+          }
 
 
         // Render the PayPal button into #paypal-button-container
@@ -94,8 +89,8 @@
                     console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
                     var transaction = orderData.purchase_units[0].payments.captures[0];
                     
-                    completeOrder();
-                    alert('Transaction '+ transaction.status);
+                    completeOrder()
+                    alert('Transaction completed successfully with Transaction ID: ' + transaction.id);
 
                     // Replace the above to show a success message within this page, e.g.
                     // const element = document.getElementById('paypal-button-container');

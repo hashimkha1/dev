@@ -24,11 +24,12 @@ class Payment_Information(models.Model):
         "accounts.CustomerUser",
         verbose_name=("Client Name"),
         on_delete=models.CASCADE,
-        related_name="customer")
-    payment_fees=models.IntegerField()
-    down_payment=models.IntegerField(default=500)
-    student_bonus=models.IntegerField(null=True,blank=True)
-    fee_balance=models.IntegerField(default=None)
+        related_name="customer",
+    )
+    payment_fees = models.IntegerField()
+    down_payment = models.IntegerField(default=500)
+    student_bonus = models.IntegerField(null=True, blank=True)
+    fee_balance = models.IntegerField(default=None)
     plan = models.IntegerField()
     payment_method = models.CharField(max_length=100)
     contract_submitted_date = models.DateTimeField(default=timezone.now)
@@ -41,20 +42,22 @@ class Payment_Information(models.Model):
     def student_balance(self):
         stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
         return stu_bal
+
     @property
     def jobsupport_balance(self):
-        support_bal = self.payment_fees - int(self.down_payment) 
+        support_bal = self.payment_fees - int(self.down_payment)
         return support_bal
-
 
     @property
     def student_balance(self):
         stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
         return stu_bal
+
     @property
     def jobsupport_balance(self):
-        support_bal = self.payment_fees - int(self.down_payment) 
+        support_bal = self.payment_fees - int(self.down_payment)
         return support_bal
+
 
 class Payment_History(models.Model):
     id = models.AutoField(primary_key=True)
@@ -62,11 +65,12 @@ class Payment_History(models.Model):
         "accounts.CustomerUser",
         verbose_name=("Client Name"),
         on_delete=models.CASCADE,
-        related_name="customer_payment_history")
-    payment_fees=models.IntegerField()
-    down_payment=models.IntegerField(default=500)
-    student_bonus=models.IntegerField(null=True,blank=True)
-    fee_balance=models.IntegerField(default=None)
+        related_name="customer_payment_history",
+    )
+    payment_fees = models.IntegerField()
+    down_payment = models.IntegerField(default=500)
+    student_bonus = models.IntegerField(null=True, blank=True)
+    fee_balance = models.IntegerField(default=None)
     payment_fees = models.IntegerField()
     down_payment = models.IntegerField(default=500)
     student_bonus = models.IntegerField(null=True, blank=True)
@@ -84,11 +88,12 @@ class Payment_History(models.Model):
 
 
 class Default_Payment_Fees(models.Model):
-	id = models.AutoField(primary_key=True)
-	job_down_payment_per_month = models.IntegerField(default=500)
-	job_plan_hours_per_month = models.IntegerField(default=40)
-	student_down_payment_per_month = models.IntegerField(default=500)
-	student_bonus_payment_per_month = models.IntegerField(default=250)
+    id = models.AutoField(primary_key=True)
+    job_down_payment_per_month = models.IntegerField(default=500)
+    job_plan_hours_per_month = models.IntegerField(default=40)
+    student_down_payment_per_month = models.IntegerField(default=500)
+    student_bonus_payment_per_month = models.IntegerField(default=250)
+
 
 class Transaction(models.Model):
     # Method of Payment
@@ -252,7 +257,9 @@ class Outflow(models.Model):
         (Check, "Check"),
         (Other, "Other"),
     ]
-    employee = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE, related_name="outflows")
+    employee = models.ForeignKey(
+        "accounts.CustomerUser", on_delete=models.CASCADE, related_name="outflows"
+    )
     sender = models.CharField(max_length=100, null=True, default=None)
     receiver = models.CharField(max_length=100, null=True, default=None)
     phone = models.CharField(max_length=50, null=True, default=None)
@@ -389,7 +396,9 @@ class Inflow(models.Model):
         default=Other,
     )
 
-    sender = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE, related_name="inflows")
+    sender = models.ForeignKey(
+        "accounts.CustomerUser", on_delete=models.CASCADE, related_name="inflows"
+    )
     receiver = models.CharField(max_length=100, null=True, default=None)
     phone = models.CharField(max_length=50, null=True, default=None)
     transaction_date = models.DateTimeField(default=timezone.now)

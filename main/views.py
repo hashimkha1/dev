@@ -94,18 +94,19 @@ def pay(request):
 def paymentComplete(request):
     body = json.loads(request.body)
     print("BODY:", body)
-    customer = body["customer"]
+    payments = Payment_Information.objects.all().first()
+    customer = request.user
     payment_fees = body["payment_fees"]
-    down_payment = body["down_payment"]
-    studend_bonus = body["student_bonus"]
-    plan = body["plan"]
-    fee_balance = body["fee_balance"]
-    payment_mothod = body["payment_method"]
-    contract_submitted_date = body["contract_sub_date"]
-    client_signature = body["client_signature"]
-    company_rep = body["company-rep"]
-    client_date = body["client_date"]
-    rep_date = body["rep_date"]
+    down_payment = payments.down_payment
+    studend_bonus = payments.student_bonus
+    plan = payments.plan
+    fee_balance = payments.fee_balance
+    payment_mothod = payments.payment_method
+    contract_submitted_date = payments.contract_submitted_date
+    client_signature = payments.client_signature
+    company_rep = payments.company_rep
+    client_date = payments.client_date
+    rep_date = payments.rep_date
     Payment_History.objects.create(
         customer=customer,
         payment_fees=payment_fees,
