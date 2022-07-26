@@ -275,17 +275,14 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
+    # address1 = models.ForeignKey(Address, verbose_name=_("Address1"),related_name="Address1", null=True, blank=True,on_delete=models.SET_NULL)
+    # address2 = models.ForeignKey(Address, verbose_name=_("Address2"),related_name="Address2", null=True, blank=True,on_delete=models.SET_NULL)
     empname= models.ForeignKey(
         "accounts.CustomerUser", on_delete=models.RESTRICT, related_name="employee_name",
+        verbose_name=_("Employee Name"),
         # limit_choices_to={"is_employee": True,"is_active": True},
         limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
-        default=1
-    )
-    employee= models.CharField(
-        verbose_name='Employee Name',
-        help_text=_("Required"),
-        max_length=255,
-        default="CODA",
+        null=True, blank=True
     )
     author = models.ForeignKey(
         "accounts.CustomerUser",
@@ -293,6 +290,14 @@ class Tracker(models.Model):
         on_delete=models.CASCADE,
         related_name="author",
         limit_choices_to={"is_client": True, "is_active": True},
+        null=True, blank=True
+    )
+
+    employee= models.CharField(
+        verbose_name='Employee Name',
+        help_text=_("Required"),
+        max_length=255,
+        default="CODA",
     )
     # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
