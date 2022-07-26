@@ -19,6 +19,7 @@ from .forms import (
     ManagementForm,
     RequirementForm,
     EvidenceForm,
+    TaskForm
 )
 from django.views.generic import (
     CreateView,
@@ -28,10 +29,10 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    Transaction,
-    Inflow,
-    Outflow,
+    # Transaction,
     Policy,
+    # Inflow,
+    # Outflow,
     Tag,
     Task,
     TaskHistory,
@@ -40,9 +41,14 @@ from .models import (
 )
 from data.models import DSU
 
+from finance.models import Transaction,Inflow,Outflow
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker,Department
 from coda_project import settings
+from datetime import date, timedelta
+from django.db.models import Q
+from finance.models import Transaction,Inflow,Outflow
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -366,14 +372,34 @@ def policy(request):
 def policies(request):
     reporting_date = date.today()
     day_name = date.today().strftime("%A")
-    uploads = Policy.objects.all().order_by("upload_date")
+    #policies from management app
+    policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
     context = {
-        "uploads": uploads,
+        "policies": policies,
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
     return render(request, "management/hr/policies.html", context)
 
+class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Policy
+    # success_url="/management/transaction"
+    fields = ["staff","type","department","day","description","link","is_active","is_featured","is_internal"]
+    form = PolicyForm()
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("management:policies")
+    
+    def test_func(self):
+        policy = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == policy.staff:
+            return True
+        return False
 
 def benefits(request):
     reporting_date = date.today()
@@ -433,8 +459,41 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-from datetime import date, timedelta
-from django.db.models import Q
+def newtaskcreation(request):
+    if request.method == "POST":
+        group = request.POST["group"]
+        category = request.POST["category"]
+        description = request.POST["description"]
+        point = request.POST["point"]
+        mxpoint = request.POST["mxpoint"]
+        mxearning = request.POST["mxearning"]
+
+        employee = request.POST["employee"].split(",")
+        activitys = request.POST["activitys"].split(",")
+        # print(type(employee),type(activitys))
+        # print(employee,activitys)
+        for emp in employee:
+            for act in activitys:
+                if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
+                    # print("activity existing",act)
+                    des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
+                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
+                else:
+                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+
+        # return redirect("management:tasks")
+        return JsonResponse({"success":True})
+
+    else:
+        tag = Tag.objects.all()
+        employess = User.objects.filter(Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True)).all()
+
+    return render(request, "management/tasknew_form.html", {"category": tag,"employess":employess})
+
+def gettasksuggestions(request):
+    category = request.POST["category"]
+    tasks = list(Task.objects.values_list("activity_name",flat=True).filter(category__id = category))
+    return JsonResponse({"tasklist":tasks})
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
@@ -625,6 +684,8 @@ def usertask(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
     # tasks = Task.objects.filter(user__username=request.user)
+    points_count = Task.objects.filter(description__in=['Meetings','General','Sprint','DAF','Recruitment','Job Support','BI Support'],employee=employee)
+    point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -675,7 +736,7 @@ def usertask(request, user=None, *args, **kwargs):
     try:
         average_earnings = average_earnings / counter
     except Exception as ZeroDivisionError:
-        average_earnings = 0.0
+        average_earnings = GoalAmount
 
     context = {
         "tasksummary": tasksummary,
@@ -691,6 +752,7 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
+        "point_check":point_check,
         "average_earnings":average_earnings
     }
 
@@ -982,7 +1044,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("management:user_task", kwargs={"username": str(task.employee)})
 
     # fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
-    fields = ["employee", "activity_name", "description", "point"]
+    fields = ["category","employee", "activity_name", "description", "point"]
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -1017,7 +1079,6 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
 # =============================EMPLOYEE EVIDENCE========================================
 def newevidence(request,taskid):
     if request.method == "POST":
@@ -1029,10 +1090,10 @@ def newevidence(request,taskid):
             return render(request, "errors/404.html")
 
         if form.is_valid():
-            points,maxpoints = Task.objects.values_list("point","mxpoint").filter(employee=request.user,id=taskid)[0]
-        
-            if points != maxpoints:
-                Task.objects.filter(employee=request.user,id=taskid).update(point=points+1)
+            points,maxpoints,taskname = Task.objects.values_list("point","mxpoint","activity_name").filter(id=taskid)[0]
+            jobsup_list = ["job support","job_support","jobsupport" ]
+            if points != maxpoints and taskname.lower() not in jobsup_list:
+                Task.objects.filter(id=taskid).update(point=points+1)
 
             # User will taken from the request 
             form.save()
@@ -1071,6 +1132,7 @@ def evidence_update_view(request, id, *args, **kwargs):
     # add form dictionary to context
     context["form"] = form
     return render(request, "management\daf\evidence_form.html", context)
+
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
 def assess(request):

@@ -3,7 +3,8 @@ from django.forms import ModelForm, Textarea
 from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
-from .models import TaskLinks, Transaction, Outflow, Inflow, Policy, Requirement
+from .models import TaskLinks, Policy, Requirement,Task
+from finance.models import Transaction,Inflow,Outflow
 from accounts.models import Department
 
 """
@@ -143,22 +144,31 @@ class PolicyForm(forms.ModelForm):
     class Meta:
         model = Policy
         fields = [
-            "first_name",
-            "last_name",
+            "staff",
+            # "first_name",
+            # "last_name",
             "department",
+            "day",
             "type",
             "description",
+            "link",
             "policy_doc",
+            "is_active",
+            "is_featured",
+            "is_internal",
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
+            "staff": "User Name",
+            "link": "Paste Link",
+            "day": "Review Day",
+            # "first_name": "First Name",
+            # "last_name": "Last Name",
             "type": "Policy Type",
             "department": "Department",
             "description": "Description",
             "policy_doc": "Attach Policy",
         }
-
+        widgets = {"description": Textarea(attrs={"cols": 75, "rows": 3})}
 
 class ManagementForm(forms.ModelForm):
     class Meta:
@@ -220,6 +230,13 @@ class RequirementForm(forms.ModelForm):
             "doc": "Upload Supporting Document",
         }
 
+    def __init__(self, **kwargs):
+        super(RequirementForm, self).__init__(**kwargs)
+        self.fields["created_by"].queryset = CustomerUser.objects.filter(
+            is_employee=True 
+            # Q(is_employee=True)
+        )
+
 class EvidenceForm(forms.ModelForm):
     class Meta:
         model = TaskLinks
@@ -260,3 +277,18 @@ class EvidenceForm(forms.ModelForm):
     #     super(EvidenceForm, self).__init__(**kwargs)
     #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
 
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = [
+                   "group",
+                    "category",
+                    "employee",
+                    "activity_name",
+                    "description",
+                    "point",
+                    "mxpoint",
+                    "mxearning",
+        ]
+
+        widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}

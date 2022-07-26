@@ -78,20 +78,21 @@
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Reports</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                  <!-- <a class="dropdown-item"href="https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
-                       target="" >Company Agenda</a > -->
-                  <a class="dropdown-item"href="{% url 'management:companyagenda' %}"
-                    target="" >Company Agenda</a >
-                  <div class="dropdown-divider"></div>
+                  <!-- <a class="dropdown-item" href="https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
+                       target="" >Company Agenda</a >
+                        <div class="dropdown-divider"></div> -->
+                  <a class="dropdown-item" href="{% url 'management:companyagenda' %}"
+                        target="" >Company Agenda</a >
+                         <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'management:finance' %}" 
                        target="" >Finance Report</a>
-                  <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="{% url 'management:hr' %}"
                       target="" >Human Resource Report</a>
-                  <div class="dropdown-divider"></div>
+                      <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="{% url 'management:assess' %}"
                       target="" >Weekly Assessment </a>
-                  <div class="dropdown-divider"></div>
+                      <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="{% url 'main:it' %}"
                           target="" >IT Department</a>
               </div>
@@ -106,14 +107,57 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Account</a>
-            {% include 'main/snippets_templates/account.html' %}
+                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    {% if user.is_employee %}
+                          <a class="dropdown-item"href="{% url 'main:team' %}" target="" >My Account</a >
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:user_task_history' user.id %}" target="" >Last DAF</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >Internal(1-1)</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+
+                    {% elif user.is_admin or user.is_superuser %}
+                          <a class="dropdown-item"href="{% url 'main:team' %}" target="" >My Account</a >
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >Current DAF</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:user_task_history' user.id %}" target="" >Last DAF</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >Internal(1-1)</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% elif user.is_client %}
+                      <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="" >My Time</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'finance:mycontract' request.user %}" target="" >My Contract</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'finance:newcontract' request.user %}" target="" >New Contract</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% else %}
+                      <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% endif %}
+              </div>
         </li>
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#"  id="navbarDropDown" role="button" data-toggle="dropdown"
             >Support</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                    {% if user.is_superuser or user.is_admin or user.is_employee %}
+                    {% if user.is_admin or  user.is_employee %}
                           <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:requirements'%}" target="" >Requirements</a>

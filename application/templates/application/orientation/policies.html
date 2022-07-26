@@ -6,63 +6,7 @@
     <p>
         Thank you for your submissions, please read through our policy requirements before joining us.
     </p>
-
-    <style type="text/css">
-      .tg {
-        border-collapse: collapse;
-        border-spacing: 0;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .tg td {
-        border-color: black;
-        border-style: solid;
-        border-width: 1px;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        overflow: hidden;
-        padding: 10px 5px;
-        word-break: normal;
-      }
-      .tg th {
-        border-color: rgb(0, 0, 0);
-        border-style: solid;
-        border-width: 1px;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        font-weight: normal;
-        overflow: hidden;
-        padding: 10px 5px;
-        word-break: normal;
-      }
-      .tg .tg-67dp {
-        background-color: #dce6f1;
-        text-align: left;
-        vertical-align: bottom;
-      }
-      .tg .tg-8xdm {
-        background-color: #817b7b;
-        color: #ffffff;
-        font-family: Impact, Charcoal, sans-serif !important;
-        font-size: 15px;
-        text-align: center;
-        vertical-align: bottom;
-      }
-      .tg .tg-xs21 {
-        background-color: #817b7b;
-        color: #ffffff;
-        font-family: Impact, Charcoal, sans-serif !important;
-        font-size: 15px;
-        font-weight: bold;
-        text-align: center;
-        vertical-align: bottom;
-      }
-      .tg .tg-7zrl {
-        text-align: left;
-        vertical-align: bottom;
-      }
-    </style>
-
+    {% include 'application/templateutils.html' %}
     <table class="tg">
       <thead>
         <tr>
@@ -88,29 +32,40 @@
       </thead>
 
       <tbody>
-        {% for upload in uploads %}
+        {% for policy in policies %}
         <tr>
           <td class="tg-7zrl">
             <span style="font-weight: 400; text-decoration: none; color: black"
-              >{{upload.id}}0100</span
+              >{{policy.id}}0100</span
             >
           </td>
           <td class="tg-7zrl">
             <span style="font-weight: 400; text-decoration: none; color: black"
-              >{{upload.policy_type}}</span
+              >{{policy.type}}</span
             >
           </td>
           <td class="tg-7zrl">
             <span style="font-weight: 400; text-decoration: none; color: black"
-              >{{upload.description}}</span
+              >{{policy.description}}</span
             >
           </td>
           <td class="tg-7zrl">
             <span style="font-weight: 400; text-decoration: none; color: black"
-              >{{upload.policy_doc}}</span
+              >{{policy.policy_doc}}</span
             >
           </td>
-          --->
+          <td class="tg-7zrl">
+            <span style="font-weight: 400; text-decoration: none; color: black"
+              >
+              <a
+                        href="{%url 'management:policy-update' policy.id %}" 
+                          class="btn text-secondary px-0"
+                        > 
+                        <h4><b>☑</b></h4> 
+                    </a>
+              </span
+            >
+          </td>
         </tr>
         {% endfor %}
       </tbody>

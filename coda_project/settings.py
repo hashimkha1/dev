@@ -22,7 +22,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True  # False
+DEBUG = True
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -65,9 +65,7 @@ INSTALLED_APPS = [
     #'dbbackup',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-# DBBACKUP_STORAGE='django.core.files.storage.FileSystemStorage'
-# DBBACKUP_STORAGE_OPTIONS={'location':BASE_DIR/'backup'}
-# DBBACKUP_STORAGE_OPTIONS={'location':'/codapp/backup'}
+
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
@@ -121,16 +119,6 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
 #         'NAME': 'CODADB_DEV',# Name of Database
 #         'USER':'postgres',
 #         'PASSWORD': os.environ.get('POSTGRESSPASS'),
@@ -138,15 +126,10 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-# #postgresql database
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_DEV',# Name of Database
-#         'USER':'CODA_DEV',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-#         'PORT': '5432'
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
 #     }
 # }
 
@@ -160,10 +143,10 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-
 import dj_database_url
 
 # postgresql database
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -248,21 +231,12 @@ EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
 
 # Gmail Email Backend Account
-""" 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com" 
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER") 
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
-
-"""
-
-# Email Backend
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
+# EMAIL_HOST_USER = "hunjin015@gmail.com"
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
@@ -273,8 +247,6 @@ AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-# AWS_S3_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-# AWS_S3_BUCKET_NAME_STATIC =  os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
@@ -303,5 +275,5 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-# FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
-# FILE_SAVE_DIR = '/var/www/html/uploads/'
+# SITEURL="http://localhost:8000"
+SITEURL = "https://www.codanalytics.net"

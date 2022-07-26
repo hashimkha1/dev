@@ -8,7 +8,7 @@ from .views import (
                         UserInflowListView,AssessListView,TagCreateView,
                         InflowDetailView,#InflowCreateView,
                         InflowUpdateView,InflowDeleteView,
-                        #OutflowCreateView,#OutflowListView,
+                        PolicyUpdateView,#OutflowListView,
                         OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
                         TransactionUpdateView,TransactionListView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
@@ -54,6 +54,8 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/hr/policy_form.html"), name="policy-update"),
+    
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
@@ -64,17 +66,17 @@ urlpatterns = [
     path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
     path('evidence/',views.evidence, name='evidence'),
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
-    path('<id>/update', views.evidence_update_view ,name='evidence_update'),
+    path('evidence/<int:id>', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
-    path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
-
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
     path('payslip/<str:username>/',views.payslip, name='user_payslip'),
     path('task_payslip/<int:pk>/',views.task_payslip, name='task_payslip'),
-    path('newtask/', TaskCreateView.as_view(), name='newtask'),
-    path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
+    # path('newtask/', TaskCreateView.as_view(), name='newtask'),
+    path('newtask/', views.newtaskcreation, name='newtask'),
+    path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
+
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
     path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),

@@ -161,7 +161,7 @@ class Credential(models.Model):
     entry_date = models.DateTimeField(_('entered on'),auto_now_add=True, editable=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
-    user_type = models.CharField(
+    user_types = models.CharField(
         max_length=25,
         choices=USER_CHOICES,
         default="Other",
@@ -281,6 +281,15 @@ class Tracker(models.Model):
         max_length=255,
         default="CODA",
     )
+    # employee = models.ForeignKey(
+    #     "accounts.CustomerUser",
+    #     verbose_name=_("Employee Name"),
+    #     help_text=_("Required"),
+    #     on_delete=models.CASCADE,
+    #     related_name="employee",
+    #     default=1,
+    #     limit_choices_to={"is_employee": True,"is_active": True}
+    # )
     author = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=_("Client Name"),

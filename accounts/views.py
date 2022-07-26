@@ -16,7 +16,7 @@ from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
-
+from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (
@@ -30,9 +30,11 @@ from .models import CustomerUser, Tracker, CredentialCategory, Credential, Depar
 from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
-from finance.models import Default_Payment_Fees
+from finance.models import Default_Payment_Fees,Payment_History
+from management.utils import email_template
 from django.http import QueryDict
 import string, random
+from management.utils import email_template
 
 # Create your views here..
 
@@ -138,12 +140,12 @@ def join(request):
 
             form.save()
 
-            username = form.cleaned_data.get("username")
-            category = form.cleaned_data.get("category")
-            gender = form.cleaned_data.get("gender")
-            country = form.cleaned_data.get("country")
-            messages.success(request, f"Account created for {username}!")
-            return redirect("accounts:account-login")
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('accounts:account-login')
     else:
         msg = "error validating form"
         form = UserForm()
@@ -163,6 +165,7 @@ def login_view(request):
     msg = None
     if request.method == "POST":
         if form.is_valid():
+            request.session["siteurl"] = settings.SITEURL
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
@@ -245,7 +248,7 @@ def login_view(request):
 
 # ================================USERS SECTION================================
 def users(request):
-    users = CustomerUser.objects.all().order_by("-date_joined")
+    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", {"users": users})
 
@@ -376,9 +379,13 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-'''
-# ================================CREDENTIALS SECTION================================
+''' 
+#================================EMPLOYEE SECTION================================
+def Employeelist(request):
+    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
+    return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
+#================================CLIENT SECTION================================
 
 def newcredentialCategory(request):
     if request.method == "POST":
@@ -523,7 +530,26 @@ class TrackListView(ListView):
     context_object_name = "trackers"
     ordering = ["-login_date"]
     # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
+    def get_queryset(self, *args, **kwargs):
+        qs = super(TrackListView, self).get_queryset(*args, **kwargs)
+        em = Tracker.objects.all().values().order_by('-pk')[0]
+        trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
+        num =trackers.count()
+        Used=trackers.aggregate(Used_Time=Sum('duration'))  
+        Usedtime=Used.get('Used_Time')
+        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+        if Usedtime < 30:
+            subject = "New Contract Alert"
+            to = customer_get[1]
+            html_content = f"""
+                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+                <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
+                </span>"""
+            email_template(subject, to, html_content)
 
+        return qs
+
+        # return tarcker_data
 
 def usertracker(request, user=None, *args, **kwargs):
     # trackers=Tracker.objects.all().order_by('-login_date')
@@ -535,7 +561,16 @@ def usertracker(request, user=None, *args, **kwargs):
     my_time = trackers.aggregate(Assigned_Time=Avg("time"))
     Used = trackers.aggregate(Used_Time=Sum("duration"))
     Usedtime = Used.get("Used_Time")
-    plantime = my_time.get("Assigned_Time")
+    # plantime = my_time.get("Assigned_Time")
+    payment_details = Payment_History.objects.filter(customer= user)
+    contract_plan_hours = payment_details.aggregate(Sum('plan'))
+    print(contract_plan_hours) 
+    assigned_hours =0
+    if contract_plan_hours.get('plan__sum'):
+        assigned_hours = contract_plan_hours.get('plan__sum') * 40
+    if my_time.get('Assigned_Time'):
+        plantime=my_time.get('Assigned_Time') + assigned_hours
+    plantime = assigned_hours
     try:
         delta = round(plantime - Usedtime)
     except (TypeError, AttributeError):
@@ -550,40 +585,6 @@ def usertracker(request, user=None, *args, **kwargs):
     }
 
     return render(request, "accounts/usertracker.html", context)
-
-
-"""     if request.user == user:
-        return render(request, 'accounts/usertracker.html', context)
-    elif request.user.is_superuser:
-        return render(request, 'accounts/usertracker.html', context)
-    else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
- """
-
-"""
-@method_decorator(login_required, name='dispatch')
-class UserTrackListView(ListView):
-    model=Tracker
-    template_name='accounts/user_tracker.html'
-    context_object_name='trackers'
-    ordering=['-login_date']
-
-    def get_queryset(self):
-        user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-        return Tracker.objects.filter(author=user).order_by('-login_date')
-
-@method_decorator(login_required, name="dispatch")
-class TrackCreateView(LoginRequiredMixin, CreateView):
-    model = Tracker
-    success_url = "/accounts/tracker"
-    # success_url="usertime"
-    # fields=['category','task','duration']
-    fields = ["employee", "author", "category", "task", "duration", "plan"]
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super().form_valid(form)
-"""
 
 
 class TrackCreateView(LoginRequiredMixin, CreateView):
@@ -612,8 +613,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job_support")
                     | Q(activity_name="jobsupport")
                     | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport"),
-                    employee=self.request.user,
+                    | Q(activity_name="JobSupport")
+                    | Q(activity_name="Job Support")
+                    | Q(activity_name="Job support")
+                    | Q(activity_name="job support"),
+                    employee=form.instance.employee,
                 )[
                     0
                 ]
@@ -634,8 +638,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job_support")
                     | Q(activity_name="jobsupport")
                     | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport"),
-                    employee=self.request.user,
+                    | Q(activity_name="JobSupport")
+                    | Q(activity_name="Job Support")
+                    | Q(activity_name="Job support")
+                    | Q(activity_name="job support"),
+                    employee=form.instance.employee,
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
@@ -687,6 +694,8 @@ class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def test_func(self):
         track = self.get_object()
         if self.request.user.is_superuser:
+            return True
+        elif self.request.user.admin:
             return True
         elif self.request.user == track.author:
             return True
