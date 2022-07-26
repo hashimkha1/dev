@@ -598,7 +598,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     # success_url="usertime"
     # fields=['category','task','duration']
     fields = [
-        "emp_name",
+        "empname",
         "employee", 
         "author",
         "category",
