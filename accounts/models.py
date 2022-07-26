@@ -10,6 +10,8 @@ from django.db.models.signals import pre_save, post_save
 from django.utils.translation import gettext_lazy as _
 from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
+from django.db.models import Q
+from django.contrib.auth import get_user_model
 
 # Create your models here.
 class CustomerUser(AbstractUser):
@@ -61,6 +63,7 @@ class CustomerUser(AbstractUser):
     class Meta:
         ordering = ["-date_joined"]
 
+User = get_user_model()
 
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
@@ -275,21 +278,17 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
-    employee = models.CharField(
-        verbose_name=_("Employee Name"),
-        help_text=_("Required"),
-        max_length=255,
-        default="CODA",
-    )
-    # employee = models.ForeignKey(
-    #     "accounts.CustomerUser",
+    # employee = models.CharField(
     #     verbose_name=_("Employee Name"),
     #     help_text=_("Required"),
-    #     on_delete=models.CASCADE,
-    #     related_name="employee",
-    #     default=1,
-    #     limit_choices_to={"is_employee": True,"is_active": True}
+    #     max_length=255,
+    #     default="CODA",
     # )
+    employee = models.ForeignKey(
+        User, on_delete=models.RESTRICT, related_name="employee",
+        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        default=999
+    )
     author = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=_("Client Name"),

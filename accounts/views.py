@@ -28,7 +28,7 @@ from django.views.generic import (
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from django.db.models import Q
-from management.models import Task
+from management.models import Task,TaskLinks
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
 from management.utils import email_template
@@ -587,6 +587,7 @@ def usertracker(request, user=None, *args, **kwargs):
     return render(request, "accounts/usertracker.html", context)
 
 
+
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
     success_url = "/accounts/tracker"
@@ -606,8 +607,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         try:
             if form.instance.category == "Job_Support":
-                points, targetpoints = Task.objects.values_list(
-                    "point", "mxpoint"
+                idval, points, targetpoints = Task.objects.values_list(
+                    "id","point", "mxpoint"
                 ).filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")
@@ -617,11 +618,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=form.instance.employee,
+                    employee_id=form.instance.employee,
                 )[
                     0
                 ]
-
+                self.idval = idval
                 if (
                     form.instance.sub_category == "Development"
                     or form.instance.sub_category == "Testing"
@@ -642,12 +643,20 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=form.instance.employee,
+                    employee_id=form.instance.employee,
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
-
+        
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse(
+                        "management:new_evidence", 
+                        kwargs={
+                            'taskid':  self.idval
+                        }
+                    )
 
 
 """ 

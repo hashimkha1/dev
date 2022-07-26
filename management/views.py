@@ -44,7 +44,7 @@ from data.models import DSU
 from finance.models import Transaction,Inflow,Outflow
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from accounts.models import Tracker,Department
+from accounts.models import Tracker,Department,CustomerUser
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
@@ -106,11 +106,45 @@ tasksummary = [
 
 # ----------------------REPORTS--------------------------------
 
-import json
+import json,os
+import pickle
+from google_auth_oauthlib.flow import InstalledAppFlow
+from google.auth.transport.requests import Request
+from googleapiclient.discovery import build
+
+def getSpreadsheetdata(spreadSheetId,rangeName):
+    creds = None
+    if os.path.exists('token.pickle'):
+        with open('token.pickle', 'rb') as token:
+            creds = pickle.load(token)
+    # If there are no (valid) credentials available, let the user log in.
+    if not creds or not creds.valid:
+        if creds and creds.expired and creds.refresh_token:
+            creds.refresh(Request())
+        else:
+            SCOPES = ["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/spreadsheets.readonly"]
+            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+            creds = flow.run_local_server()
+        # Save the credentials for the next run
+        with open('token.pickle', 'wb') as token:
+            pickle.dump(creds, token)
+
+    service = build('sheets', 'v4', credentials=creds)
+
+    # Call the Sheets API
+    sheet = service.spreadsheets()
+    result = sheet.values().get(spreadsheetId=spreadSheetId,
+                                range=rangeName,valueRenderOption='FORMULA').execute()
+    values = result.get('values', [])
+    return values
+
 def companyagenda(request):
-    # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
-    # data = json.load(f)
-    # f.close()
+    print("+++++++++COMPANY AGENDA++++++++++++++")
+    spreadsheetid = '1x0XyznGnPildtuUaGebDtZauA1kQSiNe5zNIfgihsRk'
+    rangeName     = "Sheet1!A3:M3"
+    print(rangeName)
+    values        = getSpreadsheetdata(spreadsheetid,rangeName)
+    print(values[0][2])
     with open(settings.STATIC_ROOT+'/companyagenda.json','r') as file:
         data = json.load(file)
 
@@ -528,34 +562,14 @@ def getaveragetargets(request):
 
 class TaskListView(ListView):
     queryset = Task.objects.all()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['employees'] = CustomerUser.objects.filter(is_employee=True)
+        context['admin'] = CustomerUser.objects.filter(is_admin=True)
+        return context
+    # employees = CustomerUser.objects.filter(is_employee=True)
+    # admin = CustomerUser.objects.filter(is_admin=True)
     template_name = "management/daf/tasklist.html"
-
-def filterbycategory(request):
-    category = request.POST["category"]
-    print("category",category)
-
-    tasks = Task.objects.filter(category__title=category)
-    result = []
-    details = {}
-    for data in tasks.all():
-        details["group"] = data.group
-        details["deadline"] = data.deadline.strftime("%d %b %Y")
-        details["submission"] = data.submission.strftime("%d %b %Y")
-        details["point"] = data.point
-        details["mxpoint"] = data.mxpoint
-        details["mxearning"] = float(data.mxearning)
-        details["get_pay"] = float(data.get_pay)
-        details["id"] = data.id
-        details["employee"] = data.employee.username
-        details["first_name"] = data.employee.first_name
-        details["last_name"] = data.employee.last_name
-        details["description"] = data.description
-        details["activity_name"] = data.activity_name
-        details["get_absolute_url"] = str(data.category.get_absolute_url)
-        result.append(details.copy())
-    
-    print(result)
-    return JsonResponse({"result":result},safe =False)
 
 class TaskHistoryView(ListView):
     queryset = TaskHistory.objects.all()
@@ -1314,9 +1328,12 @@ def getaveragetargets(request):
 
 def filterbycategory(request):
     category = request.POST["category"]
-    print("category",category)
+    print(category)
+    if request.POST["type"] == "category":
+        tasks = Task.objects.filter(category__title=category)
+    else:
+        tasks = Task.objects.filter(employee=int(category))
 
-    tasks = Task.objects.filter(category__title=category)
     result = []
     details = {}
     for data in tasks.all():
@@ -1335,5 +1352,5 @@ def filterbycategory(request):
         details["activity_name"] = data.activity_name
         details["get_absolute_url"] = str(data.category.get_absolute_url)
         result.append(details.copy())
-    # print(result)
+    
     return JsonResponse({"result":result},safe =False)

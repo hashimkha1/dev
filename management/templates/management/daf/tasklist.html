@@ -33,9 +33,25 @@
       </div>
     </div> 
   </div> 
+  <div style="float: left">
+      <label for="employee_filter">Employee &nbsp;</label>
+      <select id="employee_filter" name="employee">
+          <option value="" disabled selected hidden>Choose Employee</option>
+          {% for emp in  employees  %}
+            <option value="{{emp.id}}">{{emp.first_name}},{{emp.last_name}}</option>
+          {% endfor %}
+      </select>
+      <label for="admin_filter">Admin &nbsp;</label>
+      <select id="admin_filter" name="admin">
+          <option value="" disabled selected hidden>Choose Admin</option>
+          {% for adm in  admin  %}
+            <option value="{{adm.id}}">{{adm.first_name}},{{adm.last_name}}</option>
+          {% endfor %}
+      </select>
+  </div>
   <div style="float: right">
     <label for="category_filter">To filter by Category &nbsp;</label>
-    <select name="category_filter" >
+    <select name="category" id="category_filter">
         <option value="" disabled selected hidden>Choose a Category</option>
         <option value="Meetings">Meetings</option>
         <option value="Data Analysis">Data Analysis</option>
@@ -117,6 +133,7 @@
 
 
 <script>
+  
   // siteurl = "http://localhost:8000"
   siteurl ="{{request.session.siteurl}}"
 
@@ -138,6 +155,7 @@
   var csrftoken = getCookie('csrftoken');
 
   $('select').on('change', function() {
+
     $.ajax({
         type: "POST",
         url:  siteurl+"/management/tasks/filterbycategory",
@@ -145,7 +163,7 @@
         withCredentials: false, 
         headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
         xsrfHeaderName: "X-CSRFToken",
-        data : { category:this.value },
+        data : { category:this.value ,type:this.getAttribute("name")},
         success: function(result){
             
           

@@ -232,13 +232,14 @@ EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
 # Gmail Email Backend Account
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST = "smtp.privateemail.com"
+EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST = "smtp.privateemail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-# EMAIL_HOST_USER = "hunjin015@gmail.com"
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+# EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
+# EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_HOST_USER = "yalamanchinarendra999@gmail.com"
+EMAIL_HOST_PASSWORD = "kjboriorbqdmzuzm"
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
@@ -269,5 +270,5 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-# SITEURL="http://localhost:8000"
-SITEURL="https://www.codanalytics.net"
+SITEURL="http://localhost:8000"
+# SITEURL="https://www.codanalytics.net"
