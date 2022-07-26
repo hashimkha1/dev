@@ -275,7 +275,7 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
-    emp_name= models.ForeignKey(
+    empname= models.ForeignKey(
         "accounts.CustomerUser", on_delete=models.RESTRICT, related_name="employee_name",
         limit_choices_to={"is_employee": True,"is_active": True},
         # limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
