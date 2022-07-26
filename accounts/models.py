@@ -1,6 +1,6 @@
 import datetime
 from decimal import *
-
+from django.db.models import Q
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
@@ -275,21 +275,18 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
-    employee = models.CharField(
-        verbose_name=_("Employee Name"),
+    emp_name= models.ForeignKey(
+        "accounts.CustomerUser", on_delete=models.RESTRICT, related_name="employee_name",
+        limit_choices_to={"is_employee": True,"is_active": True},
+        # limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        default=1
+    )
+    employee= models.CharField(
+        verbose_name=_("Company/End Client"),
         help_text=_("Required"),
         max_length=255,
         default="CODA",
     )
-    # employee = models.ForeignKey(
-    #     "accounts.CustomerUser",
-    #     verbose_name=_("Employee Name"),
-    #     help_text=_("Required"),
-    #     on_delete=models.CASCADE,
-    #     related_name="employee",
-    #     default=1,
-    #     limit_choices_to={"is_employee": True,"is_active": True}
-    # )
     author = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=_("Client Name"),
@@ -327,15 +324,4 @@ class Tracker(models.Model):
     def total_payment(self):
         total = self.duration.objects.aggregate(TOTAL=Sum("duration"))["TOTAL"]
         return total
-
-    """ 
-    @property
-    def amt_per_plan(self):
-        if self.plan=='A':
-            return 30
-        elif self.plan=='B':
-            return 120
-        else:
-            return 9999
-    """
 

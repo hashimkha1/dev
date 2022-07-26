@@ -21,7 +21,7 @@
         },
         "APPLICANTS": {
             "Applicants": "https://www.codanalytics.net/management/hr/",
-            "Application": "https://www.codanalytics.net/application"
+            "Interview": "https://www.codanalytics.net/application/first_interview/section_a/"
         },
         "TRAINING": {
             "1-1": "https://www.codanalytics.net/application/internal_training/",

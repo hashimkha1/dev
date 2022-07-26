@@ -12,7 +12,6 @@ from django.urls import reverse, reverse_lazy
 # from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
 # from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
-from management.utils import email_template
 from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
@@ -34,7 +33,6 @@ from finance.models import Default_Payment_Fees,Payment_History
 from management.utils import email_template
 from django.http import QueryDict
 import string, random
-from management.utils import email_template
 
 # Create your views here..
 
@@ -252,8 +250,8 @@ def users(request):
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", {"users": users})
 
-    if request.user.is_admin:
-        return render(request, "accounts/admin/adminpage.html", {"users": users})
+    # if request.user.is_admin:
+    #     return render(request, "accounts/admin/adminpage.html", {"users": users})
     else:
         return redirect("main:layout")
 
@@ -549,47 +547,50 @@ class TrackListView(ListView):
     #     return qs
 
 def usertracker(request, user=None, *args, **kwargs):
-    user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
-    trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
-    em = Tracker.objects.all().values().order_by('-pk')[0]
-    num = trackers.count()
-    # Check on my_time=avg("time")
-    my_time = trackers.aggregate(Assigned_Time=Avg("time"))
-    Used = trackers.aggregate(Used_Time=Sum("duration"))
-    Usedtime = Used.get("Used_Time")
-    # plantime = my_time.get("Assigned_Time")
-    payment_details = Payment_History.objects.filter(customer= user)
-    contract_plan_hours = payment_details.aggregate(Sum('plan'))
-    assigned_hours =0
-    if contract_plan_hours.get('plan__sum'):
-        assigned_hours = contract_plan_hours.get('plan__sum') * 40
-    if my_time.get('Assigned_Time'):
-        plantime=my_time.get('Assigned_Time') + assigned_hours
-    plantime = assigned_hours
     try:
-        delta = round(plantime - Usedtime)
-    except (TypeError, AttributeError):
-        delta = 0
-    customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
-    if delta < 30:
-        subject = "New Contract Alert"
-        to = customer_get[1]
-        html_content = f"""
-            <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-            <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
-            
-            </span>"""
-        email_template(subject, to, html_content)
+        user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
+        trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
+        em = Tracker.objects.all().values().order_by('-pk')[0]
+        num = trackers.count()
+        # Check on my_time=avg("time")
+        my_time = trackers.aggregate(Assigned_Time=Avg("time"))
+        Used = trackers.aggregate(Used_Time=Sum("duration"))
+        Usedtime = Used.get("Used_Time")
+        # plantime = my_time.get("Assigned_Time")
+        payment_details = Payment_History.objects.filter(customer= user)
+        contract_plan_hours = payment_details.aggregate(Sum('plan'))
+        assigned_hours =0
+        if contract_plan_hours.get('plan__sum'):
+            assigned_hours = contract_plan_hours.get('plan__sum') * 40
+        if my_time.get('Assigned_Time'):
+            plantime=my_time.get('Assigned_Time') + assigned_hours
+        plantime = assigned_hours
+        try:
+            delta = round(plantime - Usedtime)
+        except (TypeError, AttributeError):
+            delta = 0
+        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+        if delta < 30:
+            subject = "New Contract Alert"
+            to = customer_get[1]
+            html_content = f"""
+                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+                <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+                
+                </span>"""
+            email_template(subject, to, html_content)
 
-    context = {
-        "trackers": trackers,
-        "num": num,
-        "plantime": plantime,
-        "Usedtime": Usedtime,
-        "delta": delta,
-    }
-    return render(request, "accounts/usertracker.html", context)
-
+        context = {
+            "trackers": trackers,
+            "num": num,
+            "plantime": plantime,
+            "Usedtime": Usedtime,
+            "delta": delta,
+        }
+        return render(request, "accounts/usertracker.html", context)
+    except:
+        # return render(request, "accounts/usertracker.html", context)
+        return redirect('accounts:tracker-create')
 
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
@@ -597,7 +598,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     # success_url="usertime"
     # fields=['category','task','duration']
     fields = [
-        "employee",
+        "emp_name",
+        "employee", 
         "author",
         "category",
         "sub_category",
@@ -610,8 +612,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         form.instance.author = self.request.user
         try:
             if form.instance.category == "Job_Support":
-                points, targetpoints = Task.objects.values_list(
-                    "point", "mxpoint"
+                idval, points, targetpoints = Task.objects.values_list(
+                    "id","point", "mxpoint"
                 ).filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")
@@ -621,11 +623,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=form.instance.employee,
+                    employee_id=form.instance.emp_name,
                 )[
                     0
                 ]
-
+                self.idval = idval
                 if (
                     form.instance.sub_category == "Development"
                     or form.instance.sub_category == "Testing"
@@ -646,11 +648,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    employee=form.instance.employee,
+                    employee_id=form.instance.emp_name,
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
-
+        
         return super().form_valid(form)
 
 
