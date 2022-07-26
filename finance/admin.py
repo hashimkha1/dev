@@ -92,6 +92,6 @@ class TransactionAdmin(admin.ModelAdmin):
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Outflow)
-admin.site.register(Payment_History)
+# admin.site.register(Payment_History)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)

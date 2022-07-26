@@ -274,6 +274,6 @@ CELERYBEAT_SCHEDULE = {
         #'schedule': crontab(),
     },
 }
-
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
 # SITEURL="http://localhost:8000"
 SITEURL = "https://www.codanalytics.net"

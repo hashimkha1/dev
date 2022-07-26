@@ -28,6 +28,7 @@
         </div>
       </div>
     </div>
+       <input type="text" id="myText" value={{payments.payment_fees}}>
         <div id="paypal-button-container"></div>
   </div>
 	    <!-- Set up a container element for the button -->
@@ -37,7 +38,9 @@
     <script src="https://www.paypal.com/sdk/js?client-id=AemSepU21NzcaMEfxSeOLtbQXldABFn6c7Oe8rPYTMROlEaPUvfFifzL3xc8SVqb_7wLF0RNQ2U8UWlW&currency=USD"></script>
 
     <script>
-      const price="{{price}}";
+      var price = document.getElementById("myText").value;
+      const customer="{{request.user}}";
+      const down_payment="{{payments.down_payment}}";
 
       function getCookie(name) {
         var cookieValue = null;
@@ -65,7 +68,7 @@
             'Content-type':'application/json',
             'X-CSRFToken':csrftoken,
           },
-          body:JSON.stringify({'productId':productId})
+          body:JSON.stringify({'customer':customer,'down_payment':down_payment,'student_bonus':student_bonus,'fee_balance':fee_balance,'plan':plan,'payment_method':payment_method,'contract_submitted_date':contract_submitted_date,'client_signature':client_signature,'company_rep':company_rep,'client_date':client_date,'rep_date':rep_date,})
         })
       }
 
@@ -78,7 +81,7 @@
                 return actions.order.create({
                     purchase_units: [{
                         amount: {
-                            value: '88.44'
+                            value:price
                         }
                     }]
                 });
@@ -90,7 +93,7 @@
                     // Successful capture! For demo purposes:
                     console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
                     var transaction = orderData.purchase_units[0].payments.captures[0];
-                    alert('Transaction '+ transaction.status);
+                    
                     completeOrder();
                     alert('Transaction '+ transaction.status);
 

@@ -17,7 +17,7 @@ from django.http import JsonResponse
 import json
 
 from stripe import Plan
-from finance.models import Payment_History
+from finance.models import Payment_History, Payment_Information
 
 from .forms import TransactionForm
 from .models import Expenses, Payments
@@ -86,8 +86,9 @@ def report(request):
 
 
 def pay(request):
-    payments = Payments.objects.all().first()
-    return render(request, "main/pay.html", {"title": "pay", "payments": payments})
+    payment_info = Payment_Information.objects.all().first()
+    print("payment_info:", payment_info)
+    return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
 
 
 def paymentComplete(request):
@@ -98,6 +99,7 @@ def paymentComplete(request):
     down_payment = body["down_payment"]
     studend_bonus = body["student_bonus"]
     plan = body["plan"]
+    fee_balance = body["fee_balance"]
     payment_mothod = body["payment_method"]
     contract_submitted_date = body["contract_sub_date"]
     client_signature = body["client_signature"]
@@ -110,6 +112,7 @@ def paymentComplete(request):
         down_payment=down_payment,
         student_bonus=studend_bonus,
         plan=plan,
+        fee_balance=fee_balance,
         payment_method=payment_mothod,
         contract_submitted_date=contract_submitted_date,
         client_signature=client_signature,
