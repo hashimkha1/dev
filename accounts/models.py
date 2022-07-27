@@ -281,7 +281,8 @@ class Tracker(models.Model):
          related_name="Employee", 
          null=True, blank=True,
          on_delete=models.SET_NULL,
-         limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+          limit_choices_to={"is_client": True, "is_active": True},
          )
 
     author = models.ForeignKey(
