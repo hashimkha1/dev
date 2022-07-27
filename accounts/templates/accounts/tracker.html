@@ -8,14 +8,15 @@
         <tr>
           <th>Date</th>
           <th>Trainer</th>
-          <th>Client Username</th>
+          <!-- <th>Client Username</th> -->
           <th>Client Name</th>
+          <th>End Client</th>
           <th>Category</th>
           <th>Task</th>
-          <th>Start Time</th>
-          <th>End Time</th>
+          <th>Start</th>
+          <th>End</th>
           <th>Duration</th>
-          <th>Edit Time</th>
+          <th>Update</th>
         </tr>
       </thead>
       <tbody>
@@ -23,9 +24,11 @@
         {% for tracker in trackers %}
             <tr>
               <td>{{tracker.login_date|date:"F d, Y"}}</td>
+              <td>{{tracker.empname.first_name}} {{tracker.empname.last_name}} </td>
+              <!-- <td> <a class="mr-2" href="{% url 'accounts:user-list' tracker.author %}">{{tracker.author}}</a></td> -->
+              <td> <a class="mr-2" href="{% url 'accounts:user-list' tracker.author %}">{{tracker.author.first_name}} {{tracker.author.last_name}}</a></td>
+              <!-- <td>{{tracker.author.first_name}} {{tracker.author.last_name}} </td> -->
               <td>{{tracker.employee}} </td>
-             <td> <a class="mr-2" href="{% url 'accounts:user-list' tracker.author %}">{{tracker.author}}</a></td>
-              <td>{{tracker.author.first_name}} {{tracker.author.last_name}} </td>
               <td>{{tracker.category}}</td>
               <td>{{tracker.task}}</td>
               <td>{{tracker.start_time}}</td>
