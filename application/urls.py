@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from management.views import policies
 from .views import (
     ApplicantDeleteView,
     ApplicantListView,
@@ -34,7 +35,7 @@ urlpatterns = [
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
     # path("policy/", views.policy, name="policy"),
-    # path("policies/", views.policies, name="policies"),
+    path("policies/", views.policies, name="policies"),
     path("trainee/", views.trainee, name="trainee"),
     path("trainees/", views.trainees, name="trainees"),
     path(
