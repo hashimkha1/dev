@@ -57,7 +57,7 @@ def home(request):
 
 # ================================DEPARTMENT SECTION================================
 def department(request):
-    departments=Department.objects.all().order_by('-created_date')
+    departments=Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html" , {'departments':departments})
 
 def newdepartment(request):

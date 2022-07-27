@@ -88,7 +88,7 @@ urlpatterns = [
     path('assess/', views.assess, name='assess'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
 
-    path('department/newdepartment', views.newdepartment, name='newdepartment'),
+    path('newdepartment/', views.newdepartment, name='newdepartment'),
     path('departments/', views.department, name='departments'),
     path('department/<int:pk>/', DepartmentUpdateView.as_view(template_name='management/tag_form.html'), name='department-update'),
     

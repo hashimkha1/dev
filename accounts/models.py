@@ -92,6 +92,7 @@ class Department(models.Model):
 
     description = models.TextField(max_length=500,null=True, blank=True)
     slug = models.SlugField(verbose_name=_('Department safe URL'), max_length=255, unique=True)
+    # created_date = models.DateTimeField(_('entered on'),default=timezone.now, editable=True)
     is_featured = models.BooleanField("Is featured", default=True)
     is_active=models.BooleanField(default=True)
 
