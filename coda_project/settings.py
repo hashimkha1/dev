@@ -33,9 +33,6 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
-    # "django_extensions",
-    # "django_crontab",
-    'testing.apps.TestingConfig',
     "main.apps.MainConfig",
     #'users.apps.UsersConfig',
     "accounts.apps.AccountsConfig",
@@ -64,6 +61,9 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     #'dbbackup',
+    # "django_extensions",
+    # "django_crontab",
+    # 'testing.apps.TestingConfig',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
