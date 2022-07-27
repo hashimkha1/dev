@@ -614,7 +614,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         try:
             
             if form.instance.category == "Job_Support":
-                instance=form.instance.empname
                 idval, points, targetpoints = Task.objects.values_list(
                     "id","point", "mxpoint"
                 ).filter(
@@ -627,7 +626,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
                     # employee_id=form.instance.emp_name,
-                    user_id=form.instance.empname,
+                    empname_id=form.instance.empname,
                     # instance=self.request.user,
 
                 )[
@@ -654,7 +653,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job Support")
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
-                    user_id=form.instance.empname,
+                    empname_id=form.instance.empname,
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
