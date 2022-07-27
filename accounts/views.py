@@ -609,9 +609,12 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     ]
 
     def form_valid(self, form):
+        user=self.request.user
         form.instance.author = self.request.user
         try:
+            
             if form.instance.category == "Job_Support":
+                instance=form.instance.empname
                 idval, points, targetpoints = Task.objects.values_list(
                     "id","point", "mxpoint"
                 ).filter(
@@ -625,6 +628,8 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="job support"),
                     # employee_id=form.instance.emp_name,
                     empname_id=form.instance.empname,
+                    # instance=self.request.user,
+
                 )[
                     0
                 ]
