@@ -106,7 +106,7 @@ tasksummary = [
 
 # ----------------------REPORTS--------------------------------
 
-import json,os
+import json,os,re
 import pickle
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -135,20 +135,53 @@ def getSpreadsheetdata(spreadSheetId,rangeName):
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=spreadSheetId,
                                 range=rangeName,valueRenderOption='FORMULA').execute()
-    values = result.get('values', [])
+    values = result.get("values", [])
     return values
 
+def update_values(spreadsheet_id, range_name, value_input_option, values):
+   
+    try:
+        creds = None
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                SCOPES = ["https://www.googleapis.com/auth/spreadsheets","https://www.googleapis.com/auth/spreadsheets.readonly"]
+                flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
+                creds = flow.run_local_server()
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+
+        service = build('sheets', 'v4', credentials=creds)
+        
+        body = {
+            'values': values
+        }
+        result = service.spreadsheets().values().update(
+            spreadsheetId=spreadsheet_id, range=range_name,
+            valueInputOption=value_input_option, body=body).execute()
+        print(f"{result.get('updatedCells')} cells updated.")
+        return result
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return error
+    
 def companyagenda(request):
     print("+++++++++COMPANY AGENDA++++++++++++++")
     spreadsheetid = '1x0XyznGnPildtuUaGebDtZauA1kQSiNe5zNIfgihsRk'
-    rangeName     = "Sheet1!A3:M3"
-    print(rangeName)
+    rangeName     = "Sheet1!A2:M20"
     values        = getSpreadsheetdata(spreadsheetid,rangeName)
-    print(values[0][2])
+
+    print(values)
     with open(settings.STATIC_ROOT+'/companyagenda.json','r') as file:
         data = json.load(file)
 
-    return render(request, "management/companyagenda.html", {"title": "Company Agenda","data":data})
+    return render(request, "management/companyagenda.html", {"title": "Company Agenda","data":values})
 
 
 def updatelinks_companyagenda(request):
@@ -156,17 +189,47 @@ def updatelinks_companyagenda(request):
     subdepartment = request.POST["subdepartment"]
     linkname = request.POST["linkname"]
     link_url = request.POST["link_url"]
-   
-    with open(settings.STATIC_ROOT+'/companyagenda.json', "r") as jsonFile:
-        data = json.load(jsonFile)
+    spreadsheetid = '1x0XyznGnPildtuUaGebDtZauA1kQSiNe5zNIfgihsRk'
+    rangeName     = "Sheet1!A2:M20"
+    values        = getSpreadsheetdata(spreadsheetid,rangeName)
 
     if subdepartment == "":
-        data[department][linkname] = link_url
-    else:
-        data[department][subdepartment][linkname] = link_url
+        outcounter,incounter = -1 , -1
+        for i in values:
+            outcounter += 1
+            for j in i:
+                if j == department:
+                    for j in i:
+                        incounter += 1
+                        if j[0:10] == "=HYPERLINK" and re.split(r'=HYPERLINK\("(.*?)","(.*?)"\)', j)[2] == linkname:
+                            values[outcounter][incounter] = '=HYPERLINK("'+link_url+'","'+linkname+'")'
 
-    with open(settings.STATIC_ROOT+'/companyagenda.json', "w") as jsonFile:
-        json.dump(data, jsonFile)
+    else:
+        outcounter,incounter = -1 , -1
+        for i in values:
+            outcounter += 1
+            for j in i:
+                if j == department:
+                    for k in range(1,len(i)):
+                        if i[0:10] != "=HYPERLINK" and i[k] == subdepartment:
+                            for l in range(k+1,len(i)):
+                                if j[l][0:10] == "=HYPERLINK":
+                                    values[outcounter][l] = '=HYPERLINK("'+link_url+'","'+linkname+'")'
+                                else:
+                                    break
+
+    update_values(spreadsheetid, rangeName, "USER_ENTERED",values)
+
+    # with open(settings.STATIC_ROOT+'/companyagenda.json', "r") as jsonFile:
+    #     data = json.load(jsonFile)
+
+    # if subdepartment == "":
+    #     data[department][linkname] = link_url
+    # else:
+    #     data[department][subdepartment][linkname] = link_url
+
+    # with open(settings.STATIC_ROOT+'/companyagenda.json', "w") as jsonFile:
+    #     json.dump(data, jsonFile)
 
     return JsonResponse({"success":True})
 

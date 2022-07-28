@@ -1,5 +1,6 @@
 {% extends "main/base_templates/base.html" %}
 {% load static %}
+{% load customfilters %}
 {% load mathfilters %}
 {% block title %}
 {% if category %}{{ category.name }}{% else %}activities{% endif %}
@@ -48,8 +49,30 @@
                 </div>
 
                 <div class="col-md-4">
-                    <div style="border: 1px solid black;padding:20px;">
-                        {% for departments,sub_departments in  data.items  %}
+                    <div class="departments_block" style="border: 1px solid black;padding:20px;">
+                        {% for i in data  %}
+                           
+                            <div class="departments" style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
+                                <p style="background:#bcbce2;font-weight:bold">{{ i.0 }}</p>
+                                <div style="float: right;">
+                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                                </div>
+                                <div class="links">
+                                    {% for n in i %}
+                                        {% if forloop.counter > 1 %}
+                                            {% if n|slice:"0:10" != "=HYPERLINK" %}
+                                                <span>{{ n }}</span>
+                                            {% else %}
+                                                <a href="{{ n|splitHyperLink:'url' }}" style="display: block"/>{{ n|splitHyperLink:"urlname" }} </i></a>
+                                            {% endif %} 
+                                        {% endif %} 
+                                    {% endfor %}
+                                </div>
+                            </div>
+                           
+                               
+                        {% endfor %}
+                        <!-- {% for departments,sub_departments in  data.items  %}
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
                                 <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
@@ -76,7 +99,7 @@
                                 </div>
                             </div>
                                 
-                        {% endfor %}
+                        {% endfor %} -->
                     </div>
                 </div>
             </div>
@@ -112,6 +135,135 @@
 <!-- <script type="text/javascript" src="{% static 'companyagenda.json' %}"></script> -->
 <script type="text/javascript" src="https://www.thetimenow.com/ttn-embed.min.js"></script>
 <script>
+    //  siteurl = "http://localhost:8000"
+    siteurl ="{{request.session.siteurl}}"
+
+    var jsondata = {{data | safe }}
+    
+    function update_links(e){
+        console.log(jsondata)
+        console.log($(e).parent().prev().text().length);
+        console.log($(e).parent().next().children()[0].tagName);
+        console.log($(e).parent().next().children().eq(0).text() );
+        
+        $("#overlay").css("display","block");
+        $("#popup").css("display","block");
+
+        $("#departments").html(`<option value="`+$(e).parent().prev().text()+`">`+$(e).parent().prev().text()+`</option>`)
+        console.log($(e).parent().prev().text())
+        
+        if($(e).parent().next().children().eq(0).text() == ""){
+            $("#sub_departments_block").css("display","none")
+            $("#linkname").html(`<option value="" disabled selected>Select your linkname</option>`)
+            for(i in jsondata){
+                for(j in jsondata[i]){
+                    if(jsondata[i][j] == $(e).parent().prev().text()){
+                        for(j in jsondata[i]){
+                            if(jsondata[i][j].slice(0, 10) == "=HYPERLINK"){
+                                $("#linkname").append(`<option value="`+jsondata[i][j].split(/=HYPERLINK\("(.*?)","(.*?)"\)/)[2]+`">`+jsondata[i][j].split(/=HYPERLINK\("(.*?)","(.*?)"\)/)[2]+`</option>`)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else{
+            $("#sub_departments_block").css("display","block")
+            $("#sub_departments").html(`<option value="" disabled selected>Select your sub-department</option>`)
+            $("#linkname").html(`<option value="" disabled selected>Select your linkname</option>`)
+            // for(let [key, value] of Object.entries(jsondata[$(e).parent().prev().text()]) ){
+            //     $("#sub_departments").append(`<option value="`+key+`">`+key+`</option>`)
+            // }
+            for(i in jsondata){
+                for(j in jsondata[i]){
+                    if(jsondata[i][j] == $(e).parent().prev().text()){
+                        for(let j=1; j < jsondata[i].length;j++){
+                            if(jsondata[i][j].slice(0, 10) != "=HYPERLINK"){
+                                $("#sub_departments").append(`<option value="`+jsondata[i][j]+`">`+jsondata[i][j]+`</option>`)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    $('#sub_departments').on('change', function() {
+        $("#linkname").html(`<option value="" disabled selected>Select your linkname</option>`)
+        for(i in jsondata){
+            for(j in jsondata[i]){
+                if(jsondata[i][j] == $('#departments').val() ){
+                    for(let j=1; j < jsondata[i].length;j++){
+                        if(jsondata[i][j].slice(0, 10) != "=HYPERLINK" && jsondata[i][j] == this.value){
+                            for(let k=j+1; k < jsondata[i].length;k++){
+                                if(jsondata[i][k].slice(0, 10) == "=HYPERLINK"){
+                                    $("#linkname").append(`<option value="`+jsondata[i][k].split(/=HYPERLINK\("(.*?)","(.*?)"\)/)[2]+`">`+jsondata[i][k].split(/=HYPERLINK\("(.*?)","(.*?)"\)/)[2]+`</option>`)
+                                }
+                                else{
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // $('#linkname').on('change', function() {
+    //     $("#link_url").val("")
+    //     if($("#sub_departments_block").css("display") == "none"){
+    //         $("#link_url").val(jsondata[$('#departments').val()][this.value])
+    //     }
+    //     else{
+    //         $("#link_url").val(jsondata[$('#departments').val()][$('#sub_departments').val()][this.value])
+    //     }
+    // });
+
+    function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = jQuery.trim(cookies[i]);
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    $("#submit_updatelink").on("click",function(){
+        $.ajax({
+            type: "POST",
+            url:  siteurl+"/management/companyagenda/updatelinks",
+            mode: 'cors',
+            withCredentials: false, 
+            headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
+            xsrfHeaderName: "X-CSRFToken",
+            data : { department:$('#departments').val(),subdepartment:$('#sub_departments').val(),linkname:$('#linkname').val(),link_url:$('#link_url').val()},
+            success: function(result){
+                if(result["success"]){
+                    window.location.href = "/management/companyagenda/"
+                }
+            }
+
+        })
+    })
+
+    $("#overlay").on("click",function(){
+        $("#overlay").css("display","none");
+        $("#popup").css("display","none");
+
+        $("#link_url").val("")
+    })
+</script>
+
+<!-- <script>
     //  siteurl = "http://localhost:8000"
     siteurl ="{{request.session.siteurl}}"
 
@@ -205,7 +357,7 @@
 
         $("#link_url").val("")
     })
-</script>
+</script> -->
 
 
 <script>

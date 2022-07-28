@@ -285,9 +285,9 @@ class Tracker(models.Model):
     #     default="CODA",
     # )
     employee = models.ForeignKey(
-        User, on_delete=models.RESTRICT, related_name="employee",
+        "accounts.CustomerUser", on_delete=models.RESTRICT, related_name="employee",
         limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
-        default=999
+        default=1
     )
     author = models.ForeignKey(
         "accounts.CustomerUser",
