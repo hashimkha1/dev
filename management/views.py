@@ -392,10 +392,10 @@ def policies(request):
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
-        return render(request, "application/orientation/policies.html", context)
-    else:
-        return render(request, "management/departments/hr/policies.html", context)
+    # if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
+    #     return render(request, "application/orientation/policies.html", context)
+    # else:
+    return render(request, "management/departments/hr/policies.html", context)
 
 
 class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
