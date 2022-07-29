@@ -1064,7 +1064,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("management:user_task", kwargs={"username": str(task.employee)})
 
     # fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
-    fields = ["category","employee", "activity_name", "description", "point"]
+    fields = ["category","employee", "activity_name", "description", "point",'mxpoint']
 
     def form_valid(self, form):
         return super().form_valid(form)
