@@ -26,6 +26,7 @@ class Payment_Information(models.Model):
         on_delete=models.CASCADE,
         related_name="customer",
     )
+    print(customer_id)
     payment_fees = models.IntegerField()
     down_payment = models.IntegerField(default=500)
     student_bonus = models.IntegerField(null=True, blank=True)
@@ -57,6 +58,9 @@ class Payment_Information(models.Model):
     def jobsupport_balance(self):
         support_bal = self.payment_fees - int(self.down_payment)
         return support_bal
+
+    def __str__(self):
+        return f"{self.customer_id}'s Payment Information"
 
 
 class Payment_History(models.Model):

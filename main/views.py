@@ -86,17 +86,19 @@ def report(request):
 
 
 def pay(request):
-    payment_info = Payment_Information.objects.all().first()
+    payment_info = Payment_Information.objects.filter(
+        customer_id=request.user.id
+    ).first()
+
     print("payment_info:", payment_info)
     return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
 
 
 def paymentComplete(request):
-    body = json.loads(request.body)
-    print("BODY:", body)
-    payments = Payment_Information.objects.all().first()
+    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+    print(payments)
     customer = request.user
-    payment_fees = body["payment_fees"]
+    payment_fees = payments.payment_fees
     down_payment = payments.down_payment
     studend_bonus = payments.student_bonus
     plan = payments.plan
