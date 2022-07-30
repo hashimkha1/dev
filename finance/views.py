@@ -1,20 +1,13 @@
-import datetime
-import json
-import ast
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect,render
 from requests import request
 from accounts.forms import UserForm
 from accounts.models import CustomerUser
-from .models import Payment_Information,Payment_History,Default_Payment_Fees
 from django.db.models import Q
 from django.http import QueryDict
 from django.shortcuts import render
 from django.db.models import Count
-from datetime import date, datetime, timedelta
-from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.utils.decorators import method_decorator
@@ -27,12 +20,17 @@ from django.views.generic import (
     CreateView,
     ListView,
     UpdateView,
+	DetailView,
+	DeleteView,
 )
-from .models import TrainingLoan
-from django.conf import settings
+from .models import (
+		Payment_Information,Payment_History,
+		Default_Payment_Fees,TrainingLoan,
+		Inflow,Transaction
+	)
 from django.contrib.auth import get_user_model
 
-from .forms import LoanForm
+from .forms import LoanForm,TransactionForm,InflowForm
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -224,6 +222,159 @@ class DefaultPaymentUpdateView(UpdateView):
             return True
         # elif self.request.user == task.employee:
         #     return True
+        return False
+
+
+# ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
+
+def transact(request):
+    if request.method == "POST":
+        form = TransactionForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("/finance/transaction/")
+    else:
+        form = TransactionForm()
+    return render(request, "finance/payments/transact.html", {"form": form})
+
+
+class TransactionListView(ListView):
+    model = Transaction
+    template_name = "finance/payments/transaction.html"
+    context_object_name = "transactions"
+    # ordering=['-transaction_date']
+
+
+@method_decorator(login_required, name="dispatch")
+class TransanctionDetailView(DetailView):
+    template_name = "finance/payments/transaction_detail.html"
+    model = Transaction
+    ordering = ["-transaction_date"]
+
+
+class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Transaction
+    # success_url="/finance/transaction"
+    fields = [
+        "sender",
+        "receiver",
+        "phone",
+        "department",
+        "category",
+        "type",
+        "payment_method",
+        "qty",
+        "amount",
+        "transaction_cost",
+        "description",
+        "receipt_link",
+    ]
+    form = TransactionForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("finance:transaction-list")
+
+    def test_func(self):
+        inflow = self.get_object()
+        if self.request.user == inflow.sender:
+            return True
+        elif self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+
+@method_decorator(login_required, name="dispatch")
+class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Transaction
+    success_url = "/finance/transaction"
+
+    def test_func(self):
+        transaction = self.get_object()
+        if self.request.user == transaction.sender:
+            return True
+        elif self.request.user.is_superuser or self.request.user.is_admin:
+            return True
+        return False
+        
+# ----------------------CASH INFLOW CLASS-BASED VIEWS--------------------------------
+def inflow(request):
+    if request.method == "POST":
+        form = InflowForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.sender = request.user
+            form.save()
+            return redirect("/finance/inflows/")
+    else:
+        form = InflowForm()
+    return render(
+        request, "finance/company_finances/inflow_entry.html", {"form": form}
+    )
+
+@method_decorator(login_required, name="dispatch")
+class InflowDetailView(DetailView):
+    template_name = "finance/cash_inflow/inflow_detail.html"
+    model = Inflow
+    ordering = ["-transaction_date"]
+
+
+def inflows(request):
+    inflows = Inflow.objects.all().order_by("-transaction_date")
+    # total_duration=Tracker.objects.all().aggregate(Sum('duration'))
+    # total_communication=Rated.objects.all().aggregate(Sum('communication'))
+    total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
+    revenue = total.get("Total_Cashinflows")
+    context = {"inflows": inflows, "revenue": revenue}
+    return render(request, "finance/cash_inflow/inflows.html", context)
+
+
+@method_decorator(login_required, name="dispatch")
+class UserInflowListView(ListView):
+    model = Inflow
+    template_name = "finance/cash_inflow/user_inflow.html"
+    context_object_name = "inflows"
+    ordering = ["-transaction_date"]
+
+@method_decorator(login_required, name="dispatch")
+class InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Inflow
+    success_url = "/finance/inflow"
+    fields = [
+        "sender",
+        "receiver",
+        "phone",
+        "category",
+        "task",
+        "method",
+        "period",
+        "qty",
+        "amount",
+        "transaction_cost",
+        "description",
+    ]
+
+    def form_valid(self, form):
+        form.instance.sender = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        inflow = self.get_object()
+        if self.request.user == inflow.sender:
+            return True
+        return False
+
+@method_decorator(login_required, name="dispatch")
+class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Inflow
+    success_url = "/finance/inflow"
+
+    def test_func(self):
+        inflow = self.get_object()
+        # if self.request.user == inflow.sender:
+        if self.request.user.is_superuser:
+            return True
         return False
 
 

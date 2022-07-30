@@ -1,5 +1,5 @@
 from django.db import models
-from accounts.models import CustomerUser
+from accounts.models import Department
 import calendar
 from datetime import datetime, date
 from decimal import *
@@ -15,11 +15,14 @@ from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
+User = get_user_model()
+
+
 # Create your models here.
 
 
 class Payment_Information(models.Model):
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=("Client Name"),
@@ -46,7 +49,6 @@ class Payment_Information(models.Model):
         support_bal = self.payment_fees - int(self.down_payment) 
         return support_bal
 
-
     @property
     def student_balance(self):
         stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
@@ -57,9 +59,9 @@ class Payment_Information(models.Model):
         return support_bal
 
 class Payment_History(models.Model):
-    id = models.AutoField(primary_key=True)
+    # id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(
-        "accounts.CustomerUser",
+        User,
         verbose_name=("Client Name"),
         on_delete=models.CASCADE,
         related_name="customer_payment_history")
@@ -79,77 +81,50 @@ class Payment_History(models.Model):
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)
 
-
 class Default_Payment_Fees(models.Model):
-	id = models.AutoField(primary_key=True)
+	# id = models.AutoField(primary_key=True)
 	job_down_payment_per_month = models.IntegerField(default=500)
 	job_plan_hours_per_month = models.IntegerField(default=40)
 	student_down_payment_per_month = models.IntegerField(default=500)
 	student_bonus_payment_per_month = models.IntegerField(default=250)
 
 class Transaction(models.Model):
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Other = "Other"
-
-    #  Cost Category.
-    Salary = "Salary"
-    Health = "Health"
-    Transport = "Transport"
-    Food_Accomodation = "Food & Accomodation"
-    Internet_Airtime = "Internet & Airtime"
-    Recruitment = "Recruitment"
-    Labour = "Labour"
-    Management = "Management"
-    Electricity = "Electricity"
-    Construction = "Construction"
-    Other = "Other"
-
-    # Department
-    HR = "HR Department"
-    IT = "IT Department"
-    MKT = "Marketing Department"
-    FIN = "Finance Department"
-    SECURITY = "Security Department"
-    MANAGEMENT = "Management Department"
-    HEALTH = "Health Department"
-    Other = "Other"
-    DEPARTMENT_CHOICES = [
-        (HR, "HR Department"),
-        (IT, "IT Department"),
-        (MKT, "Marketing Department"),
-        (FIN, "Finance Department"),
-        (SECURITY, "Security Department"),
-        (MANAGEMENT, "Management Department"),
-        (HEALTH, "Health Department"),
-        (Other, "Other"),
-    ]
+    # Method of Category
     CAT_CHOICES = [
-        (Salary, "Salary"),
-        (Health, "Health"),
-        (Transport, "Transport"),
-        (Food_Accomodation, "Food & Accomodation"),
-        (Internet_Airtime, "Internet & Airtime"),
-        (Recruitment, "Recruitment"),
-        (Labour, "Labour"),
-        (Management, "Management"),
-        (Electricity, "Electricity"),
-        (Construction, "Construction"),
-        (Other, "Other"),
+        ("Salary", "Salary"),
+        ("Health", "Health"),
+        ("Transport", "Transport"),
+        ("Food_Accomodation", "Food & Accomodation"),
+        ("Internet_Airtime", "Internet & Airtime"),
+        ("Recruitment", "Recruitment"),
+        ("Labour", "Labour"),
+        ("Management", "Management"),
+        ("Electricity", "Electricity"),
+        ("Construction", "Construction"),
+        ("Other", "Other"),
     ]
+    # Method of Payment
     PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Other, "Other"),
+        ("Cash", "Cash"),
+        ("Mpesa", "Mpesa"),
+        ("Check", "Check"),
+        ("Other", "Other"),
     ]
-    # id = models.AutoField(primary_key=True,default=99999999)
-    sender = models.CharField(max_length=100, null=True, default=None)
+    sender = models.ForeignKey(
+         User,
+         verbose_name=_("sender"),
+         related_name="sender", 
+         null=True, blank=True,
+         on_delete=models.SET_NULL,
+         limit_choices_to={"is_employee": True, "is_active": True},
+         )
+    department = models.ForeignKey(
+        to=Department, on_delete=models.CASCADE, default=Department.get_default_pk
+        )
+    # sender = models.CharField(max_length=100, null=True, default=None)
     receiver = models.CharField(max_length=100, null=True, default=None)
     phone = models.CharField(max_length=50, null=True, default=None)
-    department = models.CharField(max_length=100, default=None)
+    # department = models.CharField(max_length=100, default=None)
     type = models.CharField(max_length=100, default=None, null=True)
     activity_date = models.DateTimeField(default=timezone.now)
     receipt_link = models.CharField(max_length=100, blank=True, null=True)
@@ -165,19 +140,13 @@ class Transaction(models.Model):
     payment_method = models.CharField(
         max_length=25,
         choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    department = models.CharField(
-        max_length=100,
-        choices=DEPARTMENT_CHOICES,
-        default=Other,
+        default="Other",
     )
 
     category = models.CharField(
         max_length=100,
         choices=CAT_CHOICES,
-        default=Other,
+        default="Other",
     )
 
     def get_absolute_url(self):
@@ -191,112 +160,6 @@ class Transaction(models.Model):
 
 
 # -------------------------------------CASH FLOW MODEL---------------------------------------
-class Outflow(models.Model):
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Other = "Other"
-
-    #  Cost Category.
-    Salary = "Salary"
-    Health = "Health"
-    Transport = "Transport"
-    Food_Accomodation = "Food & Accomodation"
-    Internet_Airtime = "Internet & Airtime"
-    Recruitment = "Recruitment"
-    Labour = "Labour"
-    Management = "Management"
-    Electricity = "Electricity"
-    Construction = "Construction"
-    Other = "Other"
-
-    # Department
-    HR = "HR Department"
-    IT = "IT Department"
-    MKT = "Marketing Department"
-    FIN = "Finance Department"
-    SECURITY = "Security Department"
-    MANAGEMENT = "Management Department"
-    HEALTH = "Health Department"
-    Other = "Other"
-    DEPARTMENT_CHOICES = [
-        (HR, "HR Department"),
-        (IT, "IT Department"),
-        (MKT, "Marketing Department"),
-        (FIN, "Finance Department"),
-        (SECURITY, "Security Department"),
-        (MANAGEMENT, "Management Department"),
-        (HEALTH, "Health Department"),
-        (Other, "Other"),
-    ]
-    CAT_CHOICES = [
-        (Salary, "Salary"),
-        (Health, "Health"),
-        (Transport, "Transport"),
-        (Food_Accomodation, "Food & Accomodation"),
-        (Internet_Airtime, "Internet & Airtime"),
-        (Recruitment, "Recruitment"),
-        (Labour, "Labour"),
-        (Management, "Management"),
-        (Electricity, "Electricity"),
-        (Construction, "Construction"),
-        (Other, "Other"),
-    ]
-    PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Other, "Other"),
-    ]
-    employee = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE, related_name="outflows")
-    sender = models.CharField(max_length=100, null=True, default=None)
-    receiver = models.CharField(max_length=100, null=True, default=None)
-    phone = models.CharField(max_length=50, null=True, default=None)
-    department = models.CharField(max_length=100, default=None)
-    type = models.CharField(max_length=100, default=None, null=True)
-    activity_date = models.DateTimeField(default=timezone.now)
-    # receipt_link=models.CharField(max_length=100,blank=True, null=True)
-    # upload_receipt=models.FileField(default=None,upload_to='Receipt/doc/')
-    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
-    amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=None
-    )
-    transaction_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=0
-    )
-    description = models.TextField(max_length=1000, default=None)
-
-    payment_method = models.CharField(
-        max_length=25,
-        choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    department = models.CharField(
-        max_length=100,
-        choices=DEPARTMENT_CHOICES,
-        default=Other,
-    )
-
-    category = models.CharField(
-        max_length=100,
-        choices=CAT_CHOICES,
-        default=Other,
-    )
-
-    def get_absolute_url(self):
-        return reverse("management:outflow_detail", kwargs={"pk": self.pk})
-
-    class Meta:
-        verbose_name_plural = "Outflows"
-
-    def __str__(self):
-        return f"{self.id} Transactions"
-
-
-# -------------------------------------CASH FLOW MODEL---------------------------------------
-
 
 class Inflow(models.Model):
     # Period of Payment
@@ -412,7 +275,7 @@ class Inflow(models.Model):
         date_time = self.login_date + datetime.timedelta(hours=0)
         endtime = date_time.strftime("%H:%M")
         return endtime
-
+    # Computing total payment
     @property
     def total_payment(self):
         total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
