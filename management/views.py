@@ -213,7 +213,7 @@ def updatelinks_companyagenda(request):
                     for k in range(1,len(i)):
                         if i[0:10] != "=HYPERLINK" and i[k] == subdepartment:
                             for l in range(k+1,len(i)):
-                                if j[l][0:10] == "=HYPERLINK":
+                                if i[l][0:10] == "=HYPERLINK":
                                     values[outcounter][l] = '=HYPERLINK("'+link_url+'","'+linkname+'")'
                                 else:
                                     break
