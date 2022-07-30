@@ -5,45 +5,14 @@ from .views import (
                         TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         TaskHistoryView,
-                        UserInflowListView,AssessListView,TagCreateView,
-                        InflowDetailView,#InflowCreateView,
-                        InflowUpdateView,InflowDeleteView,
+                        AssessListView,TagCreateView,
                         PolicyUpdateView,DepartmentUpdateView,
-                        OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
-                        TransactionUpdateView,TransactionListView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
 
 app_name = 'management'
 urlpatterns = [
     path('', views.home, name='management-home'),
-    path('transact/', views.transact, name='management-transact'),
-    #path('transaction/', views.transaction, name='management-transaction'),
-    path('transaction/', TransactionListView.as_view(), name='transaction-list'),
-    #path('transaction/', OutflowDetailView.as_view(), name='transaction-detail'),
-    path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-update'),
-
-    #-----------CASHINFLOW---------------------------------------
-    path('inflow_entry/', views.inflow, name='entry_inflow'),
-    #path('inflow/', InflowListView.as_view(), name='inflow-list'),
-    path('inflows/', views.inflows, name='inflow-list'),
-    path('user_inflow/', UserInflowListView.as_view(), name='user-list'),
-    #path('inflow/new/', InflowCreateView.as_view(), name='inflow-create'),
-    path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),
-    path('inflow/<int:pk>/update/', InflowUpdateView.as_view(), name='inflow-update'),
-    path('inflow/<int:pk>/delete/', InflowDeleteView.as_view(), name='inflow-delete'),
-
-    #-----------CASHOUTFLOW---------------------------------------
-    path('outflow_entry/', views.outflow_entry, name='outflow_entry'),
-    #path('outflow/', OutflowListView.as_view(), name='outflow-list'),
-    path('outflows/', views.outflowlist, name='outflow-list'),
-    #path('outflow/new/', OutflowCreateView.as_view(), name='outflow-create'),
-    #path('user_outflow/', UseroutflowListView.as_view(), name='user-list'),
-    path('outflow/<int:pk>/', OutflowDetailView.as_view(), name='outflow-detail'),
-    path('outflow/<int:pk>/update/', OutflowUpdateView.as_view(), name='outflow-update'),
-    path('outflow/<int:pk>/delete/', OutflowDeleteView.as_view(), name='outflow-delete'),  
-
-
     #-----------COMPANY REPORTS---------------------------------------
     path('companyagenda/', views.companyagenda, name='companyagenda'),
     path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
@@ -73,8 +42,8 @@ urlpatterns = [
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
     path('payslip/<str:username>/',views.payslip, name='user_payslip'),
     path('task_payslip/<int:pk>/',views.task_payslip, name='task_payslip'),
-    # path('newtask/', TaskCreateView.as_view(), name='newtask'),
-    path('newtask/', views.newtaskcreation, name='newtask'),
+    path('newtask/', TaskCreateView.as_view(), name='newtask'),
+    # path('newtask/', views.newtaskcreation, name='newtask'),
     path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
 
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),

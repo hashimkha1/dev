@@ -8,7 +8,6 @@ from .models import (
     Requirement,
     Transaction,
     Inflow,
-    Outflow,
     Policy,
     Tag,
     Task,
@@ -77,7 +76,6 @@ class TransactionAdmin(admin.ModelAdmin):
 admin.site.register(Transaction, TransactionAdmin)
 
 admin.site.register(Inflow)
-admin.site.register(Outflow)
 admin.site.register(Policy)
 admin.site.register(Task)
 admin.site.register(TaskLinks)
