@@ -231,7 +231,10 @@ def transact(request):
     if request.method == "POST":
         form = TransactionForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            # form.save()
+            instance=form.save(commit=False)
+            instance.sender=request.user
+            instance.save()
             return redirect("/finance/transaction/")
     else:
         form = TransactionForm()
