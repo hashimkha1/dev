@@ -1,0 +1,87 @@
+{% extends "main/base_templates/base.html"%} 
+{% block content %}
+<style>
+  #alt_method{
+    width:100%;
+    border: none;
+  }
+</style>
+<!-------------------Payment Section Top Level------------------------->
+<div class="container-fluid text-center align-items-center">
+      <p>
+        <h2 style="align-items: center; text-align: center; padding:auto;">WELCOME TO PAYMENT PORTAL</h2>
+      </p>
+</div> 
+<section id="payment_top mb-0">
+  <div class="background_header text-center">
+
+    <h5><i>Please make a payment to access the course/interview materials. Thank You!</i></h5>
+    <hr />
+  
+  
+ 
+    <!-------------------Payment Section------------------------->
+    <div class="pay text-center padding-auto">
+      <div class="pay_header">
+        <div>
+          <div class="box-element hidden" id="payment-info">
+                <h2 class="text-center m-4">Method 1: Paypal</h2>
+                <div id="paypal-button-container"></div>
+          </div>
+     
+
+	      <script src="https://www.paypal.com/sdk/js?client-id=AcBwtGisC84Foj8VWFrg8_jZ5PGu1qNxYhXDXKU4cqcGNvYzlkACiI0d5oIXk6OI7lzn6_Ng5ujZwT0D&currency=USD&disable-funding=credit"></script>
+
+          <script>
+            const price = "{{payments.price}}";
+            paypal
+              .Buttons({
+                style: {
+                  size: 'responsive',
+                  shape: "rect",
+                  color: "blue",
+                  layout: "vertical",
+                  label: "pay",
+                  fundingicons: true,
+                },
+                createOrder: function (data, actions) {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          value: price,
+                        },
+                      },
+                    ],
+                  });
+                },
+                onApprove: function (data, actions) {
+                  return actions.order.capture().then(function (details) {
+                    alert(
+                      "Transaction completed by " +
+                        details.payer.name.given_name +
+                        "!"
+                    );
+                  });
+                },
+              })
+              .render("#paypal-button-container");
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="background_header text-center" id="alt_method">
+      <hr />
+      <h2>Method 2: Use</h2>
+      <p>a. Cashapp: $cmaghas</p>
+      <p>b. venmo: cmaghas</p>
+      
+      <p></p>
+  </div>
+</section>
+
+
+{% include 'main/footer_templates/footer.html' %}
+{% endblock content %}

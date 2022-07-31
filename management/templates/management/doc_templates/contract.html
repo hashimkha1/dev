@@ -1,0 +1,72 @@
+{%extends "main/base_templates/analysis_index.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<div class="content-section">
+    <form class="contact-form" action="CODANALYTICS.NETS" method="post">
+        <h2>CLIENT INFORMATION</h2>
+        <hr style="width:77%;text-align:left;margin-left:0">
+        <label for="name">Name: </label> </br>
+        <input type="text" name="name" placeholder="Your name"> </br>
+        <label for="email" style="text-align: center;">E-mail</label> </br>
+        <input type="text" name="mail" placeholder="Your e-mail"> </br>
+        <label for="subject">Location:   </label> </br>
+        <input type="text" name="Location" placeholder="your location"> </br>
+        <label for="subject">Phone:   </label> </br>
+        <input type="Number" name="Phone" placeholder="Phone Number"> </br>
+        <label for="Date">Start Date: </label> </br>
+        <input type="Date" name="Date" placeholder="Your name"> </br>
+         <h2>TRAINING</h2>
+         <hr style="width:77%;text-align:left;margin-left:0">
+         <p>Select the plan, package and time of your interest</p>
+        <label for="Plan">Choose a Plan:</label>
+
+        <select name="Plan" id="Plans">
+        <option value="A">Plan A</option>
+        <option value="B">Plan B</option>
+        </select>
+
+        <label for="Package">Choose a Package:</label>
+
+        <select name="Package" id="cars">
+        <option value="Data Analysis">Data Analysis Training</option>
+        <option value="Job Support">Job Support</option>
+        <option value="Website Design">Website Design</option>
+        </select>
+         
+         <label for="Package">Choose a Time:</label>
+
+        <select name="Time" id="time">
+        <option value="30hr">30 hours</option>
+        <option value="120hrs">120 hours</option>
+        </select>
+
+        <label for="Package">If Job Support, do you also want some hour to be on training?:</label>
+
+        <select name="Time" id="time">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+        </select>
+        <h2>PAYMENT METHODS</h2>
+        <hr style="width:77%;text-align:left;margin-left:0">
+        <div style="text-align: left;"><img src="paymethod.png" alt="Payment Methods"></div>
+
+        <h2>Training Info:</h2>
+         <hr style="width:77%;text-align:left;margin-left:0">
+        <p>1.THAT all the training/sessions shall be virtual via the GoToMeeting & ZOOM platform with dates communicated by CODA, any change of training platform shall be communicated <br>through WhatsApp platforms,</p>
+        <p>2.THAT CODA shall provide all the necessary materials including PowerPoints and videos within the training period.</p>
+        <p>3.THAT the Client shall commit to making payment according to the payment schedule as discussed with CODA.</p>
+        <p>4.THAT CODA retains the power to stop any form of training including sharing of materials where the client has failed to remit payments in accordance with the schedule, <br>and where there is no commitment to do the same. </p>
+        <p>5.THAT the Client shall communicate in good time of any eventualities that would stop them from attending class to allow CODA to make reasonable adjustments.</p>
+
+        <h2>Describe your payment plan</h2>
+        <hr style="width:77%;text-align:left;margin-left:0">
+        
+        <textarea name="message" class="message" placeholder="Message"  rows="15" cols="50"></textarea> </br>
+        <button type="submit" name="submit"> ENROLL </button>
+    </form>
+</div>
+{% endblock content%}
+
+
+
+
+
