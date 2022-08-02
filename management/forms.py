@@ -4,7 +4,7 @@ from django.db.models import Q
 from data.models import DSU
 from accounts.models import CustomerUser
 from .models import TaskLinks, Policy, Requirement,Task
-from finance.models import Transaction,Inflow,Outflow
+from finance.models import Transaction,Inflow
 from accounts.models import Department
 
 """
@@ -66,42 +66,6 @@ class TransactionForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
-        self.fields["payment_method"].empty_label = "Select"
-
-
-class OutflowForm(forms.ModelForm):
-    class Meta:
-        model = Outflow
-        fields = [
-            "sender",
-            "receiver",
-            "phone",
-            "department",
-            "category",
-            "type",
-            "payment_method",
-            "qty",
-            "amount",
-            "transaction_cost",
-            "description",
-        ]
-        labels = {
-            "sender": "Full Name",
-            "receiver": "Enter Receiver Name",
-            "phone": "Receiver Phone",
-            "department": "Department",
-            "category": "Category",
-            "type": "Cost Type",
-            "payment_method": "Payment Method",
-            "qty": "Quantity",
-            "amount": "Unit Price",
-            "transaction_cost": "Transaction Cost",
-            "description": "Description",
-        }
-        widgets = {"description": Textarea(attrs={"cols": 30, "rows": 1})}
-
-    def __init__(self, *args, **kwargs):
-        super(OutflowForm, self).__init__(*args, **kwargs)
         self.fields["payment_method"].empty_label = "Select"
 
 
@@ -230,12 +194,12 @@ class RequirementForm(forms.ModelForm):
             "doc": "Upload Supporting Document",
         }
 
-    def __init__(self, **kwargs):
-        super(RequirementForm, self).__init__(**kwargs)
-        self.fields["created_by"].queryset = CustomerUser.objects.filter(
-            is_employee=True 
-            # Q(is_employee=True)
-        )
+    # def __init__(self, **kwargs):
+    #     super(RequirementForm, self).__init__(**kwargs)
+    #     self.fields["created_by"].queryset = CustomerUser.objects.filter(
+    #         is_employee=True 
+    #         # Q(is_employee=True)
+    #     )
 
 class EvidenceForm(forms.ModelForm):
     class Meta:

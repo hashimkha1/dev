@@ -1,25 +1,94 @@
+from django import forms
+from django.forms import Textarea
+from django.db.models import Q
+from pyexpat import model
 
-# from pyexpat import model
-# from django import forms
-# from django.contrib.auth.forms import UserCreationForm
+from .models import (
+    TrainingLoan,
+    Transaction,
+    Inflow
+)
 
-# from .models import (
-#     Applicant_Profile,
-#     Application,
-#     InteviewUploads,
-#     Policy,
-#     Rated,
-#     Reporting,
-# )
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
 
-# class DefaultForm(forms.ModelForm):
-#     class Meta:
-#         model = Policy
-#         fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
-#         labels = {
-#             "first_name": "First Name",
-#             "last_name": "Last Name",
-#             "policy_type": "Policy Type",
-#             "description": "Description",
-#             "policy_doc": "Attach Policy",
-#         }
+        fields = [
+            "id",
+            "sender",
+            "receiver",
+            "phone",
+            "department",
+            "category",
+            "type",
+            "payment_method",
+            "qty",
+            "amount",
+            "transaction_cost",
+            "description",
+            "receipt_link",
+        ]
+        labels = {
+            "sender": "Your full Name",
+            "receiver": "Enter Receiver Name",
+            "phone": "Receiver Phone",
+            "department": "Department",
+            "category": "Category",
+            "type": "Type",
+            "payment_method": "Payment Method",
+            "qty": "Quantity",
+            "amount": "Unit Price",
+            "transaction_cost": "Transaction Cost",
+            "description": "Description",
+            "receipt_link": "Link",
+        }
+        widgets = {"description": Textarea(attrs={"cols": 30, "rows": 1})}
+
+    def __init__(self, *args, **kwargs):
+        super(TransactionForm, self).__init__(*args, **kwargs)
+        self.fields["payment_method"].empty_label = "Select"
+
+class InflowForm(forms.ModelForm):
+    class Meta:
+        model = Inflow
+        fields = [
+            "receiver",
+            "phone",
+            "category",
+            "task",
+            "method",
+            "period",
+            "qty",
+            "amount",
+            "transaction_cost",
+            "description",
+        ]
+        labels = {
+            "receiver": "Enter Receiver Name",
+            "phone": "Receiver Phone",
+            "department": "Department",
+            "category": "Category",
+            "task": "Task",
+            "method": "Payment Method",
+            "period": "Period",
+            "qty": "Quantity",
+            "amount": "Unit Price",
+            "transaction_cost": "Transaction Cost",
+            "description": "Comments",
+        }
+        widgets = {"description": Textarea(attrs={"cols": 30, "rows": 1})}
+
+    def __init__(self, *args, **kwargs):
+        super(InflowForm, self).__init__(*args, **kwargs)
+        self.fields["method"].empty_label = "Select"
+
+class LoanForm(forms.ModelForm):
+    class Meta:
+        model = TrainingLoan
+        fields = [ "user","category","amount","is_active"]
+        labels = {
+            "user":"user",
+            "category":"category",
+            "amount":"amount",
+            "is_active":"is_active",
+        }

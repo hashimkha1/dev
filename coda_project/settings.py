@@ -33,8 +33,6 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
-    # "django_crontab",
-    #'testing.apps.TestingConfig',
     "main.apps.MainConfig",
     #'users.apps.UsersConfig',
     "accounts.apps.AccountsConfig",
@@ -63,6 +61,9 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     #'dbbackup',
+    # "django_extensions",
+    # "django_crontab",
+    # 'testing.apps.TestingConfig',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -133,27 +134,17 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
 import dj_database_url
-
 # postgresql database
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'CODA_UAT',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
     }
 }
-
 db_from_env = dj_database_url.config(conn_max_age=600)
 
 DATABASES["default"].update(db_from_env)

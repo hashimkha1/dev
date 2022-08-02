@@ -5,45 +5,14 @@ from .views import (
                         TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         TaskHistoryView,
-                        UserInflowListView,AssessListView,TagCreateView,
-                        InflowDetailView,#InflowCreateView,
-                        InflowUpdateView,InflowDeleteView,
-                        PolicyUpdateView,#OutflowListView,
-                        OutflowUpdateView,OutflowDetailView,OutflowDeleteView,
-                        TransactionUpdateView,TransactionListView,
+                        AssessListView,TagCreateView,
+                        PolicyUpdateView,DepartmentUpdateView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
 
 app_name = 'management'
 urlpatterns = [
     path('', views.home, name='management-home'),
-    path('transact/', views.transact, name='management-transact'),
-    #path('transaction/', views.transaction, name='management-transaction'),
-    path('transaction/', TransactionListView.as_view(), name='transaction-list'),
-    #path('transaction/', OutflowDetailView.as_view(), name='transaction-detail'),
-    path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-update'),
-
-    #-----------CASHINFLOW---------------------------------------
-    path('inflow_entry/', views.inflow, name='entry_inflow'),
-    #path('inflow/', InflowListView.as_view(), name='inflow-list'),
-    path('inflows/', views.inflows, name='inflow-list'),
-    path('user_inflow/', UserInflowListView.as_view(), name='user-list'),
-    #path('inflow/new/', InflowCreateView.as_view(), name='inflow-create'),
-    path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),
-    path('inflow/<int:pk>/update/', InflowUpdateView.as_view(), name='inflow-update'),
-    path('inflow/<int:pk>/delete/', InflowDeleteView.as_view(), name='inflow-delete'),
-
-    #-----------CASHOUTFLOW---------------------------------------
-    path('outflow_entry/', views.outflow_entry, name='outflow_entry'),
-    #path('outflow/', OutflowListView.as_view(), name='outflow-list'),
-    path('outflows/', views.outflowlist, name='outflow-list'),
-    #path('outflow/new/', OutflowCreateView.as_view(), name='outflow-create'),
-    #path('user_outflow/', UseroutflowListView.as_view(), name='user-list'),
-    path('outflow/<int:pk>/', OutflowDetailView.as_view(), name='outflow-detail'),
-    path('outflow/<int:pk>/update/', OutflowUpdateView.as_view(), name='outflow-update'),
-    path('outflow/<int:pk>/delete/', OutflowDeleteView.as_view(), name='outflow-delete'),  
-
-
     #-----------COMPANY REPORTS---------------------------------------
     path('companyagenda/', views.companyagenda, name='companyagenda'),
     path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
@@ -54,19 +23,19 @@ urlpatterns = [
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
-    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/hr/policy_form.html"), name="policy-update"),
+    path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/departments/hr/policy_form.html"), name="policy-update"),
     
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
     path('tasks/', TaskListView.as_view(), name='tasks'),
     path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
-    path('newlink/', TaskCreateView.as_view(), name='newtask'),
+    path('newlink/', TaskCreateView.as_view(), name='newlink'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
     path('evidence/',views.evidence, name='evidence'),
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
-    path('evidence/<int:id>', views.evidence_update_view ,name='evidence_update'),
+    path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
@@ -88,6 +57,10 @@ urlpatterns = [
     path('assess/', views.assess, name='assess'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
 
+    path('newdepartment/', views.newdepartment, name='newdepartment'),
+    path('departments/', views.department, name='departments'),
+    path('department/<int:pk>/', DepartmentUpdateView.as_view(template_name='management/tag_form.html'), name='department-update'),
+    
     path('requirement/new', views.newrequirement, name='new_requirement'),
     path('requirements/', views.requirements, name='requirements'),
     path('activerequirements/', views.active_requirements, name='requirements-active'),

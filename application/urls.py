@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from management.views import policies
 from .views import (
     ApplicantDeleteView,
     ApplicantListView,

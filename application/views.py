@@ -171,7 +171,7 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
-            return redirect("application:policies")
+            return redirect("management:policies")
 
     return render(
         request,

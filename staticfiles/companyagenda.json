@@ -1,28 +1,71 @@
 {
-    "Client Training Status": {
-        "Client Emails  For new Assignment": "http://www.google.com/",
-        "Upload interview Form": "https://www.google.com/",
-        "Upload interview Data": "https://www.google.com/",
-        "Assignment Section": "https://www.upworks.com/"
+    "DEPARTMENTS": {
+        "Agenda": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+        "departments": "https://docs.google.com/spreadsheets/d/1vsxZjFGuSb7T4OqG_ZTQu93C7EF3ZyzgwxskbRlJfMY/edit#gid=0",
+        "Projects": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+        "Credentials": "https://www.codanalytics.net/accounts/credentials/",
+        "Policies": "https://www.codanalytics.net/management/policies/"
     },
-    "Emails": {
-        "Clients Applicant Emails": "https://www.google.com/",
-        "Schedule": "https://www.google.com/",
-        "Company email": "https://www.google.com/",
-        "Customized Messages": "https://www.google.com/"
-    },
-    "Stocks And Options": {
-        "Stocks and Options Trading": "https://www.google.com/"
-    },
-    "Website Update": {
-        "Job support-website ": {
-            "Projects": "https://www.fb.com/"
+    "HUMANA RESOURCE": {
+        "MEETINGS": {
+            "Scrum": "https://www.codanalytics.net/management/assess/",
+            "General": "https://www.codanalytics.net/management/finance/",
+            "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
+            "Departmental": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+            "BOG": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+            "DAF SESSIONS": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
         },
-        "Client Assignment": {
-            "Comments Example": "https://www.fiver.com/"
+        "REPORTS": {
+            "General HR Report": "https://public.tableau.com/app/profile/coda2331/viz/EmployeeProductivityVersion08/LandingPageReport?publish=yes",
+            "HR Report": "https://www.codanalytics.net/management//"
         },
-        "Reviewing the powerpoint": {
+        "APPLICANTS": {
+            "Applicants": "https://www.codanalytics.net/management/hr/",
+            "Interview": "https://www.codanalytics.net/application/first_interview/section_a/"
+        },
+        "TRAINING": {
+            "1-1": "https://www.codanalytics.net/application/internal_training/",
+            "Report": "https://public.tableau.com/app/profile/coda2331/viz/OneononeSessionsReportv5/OneonOneSessionsReport?publish=yes"
+
+        }
+    },
+    "FINANCE": {
+        "REPORTS": {
+            "General Finance Report": "https://www.codanalytics.net/management/finance/",
+            "Finance Report": "https://www.codanalytics.net/management/finance/"
+        },
+        "COMPANY SNAPSHOT": {
+            "Training": "https://www.codanalytics.net/data/bitraining/",
+            "support": "https://www.codanalytics.net/accounts/tracker/",
+            "Interview": "https://www.codanalytics.net/data/interview/"
+        },
+        "STOCKS & OPTIONS": {
+            "Stocks and Options Trading": "https://www.google.com/"
+        }
+    },
+    "IT": {
+        "WEBSITE DEVELOPMENT": {
+            "Requirements": "https://www.codanalytics.net/management/requirements/"
+        },
+        "DATA ANALYSIS": {
+            "Training": "https://www.codanalytics.net/data/bitraining/",
+            "support": "https://www.codanalytics.net/accounts/tracker/",
+            "Interview": "https://www.codanalytics.net/data/interview/"
+        },
+        "OTHER": {
             "Trainee powerpoint": "https://www.google.com/"
         }
-    }
+    },
+    "MARKETING": {
+            "SOCIAL MEDIA": {
+                "Facebook": "https://www.codanalytics.net/#/",
+                "Twitter": "https://www.codanalytics.net/#/",
+                "Instagram": "https://www.codanalytics.net/#/"
+            },
+            "REPORT": {
+                "MKT Report": "https://www.codanalytics.net/#/"
+            }
+        }
 }
+
+

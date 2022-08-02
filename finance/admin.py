@@ -26,14 +26,7 @@ class Payment_HistoryAdmin(admin.ModelAdmin):
 
 admin.site.register(Payment_History, Payment_HistoryAdmin)
 from django.urls import path, reverse
-from .models import (
-    Payment_History,
-    Default_Payment_Fees,
-    Payment_Information,
-    Transaction,
-    Inflow,
-    Outflow,
-)  # , DocUpload
+from .models import  Payment_History,Default_Payment_Fees,Payment_Information,Transaction,Inflow
 
 
 class CsvImportForm(forms.Form):
@@ -91,7 +84,6 @@ class TransactionAdmin(admin.ModelAdmin):
 
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
-admin.site.register(Outflow)
-# admin.site.register(Payment_History)
+admin.site.register(Payment_History)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)

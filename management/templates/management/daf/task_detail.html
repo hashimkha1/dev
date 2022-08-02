@@ -2,15 +2,15 @@
 <section id="career">
   <div class="career text-center">
     <h2>All Clients</h2>
-    {% if user.is_active or user.is_admin or user.is_employee%}
+    {% if  user.is_admin or user.is_superuser%}
     <a
       class="btn btn-secondary btn-sm mt-1 mb-1"
-      href="{%url 'management:userupdatetask' object.id%}"
+      href="{%url 'management:updatetask' object.id%}"
     >Update</a>
     {% else %}
     <a
       class="btn btn-secondary btn-sm mt-1 mb-1"
-      href="{%url 'management:updatetask' object.id%}"
+      href="{%url 'management:userupdatetask' object.id%}"
     >Update</a>
     <a
       class="btn btn-danger btn-sm mt-1 mb-1"

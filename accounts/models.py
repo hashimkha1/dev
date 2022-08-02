@@ -1,6 +1,6 @@
 import datetime
 from decimal import *
-
+from django.db.models import Q
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Sum
@@ -92,6 +92,7 @@ class Department(models.Model):
 
     description = models.TextField(max_length=500,null=True, blank=True)
     slug = models.SlugField(verbose_name=_('Department safe URL'), max_length=255, unique=True)
+    # created_date = models.DateTimeField(_('entered on'),default=timezone.now, editable=True)
     is_featured = models.BooleanField("Is featured", default=True)
     is_active=models.BooleanField(default=True)
 
@@ -275,27 +276,29 @@ class Tracker(models.Model):
     plan = models.CharField(
         verbose_name=_("group"), help_text=_("Required"), max_length=255, default="B"
     )
-    employee = models.CharField(
-        verbose_name=_("Employee Name"),
+    empname = models.ForeignKey(
+        "accounts.CustomerUser",
+         verbose_name=_("Employee"),
+         related_name="Employee", 
+         null=True, blank=True,
+         on_delete=models.SET_NULL,
+        #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+          limit_choices_to={"is_employee": True, "is_active": True},
+         )
+
+    author = models.ForeignKey(
+        "accounts.CustomerUser",
+         verbose_name=_("Client"),
+         related_name="Client",
+         null=True, blank=True,
+         on_delete=models.SET_NULL,
+         limit_choices_to={"is_client": True, "is_active": True},
+         )
+    employee= models.CharField(
+        verbose_name='Company/End Client',
         help_text=_("Required"),
         max_length=255,
         default="CODA",
-    )
-    # employee = models.ForeignKey(
-    #     "accounts.CustomerUser",
-    #     verbose_name=_("Employee Name"),
-    #     help_text=_("Required"),
-    #     on_delete=models.CASCADE,
-    #     related_name="employee",
-    #     default=1,
-    #     limit_choices_to={"is_employee": True,"is_active": True}
-    # )
-    author = models.ForeignKey(
-        "accounts.CustomerUser",
-        verbose_name=_("Client Name"),
-        on_delete=models.CASCADE,
-        related_name="author",
-        limit_choices_to={"is_client": True, "is_active": True},
     )
     # clientname = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE, related_name="clientname",limit_choices_to={'is_client': True})
     login_date = models.DateTimeField(auto_now_add=True)
@@ -327,15 +330,4 @@ class Tracker(models.Model):
     def total_payment(self):
         total = self.duration.objects.aggregate(TOTAL=Sum("duration"))["TOTAL"]
         return total
-
-    """ 
-    @property
-    def amt_per_plan(self):
-        if self.plan=='A':
-            return 30
-        elif self.plan=='B':
-            return 120
-        else:
-            return 9999
-    """
 

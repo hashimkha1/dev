@@ -13,7 +13,6 @@ from management.utils import email_template
 from .forms import (
     DepartmentForm,
     TransactionForm,
-    OutflowForm,
     InflowForm,
     PolicyForm,
     ManagementForm,
@@ -29,10 +28,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    # Transaction,
     Policy,
-    # Inflow,
-    # Outflow,
     Tag,
     Task,
     TaskHistory,
@@ -41,14 +37,13 @@ from .models import (
 )
 from data.models import DSU
 
-from finance.models import Transaction,Inflow,Outflow
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from finance.models import Transaction,Inflow,TrainingLoan
 from accounts.models import Tracker,Department
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
-from finance.models import Transaction,Inflow,Outflow
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -59,19 +54,36 @@ def home(request):
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
 
+# ================================DEPARTMENT SECTION================================
 def department(request):
-    departments=Department.objects.all()
-    return render(request, "management/doc_templates/departmentlist.html" , {'departments':departments})
+    departments=Department.objects.filter(is_active=True)
+    return render(request, "management/departments/departments.html" , {'departments':departments})
 
 def newdepartment(request):
     if request.method == "POST":
         form = DepartmentForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('management:management-department')
+            return redirect('management:departments')
     else:
         form=DepartmentForm()
-    return render(request, "management/doc_templates/department_form.html", {"form":form})
+    return render(request, "management/tag_form.html", {"form":form})
+
+class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Department
+    success_url="/management/departments"
+    fields = ["name","slug","description","is_active","is_featured"]
+    form = DepartmentForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+
 
 
 def contract(request):
@@ -144,217 +156,8 @@ def finance(request):
 
 
 def hr(request):
-    return render(request, "management/company_finances/hr.html", {"title": "HR"})
+    return render(request, "management/companyagenda.html", {"title": "HR"})
 
-
-# ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
-
-def transact(request):
-    if request.method == "POST":
-        form = TransactionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("/management/transaction/")
-    else:
-        form = TransactionForm()
-    return render(request, "management/company_finances/transact.html", {"form": form})
-
-
-class TransactionListView(ListView):
-    model = Transaction
-    template_name = "management/company_finances/transaction.html"
-    context_object_name = "transactions"
-    # ordering=['-transaction_date']
-
-
-@method_decorator(login_required, name="dispatch")
-class OutflowDetailView(DetailView):
-    template_name = "management/outflow_detail.html"
-    model = Transaction
-    ordering = ["-transaction_date"]
-
-
-class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Transaction
-    # success_url="/management/transaction"
-    fields = [
-        "sender",
-        "receiver",
-        "phone",
-        "department",
-        "category",
-        "type",
-        "payment_method",
-        "qty",
-        "amount",
-        "transaction_cost",
-        "description",
-        "receipt_link",
-    ]
-    form = TransactionForm()
-
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("management:transaction-list")
-
-
-# ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
-
-
-def outflow_entry(request):
-    if request.method == "POST":
-        form = OutflowForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.instance.employee = request.user
-            form.save()
-            return redirect("/management/outflows/")
-    else:
-        form = OutflowForm()
-    return render(
-        request, "management/company_finances/outflow_entry.html", {"form": form}
-    )
-
-
-def outflowlist(request):
-    outflows = Outflow.objects.all().order_by("-activity_date")
-    # total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-    # total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    total = Outflow.objects.all().aggregate(Total_Cashoutflows=Sum("amount"))
-    expenses = total.get("Total_Cashoutflows")
-    context = {"outflows": outflows, "expenses": expenses}
-    return render(request, "management/cash_outflow/outflows.html", context)
-
-
-@method_decorator(login_required, name="dispatch")
-class OutflowDetailView(DetailView):
-    template_name = "management/cash_outflow/outflow_detail.html"
-    model = Outflow
-    ordering = ["-activity_date"]
-
-
-@method_decorator(login_required, name="dispatch")
-class OutflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Outflow
-    success_url = "/management/outflows"
-    fields = [
-        "sender",
-        "receiver",
-        "phone",
-        "department",
-        "category",
-        "type",
-        "payment_method",
-        "qty",
-        "amount",
-        "transaction_cost",
-        "description",
-    ]
-
-    def form_valid(self, form):
-        form.instance.employee = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        outflow = self.get_object()
-        if self.request.user == outflow.employee:
-            return True
-        return False
-
-
-@method_decorator(login_required, name="dispatch")
-class OutflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Outflow
-    success_url = "/management/outflows"
-
-    def test_func(self):
-        outflow = self.get_object()
-        if self.request.user == outflow.employee:
-            return True
-        return False
-
-
-# ----------------------CASH INFLOW CLASS-BASED VIEWS--------------------------------
-def inflow(request):
-    if request.method == "POST":
-        form = InflowForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.instance.sender = request.user
-            form.save()
-            return redirect("/management/inflows/")
-    else:
-        form = InflowForm()
-    return render(
-        request, "management/company_finances/inflow_entry.html", {"form": form}
-    )
-
-@method_decorator(login_required, name="dispatch")
-class InflowDetailView(DetailView):
-    template_name = "management/cash_inflow/inflow_detail.html"
-    model = Inflow
-    ordering = ["-transaction_date"]
-
-
-def inflows(request):
-    inflows = Inflow.objects.all().order_by("-transaction_date")
-    # total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-    # total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
-    revenue = total.get("Total_Cashinflows")
-    context = {"inflows": inflows, "revenue": revenue}
-    return render(request, "management/cash_inflow/inflows.html", context)
-
-
-@method_decorator(login_required, name="dispatch")
-class UserInflowListView(ListView):
-    model = Inflow
-    template_name = "management/cash_inflow/user_inflow.html"
-    context_object_name = "inflows"
-    ordering = ["-transaction_date"]
-
-
-@method_decorator(login_required, name="dispatch")
-class InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Inflow
-    success_url = "/management/inflow"
-    fields = [
-        "sender",
-        "receiver",
-        "phone",
-        "category",
-        "task",
-        "method",
-        "period",
-        "qty",
-        "amount",
-        "transaction_cost",
-        "description",
-    ]
-
-    def form_valid(self, form):
-        form.instance.sender = self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        inflow = self.get_object()
-        if self.request.user == inflow.sender:
-            return True
-        return False
-
-
-@method_decorator(login_required, name="dispatch")
-class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Inflow
-    success_url = "/management/inflow"
-
-    def test_func(self):
-        inflow = self.get_object()
-        # if self.request.user == inflow.sender:
-        if self.request.user.is_superuser:
-            return True
-        return False
 
 
 # ----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
@@ -366,20 +169,24 @@ def policy(request):
             return redirect("management:policies")
     else:
         form = PolicyForm()
-    return render(request, "management/hr/policy.html", {"form": form})
-
+    return render(request, "management/departments/hr/policy.html", {"form": form})
 
 def policies(request):
-    reporting_date = date.today()
     day_name = date.today().strftime("%A")
-    #policies from management app
     policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
+    applicant_policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
+    reporting_date = date.today() + timedelta(days=7)
     context = {
         "policies": policies,
+        "applicant_policies": applicant_policies,
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    return render(request, "management/hr/policies.html", context)
+    # if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
+    #     return render(request, "application/orientation/policies.html", context)
+    # else:
+    return render(request, "management/departments/hr/policies.html", context)
+
 
 class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Policy
@@ -588,6 +395,7 @@ def task_payslip(request, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
+
     loan = Decimal(total_pay) * Decimal("0.2")
     computer_maintenance = 500
     food_accomodation = 1000
@@ -875,6 +683,7 @@ def payslip(request, user=None, *args, **kwargs):
     # the loan amount and add to the deductions. We need to create
     # new database table to store the loan amount and add to the database.
     loan = Decimal(total_pay) * Decimal("0.2")
+    kra = Decimal(total_pay) * Decimal("0.30")
     # if employee use company computer, add the charge to the deductions.
     computer_maintenance = 500
     # if user self paid the food accomodation, no need to add to the deductions
@@ -948,6 +757,7 @@ def payslip(request, user=None, *args, **kwargs):
         "food_accomodation": food_accomodation,
         "health": health,
         "loan": loan,
+        "kra": kra,
         "total_deduction": total_deduction,
         # bonus
         "Night_Bonus": Night_Bonus,
@@ -1143,13 +953,13 @@ def assess(request):
             return redirect("management:assessment")
     else:
         form = ManagementForm()
-    return render(request, "management/hr/assess_form.html", {"form": form})
+    return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
 
 class AssessListView(ListView):
     queryset = DSU.objects.filter(type="Staff").order_by("-created_at")
     # queryset=DSU.objects.all()
-    template_name = "management/hr/assessment.html"
+    template_name = "management/departments/hr/assess_form.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
 
