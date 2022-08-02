@@ -3,12 +3,13 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.urls import path, reverse
 # Register your models here.
 from .models import (
     Payment_History,
     Default_Payment_Fees,
     Payment_Information,
+    Transaction,Inflow
 )  # , DocUpload
 
 
@@ -25,8 +26,7 @@ class Payment_HistoryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Payment_History, Payment_HistoryAdmin)
-from django.urls import path, reverse
-from .models import  Payment_History,Default_Payment_Fees,Payment_Information,Transaction,Inflow
+
 
 
 class CsvImportForm(forms.Form):
@@ -84,6 +84,5 @@ class TransactionAdmin(admin.ModelAdmin):
 
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
-admin.site.register(Payment_History)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)

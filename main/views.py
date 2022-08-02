@@ -16,7 +16,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 import json
 
-from stripe import Plan
+# from stripe import Plan
 from finance.models import Payment_History, Payment_Information
 
 from .forms import TransactionForm
