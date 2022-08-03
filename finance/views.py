@@ -15,7 +15,7 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from datetime import date
+from datetime import datetime,date
 
 from django.views.generic import (
     CreateView,
