@@ -15,7 +15,7 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-
+from datetime import datetime,date
 from django.views.generic import (
     CreateView,
     ListView,
@@ -39,7 +39,6 @@ User = get_user_model()
 
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
-
 def contract_form_submission(request):
 	try:
 		if request.method == "POST":
