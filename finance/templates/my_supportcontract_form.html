@@ -96,7 +96,7 @@
         </div>
         <div class="col-md-6">
             <h4>METHOD OF PAYMENT:</h4>
-            <input type="radio" id="One_month" name="payment_type" value="paypal" {% if payment_data.payment_method  == "paypal" %} checked {% else %}disabled{% endif %}>
+            <input type="radio" id="One_month" name="payment_type" name="paypal" value="paypal" {% if payment_data.payment_method  == "paypal" %} checked {% else %}disabled{% endif %}>
             Paypal<br>
             <input type="radio" id="One_month" name="payment_type" value="cash_app" {% if payment_data.payment_method  == "cash_app" %} checked {% else %}disabled{% endif %}>
             Cash App<br>

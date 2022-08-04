@@ -501,6 +501,7 @@ class ClientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+
 @method_decorator(login_required, name="dispatch")
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = CustomerUser
@@ -538,7 +539,7 @@ class TrackListView(ListView):
     #     em = Tracker.objects.all().values().order_by('-pk')[0]
     #     trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
     #     num =trackers.count()
-    #     Used=trackers.aggregate(Used_Time=Sum('duration'))  
+    #     Used=trackers.aggregate(Used_Time=Sum('duration'))
     #     Usedtime=Used.get('Used_Time')
     #     customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
     #     if Usedtime < 30:
@@ -552,30 +553,33 @@ class TrackListView(ListView):
 
     #     return qs
 
+
 def usertracker(request, user=None, *args, **kwargs):
     try:
         user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
         trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
-        em = Tracker.objects.all().values().order_by('-pk')[0]
+        em = Tracker.objects.all().values().order_by("-pk")[0]
         num = trackers.count()
         # Check on my_time=avg("time")
         my_time = trackers.aggregate(Assigned_Time=Avg("time"))
         Used = trackers.aggregate(Used_Time=Sum("duration"))
         Usedtime = Used.get("Used_Time")
         # plantime = my_time.get("Assigned_Time")
-        payment_details = Payment_History.objects.filter(customer= user)
-        contract_plan_hours = payment_details.aggregate(Sum('plan'))
-        assigned_hours =0
-        if contract_plan_hours.get('plan__sum'):
-            assigned_hours = contract_plan_hours.get('plan__sum') * 40
-        if my_time.get('Assigned_Time'):
-            plantime=my_time.get('Assigned_Time') + assigned_hours
+        payment_details = Payment_History.objects.filter(customer=user)
+        contract_plan_hours = payment_details.aggregate(Sum("plan"))
+        assigned_hours = 0
+        if contract_plan_hours.get("plan__sum"):
+            assigned_hours = contract_plan_hours.get("plan__sum") * 40
+        if my_time.get("Assigned_Time"):
+            plantime = my_time.get("Assigned_Time") + assigned_hours
         plantime = assigned_hours
         try:
             delta = round(plantime - Usedtime)
         except (TypeError, AttributeError):
             delta = 0
-        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+        customer_get = CustomerUser.objects.values_list("username", "email").get(
+            id=em.get("author_id")
+        )
         if delta < 30:
             subject = "New Contract Alert"
             to = customer_get[1]
@@ -596,7 +600,8 @@ def usertracker(request, user=None, *args, **kwargs):
         return render(request, "accounts/usertracker.html", context)
     except:
         # return render(request, "accounts/usertracker.html", context)
-        return redirect('accounts:tracker-create')
+        return redirect("accounts:tracker-create")
+
 
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
@@ -605,7 +610,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     # fields=['category','task','duration']
     fields = [
         "empname",
-        "employee", 
+        "employee",
         "author",
         "category",
         "sub_category",
@@ -615,14 +620,14 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     ]
 
     def form_valid(self, form):
-        user=self.request.user
+        user = self.request.user
         form.instance.author = self.request.user
         try:
-            
+
             if form.instance.category == "Job_Support":
                 print(form.instance.empname)
                 idval, points, targetpoints = Task.objects.values_list(
-                    "id","point", "mxpoint"
+                    "id", "point", "mxpoint"
                 ).filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")
@@ -633,7 +638,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
                     employee__username=form.instance.empname,
-
                 )[
                     0
                 ]
@@ -662,7 +666,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
-        
+
         return super().form_valid(form)
 
 
@@ -692,28 +696,47 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)  
 """
 
+
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tracker
     success_url = "/accounts/tracker"
 
-    fields = ["employee","empname","author", "plan", "category", "task", "duration", "time"]
+    fields = [
+        "employee",
+        "empname",
+        "author",
+        "plan",
+        "category",
+        "task",
+        "duration",
+        "time",
+    ]
 
     def form_valid(self, form):
         # form.instance.author=self.request.user
-        if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.is_staff:
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            or self.request.user.is_staff
+        ):
             return super().form_valid(form)
         else:
             return False
 
     def test_func(self):
         track = self.get_object()
-        if self.request.user.is_superuser or self.request.user.is_admin or self.request.user.is_staff:
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            or self.request.user.is_staff
+        ):
             return True
         # elif self.request.user ==track.author:
         #     return True
         else:
             return False
+
 
 @method_decorator(login_required, name="dispatch")
 class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -727,5 +750,3 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
-
