@@ -526,28 +526,28 @@ class TrackListView(ListView):
     template_name = "accounts/tracker.html"
     context_object_name = "trackers"
     ordering = ["-login_date"]
-    total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
-    def get_queryset(self, *args, **kwargs):
-        qs = super(TrackListView, self).get_queryset(*args, **kwargs)
-        em = Tracker.objects.all().values().order_by('-pk')[0]
-        trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
-        num =trackers.count()
-        Used=trackers.aggregate(Used_Time=Sum('duration'))  
-        Usedtime=Used.get('Used_Time')
-        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
-        # if Usedtime < 30:
-        #     subject = "New Contract Alert"
-        #     to = customer_get[1]
-        #     html_content = f"""
-        #         <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-        #         <a href='https://www.codanalytics.net/finance/new_contract/{customer_get[0]}/'>click here to sign new contract</a><br>
-        #         </span>"""
-        #     email_template(subject, to, html_content)
+    # # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
+    # def get_queryset(self, *args, **kwargs):
+    #     qs = super(TrackListView, self).get_queryset(*args, **kwargs)
+    #     em = Tracker.objects.all().values().order_by('-pk')[0]
+    #     trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
+    #     num =trackers.count()
+    #     Used=trackers.aggregate(Used_Time=Sum('duration'))  
+    #     Usedtime=Used.get('Used_Time')
+    #     customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+    #     if Usedtime < 30:
+    #         subject = "New Contract Alert"
+    #         to = customer_get[1]
+    #         html_content = f"""
+    #             <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+    #             <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
+    #             </span>"""
+    #         email_template(subject, to, html_content)
 
-        return qs
+    #     return qs
 
 def usertracker(request, user=None, *args, **kwargs):
-    # try:
+    try:
         user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
         trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
         em = Tracker.objects.all().values().order_by('-pk')[0]
@@ -556,30 +556,29 @@ def usertracker(request, user=None, *args, **kwargs):
         my_time = trackers.aggregate(Assigned_Time=Avg("time"))
         Used = trackers.aggregate(Used_Time=Sum("duration"))
         Usedtime = Used.get("Used_Time")
-        plantime = my_time.get("Assigned_Time")
-        # payment_details = Payment_History.objects.filter(customer= user)
-        # print(payment_details)
-        # contract_plan_hours = payment_details.aggregate(Sum('plan'))
-        # assigned_hours =0
-        # if contract_plan_hours.get('plan__sum'):
-        #     assigned_hours = contract_plan_hours.get('plan__sum') * 40
-        # if my_time.get('Assigned_Time'):
-        #     plantime=my_time.get('Assigned_Time') + assigned_hours
-        # plantime = assigned_hours
+        # plantime = my_time.get("Assigned_Time")
+        payment_details = Payment_History.objects.filter(customer= user)
+        contract_plan_hours = payment_details.aggregate(Sum('plan'))
+        assigned_hours =0
+        if contract_plan_hours.get('plan__sum'):
+            assigned_hours = contract_plan_hours.get('plan__sum') * 40
+        if my_time.get('Assigned_Time'):
+            plantime=my_time.get('Assigned_Time') + assigned_hours
+        plantime = assigned_hours
         try:
             delta = round(plantime - Usedtime)
         except (TypeError, AttributeError):
             delta = 0
-        # customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
-        # if delta < 30:
-        #     subject = "New Contract Alert"
-        #     to = customer_get[1]
-        #     html_content = f"""
-        #         <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-        #         <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+        customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
+        if delta < 30:
+            subject = "New Contract Alert"
+            to = customer_get[1]
+            html_content = f"""
+                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+                <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
                 
-        #         </span>"""
-        #     email_template(subject, to, html_content)
+                </span>"""
+            email_template(subject, to, html_content)
 
         context = {
             "trackers": trackers,
@@ -589,9 +588,9 @@ def usertracker(request, user=None, *args, **kwargs):
             "delta": delta,
         }
         return render(request, "accounts/usertracker.html", context)
-    # except:
-    #     # return render(request, "accounts/usertracker.html", context)
-    #     return redirect('accounts:tracker-create')
+    except:
+        # return render(request, "accounts/usertracker.html", context)
+        return redirect('accounts:tracker-create')
 
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker

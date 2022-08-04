@@ -136,12 +136,21 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 import dj_database_url
 # postgresql database
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',# Name of Database
+        'NAME': 'codadev',# Name of Database
         'USER':'postgres',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
+        'PASSWORD': "13mse1138",
         'HOST': 'localhost',
     }
 }
@@ -241,12 +250,6 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
-# session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-# s3 = session.resource('s3')
-
-# ! Make sure the below line of code is not commented on the production for media uploads
-# DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
 CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
@@ -265,6 +268,6 @@ CELERYBEAT_SCHEDULE = {
         #'schedule': crontab(),
     },
 }
-SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
+
 # SITEURL="http://localhost:8000"
-SITEURL = "https://www.codanalytics.net"
+SITEURL="https://www.codanalytics.net"

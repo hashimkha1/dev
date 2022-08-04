@@ -8,8 +8,7 @@ from .views import (
                     DefaultPaymentUpdateView,DefaultPaymentListView,
                     LoanListView,LoanUpdateView,
 )
-
-app_name = "finance"
+app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
     path('transact/', views.transact, name='finance-transact'),
