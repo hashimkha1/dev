@@ -118,7 +118,7 @@ class Transaction(models.Model):
          limit_choices_to={"is_employee": True, "is_active": True},
          )
     department = models.ForeignKey(
-        to=Department, on_delete=models.CASCADE, default=Department.get_default_pk
+        to=Department, on_delete=models.CASCADE, default=None
         )
     # sender = models.CharField(max_length=100, null=True, default=None)
     receiver = models.CharField(max_length=100, null=True, default=None)
@@ -248,9 +248,7 @@ class Inflow(models.Model):
         default=Other,
     )
 
-    sender = models.ForeignKey(
-        "accounts.CustomerUser", on_delete=models.CASCADE, related_name="inflows"
-    )
+    sender = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE, related_name="inflows")
     receiver = models.CharField(max_length=100, null=True, default=None)
     phone = models.CharField(max_length=50, null=True, default=None)
     transaction_date = models.DateTimeField(default=timezone.now)

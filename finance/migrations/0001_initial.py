@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
+        ('accounts', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('accounts', '__first__'),
     ]
@@ -42,7 +43,7 @@ class Migration(migrations.Migration):
                 ('description', models.TextField(default=None, max_length=1000)),
                 ('payment_method', models.CharField(choices=[('Cash', 'Cash'), ('Mpesa', 'Mpesa'), ('Check', 'Check'), ('Other', 'Other')], default='Other', max_length=25)),
                 ('category', models.CharField(choices=[('Salary', 'Salary'), ('Health', 'Health'), ('Transport', 'Transport'), ('Food_Accomodation', 'Food & Accomodation'), ('Internet_Airtime', 'Internet & Airtime'), ('Recruitment', 'Recruitment'), ('Labour', 'Labour'), ('Management', 'Management'), ('Electricity', 'Electricity'), ('Construction', 'Construction'), ('Other', 'Other')], default='Other', max_length=100)),
-                ('department', models.ForeignKey(default=accounts.models.Department.get_default_pk, on_delete=django.db.models.deletion.CASCADE, to='accounts.department')),
+                ('department', models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='accounts.department')),
                 ('sender', models.ForeignKey(blank=True, limit_choices_to={'is_active': True, 'is_employee': True}, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='sender', to=settings.AUTH_USER_MODEL, verbose_name='sender')),
             ],
             options={

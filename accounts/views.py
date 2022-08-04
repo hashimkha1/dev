@@ -29,7 +29,7 @@ from .models import CustomerUser, Tracker, CredentialCategory, Credential, Depar
 from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
-from finance.models import Default_Payment_Fees, Payment_History
+from finance.models import Default_Payment_Fees,Payment_History
 from management.utils import email_template
 from django.http import QueryDict
 import string, random
@@ -96,7 +96,7 @@ def join(request):
                         "default_fee": default_fee,
                     },
                 )
-            elif (
+            if (
                 request.POST.get("category") == "3"
                 and request.POST.get("sub_category") == "2"
             ):
@@ -138,12 +138,12 @@ def join(request):
 
             form.save()
 
-            username = form.cleaned_data.get("username")
-            category = form.cleaned_data.get("category")
-            gender = form.cleaned_data.get("gender")
-            country = form.cleaned_data.get("country")
-            messages.success(request, f"Account created for {username}!")
-            return redirect("accounts:account-login")
+            username = form.cleaned_data.get('username')
+            category = form.cleaned_data.get('category')
+            gender = form.cleaned_data.get('gender')
+            country = form.cleaned_data.get('country')
+            messages.success(request, f'Account created for {username}!')
+            return redirect('accounts:account-login')
     else:
         msg = "error validating form"
         form = UserForm()
@@ -377,19 +377,13 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     form = PasswordResetForm({'email': email})
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
-'''
-# ================================EMPLOYEE SECTION================================
+''' 
+#================================EMPLOYEE SECTION================================
 def Employeelist(request):
-    employees = CustomerUser.objects.filter(
-        Q(category=2) | Q(is_employee=True)
-    ).order_by("-date_joined")
-    return render(
-        request, "accounts/employees/employees.html", {"employees": employees}
-    )
+    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
+    return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
-
-# ================================CLIENT SECTION================================
-
+#================================CLIENT SECTION================================
 
 def newcredentialCategory(request):
     if request.method == "POST":

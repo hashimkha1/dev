@@ -1,4 +1,3 @@
-from turtle import down
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -12,12 +11,6 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from django.shortcuts import render
-from django.http import JsonResponse
-import json
-
-# from stripe import Plan
-from finance.models import Payment_History, Payment_Information
 
 from .forms import TransactionForm
 from .models import Expenses, Payments
@@ -86,45 +79,8 @@ def report(request):
 
 
 def pay(request):
-    payment_info = Payment_Information.objects.filter(
-        customer_id=request.user.id
-    ).first()
-
-    print("payment_info:", payment_info)
-    return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
-
-
-def paymentComplete(request):
-    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-    print(payments)
-    customer = request.user
-    payment_fees = payments.payment_fees
-    down_payment = payments.down_payment
-    studend_bonus = payments.student_bonus
-    plan = payments.plan
-    fee_balance = payments.fee_balance
-    payment_mothod = payments.payment_method
-    contract_submitted_date = payments.contract_submitted_date
-    client_signature = payments.client_signature
-    company_rep = payments.company_rep
-    client_date = payments.client_date
-    rep_date = payments.rep_date
-    Payment_History.objects.create(
-        customer=customer,
-        payment_fees=payment_fees,
-        down_payment=down_payment,
-        student_bonus=studend_bonus,
-        plan=plan,
-        fee_balance=fee_balance,
-        payment_method=payment_mothod,
-        contract_submitted_date=contract_submitted_date,
-        client_signature=client_signature,
-        company_rep=company_rep,
-        client_date=client_date,
-        rep_date=rep_date,
-    )
-
-    return JsonResponse("Payment completed!", safe=False)
+    payments = Payments.objects.all().first()
+    return render(request, "main/pay.html", {"title": "pay", "payments": payments})
 
 
 def training(request):
