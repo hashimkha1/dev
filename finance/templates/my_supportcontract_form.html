@@ -40,7 +40,7 @@
             <b>JOB SUPPORT</b>
         </div>
         <div class="col-md-6">
-            FEES: <b><span class="fees">NULL</span></b><br>
+            FEES: <b><span class="fees">USD.{{payment_data.payment_fees}}</span></b><br>
             DATE: {{contract_date}}</br>
         </div>
       </div>
@@ -62,9 +62,11 @@
         </div>
         <div class="col-md-6">
         <h4>PLAN</h4>
-            <b><span class="plan">No plan Selected</span> </b> <br>
-              &emsp;<b>1.Job Support Hours:<span id="job_support_hrs">NULL</span><br>
-              &emsp;2.Training Hours:<span id="train_hrs">NULL</span></b>
+            <b><span class="plan">
+              {{selected_plan}} hours
+            </span> </b> <br>
+              &emsp;<b>1.Job Support Hours:<span id="job_support_hrs">{{job_support_hours}}</span><br>
+              &emsp;2.Training Hours:<span id="train_hrs">30</span></b>
         </div>
       </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />

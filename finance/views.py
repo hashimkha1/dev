@@ -17,9 +17,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from datetime import datetime,date
 from django.views.generic import (
-    CreateView,
-    ListView,
-    UpdateView,
+	CreateView,
+	ListView,
+	UpdateView,
 	DetailView,
 	DeleteView,
 )
@@ -63,7 +63,8 @@ def contract_form_submission(request):
 					form.instance.is_client = True 
 				else:
 					form.instance.is_admin = True 
-				form.save()
+				if form.is_valid():
+					form.save()
 			customer=CustomerUser.objects.get(username=username)
 			payment_fees = int(request.POST.get('duration'))*1000
 			down_payment = int(request.POST.get('down_payment'))
@@ -137,15 +138,22 @@ def mycontract(request, *args, **kwargs):
 				student_bonus_payment_per_month=100)
 		default_payment_fees.save()
 		default_fee = Default_Payment_Fees.objects.get(id=1)
-	payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
-	contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
-	if client_data.category == 3 and client_data.sub_category == 1:
-		return render(request, 'my_supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
-	if client_data.category == 3 and client_data.sub_category == 2:
-		return render(request, 'my_trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
+		
+	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
+		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
+		if client_data.category == 3 and client_data.sub_category == 1:
+			plan_dict = {"1":40,"2":80,"3":120}
+			selected_plan = plan_dict[str(payemnt_details.plan)]
+			job_support_hours = selected_plan - 30
+			return render(request, 'my_supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details,"selected_plan":selected_plan,"job_support_hours":job_support_hours})
+		if client_data.category == 3 and client_data.sub_category == 2:
+			return render(request, 'my_trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
+		else:
+			# return render(request, 'templates\errors\403.html')
+			raise Http404("Login/Wrong Page: Are You a Client?")
 	else:
-        # return render(request, 'templates\errors\403.html')
-	    raise Http404("Login/Wrong Page: Are You a Client?")
+		return render(request, 'contract_error.html',{'username':username})
 		
 @login_required
 def newcontract(request, *args, **kwargs):
@@ -169,252 +177,252 @@ def newcontract(request, *args, **kwargs):
 	if client_data.category == 3 and client_data.sub_category == 2:
 		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
 	else:
-        # return render(request, 'templates\errors\403.html')
-	    raise Http404("Login/Wrong Page: Are You a Client?")
+		# return render(request, 'templates\errors\403.html')
+		raise Http404("Login/Wrong Page: Are You a Client?")
 
 
 class PaymentCreateView(LoginRequiredMixin, CreateView):
-    model = Default_Payment_Fees
-    success_url = "/finance/contract_form"
-    fields = [
+	model = Default_Payment_Fees
+	success_url = "/finance/contract_form"
+	fields = [
 				"job_down_payment_per_month",
 				"job_plan_hours_per_month",
 				"student_down_payment_per_month",
 				"student_bonus_payment_per_month",
-    ]
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+	]
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
 
 class PaymentListView(ListView):
-    model = Payment_History
-    template_name = "finance/payments/payments.html"
-    context_object_name = "payments"
+	model = Payment_History
+	template_name = "finance/payments/payments.html"
+	context_object_name = "payments"
 
 class DefaultPaymentListView(ListView):
-    model = Default_Payment_Fees
-    template_name = "finance/payments/defaultpayments.html"
-    context_object_name = "defaultpayments"
+	model = Default_Payment_Fees
+	template_name = "finance/payments/defaultpayments.html"
+	context_object_name = "defaultpayments"
 
 class DefaultPaymentUpdateView(UpdateView):
-    model = Default_Payment_Fees
-    success_url = "/finance/payments"
+	model = Default_Payment_Fees
+	success_url = "/finance/payments"
 	
-    fields = [
+	fields = [
 				"job_down_payment_per_month",
 				"job_plan_hours_per_month",
 				"student_down_payment_per_month",
 				"student_bonus_payment_per_month",
-    ]
-    # fields=['user','activity_name','description','point']
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        if self.request.user.is_superuser:
-            return super().form_valid(form)
-        else:
-            # return redirect("management:tasks")
-            return render(request,"management/doc_templates/supportcontract_form.html")
+	]
+	# fields=['user','activity_name','description','point']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		if self.request.user.is_superuser:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"management/doc_templates/supportcontract_form.html")
 
-    def test_func(self):
-        task = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        # elif self.request.user == task.employee:
-        #     return True
-        return False
+	def test_func(self):
+		task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		# elif self.request.user == task.employee:
+		#     return True
+		return False
 
 
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
 def transact(request):
-    if request.method == "POST":
-        form = TransactionForm(request.POST, request.FILES)
-        if form.is_valid():
-            # form.save()
-            instance=form.save(commit=False)
-            instance.sender=request.user
-            instance.save()
-            return redirect("/finance/transaction/")
-    else:
-        form = TransactionForm()
-    return render(request, "finance/payments/transact.html", {"form": form})
+	if request.method == "POST":
+		form = TransactionForm(request.POST, request.FILES)
+		if form.is_valid():
+			# form.save()
+			instance=form.save(commit=False)
+			instance.sender=request.user
+			instance.save()
+			return redirect("/finance/transaction/")
+	else:
+		form = TransactionForm()
+	return render(request, "finance/payments/transact.html", {"form": form})
 
 
 class TransactionListView(ListView):
-    model = Transaction
-    template_name = "finance/payments/transaction.html"
-    context_object_name = "transactions"
-    # ordering=['-transaction_date']
+	model = Transaction
+	template_name = "finance/payments/transaction.html"
+	context_object_name = "transactions"
+	# ordering=['-transaction_date']
 
 
 @method_decorator(login_required, name="dispatch")
 class TransanctionDetailView(DetailView):
-    template_name = "finance/payments/transaction_detail.html"
-    model = Transaction
-    ordering = ["-transaction_date"]
+	template_name = "finance/payments/transaction_detail.html"
+	model = Transaction
+	ordering = ["-transaction_date"]
 
 
 class TransactionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Transaction
-    # success_url="/finance/transaction"
-    fields = [
-        "sender",
-        "receiver",
-        "phone",
-        "department",
-        "category",
-        "type",
-        "payment_method",
-        "qty",
-        "amount",
-        "transaction_cost",
-        "description",
-        "receipt_link",
-    ]
-    form = TransactionForm()
+	model = Transaction
+	# success_url="/finance/transaction"
+	fields = [
+		"sender",
+		"receiver",
+		"phone",
+		"department",
+		"category",
+		"type",
+		"payment_method",
+		"qty",
+		"amount",
+		"transaction_cost",
+		"description",
+		"receipt_link",
+	]
+	form = TransactionForm()
 
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
+	def form_valid(self, form):
+		form.instance.username = self.request.user
+		return super().form_valid(form)
 
-    def get_success_url(self):
-        return reverse("finance:transaction-list")
+	def get_success_url(self):
+		return reverse("finance:transaction-list")
 
-    def test_func(self):
-        inflow = self.get_object()
-        if self.request.user == inflow.sender:
-            return True
-        elif self.request.user.is_admin or self.request.user.is_superuser:
-            return True
-        return False
+	def test_func(self):
+		inflow = self.get_object()
+		if self.request.user == inflow.sender:
+			return True
+		elif self.request.user.is_admin or self.request.user.is_superuser:
+			return True
+		return False
 
 @method_decorator(login_required, name="dispatch")
 class TransactionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Transaction
-    success_url = "/finance/transaction"
+	model = Transaction
+	success_url = "/finance/transaction"
 
-    def test_func(self):
-        transaction = self.get_object()
-        if self.request.user == transaction.sender:
-            return True
-        elif self.request.user.is_superuser or self.request.user.is_admin:
-            return True
-        return False
-        
+	def test_func(self):
+		transaction = self.get_object()
+		if self.request.user == transaction.sender:
+			return True
+		elif self.request.user.is_superuser or self.request.user.is_admin:
+			return True
+		return False
+		
 # ----------------------CASH INFLOW CLASS-BASED VIEWS--------------------------------
 def inflow(request):
-    if request.method == "POST":
-        form = InflowForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.instance.sender = request.user
-            form.save()
-            return redirect("/finance/inflows/")
-    else:
-        form = InflowForm()
-    return render(
-        request, "finance/company_finances/inflow_entry.html", {"form": form}
-    )
+	if request.method == "POST":
+		form = InflowForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.instance.sender = request.user
+			form.save()
+			return redirect("/finance/inflows/")
+	else:
+		form = InflowForm()
+	return render(
+		request, "finance/company_finances/inflow_entry.html", {"form": form}
+	)
 
 @method_decorator(login_required, name="dispatch")
 class InflowDetailView(DetailView):
-    template_name = "finance/cash_inflow/inflow_detail.html"
-    model = Inflow
-    ordering = ["-transaction_date"]
+	template_name = "finance/cash_inflow/inflow_detail.html"
+	model = Inflow
+	ordering = ["-transaction_date"]
 
 
 def inflows(request):
-    inflows = Inflow.objects.all().order_by("-transaction_date")
-    # total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-    # total_communication=Rated.objects.all().aggregate(Sum('communication'))
-    total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
-    revenue = total.get("Total_Cashinflows")
-    context = {"inflows": inflows, "revenue": revenue}
-    return render(request, "finance/cash_inflow/inflows.html", context)
+	inflows = Inflow.objects.all().order_by("-transaction_date")
+	# total_duration=Tracker.objects.all().aggregate(Sum('duration'))
+	# total_communication=Rated.objects.all().aggregate(Sum('communication'))
+	total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
+	revenue = total.get("Total_Cashinflows")
+	context = {"inflows": inflows, "revenue": revenue}
+	return render(request, "finance/cash_inflow/inflows.html", context)
 
 
 @method_decorator(login_required, name="dispatch")
 class UserInflowListView(ListView):
-    model = Inflow
-    template_name = "finance/cash_inflow/user_inflow.html"
-    context_object_name = "inflows"
-    ordering = ["-transaction_date"]
+	model = Inflow
+	template_name = "finance/cash_inflow/user_inflow.html"
+	context_object_name = "inflows"
+	ordering = ["-transaction_date"]
 
 @method_decorator(login_required, name="dispatch")
 class InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Inflow
-    success_url = "/finance/inflow"
-    fields = [
-        "sender",
-        "receiver",
-        "phone",
-        "category",
-        "task",
-        "method",
-        "period",
-        "qty",
-        "amount",
-        "transaction_cost",
-        "description",
-    ]
+	model = Inflow
+	success_url = "/finance/inflow"
+	fields = [
+		"sender",
+		"receiver",
+		"phone",
+		"category",
+		"task",
+		"method",
+		"period",
+		"qty",
+		"amount",
+		"transaction_cost",
+		"description",
+	]
 
-    def form_valid(self, form):
-        form.instance.sender = self.request.user
-        return super().form_valid(form)
+	def form_valid(self, form):
+		form.instance.sender = self.request.user
+		return super().form_valid(form)
 
-    def test_func(self):
-        inflow = self.get_object()
-        if self.request.user == inflow.sender:
-            return True
-        return False
+	def test_func(self):
+		inflow = self.get_object()
+		if self.request.user == inflow.sender:
+			return True
+		return False
 
 @method_decorator(login_required, name="dispatch")
 class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = Inflow
-    success_url = "/finance/inflow"
+	model = Inflow
+	success_url = "/finance/inflow"
 
-    def test_func(self):
-        inflow = self.get_object()
-        # if self.request.user == inflow.sender:
-        if self.request.user.is_superuser:
-            return True
-        return False
+	def test_func(self):
+		inflow = self.get_object()
+		# if self.request.user == inflow.sender:
+		if self.request.user.is_superuser:
+			return True
+		return False
 
 
 # ============LOAN VIEWS========================
 def loan(request):
-    if request.method == "POST":
-        form = LoanForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('finance:trainingloans')
-    else:
-        form=LoanForm()
-    return render(request, "finance/payments/payment_form.html", {"form":form})
+	if request.method == "POST":
+		form = LoanForm(request.POST, request.FILES)
+		if form.is_valid():
+			form.save()
+			return redirect('finance:trainingloans')
+	else:
+		form=LoanForm()
+	return render(request, "finance/payments/payment_form.html", {"form":form})
 	
 
 class LoanUpdateView(UpdateView):
-    model = TrainingLoan
-    success_url = "/finance/payments"
+	model = TrainingLoan
+	success_url = "/finance/payments"
 	
-    fields = [ "user","category","amount","is_active"]
+	fields = [ "user","category","amount","is_active"]
    
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        if self.request.user.is_superuser:
-            return super().form_valid(form)
-        else:
-            return redirect("finance:trainingloans")
-            # return render(request,"management/doc_templates/supportcontract_form.html")
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		if self.request.user.is_superuser:
+			return super().form_valid(form)
+		else:
+			return redirect("finance:trainingloans")
+			# return render(request,"management/doc_templates/supportcontract_form.html")
 
-    def test_func(self):
-        task = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        # elif self.request.user == task.employee:
-        #     return True
-        return False
+	def test_func(self):
+		task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		# elif self.request.user == task.employee:
+		#     return True
+		return False
 
 class LoanListView(ListView):
-    model = TrainingLoan
-    template_name = "finance/payments/loans.html"
-    context_object_name = "payments"
+	model = TrainingLoan
+	template_name = "finance/payments/loans.html"
+	context_object_name = "payments"
