@@ -549,10 +549,13 @@ class TrackListView(ListView):
 
 
 def usertracker(request, user=None, *args, **kwargs):
-    try:
+    # try:
         user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
         trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
-        em = Tracker.objects.all().values().order_by("-pk")[0]
+        try:
+            em = Tracker.objects.all().values().order_by("-pk")[0]
+        except:
+            return redirect("accounts:tracker-create")
         num = trackers.count()
         # Check on my_time=avg("time")
         my_time = trackers.aggregate(Assigned_Time=Avg("time"))
@@ -592,9 +595,9 @@ def usertracker(request, user=None, *args, **kwargs):
             "delta": delta,
         }
         return render(request, "accounts/usertracker.html", context)
-    except:
-        # return render(request, "accounts/usertracker.html", context)
-        return redirect("accounts:tracker-create")
+    # except:
+    #     # return render(request, "accounts/usertracker.html", context)
+    #     return redirect("accounts:tracker-create")
 
 
 class TrackCreateView(LoginRequiredMixin, CreateView):

@@ -4,15 +4,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
-    UpdateView,
-)
-
-from .forms import TransactionForm
 from .models import Expenses, Payments
 
 # Create your views here.
@@ -91,44 +82,6 @@ def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
 
-# -------------------------transactions Section-------------------------------------#
-def transact(request):
-    if request.method == "POST":
-        form = TransactionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("management: management-transaction")
-    else:
-        form = TransactionForm()
-    return render(request, "management/company_finances/transact.html", {"form": form})
-
-
-""" 
-def transaction(request):
-    transactions=Expenses.objects.all().order_by('-activity_date')
-    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
-"""
-
-
-class TransactionListView(ListView):
-    model = Expenses
-    template_name = "main/transaction.html"  # <app>/<model>_<viewtype>
-    context_object_name = "transactions"
-    ordering = ["-activity_date"]
-
-
-"""
-class TransactionUpdateView(LoginRequiredMixin,UpdateView):
-    model=Expenses
-    fields = ['sender','receiver','phone','department', 'category','payment_method','quantity','amount','description','receipt']
-     
-    def form_valid(self,form):
-        form.instance.username=self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('transaction-list') 
-"""
 # -----------------------------Documents---------------------------------
 """
 def codadocuments(request):
