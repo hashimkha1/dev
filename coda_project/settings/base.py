@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
 import os
 from pickle import TRUE
 
@@ -22,8 +21,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
-# DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 # ALLOWED_HOSTS = []
@@ -33,8 +31,6 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
-    # "django_crontab",
-    #'testing.apps.TestingConfig',
     "main.apps.MainConfig",
     #'users.apps.UsersConfig',
     "accounts.apps.AccountsConfig",
@@ -63,11 +59,12 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     #'dbbackup',
+    # "django_extensions",
+    # "django_crontab",
+    # 'testing.apps.TestingConfig',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
-# DBBACKUP_STORAGE='django.core.files.storage.FileSystemStorage'
-# DBBACKUP_STORAGE_OPTIONS={'location':BASE_DIR/'backup'}
-# DBBACKUP_STORAGE_OPTIONS={'location':'/codapp/backup'}
+
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
@@ -111,69 +108,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
-
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
-# #postgresql database
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': 'MANAGER#2030', #os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODADB_DEV',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
-# #postgresql database
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_DEV',# Name of Database
-#         'USER':'CODA_DEV',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'database-1.ckq8mwyj2m9n.us-east-2.rds.amazonaws.com',
-#         'PORT': '5432'
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
-
-import dj_database_url
-
-# postgresql database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-    }
-}
-
-db_from_env = dj_database_url.config(conn_max_age=600)
-
-DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
@@ -246,43 +180,14 @@ LOGIN_URL = "accounts:account-login"
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
-
-# Gmail Email Backend Account
-""" 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = "smtp.gmail.com" 
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER") 
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS") 
-"""
-
-# Email Backend
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = "smtp.privateemail.com"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
-EMAIL_USE_SSL = False
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
 AWS_S3_REGION_NAME = "us-east-2"  # change to your region
 AWS_S3_SIGNATURE_VERSION = "s3v4"
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
-# AWS_S3_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME')
-# AWS_S3_BUCKET_NAME_STATIC =  os.environ.get('AWS_STORAGE_BUCKET_NAME')
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
-# session = boto3.Session( aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY)
-# s3 = session.resource('s3')
-
-# ! Make sure the below line of code is not commented on the production for media uploads
-DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
-# STATICFILES_STORAGE='storages.backends.s3boto3.S3Boto3Storage'
 django_heroku.settings(locals())
 
 CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
@@ -302,7 +207,3 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-# FILE_SAVE_DIR = '/Users/narendrayalamanchi/Desktop/' #local testing purposes
-# FILE_SAVE_DIR = '/var/www/html/uploads/'
-
-SITEURL="https://www.codanalytics.net"

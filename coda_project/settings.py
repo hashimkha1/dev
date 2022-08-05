@@ -115,6 +115,8 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
+
+import dj_database_url
 # #postgresql database
 
 # DATABASES = {
@@ -127,6 +129,25 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',# Name of Database
+        'USER':'postgres',
+        'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
+        'HOST': 'localhost',
+    }
+}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',# Name of Database
+#         'USER':'postgres',
+#         'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
+
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.sqlite3",
@@ -134,17 +155,6 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-import dj_database_url
-# postgresql database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
 db_from_env = dj_database_url.config(conn_max_age=600)
 
 DATABASES["default"].update(db_from_env)

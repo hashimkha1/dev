@@ -1,7 +1,5 @@
 from django.urls import path
-
 from . import views
-from .views import TransactionListView  # ,TransactionUpdateView
 
 app_name = 'main'
 urlpatterns = [
@@ -11,27 +9,21 @@ urlpatterns = [
     path('team/', views.team, name='team'),
 
     #==============DEPARTMENTS==============================================
-        #---------------HUMAN RESOURCE--------------------#
+    #---------------HUMAN RESOURCE--------------------#
 
-        #---------------FINANCE--------------------#
+    #---------------FINANCE--------------------#
 
-        #---------------MANAGEMENT--------------------#
-        path('it/', views.it, name='it'),
+    #---------------MANAGEMENT--------------------#
+    path('it/', views.it, name='it'),
 
-        #---------------IT--------------------#
-
+    #---------------IT--------------------#
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
     path('report/', views.report, name='report'),
     path('project/', views.project, name='project'),
     path('training/', views.training, name='training'),
     path('pay/', views.pay, name='pay'),
-    # transactions url patterns
-    #path('transact/', views.transact, name='transact'),
-    #path('transaction/', TransactionListView.as_view(), name='transaction-list'),
-    #path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-updated'),
     #path('documents/', views.codadocuments, name='documents'),
     path('checkout/', views.checkout, name='checkout'),
     path('testing/', views.testing, name='testing'),
-
 ]

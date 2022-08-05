@@ -69,7 +69,6 @@ class Payment_History(models.Model):
     down_payment=models.IntegerField(default=500)
     student_bonus=models.IntegerField(null=True,blank=True)
     fee_balance=models.IntegerField(default=None)
-    payment_fees = models.IntegerField()
     down_payment = models.IntegerField(default=500)
     student_bonus = models.IntegerField(null=True, blank=True)
     fee_balance = models.IntegerField(default=None)
