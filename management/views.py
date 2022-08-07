@@ -151,9 +151,9 @@ def updatelinks_companyagenda(request):
 
 def finance(request):
     return render(
-        request, "management/company_finances/finance.html", {"title": "Finance"}
+        request, "finance\reports\finance.html", {"title": "Finance"}
+        
     )
-
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
