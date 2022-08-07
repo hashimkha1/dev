@@ -6,7 +6,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 # Register your models here.
 from django.urls import path, reverse
-from .models import  Payment_History,Default_Payment_Fees,Payment_Information,Transaction,Inflow
+from .models import (
+    Payment_History,
+    Default_Payment_Fees,
+    Payment_Information,
+    Transaction,Inflow
+)  # , DocUpload
 
 
 class CsvImportForm(forms.Form):
@@ -60,9 +65,19 @@ class TransactionAdmin(admin.ModelAdmin):
         data = {"form": form}
         return render(request, "admin/csv_upload.html", data)
 
+class Payment_HistoryAdmin(admin.ModelAdmin):
+    list_display = (
+        "customer",
+        "payment_fees",
+        "down_payment",
+        "student_bonus",
+        "fee_balance",
+        "plan",
+        "contract_submitted_date",
+    )
 
 admin.site.register(Transaction, TransactionAdmin)
+admin.site.register(Payment_History, Payment_HistoryAdmin)
 admin.site.register(Inflow)
-admin.site.register(Payment_History)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)

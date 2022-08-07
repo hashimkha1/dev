@@ -1,10 +1,21 @@
 from django.contrib import messages
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
+from .forms import TransactionForm
 from .models import Expenses, Payments
+from finance.models import Payment_History, Payment_Information
+
 
 # Create your views here.
 
@@ -69,9 +80,49 @@ def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
 
+# def pay(request):
+#     payments = Payments.objects.all().first()
+#     return render(request, "main/pay.html", {"title": "pay", "payments": payments})
+
 def pay(request):
-    payments = Payments.objects.all().first()
-    return render(request, "main/pay.html", {"title": "pay", "payments": payments})
+    payment_info = Payment_Information.objects.filter(
+        customer_id=request.user.id
+    ).first()
+
+    print("payment_info:", payment_info)
+    return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+
+def paymentComplete(request):
+    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+    print(payments)
+    customer = request.user
+    payment_fees = payments.payment_fees
+    down_payment = payments.down_payment
+    studend_bonus = payments.student_bonus
+    plan = payments.plan
+    fee_balance = payments.fee_balance
+    payment_mothod = payments.payment_method
+    contract_submitted_date = payments.contract_submitted_date
+    client_signature = payments.client_signature
+    company_rep = payments.company_rep
+    client_date = payments.client_date
+    rep_date = payments.rep_date
+    Payment_History.objects.create(
+        customer=customer,
+        payment_fees=payment_fees,
+        down_payment=down_payment,
+        student_bonus=studend_bonus,
+        plan=plan,
+        fee_balance=fee_balance,
+        payment_method=payment_mothod,
+        contract_submitted_date=contract_submitted_date,
+        client_signature=client_signature,
+        company_rep=company_rep,
+        client_date=client_date,
+        rep_date=rep_date,
+    )
+
+    return JsonResponse("Payment completed!", safe=False)
 
 
 def training(request):
@@ -82,6 +133,44 @@ def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
 
+# -------------------------transactions Section-------------------------------------#
+def transact(request):
+    if request.method == "POST":
+        form = TransactionForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("management: management-transaction")
+    else:
+        form = TransactionForm()
+    return render(request, "management/company_finances/transact.html", {"form": form})
+
+
+""" 
+def transaction(request):
+    transactions=Expenses.objects.all().order_by('-activity_date')
+    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
+"""
+
+
+class TransactionListView(ListView):
+    model = Expenses
+    template_name = "main/transaction.html"  # <app>/<model>_<viewtype>
+    context_object_name = "transactions"
+    ordering = ["-activity_date"]
+
+
+"""
+class TransactionUpdateView(LoginRequiredMixin,UpdateView):
+    model=Expenses
+    fields = ['sender','receiver','phone','department', 'category','payment_method','quantity','amount','description','receipt']
+     
+    def form_valid(self,form):
+        form.instance.username=self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('transaction-list') 
+"""
 # -----------------------------Documents---------------------------------
 """
 def codadocuments(request):
