@@ -155,6 +155,7 @@ def finance(request):
         
     )
 
+
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
