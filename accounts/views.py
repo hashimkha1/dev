@@ -247,7 +247,7 @@ def login_view(request):
 # ================================USERS SECTION================================
 def users(request):
     users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
-    if request.user.is_superuser:
+    if request.user.is_superuser or request.user.is_employee:
         return render(request, "accounts/admin/superpage.html", {"users": users})
 
     # if request.user.is_admin:
@@ -287,15 +287,15 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         # if request.user.is_authenticated:
         if self.request.user.is_superuser:  # or self.request.user.is_authenticated :
             return super().form_valid(form)
-        #  elif self.request.user.is_authenticated:
-        #      return super().form_valid(form)
+        elif self.request.user.is_authenticated:
+            return super().form_valid(form)
         return False
 
     def test_func(self):
         user = self.get_object()
         # if self.request.user == client.username:
         #     return True
-        if self.request.user.is_superuser:  # or self.request.user == user.username:
+        if self.request.user.is_superuser or self.request.user == user.username:
             return True
         return False
 
