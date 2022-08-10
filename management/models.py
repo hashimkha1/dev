@@ -473,6 +473,27 @@ class Tag(models.Model):
         return self.title
 
 
+class TaskGroups(models.Model):
+
+    title = models.CharField(
+        max_length=55,
+        unique=True,
+        default="Group A"
+    )
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @classmethod
+    def get_default_pk(cls):
+        cat, created = cls.objects.get_or_create(
+            title="Group A"
+        )
+        return cat.pk
+
+    def __str__(self):
+        return self.title
+
+
 class TaskQuerySet(models.query.QuerySet):
     def active(self):
         return self.filter(is_active=True)
@@ -523,16 +544,18 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    group = models.CharField(
-        verbose_name=_("group"),
-        help_text=_("Required"),
-        max_length=255,
-        default="Group A",
+    # group = models.CharField(
+    #     verbose_name=_("group"),
+    #     help_text=_("Required"),
+    #     max_length=255,
+    #     default="Group A",
+    # )
+    group = models.ForeignKey(
+        to=TaskGroups, on_delete=models.CASCADE, default=TaskGroups.get_default_pk
     )
     category = models.ForeignKey(
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
-    # category = models.ManyToManyField(Tag, blank=True)
     employee = models.ForeignKey(
         User, on_delete=models.RESTRICT, related_name="user_assiged",
         limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),

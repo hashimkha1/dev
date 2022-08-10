@@ -9,22 +9,26 @@
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token%}
     <div class="row">
-      <div class="col-md-6">{{ form.first_name|as_crispy_field }}</div>
-      <div class="col-md-6">{{form.last_name|as_crispy_field }}</div>
+      <div class="col-md-6">{{ form.employeename|as_crispy_field }}</div>
     </div>
     <div class="row">
       <div class="col-md-6">{{ form.topic|as_crispy_field }}</div>
-      <div class="col-md-6">{{ form.punctuality|as_crispy_field }}</div>
     </div>
     <div class="row">
-      <div class="col-md-6">{{ form.communication|as_crispy_field }}</div>
-      <div class="col-md-6">{{ form.understanding|as_crispy_field }}</div>
+      <div class="col-md-2">{{ form.projectDescription|as_crispy_field }}</div>
+      <div class="col-md-2">{{ form.requirementsAnalysis|as_crispy_field }}</div>
+      <div class="col-md-2">{{ form.development|as_crispy_field }}</div>
+      <div class="col-md-2">{{ form.testing|as_crispy_field }}</div>
+      <div class="col-md-2">{{ form.deployment|as_crispy_field }}</div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">{{ form.totalpoints.as_hidden }}</div>
     </div>
 
     <div class="row text-center">
       <div class="col-md-6">
-        <button type="submit " class="btn btn-success">
-          <i class="fas fa-database"></i>Submit
+        <button type="submit" class="btn btn-success">
+          <i class="fas fa-database"></i>Next
         </button>
       </div>
     </div>

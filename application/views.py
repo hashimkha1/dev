@@ -28,7 +28,7 @@ from .forms import (
     ApplicantProfileFormC,
 )
 from .models import UserProfile, Application,Rated, Reporting
-from management.models import Policy
+from management.models import Policy,Task
 from .utils import alteryx_list, dba_list, posts, tableau_list
 
 # User=settings.AUTH_USER_MODEL
@@ -267,24 +267,77 @@ def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
         if form.is_valid():
+            totalpoints = 0
+            try:
+                if request.POST["projectDescription"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+            try:
+                if request.POST["requirementsAnalysis"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["development"] == "on":
+                    totalpoints += 5
+            except:
+                pass
+            try:
+                if request.POST["testing"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["deployment"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+
+            form.instance.totalpoints = totalpoints
+            # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
+            try:
+                idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions"),
+                    employee__username=form.instance.employeename,
+                )[0]
+                point = point + totalpoints
+                if point >= mxpoint or point + 15 >= mxpoint:
+                    mxpoint += 15
+                
+                Task.objects.filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions"),
+                    employee__username=form.instance.employeename,
+                ).update(point=point, mxpoint=mxpoint)
+
+            except:
+                pass
+            print("idval",idval)
             form.save()
-            return redirect("application-rating")
+            return redirect(
+                        "management:new_evidence", taskid=idval
+                    )
+            # return redirect("application:rating")
     else:
         form = RatingForm()
     return render(request, "application/orientation/rate.html", {"form": form})
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")
-    total_punctuality = Rated.objects.all().aggregate(Sum("punctuality"))
-    total_communication = Rated.objects.all().aggregate(Sum("communication"))
-    total_understanding = Rated.objects.all().aggregate(
-        Total_Understanding=Sum("understanding")
-    )
+    # total_punctuality = Rated.objects.all().aggregate(Sum("punctuality"))
+    # total_communication = Rated.objects.all().aggregate(Sum("communication"))
+    # total_understanding = Rated.objects.all().aggregate(
+    #     Total_Understanding=Sum("understanding")
+    # )
     context = {
         "ratings": ratings,
-        "total_punctuality": total_punctuality,
-        "total_communication": total_communication,
-        "total_understanding": total_understanding,
+        # "total_punctuality": total_punctuality,
+        # "total_communication": total_communication,
+        # "total_understanding": total_understanding,
     }
     return render(request, "application/orientation/rating.html", context)
 
@@ -294,6 +347,7 @@ def trainee(request):
     if request.method == "POST":
         form = ReportingForm(request.POST, request.FILES)
         if form.is_valid():
+            
             form.save()
             return redirect("application:trainees")
     else:
