@@ -30,9 +30,17 @@ from .forms import (
 from .models import UserProfile, Application,Rated, Reporting
 from management.models import Policy
 from .utils import alteryx_list, dba_list, posts, tableau_list
+from datetime import datetime, timedelta
+from management.utils import email_template
+
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
+
+
+def SectionCompleteMail(subject,user,content):
+    email_template(subject,user,content)
+
 
 
 def apply(request):
@@ -126,6 +134,11 @@ def FI_sectionA(request):
                 data.profile.section = "B"
                 data.profile.save()
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
+        SectionCompleteMail(subject,to,html_content)
         return redirect("application:section_b")
 
     return render(
@@ -151,6 +164,11 @@ def FI_sectionB(request):
                 data.profile.section = "C"
                 data.profile.save()
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
+        SectionCompleteMail(subject,to,html_content)
         return redirect("application:section_c")
 
     return render(
@@ -171,6 +189,11 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
+            SectionCompleteMail(subject,to,html_content)
             return redirect("management:policies")
 
     return render(
