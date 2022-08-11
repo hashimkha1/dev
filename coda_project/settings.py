@@ -271,5 +271,5 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
-SITEURL="http://localhost:8000"
-# SITEURL="https://www.codanalytics.net"
+# SITEURL="http://localhost:8000"
+SITEURL="https://www.codanalytics.net"
