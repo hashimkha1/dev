@@ -550,9 +550,9 @@ class Task(models.Model):
         max_length=255,
         default="Group A",
     )
-    # groupname = models.ForeignKey(
-    #     to=TaskGroups, on_delete=models.CASCADE, default=TaskGroups.get_default_pk
-    # )
+    groupname = models.ForeignKey(
+        to=TaskGroups, on_delete=models.CASCADE, default=TaskGroups.get_default_pk
+    )
     category = models.ForeignKey(
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
