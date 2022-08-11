@@ -665,6 +665,14 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
             pass
 
         return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse(
+                        "management:new_evidence", 
+                        kwargs={
+                            'taskid':  self.idval
+                        }
+                    )
 
 
 """ 

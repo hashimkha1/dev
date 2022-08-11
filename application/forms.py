@@ -77,27 +77,41 @@ class RatingForm(forms.ModelForm):
         model = Rated
         fields = [
             "id",
-            "first_name",
-            "last_name",
+            # "first_name",
+            # "last_name",
+            "employeename",
             "topic",
-            "punctuality",
-            "communication",
-            "understanding",
+            # "punctuality",
+            # "communication",
+            # "understanding",
+            "projectDescription",
+            "requirementsAnalysis",
+            "development",
+            "testing",
+            "deployment",
+            "totalpoints"
+
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
+            # "first_name": "First Name",
+            # "last_name": "Last Name",
+            "employeename":"Employee Name",
             "topic": "Topic",
-            "punctuality": "Punctuality",
-            "communication": "Communication",
-            "understanding": "Understanding",
+            # "punctuality": "Punctuality",
+            # "communication": "Communication",
+            # "understanding": "Understanding",
+            "projectDescription": "Project Description",
+            "requirementsAnalysis": "Requirements Analysis",
+            "development": "Development",
+            "testing": "Testing",
+            "deployment": "Deployment"
         }
 
     def __init__(self, *args, **kwargs):
         super(RatingForm, self).__init__(*args, **kwargs)
-        self.fields["punctuality"].empty_label = "Select"
-        self.fields["communication"].empty_label = "Select"
-        self.fields["understanding"].empty_label = "Select"
+        # self.fields["punctuality"].empty_label = "Select"
+        # self.fields["communication"].empty_label = "Select"
+        # self.fields["understanding"].empty_label = "Select"
         self.fields["topic"].required = False
 
 

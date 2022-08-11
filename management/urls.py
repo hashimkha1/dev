@@ -5,7 +5,7 @@ from .views import (
                         TaskDetailView,TaskCreateView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         TaskHistoryView,
-                        AssessListView,TagCreateView,
+                        AssessListView,TagCreateView,TaskGroupCreateView,
                         PolicyUpdateView,DepartmentUpdateView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
@@ -45,6 +45,7 @@ urlpatterns = [
     # path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('newtask/', views.newtaskcreation, name='newtask'),
     path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
+    path('verifytaskgroupexists/', views.verifytaskgroupexists, name='verifytaskgroupexists'),
 
     #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
@@ -52,6 +53,7 @@ urlpatterns = [
     path('gettotalduration/', views.gettotalduration, name='gettotalduration'),
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
+    path('newtaskgroup/', TaskGroupCreateView.as_view(), name='newtaskgroup'),
     path('contract/',views.contract, name='contract'),
 
     path('assess/', views.assess, name='assess'),

@@ -5,9 +5,10 @@
     <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
     <div class="row">
       <div class="col-md-6">
-        <p><a href="{% url 'management:newcategory'%}" class="btn btn-secondary btn-sm"
-          >ADD CATEGORY
-        </a></p>
+        <p>
+          <a href="{% url 'management:newcategory'%}" class="btn btn-secondary btn-sm">ADD CATEGORY</a>
+          <a href="{% url 'management:newtaskgroup'%}" class="btn btn-secondary btn-sm">ADD GROUP</a>
+        </p>
 
       </div>
       <div class="col-md-6">

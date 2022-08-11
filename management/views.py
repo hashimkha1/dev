@@ -30,6 +30,7 @@ from django.views.generic import (
 from .models import (
     Policy,
     Tag,
+    TaskGroups,
     Task,
     TaskHistory,
     TaskLinks,
@@ -233,6 +234,14 @@ class TagCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+class TaskGroupCreateView(LoginRequiredMixin, CreateView):
+    model = TaskGroups
+    success_url = "/management/newtask"
+    fields = ["title", "description"]
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 # ======================TASKS=======================
 def task(request, slug=None, *args, **kwargs):
@@ -283,25 +292,39 @@ def newtaskcreation(request):
         for emp in employee:
             for act in activitys:
                 if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
-                    # print("activity existing",act)
                     des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
-                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
+
+                    if Task.objects.filter(group_id=group,category_id=category,activity_name=act).count()  == 0:
+                        Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=mxpoint,mxearning=mxearning)
+                    else:
+                        Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
+
                 else:
-                    Task.objects.create(group=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+                    Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
 
         # return redirect("management:tasks")
         return JsonResponse({"success":True})
 
     else:
         tag = Tag.objects.all()
+        group = TaskGroups.objects.all()
         employess = User.objects.filter(Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True)).all()
 
-    return render(request, "management/tasknew_form.html", {"category": tag,"employess":employess})
+    return render(request, "management/tasknew_form.html", {"group": group,"category": tag,"employess":employess})
 
 def gettasksuggestions(request):
     category = request.POST["category"]
     tasks = list(Task.objects.values_list("activity_name",flat=True).filter(category__id = category))
     return JsonResponse({"tasklist":tasks})
+
+def verifytaskgroupexists(request):
+    group = request.POST["group"]
+    category = request.POST["category"]
+    activity = request.POST["activity"]
+    count = Task.objects.filter(group__id = group,category__id = category,activity_name = activity).count()
+    mxpoint = Task.objects.values_list("mxpoint",flat=True).filter(category__id = category,activity_name = activity)[0]
+   
+    return JsonResponse({"count":count,"mxpoint":mxpoint})
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
