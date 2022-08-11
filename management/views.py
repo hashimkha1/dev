@@ -262,7 +262,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     success_url = "/management/tasks"
     fields = [
-        "group",
+        "groupname",
         "category",
         "employee",
         "activity_name",
@@ -294,13 +294,13 @@ def newtaskcreation(request):
                 if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
                     des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
 
-                    if Task.objects.filter(group_id=group,category_id=category,activity_name=act).count()  == 0:
-                        Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=mxpoint,mxearning=mxearning)
+                    if Task.objects.filter(groupname_id=group,category_id=category,activity_name=act).count()  == 0:
+                        Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=mxpoint,mxearning=mxearning)
                     else:
-                        Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
+                        Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
 
                 else:
-                    Task.objects.create(group_id=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+                    Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
 
         # return redirect("management:tasks")
         return JsonResponse({"success":True})
@@ -321,7 +321,7 @@ def verifytaskgroupexists(request):
     group = request.POST["group"]
     category = request.POST["category"]
     activity = request.POST["activity"]
-    count = Task.objects.filter(group__id = group,category__id = category,activity_name = activity).count()
+    count = Task.objects.filter(groupname__id = group,category__id = category,activity_name = activity).count()
     mxpoint = Task.objects.values_list("mxpoint",flat=True).filter(category__id = category,activity_name = activity)[0]
    
     return JsonResponse({"count":count,"mxpoint":mxpoint})
@@ -369,7 +369,7 @@ def filterbycategory(request):
     result = []
     details = {}
     for data in tasks.all():
-        details["group"] = data.group
+        details["group"] = data.groupname
         details["deadline"] = data.deadline.strftime("%d %b %Y")
         details["submission"] = data.submission.strftime("%d %b %Y")
         details["point"] = data.point
@@ -842,7 +842,7 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     success_url = "/management/tasks"
     fields = [
-        "group",
+        "groupname",
         "category",
         "employee",
         "activity_name",
@@ -1154,7 +1154,7 @@ def filterbycategory(request):
     result = []
     details = {}
     for data in tasks.all():
-        details["group"] = data.group
+        details["group"] = data.groupname
         details["deadline"] = data.deadline.strftime("%d %b %Y")
         details["submission"] = data.submission.strftime("%d %b %Y")
         details["point"] = data.point

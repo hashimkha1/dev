@@ -544,13 +544,13 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    # group = models.CharField(
-    #     verbose_name=_("group"),
-    #     help_text=_("Required"),
-    #     max_length=255,
-    #     default="Group A",
-    # )
-    group = models.ForeignKey(
+    group = models.CharField(
+        verbose_name=_("group"),
+        help_text=_("Required"),
+        max_length=255,
+        default="Group A",
+    )
+    groupname = models.ForeignKey(
         to=TaskGroups, on_delete=models.CASCADE, default=TaskGroups.get_default_pk
     )
     category = models.ForeignKey(

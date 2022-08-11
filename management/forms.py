@@ -245,7 +245,7 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = [
-                   "group",
+                   "groupname",
                     "category",
                     "employee",
                     "activity_name",
