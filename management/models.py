@@ -483,12 +483,12 @@ class TaskGroups(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
 
-    @classmethod
-    def get_default_pk(cls):
-        cat, created = cls.objects.get_or_create(
-            title="Group A"
-        )
-        return cat.pk
+    # @classmethod
+    # def get_default_pk(cls):
+    #     cat, created = cls.objects.get_or_create(
+    #         title="Group A"
+    #     )
+    #     return cat.pk
 
     def __str__(self):
         return self.title
@@ -550,9 +550,9 @@ class Task(models.Model):
         max_length=255,
         default="Group A",
     )
-    groupname = models.ForeignKey(
-        to=TaskGroups, on_delete=models.CASCADE, default=TaskGroups.get_default_pk
-    )
+    # groupname = models.ForeignKey(
+    #     to=TaskGroups, on_delete=models.CASCADE, default=1
+    # )
     category = models.ForeignKey(
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
