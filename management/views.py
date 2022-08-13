@@ -287,8 +287,7 @@ def newtaskcreation(request):
 
         employee = request.POST["employee"].split(",")
         activitys = request.POST["activitys"].split(",")
-        # print(type(employee),type(activitys))
-        # print(employee,activitys)
+        
         for emp in employee:
             for act in activitys:
                 if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:

@@ -339,7 +339,7 @@ def rate(request):
 
             except:
                 pass
-            print("idval",idval)
+        
             form.save()
             return redirect(
                         "management:new_evidence", taskid=idval
