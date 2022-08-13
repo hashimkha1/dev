@@ -53,7 +53,7 @@ urlpatterns = [
     path('gettotalduration/', views.gettotalduration, name='gettotalduration'),
     path('task/<int:pk>/delete/', TaskDeleteView.as_view(), name='deletetask'),
     path('newcategory/', TagCreateView.as_view(), name='newcategory'),
-    path('newtaskgroup/', TaskGroupCreateView.as_view(), name='newtaskgroup'),
+    path('newtaskgroup/', TaskGroupCreateView.as_view(template_name="management/taskgroups_form.html"), name='newtaskgroup'),
     path('contract/',views.contract, name='contract'),
 
     path('assess/', views.assess, name='assess'),

@@ -473,25 +473,25 @@ class Tag(models.Model):
         return self.title
 
 
-class TaskGroups(models.Model):
+# class TaskGroups(models.Model):
 
-    title = models.CharField(
-        max_length=55,
-        unique=True,
-        default="Group A"
-    )
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+#     title = models.CharField(
+#         max_length=55,
+#         unique=True,
+#         default="Group A"
+#     )
+#     description = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
 
-    # @classmethod
-    # def get_default_pk(cls):
-    #     cat, created = cls.objects.get_or_create(
-    #         title="Group A"
-    #     )
-    #     return cat.pk
+#     # @classmethod
+#     # def get_default_pk(cls):
+#     #     cat, created = cls.objects.get_or_create(
+#     #         title="Group A"
+#     #     )
+#     #     return cat.pk
 
-    def __str__(self):
-        return self.title
+#     def __str__(self):
+#         return self.title
 
 
 class TaskQuerySet(models.query.QuerySet):

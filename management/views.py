@@ -30,7 +30,7 @@ from django.views.generic import (
 from .models import (
     Policy,
     Tag,
-    TaskGroups,
+    # TaskGroups,
     Task,
     TaskHistory,
     TaskLinks,
@@ -41,7 +41,7 @@ from data.models import DSU
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from finance.models import Transaction,Inflow,TrainingLoan
-from accounts.models import Tracker,Department
+from accounts.models import Tracker,Department, TaskGroups
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
