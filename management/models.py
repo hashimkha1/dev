@@ -14,6 +14,7 @@ from django.db.models.signals import pre_save, post_save
 from .utils import unique_slug_generator
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from accounts.models import TaskGroups
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -550,9 +551,9 @@ class Task(models.Model):
         max_length=255,
         default="Group A",
     )
-    # groupname = models.ForeignKey(
-    #     to=TaskGroups, on_delete=models.CASCADE, default=1
-    # )
+    groupname = models.ForeignKey(
+        to=TaskGroups, on_delete=models.CASCADE, default=1
+    )
     category = models.ForeignKey(
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
