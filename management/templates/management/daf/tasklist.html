@@ -91,7 +91,7 @@
                   {{  task.activity_name  }}
                   </a>
               </td>
-              <td>{{task.group}}</td>
+              <td>{{task.groupname}}</td>
               <td>{{task.deadline}}</td>
               <td>{{task.submission|date:"F d, Y"}}</td>
               <td>{{task.point}}</td>
@@ -170,7 +170,7 @@
                 html+=`<td> <a class="article-title" href="`+employee_usertask_url+`"><xmp>`+key['first_name']+`,`+key["last_name"]+`</xmp></a></td>`
               }
               html+=`<td><a class="text-dark  text-decoration-none" data-toggle="tooltip" title=`+key['description']+` href="">`+key["activity_name"]+`</a></td>`+
-                    `<td>`+key['group']+`</td>`+
+                    `<td>`+key['groupname']+`</td>`+
                     `<td>`+key['deadline']+`</td>`+
                     `<td>`+key['submission']+`</td>`+
                     `<td>`+key['point']+`</td>`+

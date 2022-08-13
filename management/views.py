@@ -363,13 +363,12 @@ class TaskListView(ListView):
 
 def filterbycategory(request):
     category = request.POST["category"]
-    print("category",category)
-
+   
     tasks = Task.objects.filter(category__title=category)
     result = []
     details = {}
     for data in tasks.all():
-        details["group"] = data.groupname
+        details["groupname"] = data.groupname
         details["deadline"] = data.deadline.strftime("%d %b %Y")
         details["submission"] = data.submission.strftime("%d %b %Y")
         details["point"] = data.point
