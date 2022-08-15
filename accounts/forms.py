@@ -80,6 +80,9 @@ class CredentialForm(forms.ModelForm):
         model = Credential
         fields = ['category','name', 'added_by','slug','description','password','link_name','link','is_active','is_featured']
         widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
+        labels={
+                'link_name':'Enter User Name/Email',
+        }
 """ 
 #==========================APPLICATION FORM-APPLICANTS================================
 

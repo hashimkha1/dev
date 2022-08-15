@@ -402,7 +402,10 @@ def newcredential(request):
     if request.method == "POST":
         form = CredentialForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            # form.save()
+            instance=form.save(commit=False)
+            instance.added_by=request.user
+            instance.save()
             return redirect("accounts:account-crendentials")
     else:
         form = CredentialForm()
