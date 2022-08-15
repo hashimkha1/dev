@@ -336,14 +336,15 @@ def rate(request):
                     | Q(activity_name="One On One Sessions"),
                     employee__username=form.instance.employeename,
                 ).update(point=point, mxpoint=mxpoint)
-
+                form.save()
+                return redirect(
+                            "management:new_evidence", taskid=idval
+                        )
             except:
-                pass
+                form = RatingForm()
+                return render(request, "application/orientation/rate.html", {"form": form,"error":True})
         
-            form.save()
-            return redirect(
-                        "management:new_evidence", taskid=idval
-                    )
+            
             # return redirect("application:rating")
     else:
         form = RatingForm()
