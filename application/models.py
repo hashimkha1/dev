@@ -126,7 +126,7 @@ class Rated(models.Model):
     # first_name = models.CharField(max_length=100)
     # last_name = models.CharField(max_length=100)
     employeename =  models.ForeignKey(
-                    "accounts.CustomerUser", limit_choices_to=Q(is_employee=True), 
+                    "accounts.CustomerUser", limit_choices_to=Q(is_employee=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="rating_empname",default=1)
     topic = models.CharField(max_length=100, default=None)
     rating_date = models.DateTimeField(default=timezone.now)

@@ -289,6 +289,10 @@ def policies(request):
 def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
+        if request.user.is_employee == True or request.user.is_applicant == True:
+            print("employee or applicant",request.user)
+            form.instance.employeename = request.user
+            
         if form.is_valid():
             totalpoints = 0
             try:
