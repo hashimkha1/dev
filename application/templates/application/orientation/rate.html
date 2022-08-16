@@ -6,6 +6,10 @@
   <p class="lead font-italic text-center">
     Rate Candidates and Employees on all categories in your department
   </p>
+
+  {% if error %}
+    <p style="color: red"> There is no one on one sessions for the Employee you selected. </p>
+  {% endif %}
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token%}
     <div class="row">
