@@ -78,10 +78,11 @@ class CredentialCategoryForm(forms.ModelForm):
 class CredentialForm(forms.ModelForm):  
     class Meta:  
         model = Credential
-        fields = ['category','name', 'added_by','slug','description','password','link_name','link','is_active','is_featured']
+        fields = ['category','name', 'added_by','slug','user_types','description','password','link_name','link','is_active','is_featured']
         widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
         labels={
                 'link_name':'Enter User Name/Email',
+                'user_types':'Specify Who Can Access this Credential?'
         }
 """ 
 #==========================APPLICATION FORM-APPLICANTS================================
