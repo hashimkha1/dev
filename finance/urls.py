@@ -12,7 +12,7 @@ app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
     path('transact/', views.transact, name='finance-transact'),
-    #path('transaction/', views.transaction, name='management-transaction'),
+    path('finance/', views.finance, name='finance'),
     path('transaction/', TransactionListView.as_view(), name='transaction-list'),
     path('transaction/<int:pk>/', TransanctionDetailView.as_view(), name='transaction-detail'),
     path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(template_name="finance/payments/transaction_form.html"), name='transaction-update'),
