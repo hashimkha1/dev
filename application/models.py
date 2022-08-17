@@ -127,8 +127,9 @@ class Rated(models.Model):
     # last_name = models.CharField(max_length=100)
     employeename =  models.ForeignKey(
                     "accounts.CustomerUser", limit_choices_to=Q(is_employee=True)|Q(is_applicant=True), 
-                    on_delete=models.CASCADE, related_name="rating_empname",default=1)
+                    on_delete=models.CASCADE, related_name="rating_empname",default=1,blank=True)
     topic = models.CharField(max_length=100, default=None)
+    uploadlinkurl = models.CharField(max_length=1000,blank=True, null=True)
     rating_date = models.DateTimeField(default=timezone.now)
     # punctuality = models.IntegerField(choices=Score.choices)
     # communication = models.IntegerField(choices=Score.choices)

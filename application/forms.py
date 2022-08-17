@@ -15,31 +15,34 @@ from .models import (
 class ApplicantProfileFormA(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["section", "upload_a"]
+        # fields = ["section", "upload_a"]
+        fields = ["section"]
 
     def __init__(self, *args, **kwargs):
         super(ApplicantProfileFormA, self).__init__(*args, **kwargs)
-        self.fields["upload_a"].label = ""
+        # self.fields["upload_a"].label = ""
 
 
 class ApplicantProfileFormB(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["section", "upload_b"]
+        # fields = ["section", "upload_b"]
+        fields = ["section"]
 
-    def __init__(self, *args, **kwargs):
-        super(ApplicantProfileFormB, self).__init__(*args, **kwargs)
-        self.fields["upload_b"].label = ""
+    # def __init__(self, *args, **kwargs):
+    #     super(ApplicantProfileFormB, self).__init__(*args, **kwargs)
+    #     self.fields["upload_b"].label = ""
 
 
 class ApplicantProfileFormC(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ["section", "upload_c"]
+        # fields = ["section", "upload_c"]
+        fields = ["section"]
 
-    def __init__(self, *args, **kwargs):
-        super(ApplicantProfileFormC, self).__init__(*args, **kwargs)
-        self.fields["upload_c"].label = ""
+    # def __init__(self, *args, **kwargs):
+    #     super(ApplicantProfileFormC, self).__init__(*args, **kwargs)
+    #     self.fields["upload_c"].label = ""
 
 
 class ApplicantForm(forms.ModelForm):
@@ -76,11 +79,12 @@ class RatingForm(forms.ModelForm):
     class Meta:
         model = Rated
         fields = [
-            "id",
+            # "id",
             # "first_name",
             # "last_name",
             "employeename",
             "topic",
+            "uploadlinkurl",
             # "punctuality",
             # "communication",
             # "understanding",
@@ -97,6 +101,7 @@ class RatingForm(forms.ModelForm):
             # "last_name": "Last Name",
             "employeename":"Employee Name",
             "topic": "Topic",
+            "uploadlinkurl": "Upload link url",
             # "punctuality": "Punctuality",
             # "communication": "Communication",
             # "understanding": "Understanding",

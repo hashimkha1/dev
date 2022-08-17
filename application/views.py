@@ -90,11 +90,6 @@ class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 """
 
 
-@login_required
-def UserProfile(request):
-    return render(request, "application/applications/Application_Profile.html")
-
-
 # def testinterview(request):
 #     return render(request, "application/interview_process/firstinterview/sectionB.html")
 
@@ -123,6 +118,7 @@ def FI_sectionA(request):
     form = ApplicantProfileFormA(
         request.POST, request.FILES, instance=request.user.profile
     )
+
     if request.method == "POST":
         form = ApplicantProfileFormA(
             request.POST, request.FILES, instance=request.user.profile
@@ -139,7 +135,8 @@ def FI_sectionA(request):
             html_content = f"""
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
         SectionCompleteMail(subject,to,html_content)
-        return redirect("application:section_b")
+        # return redirect("application:section_b")
+        return redirect("application:rate")
 
     return render(
         request,
@@ -169,7 +166,8 @@ def FI_sectionB(request):
             html_content = f"""
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
         SectionCompleteMail(subject,to,html_content)
-        return redirect("application:section_c")
+        # return redirect("application:section_c")
+        return redirect("application:rate")
 
     return render(
         request,
@@ -188,13 +186,19 @@ def FI_sectionC(request):
             request.POST, request.FILES, instance=request.user.profile
         )
         if form.is_valid():
+            data = form.cleaned_data["user"] = request.user
+            section = data.profile.section
+            if section == "C":
+                data.profile.section = "D"
+                data.profile.save()
             form.save()
             subject = "New Contract Alert"
             to = request.user.email
             html_content = f"""
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
             SectionCompleteMail(subject,to,html_content)
-            return redirect("management:policies")
+            # return redirect("management:policies")
+            return redirect("application:rate")
 
     return render(
         request,
@@ -292,7 +296,8 @@ def rate(request):
         if request.user.is_employee == True or request.user.is_applicant == True:
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
-            
+
+        print(form.is_valid())
         if form.is_valid():
             totalpoints = 0
             try:
@@ -322,6 +327,15 @@ def rate(request):
                 pass
 
             form.instance.totalpoints = totalpoints
+            # Saving form data to rating table only if the user is applicant
+            if form.instance.employeename.is_applicant == True:
+                form.save()
+                userprof = UserProfile.objects.get(user__username=form.instance.employeename)
+                if userprof.section == "D":
+                    return redirect("management:policies")
+                else:   
+                    return redirect("application:section_"+userprof.section.lower()+"")
+
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
             try:
                 idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
@@ -340,7 +354,7 @@ def rate(request):
                     | Q(activity_name="One On One Sessions"),
                     employee__username=form.instance.employeename,
                 ).update(point=point, mxpoint=mxpoint)
-                form.save()
+                        
                 return redirect(
                             "management:new_evidence", taskid=idval
                         )
@@ -543,3 +557,7 @@ def success_stories(request):
     }
     return render(request, 'codablog/success.html', context)
 """
+
+# @login_required
+# def UserProfile(request):
+#     return render(request, "application/applications/Application_Profile.html")

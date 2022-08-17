@@ -163,16 +163,18 @@
         <hr>      
             <div class="uploads_submission">
                 <form action="{% url "application:section_a" %}" method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <p>Note: Combine all the files and zip before uploading.</p>
-                <div class="d-flex justify-content-around">
-                <div class="col-md-3">{{ form.upload_a|as_crispy_field }}</div>
-                <div ><a href="{% url 'application:section_b' %}">
-                  <button id="next_section_btn">Next Section</button>
-                </a></div>
-            </div>
+                    
+                    {% csrf_token %}
+                    <p>Note: Combine all the files and zip before uploading.</p>
+                    <div class="d-flex justify-content-around">
+                       
+                        <div >
+                            <a href="{% url 'application:section_b' %}">
+                                <button id="next_section_btn">Next Section</button>
+                            </a>
+                        </div>
+                    </div>
               
-                
                 </form>
                 
           
