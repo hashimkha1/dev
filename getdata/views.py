@@ -1,22 +1,48 @@
+from re import M
 from django.shortcuts import render
 # imports added below
 import json
 import os
-
+import requests
+import threading
+import time
 from django.shortcuts import render
-from django.views.generic import ListView , DetailView , FormView
 from http.client import HTTPResponse
-
+from django.http import HttpResponseRedirect
 from requests import request 
 from . import forms
-
 from django.views import View
 from django.utils.dateformat import format
 from django.shortcuts import redirect
-import requests
+from django.contrib import admin
+from django.contrib import messages
+from django import forms
 
-import threading
-import time
+from django.urls import path, reverse, reverse_lazy
+from main.utils import Finance,Data,Management
+from django.contrib.auth.decorators import login_required
+from django.http import Http404, JsonResponse
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from datetime import datetime,date
+from django.views.generic import (
+	CreateView,
+	ListView,
+	UpdateView,
+	DetailView,
+	DeleteView, 
+    FormView
+)
+from finance.models import (
+        Transaction
+	)
+from django.contrib.auth import get_user_model
+
+from .forms import CsvImportForm
+
+# User=settings.AUTH_USER_MODEL
+User = get_user_model()
 
 # top level variables declaration
 # views on ratings data.
@@ -29,6 +55,16 @@ def index(request):
 def show(request):  
     employees = Employee.objects.all()  
     return render(request,"accounts/show.html",{'employees':employees})  
+
+def uploaddata(request):  
+    # context = {"posts": posts}
+    context = {
+        "Finance": Finance,
+        "Data": Data,
+        "Management": Management,
+    }
+    return render(request,"getdata/uploaddata.html", context)  
+
 # # ==================GOTOMEETING===========================
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # print('---dir_path-- : ',dir_path)
@@ -198,3 +234,54 @@ def show(request):
 #     result['info'] = cleanResponse
 
 #     return render(request , template_name , result)
+
+# ========================================UPLOADING DATA SECTION========================
+
+
+	
+# def get_urls(self):
+#     urls = super().get_urls()
+#     new_urls = [
+#         path("upload-csv/", self.upload_csv),
+#     ]
+#     return new_urls + urls
+
+def upload_csv(request):
+
+    if request.method == "POST":
+        csv_file = request.FILES["csv_upload"]
+
+        if not csv_file.name.endswith(".csv"):
+            messages.warning(
+                request, "The wrong file type was uploaded, it should be a csv file"
+            )
+            return render(request, "getdata/uploaddata.html")
+            # return HttpResponseRedirect(request.path_info)
+
+        # file= csv_file.read().decode("utf-8")
+        file = csv_file.read().decode("ISO-8859-1")
+        file_data = file.split("\n")
+        csv_data = [line for line in file_data if line.strip() != ""]
+        print(csv_data)
+        for x in csv_data:
+            fields = x.split(",")
+            created = Transaction.objects.update_or_create(
+                activity_date=fields[0],
+                sender=fields[1],
+                receiver=fields[2],
+                phone=fields[3],
+                qty=fields[4],
+                amount=fields[5],
+                payment_method=fields[6],
+                department=fields[7],
+                category=fields[8],
+                type=fields[9],
+                description=fields[10],
+                receipt_link=fields[11],
+            )
+        url = reverse("main:layout")
+        return HttpResponseRedirect(url)
+    form = CsvImportForm()
+    data = {"form": form}
+    # return render(request, "admin/csv_upload.html", data)
+    return render(request, "getdata/uploaddata.html", data)
