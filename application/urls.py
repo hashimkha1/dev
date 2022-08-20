@@ -12,8 +12,6 @@ urlpatterns = [
     # =============================APPLICATIONS VIEWS=====================================
     path("", views.career, name="career"),
     path("apply/", views.apply, name="apply"),
-    # path('applicants/', views.applicantlist, name='applicants'),
-    # path('applicants/', ApplicantListView.as_view(), name='applicant-list'),
     path(
         "applicant/<int:pk>/delete/",
         ApplicantDeleteView.as_view(),
