@@ -39,7 +39,7 @@
                             <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
                           </div>
                           <div class="col-md-6">
-                            <p> <a class="article-title target="_blank " href="{{requirement.doc.url}}">WIREFRAME</a></p>
+                            <p> <a class="article-title target="_blank " href="{{requirement.doc.url|default_if_none:'#'}}">WIREFRAME</a></p>
                           </div>
                         </div>
                     </div>
