@@ -474,7 +474,7 @@ class ClientDetailView(DetailView):
     model = CustomerUser
     ordering = ["-date_joined "]
 
-
+@method_decorator(login_required, name="dispatch")
 class ClientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = CustomerUser
     success_url = "/accounts/clients"
@@ -483,21 +483,25 @@ class ClientUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         # form.instance.username=self.request.user
-        # if request.user.is_authenticated:
-        if self.request.user.is_superuser or self.request.user.is_authenticated:
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            # or self.request.user.is_staff
+        ):
             return super().form_valid(form)
-        #  elif self.request.user.is_authenticated:
-        #      return super().form_valid(form)
-        return False
+        else:
+            return False
 
     def test_func(self):
-        client = self.get_object()
-        # if self.request.user == client.username:
-        #     return True
-        if self.request.user.is_superuser or self.request.user == client.username:
+        # client = self.get_object()
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            # or self.request.user.is_staff
+        ):
             return True
-        return False
-
+        else:
+            return False
 
 @method_decorator(login_required, name="dispatch")
 class ClientDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):

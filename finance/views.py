@@ -38,6 +38,8 @@ User = get_user_model()
 
 # Create your views here.
 
+def finance(request):
+    return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
 def contract_form_submission(request):
