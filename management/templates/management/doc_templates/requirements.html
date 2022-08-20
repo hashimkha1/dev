@@ -8,7 +8,6 @@
             <p><a href="{% url 'management:new_requirement'%}" class="btn btn-primary btn-sm"
               >ADD REQRUIREMENTS
             </a></p>
-
           </div>
           <div class="col-md-6">
             <p><a href="{% url 'management:requirements-active'%}" class="btn btn-primary btn-sm"
@@ -36,8 +35,11 @@
                         </p>
                         <hr/>
                         <div class="row">
-                          <div class="col-md-12">
-                            <p> <a class="article-title" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+                          <div class="col-md-6">
+                            <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+                          </div>
+                          <div class="col-md-6">
+                            <p> <a class="article-title target="_blank " href="{{requirement.doc.url}}">WIREFRAME</a></p>
                           </div>
                         </div>
                     </div>
