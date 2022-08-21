@@ -106,6 +106,9 @@ TEMPLATES = [
                 "management.context_processors.categories",
                 "management.context_processors.departments",
             ],
+            'libraries': {
+                'customfilters': 'application.templatetags.customfilters',
+            }
         },
     },
 ]

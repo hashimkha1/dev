@@ -1,5 +1,6 @@
 {%extends "main/base_templates/application_base.html"%}
  {%load crispy_forms_tags%} 
+ {% load customfilters %}
  {%block content %}
 <section id="career">
   <div class="career text-center">
@@ -36,7 +37,7 @@
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
           <td>{{applicant.profile.section}}</td>
-          {% if applicant.profile.upload_a %}
+          <!-- {% if applicant.profile.upload_a %}
              <td>
             <button>
               <a href="{{applicant.profile.upload_a.url}}" class="btn btn-secondary btn-sm" target="_blank"
@@ -46,8 +47,15 @@
           </td>
           {% else %}
           <td>N/A</td>
+          {% endif %} -->
+          {% fetchurl applicant.id "Alteryx" as urlval %}
+          {% if urlval %}
+            <td><a href="{{urlval}}">Watch</a></td>
+          {% else %}
+            <td>N/A</td>
           {% endif %}
-           {% if applicant.profile.upload_b %}
+
+          <!-- {% if applicant.profile.upload_b %}
              <td>
             <button>
               <a href="{{applicant.profile.upload_b.url}}" class="btn btn-secondary btn-sm" target="_blank"
@@ -57,8 +65,16 @@
           </td>
           {% else %}
           <td>N/A</td>
+          {% endif %} -->
+
+          {% fetchurl applicant.id "Tableau" as urlval %}
+          {% if urlval %}
+            <td><a href="{{urlval}}">Watch</a></td>
+          {% else %}
+            <td>N/A</td>
           {% endif %}
-           {% if applicant.profile.upload_c %}
+
+          <!-- {% if applicant.profile.upload_c %}
              <td>
             <button>
               <a href="{{applicant.profile.upload_c.url}}" class="btn btn-secondary btn-sm" target="_blank"
@@ -68,7 +84,15 @@
           </td>
           {% else %}
           <td>N/A</td>
+          {% endif %} -->
+
+          {% fetchurl applicant.id "Database" as urlval %}
+          {% if urlval %}
+            <td><a href="{{urlval}}">Watch</a></td>
+          {% else %}
+            <td>N/A</td>
           {% endif %}
+
           <td>
             <button>
               <a href="{{applicant.resume.url}}" class="btn btn-secondary btn-sm" target="_blank"

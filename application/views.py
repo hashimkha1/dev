@@ -332,7 +332,7 @@ def rate(request):
                 form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
                 if userprof.section == "D":
-                    return redirect("management:policies")
+                    return redirect("application:policies")
                 else:   
                     return redirect("application:section_"+userprof.section.lower()+"")
 
