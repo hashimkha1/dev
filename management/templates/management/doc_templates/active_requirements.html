@@ -30,13 +30,18 @@
                         </p>
                         <hr/>
                         <div class="row">
+                          {% if active_requirement.doc_url is none %}
+                          <div class="col-md-12">
+                            <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' active_requirement.id %}">EXAMINE</a></p>
+                          </div>
+                          {% else %}
                           <div class="col-md-6">
                             <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' active_requirement.id %}">EXAMINE</a></p>
                           </div>
                           <div class="col-md-6">
                             <p> <a class="article-title target="_blank" href="{{active_requirement.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
                           </div>
-
+                          {% endif %}
                         </div>
                     </div>
                   </div>

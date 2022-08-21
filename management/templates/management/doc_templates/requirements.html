@@ -1,56 +1,61 @@
-{%extends "main/base_templates/analysis_index.html"%} {% block content %}
+  {%extends "main/base_templates/analysis_index.html"%} {% block content %}
 
-<section id="data_training">
-    <div class="data_training text-center">
-        <h3 class="title">PRODUCT BACKLOG</h3>
-        <div class="row">
-          <div class="col-md-6">
-            <p><a href="{% url 'management:new_requirement'%}" class="btn btn-primary btn-sm"
-              >ADD REQRUIREMENTS
-            </a></p>
+  <section id="data_training">
+      <div class="data_training text-center">
+          <h3 class="title">PRODUCT BACKLOG</h3>
+          <div class="row">
+            <div class="col-md-6">
+              <p><a href="{% url 'management:new_requirement'%}" class="btn btn-primary btn-sm"
+                >ADD REQRUIREMENTS
+              </a></p>
+            </div>
+            <div class="col-md-6">
+              <p><a href="{% url 'management:requirements-active'%}" class="btn btn-primary btn-sm"
+                >ACTIVE REQRUIREMENTS
+              </a></p>
+            </div>
           </div>
-          <div class="col-md-6">
-            <p><a href="{% url 'management:requirements-active'%}" class="btn btn-primary btn-sm"
-              >ACTIVE REQRUIREMENTS
-            </a></p>
-          </div>
-        </div>
 
-        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-        <p class="p text-center"> </p>
-        <p class="gi">
-          This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
-      </p>
-        <div class="row text-center">
-          {% for requirement in  requirements  %}
-            <div class="col-md-6" id="gi">
-                <div class="card">
-                  <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-                    <div class="card-body">
-                      <b> REQ:CODA000{{requirement.id}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}</b>
-                        <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                        <p class="gi">
-                         As {{requirement.requestor}} {{requirement.what|truncatewords:15}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
-                         {{requirement.delivery_date}} 
-                        </p>
-                        <hr/>
-                        <div class="row">
-                          <div class="col-md-6">
-                            <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+          <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+          <p class="p text-center"> </p>
+          <p class="gi">
+            This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
+        </p>
+          <div class="row text-center">
+            {% for requirement in  requirements  %}
+              <div class="col-md-6" id="gi">
+                  <div class="card">
+                    <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                      <div class="card-body">
+                        <b> REQ:CODA000{{requirement.id}} |Deadline: {{requirement.delivery_date|date:"F d, Y"}}|Assigned: {{requirement.assigned_to}}</b>
+                          <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                          <p class="gi">
+                          As {{requirement.requestor}} {{requirement.what|truncatewords:15}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
+                          {{requirement.delivery_date}} 
+                          </p>
+                          <hr/>
+                          <div class="row">
+                            {% if requirement.doc_url is none %}
+                            <div class="col-md-12">
+                              <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+                            </div>
+                            {% else %}
+                            <div class="col-md-6">
+                              <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
+                            </div>
+                            <div class="col-md-6">
+                              <p> <a class="article-title target="_blank" href="{{requirement.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
+                            </div>
+                            {% endif %}
                           </div>
-                          <div class="col-md-6">
-                            <p> <a class="article-title target="_blank" href="{{requirement.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
-                          </div>
-
-                        </div>
+                      </div>
                     </div>
-                  </div>
-               </div>
-              {%endfor%}
-        </div>
-    </div>
-    </section>
-{% endblock content %}
+                </div>
+                {%endfor%}
+          </div>
+      </div>
+      </section>
+  {% endblock content %}
 
 
 
