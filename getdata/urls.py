@@ -8,6 +8,8 @@ app_name = 'getdata'
 urlpatterns = [
     path('getrating/', views.getrating, name='data-getrating'),
     path('index/', views.index, name='data-index'),
+    path('upload/', views.upload_csv, name='upload'),
+    path('dataupload/', views.uploaddata, name='upload-data'),
 #     path('gotomeeting/',views.meetingFormView,name='meetingform1'),
 #     # trying a url pattern for dates
 #     # gotomeetingresult

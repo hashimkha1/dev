@@ -28,11 +28,19 @@ from .forms import (
     ApplicantProfileFormC,
 )
 from .models import UserProfile, Application,Rated, Reporting
-from management.models import Policy
+from management.models import Policy,Task
 from .utils import alteryx_list, dba_list, posts, tableau_list
+from datetime import datetime, timedelta
+from management.utils import email_template
+
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
+
+
+def SectionCompleteMail(subject,user,content):
+    email_template(subject,user,content)
+
 
 
 def apply(request):
@@ -61,13 +69,14 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def applicantlist(request):
-    applications = Application.objects.filter().order_by("-application_date")
-    applicants = CustomerUser.objects.filter(is_applicant=True,is_active=True)
-
-    # applicants=User.objects.filter(is_applicant=True).order_by('-date_joined')
-    context = {"applications": applications, "applicants": applicants}
+    # applications = Application.objects.filter().order_by("-application_date")
+    applicants = CustomerUser.objects.filter(is_applicant=True,is_active=True).order_by("-date_joined")
+    print(applicants)
+    context = {
+            # "applications": applications, 
+             "applicants": applicants
+         }
     return render(request, "application/applications/applicants.html", context)
-
 
 """
 class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
@@ -126,6 +135,11 @@ def FI_sectionA(request):
                 data.profile.section = "B"
                 data.profile.save()
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
+        SectionCompleteMail(subject,to,html_content)
         return redirect("application:section_b")
 
     return render(
@@ -151,6 +165,11 @@ def FI_sectionB(request):
                 data.profile.section = "C"
                 data.profile.save()
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
+        SectionCompleteMail(subject,to,html_content)
         return redirect("application:section_c")
 
     return render(
@@ -171,6 +190,11 @@ def FI_sectionC(request):
         )
         if form.is_valid():
             form.save()
+            subject = "New Contract Alert"
+            to = request.user.email
+            html_content = f"""
+                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
+            SectionCompleteMail(subject,to,html_content)
             return redirect("management:policies")
 
     return render(
@@ -267,24 +291,78 @@ def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect("application-rating")
+            totalpoints = 0
+            try:
+                if request.POST["projectDescription"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+            try:
+                if request.POST["requirementsAnalysis"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["development"] == "on":
+                    totalpoints += 5
+            except:
+                pass
+            try:
+                if request.POST["testing"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["deployment"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+
+            form.instance.totalpoints = totalpoints
+            # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
+            try:
+                idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions"),
+                    employee__username=form.instance.employeename,
+                )[0]
+                point = point + totalpoints
+                if point >= mxpoint or point + 15 >= mxpoint:
+                    mxpoint += 15
+                
+                Task.objects.filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions"),
+                    employee__username=form.instance.employeename,
+                ).update(point=point, mxpoint=mxpoint)
+                form.save()
+                return redirect(
+                            "management:new_evidence", taskid=idval
+                        )
+            except:
+                form = RatingForm()
+                return render(request, "application/orientation/rate.html", {"form": form,"error":True})
+        
+            
+            # return redirect("application:rating")
     else:
         form = RatingForm()
     return render(request, "application/orientation/rate.html", {"form": form})
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")
-    total_punctuality = Rated.objects.all().aggregate(Sum("punctuality"))
-    total_communication = Rated.objects.all().aggregate(Sum("communication"))
-    total_understanding = Rated.objects.all().aggregate(
-        Total_Understanding=Sum("understanding")
-    )
+    # total_punctuality = Rated.objects.all().aggregate(Sum("punctuality"))
+    # total_communication = Rated.objects.all().aggregate(Sum("communication"))
+    # total_understanding = Rated.objects.all().aggregate(
+    #     Total_Understanding=Sum("understanding")
+    # )
     context = {
         "ratings": ratings,
-        "total_punctuality": total_punctuality,
-        "total_communication": total_communication,
-        "total_understanding": total_understanding,
+        # "total_punctuality": total_punctuality,
+        # "total_communication": total_communication,
+        # "total_understanding": total_understanding,
     }
     return render(request, "application/orientation/rating.html", context)
 
@@ -294,6 +372,7 @@ def trainee(request):
     if request.method == "POST":
         form = ReportingForm(request.POST, request.FILES)
         if form.is_valid():
+            
             form.save()
             return redirect("application:trainees")
     else:

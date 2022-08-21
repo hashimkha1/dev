@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "django_celery_results",
     #'dbbackup',
     # "django_extensions",
-    # "django_crontab",
+    "django_crontab",
     # 'testing.apps.TestingConfig',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -68,6 +68,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
+    ("* * * * *", "application.msg_send_cron.SendMsgApplicatUser"),
     ("*/5 * * * *", "management.cron.advertisement"),
 ]
 

@@ -5,7 +5,7 @@ from distutils.command.upload import upload
 from django.db import models
 from django.utils import timezone
 from accounts.models import CustomerUser
-
+from django.db.models import Q
 
 
 # Create your models here.
@@ -122,14 +122,36 @@ class Rated(models.Model):
         Very_good = 4
         Excellent = 5
 
+    TOPIC_CHOICES = [
+        ("Tableau-Landing Page", "Tableau-Landing Page"),
+        ("Tableau-Executive Page", "Tableau-Executive Page"),
+        ("Tableau-Other", "Tableau-Other"),
+        ("Alteryx", "Alteryx"),
+        ("Database", "Database"),
+        ("Other", "Other"),
+    ]
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    topic = models.CharField(max_length=100, default=None)
+    # first_name = models.CharField(max_length=100)
+    # last_name = models.CharField(max_length=100)
+    employeename =  models.ForeignKey(
+                    "accounts.CustomerUser", limit_choices_to=Q(is_employee=True), 
+                    on_delete=models.CASCADE, related_name="rating_empname",default=1)
+    # topic = models.CharField(max_length=100, default=None)
+    topic = models.CharField(
+        max_length=255,
+        choices=TOPIC_CHOICES,
+        default='Other'
+    )
     rating_date = models.DateTimeField(default=timezone.now)
-    punctuality = models.IntegerField(choices=Score.choices)
-    communication = models.IntegerField(choices=Score.choices)
-    understanding = models.IntegerField(choices=Score.choices)
+    # punctuality = models.IntegerField(choices=Score.choices)
+    # communication = models.IntegerField(choices=Score.choices)
+    # understanding = models.IntegerField(choices=Score.choices)
+    projectDescription = models.BooleanField(default=False)# 2
+    requirementsAnalysis  = models.BooleanField(default=False)# 3
+    development = models.BooleanField(default=False)# 5
+    testing = models.BooleanField(default=False)# 3
+    deployment = models.BooleanField(default=False)# 2
+    totalpoints = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.id} Rating"

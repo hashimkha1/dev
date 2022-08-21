@@ -29,6 +29,7 @@ from django.views.generic import (
 from management.models import (
     Policy,
     Tag,
+    # TaskGroups,
     Task,
     TaskHistory,
     TaskLinks,
@@ -254,6 +255,14 @@ class TagCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+class TaskGroupCreateView(LoginRequiredMixin, CreateView):
+    model = TaskGroups
+    success_url = "/management/newtask"
+    fields = ["title", "description"]
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 # ======================TASKS=======================
 def task(request, slug=None, *args, **kwargs):
@@ -274,7 +283,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
     model = Task
     success_url = "/management/tasks"
     fields = [
-        "group",
+        "groupname",
         "category",
         "employee",
         "activity_name",
@@ -300,8 +309,7 @@ def newtaskcreation(request):
 
         employee = request.POST["employee"].split(",")
         activitys = request.POST["activitys"].split(",")
-        # print(type(employee),type(activitys))
-        # print(employee,activitys)
+        
         for emp in employee:
             for act in activitys:
                 if (
@@ -415,7 +423,7 @@ def filterbycategory(request):
     result = []
     details = {}
     for data in tasks.all():
-        details["group"] = data.group
+        details["groupname"] = data.groupname
         details["deadline"] = data.deadline.strftime("%d %b %Y")
         details["submission"] = data.submission.strftime("%d %b %Y")
         details["point"] = data.point
@@ -909,7 +917,7 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     success_url = "/management/tasks"
     fields = [
-        "group",
+        "groupname",
         "category",
         "employee",
         "activity_name",
@@ -1061,7 +1069,7 @@ def assess(request):
 class AssessListView(ListView):
     queryset = DSU.objects.filter(type="Staff").order_by("-created_at")
     # queryset=DSU.objects.all()
-    template_name = "management/departments/hr/assess_form.html"
+    template_name = "management/departments/hr/assessment.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
 
@@ -1242,7 +1250,7 @@ def filterbycategory(request):
     result = []
     details = {}
     for data in tasks.all():
-        details["group"] = data.group
+        details["group"] = data.groupname
         details["deadline"] = data.deadline.strftime("%d %b %Y")
         details["submission"] = data.submission.strftime("%d %b %Y")
         details["point"] = data.point

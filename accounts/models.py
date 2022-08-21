@@ -234,6 +234,26 @@ class UserProfile(models.Model):
     def __str__(self):
         return f'{self.user.username} Profile'
 """
+
+class TaskGroups(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(
+        max_length=55,
+        unique=True,
+        default="Group A"
+    )
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # @classmethod
+    # def get_default_pk(cls):
+    #     cat, created = cls.objects.get_or_create(
+    #         title="Group A"
+    #     )
+    #     return cat.pk
+
+    def __str__(self):
+        return self.title
 # ========================================TIME TRACKER====================================================
 # Time Tracking Model
 class Tracker(models.Model):

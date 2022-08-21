@@ -13,8 +13,8 @@
           <th>City</th>
           <th>State</th>
           <th>Country</th>
-           <!---
           <th>Update</th>
+           <!---
           <th>Delete</th>
           <th>CustomerId</th>
           <th>Registering For:</th>
@@ -41,6 +41,7 @@
               <td> <a class="article-title" href="#">Edit</a></td>
               <td> <a class="article-title" href="#">Delete</a></td>
                --->
+              <td> <a class="article-title" href="{% url 'accounts:superuser-update' employee.id %}">Edit</a></td>
             </tr>
          
         {% endfor %}

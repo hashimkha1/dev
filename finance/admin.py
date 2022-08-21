@@ -10,7 +10,8 @@ from .models import (
     Payment_History,
     Default_Payment_Fees,
     Payment_Information,
-    Transaction,Inflow
+    Transaction,Inflow,
+    TrainingLoan
 )  # , DocUpload
 
 
@@ -81,3 +82,4 @@ admin.site.register(Payment_History, Payment_HistoryAdmin)
 admin.site.register(Inflow)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)
+admin.site.register(TrainingLoan)

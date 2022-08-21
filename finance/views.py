@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, redirect,render
 from requests import request
 from accounts.forms import UserForm
 from accounts.models import CustomerUser
+from management.models import Task
 from django.db.models import Q
 from django.http import QueryDict
 from django.shortcuts import render
@@ -37,6 +38,8 @@ User = get_user_model()
 
 # Create your views here.
 
+def finance(request):
+    return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
 def contract_form_submission(request):
@@ -235,17 +238,33 @@ class DefaultPaymentUpdateView(UpdateView):
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 
 def transact(request):
-	if request.method == "POST":
-		form = TransactionForm(request.POST, request.FILES)
-		if form.is_valid():
-			# form.save()
-			instance=form.save(commit=False)
-			instance.sender=request.user
-			instance.save()
-			return redirect("/finance/transaction/")
-	else:
-		form = TransactionForm()
-	return render(request, "finance/payments/transact.html", {"form": form})
+    if request.method == "POST":
+        form = TransactionForm(request.POST, request.FILES)
+        if form.is_valid():
+            points,mxpoint = Task.objects.values_list(
+                "point","mxpoint"
+                ).filter(
+                    Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
+                    employee__username=form.instance.sender
+                )[
+                    0
+                ]
+            points = points+1
+            if points >= mxpoint:
+                mxpoint += 5
+            Task.objects.filter(
+                    Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
+                    employee__username=form.instance.sender
+                ).update(point=points, mxpoint=mxpoint)
+                
+            form.save()
+            # instance=form.save(commit=False)
+            # instance.sender=request.user
+            # instance.save()
+            return redirect("/finance/transaction/")
+    else:
+        form = TransactionForm()
+    return render(request, "finance/payments/transact.html", {"form": form})
 
 
 class TransactionListView(ListView):

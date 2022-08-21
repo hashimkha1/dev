@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save
 from management.utils import unique_slug_generator
 from django.contrib.auth import get_user_model
+from accounts.models import TaskGroups
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -466,6 +467,27 @@ class Tag(models.Model):
         return self.title
 
 
+# class TaskGroups(models.Model):
+
+#     title = models.CharField(
+#         max_length=55,
+#         unique=True,
+#         default="Group A"
+#     )
+#     description = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     # @classmethod
+#     # def get_default_pk(cls):
+#     #     cat, created = cls.objects.get_or_create(
+#     #         title="Group A"
+#     #     )
+#     #     return cat.pk
+
+#     def __str__(self):
+#         return self.title
+
+
 class TaskQuerySet(models.query.QuerySet):
     def active(self):
         return self.filter(is_active=True)
@@ -522,10 +544,12 @@ class Task(models.Model):
         max_length=255,
         default="Group A",
     )
+    groupname = models.ForeignKey(
+        to=TaskGroups, on_delete=models.CASCADE, default=1
+    )
     category = models.ForeignKey(
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
-    # category = models.ManyToManyField(Tag, blank=True)
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
@@ -852,6 +876,11 @@ class Requirement(models.Model):
     )  # how should it be delivered/Which platform or mode of delivery?
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    @property
+    def doc_url(self):
+        if self.doc and hasattr(self.doc, 'url'):
+            return self.doc.url
 
     class Meta:
         verbose_name_plural = "Requirements"

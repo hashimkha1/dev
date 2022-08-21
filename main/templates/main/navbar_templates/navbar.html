@@ -84,11 +84,11 @@
                   <a class="dropdown-item" href="{% url 'management:companyagenda' %}"
                         target="" >Company Agenda</a >
                          <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'management:finance' %}" 
+                  <a class="dropdown-item" href="{% url 'finance:finance' %}" 
                        target="" >Finance Report</a>
                         <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'management:hr' %}"
-                      target="" >Human Resource Report</a>
+                  <a class="dropdown-item" href="https://public.tableau.com/app/profile/coda2331/viz/EmployeeProductivityVersion08/LandingPageReport?publish=yes"
+                      target="_blank" >Human Resource Report</a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="{% url 'management:assess' %}"
                       target="" >Weekly Assessment </a>
@@ -161,6 +161,8 @@
                           <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:requirements'%}" target="" >Requirements</a>
+                            <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1gTia0pMaLGDW7bBBTxTDcqnCA8sqCcrzKrKZEItWmH4/edit#gid=1318432858" target="_blank" >Excel Requirements</a>
                             <div class="dropdown-divider"></div>
                     {% else %}
                     <a class="dropdown-item" href="{% url 'main:layout' %}" target="" >Help?</a>

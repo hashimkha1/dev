@@ -249,14 +249,14 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = [
-            "group",
-            "category",
-            "employee",
-            "activity_name",
-            "description",
-            "point",
-            "mxpoint",
-            "mxearning",
+                   "group",
+                    "category",
+                    "employee",
+                    "activity_name",
+                    "description",
+                    "point",
+                    "mxpoint",
+                    "mxearning",
         ]
 
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
