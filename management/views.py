@@ -1261,9 +1261,10 @@ def filterbycategory(request):
     return JsonResponse({"result": result}, safe=False)
 
 
-def AdvertisementView(request):
-    t_form = TwitterForm()
-    f_form = FacebookForm()
+@login_required
+def advertisement(request):
+    t_form = TwitterForm(request.POST, request.FILES, instance=request.user)
+    f_form = FacebookForm(request.POST, request.FILES, instance=request.user)
     if request.method == "POST":
         if t_form.is_valid() and f_form.is_valid():
             t_form.save()

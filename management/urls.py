@@ -96,5 +96,5 @@ urlpatterns = [
         RequirementDetailView.as_view(),
         name="RequirementDetail",
     ),
-    path("advertisement/", views.AdvertisementView, name="advertisement"),
+    path("advertisement/", views.advertisement, name="advertisement"),
 ]
