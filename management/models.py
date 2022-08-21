@@ -877,6 +877,11 @@ class Requirement(models.Model):
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
+    @property
+    def doc_url(self):
+        if self.doc and hasattr(self.doc, 'url'):
+            return self.doc.url
+
     class Meta:
         verbose_name_plural = "Requirements"
 

@@ -31,7 +31,7 @@
                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                         <p class="gi">
                          As {{requirement.requestor}} {{requirement.what|truncatewords:15}}.This should be done {{requirement.why}}.The requirement should take {{requirement.duration}} hours and it should be completed by 
-                         {{requirement.delivery_date}}
+                         {{requirement.delivery_date}} 
                         </p>
                         <hr/>
                         <div class="row">
@@ -39,8 +39,9 @@
                             <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' requirement.id %}">EXAMINE</a></p>
                           </div>
                           <div class="col-md-6">
-                            <p> <a class="article-title target="_blank " href="{{requirement.doc.url|default_if_none:'#'}}">WIREFRAME</a></p>
+                            <p> <a class="article-title target="_blank" href="{{requirement.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
                           </div>
+
                         </div>
                     </div>
                   </div>
