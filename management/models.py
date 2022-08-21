@@ -881,7 +881,6 @@ class Twitter(models.Model):
     )
     post_description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="Uploads/Twitter/", null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
 
 
 def __str__(self):
@@ -894,8 +893,6 @@ class Facebook(models.Model):
     page_name = models.CharField(max_length=100, null=True, blank=True)
     post_description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
-    file = models.FileField(upload_to="Uploads/Facebook/", null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

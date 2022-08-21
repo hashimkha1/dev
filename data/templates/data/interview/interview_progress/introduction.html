@@ -1,0 +1,67 @@
+{%extends "main/base_templates/analysis_index.html"%}
+{% load static %}
+{% block title %}
+{% if department %}{{ department.name }}{% else %}activities{% endif %}
+{% endblock %}
+{% block content %}
+
+<section id="data_training">
+    <div class="data_training text-center">
+        <section id="job_market">
+            <div class="job_market text-center">
+                <h3 class="title">Section 1</h3>
+                <div class="row text-center">
+                    <div class="col-md-12 services">
+                        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                        <h4>Introduction</h4>
+                        <p>
+                          Tell me about yourself?
+                        </p>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="" id="navbarDropDown" role="button"
+                                    data-toggle="dropdown">
+                                    <button type="btn" class="btn-primary">Select</button>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                                    <a class="dropdown-item" target="_blank"
+                                        href="https://docs.google.com/document/d/1GZZ_6ME1QI-4zeHt0cQ1lNrztSTKKp5-D7K0ytOXgh8/edit#heading=h.gjdgxs">
+                                        PPT : Introduction</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" target="_blank"
+                                        href="https://drive.google.com/file/d/15-82jaqBrXW21SoLJ5QNvGmltOrekv8F/view">
+                                        Video.
+                                        Introduction</a>
+                                    <div class="dropdown-divider"></div>
+
+                            </li>
+                        </ul>
+                            <div class="uploads_submission">
+            
+                <p>Note: Upload your resume</p>
+                <div class="d-flex justify-content-around">
+                <div ><a href="{% url 'data:uploadinterview' %}">
+                  <button id="next_section_btn">Next Section</button>
+                </a>
+            </div>
+                  
+            </div>
+            </div>
+            </div>
+        </section>  
+     <script>
+            $(document).ready(function() {
+                $('#next_section_btn').click(function() {
+                    var applicantworks = $('#applicantworks').val();
+                    if (applicantworks == '') {
+                        alert('Please upload your File');
+                        return false;
+                    }
+                });
+            });
+        </script>   
+                {% include 'main/footer_templates/footer.html' %}
+ 
+{% endblock content %}
+
+      

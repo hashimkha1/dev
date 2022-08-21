@@ -11,10 +11,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
-from pickle import TRUE
 
 import django_heroku
-import redis
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -115,8 +113,8 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
 
-
 import dj_database_url
+
 # #postgresql database
 
 # DATABASES = {
@@ -129,15 +127,15 @@ import dj_database_url
 #     }
 # }
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',# Name of Database
-        'USER':'postgres',
-        'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
-        'HOST': 'localhost',
-    }
-}
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "postgres",  # Name of Database
+#         "USER": "postgres",
+#         "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
+#         "HOST": "localhost",
+#     }
+# }
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
@@ -148,12 +146,12 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 
@@ -271,4 +269,4 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-SITEURL="https://www.codanalytics.net"
+SITEURL = "https://www.codanalytics.net"

@@ -1,21 +1,13 @@
-from django.contrib import messages
 from django.http import JsonResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.shortcuts import redirect, render
 from django.views.generic import (
-    CreateView,
-    DeleteView,
-    DetailView,
     ListView,
-    UpdateView,
 )
-from .forms import TransactionForm
-from .models import Expenses, Payments
+import json
+from main.forms import TransactionForm
+from main.models import Expenses
 from finance.models import Payment_History, Payment_Information
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -84,19 +76,22 @@ def report(request):
 #     payments = Payments.objects.all().first()
 #     return render(request, "main/pay.html", {"title": "pay", "payments": payments})
 
+
+@login_required
 def pay(request):
     payment_info = Payment_Information.objects.filter(
         customer_id=request.user.id
     ).first()
-
-    print("payment_info:", payment_info)
     return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
     print(payments)
     customer = request.user
-    payment_fees = payments.payment_fees
+    body = json.loads(request.body)
+    print("payment_complete:", body)
+    payment_fees = body["payment_fees"]
     down_payment = payments.down_payment
     studend_bonus = payments.student_bonus
     plan = payments.plan
