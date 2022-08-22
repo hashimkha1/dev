@@ -63,7 +63,7 @@ INSTALLED_APPS = [
     #'dbbackup',
     # "django_extensions",
     "django_crontab",
-    # 'testing.apps.TestingConfig',
+    'testing.apps.TestingConfig',
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 

@@ -83,7 +83,7 @@ urlpatterns = [
     path("management/", include("management.urls", namespace="management")),
     path("globalsearch/", include("globalsearch.urls"), name="search"),
     path("finance/", include("finance.urls"), name="finance"),
-    # path('admindashboard/',include("testing.adminurls"))
+    # path('testing/',include("testing.urls"))
 ]
 
 if settings.DEBUG:
