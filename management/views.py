@@ -36,7 +36,7 @@ from management.models import (
     Requirement,
 )
 from data.models import DSU
-
+from accounts.models import Tracker,Department, TaskGroups
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Tracker, Department
