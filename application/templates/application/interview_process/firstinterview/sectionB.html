@@ -139,7 +139,7 @@
                 {% csrf_token %}
                 <p>Note: Combine all the files and zip before uploading.</p>
                 <div class="d-flex justify-content-around">
-                <div class="col-md-3">{{ form.upload_b|as_crispy_field }}</div>
+               
                 <div ><a href="{% url 'application:section_c' %}">
                   <button id="next_section_btn">Next Section</button>
                 </a></div>
