@@ -1,0 +1,68 @@
+{%extends "main/base_templates/analysis_index.html"%}
+ {%load crispy_forms_tags%} 
+{% load static %}
+{% block title %}
+{% if department %}{{ department.name }}{% else %}activities{% endif %}
+{% endblock %}
+{% block content %}
+
+<section id="data_training">
+    <div class="data_training text-center">
+        <section id="job_market">
+            <div class="job_market text-center">
+                <h3 class="title">Section 1</h3>
+                <div class="row text-center">
+                    <div class="col-md-12 services">
+                        <!-- <img src="static/img/services/service1.png" class="service-img" >-->
+                        <h4>Resume</h4>
+                        <p>
+                            Walk me through your resume?
+                        </p>
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="" id="navbarDropDown" role="button"
+                                    data-toggle="dropdown">
+                                    <button type="btn" class="btn-primary">Select</button>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                                    <a class="dropdown-item" target="_blank"
+                                        href=" https://docs.google.com/presentation/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/edit#slide=id.gb867311a18_3_7">
+                                        PPT Resume</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" target="_blank"
+                                        href="https://drive.google.com/file/d/1y8bMA01KNAykHiAaF8LIrzWI_JSAIeHN/view?usp=sharing">
+                                        Video. Resume</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" target="_blank"
+                                        href="https://docs.google.com/document/d/17RxXz8c5bjX9OrdbWR97qpoM4P-zqVgweOpNY4-CsnA/edit#">
+                                        Sample
+                                        Resume</a>
+                                </div>
+
+                            </li>
+                        </ul>
+                                <hr>      
+            <div class="uploads_submission">
+            
+                <p>Note: Upload your resume</p>
+                <div class="d-flex justify-content-around">
+            
+                <div ><a href="{% url 'data:uploadinterview' %}">
+                  <button id="next_section_btn">Upload File</button>
+                </a>
+             </div>
+                  
+            </div>
+      
+                
+          
+            </div>
+
+      </section>
+
+      
+                {% include 'main/footer_templates/footer.html' %}
+ 
+{% endblock content %}
+
+      

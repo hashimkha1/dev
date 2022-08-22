@@ -1,10 +1,8 @@
 from django import forms
-from django.forms import ModelForm, Textarea
-from django.db.models import Q
+from django.forms import Textarea
 from data.models import DSU
-from accounts.models import CustomerUser
-from .models import TaskLinks, Policy, Requirement,Task
-from finance.models import Transaction,Inflow
+from management.models import TaskLinks, Policy, Requirement, Task, Twitter, Facebook
+from finance.models import Transaction, Inflow
 from accounts.models import Department
 
 """
@@ -19,15 +17,17 @@ class EmployeeForm(forms.ModelForm):
 
 """
 
-class DepartmentForm(forms.ModelForm):  
-    class Meta:  
-        model = Department  
-        fields = ['name', 'slug','description', 'is_active','is_featured']
+
+class DepartmentForm(forms.ModelForm):
+    class Meta:
+        model = Department
+        fields = ["name", "slug", "description", "is_active", "is_featured"]
         widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
 
     def __init__(self, *args, **kwargs):
         super(DepartmentForm, self).__init__(*args, **kwargs)
         self.fields["name"].empty_label = "Select"
+
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -134,6 +134,7 @@ class PolicyForm(forms.ModelForm):
         }
         widgets = {"description": Textarea(attrs={"cols": 75, "rows": 3})}
 
+
 class ManagementForm(forms.ModelForm):
     class Meta:
         model = DSU
@@ -176,7 +177,7 @@ class RequirementForm(forms.ModelForm):
             "why",
             "how",
             "doc",
-            'is_active'
+            "is_active",
         ]
 
         labels = {
@@ -184,7 +185,7 @@ class RequirementForm(forms.ModelForm):
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
             "app": "Specify app if Website",
-            "company":"company",
+            "company": "company",
             "category": "Select a category",
             "what": "Describe the Requirement",
             "why": "Why do they need it ?",
@@ -197,36 +198,37 @@ class RequirementForm(forms.ModelForm):
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
     #     self.fields["created_by"].queryset = CustomerUser.objects.filter(
-    #         is_employee=True 
+    #         is_employee=True
     #         # Q(is_employee=True)
     #     )
+
 
 class EvidenceForm(forms.ModelForm):
     class Meta:
         model = TaskLinks
         fields = [
-                    "task",
-                    "added_by",
-                    "link_name",
-                    "linkpassword",
-                    "description",
-                    "doc",
-                    "link",
-                    "linkpassword",
-                    "is_active",
-                    "is_featured",
+            "task",
+            "added_by",
+            "link_name",
+            "linkpassword",
+            "description",
+            "doc",
+            "link",
+            "linkpassword",
+            "is_active",
+            "is_featured",
         ]
 
         labels = {
-                "task ":"Task Name",
-                "added_by":"Your Username",
-                "link_name":"Enter link name",
-                "linkpassword":"If Links Needs Password Enter Password here:",
-                "description":"What is this link/Evidence about",
-                "doc":"Upload file/document if possible",
-                "link":"Upload link/paste your link below",
-                "linkpassword":"Provide Password if necessary",
-                # "is_active ":"Is this link still active "
+            "task ": "Task Name",
+            "added_by": "Your Username",
+            "link_name": "Enter link name",
+            "linkpassword": "If Links Needs Password Enter Password here:",
+            "description": "What is this link/Evidence about",
+            "doc": "Upload file/document if possible",
+            "link": "Upload link/paste your link below",
+            "linkpassword": "Provide Password if necessary",
+            # "is_active ":"Is this link still active "
         }
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
 
@@ -237,16 +239,17 @@ class EvidenceForm(forms.ModelForm):
         # )
 
         # Forms updated by Karki
+
     # def __init__(self, **kwargs):
     #     super(EvidenceForm, self).__init__(**kwargs)
     #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
+
 
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = [
-                    # "group",
-                    "groupname",
+                   "group",
                     "category",
                     "employee",
                     "activity_name",
@@ -257,3 +260,28 @@ class TaskForm(forms.ModelForm):
         ]
 
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
+
+class TwitterForm(forms.ModelForm):
+    class Meta:
+        model = Twitter
+        fields = [
+            "twitter_api_key",
+            "twitter_api_key_secret",
+            "twitter_bearer_token",
+            "twitter_access_token",
+            "twitter_access_token_secret",
+            "post_description",
+            "image",
+        ]
+
+
+class FacebookForm(forms.ModelForm):
+    class Meta:
+        model = Facebook
+        fields = [
+            "facebook_access_token",
+            "facebook_page_id",
+            "post_description",
+            "image",
+        ]

@@ -4,14 +4,9 @@
 {% if department %}{{ department.name }}{% else %}activities{% endif %}
 {% endblock %}
 {% block content %}
-<!--------------------------Slider Section--------------------------------->
-<!-------------------Our home services Section------------------------->
-<!-------------------1. interview Section------------------------->
+
 <section id="data_training">
     <div class="data_training text-center">
-
-
-        <!-------------------Job Market Section------------------------->
         <section id="job_market">
             <div class="job_market text-center">
                 <h3 class="title">Section 1</h3>
@@ -283,6 +278,12 @@
                 </div>
             </div>
         </section>
+        <!-- End Services Section -->
+        <hr>
+        <div classs="container  text-center">
+        
+            <a href="{% url 'data:resume'%}" class="btn btn-primary btn-sm">Start Process</a>
+        </div>
         {% endblock content %}
 
       

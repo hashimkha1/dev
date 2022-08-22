@@ -1,18 +1,14 @@
 import calendar
 from datetime import datetime, date
 from decimal import *
-from enum import unique
-from unittest.mock import DEFAULT
 from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
-from django.db.models.signals import pre_save, post_save
-from .utils import unique_slug_generator
-from django.conf import settings
+from django.db.models.signals import pre_save
+from management.utils import unique_slug_generator
 from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups
 
@@ -402,21 +398,17 @@ class Policy(models.Model):
     #     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
     #     default=1
     # )
-    staff = models.CharField(max_length=100, null=True, blank=True,default="admin")
+    staff = models.CharField(max_length=100, null=True, blank=True, default="admin")
     # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
-    link=models.CharField(max_length=1000,blank=True, null=True)
+    link = models.CharField(max_length=1000, blank=True, null=True)
     department = models.CharField(
         max_length=100,
         choices=DEPARTMENT_CHOICES,
         default=Other,
     )
-    day = models.CharField(
-        max_length=25,
-        choices=DAY_CHOICES,
-        default='Sunday'
-    )
+    day = models.CharField(max_length=25, choices=DAY_CHOICES, default="Sunday")
     description = models.TextField()
     policy_doc = models.FileField(
         upload_to="policy/doc/", default=None, null=True, blank=True
@@ -424,10 +416,11 @@ class Policy(models.Model):
 
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
-    is_internal= models.BooleanField(default=True)
+    is_internal = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.id} policy"
+
 
 # ==================================ACTIVITIES====================================
 class Tag(models.Model):
@@ -540,9 +533,12 @@ class Task(models.Model):
         to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
     )
     employee = models.ForeignKey(
-        User, on_delete=models.RESTRICT, related_name="user_assiged",
-        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
-        default=999
+        User,
+        on_delete=models.RESTRICT,
+        related_name="user_assiged",
+        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)
+        and Q(is_active=True),
+        default=999,
     )
     activity_name = models.CharField(
         verbose_name=_("Activity Name"),
@@ -658,21 +654,23 @@ class Task(models.Model):
     def __str__(self):
         return self.activity_name
 
+
 # Adding the evidence table/model
 class TaskLinks(models.Model):
     # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
-    task= models.ForeignKey(Task,on_delete=models.CASCADE)
-    added_by= models.ForeignKey(
-    User, 
-    on_delete=models.CASCADE,
-    limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),)
-    link_name=models.CharField(max_length=255, default='General')
-    description=models.TextField()
-    created_at=models.DateTimeField(auto_now_add=True)
-    updated_at=models.DateTimeField(auto_now=True)
-    doc=models.FileField(default="None",upload_to='evidence/docs/')
-    link=models.CharField(max_length=1000,blank=True, null=True)
-    linkpassword=models.CharField(max_length=255, default='No Password Needed')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    added_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),
+    )
+    link_name = models.CharField(max_length=255, default="General")
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    doc = models.FileField(default="None", upload_to="evidence/docs/")
+    link = models.CharField(max_length=1000, blank=True, null=True)
+    linkpassword = models.CharField(max_length=255, default="No Password Needed")
     is_active = models.BooleanField("Is active", default=True)
     is_featured = models.BooleanField("Is featured", default=False)
 
@@ -684,6 +682,7 @@ class TaskLinks(models.Model):
 
     def __str__(self):
         return self.link_name
+
 
 class TaskHistory(models.Model):
     group = models.CharField(
@@ -840,7 +839,8 @@ class Requirement(models.Model):
         on_delete=models.CASCADE,
         default=1,
         # limit_choices_to={"is_active": True,"is_employee": True,"is_admin": True,"is_superuser": True},
-        limit_choices_to=Q(is_active=True) and (Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True)),
+        limit_choices_to=Q(is_active=True)
+        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     company = models.CharField(max_length=255, default="CODA")
     created_by = models.CharField(max_length=255, default="admin")
@@ -892,11 +892,10 @@ class Twitter(models.Model):
     )
     post_description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="Uploads/Twitter/", null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
 
 
-def __str__(self):
-    return self.post_description
+# def __str__(self):
+#     return self.post_description
 
 
 class Facebook(models.Model):
@@ -905,10 +904,7 @@ class Facebook(models.Model):
     page_name = models.CharField(max_length=100, null=True, blank=True)
     post_description = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
-    file = models.FileField(upload_to="Uploads/Facebook/", null=True, blank=True)
-    link = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.page_name
-
+    # def __str__(self):
+    #     return self.page_name
