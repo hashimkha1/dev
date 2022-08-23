@@ -1,4 +1,5 @@
-import calendar
+import calendar,string
+from django import template
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
@@ -48,7 +49,7 @@ from django.db.models import Q
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
-
+register = template.Library()
 
 def home(request):
     return render(
@@ -491,6 +492,19 @@ def task_payslip(request, *args, **kwargs):
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
+@register.filter
+def in_list(value, the_list):
+    value = str(value)
+    return value in the_list.split(',')
+
+activities=["one one one","one one one session","one one one sessions"]
+myactivities=["oneoneone","oneoneonesession","oneoneonesessions"]
+activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+print(activitiesmodified)
+
+@register.filter(name='activitieslist')
+def activitieslist(value, myactivities):
+    return True if value in myactivities else False
 
 def usertask(request, user=None, *args, **kwargs):
     # tasks=Task.objects.all().order_by('-submission')
@@ -567,8 +581,12 @@ def usertask(request, user=None, *args, **kwargs):
         average_earnings = average_earnings / counter
     except Exception as ZeroDivisionError:
         average_earnings = GoalAmount
-
+    # activitysession="one one one session"
+    activities=["one one one","one one one session","one one one sessions"]
+    activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+    print(activitiesmodified)
     context = {
+        'activitiesmodified':activitiesmodified,
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
         "tasks": tasks,

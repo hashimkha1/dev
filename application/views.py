@@ -342,7 +342,9 @@ def rate(request):
                 idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
                     Q(activity_name="one on one sessions")
                     | Q(activity_name="One on one sessions")
-                    | Q(activity_name="One On One Sessions"),
+                    | Q(activity_name="One On One Sessions")
+                    | Q(activity_name="One On One")
+                    | Q(activity_name="one on one"),
                     employee__username=form.instance.employeename,
                 )[0]
                 point = point + totalpoints
@@ -352,7 +354,9 @@ def rate(request):
                 Task.objects.filter(
                     Q(activity_name="one on one sessions")
                     | Q(activity_name="One on one sessions")
-                    | Q(activity_name="One On One Sessions"),
+                    | Q(activity_name="One On One Sessions")
+                    | Q(activity_name="One On One")
+                    | Q(activity_name="one on one"),
                     employee__username=form.instance.employeename,
                 ).update(point=point, mxpoint=mxpoint)
                         
