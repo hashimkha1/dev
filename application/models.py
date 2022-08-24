@@ -123,9 +123,7 @@ class Rated(models.Model):
         Excellent = 5
 
     TOPIC_CHOICES = [
-        ("Tableau-Landing Page", "Tableau-Landing Page"),
-        ("Tableau-Executive Page", "Tableau-Executive Page"),
-        ("Tableau-Other", "Tableau-Other"),
+        ("Tableau", "Tableau"),
         ("Alteryx", "Alteryx"),
         ("Database", "Database"),
         ("Other", "Other"),
