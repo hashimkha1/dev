@@ -1,4 +1,5 @@
-import calendar
+import calendar,string
+import itertools
 from datetime import datetime, date
 from decimal import *
 from django.db import models
@@ -545,6 +546,7 @@ class Task(models.Model):
         help_text=_("Required"),
         max_length=255,
     )
+
     description = models.TextField(
         verbose_name=_("description"),
         help_text=_("Not Required"),
@@ -630,6 +632,26 @@ class Task(models.Model):
             return 0.98
         else:
             return 1
+
+    @property
+    def task_url(self):
+        one_list = ["one on one","one on one session","one on one sessions"]
+        job_list =  ["job support","job_support"]
+        onelist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in one_list] 
+        joblist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in job_list] 
+        activity=self.activity_name.lower().translate({ord(c): None for c in string.whitespace})
+        # for i in onelist:
+        #     if(i == activity):
+        #         return reverse("application:rate")
+        #     else:
+        #         return reverse("management:new_evidence", args=[self.id])
+        for i,j in itertools.zip_longest(onelist,joblist):
+            if(i==activity):
+                return reverse("application:rate")
+            elif(j==activity):
+                return reverse("accounts:tracker-list")
+            else:
+                return reverse("management:new_evidence", args=[self.id])
 
     @property
     def get_pay(self):

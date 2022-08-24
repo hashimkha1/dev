@@ -1,4 +1,6 @@
-import calendar
+import calendar,string
+import itertools
+from django import template
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
@@ -35,7 +37,7 @@ from django.db.models import Q
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
-
+register = template.Library()
 class ServicesListView(ListView):
     queryset=Services.objects.all()
     template_name="testing/display.html"
@@ -46,3 +48,69 @@ def Services_List(request):
         "services":services
     }
     return render (request, "testing/display.html",context)
+
+# ===============================RESEARCH==============================================
+
+
+@register.filter
+def in_list(value, the_list):
+    value = str(value)
+    return value in the_list.split(',')
+# activities=["one one one","one one one session","one one one sessions"]
+# myactivities=["oneoneone","oneoneonesession","oneoneonesessions"]
+# activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+# print(activitiesmodified)
+
+def task_url():
+    one_list = ["one on one","one on one session","one on one sessions"]
+    job_list =  ["job support","job_support"]
+    onelist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in one_list] 
+    joblist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in job_list] 
+    # activity=self.activity_name.lower().translate({ord(c): None for c in string.whitespace})
+    # for i in onelist:
+    #     print(i)
+    #     if(i == "oneonone"):
+    #         print("year")
+    #     else:
+    #         print("no")
+    #     #     return reverse("management:new_evidence", args=[self.id])
+    for i,j in itertools.zip_longest(onelist,joblist):
+        if i in onelist:
+            print(i)
+        elif j in joblist:
+            print(j)
+        else:
+            print("no")
+
+        # if(i == "oneonone"):
+        #     print("oneonone")
+        # elif(i == "oneononesession"):
+        #     print("oneononesession")
+        # elif(i == "oneononesessions"):
+        #     print("oneononesessions")
+        # else:
+        #     print("no")
+    # for i,j in zip(onelist,joblist):
+    #     print(i)
+    
+        # print(j)
+        # print(i,j)
+        # if(i == "oneonone"):
+        #     print("year")
+        # else:
+        #     print("no")
+        # if(i == "oneonone"):
+        #     print("year")
+        # else:
+        #     print("no")
+        # if(i == "oneonone"):
+        #     print("year")
+        # else:
+        #     print("no")
+task_url()
+@register.filter(name='activitieslist')
+def activitieslist(value, myactivities):
+    return True if value in myactivities else False
+
+def list(item, mylist):
+    filter( lambda x: x in mylist, item)[0]

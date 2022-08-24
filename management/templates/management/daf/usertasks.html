@@ -166,7 +166,7 @@
                   <td>{{task.get_pay}}</td>
                 <td>
                   <button>
-                    <a href="{% url 'management:new_evidence' task.id %}">
+                    <a href="{{task.task_url}}">
                       Upload Evidence
                     </a>
                   </button>
@@ -176,12 +176,7 @@
               {%if user.is_admin or user.is_superuser%}
               <td> <a class="article-title" href="{% url 'management:userupdatetask' task.id %}">Edit</a></td>
               {%else%}
-                {%if task.activity_name|cut:" " in activitiesmodified %}
-                <!-- task.activity_name in ["one on one" or task.activity_name="one on one sessions"] -->
-                <td> <a class="article-title" href="{% url 'application:rate'%}">Evidence</a></td>
-                {%else%}
-                <td> <a class="article-title" href="{% url 'management:new_evidence' task.id %}">Evidence</a></td>
-                {%endif%}
+                <td> <a class="article-title" href="{{task.task_url}}">Evidence</a></td>
               {%endif%}
               </tr>
           {% endfor %}

@@ -100,7 +100,7 @@
               <td>{{task.get_pay}}</td>
               <td>
                 <button>
-                  <a href="{% url 'management:new_evidence' task.id %}">Button</a>
+                  <a href="{{task.task_url}}">Button</a>
                 </button>
               </td>
               {%if user.is_admin or user.is_superuser%}
