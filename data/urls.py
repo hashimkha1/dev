@@ -38,6 +38,7 @@ urlpatterns = [
     path("training_v2/", views.training_v2, name="training_v2"),
     path("bitraining/", views.bitraining, name="bitraining"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
+    path("bi_training/", views.bi_training, name="bi_training"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
     path("resume/", views.resume, name="resume"),
