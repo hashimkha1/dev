@@ -635,7 +635,7 @@ class Task(models.Model):
 
     @property
     def task_url(self):
-        one_list = ["one on one","one on one session","one on one sessions"]
+        one_list = ["one on one sessions","one on one","one on one session",]
         job_list =  ["job support","job_support"]
         onelist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in one_list] 
         joblist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in job_list] 

@@ -55,6 +55,11 @@ def bitraining(request):
     return render(request, "data/training/bitraining.html", {"title": "training"})
 
 
+@login_required
+def bi_training(request):
+    return render(request, "data/training/bi_training.html", {"title": "training"})
+
+
 # interview starts
 @login_required
 def interview(request):

@@ -114,3 +114,41 @@ def activitieslist(value, myactivities):
 
 def list(item, mylist):
     filter( lambda x: x in mylist, item)[0]
+
+@register.filter
+def in_list(value, the_list):
+    value = str(value)
+    return value in the_list.split(',')
+
+# activities=["one one one","one one one session","one one one sessions"]
+# myactivities=["oneoneone","oneoneonesession","oneoneonesessions"]
+# activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+# print(activitiesmodified)
+def tasklist():
+    tasks=Task.objects.values_list("activity_name")
+    activity_list=[]
+    for word in tasks:
+        for letter in word:
+            activity_list.append(letter)
+    return activity_list
+
+# tasklist()
+def task():
+    one_list = ["one on one","one on one session","one on one sessions"]
+    job_list =  ["job support","job_support"]
+    onelist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in one_list] 
+    joblist= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in job_list]
+    # checklist=tasklist()
+    activity= [task.lower().translate({ord(c): None for c in string.whitespace}) for task in tasklist()]
+    # print(checklist)
+    # print(activity)
+    for i,j,k in itertools.zip_longest(onelist,joblist,activity):
+        # print(i,j,k)
+        if i==k:
+            print(i,k)
+        if j==k:
+            print(j,k)
+        else:
+            print(i,k)
+
+# task()
