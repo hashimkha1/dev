@@ -450,6 +450,38 @@ def security_verification(request):
     return render(request, "accounts/admin/email_verification.html")
 
 
+@method_decorator(login_required, name="dispatch")
+class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Credential
+    success_url = "/accounts/credentials"
+    fields = ['category','name', 'added_by','slug',
+                'user_types','description','password',
+                'link_name','link','is_active','is_featured']
+
+    def form_valid(self, form):
+        # if (
+        #     self.request.user.is_superuser
+        #     or self.request.user.is_admin
+        #     or self.request.user.is_staff
+        # ):
+        if form.instance.added_by==self.request.user:
+            return super().form_valid(form)
+        else:
+            return False
+
+    def test_func(self):
+        credential = self.get_object()
+        # if (
+        #     self.request.user.is_superuser
+        #     or self.request.user.is_admin
+        #     or self.request.user.is_staff
+        # ):
+        if self.request.user ==credential.added_by:
+            return True
+        else:
+            return False
+
+
 # ================================EMPLOYEE SECTION================================
 def Employeelist(request):
     employees = CustomerUser.objects.filter(

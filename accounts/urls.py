@@ -3,7 +3,7 @@ from . import views
 from .views import (
                     UserUpdateView,UserDeleteView,SuperuserUpdateView,
                     ClientUpdateView,ClientDeleteView,ClientDetailView,
-                    Employeelist,
+                    Employeelist,CredentialUpdateView,
                     TrackCreateView, TrackDeleteView, TrackDetailView,
                     TrackListView, TrackUpdateView,
                     )
@@ -25,6 +25,7 @@ urlpatterns = [
     path('credentials/', views.credential_view, name='account-crendentials'),
     path('newcredentialcategory/', views.newcredentialCategory, name='account-newcredentialcategory'),
     path('newcredential/', views.newcredential, name='account-newcredentials'),
+    path('credential/update/<int:pk>/', CredentialUpdateView.as_view(template_name="accounts/admin/forms/credential_form.html"), name='credential-update'),
     
     path('security_verification/', views.security_verification, name='security_verification'),
     #=============================CLIENTS VIEWS=====================================
