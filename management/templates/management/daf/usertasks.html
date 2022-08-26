@@ -9,9 +9,44 @@
   <section id="data_training">
 
   <div class="data_training text-center">
-    <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
+    <!-- <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3> -->
+    <div class="row text-center">
+      <div class="col-md-2 amount_msg" id="bada">
+          <div class="card">
+            <div class="card-body">
+              <h5><b>WELCOME BACK</b></h5>
+              <hr/>
+              <i><h6>{{user.first_name|upper }}</h6></i>
+              <hr/>
+              <i><p>Please Proceed!</p></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-8" id="bada">
+          <div class="card">
+            <div class="card-body">
+              <h5><b>TIME LEFT FOR MAXIMIZING YOUR PAY</b></h5>
+              <hr/>
+              <i><h6><b>{{time_remaining_days}} Days {{time_remaining_hours}} Hours {{time_remaining_minutes}} Mins</b></h6></i>
+              <hr/>
+              <i><h6><b>{{pointsbalance}}</b> Points Left to be completed in <b>{{time_remaining_days}} Days {{time_remaining_hours}} Hours {{time_remaining_minutes}} Mins</b></h6></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-2" id="bada">
+          <div class="card">
+            <div class="card-body">
+              <h5><b>PAY DAY</b></h5>
+              <hr/>
+              <i><h6>{{payday}}</h6></i>
+              <hr/>
+              <i><p>Assigned Amount</p></i>
+            </div>
+          </div>
+        </div>
+      </div>
     <h3 class="title">{{time_remaining}}</h3>
-    <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p>
+    <!-- <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p> -->
   <input type="hidden" name="amounts" value="{{GoalAmount}} {{total_pay}}" id="total_amount">
   <div class="container-fluid mr-auto">
         <div class="row text-center">
@@ -58,7 +93,7 @@
                             <hr/>
                             <i><h6>Ksh. {{paybalance}}</h6></i>
                             <hr/>
-                            <i><p>Kindly complete more tasks</p></i>
+                            <i><p>Complete more tasks</p></i>
                           </div>
                         </div>
                       </div>
@@ -69,9 +104,9 @@
                           <div class="card-body">
                             <h5><b>Points</b></h5>
                             <hr/>
-                            <i><h6>{{Points}}/{{MaxPoints}} Points</h6></i>
+                            <i><h6>{{Points}}/{{MaxPoints}}</h6></i>
                             <hr/>
-                            <i><p>Completed {{Points}} with {{pointsbalance}} left </p></i>
+                            <i><p>Balance:{{pointsbalance}}</p></i>
                           </div>
                         </div>
                       </div>
@@ -85,12 +120,8 @@
                             <i><h6>Ksh.{{net}}</h6></i>
                             <hr/>
                             <i><p>Thank You!
-                              
+                              <a href="{% url 'management:user_payslip' request.session.employee_name %}">More</a>
                             </p></i>
-                            <!-- <a href="{% url 'management:user_payslip' user.username %}">More</a> -->
-                            
-                            <a href="{% url 'management:user_payslip' request.session.employee_name %}">More</a>
-                            
                           </div>
                         </div>
                       </div>

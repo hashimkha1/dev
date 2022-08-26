@@ -1,6 +1,7 @@
 import calendar,string
 from django import template
 from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -522,8 +523,14 @@ def usertask(request, user=None, *args, **kwargs):
         date.today().month,
         calendar.monthrange(date.today().year, date.today().month)[-1],
     )
-    delta = deadline_date - date.today()
-    time_remaining = delta.days
+    # delta = deadline_date - date.today()
+    payday=deadline_date + timedelta(days=15)
+    delta=relativedelta(deadline_date, date.today())
+    # year=delta.years
+    # months=delta.months
+    time_remaining_days = delta.days
+    time_remaining_hours = delta.hours
+    time_remaining_minutes=delta.minutes
     current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
@@ -587,7 +594,7 @@ def usertask(request, user=None, *args, **kwargs):
     print(activitiesmodified)
     context = {
         'activitiesmodified':activitiesmodified,
-        "tasksummary": tasksummary,
+        "payday": payday,
         "num_tasks": num_tasks,
         "tasks": tasks,
         "Points": Points,
@@ -596,7 +603,9 @@ def usertask(request, user=None, *args, **kwargs):
         "GoalAmount": GoalAmount,
         "paybalance": paybalance,
         "pointsbalance": pointsbalance,
-        "time_remaining": time_remaining,
+        "time_remaining_days": time_remaining_days,
+        "time_remaining_hours": time_remaining_hours,
+        "time_remaining_minutes": time_remaining_minutes,
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
