@@ -123,8 +123,8 @@ class Rated(models.Model):
         Excellent = 5
 
     TOPIC_CHOICES = [
-        ("Tableau", "Tableau"),
         ("Alteryx", "Alteryx"),
+        ("Tableau", "Tableau"),
         ("Database", "Database"),
         ("Other", "Other"),
     ]
