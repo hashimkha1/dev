@@ -199,13 +199,13 @@ def login_view(request):
                     return redirect("application:policies")
                 else:
                     login(request, account)
-                    return redirect("application:first_interview")
+                    return redirect("application:interview")
 
             elif account is not None and account.category == 1:
                 if account.country in ("KE", "UG", "RW", "TZ"):  # Male
                     if account.gender == 1:
                         login(request, account)
-                        return redirect("application:first_interview")
+                        return redirect("application:interview")
                     if account.account_profile.section == "A":
                         login(request, account)
                         return redirect("application:sectionA")
@@ -217,10 +217,10 @@ def login_view(request):
                         return redirect("application:policies")
                     else:
                         login(request, account)
-                        return redirect("application:first_interview")
+                        return redirect("application:interview")
                 else:
                     login(request, account)
-                    return redirect("application:first_interview")
+                    return redirect("application:interview")
 
             elif account is not None and account.is_admin:
                 login(request, account)

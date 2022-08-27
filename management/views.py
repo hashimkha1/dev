@@ -576,18 +576,26 @@ def usertask(request, user=None, *args, **kwargs):
     # 3rd month
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
-
-    history = TaskHistory.objects.filter(Q(submission__gte=start_day_of_prev_month3) , Q(submission__lte=last_day_of_prev_month1))
+    # employee__username=request.user
+    print(request.user)
+    # print(employee__username)
+    history = TaskHistory.objects.filter(
+        Q(submission__gte=start_day_of_prev_month3) , 
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(employee__username=request.user)
+        )
 
     average_earnings = 0
-    counter = 0
+    counter = 3
     for data in history.all():
         average_earnings += data.get_pay
-        counter = counter+1
-    try:
-        average_earnings = average_earnings / counter
-    except Exception as ZeroDivisionError:
-        average_earnings = GoalAmount
+        # counter = counter+1 
+        counter=3
+    average_earnings = average_earnings / counter 
+    # try:
+    #     average_earnings = average_earnings / counter 
+    # except Exception as ZeroDivisionError:
+    #     average_earnings = GoalAmount
     # activitysession="one one one session"
     activities=["one one one","one one one session","one one one sessions"]
     activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
