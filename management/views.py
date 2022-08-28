@@ -652,7 +652,10 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     delta = deadline_date - date.today()
     time_remaining = delta.days
     current_user = request.user
-    task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+    try:
+        task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+    except TaskHistory.DoesNotExist:
+        print("You dont have any matching records in the database")
     employee = get_object_or_404(User, username=task_history.employee)
     tasks = TaskHistory.objects.all().filter(
         employee=employee, submission__month=task_history.submission.strftime("%m")

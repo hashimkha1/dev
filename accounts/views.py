@@ -459,24 +459,24 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
                 'link_name','link','is_active','is_featured']
 
     def form_valid(self, form):
-        # if (
-        #     self.request.user.is_superuser
-        #     or self.request.user.is_admin
-        #     or self.request.user.is_staff
-        # ):
-        if form.instance.added_by==self.request.user:
+        # if form.instance.added_by==self.request.user:
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            # or self.request.user.is_staff
+        ):
             return super().form_valid(form)
         else:
             return False
 
     def test_func(self):
         credential = self.get_object()
-        # if (
-        #     self.request.user.is_superuser
-        #     or self.request.user.is_admin
-        #     or self.request.user.is_staff
-        # ):
-        if self.request.user ==credential.added_by:
+        # if self.request.user ==credential.added_by:
+        if (
+            self.request.user.is_superuser
+            or self.request.user.is_admin
+            # or self.request.user.is_staff
+        ):
             return True
         else:
             return False
