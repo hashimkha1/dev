@@ -262,8 +262,8 @@ AWS_DEFAULT_ACL = None
 
 django_heroku.settings(locals())
 
-CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
-CELERY_RESULT_BACKEND = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
+CELERY_BROKER_URL = "redis://default:6jbyvh8vbNBLAxdSh0jTTz7KRwQ8dGBU@redis-18426.c10.us-east-1-2.ec2.cloud.redislabs.com:18426"
+CELERY_RESULT_BACKEND = "redis://default:6jbyvh8vbNBLAxdSh0jTTz7KRwQ8dGBU@redis-18426.c10.us-east-1-2.ec2.cloud.redislabs.com:18426"
 CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
