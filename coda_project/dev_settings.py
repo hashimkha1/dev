@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
+# django_heroku.settings(locals())
 
 # Application definition
 INSTALLED_APPS = [
