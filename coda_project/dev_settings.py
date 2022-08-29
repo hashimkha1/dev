@@ -63,7 +63,6 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     #'dbbackup',
-    'whitenoise.runserver_nostatic'
 ]
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
@@ -148,17 +147,23 @@ import dj_database_url
 
 # # postgresql database
 
+# DATABASES = {
+#     "default": {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dacklsu0f9d0nv',# Name of Database
+#         'USER':'qmhjnqmfflxpqi',
+#         'PASSWORD': 'bb7d8cb419d001e50b80fa39fb1ff20bcdd266636d36a694a51df18cbc042c98', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': '5432',
+#     }
+# }
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dacklsu0f9d0nv',# Name of Database
-        'USER':'qmhjnqmfflxpqi',
-        'PASSWORD': 'bb7d8cb419d001e50b80fa39fb1ff20bcdd266636d36a694a51df18cbc042c98', #os.environ.get('POSTGRESSPASS'),
-        'HOST': '5432',
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3")
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600)
+db_from_env = dj_database_url.config(conn_max_age=600,ssl_require=True)
 
 DATABASES["default"].update(db_from_env)
 
