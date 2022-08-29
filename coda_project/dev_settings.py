@@ -145,12 +145,15 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 
 import dj_database_url
 
-# postgresql database
+# # postgresql database
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dacklsu0f9d0nv',# Name of Database
+        'USER':'qmhjnqmfflxpqi',
+        'PASSWORD': 'bb7d8cb419d001e50b80fa39fb1ff20bcdd266636d36a694a51df18cbc042c98', #os.environ.get('POSTGRESSPASS'),
+        'HOST': '5432',
     }
 }
 
