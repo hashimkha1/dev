@@ -21,7 +21,7 @@ from data.views import (
     InterviewCreateView,
     JobCreateView,
     JobListView,
-    # TrackCreateView, TrackDeleteView, TrackDetailView,
+     # MethodologyView,TrackDeleteView, TrackDetailView,
     # TrackListView, InterviewUpdateView #,UserTrackListView
 )
 
@@ -41,14 +41,14 @@ urlpatterns = [
     path("bi_training/", views.bi_training, name="bi_training"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
-    path("resume/", views.resume, name="resume"),
-    path("project_story/", views.project_story, name="project_story"),
-    path("introduction/", views.introduction, name="introduction"),
-    path("agile_vs_waterfall/", views.agile_vs_waterfall, name="agile_vs_waterfall"),
-    path("performance_tuning/", views.performance_tuning, name="performance_tuning"),
-    path("sdlc/", views.sdlc, name="sdlc"),
-    path("testing/", views.testing, name="testing"),
-    path("environment/", views.environment, name="environment"),
+    path("resume/", views.ResumeView.as_view(), name="resume"),
+    path("project_story/", views.ProjectStoryView.as_view(), name="project_story"),
+    path("introduction/", views.IntroductionView.as_view(), name="introduction"),
+    path("sdlc/", views.SDLCView.as_view(), name="sdlc"),
+    path("methodology/", views.MethodologyView.as_view(), name="methodology"),
+    path("performance_tuning/", views.MethodologyView.as_view(), name="performance_tuning"),
+    path("testing/", views.TestingView.as_view(), name="testing"),
+    path("environment/", views.EnvironmentView.as_view(), name="environment"),
     # Interview section urls ends
     path("deliverable/", views.deliverable, name="deliverable"),
     path("getdata/", views.getdata, name="getdata"),

@@ -66,6 +66,7 @@ def interview(request):
     return render(request, "data/interview/interview.html")
 
 
+
 @login_required
 def resume(request):
 
@@ -196,6 +197,103 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 
 # ==================================INTERVIEW VIEWS====================================
+class ResumeView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/resume.html"
+    success_url = "/data/project_story"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "resume"
+        return super().form_valid(form)
+
+
+class ProjectStoryView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/project_story.html"
+    success_url = "/data/introduction"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "project story"
+        return super().form_valid(form)
+       
+class IntroductionView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/introduction.html"
+    success_url = "/data/sdlc"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "introduction"
+        return super().form_valid(form)
+
+class SDLCView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/sdlc.html"
+    success_url = "/data/methodology"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "sdlc"
+        return super().form_valid(form)
+
+class MethodologyView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/methodology.html"
+    success_url = "/data/performance_tuning"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "methodology"
+        return super().form_valid(form)
+
+class PerformanceView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/performance.html"
+    success_url = "/data/environment"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "performance"
+        return super().form_valid(form)
+
+class EnvironmentView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/environment.html"
+    success_url = "/data/testing"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "environment"
+        return super().form_valid(form)
+
+class TestingView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_progress/testing.html"
+    success_url = "/data/home"
+    # fields = ["category", "doc", "link", "answer_to_question"]
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        form.instance.question_type = "testing"
+        return super().form_valid(form)
+
 class InterviewCreateView(LoginRequiredMixin, CreateView):
     model = Interviews
     # success_url = "/data/iuploads"

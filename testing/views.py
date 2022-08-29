@@ -49,6 +49,12 @@ def Services_List(request):
     }
     return render (request, "testing/display.html",context)
 
+class ServicesDetailView(DetailView):
+    queryset=Services.objects.all()
+    template_name="testing/resume.html"
+
+
+
 # ===============================RESEARCH==============================================
 
 
