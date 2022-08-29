@@ -22,7 +22,7 @@ class UserProfile(models.Model):
     upload_b = models.FileField(upload_to="Application_Profile/uploads")
     upload_c = models.FileField(upload_to="Application_Profile/uploads")
     is_active = models.BooleanField("Is featured", default=True)
-    laptop_status= models.BooleanField("Is lap_status", default=True)
+    # laptop_status= models.BooleanField("Is lap_status", default=True)
 
     def __str__(self):
         return f"{self.user.username} Applicant Profile"

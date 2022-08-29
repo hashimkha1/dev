@@ -137,7 +137,7 @@ def FI_sectionA(request):
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
         SectionCompleteMail(subject,to,html_content)
         # return redirect("application:section_b")
-        return redirect("application:rate")
+        return redirect("application:ratewid", pk="Alteryx")
 
     return render(
         request,
@@ -168,7 +168,7 @@ def FI_sectionB(request):
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
         SectionCompleteMail(subject,to,html_content)
         # return redirect("application:section_c")
-        return redirect("application:rate")
+        return redirect("application:ratewid", pk="Tableau")
 
     return render(
         request,
@@ -199,7 +199,7 @@ def FI_sectionC(request):
                 <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
             SectionCompleteMail(subject,to,html_content)
             # return redirect("management:policies")
-            return redirect("application:rate")
+            return redirect("application:ratewid", pk="Database")
 
     return render(
         request,
@@ -326,7 +326,91 @@ def rate(request):
                     totalpoints += 2
             except:
                 pass
+            
+            form.instance.topic = "Other"
+            form.instance.totalpoints = totalpoints
+            # Saving form data to rating table only if the user is applicant
+            if form.instance.employeename.is_applicant == True:
+                form.save()
+                userprof = UserProfile.objects.get(user__username=form.instance.employeename)
+                if userprof.section == "D":
+                    return redirect("application:policies")
+                else:   
+                    return redirect("application:section_"+userprof.section.lower()+"")
 
+            # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
+            try:
+                idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions")
+                    | Q(activity_name="One On One")
+                    | Q(activity_name="one on one"),
+                    employee__username=form.instance.employeename,
+                )[0]
+                point = point + totalpoints
+                if point >= mxpoint or point + 15 >= mxpoint:
+                    mxpoint += 15
+                
+                Task.objects.filter(
+                    Q(activity_name="one on one sessions")
+                    | Q(activity_name="One on one sessions")
+                    | Q(activity_name="One On One Sessions")
+                    | Q(activity_name="One On One")
+                    | Q(activity_name="one on one"),
+                    employee__username=form.instance.employeename,
+                ).update(point=point, mxpoint=mxpoint)
+                        
+                return redirect(
+                            "management:new_evidence", taskid=idval
+                        )
+            except:
+                form = RatingForm()
+                return render(request, "application/orientation/rate.html", {"form": form,"error":True})
+        
+            
+            # return redirect("application:rating")
+    else:
+        form = RatingForm()
+    return render(request, "application/orientation/rate.html", {"form": form})
+
+def ratewid(request,pk):
+    if request.method == "POST":
+        form = RatingForm(request.POST, request.FILES)
+        if request.user.is_employee == True or request.user.is_applicant == True:
+            print("employee or applicant",request.user)
+            form.instance.employeename = request.user
+
+        print(form.is_valid())
+        if form.is_valid():
+            totalpoints = 0
+            try:
+                if request.POST["projectDescription"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+            try:
+                if request.POST["requirementsAnalysis"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["development"] == "on":
+                    totalpoints += 5
+            except:
+                pass
+            try:
+                if request.POST["testing"] == "on":
+                    totalpoints += 3
+            except:
+                pass
+            try:
+                if request.POST["deployment"] == "on":
+                    totalpoints += 2
+            except:
+                pass
+
+            form.instance.topic = pk
             form.instance.totalpoints = totalpoints
             # Saving form data to rating table only if the user is applicant
             if form.instance.employeename.is_applicant == True:
