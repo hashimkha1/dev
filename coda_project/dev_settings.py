@@ -16,7 +16,7 @@ from pickle import TRUE
 import django_heroku
 import redis
 
-IS_HEROKU = "DYNO" in os.environ
+# IS_HEROKU = "DYNO" in os.environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -166,7 +166,7 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600,ssl_require=True)
+db_from_env = dj_database_url.config(conn_max_age=600)
 
 DATABASES["default"].update(db_from_env)
 
