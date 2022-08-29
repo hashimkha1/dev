@@ -1,6 +1,5 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -64,51 +63,6 @@ def bi_training(request):
 @login_required
 def interview(request):
     return render(request, "data/interview/interview.html")
-
-
-
-@login_required
-def resume(request):
-
-    return render(request, "data/interview/interview_progress/resume.html")
-
-
-@login_required
-def project_story(request):
-    return render(request, "data/interview/interview_progress/project_story.html")
-
-
-@login_required
-def introduction(request):
-    return render(request, "data/interview/interview_progress/introduction.html")
-
-
-@login_required
-def agile_vs_waterfall(request):
-    return render(request, "data/interview/interview_progress/agile_vs_waterfall.html")
-
-
-@login_required
-def performance_tuning(request):
-    return render(request, "data/interview/interview_progress/performance_tuning.html")
-
-
-@login_required
-def sdlc(request):
-    return render(request, "data/interview/interview_progress/sdlc.html")
-
-
-@login_required
-def testing(request):
-    return render(request, "data/interview/interview_progress/testing.html")
-
-
-@login_required
-def environment(request):
-    return render(request, "data/interview/interview_progress/environment.html")
-
-
-# interview ends
 
 
 def payroll(request):
@@ -221,7 +175,8 @@ class ProjectStoryView(LoginRequiredMixin, CreateView):
         form.instance.client = self.request.user
         form.instance.question_type = "project story"
         return super().form_valid(form)
-       
+
+
 class IntroductionView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -233,6 +188,7 @@ class IntroductionView(LoginRequiredMixin, CreateView):
         form.instance.client = self.request.user
         form.instance.question_type = "introduction"
         return super().form_valid(form)
+
 
 class SDLCView(LoginRequiredMixin, CreateView):
     model = Interviews
@@ -246,6 +202,7 @@ class SDLCView(LoginRequiredMixin, CreateView):
         form.instance.question_type = "sdlc"
         return super().form_valid(form)
 
+
 class MethodologyView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -257,6 +214,7 @@ class MethodologyView(LoginRequiredMixin, CreateView):
         form.instance.client = self.request.user
         form.instance.question_type = "methodology"
         return super().form_valid(form)
+
 
 class PerformanceView(LoginRequiredMixin, CreateView):
     model = Interviews
@@ -270,6 +228,7 @@ class PerformanceView(LoginRequiredMixin, CreateView):
         form.instance.question_type = "performance"
         return super().form_valid(form)
 
+
 class EnvironmentView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -282,6 +241,7 @@ class EnvironmentView(LoginRequiredMixin, CreateView):
         form.instance.question_type = "environment"
         return super().form_valid(form)
 
+
 class TestingView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -292,39 +252,6 @@ class TestingView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.client = self.request.user
         form.instance.question_type = "testing"
-        return super().form_valid(form)
-
-class InterviewCreateView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    # success_url = "/data/iuploads"
-    fields = ["category", "question_type", "doc", "link"]
-
-    def get_success_url(self):
-        data = Interviews.objects.filter(client=self.request.user)
-        # print(data, "HERE  GOES THE DATA")
-        question_types = []
-        for i in data:
-            question_types.append(i.question_type)
-        print(question_types)
-        if "Project Story" not in question_types:
-            return reverse("data:project_story")
-        elif "introduction" not in question_types:
-            return reverse("data:introduction")
-        elif "methodology" not in question_types:
-            return reverse("data:agile_vs_waterfall")
-        elif "performance" not in question_types:
-            return reverse("data:performance_tuning")
-        elif "sdlc" not in question_types:
-            return reverse("data:sdlc")
-        elif "testing" not in question_types:
-            return reverse("data:testing")
-        elif "environment" not in question_types:
-            return reverse("data:environment")
-        else:
-            return reverse("data:interview")
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
         return super().form_valid(form)
 
 

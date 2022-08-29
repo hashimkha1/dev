@@ -21,7 +21,7 @@ from data.views import (
     InterviewCreateView,
     JobCreateView,
     JobListView,
-     # MethodologyView,TrackDeleteView, TrackDetailView,
+    # MethodologyView,TrackDeleteView, TrackDetailView,
     # TrackListView, InterviewUpdateView #,UserTrackListView
 )
 
@@ -46,7 +46,11 @@ urlpatterns = [
     path("introduction/", views.IntroductionView.as_view(), name="introduction"),
     path("sdlc/", views.SDLCView.as_view(), name="sdlc"),
     path("methodology/", views.MethodologyView.as_view(), name="methodology"),
-    path("performance_tuning/", views.MethodologyView.as_view(), name="performance_tuning"),
+    path(
+        "performance_tuning/",
+        views.MethodologyView.as_view(),
+        name="performance_tuning",
+    ),
     path("testing/", views.TestingView.as_view(), name="testing"),
     path("environment/", views.EnvironmentView.as_view(), name="environment"),
     # Interview section urls ends
