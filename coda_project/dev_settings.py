@@ -16,13 +16,15 @@ from pickle import TRUE
 import django_heroku
 import redis
 
-# IS_HEROKU = "DYNO" in os.environ
+IS_HEROKU = "DYNO" in os.environ
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
+if 'SECRET_KEY' in os.environ:
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
 DEBUG = False
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
@@ -166,7 +168,7 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600)
+db_from_env = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
 DATABASES["default"].update(db_from_env)
 
