@@ -16,6 +16,8 @@ from pickle import TRUE
 import django_heroku
 import redis
 
+# IS_HEROKU = "DYNO" in os.environ
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
