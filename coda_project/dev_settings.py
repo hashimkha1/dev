@@ -16,8 +16,6 @@ from pickle import TRUE
 import django_heroku
 import redis
 
-IS_HEROKU = "DYNO" in os.environ
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
@@ -26,7 +24,7 @@ SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 if 'SECRET_KEY' in os.environ:
     SECRET_KEY = os.environ["SECRET_KEY"]
 
-DEBUG = False
+DEBUG = True
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
