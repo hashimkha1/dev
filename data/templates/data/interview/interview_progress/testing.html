@@ -110,14 +110,12 @@
 
   <body>
 
-
   </head>
   <body class="container-fluid">
     <div class="flex-container">
       <div id="introduction" class="container mt-4">
         <div id="one" class="text-left text-white">
           <hr id="hr1" />
-
           <h4>TRAINING</h4>
           <h2>Testing</h2>
           <h6>
@@ -129,7 +127,7 @@
               <a
                 class="text-white"
                 target="_blank"
-                href="https://docs.google.com/presentation/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/edit#slide=id.gb867311a18_3_7">
+                href="https://docs.google.com/presentation/d/19jZhSd6o9dUXoSX82rFeN2Qj8GLrcNfc/edit#slide=id.p7">
                 PPT Testing</a
               >
             </h5>
@@ -182,7 +180,7 @@
             </li>
           </ol>
           <div class="content-section text-dark h6">
-            <form action="{% url 'data:resume' %}" method="POST">
+            <form action="{% url 'data:testing' %}" method="POST">
               {% csrf_token %}
               <fieldset class="form-group">
                 <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
@@ -196,7 +194,7 @@
             </form>
           </div>
           <div >
-            <a href="{% url 'data:performance' %}">
+            <a href="{% url 'data:performance_tuning' %}">
                 <button id="next_section_btn">Previous Section</button></a>
         </div>
         </div>

@@ -35,4 +35,15 @@ urlpatterns = [
     path("payment_complete/", views.paymentComplete, name="payment_complete"),
     path('testing/', views.testing, name='testing'),
 
+   #==============ERRORS==============================================
+    path('400Error/', views.error400, name='400error'),
+    path('403Error/', views.error403, name='403error'),
+    path('404Error/', views.error404, name='404error'),
+    path('500Error/', views.error500, name='500error'),
+
+    path('400/', views.hendler400, name='400-error'),
+    path('403/', views.hendler403, name='403-error'),
+    path('404/', views.hendler404, name='404-error'),
+    path('500/', views.hendler500, name='500-error'),
+
 ]

@@ -1,14 +1,16 @@
 from django import forms
+from django.forms import Textarea
 from django.db.models import Q
 # from codapp.accounts.models import CustomerUser
 from accounts.models import CustomerUser
-from .models import Interviews ,DSU #, DocUpload
+from .models import Interviews ,DSU ,JobRole
 from accounts.models import CustomerUser
 from django.db.models import Q
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interviews
-        fields =['category','question_type','client','doc','link']
+        fields =['category','doc','link']
+        # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',
                 'client':'username', 
@@ -18,6 +20,26 @@ class InterviewForm(forms.ModelForm):
                 'link':'Google Share Url',
                 }
 
+
+class RoleForm(forms.ModelForm):
+    class Meta:
+        model = JobRole
+        fields =['category','question_type','doc','videolink','doclink','desc1','desc2']
+        labels={
+                    # 'user':'username', 
+                    'category':'Category',
+                    'question_type':'Question',
+                    'doc':'Assignment',
+                    'doclink':'PPT/Doc Link',
+                    'videolink':'Video Link',
+                    'desc1':'Overall Description',
+                    'desc2':'Question description',
+                }
+        widgets = {
+                    "desc1": Textarea(attrs={"cols": 30, "rows": 6}),
+                    "desc2": Textarea(attrs={"cols": 30, "rows": 6})
+                  }
+        # widgets = {"desc2": Textarea(attrs={"cols": 15, "rows": 2})}
 '''
 class UploadForm(forms.ModelForm):
     class Meta:
@@ -46,6 +68,7 @@ class DSUForm(forms.ModelForm):
                 'challenge':'What Challenges are you facing?',
                 'uploaded' : 'Have you uploaded your assignments to Interview Portal?'
                 }
+        
 '''
     def __init__(self, **kwargs):
         super(DSUForm, self).__init__(**kwargs)

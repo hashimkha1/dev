@@ -1,3 +1,4 @@
+from typing import List
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,7 +11,7 @@ from django.views.generic import (
     DetailView,
     UpdateView,
 )
-from data.forms import InterviewForm, DSUForm  # , UploadForm
+from data.forms import InterviewForm, DSUForm ,RoleForm
 
 from data.models import (
     Interviews,
@@ -19,7 +20,8 @@ from data.models import (
     FeaturedActivity,
     ActivityLinks,
     DSU,
-    Job_Tracker,  # , DocUpload
+    Job_Tracker,
+    JobRole
 )
 from data.filters import InterviewFilter, BitrainingFilter  # ,UserFilter
 
@@ -151,6 +153,12 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 
 # ==================================INTERVIEW VIEWS====================================
+class RoleListView(LoginRequiredMixin, ListView):
+    queryset = JobRole.objects.all()
+    template_name = "data/interview/interview_progress/interview_progress.html"
+    success_url = "/data/project_story"
+
+
 class ResumeView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -160,7 +168,8 @@ class ResumeView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.client = self.request.user
-        form.instance.question_type = "resume"
+        form.instance.question_type = "project story"
+        print("form.instance.question_type")
         return super().form_valid(form)
 
 
@@ -174,6 +183,7 @@ class ProjectStoryView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.client = self.request.user
         form.instance.question_type = "project story"
+        print("form.instance.question_type")
         return super().form_valid(form)
 
 
@@ -219,7 +229,7 @@ class MethodologyView(LoginRequiredMixin, CreateView):
 class PerformanceView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
-    template_name = "data/interview/interview_progress/performance.html"
+    template_name = "data/interview/interview_progress/performance_tuning.html"
     success_url = "/data/environment"
     # fields = ["category", "doc", "link", "answer_to_question"]
 
@@ -246,7 +256,7 @@ class TestingView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
     template_name = "data/interview/interview_progress/testing.html"
-    success_url = "/data/home"
+    success_url = "/data/interview"
     # fields = ["category", "doc", "link", "answer_to_question"]
 
     def form_valid(self, form):
@@ -322,6 +332,58 @@ class InterviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ==================================TRAINING VIEWS====================================
+@method_decorator(login_required, name="dispatch")
+class RoleCreateView(LoginRequiredMixin, CreateView):
+    model = JobRole
+    form_class = RoleForm
+    template_name = "data/jobroles/role.html"
+    success_url = "/data/roles/"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+@method_decorator(login_required, name="dispatch")
+class RolesView(LoginRequiredMixin, ListView):
+    queryset  = JobRole.objects.all()
+    template_name = "data/jobroles/roles.html"
+
+@method_decorator(login_required, name="dispatch")
+class RoleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = JobRole
+    template_name = "data/jobroles/role.html"
+    success_url = "/data/roles"
+    fields =['category','question_type','doc','doclink','doclink',"desc1","desc2"]
+
+    def form_valid(self, form):
+        form.instance.user=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        editor=self.request.user
+        JobRole = self.get_object()
+        if editor.is_superuser or  editor.is_admin :
+            return True
+        elif editor == JobRole.user:
+            return True
+        return redirect("data:jobroles")
+
+
+@method_decorator(login_required, name="dispatch")
+class RoleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = JobRole
+    template_name = "data/jobroles/jobrole_confirm_delete.html"
+    success_url = "/data/roles"
+
+    def test_func(self):
+        editor=self.request.user
+        JobRole = self.get_object()
+        if editor.is_superuser or  editor.is_admin :
+            return True
+        elif editor == JobRole.user:
+            return True
+        return False
+
 # ========================1. CREATION OF VIEWS============================
 
 

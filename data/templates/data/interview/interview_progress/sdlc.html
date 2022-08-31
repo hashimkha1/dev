@@ -131,7 +131,7 @@
               <a
                 class="text-white"
                 target="_blank"
-                href=" https://docs.google.com/presentation/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/edit#slide=id.gb867311a18_3_7">
+                href="https://docs.google.com/presentation/d/1Ipwsu01gANc5-bi1tOU5dSi1nF-q8f02/edit?usp=drive_web&ouid=115037154650831613074&rtpof=true">
                 PPT SDLC</a
               >
             </h5>
@@ -183,7 +183,7 @@
             </li>
           </ol>
           <div class="content-section text-dark h6">
-            <form action="{% url 'data:resume' %}" method="POST">
+            <form action="{% url 'data:sdlc' %}" method="POST">
               {% csrf_token %}
               <fieldset class="form-group">
                 <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
@@ -197,7 +197,7 @@
             </form>
           </div>
           <div >
-            <a href="{% url 'data:resume' %}">
+            <a href="{% url 'data:introduction' %}">
                 <button id="next_section_btn">Previous Section</button></a>
         </div>
         </div>
