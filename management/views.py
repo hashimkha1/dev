@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
-from management.utils import email_template
+from mail.custom_email import send_email
 from .forms import (
     DepartmentForm,
     TransactionForm,
@@ -1054,14 +1054,21 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{request.POST['what']}<br>
-                    <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {request.POST['delivery_date']}</b><br><b>Created by: 
-                    {request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                # html_content = f"""
+                #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
+                #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
+                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
+                #     <b>Dead Line: </b><b style='color:red;'>
+                #     {request.POST['delivery_date']}</b><br><b>Created by:
+                #     {request.user}</b></span>"""
+                # email_template(subject, to, html_content)
+                context = {
+                    'request_what': request.POST['what'],
+                    'url': protocol + request.get_host()+reverse('management:RequirementDetail', kwargs={'pk':form.instance.id}),
+                    'delivery_date': request.POST['delivery_date'],
+                    'user': request.user,
+                }
+                send_email(category=request.user.category, to_email=[to,], subject=subject, html_template='email/newrequirement.html', context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1117,14 +1124,21 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
-                    <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {self.request.POST['delivery_date']}</b><br><b>Created by: 
-                    {self.request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                # html_content = f"""
+                #     <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
+                #     <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
+                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
+                #     <b>Dead Line: </b><b style='color:red;'>
+                #     {self.request.POST['delivery_date']}</b><br><b>Created by:
+                #     {self.request.user}</b></span>"""
+                # email_template(subject, to, html_content)
+                context = {
+                    'request_what': self.request.POST['what'],
+                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail', kwargs={'pk':form.instance.id}),
+                    'delivery_date': self.request.POST['delivery_date'],
+                    'user': self.request.user,
+                }
+                send_email(category=self.request.user.category, to_email=[to,], subject=subject, html_template='email/RequirementUpdateView.html', context=context)
             return super().form_valid(form)
         else:
             return redirect("management:requirements-active")
