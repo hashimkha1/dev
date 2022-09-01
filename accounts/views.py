@@ -77,7 +77,7 @@ def join(request):
             else:
                 default_payment_fees = Default_Payment_Fees(
                     job_down_payment_per_month=500,
-                    job_plan_hours_per_month=40,
+                    job_plan_hours_per_month=30,
                     student_down_payment_per_month=500,
                     student_bonus_payment_per_month=100,
                 )
