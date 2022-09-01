@@ -25,6 +25,8 @@ from django.contrib.auth import views as auth_views
 from accounts import views as account_views
 from coda_project import settings
 
+from mail.search_mail import parse_mail
+
 # ===========ERROR HANDLING SECTION================
 handler400 = "main.views.hendler400"
 handler403 = "main.views.hendler403"
@@ -33,6 +35,7 @@ handler500 = "main.views.hendler500"
 
 
 urlpatterns = [
+    path('parse_cashapp_mails/', parse_mail),
     path("admin/", admin.site.urls),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
