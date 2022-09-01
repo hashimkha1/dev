@@ -11,30 +11,38 @@ from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
+def error400(request):
+    return render(request, "main/errors/400.html", {"title": "400Error"})
 
-def hendler400(request, exception):
-    return render(request, "errors/400.html", status=400)
+def error403(request):
+    return render(request, "main/errors/403.html", {"title": "403Error"})
 
+def error404(request):
+    return render(request, "main/errors/404.html", {"title": "404Error"})
+    
+def error500(request):
+    return render(request, "main/errors/500.html", {"title": "500Error"})
+#  ===================================================================================   
+def hendler400(request,exception):
+    return render(request, "errors/400.html")
 
-def hendler403(request, exception):
-    return render(request, "errors/403.html", status=403)
+def hendler403(request,exception):
+    return render(request, "main/errors/403.html")
 
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
 
-def hendler404(request, exception):
-    return render(request, "errors/404.html", status=404)
-
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
 
 def hendler500(request):
-    return render(request, "errors/500.html", status=500)
-
-
+    return render(request, "main/errors/500.html")
+    
 def test(request):
     return render(request, "main/test.html", {"title": "test"})
 
-
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
-
 
 def layout(request):
     return render(request, "main/home_templates/layout.html", {"title": "layout"})

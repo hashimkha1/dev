@@ -3,7 +3,7 @@ from decimal import *
 from django.utils.translation import gettext_lazy as _
 from django.db import models
 from django.urls import reverse
-
+from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -52,9 +52,8 @@ class InterviewManager(models.Manager):
         return self.get_queryset().active().search(query)
 
 
-"""
 #Interview Model
-class Interview(models.Model):
+class JobRole(models.Model):
     # Job Category.
     Project_Management = 'Project Management'
     Business_Analysis = 'Business Analyst'
@@ -98,15 +97,17 @@ class Interview(models.Model):
     (Resume , 'resume'),
     (Other, 'Other'),
     ]
-    #id = models.AutoField(primary_key=True,default=9999999)
-    #client= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    user= models.ForeignKey(User, on_delete=models.RESTRICT, related_name='client_assiged',default=1)
-    #first_name=models.CharField(max_length=100,null=True,blank=True)
-    #midle=models.CharField(max_length=100,null=True,blank=True)
-    
-    #last_name=models.CharField(max_length=100,null=True,blank=True)
+    user= models.ForeignKey(
+                            User,
+                            verbose_name=_("Client"),
+                            related_name="Client_Name",
+                            null=True,
+                            blank=True,
+                            on_delete=models.SET_NULL,
+                            #  limit_choices_to=Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+                            limit_choices_to={"is_client": True, "is_active": True},
+                           )
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
-
     category= models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
@@ -117,19 +118,30 @@ class Interview(models.Model):
         choices=QUESTION_CHOICES,
         default=Other,
     )
-
     doc=models.FileField(default="None",upload_to='Uploads/doc/')
-    link=models.CharField(max_length=255,blank=True, null=True)
+    videolink=models.CharField(max_length=255,blank=True, null=True)
+    doclink=models.CharField(max_length=255,blank=True, null=True)
+    desc1=models.TextField(max_length=1000,blank=True, null=True)
+    desc2=models.TextField(max_length=1000,blank=True, null=True)
     is_active=models.BooleanField(default=True)
 
-    objects=InterviewManager()
+    # objects=InterviewManager()
 
     class Meta:
-        verbose_name_plural = 'InterviewUploaded'   
+        verbose_name_plural = 'Roles'  
+
+    def uploaded_doc(self):
+        if self.doc is None or self.doc == "None":
+            return reverse("main:404error")
+        else:
+            return self.doc
 
     def __str__(self):
-        return f'{self.username} upload'
-"""
+        return f'{self.category} upload'
+
+    
+
+
 
 # Interviews Model
 class Interviews(models.Model):

@@ -31,6 +31,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from finance.models import Transaction,Inflow,TrainingLoan
 from accounts.models import Tracker,Department, TaskGroups
+from management.models import Task
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
@@ -48,6 +49,12 @@ def Services_List(request):
         "services":services
     }
     return render (request, "testing/display.html",context)
+
+class ServicesDetailView(DetailView):
+    queryset=Services.objects.all()
+    template_name="testing/resume.html"
+
+
 
 # ===============================RESEARCH==============================================
 
@@ -107,7 +114,7 @@ def task_url():
         #     print("year")
         # else:
         #     print("no")
-task_url()
+# task_url()
 @register.filter(name='activitieslist')
 def activitieslist(value, myactivities):
     return True if value in myactivities else False
