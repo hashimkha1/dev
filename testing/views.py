@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
-from management.utils import email_template
+from mail.custom_email import send_email
 from .forms import (
     DepartmentForm,
 )

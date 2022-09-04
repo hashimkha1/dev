@@ -229,10 +229,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = "main:layout"
 LOGIN_URL = "accounts:account-login"
 
+"""
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
-
-
 # Gmail Email Backend Account
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 # EMAIL_HOST = "smtp.gmail.com"
@@ -244,6 +243,34 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+"""
+
+EMAIL_INFO = {
+    'USER': os.environ.get('EMAIL_INFO_USER'),
+    'PASS': os.environ.get('EMAIL_INFO_PASS'),
+    'HOST': os.environ.get('EMAIL_INFO_HOST'),
+    'PORT': os.environ.get('EMAIL_INFO_PORT'),
+    'USE_TLS': os.environ.get('EMAIL_INFO_USE_TLS'),
+    'USE_SSL': os.environ.get('EMAIL_INFO_USE_SSL'),
+}
+
+EMAIL_HR = {
+    'USER': os.environ.get('EMAIL_HR_USER'),
+    'PASS': os.environ.get('EMAIL_HR_PASS'),
+    'HOST': os.environ.get('EMAIL_HR_HOST'),
+    'PORT': os.environ.get('EMAIL_HR_PORT'),
+    'USE_TLS': os.environ.get('EMAIL_HR_USE_TLS'),
+    'USE_SSL': os.environ.get('EMAIL_HR_USE_SSL'),
+}
+
+# EMAIL_HR = {
+#     'USER': 'codatestreceive@gmail.com',
+#     'PASS': 'xpyppzxymhaqwqbm',
+#     'HOST': 'smtp.gmail.com',
+#     'PORT': 587,
+#     'USE_TLS': True,
+#     'USE_SSL': False,
+# }
 
 AWS_S3_REGION_NAME = "us-east-2"  # change to your region
 AWS_S3_SIGNATURE_VERSION = "s3v4"

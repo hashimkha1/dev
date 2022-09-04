@@ -1,18 +1,41 @@
-{% extends "main/base_templates/accounts_base.html" %} 
-{% load crispy_forms_tags %}
+{% load crispy_forms_tags%} 
+{% load static %}
+{% block title %}
+{% endblock %}
+{% include 'main/navbar_templates/data_navbar2.html' %}
+
 {% block content %}
-<div class="content-section">
-  <form method="POST">
-    {% csrf_token %}
-    <fieldset class="form-group">
-        <h1>Twitter Credentials</h1>
-      {{ t_form|crispy }} 
-      <h1>Facebook Credentials</h1>
-      {{ f_form|crispy }}
-    </fieldset>
-    <div class="form-group">
-      <button class="btn btn-outline-info" type="submit">Submit</button>
-    </div>
-  </form>
+   <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+      <style>
+      .nounderline{
+        text-decoration: none;
+        color: aliceblue;
+      }
+    </style>
+<div class="container">
+      <h1>Advertisement Details For Fb and Twitter</h1>
+      <hr>
+      <br>
+
+    {% for post in posts %}
+    <h2>
+      <h2> Facebook Page Name : {{post.page_name}}</h2>
+     
+      <button type="button" class="btn btn-secondary"> <a
+        class="article-title nounderline"
+        href="{% url 'management:update_advertisement' post.id %}"
+        >Update
+      </a></button>
+    </h2>
+    <hr>
 </div>
-{% endblock content%}
+    {% endfor %}
+
+{% endblock content %}
+
+{% include 'main/footer_templates/client_interview_footer.html' %}

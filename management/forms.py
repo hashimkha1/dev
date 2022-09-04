@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from data.models import DSU
-from management.models import TaskLinks, Policy, Requirement, Task, Twitter, Facebook
+from management.models import TaskLinks, Policy, Requirement, Task
 from finance.models import Transaction, Inflow
 from accounts.models import Department
 
@@ -260,28 +260,3 @@ class TaskForm(forms.ModelForm):
         ]
 
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
-
-
-class TwitterForm(forms.ModelForm):
-    class Meta:
-        model = Twitter
-        fields = [
-            "twitter_api_key",
-            "twitter_api_key_secret",
-            "twitter_bearer_token",
-            "twitter_access_token",
-            "twitter_access_token_secret",
-            "post_description",
-            "image",
-        ]
-
-
-class FacebookForm(forms.ModelForm):
-    class Meta:
-        model = Facebook
-        fields = [
-            "facebook_access_token",
-            "facebook_page_id",
-            "post_description",
-            "image",
-        ]

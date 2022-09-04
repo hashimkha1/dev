@@ -11,16 +11,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
-from management.utils import email_template
-from .forms import (
+from mail.custom_email import send_email
+from management.forms import (
     DepartmentForm,
-    TransactionForm,
-    InflowForm,
     PolicyForm,
     ManagementForm,
     RequirementForm,
-    EvidenceForm,
-    TaskForm
+    EvidenceForm
 )
 from django.views.generic import (
     CreateView,
@@ -29,7 +26,8 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import (
+from management.models import (
+    Advertisement,
     Policy,
     Tag,
     # TaskGroups,
@@ -42,7 +40,6 @@ from data.models import DSU
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from finance.models import Transaction,Inflow,TrainingLoan
 from accounts.models import Tracker,Department, TaskGroups
 from coda_project import settings
 from datetime import date, timedelta
@@ -1054,14 +1051,21 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{request.POST['what']}<br>
-                    <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {request.POST['delivery_date']}</b><br><b>Created by: 
-                    {request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                # html_content = f"""
+                #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
+                #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
+                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
+                #     <b>Dead Line: </b><b style='color:red;'>
+                #     {request.POST['delivery_date']}</b><br><b>Created by:
+                #     {request.user}</b></span>"""
+                # email_template(subject, to, html_content)
+                context = {
+                    'request_what': request.POST['what'],
+                    'url': protocol + request.get_host()+reverse('management:RequirementDetail', kwargs={'pk':form.instance.id}),
+                    'delivery_date': request.POST['delivery_date'],
+                    'user': request.user,
+                }
+                send_email(category=request.user.category, to_email=[to,], subject=subject, html_template='email/newrequirement.html', context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1117,14 +1121,21 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
-                    <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {self.request.POST['delivery_date']}</b><br><b>Created by: 
-                    {self.request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                # html_content = f"""
+                #     <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
+                #     <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
+                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
+                #     <b>Dead Line: </b><b style='color:red;'>
+                #     {self.request.POST['delivery_date']}</b><br><b>Created by:
+                #     {self.request.user}</b></span>"""
+                # email_template(subject, to, html_content)
+                context = {
+                    'request_what': self.request.POST['what'],
+                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail', kwargs={'pk':form.instance.id}),
+                    'delivery_date': self.request.POST['delivery_date'],
+                    'user': self.request.user,
+                }
+                send_email(category=self.request.user.category, to_email=[to,], subject=subject, html_template='email/RequirementUpdateView.html', context=context)
             return super().form_valid(form)
         else:
             return redirect("management:requirements-active")
@@ -1207,3 +1218,39 @@ def filterbycategory(request):
         result.append(details.copy())
     # print(result)
     return JsonResponse({"result":result},safe =False)
+
+
+class AdsContent(ListView):
+    model = Advertisement
+    template_name = "management/advertisement.html"  
+    context_object_name = "posts"
+    ordering = ["-created_at"]
+   
+   
+
+
+class AdsCreateView(LoginRequiredMixin, CreateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
