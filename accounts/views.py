@@ -30,7 +30,7 @@ from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
-from management.utils import email_template
+from mail.custom_email import send_email
 from django.http import QueryDict
 import string, random
 
@@ -77,7 +77,7 @@ def join(request):
             else:
                 default_payment_fees = Default_Payment_Fees(
                     job_down_payment_per_month=500,
-                    job_plan_hours_per_month=40,
+                    job_plan_hours_per_month=30,
                     student_down_payment_per_month=500,
                     student_bonus_payment_per_month=100,
                 )
@@ -441,12 +441,13 @@ def credential_view(request):
 
 def security_verification(request):
     subject = "One time verification code to view passwords"
-    to = request.user.email
+    # to = request.user.email
     otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
     request.session["security_otp"] = otp
-    html_content = "Your One time verification code is " + otp
-    print(to, otp)
-    email_template(subject, to, html_content)
+    # html_content = "Your One time verification code is " + otp
+    # print(to, otp)
+    # email_template(subject, to, html_content)
+    send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/security_verification.html', context={'otp': otp})
     return render(request, "accounts/admin/email_verification.html")
 
 
