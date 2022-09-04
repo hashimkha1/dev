@@ -12,15 +12,12 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
 from management.utils import email_template
-from .forms import (
+from management.forms import (
     DepartmentForm,
-    TransactionForm,
-    InflowForm,
     PolicyForm,
     ManagementForm,
     RequirementForm,
-    EvidenceForm,
-    TaskForm
+    EvidenceForm
 )
 from django.views.generic import (
     CreateView,
@@ -29,7 +26,8 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import (
+from management.models import (
+    Advertisement,
     Policy,
     Tag,
     # TaskGroups,
@@ -42,7 +40,6 @@ from data.models import DSU
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from finance.models import Transaction,Inflow,TrainingLoan
 from accounts.models import Tracker,Department, TaskGroups
 from coda_project import settings
 from datetime import date, timedelta
@@ -1207,3 +1204,39 @@ def filterbycategory(request):
         result.append(details.copy())
     # print(result)
     return JsonResponse({"result":result},safe =False)
+
+
+class AdsContent(ListView):
+    model = Advertisement
+    template_name = "management/advertisement.html"  
+    context_object_name = "posts"
+    ordering = ["-created_at"]
+   
+   
+
+
+class AdsCreateView(LoginRequiredMixin, CreateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
