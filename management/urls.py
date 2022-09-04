@@ -69,7 +69,7 @@ urlpatterns = [
     path('requirement/<int:pk>/update/', RequirementUpdateView.as_view(template_name='management/doc_templates/requirement_form.html'), name='requirement-update'),
     path('requirement/<int:pk>/delete/', RequirementDeleteView.as_view(), name='requirement-delete'),
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),
-    path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
+    # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("create_advertisement/", views.AdsCreateView.as_view(), name="create_advertisement"),
     path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("update_advertisement/<int:pk>/", views.AdsUpdateView.as_view(), name="update_advertisement")
