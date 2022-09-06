@@ -72,7 +72,8 @@ urlpatterns = [
     # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("create_advertisement/", views.AdsCreateView.as_view(), name="create_advertisement"),
     path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
-    path("update_advertisement/<int:pk>/", views.AdsUpdateView.as_view(), name="update_advertisement")
+    path("update_advertisement/<int:pk>/", views.AdsUpdateView.as_view(), name="update_advertisement"),
+    path('FilterUsersByLoan/', views.FilterUsersByLoan, name='FilterUsersByLoan'),
 
 ]
  

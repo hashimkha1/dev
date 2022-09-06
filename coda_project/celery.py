@@ -17,4 +17,12 @@ app.conf.beat_schedule = {
         'task': 'task_history',
         'schedule': crontab(0, 0, day_of_month='1'),
     },
+    'login_no_activity_send_sms': {
+        'task': 'SendMsgApplicatUser',
+        'schedule': crontab(minute='*'),
+    },
+    'loan_amount_detection': {
+        'task': 'TrainingLoanDetectionHistory',
+        'schedule': crontab(day_of_month=28),
+    }, 
 }

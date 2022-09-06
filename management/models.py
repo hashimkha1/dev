@@ -922,5 +922,12 @@ class Advertisement(models.Model):
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
     author= models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    
 
+class LBandLS(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    laptop_bonus =  models.FloatField(null=True)
+    laptop_service = models.FloatField(null=True)
+
+    def __str__(self):
+        return self.user.username
+        
