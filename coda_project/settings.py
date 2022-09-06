@@ -134,9 +134,9 @@ import dj_database_url
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "curr_coda_prod",  # Name of Database
+        "NAME": "postgres",  # Name of Database
         "USER": "postgres",
-        "PASSWORD": "egrove",  # os.environ.get('POSTGRESSPASS'),
+        "PASSWORD": "postgres",  # os.environ.get('POSTGRESSPASS'),
         "HOST": "localhost",
     }
 }
