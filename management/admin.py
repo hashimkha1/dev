@@ -14,6 +14,7 @@ from management.models import (
     TaskHistory,
 Advertisement,
 )
+from accounts.models import TaskGroups
 
 # from .models import Activity, Category, Employee, Transaction , Department
 
@@ -83,6 +84,7 @@ admin.site.register(TaskHistory)
 admin.site.register(Tag)
 admin.site.register(Requirement)
 admin.site.register(Advertisement, AdsAdmin)
+admin.site.register(TaskGroups)
 
 """
 admin.site.register(Employee)

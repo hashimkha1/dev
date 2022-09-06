@@ -12,12 +12,13 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
 from mail.custom_email import send_email
+from application.models import UserProfile
 from management.forms import (
     DepartmentForm,
     PolicyForm,
     ManagementForm,
     RequirementForm,
-    EvidenceForm
+    EvidenceForm,
 )
 from django.views.generic import (
     CreateView,
@@ -35,8 +36,10 @@ from management.models import (
     TaskHistory,
     TaskLinks,
     Requirement,
+    LBandLS
 )
 from data.models import DSU
+from finance.models import Default_Payment_Fees, LoanUsers
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -359,6 +362,44 @@ class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
+def FilterUsersByLoan(request):
+
+    user_loan_filter = request.POST["user_loan_filter"]
+    reslist = []
+
+    if user_loan_filter == "all_user":
+        tasklist = Task.objects.all()
+        res = filterdatset(tasklist)
+        reslist = res.copy()
+    else:
+        loanusers = LoanUsers.objects.filter(is_loan=user_loan_filter).values_list("user",flat=True)
+        loanusers = list(loanusers)
+        tasklist = Task.objects.filter(employee__in=loanusers)
+        res = filterdatset(tasklist)
+        reslist = res.copy()
+    return JsonResponse(reslist, safe=False)
+
+def filterdatset(obj):
+    result = []
+    details = {}
+    for data in obj:
+        details["groupname"] = str(data.groupname)
+        details["deadline"] = data.deadline.strftime("%d %b %Y")
+        details["submission"] = data.submission.strftime("%d %b %Y")
+        details["point"] = data.point
+        details["mxpoint"] = data.mxpoint
+        details["mxearning"] = float(data.mxearning)
+        details["get_pay"] = float(data.get_pay)
+        details["id"] = data.id
+        details["employee"] = data.employee.username
+        details["first_name"] = data.employee.first_name
+        details["last_name"] = data.employee.last_name
+        details["description"] = data.description
+        details["activity_name"] = data.activity_name
+        details["get_absolute_url"] = str(data.category.get_absolute_url)
+        result.append(details.copy())
+    return result
+
 def filterbycategory(request):
     category = request.POST["category"]
    
@@ -597,6 +638,7 @@ def usertask(request, user=None, *args, **kwargs):
     activities=["one one one","one one one session","one one one sessions"]
     activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
     print(activitiesmodified)
+    deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
     context = {
         'activitiesmodified':activitiesmodified,
         "payday": payday,
@@ -615,7 +657,8 @@ def usertask(request, user=None, *args, **kwargs):
         "loan": loan,
         "net": net,
         "point_check":point_check,
-        "average_earnings":average_earnings
+        "average_earnings":average_earnings,
+        "enddate" : deadline_date_modify
     }
 
     # setting  up session
@@ -715,6 +758,8 @@ def usertaskhistory(request, user=None, *args, **kwargs):
 
 
 def payslip(request, user=None, *args, **kwargs):
+    default_payment_fees = Default_Payment_Fees.objects.all().first()
+
     deadline_date = date(
         date.today().year,
         date.today().month,
@@ -740,6 +785,41 @@ def payslip(request, user=None, *args, **kwargs):
     # the loan amount and add to the deductions. We need to create
     # new database table to store the loan amount and add to the database.
     loan = Decimal(total_pay) * Decimal("0.2")
+    balance_amount = 0
+    if TrainingLoan.objects.filter(user=employee).exists():
+        training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
+        loan = training_loan.detection_amount
+        if LoanUsers.objects.filter(user=employee,is_loan=True).exists():
+            balance_amount = training_loan.balance_amount
+        else:
+            balance_amount = 0
+    else:
+        loan_amount = Decimal(default_payment_fees.loan_amount)
+        balance_amount = loan_amount - loan
+    
+
+    userprofile = UserProfile.objects.get(user_id=employee)
+    if userprofile.laptop_status == True:
+        laptop_saving = 0
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_bonus = lbandls.laptop_bonus
+        else:
+            laptop_bonus = 0
+    else:
+        laptop_bonus = 0
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_saving = lbandls.laptop_service
+        else:
+            laptop_saving = 0
+
+    laptop_bonus = '{0:.2f}'.format(laptop_bonus)
+    laptop_saving = '{0:.2f}'.format(laptop_saving)
+
+    loan = round(loan, 2)
+    balance_amount = round(balance_amount, 2)
+
     kra = Decimal(total_pay) * Decimal("0.30")
     # if employee use company computer, add the charge to the deductions.
     computer_maintenance = 500
@@ -751,7 +831,7 @@ def payslip(request, user=None, *args, **kwargs):
     # if employee achieved the 20000 threshold it will then no deduction.
     # if the employee buy a laptop in 2, or so months. Then we'll stop dedcuting and
     # the amount that we deducted the last month will be added to the total pay.
-    laptop_saving = 1000
+    # laptop_saving = 1000
     total_deduction = (
         Decimal(loan)
         + Decimal(computer_maintenance)
@@ -827,6 +907,8 @@ def payslip(request, user=None, *args, **kwargs):
         "today": today,
         "total_pay": total_pay,
         "net": net,
+        "balance_amount":balance_amount,
+        "laptop_bonus":laptop_bonus
     }
 
     if request.user == employee:

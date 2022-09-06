@@ -35,8 +35,14 @@
     </div> 
   </div> 
   <div style="float: right">
+    <label for="user_loan_filter">To filter by Users &nbsp;</label>
+    <select name="user_loan_filter" id="user_loan_filter">
+      <option value="all_user" selected>All users</option>
+      <option value="True">Loan users</option>
+      <option value="False">Loan completed users</option>
+    </select>
     <label for="category_filter">To filter by Category &nbsp;</label>
-    <select name="category_filter" >
+    <select name="category_filter" id="category_filter">
         <option value="" disabled selected hidden>Choose a Category</option>
         <option value="Meetings">Meetings</option>
         <option value="Data Analysis">Data Analysis</option>
@@ -137,8 +143,53 @@
           return cookieValue;
   }
   var csrftoken = getCookie('csrftoken');
-
-  $('select').on('change', function() {
+  $("#user_loan_filter").on("change",function(){
+  $.ajax({
+      type: "POST",
+      url:  `{% url 'management:FilterUsersByLoan' %}`,
+      mode: 'cors',
+      withCredentials: false, 
+      headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
+      xsrfHeaderName: "X-CSRFToken",
+      data : { "user_loan_filter":$(this).val() },
+      success: function(result){
+        console.log(result)
+        var tasks = result
+        var html = "";
+        if(tasks.length == 0){
+            $("#table_body_data").html("");
+            $(".no_data_text").css("display","block")
+          }
+          else{
+            $(".no_data_text").css("display","none")
+            for( key in tasks){
+              var key =  tasks[key]
+              html += `<tr> <td><input type="checkbox" class="checkthis" /></td>`;
+              employee_usertask_url = "{% url 'management:user_task' 123 %}".replace("123",key['employee'])
+              if(key["first_name"] == "" || key["last_name"] == ""){
+                html+=`<td> <a class="article-title" href="`+employee_usertask_url+`">`+key['employee']+`</a></td>`
+              }
+              else{
+                html+=`<td> <a class="article-title" href="`+employee_usertask_url+`"><xmp>`+key['first_name']+`,`+key["last_name"]+`</xmp></a></td>`
+              }
+              html+=`<td><a class="text-dark  text-decoration-none" data-toggle="tooltip" title=`+key['description']+` href="">`+key["activity_name"]+`</a></td>`+
+                    `<td>`+key['groupname']+`</td>`+
+                    `<td>`+key['deadline']+`</td>`+
+                    `<td>`+key['submission']+`</td>`+
+                    `<td>`+key['point']+`</td>`+
+                    `<td>`+key['mxpoint']+`</td>`+
+                    `<td>`+key['mxearning']+`</td>`+
+                    `<td>`+key['get_pay']+`</td>`+
+                    `<td><button><a href="`+"{% url 'management:new_evidence' 123 %}".replace("123",key['id'])+`">Button</a></button></td>`+
+                    `<td><a class="article-title" href="`+"{% url 'management:taskdetail' 123 %}".replace("123",key['id'])+`">Edit</a></td> </tr>`
+              
+            }
+            $("#table_body_data").html(html);
+          }
+      }
+    });
+  })
+  $('#category_filter').on('change', function() {
     $.ajax({
         type: "POST",
         url:  siteurl+"/management/tasks/filterbycategory",
