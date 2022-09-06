@@ -624,13 +624,13 @@ def usertracker(request, user=None, *args, **kwargs):
         )
         if delta < 30:
             subject = "New Contract Alert"
-            to = customer_get[1]
-            html_content = f"""
-                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-                <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+            # to = customer_get[1]
+            # html_content = f"""
+            #     <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+            #     <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
                 
-                </span>"""
-            email_template(subject, to, html_content)
+            #     </span>"""
+            # email_template(subject, to, html_content)
 
         context = {
             "trackers": trackers,
