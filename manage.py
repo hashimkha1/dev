@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 from dotenv import load_dotenv
 
+
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'coda_project.settings')
     load_dotenv()

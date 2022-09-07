@@ -160,7 +160,7 @@ DATABASES = {
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 
-DATABASES["default"].update(db_from_env)
+# DATABASES ={'default':db_from_env} 
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
@@ -230,21 +230,24 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = "main:layout"
 LOGIN_URL = "accounts:account-login"
 
-"""
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
 # Gmail Email Backend Account
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # EMAIL_HOST = "smtp.gmail.com"
+# EMAIL_HOST_USER = "hunjin015@gmail.com"
+
+# private email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.privateemail.com"
+EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-# EMAIL_HOST_USER = "hunjin015@gmail.com"
+
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
-EMAIL_USE_SSL = False
+EMAIL_FILE_PATH = BASE_DIR + "/emails"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-"""
 
 EMAIL_INFO = {
     'USER': os.environ.get('EMAIL_INFO_USER'),
