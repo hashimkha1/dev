@@ -11,13 +11,9 @@ from coda_project.settings import EMAIL_INFO, EMAIL_HR
 
 
 def send_email(category, to_email, subject, html_template, context):
-    if category is None:
-        raise Exception("Are you trying to send email to an anonymous user?")
     if category == 1:
-        logger.info('the user seems to be applicant!')
         __smtp_user = EMAIL_HR
     else:
-        logger.info('the user is not applicant!')
         __smtp_user = EMAIL_INFO
 
     from_email = __smtp_user.get("USER")
@@ -38,11 +34,11 @@ def send_email(category, to_email, subject, html_template, context):
 
     logger.debug(f'from_email: {from_email}')
     logger.debug(f'to_email: {to_email}')
-    logger.debug(f'msg_str: {msg_str}')
+    # logger.debug(f'msg_str: {msg_str}')
 
     with smtplib.SMTP(host=__smtp_user.get('HOST'), port=__smtp_user.get('PORT')) as server:
         server.ehlo()
         server.starttls()
         server.login(from_email, __smtp_user.get('PASS'))
         server.sendmail(from_email, to_email, msg_str)
-        logger.info('the mail is sent (Hopefully!)')
+        logger.info('the mail is sent!)')
