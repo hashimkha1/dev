@@ -1,15 +1,16 @@
 import os
 import pickle
-
-import logging
-logger = logging.getLogger(__name__)
-
+from pprint import pprint
 from base64 import urlsafe_b64decode
 
 # Gmail API utils
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+
+import logging
+logger = logging.getLogger(__name__)
+
 
 # If you modified scopes, delete the file token.json and re-authenticate!
 SCOPES = ('https://mail.google.com/',)
@@ -54,9 +55,9 @@ def search_messages(service, query):
 def get_message(service, msg_id):
     # mark that mail as read.
     msg = service.users().messages().modify(
-        userId = 'me',
-        id = msg_id,
-        body = {
+        userId='me',
+        id=msg_id,
+        body={
             'addLabelIds': [],
             'removeLabelIds': ['UNREAD'],
         },
@@ -69,9 +70,22 @@ def get_message(service, msg_id):
         return
 
     msg_payload = msg.get('payload')
-    to_mail = msg_payload.get('headers')[0].get('value')
-    received_date = msg_payload.get('headers')[1].get('value')
-    from_mail = msg_payload.get('headers')[6].get('value')
+    headers = msg_payload.get('headers')
+    # pprint(headers)
+
+    # to_mail = msg_payload.get('headers')[0].get('value')
+    # received_date = msg_payload.get('headers')[1].get('value')
+    # from_mail = msg_payload.get('headers')[6].get('value')
+
+    for header in headers:
+        if header.get('name') == 'Date':
+            received_date = header.get('value')
+        if header.get('name') == 'From':
+            from_mail = header.get('value')
+        if header.get('name') == 'To':
+            to_mail = header.get('value')
+        if header.get('name') == 'Subject':
+            subject = header.get('value')
 
     html_part = msg_payload.get('parts')[1]
     encoded_data = html_part.get('body').get('data')
@@ -79,8 +93,10 @@ def get_message(service, msg_id):
 
     file_name = 'mail-' + str(msg_id) + '.html'
     html_path = os.path.join(current_dir, 'stored_mails', file_name)
-    with open(html_path, 'w+') as out:
-        out.write(decoded_str)
+
+    if not os.path.exists(html_path):
+        with open(html_path, 'w+') as out:
+            out.write(decoded_str)
 
     text_part = msg.get('payload').get('parts')[0]
     encoded_data = text_part.get('body').get('data')
@@ -91,6 +107,7 @@ def get_message(service, msg_id):
         'id': msg_id,
         'from_mail': from_mail,
         'to_mail': to_mail,
+        'subject': subject,
         'file_name': file_name,
         'full_path': html_path,
         'text_mail': decoded_str,
