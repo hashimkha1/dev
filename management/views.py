@@ -1,4 +1,5 @@
 import calendar,string
+from logging import exception
 from django import template
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -762,7 +763,10 @@ def usertaskhistory(request, user=None, *args, **kwargs):
 
 
 def payslip(request, user=None, *args, **kwargs):
-    default_payment_fees = Default_Payment_Fees.objects.all().first()
+    try:
+        default_payment_fees = Default_Payment_Fees.objects.all().first()
+    except:
+        default_payment_fees =0
 
     deadline_date = date(
         date.today().year,
