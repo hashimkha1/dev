@@ -17,6 +17,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_CREDENTIALS = os.path.join(current_dir, 'creds/credentials.json')
 DEFAULT_TOKEN = os.path.join(current_dir, 'creds/token.pickle')
 
+
 def get_service(scopes=SCOPES, service_name='gmail', service_version='v1', token=DEFAULT_TOKEN, credentials=DEFAULT_CREDENTIALS):
     creds = None
     # the file token.pickle stores the user's access and refresh tokens, and is
@@ -35,6 +36,7 @@ def get_service(scopes=SCOPES, service_name='gmail', service_version='v1', token
         with open(token, "wb") as token_file:
             pickle.dump(creds, token_file)
     return build(service_name, service_version, credentials=creds)
+
 
 def search_messages(service, query):
     result = service.users().messages().list(userId='me', q=query).execute()
@@ -75,8 +77,8 @@ def get_message(service, msg_id):
     encoded_data = html_part.get('body').get('data')
     decoded_str = str(urlsafe_b64decode(encoded_data), 'UTF-8')
 
-    file_name = 'mail-'+ str(msg_id) + '.html'
-    html_path = os.path.join(current_dir, 'temp_mails', file_name)
+    file_name = 'mail-' + str(msg_id) + '.html'
+    html_path = os.path.join(current_dir, 'stored_mails', file_name)
     with open(html_path, 'w+') as out:
         out.write(decoded_str)
 

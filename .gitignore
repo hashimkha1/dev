@@ -11,6 +11,12 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+.idea/
+.vscode/
+.venv/
+/gapi/creds/
+/gapi/stored_mails/
+
 ### Apps ###
 #testing
 
@@ -153,4 +159,3 @@ dmypy.json
 cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/django
-/gapi/creds/token.pickle

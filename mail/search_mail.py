@@ -9,7 +9,7 @@ from getdata.models import CashappMail
 
 
 def parse_mail(request):
-    search_query = 'from:pallpandiyan.s@egrovesys.com is:unread'
+    search_query = 'from:cash@square.com is:unread'
 
     service = get_service()  # default service with default scope, gmail-v1
     if not service:
