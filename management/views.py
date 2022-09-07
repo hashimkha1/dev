@@ -39,7 +39,7 @@ from management.models import (
     LBandLS
 )
 from data.models import DSU
-from finance.models import Default_Payment_Fees, LoanUsers
+from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -794,8 +794,11 @@ def payslip(request, user=None, *args, **kwargs):
         else:
             balance_amount = 0
     else:
-        loan_amount = Decimal(default_payment_fees.loan_amount)
-        balance_amount = loan_amount - loan
+        if default_payment_fees:
+            loan_amount = Decimal(default_payment_fees.loan_amount)
+            balance_amount = loan_amount - loan
+        else:
+            loan_amount = 0
     
 
     userprofile = UserProfile.objects.get(user_id=employee)
