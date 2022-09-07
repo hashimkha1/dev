@@ -90,7 +90,7 @@ class Default_Payment_Fees(models.Model):
     loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
 
     def __str__(self):
-        return self.loan_amount
+        return str(self.loan_amount)
 
 class Transaction(models.Model):
     # Method of Category

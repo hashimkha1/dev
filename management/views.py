@@ -630,6 +630,10 @@ def usertask(request, user=None, *args, **kwargs):
         # counter = counter+1 
         counter=3
     average_earnings = average_earnings / counter 
+    if average_earnings==0:
+        average_earnings = GoalAmount
+    else:
+        average_earnings
     # try:
     #     average_earnings = average_earnings / counter 
     # except Exception as ZeroDivisionError:

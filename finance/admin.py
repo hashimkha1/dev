@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 # Register your models here.
 from django.urls import path, reverse
 from .models import (
+    LoanUsers,
     Payment_History,
     Default_Payment_Fees,
     Payment_Information,
@@ -83,3 +84,4 @@ admin.site.register(Inflow)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)
 admin.site.register(TrainingLoan)
+admin.site.register(LoanUsers)
