@@ -36,7 +36,10 @@ urlpatterns = [
     path("financialsystem/", views.financialsystem, name="finance"),
     path("payroll/", views.payroll, name="payroll"),
     path("project/", views.project, name="project"),
+    # Training SEction Urls starts
     path("training/", views.training, name="training"),
+    path("train/", views.TrainingView.as_view(), name="train"),
+    path("course/", views.CourseView.as_view(), name="course"),
     path("training_v2/", views.training_v2, name="training_v2"),
     path("bitraining/", views.bitraining, name="bitraining"),
     path("bitraining2/", views.activity_view, name="bitraining2"),

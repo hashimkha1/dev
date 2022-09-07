@@ -1,0 +1,248 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
+        integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- <style>
+        @media (min-width: 1200px) {
+            .home-manual .container {
+                max-width: 1300px;
+            }
+        }
+    </style> -->
+    <style>
+        .logo-text {
+            color: #243865 !important;
+            font-size: 3rem !important;
+            font-weight: bold;
+        }
+
+        .nav-items>a {
+            color: #ADB4C5 !important;
+        }
+
+        .navbar .navbar-brand {
+            font-size: 30px;
+        }
+
+        .navbar .nav-item {
+            padding: 10px 20px;
+        }
+
+        .navbar .nav-link {
+            font-size: 20px;
+            margin-left: 10px;
+        }
+
+        .fa-bars {
+            color: #007bff;
+            font-size: 30px;
+        }
+
+        .top-coloumn {
+            background-color: #243865;
+            padding: 3rem 8rem 3rem 8rem;
+            padding-top: 7px;
+        }
+
+        .title-sub-head {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .title-head {
+            font-size: 5.4rem;
+            font-weight: bold;
+            display: block;
+            margin-top: -10px;
+        }
+
+        .title-sub-head,
+        .title-head {
+            color: #E7AD4A;
+        }
+
+        .title-para {
+            font-size: 19px;
+            color: #ffffff
+        }
+
+        .bottom-coloumn {
+            background-color: #E6E6E6 !important;
+        }
+
+        .follow-text {
+            color: black;
+            font-size: 1.3rem;
+        }
+
+        .fb-circle {
+            background-color: #3A5B9F;
+            padding: 2px;
+            width: 19px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-bc {
+            background-color: #E7AD4A;
+            color: #ffffff;
+            border-radius: 0;
+            padding: 0.5rem 1.5rem;
+            font-size: 16px;
+        }
+
+        .top-left-coloumn {
+            background-image: url(/static/data/img/banner1.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .footer-liinks-div a {
+            margin-bottom: .5rem;
+            display: block;
+            font-size: 14px;
+        }
+
+        .background-count-bullet {
+            background-color: #E7AD4A;
+            border-radius: 100px;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* .bottom-left-coloumn{
+            background-image: url('/static/data/img/coda_CEO.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+        } */
+        @media screen and (max-width:768px) {
+            .top-coloumn {
+                padding: 3rem 1rem 3rem 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-light navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand logo-text" href="{% url 'main:layout'%}">CODA</a>
+            <button class="navbar-toggler nav-btn" type="button" data-bs-toggle="coll apse"
+                data-bs-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav mr-auto w-100 justify-content-end">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="{% url 'main:layout'%}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:layout'%}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'main:layout'%}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <p class="mb-1" style="font-size: 8px;text-align: right;">MODULE PROGRESS %</p>
+                        <div class="progress" style="border-radius: 20px;width: 150px;">
+                            <div class="progress-bar" role="progressbar" style="width: 60%" aria-valuenow="60"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <div>
+                            <i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div>
+        {% block content %}{% endblock %}
+    </div>
+
+    <div class="py-5" style="background-color: #1a1a1a;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2 class="font-weight-bold mb-4" style="color: white;">CODA</h2>
+                    <p style="color: white; max-width: 510px; font-size: 14px;">
+                        Crown Data Analysis and Consultancy LLC (CODA) was established to provide
+                        our customers with high quality services in project management. Consultancy
+                        and Software solutions. Our goal is to provide these services with efficiency
+                        and effectiveness at a fair price both locally & internationally
+                    </p>
+                </div>
+                <div class="col-md-6">
+                    <div class="row text-white footer-liinks-div">
+                        <div class="col-md-3">
+                            <p>MY ACCOUNT</p>
+                            <div>
+                                <a>Sign In</a>
+                                <a>Register</a>
+                                <a>Log Out</a>
+                                <a>My Progress</a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p>COMPANY</p>
+                            <div>
+                                <a>Our Story</a>
+                                <a>Why CODA</a>
+                                <a>Contacts</a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p>SUPPORT</p>
+                            <div>
+                                <a>FAQ</a>
+                                <a>Student Support</a>
+                                <a>Customer Support</a>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div style="margin-top: 40px;">
+                                <a>Privacy Policy</a>
+                                <a>Terms Of Use</a>
+                                <a>Copyright</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
+
+    <script>
+        $(".nav-btn").click(function () {
+            $("#collapsibleNavbar").toggleClass('show')
+        })
+    </script>
+</body>
+
+</html>

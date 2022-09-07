@@ -152,6 +152,35 @@ def useruploads(request, pk=None, *args, **kwargs):
     return render(request, "data/interview/useruploads.html", context)
 
 
+# ==================================TRAINING VIEWS====================================
+
+# class CourseView(LoginRequiredMixin, CreateView):
+#     model = Interviews
+#     form_class = InterviewForm
+#     template_name = "data/training/training_progress/main.html"
+#     success_url = "/data/project_story"
+#     # fields = ["category", "doc", "link", "answer_to_question"]
+
+#     def form_valid(self, form):
+#         form.instance.client = self.request.user
+#         form.instance.question_type = "project story"
+#         print("form.instance.question_type")
+#         return super().form_valid(form)
+
+class TrainingView(LoginRequiredMixin, ListView):
+    model = Interviews
+    template_name = "data/training/training_progress/train.html"
+    success_url = "/data/course"
+
+class CourseView(LoginRequiredMixin, ListView):
+    model = Interviews
+    template_name = "data/training/training_progress/course.html"
+    # success_url = "/data/course"
+
+
+
+
+
 # ==================================INTERVIEW VIEWS====================================
 class RoleListView(LoginRequiredMixin, ListView):
     queryset = JobRole.objects.all()
