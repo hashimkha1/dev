@@ -452,7 +452,12 @@ def security_verification(request):
     # html_content = "Your One time verification code is " + otp
     # print(to, otp)
     # email_template(subject, to, html_content)
-    send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/security_verification.html', context={'otp': otp})
+    print(request.user.category)
+    send_email( category=request.user.category,
+                to_email=[request.user.email,],
+                subject=subject, 
+                html_template='email/security_verification.html',
+                context={'otp': otp})
     return render(request, "accounts/admin/email_verification.html")
 
 

@@ -75,8 +75,9 @@ class Air_Quality_Data(models.Model):
 
 class CashappMail(models.Model):
 	id = models.CharField(max_length=30, unique=True, primary_key=True)
-	from_mail = models.EmailField()
-	to_mail = models.EmailField()
+	from_mail = models.CharField(max_length=255)
+	to_mail = models.CharField(max_length=255)
+	subject = models.CharField(max_length=255)
 	file_name = models.CharField(max_length=50)
 	full_path = models.CharField(max_length=255)
 	text_mail = models.TextField()
