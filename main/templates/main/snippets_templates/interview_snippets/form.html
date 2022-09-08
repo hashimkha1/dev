@@ -1,0 +1,14 @@
+<div class="content-section text-dark h6">
+    <form action="{% url 'data:resume' %}" method="POST">
+      {% csrf_token %}
+      <fieldset class="form-group">
+        <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
+        {{ form|crispy }}
+      </fieldset>
+      <div class="form-group">
+        <button class="btn btn-warning w-25" type="submit">
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>

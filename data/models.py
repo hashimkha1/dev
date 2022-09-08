@@ -48,6 +48,48 @@ class InterviewManager(models.Manager):
             return qs.first()
         return None
 
+    def get_by_question(self, question_type):
+        qs = self.get_queryset().filter(question_type=question_type)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+    def search(self, query):
+        return self.get_queryset().active().search(query)
+
+class RoleQuerySet(models.query.QuerySet):
+    def active(self):
+        return self.filter(is_active=True)
+
+    def featured(self):
+        return self.filter(featured=True, is_active=True)
+
+    def search(self, query):
+            lookups = (
+                Q(category__icontains=query)| Q(question_type__icontains=query)
+            )
+            return self.filter(lookups).distinct()
+
+class RoleManager(models.Manager):
+    def get_queryset(self):
+        # return super(TaskManager, self).get_queryset().filter(is_active=True)
+        return RoleQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def get_by_slug(self, slug):
+        qs = self.get_queryset().filter(slug=slug)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+    def get_by_question(self, question_type):
+        qs = self.get_queryset().filter(question_type=question_type)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
     def search(self, query):
         return self.get_queryset().active().search(query)
 
@@ -125,7 +167,7 @@ class JobRole(models.Model):
     desc2=models.TextField(max_length=1000,blank=True, null=True)
     is_active=models.BooleanField(default=True)
 
-    # objects=InterviewManager()
+    objects=RoleManager()
 
     class Meta:
         verbose_name_plural = 'Roles'  
@@ -136,8 +178,10 @@ class JobRole(models.Model):
         else:
             return self.doc
 
-    def __str__(self):
-        return f'{self.category} upload'
+    def get_url(self):
+        return reverse("data:question-detail", args=[self.question_type])
+    # def __str__(self):
+    #     return f'{self.question_type}'
 
     
 
@@ -307,7 +351,7 @@ class FeaturedSubCategory(models.Model):
         verbose_name_plural = "Subcategories"
 
     def get_absolute_url(self):
-        return reverse("bitraining")
+        return reverse('data:question-detail', kwargs={'question_type': self.question_type})
 
     def __str__(self):
         return self.title

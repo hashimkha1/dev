@@ -50,9 +50,9 @@ urlpatterns = [
     path("roles/delete/<int:pk>/", views.RoleDeleteView.as_view(), name="role-delete"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
-    path("interview/", views.interview, name="interview"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
-    path("resume/", views.ResumeView.as_view(), name="resume"),
+    path("interview/<str:question_type>/", views.questionview, name="question-detail"),
+    path("resumes/", views.ResumeView, name="resumes"),
     path("project_story/", ProjectStoryView.as_view(), name="project_story"),
     path("introduction/", views.IntroductionView.as_view(), name="introduction"),
     path("sdlc/", views.SDLCView.as_view(), name="sdlc"),

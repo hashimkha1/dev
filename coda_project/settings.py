@@ -103,6 +103,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "management.context_processors.categories",
                 "management.context_processors.departments",
+                "data.context_processors.roles",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',

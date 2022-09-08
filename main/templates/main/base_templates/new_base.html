@@ -57,7 +57,7 @@
         }
 
         .title-sub-head {
-            font-size: 3rem;
+            font-size: 2rem;
             font-weight: bold;
         }
 
@@ -156,6 +156,29 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:layout'%}">About</a>
                     </li>
+                    <li class="nav-item dropdown">
+                        <a
+                          class="nav-link dropdown-toggle"
+                          href="#"
+                          id="navbarDropdown"
+                          role="button"
+                          data-toggle="dropdown"
+                          aria-haspopup="true"
+                          aria-expanded="false"
+                        >
+                          Interview
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                            {% for role in roles %}
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{{role.get_url}}"
+                              >{{role.question_type|capfirst}}</a
+                            >
+                            {% endfor%}
+           
+                          <div class="dropdown-divider"></div>
+                        </div>
+                      </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'main:layout'%}">Services</a>
                     </li>

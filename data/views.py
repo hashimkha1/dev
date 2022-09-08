@@ -1,6 +1,8 @@
 from typing import List
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, JsonResponse
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -189,11 +191,13 @@ class RoleListView(LoginRequiredMixin, ListView):
 
 
 class ResumeView(LoginRequiredMixin, CreateView):
+    queryset = JobRole.objects.all()
     model = Interviews
     form_class = InterviewForm
     template_name = "data/interview/interview_progress/resume.html"
     success_url = "/data/project_story"
-    # fields = ["category", "doc", "link", "answer_to_question"]
+    interviews = Interviews.objects.all()
+    form= InterviewForm
 
     def form_valid(self, form):
         form.instance.client = self.request.user
@@ -319,6 +323,31 @@ class ClientInterviewListView(ListView):
 class InterviewDetailView(DetailView):
     model = Interviews
     ordering = ["-upload_date"]
+
+# @method_decorator(login_required, name="dispatch")
+# class QuestionDetailView(DetailView):
+#     model = Interviews
+#     ordering = ["-upload_date"]
+
+
+
+def questionview(request, question_type=None, *args, **kwargs):
+    instance = JobRole.objects.get_by_question(question_type)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/interview/interview_progress/{question_type}s.html'
+    url=f'data/interview/interview_progress/questions.html'
+    # url="data/interview/interview_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "interviews": Interviews.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
 
 @method_decorator(login_required, name="dispatch")
