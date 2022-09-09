@@ -297,6 +297,17 @@ class TestingView(LoginRequiredMixin, CreateView):
         form.instance.question_type = "testing"
         return super().form_valid(form)
 
+class InterviewCreateView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_form.html"
+    success_url = "/data/iuploads/"
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        # form.instance.question_type = "testing"
+        return super().form_valid(form)
+
 
 @method_decorator(login_required, name="dispatch")
 class InterviewListView(ListView):
@@ -455,6 +466,24 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+def categorydetail(request, title=None, *args, **kwargs):
+    instance = FeaturedCategory.objects.get_by_category(title)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/training/training_progress/{title}s.html'
+    url=f'data/training/training_progress/training.html'
+    # url="data/training/training_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "categories": FeaturedCategory.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
+
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
@@ -466,6 +495,23 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+def subcategorydetail(request, title=None, *args, **kwargs):
+    instance = FeaturedSubCategory.objects.get_by_category(title)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/training/training_progress/{title}s.html'
+    url=f'data/training/training_progress/training.html'
+    # url="data/training/training_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "categories": FeaturedSubCategory.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):

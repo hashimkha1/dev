@@ -51,7 +51,7 @@
                 </li>
               </ol>
               <div class="content-section text-dark h6">
-                <form action="{% url 'data:question-detail' object.question_type|capfirst %}" method="POST">
+                <form action="/data/iuploads/" method="POST">
                   {% csrf_token %}
                   <fieldset class="form-group">
                     <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>

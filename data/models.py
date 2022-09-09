@@ -281,7 +281,7 @@ class FeaturedSubCategory(models.Model):
         # return reverse('data:subcategory-detail', kwargs={'title': self.title})
     
     def get_url(self):
-        return reverse("data:category-detail", args=[self.title])
+        return reverse("data:subcategory-detail", args=[self.title])
 
     def __str__(self):
         return self.title

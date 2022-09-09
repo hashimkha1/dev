@@ -20,7 +20,7 @@ from data.views import (
     InterviewUpdateView,
     InterviewDeleteView,
     InterviewListView,
-    # InterviewCreateView,
+    InterviewCreateView,
     JobCreateView,
     JobListView,
     # MethodologyView,TrackDeleteView, TrackDetailView,
@@ -72,11 +72,11 @@ urlpatterns = [
     path("pay/", views.pay, name="pay"),
     # Interview/Assignment Section
     # ----------------------CREATION----------------------------------------------------
-    # path(
-    #     "uploadinterview/",
-    #     InterviewCreateView.as_view(template_name="data/interview/interview_form.html"),
-    #     name="uploadinterview",
-    # ),
+    path(
+        "uploadinterview/",
+        InterviewCreateView.as_view(),
+        name="uploadinterview",
+    ),
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
@@ -148,8 +148,8 @@ urlpatterns = [
     # path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
     path("dsu/new", views.dsu_entry, name="dsu_entry"),
     # ----------------------List----------------------------------------------------
-    # path('<str:title>/', views.categorydetail, name='category-detail'),
-    # path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
+    path('<str:title>/', views.categorydetail, name='category-detail'),
+    path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     # path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path("dsu/", DSUListView.as_view(), name="dsu"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
