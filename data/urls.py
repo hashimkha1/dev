@@ -148,8 +148,8 @@ urlpatterns = [
     # path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
     path("dsu/new", views.dsu_entry, name="dsu_entry"),
     # ----------------------List----------------------------------------------------
-    path('<str:title>/', views.categorydetail, name='category-detail'),
-    path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
+    # path('<str:title>/', views.categorydetail, name='category-detail'),
+    # path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     # path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
     path("dsu/", DSUListView.as_view(), name="dsu"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
