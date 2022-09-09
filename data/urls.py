@@ -52,7 +52,7 @@ urlpatterns = [
     path("interview/", views.interview, name="interview"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),
-    path("resumes/", views.ResumeView, name="resumes"),
+    path("resume/", views.ResumeView.as_view(), name="resume"),
     path("project_story/", ProjectStoryView.as_view(), name="project_story"),
     path("introduction/", views.IntroductionView.as_view(), name="introduction"),
     path("sdlc/", views.SDLCView.as_view(), name="sdlc"),
@@ -118,21 +118,21 @@ urlpatterns = [
     # TRAINING SECTION
     # ----------------------Creation----------------------------------------------------
     path(
-        "category/new",
+        "newcategory/",
         FeaturedCategoryCreateView.as_view(
             template_name="data/training/form_templates/task_form.html"
         ),
         name="featuredcategory",
     ),
     path(
-        "subcategory/new",
+        "newsubcategory/",
         FeaturedSubCategoryCreateView.as_view(
             template_name="data/training/form_templates/task_form.html"
         ),
         name="featuredsubcategory",
     ),
     path(
-        "activity/new",
+        "newactivity/",
         FeaturedActivityCreateView.as_view(
             template_name="data/training/form_templates/task_form.html"
         ),
@@ -148,10 +148,13 @@ urlpatterns = [
     # path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
     path("dsu/new", views.dsu_entry, name="dsu_entry"),
     # ----------------------List----------------------------------------------------
-    path("dsu/", DSUListView.as_view(), name="dsu"),
+    path('<str:title>/', views.categorydetail, name='category-detail'),
+    path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     # path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
+    path("dsu/", DSUListView.as_view(), name="dsu"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
     path("updatelist/", views.table_activity_view, name="activity-list"),
+    
     # ----------------------Update----------------------------------------------------
     path(
         "category/<int:pk>/update",

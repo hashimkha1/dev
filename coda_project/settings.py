@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -104,6 +104,8 @@ TEMPLATES = [
                 "management.context_processors.categories",
                 "management.context_processors.departments",
                 "data.context_processors.roles",
+                "data.context_processors.categories",
+                "data.context_processors.subcategories",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',
