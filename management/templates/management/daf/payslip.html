@@ -1,8 +1,11 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{% extends "main/base_templates/base.html" %}
 {% load static %}
+
 {% block title %}
 <!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
-{% endblock %}
+{% endblock title %}
+
+{% block content %}
 <div>
     <img src="\media\banner\banner.jpg" class="d-block img-fluid" width="1500px" alt="banner" />
 </div>
@@ -11,9 +14,9 @@
     <div class="row">
         <div class="col-md-12">
             <div class="text-center lh-1 mb-2">
-                <h6 class="fw-bold">Payslip</h6> <span class="fw-normal">Payment slip for the month of {{deadline_date|date:"F d,Y"}}</span>
+                <h6 class="fw-bold">Payslip</h6> <span class="fw-normal">Payment slip for the month of {{ deadline_date|date:"F d,Y" }}</span>
               </div>
-            <div class="d-flex justify-content-end"> <span>Working Branch:MAKUTANO</span> </div>
+            <div class="d-flex justify-content-end"> <span>Working Branch: MAKUTANO</span> </div>
             <div class="row">
                 <div class="col-md-10">
                     <div class="row">
@@ -21,13 +24,12 @@
                             <div> <span class="fw-bolder">EMP Code</span> <small class="ms-3">CODA0274</small> </div>
                         </div>
                         <div class="col-md-6">
-                            <div> <span class="fw-bolder">EMP Name</span> <small class="ms-3"> {{user.first_name|upper }}</small>
+                            <div> <span class="fw-bolder">EMP Name</span> <small class="ms-3"> {{ user.first_name|upper }}</small>
                             </div>
                         </div>
                     </div>
 
                     <div class="row">
-
                         <div class="col-md-6">
                             <div> <span class="fw-bolder">Mode of Pay</span> <small class="ms-3">MPESA</small> </div>
                         </div>
@@ -38,7 +40,7 @@
                                 </small> </div>
                         </div>
                         <div class="col-md-6">
-                            <div> <span class="fw-bolder">Ac No./Phone No.</span> <small class="ms-3">{{user.phone|upper}}</small>
+                            <div> <span class="fw-bolder">Ac No./Phone No.</span> <small class="ms-3">{{ user.phone|upper }}</small>
                             </div>
                         </div>
                     </div>
@@ -54,72 +56,83 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Total Earnings</th>
-                            <td>{{total_pay}}</td>
+                            <td>Earnings</td>
+                            <td>{{ earned_salary }}</td>
                             <td>Training Loan</td>
-                            <td>{{loan}}</td>
+                            <td>{{ deductions.loan_deduction }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Points Earnings</th>
-                            <td>{{pointsearning}}</td>
+                            <td>Points:</td>
+                            <td>{{ bonus.points_earned }}</td>
                             <td>FA</td>
-                            <td>{{food_accomodation}}</td>
+                            <td>{{ deductions.food_accommodation }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">EOM</th>
-                            <td>0.00</td>
+                            <td>EOM</td>
+                            <td>{{ bonus.EOM }}</td>
                             <td>CM</td>
-                            <td>{{computer_maintenance}}</td>
+                            <td>{{ deductions.computer_maintenance }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">EOQ</th>
-                            <td>0.00 </td>
+                            <td>EOQ</td>
+                            <td>{{ bonus.EOQ }}</td>
                             <td>Health Care</td>
-                            <td>{{health}}</td>
+                            <td>{{ deductions.health }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">EOY</th>
-                            <td>0.00 </td>
+                            <td>EOY</td>
+                            <td>{{ bonus.EOQ }}</td>
                             <td>LS</td>
-                            <td>{{laptop_saving}}</td>
+                            <td>{{ deductions.ls_amount }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Laptop Bonus</th>
-                            <td>{{laptop_bonus}}</td>
+                            <td>Laptop Bonus</td>
+                            <td>{{ bonus.lb_amount }}</td>
+                            <td>KRA</td>
+                            <td>{{ deductions.kra }}</td>
+                        </tr>
 
-                        </tr>
-
                         <tr>
-                            <th scope="row">Holiday Wages</th>
-                            <td>{{holidaypay}}</td>
-                            <td colspan="6"></td>
-                        </tr>
-                        <tr>
-                            <th scope="row">Night Allowance</th>
-                            <td>{{Night_Bonus}}</td>
-                            <td colspan="2"></td>
+                            <td>Holiday Wages</td>
+                            <td>{{ bonus.holiday_pay }}</td>
+                            <td> </td>
+                            <td> </td>
                         </tr>
                         <tr>
-                            <th scope="row">Retirement Yearly Package</th>
-                            <td>{{yearly}}</td>
-                            <td colspan="2"></td>
+                            <td>Night Allowance</td>
+                            <td>{{ bonus.night_bonus }}</td>
+                            <td> </td>
+                            <td> </td>
+                        </tr>
+                        <tr>
+                            <td>Retirement Yearly Package</td>
+                            <td>{{ rp_amount }}</td>
+                            <td> </td>
+                            <td> </td>
                         </tr>
 
                         <tr class="border-top">
-                            <th scope="row">Total Earning</th>
-                            <td>{{net}}</td>
+                            <td>Total Earning</td>
+                            <td>{{ total_earning }}</td>
                             <td>Total Deductions</td>
-                            <td>{{total_deduction}}</td>
+                            <td>{{ total_deductions }}</td>
+                        </tr>
+
+                        <tr class="border-top">
+                            <td> </td>
+                            <td> </td>
+                            <td>Net Earning</td>
+                            <td>{{ net_earning }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="row">
-                <div class="col-md-4"> 
-                    <br> <span class="fw-bold">Net Pay : {{net}}</span> <br />
-                    {% if balance_amount > 0 %}
-                        <span class="fw-bold">Balance Amount : {{balance_amount}}</span> 
-                    {% endif %} 
+                <div class="col-md-4">
+                    <br> <span class="fw-bold">Net Pay : {{ net_pay }}</span> <br />
+                    {% if loan_balance > 0 %}
+                        <span class="fw-bold">Balance Amount : {{ loan_balance }}</span>
+                    {% endif %}
                 </div>
                 <div class="border col-md-8">
                     <div class="d-flex flex-column"> <span>In Words</span> <span>Translate</span> </div>

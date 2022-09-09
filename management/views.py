@@ -43,10 +43,21 @@ from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from accounts.models import Tracker, Department, TaskGroups
+
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
+
+from accounts.models import Tracker, Department, TaskGroups
+from .models import (
+    PayslipConfig,
+    Payslip,
+    RetirementPackage,
+    Loan,
+    LaptopBonus,
+    LaptopSaving,
+    MonthlyPoints
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -960,6 +971,168 @@ def payslip(request, user=None, *args, **kwargs):
         return render(request, "management/daf/payslip.html", context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
+
+
+def default_payslip(request, *args, **kwargs):
+    received_username = kwargs.get('username')
+    employee = None
+    if request.user.is_superuser and received_username is not None:
+        logger.debug(f'received_username: {received_username}')
+        try:
+           employee = get_user_model().objects.get(username=received_username)
+        except:
+            pass
+    elif request.user.id:
+        logger.debug(f'request.user.id: {request.user.id}')
+        # employee = get_object_or_404(User, id=int(request.user.id))
+        try:
+            employee = get_user_model().objects.get(id=int(request.user.id))
+        except:
+            pass
+    logger.debug(f'employee: {employee}')
+    if not employee:
+        raise Http404("Login and try again!")
+
+    today = date.today()
+    month = today.strftime("%Y-%m")
+    logger.debug(f'month: {month}')
+
+    tasks = Task.objects.all().filter(employee=employee, submission__contains=month)
+    logger.debug(f'tasks: {tasks}')
+
+    # if not tasks:
+    #     raise Http404("No tasks found!")
+
+    earned_salary = Decimal(0)
+    points_earned = Decimal(0)
+    for t in tasks:
+        earned_salary = earned_salary + t.get_pay
+        points_earned = points_earned + Decimal(t.point)
+    logger.debug(f'earned_salary: {earned_salary}')
+    logger.debug(f'points: {points_earned}')
+
+    payslip_config_obj = PayslipConfig.objects.get(user=employee)
+    # logger.debug(f'payslip_config_obj: {payslip_config_obj}')
+
+    # Bonus and Deductions
+    loan_status = payslip_config_obj.loan_status
+    computer_maintenance = Decimal(0)
+    if loan_status is True:
+        loan_deduction = earned_salary * payslip_config_obj.loan_repayment_percentage
+        logger.debug(f'loan_deduction: {loan_deduction}')
+
+        # loan_balance = Loan.objects.filter(user=employee).latest('balance')
+        # loan_balance = Decimal(0)
+
+        last_month = today + relativedelta(months=-1)
+        last_month = last_month.strftime("%Y-%m")
+        logger.debug(f'last_month: {last_month}')
+        loan_balance = Loan.objects.get(user=employee, period__contains=last_month).balance
+        logger.debug(f'loan_balance: {loan_balance}')
+
+        if loan_balance <= loan_deduction:
+            loan_deduction = loan_balance
+            loan_balance = Decimal(0)
+        else:
+            loan_balance = loan_balance - loan_deduction
+    else:
+        # if employee use company computer, add the charge to the deductions.
+        computer_maintenance = payslip_config_obj.computer_maintenance
+
+    lb_amount = Decimal(0)
+    ls_amount = Decimal(0)
+    laptop_status = payslip_config_obj.laptop_status
+    if laptop_status:
+        lb_amount = payslip_config_obj.lb_amount
+    else:
+        ls_amount = payslip_config_obj.ls_amount
+        ls_total = LaptopSaving.objects.filter(user=employee).latest('total')
+        ls_max_limit = payslip_config_obj.ls_max_limit
+
+        if (ls_amount + ls_total) > ls_max_limit:
+            ls_amount = ls_max_limit - ls_total
+
+    kra = earned_salary * payslip_config_obj.kra_percentage
+    food_accommodation = payslip_config_obj.food_accommodation
+    health = payslip_config_obj.health
+
+    deductions = {
+        'computer_maintenance': round(computer_maintenance, 2),
+        'food_accommodation': round(food_accommodation, 2),
+        'health': round(health, 2),
+        'kra': round(kra, 2),
+        'loan_deduction': round(loan_deduction, 2),
+        'ls_amount': round(ls_amount, 2),
+    }
+
+    total_deductions = Decimal(0)
+    for val in deductions.values():
+        total_deductions = total_deductions + val
+
+    # if employee working on night or different timezone will get a bonus. 2% of the total pay.
+    night_bonus = earned_salary * payslip_config_obj.night_bonus_percentage
+
+    # we should create an attendance system, who mark an attendance of every employee.
+    # leave it for the time being.
+    if month in (12, 1):
+        holiday_pay = payslip_config_obj.holiday_pay
+    else:
+        holiday_pay = Decimal(0)
+
+    monthly_point_obj = MonthlyPoints.objects.get(user=employee, period__contains=month)
+    if not monthly_point_obj:
+        monthly_point_obj = MonthlyPoints(user=employee, period=today, points=points_earned)
+    else:
+        monthly_point_obj.points = points_earned
+    monthly_point_obj.save()
+
+    EOM = Decimal(0)  # employee of month
+    EOQ = Decimal(0)  # employee of quarter
+    EOY = Decimal(0)  # employee of year
+
+    # retirement package
+    rp_amount = payslip_config_obj.rp_starting_amount + (earned_salary * payslip_config_obj.rp_increment_percentage)
+
+    bonus = {
+        'EOM': round(EOM, 2),
+        'EOQ': round(EOQ, 2),
+        'EOY': round(EOY, 2),
+        'holiday_pay': round(holiday_pay, 2),
+        'lb_amount': round(lb_amount, 2),
+        'night_bonus': round(night_bonus, 2),
+        'points_earned': round(points_earned, 2),
+    }
+
+    total_bonus = Decimal(0)
+    for val in bonus.values():
+        total_bonus = total_bonus + val
+
+    # Net Pay
+    total_earning = earned_salary + total_bonus
+    net_earning = total_earning - total_deductions
+    round_off = round(net_earning) - net_earning
+    net_pay = net_earning + round_off
+
+    deadline_date = date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+
+    context = {
+        'user': employee,
+        'earned_salary': round(earned_salary, 2),
+        'bonus': bonus,
+        'total_bonus': round(total_bonus, 2),
+        'deductions': deductions,
+        'total_deductions': round(total_deductions, 2),
+        'rp_amount': round(rp_amount, 2),
+        'total_earning': round(total_earning, 2),
+        'net_earning': round(net_earning, 2),
+        'net_pay': round(net_pay, 2),
+        'loan_balance': round(loan_balance, 2),
+    }
+    return render(request, "management/daf/payslip.html", context)
 
 
 class TaskDetailView(DetailView):

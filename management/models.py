@@ -468,9 +468,6 @@ class Tag(models.Model):
         return self.title
 
 
-
-
-
 class TaskQuerySet(models.query.QuerySet):
     def active(self):
         return self.filter(is_active=True)
@@ -930,4 +927,132 @@ class LBandLS(models.Model):
 
     def __str__(self):
         return self.user.username
-        
+
+
+class PayslipConfig(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    # configs for loan
+    loan_status = models.BooleanField(default=True)
+    loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+    loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
+
+    # configs for laptop service
+    laptop_status = models.BooleanField(default=True)
+    lb_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    ls_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+
+    # configs for retirement package
+    rp_starting_period = models.DateField()
+    rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
+    rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+    rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
+    rp_increment_percentage_increment = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+    rp_increment_percentage_increment_cycle = models.IntegerField(default=12)
+
+    # configs for bonus
+    holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
+    night_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+
+    # configs for deductions
+    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+    food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+    kra_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.30)
+
+
+class Payslip(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    # month and year of period we are paying
+    period = models.DateField()
+
+    # points based on the work the employee done
+    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # earnings calculated based on points
+    earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # benefits
+    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # retirement_package is long term benefit and does not affect the net pay
+    retirement_package = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # deductions
+    training_loan = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_service = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    @property
+    def get_monthly_benefits(self):
+        return (
+            'EOM',
+            'EOQ',
+            'EOY',
+            'laptop_bonus',
+            'holiday_wages',
+            'night_allowance'
+        )
+
+    @property
+    def get_monthly_deductions(self):
+        return (
+            'training_loan',
+            'FA',
+            'computer_maintenance',
+            'health_care',
+            'laptop_service'
+        )
+
+
+class RetirementPackage(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Loan(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField(unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopBonus(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopSaving(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class MonthlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    points = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class QuarterlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    points = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class YearlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.DateField()
+    points = models.DecimalField(max_digits=10, decimal_places=2)
