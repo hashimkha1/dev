@@ -7,49 +7,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from data.modelmanager import(
+                                InterviewQuerySet,InterviewManager,
+                                RoleQuerySet,RoleManager,
+                                CategoryManager,SubCategoryManager
 
+                             )
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
-
-# ==================================INTERVIEWS====================================
-class InterviewQuerySet(models.query.QuerySet):
-    def active(self):
-        return self.filter(is_active=True)
-
-    def featured(self):
-        return self.filter(featured=True, is_active=True)
-
-    def search(self, query):
-        lookups = (
-            Q(category__icontains=query)
-            | Q(question_type__icontains=query)
-            | Q(last_name__icontains=query)
-            | Q(first_name__icontains=query)
-            | Q(upload_date__icontains=query)
-            | Q(username__username__icontains=query)
-        )
-        return self.filter(lookups).distinct()
-
-
-class InterviewManager(models.Manager):
-    def get_queryset(self):
-        # return super(TaskManager, self).get_queryset().filter(is_active=True)
-        return InterviewQuerySet(self.model, using=self._db)
-
-    def all(self):
-        return self.get_queryset()
-
-    """ def featured(self):
-        return self.get_queryset().featured() """
-
-    def get_by_slug(self, slug):
-        qs = self.get_queryset().filter(slug=slug)
-        if qs.count() == 1:
-            return qs.first()
-        return None
-
-    def search(self, query):
-        return self.get_queryset().active().search(query)
 
 
 #Interview Model
@@ -125,7 +90,7 @@ class JobRole(models.Model):
     desc2=models.TextField(max_length=1000,blank=True, null=True)
     is_active=models.BooleanField(default=True)
 
-    # objects=InterviewManager()
+    objects=RoleManager()
 
     class Meta:
         verbose_name_plural = 'Roles'  
@@ -136,11 +101,10 @@ class JobRole(models.Model):
         else:
             return self.doc
 
-    def __str__(self):
-        return f'{self.category} upload'
-
-    
-
+    def get_url(self):
+        return reverse("data:question-detail", args=[self.question_type])
+    # def __str__(self):
+    #     return f'{self.question_type}'
 
 
 # Interviews Model
@@ -269,6 +233,8 @@ class FeaturedCategory(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.IntegerField(default=1)
 
+    objects=CategoryManager()
+
     class Meta:
         verbose_name_plural = "Categories"
 
@@ -279,8 +245,11 @@ class FeaturedCategory(models.Model):
         )
         return cat.pk
 
-    def get_absolute_url(self):
-        return reverse("bitraining")
+    # def get_absolute_url(self):
+    #     return reverse("bitraining")
+
+    def get_url(self):
+        return reverse("data:category-detail", args=[self.title])
 
     def __str__(self):
         return self.title
@@ -303,11 +272,16 @@ class FeaturedSubCategory(models.Model):
     # link_name=models.CharField(max_length=255, default='General')
     is_active = models.IntegerField(default=1)
 
+    objects=SubCategoryManager()
+
     class Meta:
         verbose_name_plural = "Subcategories"
 
-    def get_absolute_url(self):
-        return reverse("bitraining")
+    # def get_absolute_url(self):
+        # return reverse('data:subcategory-detail', kwargs={'title': self.title})
+    
+    def get_url(self):
+        return reverse("data:category-detail", args=[self.title])
 
     def __str__(self):
         return self.title
