@@ -15,11 +15,15 @@ from pickle import TRUE
 import django_heroku
 import redis
 
+# IS_HEROKU = "DYNO" in os.environ
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
+if 'SECRET_KEY' in os.environ:
+    SECRET_KEY = os.environ["SECRET_KEY"]
 
 
 ALLOWED_HOSTS = ["*"]
@@ -28,6 +32,7 @@ ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
+# django_heroku.settings(locals())
 
 # Application definition
 INSTALLED_APPS = [
@@ -108,6 +113,38 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
+
+
+# Database
+# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
+
+import dj_database_url
+
+# # postgresql database
+
+# DATABASES = {
+#     "default": {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dacklsu0f9d0nv',# Name of Database
+#         'USER':'qmhjnqmfflxpqi',
+#         'PASSWORD': 'bb7d8cb419d001e50b80fa39fb1ff20bcdd266636d36a694a51df18cbc042c98', #os.environ.get('POSTGRESSPASS'),
+#         'HOST': '5432',
+#     }
+# }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "das6459qgcjbmv",  # Name of Database
+        "USER": "xgsxxbmwywwmoj",
+        "PASSWORD": "91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1",  # os.environ.get('POSTGRESSPASS'),
+        "HOST": "ec2-3-223-169-166.compute-1.amazonaws.com",
+    }
+}
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+
+DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
