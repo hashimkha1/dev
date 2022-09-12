@@ -944,7 +944,7 @@ class PayslipConfig(models.Model):
     ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
 
     # configs for retirement package
-    rp_starting_period = models.DateField()
+    rp_starting_period = models.CharField(max_length=10, unique=True)
     rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
     rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
     rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
@@ -962,11 +962,55 @@ class PayslipConfig(models.Model):
     kra_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.30)
 
 
+class RetirementPackage(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Loan(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopBonus(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopSaving(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class MonthlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    points = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class QuarterlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    points = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class YearlyPoints(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10, unique=True)
+    points = models.DecimalField(max_digits=10, decimal_places=2)
+
+
 class Payslip(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     # month and year of period we are paying
-    period = models.DateField()
+    period = models.CharField(max_length=10, unique=True)
 
     # points based on the work the employee done
     points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
@@ -978,19 +1022,19 @@ class Payslip(models.Model):
     EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_bonus = models.OneToOneField(LaptopBonus, on_delete=models.CASCADE)
     holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # retirement_package is long term benefit and does not affect the net pay
-    retirement_package = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
 
     # deductions
-    training_loan = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    loan = models.OneToOneField(Loan, on_delete=models.CASCADE)
     FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_service = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
 
     @property
     def get_monthly_benefits(self):
@@ -1012,47 +1056,3 @@ class Payslip(models.Model):
             'health_care',
             'laptop_service'
         )
-
-
-class RetirementPackage(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class Loan(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField(unique=True)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class LaptopBonus(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class LaptopSaving(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class MonthlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    points = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class QuarterlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    points = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class YearlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.DateField()
-    points = models.DecimalField(max_digits=10, decimal_places=2)

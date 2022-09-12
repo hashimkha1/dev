@@ -317,8 +317,7 @@ def newtaskcreation(request):
         for emp in employee:
             for act in activitys:
                 if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
-                    des, po, maxpo, maxear = \
-                    Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
+                    des, po, maxpo, maxear = Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
                         category_id=category, activity_name=act)[0]
 
                     if Task.objects.filter(groupname_id=group, category_id=category, activity_name=act).count() == 0:
@@ -677,8 +676,7 @@ def usertask(request, user=None, *args, **kwargs):
     average_earnings = average_earnings / counter
     if average_earnings == 0:
         average_earnings = GoalAmount
-    else:
-        average_earnings
+
     # try:
     #     average_earnings = average_earnings / counter 
     # except Exception as ZeroDivisionError:
@@ -991,6 +989,7 @@ def default_payslip(request, *args, **kwargs):
             pass
     logger.debug(f'employee: {employee}')
     if not employee:
+        logger.error('employee is not found!')
         raise Http404("Login and try again!")
 
     today = date.today()
@@ -1000,8 +999,9 @@ def default_payslip(request, *args, **kwargs):
     tasks = Task.objects.all().filter(employee=employee, submission__contains=month)
     logger.debug(f'tasks: {tasks}')
 
-    # if not tasks:
-    #     raise Http404("No tasks found!")
+    if not tasks:
+        logger.error('there is no task in the database!')
+        raise Http404("No tasks found!")
 
     earned_salary = Decimal(0)
     points_earned = Decimal(0)
@@ -1011,7 +1011,11 @@ def default_payslip(request, *args, **kwargs):
     logger.debug(f'earned_salary: {earned_salary}')
     logger.debug(f'points: {points_earned}')
 
-    payslip_config_obj = PayslipConfig.objects.get(user=employee)
+    try:
+        payslip_config_obj = PayslipConfig.objects.get(user=employee)
+    except:
+        logger.error('payslip configuration for this employee is not found!')
+        raise Http404("No Payslip Configuration found!")
     # logger.debug(f'payslip_config_obj: {payslip_config_obj}')
 
     # Bonus and Deductions
@@ -1027,14 +1031,19 @@ def default_payslip(request, *args, **kwargs):
         last_month = today + relativedelta(months=-1)
         last_month = last_month.strftime("%Y-%m")
         logger.debug(f'last_month: {last_month}')
-        loan_balance = Loan.objects.get(user=employee, period__contains=last_month).balance
+
+        try:
+            loan_balance = Loan.objects.filter(user=employee, period__contains=last_month).balance
+            if loan_balance <= loan_deduction:
+                loan_deduction = loan_balance
+                loan_balance = Decimal(0)
+            else:
+                loan_balance = loan_balance - loan_deduction
+        except:
+            loan_balance = 0
+            loan_deduction = 0
         logger.debug(f'loan_balance: {loan_balance}')
 
-        if loan_balance <= loan_deduction:
-            loan_deduction = loan_balance
-            loan_balance = Decimal(0)
-        else:
-            loan_balance = loan_balance - loan_deduction
     else:
         # if employee use company computer, add the charge to the deductions.
         computer_maintenance = payslip_config_obj.computer_maintenance
