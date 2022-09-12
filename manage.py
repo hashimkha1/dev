@@ -13,7 +13,7 @@ def main():
     load_dotenv()
     logging.basicConfig(
         filename='logs.log',
-        filemode='w',
+        filemode='a',
         format='%(asctime)s - %(pathname)s - \n\t %(levelname)s - %(message)s',
         level=logging.DEBUG
     )

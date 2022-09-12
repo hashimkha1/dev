@@ -12,7 +12,16 @@ from management.models import (
     Task,
     TaskLinks,
     TaskHistory,
-Advertisement,
+    Advertisement,
+    Payslip,
+    PayslipConfig,
+    RetirementPackage,
+    Loan,
+    LaptopBonus,
+    LaptopSaving,
+    MonthlyPoints,
+    QuarterlyPoints,
+    YearlyPoints
 )
 from accounts.models import TaskGroups
 
@@ -74,8 +83,8 @@ class TransactionAdmin(admin.ModelAdmin):
 class AdsAdmin(admin.ModelAdmin):
     list_display = ("facebook_page_id", "page_name", "created_at")
 
-admin.site.register(Transaction, TransactionAdmin)
 
+admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Policy)
 admin.site.register(Task)
@@ -85,6 +94,15 @@ admin.site.register(Tag)
 admin.site.register(Requirement)
 admin.site.register(Advertisement, AdsAdmin)
 admin.site.register(TaskGroups)
+
+admin.site.register(Payslip)
+admin.site.register(PayslipConfig)
+admin.site.register(RetirementPackage)
+admin.site.register(Loan)
+admin.site.register(LaptopSaving)
+admin.site.register(MonthlyPoints)
+admin.site.register(QuarterlyPoints)
+admin.site.register(YearlyPoints)
 
 """
 admin.site.register(Employee)

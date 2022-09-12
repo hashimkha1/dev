@@ -944,7 +944,7 @@ class PayslipConfig(models.Model):
     ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
 
     # configs for retirement package
-    rp_starting_period = models.CharField(max_length=10, unique=True)
+    rp_starting_period = models.CharField(max_length=10)
     rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
     rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
     rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
@@ -961,48 +961,52 @@ class PayslipConfig(models.Model):
     health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
     kra_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.30)
 
+    # employee of the month, quarter and year
+    eom_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+    eoq_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+    eoy_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+
 
 class RetirementPackage(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class Loan(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     balance = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class LaptopBonus(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class LaptopSaving(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class MonthlyPoints(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     points = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class QuarterlyPoints(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     points = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class YearlyPoints(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
     points = models.DecimalField(max_digits=10, decimal_places=2)
 
 
@@ -1010,13 +1014,13 @@ class Payslip(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
     # month and year of period we are paying
-    period = models.CharField(max_length=10, unique=True)
+    period = models.CharField(max_length=10)
 
     # points based on the work the employee done
     points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # earnings calculated based on points
-    earnings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     # benefits
     EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
