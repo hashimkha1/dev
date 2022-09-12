@@ -980,7 +980,7 @@ def prefix_zero(month:int) -> str:
     return str(month) if month > 9 else '0' + str(month)
 
 
-def generate_monthly_points(employee, month, year, points_earned):
+def monthly_points_update(employee, year, month, points_earned):
     period = str(year) + '-' + prefix_zero(month)
     try:
         monthly_point_obj = MonthlyPoints.objects.get(user=employee, period__contains=period)
@@ -990,14 +990,11 @@ def generate_monthly_points(employee, month, year, points_earned):
     finally:
         monthly_point_obj.save()
 
-    eom_user_obj = MonthlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
-    logger.debug(f'eom_user_obj: {eom_user_obj}')
-    logger.debug(f'eom_user_obj.user: {eom_user_obj.user}')
-
-    return eom_user_obj.user
+    quarterly_points_update(employee,year, month)
+    yearly_points_update(employee, year)
 
 
-def generate_quarterly_points(employee, year, month):
+def quarterly_points_update(employee, year, month):
     first_month = prefix_zero(month - 2)
     second_month = prefix_zero(month - 1)
     third_month = prefix_zero(month)
@@ -1005,15 +1002,14 @@ def generate_quarterly_points(employee, year, month):
     logger.debug(f'second_month: {second_month}')
     logger.debug(f'third_month: {third_month}')
 
-    quarterly_points_obj = MonthlyPoints.objects.filter(
+    monthly_points_obj = MonthlyPoints.objects.filter(
         Q(period__contains = str(year) + '-' + first_month)
         | Q(period__contains = str(year) + '-' + second_month)
         | Q(period__contains = str(year) + '-' + third_month),
         user=employee,
     )
-    logger.debug(f'quarterly_points_obj: {quarterly_points_obj}')
-
-    quarterly_points = quarterly_points_obj.aggregate(Sum('points')).get('points__sum')
+    logger.debug(f'monthly_points_obj: {monthly_points_obj}')
+    quarterly_points = monthly_points_obj.aggregate(Sum('points')).get('points__sum')
     logger.debug(f'quarterly_points: {quarterly_points}')
 
     # what quarter we are working on?
@@ -1031,21 +1027,52 @@ def generate_quarterly_points(employee, year, month):
         quarterly_point_obj.save()
     logger.debug(f'quarterly_point_obj: {quarterly_point_obj}')
 
+
+def yearly_points_update(employee, year):
+    quarterly_points_obj = QuarterlyPoints.objects.filter(
+        user=employee,
+        period__contains=year
+    )
+    logger.debug(f'quarterly_points_obj: {quarterly_points_obj}')
+    yearly_points = quarterly_points_obj.aggregate(Sum('points')).get('points__sum')
+    logger.debug(f'quarterly_points: {yearly_points}')
+
+    try:
+        yearly_point_obj = YearlyPoints.objects.get(user=employee, period=year)
+        yearly_point_obj.points = yearly_points
+    except:
+        yearly_point_obj = YearlyPoints(user=employee, period=year, points=yearly_points)
+    finally:
+        yearly_point_obj.save()
+    logger.debug(f'quarterly_point_obj: {yearly_point_obj}')
+
+
+def eom_user(period):
+    eom_user_obj = MonthlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
+    logger.debug(f'eom_user_obj: {eom_user_obj}')
+    logger.debug(f'eom_user_obj.user: {eom_user_obj.user}')
+    return eom_user_obj.user
+
+
+def eoq_user(period):
     eoq_user_obj = QuarterlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
     logger.debug(f'eom_user_obj: {eoq_user_obj}')
     logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
-
     return eoq_user_obj.user
 
 
-def generate_yearly_points(employee, period, points_earned):
-    return None
+def eoy_user(year):
+    eoq_user_obj = YearlyPoints.objects.annotate(max=Max('points')).get(period__contains=year)
+    logger.debug(f'eom_user_obj: {eoq_user_obj}')
+    logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
+    return eoq_user_obj.user
 
 
 def generate_payslip(employee, year, month):
     period = str(year) + '-' + prefix_zero(month)
     logger.debug(f'period: {period}')
 
+    quarter = str(year) + '-' + str(month//3)
     tasks = Task.objects.all().filter(employee=employee, submission__contains=period)
     logger.debug(f'tasks: {tasks}')
 
@@ -1149,22 +1176,13 @@ def generate_payslip(employee, year, month):
     eom = Decimal(0)  # employee of month
     eoq = Decimal(0)  # employee of quarter
     eoy = Decimal(0)  # employee of year
-
-    if month == 12:
-        eoy_user = generate_yearly_points(employee, year, month)
-        if eoy_user == employee:
-            eoy = round(earned_salary * payslip_config_obj.eoy_bonus_percentage, 2)
-
-    elif month % 3 == 0:
-        eoq_user = generate_quarterly_points(employee, year, month)
-        if eoq_user == employee:
-            eoq = round(earned_salary * payslip_config_obj.eoq_bonus_percentage, 2)
-
-    else:
-        eom_user = generate_monthly_points(employee, year, month, points_earned)
-        logger.debug(f'eom_user: {eom_user}')
-        if eom_user == employee:
-            eom = round(earned_salary * payslip_config_obj.eom_bonus_percentage, 2)
+    monthly_points_update(employee, year, month, points_earned)
+    if month == 12 and employee == eoy_user(year):
+        eoy = round(earned_salary * payslip_config_obj.eoy_bonus_percentage, 2)
+    elif month % 3 == 0 and employee == eoq_user(quarter):
+        eoq = round(earned_salary * payslip_config_obj.eoq_bonus_percentage, 2)
+    elif employee == eom_user(period):
+        eom = round(earned_salary * payslip_config_obj.eom_bonus_percentage, 2)
 
     logger.debug(f'eom: {eom}')
     logger.debug(f'eoy: {eoy}')
@@ -1195,12 +1213,7 @@ def generate_payslip(employee, year, month):
 
     return {
         'user': employee,
-        'period': period,
-        'points': points_earned,
-        'earned_pay': round(earned_salary, 2),
-        'EOM': eom,
-
-
+        'earned_salary': round(earned_salary, 2),
         'bonus': bonus,
         'total_bonus': round(total_bonus, 2),
         'deductions': deductions,
@@ -1236,6 +1249,7 @@ def default_payslip(request, *args, **kwargs):
     year = int(today.strftime("%Y"))
 
     context = generate_payslip(employee, year, month)
+    # context = generate_payslip(employee, year, 12)
     return render(request, "management/daf/payslip.html", context)
 
 
