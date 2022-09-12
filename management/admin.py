@@ -3,8 +3,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
-from mptt.admin import MPTTModelAdmin
-from .models import (
+from management.models import (
     Requirement,
     Transaction,
     Inflow,
@@ -13,9 +12,9 @@ from .models import (
     Task,
     TaskLinks,
     TaskHistory,
-    Twitter,
-    Facebook
+Advertisement,
 )
+from accounts.models import TaskGroups
 
 # from .models import Activity, Category, Employee, Transaction , Department
 
@@ -72,6 +71,8 @@ class TransactionAdmin(admin.ModelAdmin):
         data = {"form": form}
         return render(request, "admin/csv_upload.html", data)
 
+class AdsAdmin(admin.ModelAdmin):
+    list_display = ("facebook_page_id", "page_name", "created_at")
 
 admin.site.register(Transaction, TransactionAdmin)
 
@@ -82,8 +83,8 @@ admin.site.register(TaskLinks)
 admin.site.register(TaskHistory)
 admin.site.register(Tag)
 admin.site.register(Requirement)
-admin.site.register(Twitter)
-admin.site.register(Facebook)
+admin.site.register(Advertisement, AdsAdmin)
+admin.site.register(TaskGroups)
 
 """
 admin.site.register(Employee)

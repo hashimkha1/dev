@@ -71,3 +71,15 @@ class Air_Quality_Data(models.Model):
 	air_quality_time = models.CharField(max_length=100,null=True,blank=True)
 	particulate_matter = models.FloatField(null=True, blank=True) # µm 
 	air_quality_index = models.IntegerField(null=True, blank=True) #(0-50--good,51-100--satisfactory,101-200--moderate,201-300 --poor,301-400 --very poor,401-500 --severe)
+
+
+class CashappMail(models.Model):
+	id = models.CharField(max_length=30, unique=True, primary_key=True)
+	from_mail = models.CharField(max_length=255)
+	to_mail = models.CharField(max_length=255)
+	subject = models.CharField(max_length=255)
+	file_name = models.CharField(max_length=50)
+	full_path = models.CharField(max_length=255)
+	text_mail = models.TextField()
+	received_date = models.CharField(max_length=255)
+	parsed_date = models.DateTimeField(auto_now_add=True)

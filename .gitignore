@@ -11,6 +11,12 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
+.idea/
+.vscode/
+.venv/
+/gapi/creds/
+/gapi/stored_mails/
+
 ### Apps ###
 #testing
 

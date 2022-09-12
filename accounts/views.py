@@ -30,7 +30,7 @@ from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
-from management.utils import email_template
+from mail.custom_email import send_email
 from django.http import QueryDict
 import string, random
 
@@ -47,103 +47,108 @@ def thank(request):
 
 
 # ---------------ACCOUNTS VIEWS----------------------
-
-
 def join(request):
     if request.method == "POST":
-        if request.POST.get("category") == "3":
-            student_data = {}
-            student_data["first_name"] = request.POST.get("first_name")
-            student_data["last_name"] = request.POST.get("last_name")
-            student_data["address"] = request.POST.get("address")
-            student_data["category"] = request.POST.get("category")
-            student_data["sub_category"] = request.POST.get("sub_category")
-            student_data["username"] = request.POST.get("username")
-            student_data["password1"] = request.POST.get("password1")
-            student_data["password2"] = request.POST.get("password2")
-            student_data["email"] = request.POST.get("email")
-            student_data["phone"] = request.POST.get("phone")
-            student_data["gender"] = request.POST.get("gender")
-            student_data["city"] = request.POST.get("city")
-            student_data["state"] = request.POST.get("state")
-            student_data["country"] = request.POST.get("country")
-            student_data["resume_file"] = request.POST.get("resume_file")
-            today = date.today()
+        previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
 
-            contract_date = today.strftime("%d %B, %Y")
-            check_default_fee = Default_Payment_Fees.objects.all()
-            if check_default_fee:
-                default_fee = Default_Payment_Fees.objects.get(id=1)
-            else:
-                default_payment_fees = Default_Payment_Fees(
-                    job_down_payment_per_month=500,
-                    job_plan_hours_per_month=30,
-                    student_down_payment_per_month=500,
-                    student_bonus_payment_per_month=100,
-                )
-                default_payment_fees.save()
-                default_fee = Default_Payment_Fees.objects.get(id=1)
-            if (
-                request.POST.get("category") == "3"
-                and request.POST.get("sub_category") == "1"
-            ):
-                return render(
-                    request,
-                    "management/doc_templates/supportcontract_form.html",
-                    {
-                        "job_support_data": student_data,
-                        "contract_date": contract_date,
-                        "default_fee": default_fee,
-                    },
-                )
-            if (
-                request.POST.get("category") == "3"
-                and request.POST.get("sub_category") == "2"
-            ):
-                return render(
-                    request,
-                    "management/doc_templates/trainingcontract_form.html",
-                    {
-                        "student_data": student_data,
-                        "contract_date": contract_date,
-                        "default_fee": default_fee,
-                    },
-                )
+        if len(previous_user) > 0:
+            messages.success(request, f'User already exist with this email')
+            form = UserForm()
+            return redirect("/password-reset")
         else:
-            form = UserForm(request.POST, request.FILES)
+            if request.POST.get("category") == "3":
+                student_data = {}
+                student_data["first_name"] = request.POST.get("first_name")
+                student_data["last_name"] = request.POST.get("last_name")
+                student_data["address"] = request.POST.get("address")
+                student_data["category"] = request.POST.get("category")
+                student_data["sub_category"] = request.POST.get("sub_category")
+                student_data["username"] = request.POST.get("username")
+                student_data["password1"] = request.POST.get("password1")
+                student_data["password2"] = request.POST.get("password2")
+                student_data["email"] = request.POST.get("email")
+                student_data["phone"] = request.POST.get("phone")
+                student_data["gender"] = request.POST.get("gender")
+                student_data["city"] = request.POST.get("city")
+                student_data["state"] = request.POST.get("state")
+                student_data["country"] = request.POST.get("country")
+                student_data["resume_file"] = request.POST.get("resume_file")
+                today = date.today()
+
+                contract_date = today.strftime("%d %B, %Y")
+                check_default_fee = Default_Payment_Fees.objects.all()
+                if check_default_fee:
+                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                else:
+                    default_payment_fees = Default_Payment_Fees(
+                        job_down_payment_per_month=500,
+                        job_plan_hours_per_month=40,
+                        student_down_payment_per_month=500,
+                        student_bonus_payment_per_month=100,
+                    )
+                    default_payment_fees.save()
+                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                if (
+                    request.POST.get("category") == "3"
+                    and request.POST.get("sub_category") == "1"
+                ):
+                    return render(
+                        request,
+                        "management/doc_templates/supportcontract_form.html",
+                        {
+                            "job_support_data": student_data,
+                            "contract_date": contract_date,
+                            "default_fee": default_fee,
+                        },
+                    )
+                if (
+                    request.POST.get("category") == "3"
+                    and request.POST.get("sub_category") == "2"
+                ):
+                    return render(
+                        request,
+                        "management/doc_templates/trainingcontract_form.html",
+                        {
+                            "student_data": student_data,
+                            "contract_date": contract_date,
+                            "default_fee": default_fee,
+                        },
+                    )
+            else:
+                form = UserForm(request.POST, request.FILES)
+                if form.is_valid():
+                    print("category", form.cleaned_data.get("category"))
+
             if form.is_valid():
                 print("category", form.cleaned_data.get("category"))
 
-        if form.is_valid():
-            print("category", form.cleaned_data.get("category"))
+                # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
+                #     if form.cleaned_data.get('sub_category') == 6:
+                #         form.instance.is_admin = True
+                #         form.instance.is_superuser = True
+                #     else:
+                #         form.instance.is_employee = True
+                # elif form.cleaned_data.get('category') == 3:# Client
+                #     form.instance.is_client = True
+                # else:
+                #     form.instance.is_applicant = True
+                if form.cleaned_data.get("category") == 1:
+                    form.instance.is_applicant = True
+                elif form.cleaned_data.get("category") == 2:
+                    form.instance.is_employee = True
+                elif form.cleaned_data.get("category") == 3:
+                    form.instance.is_client = True
+                else:
+                    form.instance.is_admin = True
 
-            # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
-            #     if form.cleaned_data.get('sub_category') == 6:
-            #         form.instance.is_admin = True
-            #         form.instance.is_superuser = True
-            #     else:
-            #         form.instance.is_employee = True
-            # elif form.cleaned_data.get('category') == 3:# Client
-            #     form.instance.is_client = True
-            # else:
-            #     form.instance.is_applicant = True
-            if form.cleaned_data.get("category") == 1:
-                form.instance.is_applicant = True
-            elif form.cleaned_data.get("category") == 2:
-                form.instance.is_employee = True
-            elif form.cleaned_data.get("category") == 3:
-                form.instance.is_client = True
-            else:
-                form.instance.is_admin = True
+                form.save()
 
-            form.save()
-
-            username = form.cleaned_data.get('username')
-            category = form.cleaned_data.get('category')
-            gender = form.cleaned_data.get('gender')
-            country = form.cleaned_data.get('country')
-            messages.success(request, f'Account created for {username}!')
-            return redirect('accounts:account-login')
+                username = form.cleaned_data.get('username')
+                category = form.cleaned_data.get('category')
+                gender = form.cleaned_data.get('gender')
+                country = form.cleaned_data.get('country')
+                messages.success(request, f'Account created for {username}!')
+                return redirect('accounts:account-login')
     else:
         msg = "error validating form"
         form = UserForm()
@@ -441,12 +446,18 @@ def credential_view(request):
 
 def security_verification(request):
     subject = "One time verification code to view passwords"
-    to = request.user.email
+    # to = request.user.email
     otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
     request.session["security_otp"] = otp
-    html_content = "Your One time verification code is " + otp
-    print(to, otp)
-    email_template(subject, to, html_content)
+    # html_content = "Your One time verification code is " + otp
+    # print(to, otp)
+    # email_template(subject, to, html_content)
+    print(request.user.category)
+    send_email( category=request.user.category,
+                to_email=[request.user.email,],
+                subject=subject, 
+                html_template='email/security_verification.html',
+                context={'otp': otp})
     return render(request, "accounts/admin/email_verification.html")
 
 
@@ -618,13 +629,13 @@ def usertracker(request, user=None, *args, **kwargs):
         )
         if delta < 30:
             subject = "New Contract Alert"
-            to = customer_get[1]
-            html_content = f"""
-                <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-                <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+            # to = customer_get[1]
+            # html_content = f"""
+            #     <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+            #     <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
                 
-                </span>"""
-            email_template(subject, to, html_content)
+            #     </span>"""
+            # email_template(subject, to, html_content)
 
         context = {
             "trackers": trackers,

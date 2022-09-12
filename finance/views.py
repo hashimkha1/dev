@@ -216,6 +216,7 @@ class DefaultPaymentUpdateView(UpdateView):
 				"job_plan_hours_per_month",
 				"student_down_payment_per_month",
 				"student_bonus_payment_per_month",
+				"loan_amount",
 	]
 	# fields=['user','activity_name','description','point']
 	def form_valid(self, form):

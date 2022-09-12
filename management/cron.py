@@ -1,7 +1,7 @@
 # from django.core.management import call_command
 import tweepy
 import requests
-from management.models import TwitterAd, FacebookAd
+from management.models import Advertisement
 
 """
 
@@ -14,12 +14,11 @@ def advertisement():
     """
     This function will post the latest Facebook Ad
     """
-    twitter_context = TwitterAd.objects.all().first()
-    facebook_context = FacebookAd.objects.all().first()
-    apiKey = twitter_context.twitter_api_key
-    apiSecret = twitter_context.twitter_api_secret
-    accessToken = twitter_context.twitter_access_token
-    accessTokenSecret = twitter_context.twitter_access_token_secret
+    context = Advertisement.objects.all().first()
+    apiKey = context.twitter_api_key
+    apiSecret = context.twitter_api_secret
+    accessToken = context.twitter_access_token
+    accessTokenSecret = context.twitter_access_token_secret
 
     # 3. Create Oauth client and set authentication and create API object
     oauth = tweepy.OAuthHandler(apiKey, apiSecret)
@@ -28,22 +27,22 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    media = api.media_upload(twitter_context.image)
+    media = api.media_upload(context.image)
 
     api.update_status(
-        status=twitter_context.tweet_description,
-        media_ids=[twitter_context.tweet_media],
+        status=context.tweet_description,
+        media_ids=[context.tweet_media],
     )
 
     """
         This function will post the latest Facebook Ad
     """
 
-    facebook_page_id = facebook_context.facebook_page_id
-    access_token = facebook_context.facebook_access_token
+    facebook_page_id = context.facebook_page_id
+    access_token = context.facebook_access_token
     url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
-    msg = facebook_context.post_description
-    image_location = facebook_context.image
+    msg = context.post_description
+    image_location = context.image
     payload = {
         "url": image_location,
         "access_token": access_token,

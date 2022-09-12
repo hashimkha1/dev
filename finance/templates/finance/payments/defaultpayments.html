@@ -17,6 +17,7 @@
             <th>Plan</th>
             <th>Student Down Payment</th>
             <th>Bonus</th>
+            <th>Loan Amount</th>
             <th>Update</th>
         </tr>
       </thead>
@@ -28,6 +29,7 @@
                 <td>{{payment.job_plan_hours_per_mont}}</td>
                 <td>{{payment.student_down_payment_per_month}}</td>
                 <td>{{payment.student_bonus_payment_per_month}}</td>
+                <td>{{payment.loan_amount}}</td>
               <td> <a class="article-title" href="{% url 'finance:payment-update' payment.id %}">Edit</a></td>
             </tr>
         {% endfor %}
