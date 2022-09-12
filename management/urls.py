@@ -40,7 +40,10 @@ urlpatterns = [
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
     path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
-    path('payslip/<str:username>/',views.payslip, name='user_payslip'),
+
+    path('payslips/<str:username>/',views.default_payslip, name='user_payslip'),
+    # path('payslip/<str:username>/',views.payslip, name='user_payslip'),
+
     path('task_payslip/<int:pk>/',views.task_payslip, name='task_payslip'),
     # path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('newtask/', views.newtaskcreation, name='newtask'),

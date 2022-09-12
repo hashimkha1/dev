@@ -11,7 +11,6 @@ from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.db.models import Q
 from mail.custom_email import send_email
 from application.models import UserProfile
 from management.forms import (
@@ -44,10 +43,24 @@ from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from accounts.models import Tracker, Department, TaskGroups
+
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
+from django.db.models import Max
+
+from accounts.models import Tracker, Department, TaskGroups
+from .models import (
+    PayslipConfig,
+    Payslip,
+    RetirementPackage,
+    Loan,
+    LaptopBonus,
+    LaptopSaving,
+    MonthlyPoints,
+    QuarterlyPoints,
+    YearlyPoints
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -667,8 +680,7 @@ def usertask(request, user=None, *args, **kwargs):
     average_earnings = average_earnings / counter
     if average_earnings == 0:
         average_earnings = GoalAmount
-    else:
-        average_earnings
+
     # try:
     #     average_earnings = average_earnings / counter 
     # except Exception as ZeroDivisionError:
@@ -966,6 +978,285 @@ def payslip(request, user=None, *args, **kwargs):
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 
+def prefix_zero(month:int) -> str:
+    if month < 1:
+        month = 12 + month
+    return str(month) if month > 9 else '0' + str(month)
+
+
+def monthly_points_update(employee, year, month, points_earned):
+    period = str(year) + '-' + prefix_zero(month)
+    try:
+        monthly_point_obj = MonthlyPoints.objects.get(user=employee, period__contains=period)
+        monthly_point_obj.points = points_earned
+    except:
+        monthly_point_obj = MonthlyPoints(user=employee, period=period, points=points_earned)
+    finally:
+        monthly_point_obj.save()
+
+    quarterly_points_update(employee,year, month)
+    yearly_points_update(employee, year)
+
+
+def quarterly_points_update(employee, year, month):
+    first_month = prefix_zero(month - 2)
+    second_month = prefix_zero(month - 1)
+    third_month = prefix_zero(month)
+    logger.debug(f'first_month: {first_month}')
+    logger.debug(f'second_month: {second_month}')
+    logger.debug(f'third_month: {third_month}')
+
+    monthly_points_obj = MonthlyPoints.objects.filter(
+        Q(period__contains = str(year) + '-' + first_month)
+        | Q(period__contains = str(year) + '-' + second_month)
+        | Q(period__contains = str(year) + '-' + third_month),
+        user=employee,
+    )
+    logger.debug(f'monthly_points_obj: {monthly_points_obj}')
+    quarterly_points = monthly_points_obj.aggregate(Sum('points')).get('points__sum')
+    logger.debug(f'quarterly_points: {quarterly_points}')
+
+    # what quarter we are working on?
+    # Quarter 1 or jan-2022 to mar-2022 will be 2022-1
+    # Quarter 1 or april-2022 to june-2022 will be 2022-2
+    period = str(year) + '-' + str(month//3)
+    logger.debug(f'period: {period}')
+
+    try:
+        quarterly_point_obj = QuarterlyPoints.objects.get(user=employee, period=period)
+        quarterly_point_obj.points = quarterly_points
+    except:
+        quarterly_point_obj = QuarterlyPoints(user=employee, period=period, points=quarterly_points)
+    finally:
+        quarterly_point_obj.save()
+    logger.debug(f'quarterly_point_obj: {quarterly_point_obj}')
+
+
+def yearly_points_update(employee, year):
+    quarterly_points_obj = QuarterlyPoints.objects.filter(
+        user=employee,
+        period__contains=year
+    )
+    logger.debug(f'quarterly_points_obj: {quarterly_points_obj}')
+    yearly_points = quarterly_points_obj.aggregate(Sum('points')).get('points__sum')
+    logger.debug(f'quarterly_points: {yearly_points}')
+
+    try:
+        yearly_point_obj = YearlyPoints.objects.get(user=employee, period=year)
+        yearly_point_obj.points = yearly_points
+    except:
+        yearly_point_obj = YearlyPoints(user=employee, period=year, points=yearly_points)
+    finally:
+        yearly_point_obj.save()
+    logger.debug(f'quarterly_point_obj: {yearly_point_obj}')
+
+
+def eom_user(period):
+    eom_user_obj = MonthlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
+    logger.debug(f'eom_user_obj: {eom_user_obj}')
+    logger.debug(f'eom_user_obj.user: {eom_user_obj.user}')
+    return eom_user_obj.user
+
+
+def eoq_user(period):
+    eoq_user_obj = QuarterlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
+    logger.debug(f'eom_user_obj: {eoq_user_obj}')
+    logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
+    return eoq_user_obj.user
+
+
+def eoy_user(year):
+    eoq_user_obj = YearlyPoints.objects.annotate(max=Max('points')).get(period__contains=year)
+    logger.debug(f'eom_user_obj: {eoq_user_obj}')
+    logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
+    return eoq_user_obj.user
+
+
+def generate_payslip(employee, year, month):
+    period = str(year) + '-' + prefix_zero(month)
+    logger.debug(f'period: {period}')
+
+    quarter = str(year) + '-' + str(month//3)
+    tasks = Task.objects.all().filter(employee=employee, submission__contains=period)
+    logger.debug(f'tasks: {tasks}')
+
+    if not tasks:
+        logger.error('there is no task in the database!')
+        raise Http404("No tasks found!")
+
+    earned_salary = Decimal(0)
+    points_earned = Decimal(0)
+    for t in tasks:
+        earned_salary = earned_salary + t.get_pay
+        points_earned = points_earned + Decimal(t.point)
+    logger.debug(f'earned_salary: {earned_salary}')
+    logger.debug(f'points: {points_earned}')
+
+    try:
+        payslip_config_obj = PayslipConfig.objects.get(user=employee)
+    except:
+        logger.error('payslip configuration for this employee is not found!')
+        raise Http404("No Payslip Configuration found!")
+    # logger.debug(f'payslip_config_obj: {payslip_config_obj}')
+
+    # Bonus and Deductions
+    loan_status = payslip_config_obj.loan_status
+    logger.debug(f'loan_status: {loan_status}')
+    if loan_status:
+        loan_deduction = earned_salary * payslip_config_obj.loan_repayment_percentage
+        logger.debug(f'initial loan_deduction: {loan_deduction}')
+
+        last_month = prefix_zero(month - 1)
+        if month == 1:
+            last_period = str(year-1) + '-' + last_month
+        else:
+            last_period = str(year) + '-' + last_month
+        logger.debug(f'last_month: {last_month}')
+
+        try:
+            loan_obj = Loan.objects.get(user=employee, period__contains=last_period)
+            logger.debug(f'loan_obj: {loan_obj}')
+            loan_balance = loan_obj.get('balance')
+        except:
+            loan_balance = payslip_config_obj.loan_amount
+        logger.debug(f'initial loan_balance: {loan_balance}')
+
+        if loan_balance <= loan_deduction:
+            loan_deduction = loan_balance
+            loan_balance = Decimal(0)
+        else:
+            loan_balance = loan_balance - loan_deduction
+    else:
+        loan_balance = 0
+        loan_deduction = 0
+    logger.debug(f'final loan_deduction: {loan_deduction}')
+    logger.debug(f'final loan_balance: {loan_balance}')
+
+    lb_amount = Decimal(0)
+    ls_amount = Decimal(0)
+    computer_maintenance = Decimal(0)
+    laptop_status = payslip_config_obj.laptop_status
+    if laptop_status:
+        lb_amount = payslip_config_obj.lb_amount
+    else:
+        ls_amount = payslip_config_obj.ls_amount
+        ls_total = LaptopSaving.objects.filter(user=employee).aggrigate(Max('amount')).get('amount')
+        ls_max_limit = payslip_config_obj.ls_max_limit
+
+        if (ls_amount + ls_total) > ls_max_limit:
+            ls_amount = ls_max_limit - ls_total
+
+        # if employee use company computer, add the charge to the deductions.
+        computer_maintenance = payslip_config_obj.computer_maintenance
+
+    kra = earned_salary * payslip_config_obj.kra_percentage
+    food_accommodation = payslip_config_obj.food_accommodation
+    health = payslip_config_obj.health
+
+    deductions = {
+        'computer_maintenance': round(computer_maintenance, 2),
+        'food_accommodation': round(food_accommodation, 2),
+        'health': round(health, 2),
+        'kra': round(kra, 2),
+        'loan_deduction': round(loan_deduction, 2),
+        'ls_amount': round(ls_amount, 2),
+    }
+
+    total_deductions = Decimal(0)
+    for val in deductions.values():
+        total_deductions = total_deductions + val
+
+    # if employee working on night or different timezone will get a bonus. 2% of the total pay.
+    night_bonus = earned_salary * payslip_config_obj.night_bonus_percentage
+
+    # we should create an attendance system, who mark an attendance of every employee.
+    # leave it for the time being.
+    logger.debug(f'month: {month}')
+    if month in (12, 1):
+        holiday_pay = payslip_config_obj.holiday_pay
+    else:
+        holiday_pay = Decimal(0)
+
+    eom = Decimal(0)  # employee of month
+    eoq = Decimal(0)  # employee of quarter
+    eoy = Decimal(0)  # employee of year
+    monthly_points_update(employee, year, month, points_earned)
+    if month == 12 and employee == eoy_user(year):
+        eoy = round(earned_salary * payslip_config_obj.eoy_bonus_percentage, 2)
+    elif month % 3 == 0 and employee == eoq_user(quarter):
+        eoq = round(earned_salary * payslip_config_obj.eoq_bonus_percentage, 2)
+    elif employee == eom_user(period):
+        eom = round(earned_salary * payslip_config_obj.eom_bonus_percentage, 2)
+
+    logger.debug(f'eom: {eom}')
+    logger.debug(f'eoy: {eoy}')
+    logger.debug(f'eoq: {eoq}')
+
+    # retirement package
+    rp_amount = payslip_config_obj.rp_starting_amount + (earned_salary * payslip_config_obj.rp_increment_percentage)
+
+    bonus = {
+        'EOM': round(eom, 2),
+        'EOQ': round(eoq, 2),
+        'EOY': round(eoy, 2),
+        'holiday_pay': round(holiday_pay, 2),
+        'lb_amount': round(lb_amount, 2),
+        'night_bonus': round(night_bonus, 2),
+        'points_earned': round(points_earned, 2),
+    }
+
+    total_bonus = Decimal(0)
+    for val in bonus.values():
+        total_bonus = total_bonus + val
+
+    # Net Pay
+    total_earning = earned_salary + total_bonus
+    net_earning = total_earning - total_deductions
+    round_off = round(net_earning) - net_earning
+    net_pay = net_earning + round_off
+
+    return {
+        'user': employee,
+        'earned_salary': round(earned_salary, 2),
+        'bonus': bonus,
+        'total_bonus': round(total_bonus, 2),
+        'deductions': deductions,
+        'total_deductions': round(total_deductions, 2),
+        'rp_amount': round(rp_amount, 2),
+        'total_earning': round(total_earning, 2),
+        'net_earning': round(net_earning, 2),
+        'net_pay': round(net_pay, 2),
+        'loan_balance': round(loan_balance, 2),
+    }
+
+def default_payslip(request, *args, **kwargs):
+    received_username = kwargs.get('username')
+    employee = None
+    if request.user.is_superuser and received_username is not None:
+        logger.debug(f'received_username: {received_username}')
+        try:
+            employee = get_user_model().objects.get(username=received_username)
+        except:
+            logger.error('employee is not found!')
+            raise Http404("employee is not found!")
+    elif request.user.id:
+        logger.debug(f'request.user.id: {request.user.id}')
+        try:
+            employee = get_user_model().objects.get(id=int(request.user.id))
+        except:
+            logger.error('employee is not found!')
+            raise Http404("employee is not found!")
+    logger.debug(f'employee: {employee}')
+
+    today = date.today()
+    month = int(today.strftime("%m"))
+    year = int(today.strftime("%Y"))
+
+    context = generate_payslip(employee, year, month)
+    # context = generate_payslip(employee, year, 12)
+    return render(request, "management/daf/payslip.html", context)
+
+
 class TaskDetailView(DetailView):
     queryset = Task.objects.all()
     template_name = "management/daf/task_detail.html"
@@ -1090,7 +1381,7 @@ def newevidence(request, taskid):
 
         if form.is_valid():
             points, maxpoints, taskname = \
-            Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
+                Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
             jobsup_list = ["job support", "job_support", "jobsupport"]
             if points != maxpoints and taskname.lower() not in jobsup_list:
                 Task.objects.filter(id=taskid).update(point=points + 1)
@@ -1247,7 +1538,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
 
             if (not get_user_model().objects.get(pk=self.request.POST["assigned_to"]) == self.request.user
                     and not get_user_model().objects.get(pk=self.request.POST["assigned_to"]
-            ) == old_dev
+                                                         ) == old_dev
             ):
                 if self.request.is_secure():
                     protocol = "https://"
@@ -1268,7 +1559,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
                 # logger.debug(f'context: {context}')
                 send_email(
                     category=old_dev_obj.category,
-                    to_email=[old_dev_email,],
+                    to_email=[old_dev_email, ],
                     subject=subject,
                     html_template='email/requirement_reassigned.html',
                     context=context
@@ -1289,7 +1580,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
                 }
                 send_email(
                     category=self.request.user.category,
-                    to_email=[to,],
+                    to_email=[to, ],
                     subject=subject,
                     html_template='email/RequirementUpdateView.html',
                     context=context

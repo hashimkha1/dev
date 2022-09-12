@@ -1,8 +1,6 @@
 import random
 import string
-from django.conf import settings
 from django.utils.text import slugify
-from django.core.mail import EmailMultiAlternatives
 
 
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
@@ -28,9 +26,3 @@ def unique_slug_generator(instance, new_slug=None):
         )
         return unique_slug_generator(instance, new_slug=new_slug)
     return slug
-
-# def email_template(subject, to, html_content):
-#     msg = EmailMultiAlternatives(
-#         subject, '', settings.EMAIL_HOST_USER, [to])
-#     msg.attach_alternative(html_content, "text/html")
-#     msg.send()
