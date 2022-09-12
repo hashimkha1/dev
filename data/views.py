@@ -265,6 +265,17 @@ class TestingView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+class InterviewCreateView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_form.html"
+    success_url = "/data/iuploads/"
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        # form.instance.question_type = "testing"
+        return super().form_valid(form)
+
 @method_decorator(login_required, name="dispatch")
 class InterviewListView(ListView):
     queryset = Interviews.objects.all()

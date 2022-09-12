@@ -20,7 +20,7 @@ from data.views import (
     InterviewUpdateView,
     InterviewDeleteView,
     InterviewListView,
-    # InterviewCreateView,
+    InterviewCreateView,
     JobCreateView,
     JobListView,
     # MethodologyView,TrackDeleteView, TrackDetailView,
@@ -69,11 +69,11 @@ urlpatterns = [
     path("pay/", views.pay, name="pay"),
     # Interview/Assignment Section
     # ----------------------CREATION----------------------------------------------------
-    # path(
-    #     "uploadinterview/",
-    #     InterviewCreateView.as_view(template_name="data/interview/interview_form.html"),
-    #     name="uploadinterview",
-    # ),
+    path(
+        "uploadinterview/",
+        InterviewCreateView.as_view(),
+        name="uploadinterview",
+    ),
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
