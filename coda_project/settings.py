@@ -103,9 +103,6 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "management.context_processors.categories",
                 "management.context_processors.departments",
-                "data.context_processors.roles",
-                "data.context_processors.categories",
-                "data.context_processors.subcategories",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',
@@ -134,23 +131,13 @@ import dj_database_url
 #     }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "postgres",  # Name of Database
-        "USER": "postgres",
-        "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
-        "HOST": "localhost",
-    }
-}
-
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "das6459qgcjbmv",  # Name of Database
-#         "USER": "xgsxxbmwywwmoj",
-#         "PASSWORD": "91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1",  # os.environ.get('POSTGRESSPASS'),
-#         "HOST": "ec2-3-223-169-166.compute-1.amazonaws.com",
+#         "NAME": "postgres",  # Name of Database
+#         "USER": "postgres",
+#         "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
+#         "HOST": "localhost",
 #     }
 # }
 
@@ -164,16 +151,16 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 
-# DATABASES ={'default':db_from_env} 
+DATABASES["default"].update(db_from_env)
 
 CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
 CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
@@ -245,49 +232,19 @@ LOGIN_URL = "accounts:account-login"
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
-# Gmail Email Backend Account
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_HOST_USER = "hunjin015@gmail.com"
 
-# private email
+
+# Gmail Email Backend Account
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_HOST = "smtp.gmail.com"
 EMAIL_HOST = "smtp.privateemail.com"
-EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-
+# EMAIL_HOST_USER = "hunjin015@gmail.com"
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
-EMAIL_FILE_PATH = BASE_DIR + "/emails"
+EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-
-EMAIL_INFO = {
-    'USER': os.environ.get('EMAIL_INFO_USER'),
-    'PASS': os.environ.get('EMAIL_INFO_PASS'),
-    'HOST': os.environ.get('EMAIL_INFO_HOST'),
-    'PORT': os.environ.get('EMAIL_INFO_PORT'),
-    'USE_TLS': os.environ.get('EMAIL_INFO_USE_TLS'),
-    'USE_SSL': os.environ.get('EMAIL_INFO_USE_SSL'),
-}
-
-EMAIL_HR = {
-    'USER': os.environ.get('EMAIL_HR_USER'),
-    'PASS': os.environ.get('EMAIL_HR_PASS'),
-    'HOST': os.environ.get('EMAIL_HR_HOST'),
-    'PORT': os.environ.get('EMAIL_HR_PORT'),
-    'USE_TLS': os.environ.get('EMAIL_HR_USE_TLS'),
-    'USE_SSL': os.environ.get('EMAIL_HR_USE_SSL'),
-}
-
-# EMAIL_HR = {
-#     'USER': 'codatestreceive@gmail.com',
-#     'PASS': 'xpyppzxymhaqwqbm',
-#     'HOST': 'smtp.gmail.com',
-#     'PORT': 587,
-#     'USE_TLS': True,
-#     'USE_SSL': False,
-# }
 
 AWS_S3_REGION_NAME = "us-east-2"  # change to your region
 AWS_S3_SIGNATURE_VERSION = "s3v4"
@@ -317,5 +274,4 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com/"
 SITEURL = "https://www.codanalytics.net"
