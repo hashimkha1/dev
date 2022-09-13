@@ -1,4 +1,5 @@
 import calendar,string
+from logging import exception
 from django import template
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -11,16 +12,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.db.models import Q
-from management.utils import email_template
-from .forms import (
+from mail.custom_email import send_email
+from application.models import UserProfile
+from management.forms import (
     DepartmentForm,
-    TransactionForm,
-    InflowForm,
     PolicyForm,
     ManagementForm,
     RequirementForm,
     EvidenceForm,
-    TaskForm
 )
 from django.views.generic import (
     CreateView,
@@ -29,7 +28,8 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import (
+from management.models import (
+    Advertisement,
     Policy,
     Tag,
     # TaskGroups,
@@ -37,30 +37,37 @@ from .models import (
     TaskHistory,
     TaskLinks,
     Requirement,
+    LBandLS
 )
 from data.models import DSU
+from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from finance.models import Transaction,Inflow,TrainingLoan
-from accounts.models import Tracker,Department, TaskGroups
+from accounts.models import Tracker, Department, TaskGroups
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
 
+import logging
+logger = logging.getLogger(__name__)
+
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 register = template.Library()
+
 
 def home(request):
     return render(
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
 
+
 # ================================DEPARTMENT SECTION================================
 def department(request):
-    departments=Department.objects.filter(is_active=True)
-    return render(request, "management/departments/departments.html" , {'departments':departments})
+    departments = Department.objects.filter(is_active=True)
+    return render(request, "management/departments/departments.html", {'departments': departments})
+
 
 def newdepartment(request):
     if request.method == "POST":
@@ -69,13 +76,14 @@ def newdepartment(request):
             form.save()
             return redirect('management:departments')
     else:
-        form=DepartmentForm()
-    return render(request, "management/tag_form.html", {"form":form})
+        form = DepartmentForm()
+    return render(request, "management/tag_form.html", {"form": form})
+
 
 class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Department
-    success_url="/management/departments"
-    fields = ["name","slug","description","is_active","is_featured"]
+    success_url = "/management/departments"
+    fields = ["name", "slug", "description", "is_active", "is_featured"]
     form = DepartmentForm()
 
     def form_valid(self, form):
@@ -88,7 +96,6 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
 
-
 def contract(request):
     return render(request, "management/doc_templates/trainingcontract_form.html")
     # if request.user == employee:
@@ -97,7 +104,7 @@ def contract(request):
     # elif request.user.is_superuser:
     #     # return render(request, 'management/daf/paystub.html', context)
     #     return render(request, "management/doc_templates/supportcontract_form.html")
-    
+
 
 # ==============================PLACE HOLDER MODELS=======================================
 
@@ -122,14 +129,16 @@ tasksummary = [
 # ----------------------REPORTS--------------------------------
 
 import json
+
+
 def companyagenda(request):
     # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
     # data = json.load(f)
     # f.close()
-    with open(settings.STATIC_ROOT+'/companyagenda.json','r') as file:
+    with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
 
-    return render(request, "management/companyagenda.html", {"title": "Company Agenda","data":data})
+    return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
 
 
 def updatelinks_companyagenda(request):
@@ -137,8 +146,8 @@ def updatelinks_companyagenda(request):
     subdepartment = request.POST["subdepartment"]
     linkname = request.POST["linkname"]
     link_url = request.POST["link_url"]
-   
-    with open(settings.STATIC_ROOT+'/companyagenda.json', "r") as jsonFile:
+
+    with open(settings.STATIC_ROOT + '/companyagenda.json', "r") as jsonFile:
         data = json.load(jsonFile)
 
     if subdepartment == "":
@@ -146,22 +155,21 @@ def updatelinks_companyagenda(request):
     else:
         data[department][subdepartment][linkname] = link_url
 
-    with open(settings.STATIC_ROOT+'/companyagenda.json', "w") as jsonFile:
+    with open(settings.STATIC_ROOT + '/companyagenda.json', "w") as jsonFile:
         json.dump(data, jsonFile)
 
-    return JsonResponse({"success":True})
+    return JsonResponse({"success": True})
 
 
 def finance(request):
     return render(
         request, "finance\reports\finance.html", {"title": "Finance"}
-        
+
     )
 
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
-
 
 
 # ----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
@@ -175,10 +183,11 @@ def policy(request):
         form = PolicyForm()
     return render(request, "management/departments/hr/policy.html", {"form": form})
 
+
 def policies(request):
     day_name = date.today().strftime("%A")
-    policies = Policy.objects.filter(is_active=True,day=day_name).order_by("upload_date")
-    applicant_policies =Policy.objects.filter(Q(is_active=True),Q(is_internal=False)).order_by("upload_date")
+    policies = Policy.objects.filter(is_active=True, day=day_name).order_by("upload_date")
+    applicant_policies = Policy.objects.filter(Q(is_active=True), Q(is_internal=False)).order_by("upload_date")
     reporting_date = date.today() + timedelta(days=7)
     context = {
         "policies": policies,
@@ -195,15 +204,16 @@ def policies(request):
 class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Policy
     # success_url="/management/transaction"
-    fields = ["staff","type","department","day","description","link","is_active","is_featured","is_internal"]
+    fields = ["staff", "type", "department", "day", "description", "link", "is_active", "is_featured", "is_internal"]
     form = PolicyForm()
+
     def form_valid(self, form):
         form.instance.username = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
         return reverse("management:policies")
-    
+
     def test_func(self):
         policy = self.get_object()
         if self.request.user.is_superuser:
@@ -211,6 +221,7 @@ class PolicyUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif self.request.user == policy.staff:
             return True
         return False
+
 
 def benefits(request):
     reporting_date = date.today()
@@ -236,6 +247,7 @@ class TagCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
 class TaskGroupCreateView(LoginRequiredMixin, CreateView):
     model = TaskGroups
     success_url = "/management/newtask"
@@ -244,6 +256,7 @@ class TaskGroupCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
 
 # ======================TASKS=======================
 def task(request, slug=None, *args, **kwargs):
@@ -278,6 +291,7 @@ class TaskCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
+
 def newtaskcreation(request):
     if request.method == "POST":
         group = request.POST["group"]
@@ -289,43 +303,53 @@ def newtaskcreation(request):
 
         employee = request.POST["employee"].split(",")
         activitys = request.POST["activitys"].split(",")
-        
+
         for emp in employee:
             for act in activitys:
-                if Task.objects.filter(category_id=category,activity_name=act).count()  > 0:
-                    des,po,maxpo,maxear = Task.objects.values_list("description","point","mxpoint","mxearning").filter(category_id=category,activity_name=act)[0]
+                if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
+                    des, po, maxpo, maxear = \
+                    Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
+                        category_id=category, activity_name=act)[0]
 
-                    if Task.objects.filter(groupname_id=group,category_id=category,activity_name=act).count()  == 0:
-                        Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=mxpoint,mxearning=mxearning)
+                    if Task.objects.filter(groupname_id=group, category_id=category, activity_name=act).count() == 0:
+                        Task.objects.create(groupname_id=group, category_id=category, employee_id=emp,
+                                            activity_name=act, description=des, point=0.00, mxpoint=mxpoint,
+                                            mxearning=mxearning)
                     else:
-                        Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=des,point=0.00,mxpoint=maxpo,mxearning=maxear)
+                        Task.objects.create(groupname_id=group, category_id=category, employee_id=emp,
+                                            activity_name=act, description=des, point=0.00, mxpoint=maxpo,
+                                            mxearning=maxear)
 
                 else:
-                    Task.objects.create(groupname_id=group,category_id=category,employee_id=emp,activity_name=act,description=description,point=point,mxpoint=mxpoint,mxearning=mxearning)
+                    Task.objects.create(groupname_id=group, category_id=category, employee_id=emp, activity_name=act,
+                                        description=description, point=point, mxpoint=mxpoint, mxearning=mxearning)
 
         # return redirect("management:tasks")
-        return JsonResponse({"success":True})
+        return JsonResponse({"success": True})
 
     else:
         tag = Tag.objects.all()
         group = TaskGroups.objects.all()
-        employess = User.objects.filter(Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True)).all()
+        employess = User.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
 
-    return render(request, "management/tasknew_form.html", {"group": group,"category": tag,"employess":employess})
+    return render(request, "management/tasknew_form.html", {"group": group, "category": tag, "employess": employess})
+
 
 def gettasksuggestions(request):
     category = request.POST["category"]
-    tasks = list(Task.objects.values_list("activity_name",flat=True).filter(category__id = category))
-    return JsonResponse({"tasklist":tasks})
+    tasks = list(Task.objects.values_list("activity_name", flat=True).filter(category__id=category))
+    return JsonResponse({"tasklist": tasks})
+
 
 def verifytaskgroupexists(request):
     group = request.POST["group"]
     category = request.POST["category"]
     activity = request.POST["activity"]
-    count = Task.objects.filter(groupname__id = group,category__id = category,activity_name = activity).count()
-    mxpoint = Task.objects.values_list("mxpoint",flat=True).filter(category__id = category,activity_name = activity)[0]
-   
-    return JsonResponse({"count":count,"mxpoint":mxpoint})
+    count = Task.objects.filter(groupname__id=group, category__id=category, activity_name=activity).count()
+    mxpoint = Task.objects.values_list("mxpoint", flat=True).filter(category__id=category, activity_name=activity)[0]
+
+    return JsonResponse({"count": count, "mxpoint": mxpoint})
+
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
@@ -341,14 +365,15 @@ def getaveragetargets(request):
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
 
-    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3),
+                                         Q(created_at__lte=last_day_of_prev_month1))
 
-    results = { "target_points":0, "target_amount":0 }
+    results = {"target_points": 0, "target_amount": 0}
     counter = 0
     for data in history.all():
         results["target_points"] += data.mxpoint
         results["target_amount"] += data.mxearning
-        counter = counter+1
+        counter = counter + 1
     try:
         results["target_points"] = results["target_points"] / counter
         results["target_amount"] = results["target_amount"] / counter
@@ -358,13 +383,54 @@ def getaveragetargets(request):
 
     return JsonResponse(results)
 
+
 class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
+
+def FilterUsersByLoan(request):
+    user_loan_filter = request.POST["user_loan_filter"]
+    reslist = []
+
+    if user_loan_filter == "all_user":
+        tasklist = Task.objects.all()
+        res = filterdatset(tasklist)
+        reslist = res.copy()
+    else:
+        loanusers = LoanUsers.objects.filter(is_loan=user_loan_filter).values_list("user", flat=True)
+        loanusers = list(loanusers)
+        tasklist = Task.objects.filter(employee__in=loanusers)
+        res = filterdatset(tasklist)
+        reslist = res.copy()
+    return JsonResponse(reslist, safe=False)
+
+
+def filterdatset(obj):
+    result = []
+    details = {}
+    for data in obj:
+        details["groupname"] = str(data.groupname)
+        details["deadline"] = data.deadline.strftime("%d %b %Y")
+        details["submission"] = data.submission.strftime("%d %b %Y")
+        details["point"] = data.point
+        details["mxpoint"] = data.mxpoint
+        details["mxearning"] = float(data.mxearning)
+        details["get_pay"] = float(data.get_pay)
+        details["id"] = data.id
+        details["employee"] = data.employee.username
+        details["first_name"] = data.employee.first_name
+        details["last_name"] = data.employee.last_name
+        details["description"] = data.description
+        details["activity_name"] = data.activity_name
+        details["get_absolute_url"] = str(data.category.get_absolute_url)
+        result.append(details.copy())
+    return result
+
+
 def filterbycategory(request):
     category = request.POST["category"]
-   
+
     tasks = Task.objects.filter(category__title=category)
     result = []
     details = {}
@@ -384,9 +450,10 @@ def filterbycategory(request):
         details["activity_name"] = data.activity_name
         details["get_absolute_url"] = str(data.category.get_absolute_url)
         result.append(details.copy())
-    
+
     print(result)
-    return JsonResponse({"result":result},safe =False)
+    return JsonResponse({"result": result}, safe=False)
+
 
 class TaskHistoryView(ListView):
     queryset = TaskHistory.objects.all()
@@ -426,11 +493,11 @@ def task_payslip(request, *args, **kwargs):
     health = 500
     laptop_saving = 1000
     total_deduction = (
-        Decimal(loan)
-        + Decimal(computer_maintenance)
-        + Decimal(food_accomodation)
-        + Decimal(health)
-        + Decimal(laptop_saving)
+            Decimal(loan)
+            + Decimal(computer_maintenance)
+            + Decimal(food_accomodation)
+            + Decimal(health)
+            + Decimal(laptop_saving)
     )
 
     # Bonus
@@ -450,12 +517,12 @@ def task_payslip(request, *args, **kwargs):
     EOY = 0
     yearly = 12000
     total_bonus = (
-        Decimal(pointsearning)
-        + Decimal(holidaypay)
-        + Decimal(EOM)
-        + Decimal(EOQ)
-        + Decimal(EOY)
-        + Night_Bonus
+            Decimal(pointsearning)
+            + Decimal(holidaypay)
+            + Decimal(EOM)
+            + Decimal(EOQ)
+            + Decimal(EOY)
+            + Night_Bonus
     )
     # Net Pay
     try:
@@ -493,19 +560,23 @@ def task_payslip(request, *args, **kwargs):
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
+
 @register.filter
 def in_list(value, the_list):
     value = str(value)
     return value in the_list.split(',')
 
-activities=["one one one","one one one session","one one one sessions"]
-myactivities=["oneoneone","oneoneonesession","oneoneonesessions"]
-activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+
+activities = ["one one one", "one one one session", "one one one sessions"]
+myactivities = ["oneoneone", "oneoneonesession", "oneoneonesessions"]
+activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities]
 print(activitiesmodified)
+
 
 @register.filter(name='activitieslist')
 def activitieslist(value, myactivities):
     return True if value in myactivities else False
+
 
 def usertask(request, user=None, *args, **kwargs):
     # tasks=Task.objects.all().order_by('-submission')
@@ -524,18 +595,20 @@ def usertask(request, user=None, *args, **kwargs):
         calendar.monthrange(date.today().year, date.today().month)[-1],
     )
     # delta = deadline_date - date.today()
-    payday=deadline_date + timedelta(days=15)
-    delta=relativedelta(deadline_date, date.today())
+    payday = deadline_date + timedelta(days=15)
+    delta = relativedelta(deadline_date, date.today())
     # year=delta.years
     # months=delta.months
     time_remaining_days = delta.days
     time_remaining_hours = delta.hours
-    time_remaining_minutes=delta.minutes
+    time_remaining_minutes = delta.minutes
     current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
     # tasks = Task.objects.filter(user__username=request.user)
-    points_count = Task.objects.filter(description__in=['Meetings','General','Sprint','DAF','Recruitment','Job Support','BI Support'],employee=employee)
+    points_count = Task.objects.filter(
+        description__in=['Meetings', 'General', 'Sprint', 'DAF', 'Recruitment', 'Job Support', 'BI Support'],
+        employee=employee)
     point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
@@ -580,28 +653,34 @@ def usertask(request, user=None, *args, **kwargs):
     print(request.user)
     # print(employee__username)
     history = TaskHistory.objects.filter(
-        Q(submission__gte=start_day_of_prev_month3) , 
+        Q(submission__gte=start_day_of_prev_month3),
         Q(submission__lte=last_day_of_prev_month1),
         Q(employee__username=request.user)
-        )
+    )
 
     average_earnings = 0
     counter = 3
     for data in history.all():
         average_earnings += data.get_pay
         # counter = counter+1 
-        counter=3
-    average_earnings = average_earnings / counter 
+        counter = 3
+    average_earnings = average_earnings / counter
+    if average_earnings == 0:
+        average_earnings = GoalAmount
+    else:
+        average_earnings
     # try:
     #     average_earnings = average_earnings / counter 
     # except Exception as ZeroDivisionError:
     #     average_earnings = GoalAmount
     # activitysession="one one one session"
-    activities=["one one one","one one one session","one one one sessions"]
-    activitiesmodified= [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities] 
+    activities = ["one one one", "one one one session", "one one one sessions"]
+    activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
+                          activities]
     print(activitiesmodified)
+    deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
     context = {
-        'activitiesmodified':activitiesmodified,
+        'activitiesmodified': activitiesmodified,
         "payday": payday,
         "num_tasks": num_tasks,
         "tasks": tasks,
@@ -617,8 +696,9 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
-        "point_check":point_check,
-        "average_earnings":average_earnings
+        "point_check": point_check,
+        "average_earnings": average_earnings,
+        "enddate": deadline_date_modify
     }
 
     # setting  up session
@@ -718,6 +798,11 @@ def usertaskhistory(request, user=None, *args, **kwargs):
 
 
 def payslip(request, user=None, *args, **kwargs):
+    try:
+        default_payment_fees = Default_Payment_Fees.objects.all().first()
+    except:
+        default_payment_fees =0
+
     deadline_date = date(
         date.today().year,
         date.today().month,
@@ -743,6 +828,43 @@ def payslip(request, user=None, *args, **kwargs):
     # the loan amount and add to the deductions. We need to create
     # new database table to store the loan amount and add to the database.
     loan = Decimal(total_pay) * Decimal("0.2")
+    balance_amount = 0
+    if TrainingLoan.objects.filter(user=employee).exists():
+        training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
+        loan = training_loan.detection_amount
+        if LoanUsers.objects.filter(user=employee, is_loan=True).exists():
+            balance_amount = training_loan.balance_amount
+        else:
+            balance_amount = 0
+    else:
+        if default_payment_fees:
+            loan_amount = Decimal(default_payment_fees.loan_amount)
+            balance_amount = loan_amount - loan
+        else:
+            loan_amount = 0
+
+    userprofile = UserProfile.objects.get(user_id=employee)
+    if userprofile.laptop_status == True:
+        laptop_saving = 0
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_bonus = lbandls.laptop_bonus
+        else:
+            laptop_bonus = 0
+    else:
+        laptop_bonus = 0
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_saving = lbandls.laptop_service
+        else:
+            laptop_saving = 0
+
+    laptop_bonus = '{0:.2f}'.format(laptop_bonus)
+    laptop_saving = '{0:.2f}'.format(laptop_saving)
+
+    loan = round(loan, 2)
+    balance_amount = round(balance_amount, 2)
+
     kra = Decimal(total_pay) * Decimal("0.30")
     # if employee use company computer, add the charge to the deductions.
     computer_maintenance = 500
@@ -754,13 +876,13 @@ def payslip(request, user=None, *args, **kwargs):
     # if employee achieved the 20000 threshold it will then no deduction.
     # if the employee buy a laptop in 2, or so months. Then we'll stop dedcuting and
     # the amount that we deducted the last month will be added to the total pay.
-    laptop_saving = 1000
+    # laptop_saving = 1000
     total_deduction = (
-        Decimal(loan)
-        + Decimal(computer_maintenance)
-        + Decimal(food_accomodation)
-        + Decimal(health)
-        + Decimal(laptop_saving)
+            Decimal(loan)
+            + Decimal(computer_maintenance)
+            + Decimal(food_accomodation)
+            + Decimal(health)
+            + Decimal(laptop_saving)
     )
 
     # Bonus
@@ -797,12 +919,12 @@ def payslip(request, user=None, *args, **kwargs):
     # # if user earnt 1000 we'll add this to the transaction module.
     yearly = 12000
     total_bonus = (
-        Decimal(pointsearning)
-        + Decimal(holidaypay)
-        + Decimal(EOM)
-        + Decimal(EOQ)
-        + Decimal(EOY)
-        + Night_Bonus
+            Decimal(pointsearning)
+            + Decimal(holidaypay)
+            + Decimal(EOM)
+            + Decimal(EOQ)
+            + Decimal(EOY)
+            + Night_Bonus
     )
     # Net Pay
     try:
@@ -830,6 +952,8 @@ def payslip(request, user=None, *args, **kwargs):
         "today": today,
         "total_pay": total_pay,
         "net": net,
+        "balance_amount": balance_amount,
+        "laptop_bonus": laptop_bonus
     }
 
     if request.user == employee:
@@ -845,6 +969,7 @@ def payslip(request, user=None, *args, **kwargs):
 class TaskDetailView(DetailView):
     queryset = Task.objects.all()
     template_name = "management/daf/task_detail.html"
+
     # ordering = ['-datePosted']
 
     def get_context_data(self, *args, **kwargs):
@@ -887,6 +1012,7 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "mxpoint",
         "mxearning",
     ]
+
     # fields=['user','activity_name','description','point']
     def form_valid(self, form):
         # form.instance.author=self.request.user
@@ -914,7 +1040,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("management:user_task", kwargs={"username": str(task.employee)})
 
     # fields=['group','category','user','activity_name','description','slug','point','mxpoint','mxearning']
-    fields = ["category","employee", "activity_name", "description", "point"]
+    fields = ["category", "employee", "activity_name", "description", "point"]
 
     def form_valid(self, form):
         return super().form_valid(form)
@@ -926,6 +1052,7 @@ class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif self.request.user == task.employee:
             return True
         return False
+
 
 @login_required
 def gettotalduration(request):
@@ -949,8 +1076,10 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+
 # =============================EMPLOYEE EVIDENCE========================================
-def newevidence(request,taskid):
+def newevidence(request, taskid):
     if request.method == "POST":
         form = EvidenceForm(request.POST)
         # Check whether the task exist then only we allow to create evidence
@@ -960,10 +1089,11 @@ def newevidence(request,taskid):
             return render(request, "errors/404.html")
 
         if form.is_valid():
-            points,maxpoints,taskname = Task.objects.values_list("point","mxpoint","activity_name").filter(id=taskid)[0]
-            jobsup_list = ["job support","job_support","jobsupport" ]
+            points, maxpoints, taskname = \
+            Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
+            jobsup_list = ["job support", "job_support", "jobsupport"]
             if points != maxpoints and taskname.lower() not in jobsup_list:
-                Task.objects.filter(id=taskid).update(point=points+1)
+                Task.objects.filter(id=taskid).update(point=points + 1)
 
             # User will taken from the request 
             form.save()
@@ -974,9 +1104,11 @@ def newevidence(request,taskid):
 
     return render(request, "management/daf/evidence_form.html", {"form": form})
 
+
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
     return render(request, "management/daf/evidence.html", {"links": links})
+
 
 def userevidence(request, user=None, *args, **kwargs):
     # current_user = request.user
@@ -984,12 +1116,13 @@ def userevidence(request, user=None, *args, **kwargs):
     userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
 
+
 def evidence_update_view(request, id, *args, **kwargs):
-    context ={}
+    context = {}
     # fetch the object related to passed id
-    obj = get_object_or_404(TaskLinks, id = id)
+    obj = get_object_or_404(TaskLinks, id=id)
     # pass the object as instance in form
-    form = EvidenceForm(request.POST or None, instance = obj)
+    form = EvidenceForm(request.POST or None, instance=obj)
     # save the data from the form and
     # redirect to detail_view
     if form.is_valid():
@@ -1002,6 +1135,7 @@ def evidence_update_view(request, id, *args, **kwargs):
     # add form dictionary to context
     context["form"] = form
     return render(request, "management\daf\evidence_form.html", context)
+
 
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
@@ -1045,8 +1179,8 @@ def newrequirement(request):
         if form.is_valid():
             form.save()
             if (
-                not get_user_model().objects.get(pk=request.POST["assigned_to"])
-                == request.user
+                    not get_user_model().objects.get(pk=request.POST["assigned_to"])
+                        == request.user
             ):
                 subject = "Task assign on CodaTraining"
                 to = get_user_model().objects.get(pk=request.POST["assigned_to"]).email
@@ -1054,14 +1188,23 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{request.POST['what']}<br>
-                    <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {request.POST['delivery_date']}</b><br><b>Created by: 
-                    {request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                # html_content = f"""
+                #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
+                #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
+                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
+                #     <b>Dead Line: </b><b style='color:red;'>
+                #     {request.POST['delivery_date']}</b><br><b>Created by:
+                #     {request.user}</b></span>"""
+                # email_template(subject, to, html_content)
+                context = {
+                    'request_what': request.POST['what'],
+                    'url': protocol + request.get_host() + reverse('management:RequirementDetail',
+                                                                   kwargs={'pk': form.instance.id}),
+                    'delivery_date': request.POST['delivery_date'],
+                    'user': request.user,
+                }
+                send_email(category=request.user.category, to_email=[to, ], subject=subject,
+                           html_template='email/newrequirement.html', context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1099,32 +1242,59 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         # form.instance.author=self.request.user
         if self.request.user.is_superuser:
-            if (
-                not get_user_model().objects.get(pk=self.request.POST["assigned_to"])
-                == self.request.user
-                and not get_user_model().objects.get(
-                    pk=self.request.POST["assigned_to"]
-                )
-                == Requirement.objects.get(pk=form.instance.id).assigned_to
+            req_obj = Requirement.objects.get(pk=form.instance.id)
+            old_dev = req_obj.assigned_to
+
+            if (not get_user_model().objects.get(pk=self.request.POST["assigned_to"]) == self.request.user
+                    and not get_user_model().objects.get(pk=self.request.POST["assigned_to"]
+            ) == old_dev
             ):
+                if self.request.is_secure():
+                    protocol = "https://"
+                else:
+                    protocol = "http://"
+
+                subject = 'Task has been reassigned on CodaTraining'
+                old_dev_obj = get_user_model().objects.get(username=old_dev)
+                old_dev_email = old_dev_obj.email
+                context = {
+                    'user': old_dev,
+                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
+                                                                        kwargs={'pk': form.instance.id}),
+                    'req_id': req_obj.id,
+                    'delivery_date': req_obj.delivery_date,
+                }
+                # logger.debug(f'old_dev_email: {old_dev_email}')
+                # logger.debug(f'context: {context}')
+                send_email(
+                    category=old_dev_obj.category,
+                    to_email=[old_dev_email,],
+                    subject=subject,
+                    html_template='email/requirement_reassigned.html',
+                    context=context
+                )
+
                 subject = "Task assign on CodaTraining"
                 to = (
                     get_user_model()
                     .objects.get(pk=self.request.POST["assigned_to"])
                     .email
                 )
-                if self.request.is_secure():
-                    protocol = "https://"
-                else:
-                    protocol = "http://"
-                html_content = f"""
-                    <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
-                    <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
-                    kwargs={'pk':form.instance.id})}'>click here</a><br>
-                    <b>Dead Line: </b><b style='color:red;'>
-                    {self.request.POST['delivery_date']}</b><br><b>Created by: 
-                    {self.request.user}</b></span>"""
-                email_template(subject, to, html_content)
+                context = {
+                    'request_what': self.request.POST['what'],
+                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
+                                                                        kwargs={'pk': form.instance.id}),
+                    'delivery_date': self.request.POST['delivery_date'],
+                    'user': self.request.user,
+                }
+                send_email(
+                    category=self.request.user.category,
+                    to_email=[to,],
+                    subject=subject,
+                    html_template='email/RequirementUpdateView.html',
+                    context=context
+                )
+
             return super().form_valid(form)
         else:
             return redirect("management:requirements-active")
@@ -1150,7 +1320,6 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
         return False
 
 
-
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
     taskname = request.POST["taskname"]
@@ -1165,14 +1334,15 @@ def getaveragetargets(request):
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
 
-    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3) , Q(created_at__lte=last_day_of_prev_month1))
+    history = TaskHistory.objects.filter(Q(activity_name=taskname), Q(created_at__gte=start_day_of_prev_month3),
+                                         Q(created_at__lte=last_day_of_prev_month1))
 
-    results = { "target_points":0, "target_amount":0 }
+    results = {"target_points": 0, "target_amount": 0}
     counter = 0
     for data in history.all():
         results["target_points"] += data.mxpoint
         results["target_amount"] += data.mxearning
-        counter = counter+1
+        counter = counter + 1
     try:
         results["target_points"] = results["target_points"] / counter
         results["target_amount"] = results["target_amount"] / counter
@@ -1182,9 +1352,10 @@ def getaveragetargets(request):
 
     return JsonResponse(results)
 
+
 def filterbycategory(request):
     category = request.POST["category"]
-    print("category",category)
+    print("category", category)
 
     tasks = Task.objects.filter(category__title=category)
     result = []
@@ -1206,4 +1377,39 @@ def filterbycategory(request):
         details["get_absolute_url"] = str(data.category.get_absolute_url)
         result.append(details.copy())
     # print(result)
-    return JsonResponse({"result":result},safe =False)
+    return JsonResponse({"result": result}, safe=False)
+
+
+class AdsContent(ListView):
+    model = Advertisement
+    template_name = "management/advertisement.html"
+    context_object_name = "posts"
+    ordering = ["-created_at"]
+
+
+class AdsCreateView(LoginRequiredMixin, CreateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Advertisement
+    template_name = "management/create_advertisement.html"
+    fields = "__all__"
+    success_url = "/management/advertisement"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False

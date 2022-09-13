@@ -31,15 +31,15 @@ from .models import UserProfile, Application,Rated, Reporting
 from management.models import Policy,Task
 from .utils import alteryx_list, dba_list, posts, tableau_list
 from datetime import datetime, timedelta
-from management.utils import email_template
+from mail.custom_email import send_email
 
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
 
-def SectionCompleteMail(subject,user,content):
-    email_template(subject,user,content)
+# def SectionCompleteMail(subject,user,content):
+#     email_template(subject,user,content)
 
 
 
@@ -132,10 +132,10 @@ def FI_sectionA(request):
                 data.profile.save()
             form.save()
             subject = "New Contract Alert"
-            to = request.user.email
-            html_content = f"""
-                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
-        SectionCompleteMail(subject,to,html_content)
+            # to = request.user.email
+            # html_content = f"""<span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
+            # SectionCompleteMail(subject,to,html_content)
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionA.html', context={'user': request.user})
         # return redirect("application:section_b")
         return redirect("application:ratewid", pk="Alteryx")
 
@@ -163,10 +163,11 @@ def FI_sectionB(request):
                 data.profile.save()
             form.save()
             subject = "New Contract Alert"
-            to = request.user.email
-            html_content = f"""
-                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
-        SectionCompleteMail(subject,to,html_content)
+            # to = request.user.email
+            # html_content = f"""
+            #     <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
+            # SectionCompleteMail(subject,to,html_content)
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionB.html', context={'user': request.user})
         # return redirect("application:section_c")
         return redirect("application:ratewid", pk="Tableau")
 
@@ -194,10 +195,11 @@ def FI_sectionC(request):
                 data.profile.save()
             form.save()
             subject = "New Contract Alert"
-            to = request.user.email
-            html_content = f"""
-                <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
-            SectionCompleteMail(subject,to,html_content)
+            # to = request.user.email
+            # html_content = f"""
+            #     <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
+            # SectionCompleteMail(subject,to,html_content)
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionC.html', context={'user': request.user})
             # return redirect("management:policies")
             return redirect("application:ratewid", pk="Database")
 

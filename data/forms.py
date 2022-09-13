@@ -9,7 +9,7 @@ from django.db.models import Q
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interviews
-        fields =['category','doc','link']
+        fields =['category','question_type','doc','link']
         # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',

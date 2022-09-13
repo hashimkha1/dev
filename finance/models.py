@@ -81,11 +81,16 @@ class Payment_History(models.Model):
     rep_date = models.CharField(max_length=100, null=True, blank=True)
 
 class Default_Payment_Fees(models.Model):
-	# id = models.AutoField(primary_key=True)
-	job_down_payment_per_month = models.IntegerField(default=500)
-	job_plan_hours_per_month = models.IntegerField(default=40)
-	student_down_payment_per_month = models.IntegerField(default=500)
-	student_bonus_payment_per_month = models.IntegerField(default=250)
+    # id = models.AutoField(primary_key=True)
+    job_down_payment_per_month = models.IntegerField(default=500)
+    job_plan_hours_per_month = models.IntegerField(default=40)
+    student_down_payment_per_month = models.IntegerField(default=500)
+    student_bonus_payment_per_month = models.IntegerField(default=250)
+
+    loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+
+    def __str__(self):
+        return str(self.loan_amount)
 
 class Transaction(models.Model):
     # Method of Category
@@ -292,3 +297,14 @@ class TrainingLoan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField('Is complete', default=True)
+    training_loan_amount = models.ForeignKey('Default_Payment_Fees',on_delete=models.CASCADE,null=True)
+    total_earnings_amount = models.FloatField(null=True)
+    detection_date = models.DateField(auto_now_add=True)
+    detection_amount = models.FloatField(null=True)
+    balance_amount = models.FloatField(null=True)
+
+class LoanUsers(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    is_loan = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

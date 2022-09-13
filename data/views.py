@@ -1,6 +1,8 @@
 from typing import List
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.http import Http404, JsonResponse
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -152,6 +154,35 @@ def useruploads(request, pk=None, *args, **kwargs):
     return render(request, "data/interview/useruploads.html", context)
 
 
+# ==================================TRAINING VIEWS====================================
+
+# class CourseView(LoginRequiredMixin, CreateView):
+#     model = Interviews
+#     form_class = InterviewForm
+#     template_name = "data/training/training_progress/main.html"
+#     success_url = "/data/project_story"
+#     # fields = ["category", "doc", "link", "answer_to_question"]
+
+#     def form_valid(self, form):
+#         form.instance.client = self.request.user
+#         form.instance.question_type = "project story"
+#         print("form.instance.question_type")
+#         return super().form_valid(form)
+
+class TrainingView(LoginRequiredMixin, ListView):
+    model = Interviews
+    template_name = "data/training/training_progress/train.html"
+    success_url = "/data/course"
+
+class CourseView(LoginRequiredMixin, ListView):
+    model = Interviews
+    template_name = "data/training/training_progress/course.html"
+    # success_url = "/data/course"
+
+
+
+
+
 # ==================================INTERVIEW VIEWS====================================
 class RoleListView(LoginRequiredMixin, ListView):
     queryset = JobRole.objects.all()
@@ -160,11 +191,13 @@ class RoleListView(LoginRequiredMixin, ListView):
 
 
 class ResumeView(LoginRequiredMixin, CreateView):
+    queryset = JobRole.objects.all()
     model = Interviews
     form_class = InterviewForm
     template_name = "data/interview/interview_progress/resume.html"
     success_url = "/data/project_story"
-    # fields = ["category", "doc", "link", "answer_to_question"]
+    interviews = Interviews.objects.all()
+    form= InterviewForm
 
     def form_valid(self, form):
         form.instance.client = self.request.user
@@ -264,6 +297,28 @@ class TestingView(LoginRequiredMixin, CreateView):
         form.instance.question_type = "testing"
         return super().form_valid(form)
 
+class InterviewCreateView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_form.html"
+    success_url = "/data/iuploads/"
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        # form.instance.question_type = "testing"
+        return super().form_valid(form)
+
+
+class InterviewCreateView(LoginRequiredMixin, CreateView):
+    model = Interviews
+    form_class = InterviewForm
+    template_name = "data/interview/interview_form.html"
+    success_url = "/data/iuploads/"
+
+    def form_valid(self, form):
+        form.instance.client = self.request.user
+        # form.instance.question_type = "testing"
+        return super().form_valid(form)
 
 @method_decorator(login_required, name="dispatch")
 class InterviewListView(ListView):
@@ -290,6 +345,31 @@ class ClientInterviewListView(ListView):
 class InterviewDetailView(DetailView):
     model = Interviews
     ordering = ["-upload_date"]
+
+# @method_decorator(login_required, name="dispatch")
+# class QuestionDetailView(DetailView):
+#     model = Interviews
+#     ordering = ["-upload_date"]
+
+
+
+def questionview(request, question_type=None, *args, **kwargs):
+    instance = JobRole.objects.get_by_question(question_type)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/interview/interview_progress/{question_type}s.html'
+    url=f'data/interview/interview_progress/questions.html'
+    # url="data/interview/interview_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "interviews": Interviews.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -397,6 +477,24 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+def categorydetail(request, title=None, *args, **kwargs):
+    instance = FeaturedCategory.objects.get_by_category(title)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/training/training_progress/{title}s.html'
+    url=f'data/training/training_progress/training.html'
+    # url="data/training/training_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "categories": FeaturedCategory.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
+
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
@@ -408,6 +506,23 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+def subcategorydetail(request, title=None, *args, **kwargs):
+    instance = FeaturedSubCategory.objects.get_by_category(title)
+    form= InterviewForm
+    print(instance)
+    # url=f'data/training/training_progress/{title}s.html'
+    url=f'data/training/training_progress/training.html'
+    # url="data/training/training_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "categories": FeaturedSubCategory.objects.all()
+
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):

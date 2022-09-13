@@ -29,8 +29,8 @@ def unique_slug_generator(instance, new_slug=None):
         return unique_slug_generator(instance, new_slug=new_slug)
     return slug
 
-def email_template(subject, to, html_content):
-    msg = EmailMultiAlternatives(
-        subject, '', settings.EMAIL_HOST_USER, [to])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
+# def email_template(subject, to, html_content):
+#     msg = EmailMultiAlternatives(
+#         subject, '', settings.EMAIL_HOST_USER, [to])
+#     msg.attach_alternative(html_content, "text/html")
+#     msg.send()
