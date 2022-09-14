@@ -12,22 +12,22 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 
-import django_heroku
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# print(BASE_DIR)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# SECURITY
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
-# DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+# DEBUG = True
+DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 # ALLOWED_HOSTS = []
-AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
+AUTH_USER_MODEL = "accounts.CustomerUser"
+
+AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 
 # Application definition
 INSTALLED_APPS = [
@@ -63,8 +63,8 @@ INSTALLED_APPS = [
     "django_crontab",
     'testing.apps.TestingConfig',
 ]
-DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
@@ -103,6 +103,9 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "management.context_processors.categories",
                 "management.context_processors.departments",
+                "data.context_processors.roles",
+                "data.context_processors.categories",
+                "data.context_processors.subcategories",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',
@@ -112,14 +115,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
-
+import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-
-import dj_database_url
-
-# #postgresql database
 
 # DATABASES = {
 #     'default': {
@@ -162,25 +160,11 @@ db_from_env = dj_database_url.config(conn_max_age=600)
 
 DATABASES["default"].update(db_from_env)
 
-CELERY_BROKER_URL = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
-CELERY_RESULT_BACKEND = "redis://default:X7riK5cCiJMQa0qpZr23qzAizQpzjvSz@redis-19459.c52.us-east-1-4.ec2.cloud.redislabs.com:19459"
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_TASK_SERIALIZER = "json"
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_IMPORTS = "coda_project.task"
-
-from celery.schedules import crontab
-
-CELERYBEAT_SCHEDULE = {
-    "run_on_every_1st": {
-        "task": "task_history",
-        "schedule": crontab(0, 0, day_of_month="1"),
-    },
-}
+# DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -218,11 +202,10 @@ USE_TZ = True
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+STATIC_ROOT = os.path.join(BASE_DIR, '..', "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_DIR = os.path.join(BASE_DIR, "static")
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -230,21 +213,43 @@ CRISPY_TEMPLATE_PACK = "bootstrap4"
 LOGIN_REDIRECT_URL = "main:layout"
 LOGIN_URL = "accounts:account-login"
 
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = BASE_DIR + "/emails"
-
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
 # Gmail Email Backend Account
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # EMAIL_HOST = "smtp.gmail.com"
-EMAIL_HOST = "smtp.privateemail.com"
+# EMAIL_HOST_USER = "hunjin015@gmail.com"
+
+# private email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-# EMAIL_HOST_USER = "hunjin015@gmail.com"
+EMAIL_HOST = "smtp.privateemail.com"
 EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
-EMAIL_USE_SSL = False
+EMAIL_FILE_PATH = BASE_DIR + "/emails"
+
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+EMAIL_INFO = {
+    'USER': os.environ.get('EMAIL_INFO_USER'),
+    'PASS': os.environ.get('EMAIL_INFO_PASS'),
+    'HOST': os.environ.get('EMAIL_INFO_HOST'),
+    'PORT': os.environ.get('EMAIL_INFO_PORT'),
+    'USE_TLS': os.environ.get('EMAIL_INFO_USE_TLS'),
+    'USE_SSL': os.environ.get('EMAIL_INFO_USE_SSL'),
+}
+
+EMAIL_HR = {
+    'USER': os.environ.get('EMAIL_HR_USER'),
+    'PASS': os.environ.get('EMAIL_HR_PASS'),
+    'HOST': os.environ.get('EMAIL_HR_HOST'),
+    'PORT': os.environ.get('EMAIL_HR_PORT'),
+    'USE_TLS': os.environ.get('EMAIL_HR_USE_TLS'),
+    'USE_SSL': os.environ.get('EMAIL_HR_USE_SSL'),
+}
 
 AWS_S3_REGION_NAME = "us-east-2"  # change to your region
 AWS_S3_SIGNATURE_VERSION = "s3v4"
@@ -254,7 +259,8 @@ AWS_STORAGE_BUCKET_NAME = os.environ.get("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
-django_heroku.settings(locals())
+
+from celery.schedules import crontab
 
 CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
 CELERY_RESULT_BACKEND = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
@@ -262,8 +268,6 @@ CELERY_ACCEPT_CONTENT = ["application/json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_IMPORTS = "coda_project.task"
-
-from celery.schedules import crontab
 
 CELERYBEAT_SCHEDULE = {
     "run_on_every_1st": {
@@ -274,4 +278,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
+# SITEURL = "https://codadev.herokuapp.com/"
 SITEURL = "https://www.codanalytics.net"
