@@ -15,6 +15,23 @@ logger = logging.getLogger(__name__)
 # If you modified scopes, delete the file token.json and re-authenticate!
 SCOPES = ('https://mail.google.com/',)
 current_dir = os.path.dirname(os.path.abspath(__file__))
+
+cred_json = """
+{
+  "installed": {
+    "client_id": "498740793837-o1rc4af9mde2jg00sivsl0dmuh09t6ts.apps.googleusercontent.com",
+    "project_id": "leafy-winter-361308",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "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",
+    "redirect_uris": [
+      "http://localhost"
+    ]
+  }
+}
+"""
+# DEFAULT_CREDENTIALS = os.path.join(current_dir, 'creds/credentials.json')
 DEFAULT_CREDENTIALS = os.path.join(current_dir, 'creds/credentials.json')
 DEFAULT_TOKEN = os.path.join(current_dir, 'creds/token.pickle')
 
