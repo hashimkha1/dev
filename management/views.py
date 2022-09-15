@@ -1052,27 +1052,25 @@ def yearly_points_update(employee, year):
 
 
 def eom_user(period):
-    eom_users = MonthlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user')
+    eom_users = tuple(MonthlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
     logger.debug(f'eom_users: {eom_users}')
     return eom_users
 
 
 def eoq_user(period):
-    eoq_users = QuarterlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user')
-    logger.debug(f'eoq_users.user: {eoq_users}')
+    eoq_users = tuple(QuarterlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
+    logger.debug(f'eoq_users: {eoq_users}')
     return eoq_users
 
 
 def eoy_user(year):
-    eoq_user_obj = YearlyPoints.objects.annotate(max=Max('points')).get(period__contains=year)
+    eoq_user_obj = tuple(YearlyPoints.objects.annotate(max=Max('points')).filter(period__contains=year).values_list('user__username'))
     logger.debug(f'eom_user_obj: {eoq_user_obj}')
     logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
     return eoq_user_obj.user
 
 
 def generate_payslip(employee, year, month):
-    user_id = get_user_model().get(username=employee).id
-    logger.debug(f'user_id: {user_id}')
     period = str(year) + '-' + prefix_zero(month)
     logger.debug(f'period: {period}')
 
@@ -1152,7 +1150,7 @@ def generate_payslip(employee, year, month):
         # if employee use company computer, add the charge to the deductions.
         computer_maintenance = payslip_config_obj.computer_maintenance
 
-    kra = round(earned_salary * payslip_config_obj.kra_percentage, 2)
+    kra = payslip_config_obj.kra
     food_accommodation = payslip_config_obj.food_accommodation
     health = payslip_config_obj.health
 
@@ -1169,8 +1167,8 @@ def generate_payslip(employee, year, month):
     for val in deductions.values():
         total_deductions = total_deductions + val
 
-    # if employee working on night or different timezone will get a bonus. 2% of the total pay.
-    night_bonus = round(earned_salary * payslip_config_obj.night_bonus_percentage, 2)
+    # if employee working on night or different timezone will get a bonus.
+    night_bonus = payslip_config_obj.night_bonus
 
     # we should create an attendance system, who mark an attendance of every employee.
     # leave it for the time being.
@@ -1184,12 +1182,13 @@ def generate_payslip(employee, year, month):
     eoq = Decimal(0)  # employee of quarter
     eoy = Decimal(0)  # employee of year
     monthly_points_update(employee, year, month, points_earned)
-    if month == 12 and user_id in eoy_user(year):
-        eoy = round(earned_salary * payslip_config_obj.eoy_bonus_percentage, 2)
-    elif month % 3 == 0 and user_id in eoq_user(quarter):
-        eoq = round(earned_salary * payslip_config_obj.eoq_bonus_percentage, 2)
-    elif user_id in eom_user(period):
-        eom = round(earned_salary * payslip_config_obj.eom_bonus_percentage, 2)
+    logger.debug(f'(str(employee),): {(str(employee),)}')
+    if month == 12 and (str(employee),) in eoy_user(year):
+        eoy = payslip_config_obj.eoy_bonus
+    elif month % 3 == 0 and (str(employee),) in eoq_user(quarter):
+        eoq = payslip_config_obj.eoq_bonus
+    elif (str(employee),) in eom_user(period):
+        eom = payslip_config_obj.eom_bonus
     logger.debug(f'eom: {eom}')
     logger.debug(f'eoy: {eoy}')
     logger.debug(f'eoq: {eoq}')

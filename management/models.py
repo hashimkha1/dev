@@ -953,18 +953,18 @@ class PayslipConfig(models.Model):
 
     # configs for bonus
     holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
-    night_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+    night_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
 
     # configs for deductions
     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
     food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
     health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-    kra_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.30)
+    kra = models.DecimalField(max_digits=10, decimal_places=2, default=300.00)
 
     # employee of the month, quarter and year
-    eom_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
-    eoq_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
-    eoy_bonus_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.02)
+    eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+    eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+    eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
 
 
 class RetirementPackage(models.Model):
@@ -1026,7 +1026,7 @@ class Payslip(models.Model):
     EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.OneToOneField(LaptopBonus, on_delete=models.CASCADE)
+    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
@@ -1039,24 +1039,3 @@ class Payslip(models.Model):
     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
-
-    @property
-    def get_monthly_benefits(self):
-        return (
-            'EOM',
-            'EOQ',
-            'EOY',
-            'laptop_bonus',
-            'holiday_wages',
-            'night_allowance'
-        )
-
-    @property
-    def get_monthly_deductions(self):
-        return (
-            'training_loan',
-            'FA',
-            'computer_maintenance',
-            'health_care',
-            'laptop_service'
-        )
