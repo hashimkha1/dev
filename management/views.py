@@ -263,7 +263,8 @@ class TagCreateView(LoginRequiredMixin, CreateView):
 
 class TaskGroupCreateView(LoginRequiredMixin, CreateView):
     model = TaskGroups
-    success_url = "/management/newtask"
+    # success_url = "/management/newtask"
+    success_url = "/management/tasks/"
     fields = ["title", "description"]
 
     def form_valid(self, form):
@@ -808,7 +809,6 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
-
 def payslip(request, user=None, *args, **kwargs):
     try:
         default_payment_fees = Default_Payment_Fees.objects.all().first()
@@ -835,10 +835,6 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    # if loan already paid so, no need add to the deductions
-    # currently, one of the employee from coda mannually calculate
-    # the loan amount and add to the deductions. We need to create
-    # new database table to store the loan amount and add to the database.
     loan = Decimal(total_pay) * Decimal("0.2")
     balance_amount = 0
     if TrainingLoan.objects.filter(user=employee).exists():
@@ -870,25 +866,15 @@ def payslip(request, user=None, *args, **kwargs):
             laptop_saving = lbandls.laptop_service
         else:
             laptop_saving = 0
-
     laptop_bonus = '{0:.2f}'.format(laptop_bonus)
     laptop_saving = '{0:.2f}'.format(laptop_saving)
-
     loan = round(loan, 2)
     balance_amount = round(balance_amount, 2)
-
     kra = Decimal(total_pay) * Decimal("0.30")
-    # if employee use company computer, add the charge to the deductions.
     computer_maintenance = 500
-    # if user self paid the food accomodation, no need to add to the deductions
     food_accomodation = 1000
-    # same as food accomodation.
     health = 500
-    # if company gave the laptop to the employee. They will charge or deduct from the total pay. We are currently charging 1000 until it gets to the 20000.
-    # if employee achieved the 20000 threshold it will then no deduction.
-    # if the employee buy a laptop in 2, or so months. Then we'll stop dedcuting and
-    # the amount that we deducted the last month will be added to the total pay.
-    # laptop_saving = 1000
+
     total_deduction = (
             Decimal(loan)
             + Decimal(computer_maintenance)
@@ -896,39 +882,20 @@ def payslip(request, user=None, *args, **kwargs):
             + Decimal(health)
             + Decimal(laptop_saving)
     )
-
-    # Bonus
-    # if you have your own laptop company will give you a bonus.
+    # Bonus Section
     Lap_Bonus = 500  # make it 1000 later.
     if points.get("Your_Total_Points") == None:
         pointsearning = 0
     else:
         pointsearning = points.get("Your_Total_Points")
-
-    # if a employee working on night or different timezone will get a bonus.
     Night_Bonus = Decimal(total_pay) * Decimal("0.02")  # 2% of the total pay.
-    # we should create an attendance system, who mark an attendance of every employee.
-    # leave it for the time being.
     if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
         holidaypay = 3000.00
     else:
         holidaypay = 0.00
-    # for employee of year, we need to filter out the most daf points of the month.
-    # for message point we need to divide the points with 10 (we need an API to get the message points)
-    # for rating points we need to divide it by 2 (we already have rating model)
-    # DAF (tasks points) points will be multiplied by 2 (we already have tasks table for tasks points)
-    # 1-1 (second level tasks) session points will be multiplied by 3
-    # total number of meetings points.
-    # mainly 'go to meetings'(1-1 meetings) and 'zoom meetings'.
     EOM = 0  # employee of month
     EOQ = 0  # employee of quarter
     EOY = 0  # employee of year
-
-    # if user.joining_date > 12 months ago he will get 12000ksh bonus.
-    # if user spent 25 months, the program will check if user already
-    # claimed the previous 12000 bonus. If not, he will get double bonus.
-    # # Transaction => will note every transaction of the employee.
-    # # if user earnt 1000 we'll add this to the transaction module.
     yearly = 12000
     total_bonus = (
             Decimal(pointsearning)
@@ -943,7 +910,6 @@ def payslip(request, user=None, *args, **kwargs):
         net = total_pay + total_bonus - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
-
     context = {
         # deductions
         "laptop_saving": laptop_saving,

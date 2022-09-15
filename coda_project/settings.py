@@ -115,7 +115,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
-
+import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -132,20 +132,10 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "coda",  # Name of Database
+#         "NAME": "postgres",  # Name of Database
 #         "USER": "postgres",
-#         "PASSWORD": "egrove",  # os.environ.get('POSTGRESSPASS'),
+#         "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
 #         "HOST": "localhost",
-#     }
-# }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "das6459qgcjbmv",  # Name of Database
-#         "USER": "xgsxxbmwywwmoj",
-#         "PASSWORD": "91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1",  # os.environ.get('POSTGRESSPASS'),
-#         "HOST": "ec2-3-223-169-166.compute-1.amazonaws.com",
 #     }
 # }
 
@@ -159,15 +149,18 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
-import dj_database_url
-DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
+db_from_env = dj_database_url.config(conn_max_age=600)
+
+DATABASES["default"].update(db_from_env)
+
+# DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
 
 # Password validation
@@ -285,8 +278,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-# SITEURL = "https://www.codanalytics.net"
-SITEURL = "https://codadev.herokuapp.com/"
-
-import django_heroku
-django_heroku.settings(locals(), staticfiles=False)
+# SITEURL = "https://codadev.herokuapp.com/"
+SITEURL = "https://www.codanalytics.net"
