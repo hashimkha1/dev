@@ -25,7 +25,7 @@ from django.views.generic import (
 	DeleteView,
 )
 from .models import (
-		Payment_Information,Payment_History,
+		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction
 	)
@@ -446,3 +446,8 @@ class LoanListView(ListView):
 	model = TrainingLoan
 	template_name = "finance/payments/loans.html"
 	context_object_name = "payments"
+
+class userLoanListView(ListView):
+	model = LoanUsers
+	template_name = "finance/payments/loanpage.html"
+	context_object_name = "loans"

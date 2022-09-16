@@ -101,6 +101,8 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "main.context_processors.images",
+                "main.context_processors.googledriveurl",
                 "management.context_processors.categories",
                 "management.context_processors.departments",
                 "data.context_processors.roles",

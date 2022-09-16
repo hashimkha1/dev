@@ -162,8 +162,10 @@
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'management:requirements'%}" target="" >Requirements</a>
                             <div class="dropdown-divider"></div>
-                          <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1gTia0pMaLGDW7bBBTxTDcqnCA8sqCcrzKrKZEItWmH4/edit#gid=1318432858" target="_blank" >Excel Requirements</a>
+                            <a class="dropdown-item" href="https://docs.google.com/spreadsheets/d/1gTia0pMaLGDW7bBBTxTDcqnCA8sqCcrzKrKZEItWmH4/edit#gid=1318432858" target="_blank" >Excel Requirements</a>
                             <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'getdata:upload-data'%}" target="" >Data/Assets</a>
+                              <div class="dropdown-divider"></div>
                     {% else %}
                     <a class="dropdown-item" href="{% url 'main:layout' %}" target="" >Help?</a>
                     {% endif %}

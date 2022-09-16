@@ -6,7 +6,7 @@ from .views import (
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    LoanListView,LoanUpdateView,
+                    LoanListView,LoanUpdateView,userLoanListView
 )
 app_name = 'finance'
 urlpatterns = [
@@ -39,6 +39,7 @@ urlpatterns = [
     #Loans URLS
     path('loans/', LoanListView.as_view(template_name='finance/payments/loans.html'), name='trainingloans'),
     path('newpay/', views.loan, name='newpay'),
+    path('loanuser/', views.userLoanListView, name='loanuser'),
     path('loan/<int:pk>/update/', LoanUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='loan-update'),
  
 ]
