@@ -1018,21 +1018,19 @@ def yearly_points_update(employee, year):
 
 
 def eom_user(period):
-    eom_user_obj = MonthlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
-    logger.debug(f'eom_user_obj: {eom_user_obj}')
-    logger.debug(f'eom_user_obj.user: {eom_user_obj.user}')
-    return eom_user_obj.user
+    eom_users = tuple(MonthlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
+    logger.debug(f'eom_users: {eom_users}')
+    return eom_users
 
 
 def eoq_user(period):
-    eoq_user_obj = QuarterlyPoints.objects.annotate(max=Max('points')).get(period__contains=period)
-    logger.debug(f'eom_user_obj: {eoq_user_obj}')
-    logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
-    return eoq_user_obj.user
+    eoq_users = tuple(QuarterlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
+    logger.debug(f'eoq_users: {eoq_users}')
+    return eoq_users
 
 
 def eoy_user(year):
-    eoq_user_obj = YearlyPoints.objects.annotate(max=Max('points')).get(period__contains=year)
+    eoq_user_obj = tuple(YearlyPoints.objects.annotate(max=Max('points')).filter(period__contains=year).values_list('user__username'))
     logger.debug(f'eom_user_obj: {eoq_user_obj}')
     logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
     return eoq_user_obj.user
@@ -1048,13 +1046,15 @@ def generate_payslip(employee, year, month):
 
     if not tasks:
         logger.error('there is no task in the database!')
-        raise Http404("No tasks found!")
+        # raise Http404("No tasks found!")
 
     earned_salary = Decimal(0)
     points_earned = Decimal(0)
     for t in tasks:
         earned_salary = earned_salary + t.get_pay
         points_earned = points_earned + Decimal(t.point)
+    earned_salary = round(earned_salary, 2)
+    points_earned = round(points_earned, 2)
     logger.debug(f'earned_salary: {earned_salary}')
     logger.debug(f'points: {points_earned}')
 
@@ -1069,7 +1069,8 @@ def generate_payslip(employee, year, month):
     loan_status = payslip_config_obj.loan_status
     logger.debug(f'loan_status: {loan_status}')
     if loan_status:
-        loan_deduction = earned_salary * payslip_config_obj.loan_repayment_percentage
+        loan_deduction = round(earned_salary * payslip_config_obj.loan_repayment_percentage, 2)
+        logger.debug(f'payslip_config_obj.loan_repayment_percentage: {payslip_config_obj.loan_repayment_percentage}')
         logger.debug(f'initial loan_deduction: {loan_deduction}')
 
         last_month = prefix_zero(month - 1)
@@ -1115,25 +1116,25 @@ def generate_payslip(employee, year, month):
         # if employee use company computer, add the charge to the deductions.
         computer_maintenance = payslip_config_obj.computer_maintenance
 
-    kra = earned_salary * payslip_config_obj.kra_percentage
+    kra = payslip_config_obj.kra
     food_accommodation = payslip_config_obj.food_accommodation
     health = payslip_config_obj.health
 
     deductions = {
-        'computer_maintenance': round(computer_maintenance, 2),
-        'food_accommodation': round(food_accommodation, 2),
-        'health': round(health, 2),
-        'kra': round(kra, 2),
-        'loan_deduction': round(loan_deduction, 2),
-        'ls_amount': round(ls_amount, 2),
+        'computer_maintenance': computer_maintenance,
+        'food_accommodation': food_accommodation,
+        'health': health,
+        'kra': kra,
+        'loan_deduction': loan_deduction,
+        'ls_amount': ls_amount,
     }
 
     total_deductions = Decimal(0)
     for val in deductions.values():
         total_deductions = total_deductions + val
 
-    # if employee working on night or different timezone will get a bonus. 2% of the total pay.
-    night_bonus = earned_salary * payslip_config_obj.night_bonus_percentage
+    # if employee working on night or different timezone will get a bonus.
+    night_bonus = payslip_config_obj.night_bonus
 
     # we should create an attendance system, who mark an attendance of every employee.
     # leave it for the time being.
@@ -1147,28 +1148,28 @@ def generate_payslip(employee, year, month):
     eoq = Decimal(0)  # employee of quarter
     eoy = Decimal(0)  # employee of year
     monthly_points_update(employee, year, month, points_earned)
-    if month == 12 and employee == eoy_user(year):
-        eoy = round(earned_salary * payslip_config_obj.eoy_bonus_percentage, 2)
-    elif month % 3 == 0 and employee == eoq_user(quarter):
-        eoq = round(earned_salary * payslip_config_obj.eoq_bonus_percentage, 2)
-    elif employee == eom_user(period):
-        eom = round(earned_salary * payslip_config_obj.eom_bonus_percentage, 2)
-
+    logger.debug(f'(str(employee),): {(str(employee),)}')
+    if month == 12 and (str(employee),) in eoy_user(year):
+        eoy = payslip_config_obj.eoy_bonus
+    elif month % 3 == 0 and (str(employee),) in eoq_user(quarter):
+        eoq = payslip_config_obj.eoq_bonus
+    elif (str(employee),) in eom_user(period):
+        eom = payslip_config_obj.eom_bonus
     logger.debug(f'eom: {eom}')
     logger.debug(f'eoy: {eoy}')
     logger.debug(f'eoq: {eoq}')
 
     # retirement package
-    rp_amount = payslip_config_obj.rp_starting_amount + (earned_salary * payslip_config_obj.rp_increment_percentage)
+    rp_amount = payslip_config_obj.rp_starting_amount + round(earned_salary * payslip_config_obj.rp_increment_percentage, 2)
 
     bonus = {
-        'EOM': round(eom, 2),
-        'EOQ': round(eoq, 2),
-        'EOY': round(eoy, 2),
-        'holiday_pay': round(holiday_pay, 2),
-        'lb_amount': round(lb_amount, 2),
-        'night_bonus': round(night_bonus, 2),
-        'points_earned': round(points_earned, 2),
+        'EOM': eom,
+        'EOQ': eoq,
+        'EOY': eoy,
+        'holiday_pay': holiday_pay,
+        'lb_amount': lb_amount,
+        'night_bonus': night_bonus,
+        'points_earned': points_earned,
     }
 
     total_bonus = Decimal(0)
@@ -1183,16 +1184,16 @@ def generate_payslip(employee, year, month):
 
     return {
         'user': employee,
-        'earned_salary': round(earned_salary, 2),
+        'earned_salary': earned_salary,
         'bonus': bonus,
-        'total_bonus': round(total_bonus, 2),
+        'total_bonus': total_bonus,
         'deductions': deductions,
-        'total_deductions': round(total_deductions, 2),
-        'rp_amount': round(rp_amount, 2),
-        'total_earning': round(total_earning, 2),
-        'net_earning': round(net_earning, 2),
-        'net_pay': round(net_pay, 2),
-        'loan_balance': round(loan_balance, 2),
+        'total_deductions': total_deductions,
+        'rp_amount': rp_amount,
+        'total_earning': total_earning,
+        'net_earning': net_earning,
+        'net_pay': net_pay,
+        'loan_balance': loan_balance,
     }
 
 def default_payslip(request, *args, **kwargs):
