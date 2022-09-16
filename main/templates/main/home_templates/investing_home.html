@@ -10,7 +10,13 @@
               </ol>
               <div class="carousel-inner">
                 <div class="carousel-item active">
-                  <img src="\media\home\investing_v2.jpg" 
+                  <img 
+                  <img 
+                  {%for image in images%}
+                  {% if image.name == "investing_page_v1"%}
+                      src="{{googledriveurl}}={{image.image_url}}""
+                  {%endif%}
+                  {% endfor %}
                   class="d-block img-fluid"
                   alt="home2"
                   >
@@ -24,7 +30,12 @@
                   </div>
                 </div>
                 <div class="carousel-item ">
-                  <img src="\media\home\investing_v2.jpg" 
+                  <img 
+                  {%for image in images%}
+                  {% if image.name == "investing_page_v1"%}
+                      src="{{googledriveurl}}={{image.image_url}}""
+                  {%endif%}
+                  {% endfor %}
                   class="d-block img-fluid"
                   width="1200px"
                   height="800px"
@@ -41,7 +52,12 @@
                 </div>
 
                 <div class="carousel-item">
-                  <img src="\media\home\investing_v2.jpg" 
+                  <img 
+                  {%for image in images%}
+                  {% if image.name == "investing_page_v1"%}
+                      src="{{googledriveurl}}={{image.image_url}}""
+                  {%endif%}
+                  {% endfor %}
                   class="d-block img-fluid"
                   alt="home3"
                   >

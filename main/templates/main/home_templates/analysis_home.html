@@ -9,7 +9,12 @@
         </ol>
         <div class="carousel-inner">
           <div class="carousel-item active">
-            <img src="\media\data\data-home_v5.jpg" 
+            <img 
+            {%for image in images%}
+            {% if image.name == "data_page_v1"%}
+                src="{{googledriveurl}}={{image.image_url}}""
+            {%endif%}
+            {% endfor %}
             class="d-block img-fluid"
             width="1200px"
             alt="home1"
@@ -22,7 +27,12 @@
             </div>
           </div>
           <div class="carousel-item">
-            <img src="\media\data\data-home_v5.jpg" 
+            <img 
+            {%for image in images%}
+            {% if image.name == "data_page_v2"%}
+                src="{{googledriveurl}}={{image.image_url}}""
+            {%endif%}
+            {% endfor %}
             class="d-block img-fluid"
             width="1200px"
             alt="home2"
@@ -36,7 +46,12 @@
             </div>
           </div>
           <div class="carousel-item">
-            <img src="\media\data\data-home_v5.jpg" 
+            <img 
+            {%for image in images%}
+            {% if image.name == "data_page_v1"%}
+                src="{{googledriveurl}}={{image.image_url}}""
+            {%endif%}
+            {% endfor %}
             class="d-block img-fluid"
             width="1200px"
             alt="home3"
@@ -300,68 +315,5 @@
 </section>
 ------>
 <!-------------------CONTACT US------------------------->
-
-<section id="service_contact">
-  <div class="service_contact text-center">
-    <h3 class="title">CONTACT US</h3>
-    <p class="hear">
-      We Would Love to Hear From You!
-     </p>
-<hr/>
-      <div class="row text-center">
-        <div class="col-md-3">
-          <h3>Call Us</h3>
-          <img
-            src="\media\icons\phone_v1.jpg"
-            class="contact-img"
-            width="100px"
-            height="100px"
-          />
-          <p>
-            cell :4174137966 <br>         
-           cell2:  18122002265
-          </p>
-        </div>
-        <div class="col-md-3">
-          <h3>Email</h3>
-          <img
-            src="\media\icons\email_v1.jpg"
-            class="contact-img"
-            width="100px"
-            height="100px"
-          />
-         
-          <p>
-            info@codanalytics.net
-            Coachofanalytics@gmail.com
-          </p>
-        </div>
-        <div class="col-md-3">
-          <h3>Social Media</h3>
-          <img
-            src="\media\icons\facebook_v2.jpg"
-            class="contact-img"
-            width="100px"
-            height="100px"
-          />
-          <a href="#" target="_blank"> 
-            <p>Get more info on <br> Our facebook Page</p> </a>
-        </div>
-        <div class="col-md-3">
-          <h3>Address</h3>
-          <img
-            src="\media\icons\address_v1.jpg"
-            class="contact-img"
-            width="100px"
-            height="100px"
-          />
-    
-          <p>
-            3557 W Rockwood St,
-            Springfield,MO,65807
-          </p>
-        </div>
-      </div>
-    </div>
-</section>
+{% include 'main/contact/contact.html' %}
 {% endblock content %}

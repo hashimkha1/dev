@@ -33,6 +33,9 @@ urlpatterns = [
     path('checkout/', views.checkout, name='checkout'),
     path('pay/', views.pay, name='pay'),
     path("payment_complete/", views.paymentComplete, name="payment_complete"),
+    path('image/', views.ImageCreateView.as_view(template_name='main/form.html'), name='image'),
+    path('image/<int:pk>/', views.ImageUpdateView.as_view(template_name='main/form.html'), name='updateimage'),
+    path('images/', views.images, name='images'),
     path('testing/', views.testing, name='testing'),
 
    #==============ERRORS==============================================

@@ -4,11 +4,20 @@ from django.views.generic import (
     ListView,
 )
 import json
+from .models import Service
 from main.forms import TransactionForm
 from main.models import Expenses
 from finance.models import Payment_History, Payment_Information
 from django.contrib.auth.decorators import login_required
-
+from django.urls import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 # Create your views here.
 
 def error400(request):
@@ -79,10 +88,32 @@ def contact(request):
 def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
+class ImageCreateView(LoginRequiredMixin, CreateView):
+    model = Service
+    success_url = "/images/"
+    # fields = ["title", "description"]
+    fields = ["name", "description","image_url"]
 
-# def pay(request):
-#     payments = Payments.objects.all().first()
-#     return render(request, "main/pay.html", {"title": "pay", "payments": payments})
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+        
+def images(request):
+    # images = Service.objects.all().first()
+    images = Service.objects.all()
+    print(images)
+    return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
+
+class ImageUpdateView(LoginRequiredMixin,UpdateView):
+    model=Service
+    fields = ['name','image_url','description']
+     
+    def form_valid(self,form):
+        form.instance.username=self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('main:images') 
 
 
 @login_required
