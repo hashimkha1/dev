@@ -831,7 +831,9 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    loan = Decimal(total_pay) * Decimal("0.2")
+    payslip_config = PayslipConfig.objects.filter(user=employee)
+    loan = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+
     balance_amount = 0
     if TrainingLoan.objects.filter(user=employee).exists():
         training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
