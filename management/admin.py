@@ -17,11 +17,7 @@ from management.models import (
     PayslipConfig,
     RetirementPackage,
     Loan,
-    LaptopBonus,
     LaptopSaving,
-    MonthlyPoints,
-    QuarterlyPoints,
-    YearlyPoints
 )
 from accounts.models import TaskGroups
 
@@ -100,9 +96,6 @@ admin.site.register(PayslipConfig)
 admin.site.register(RetirementPackage)
 admin.site.register(Loan)
 admin.site.register(LaptopSaving)
-admin.site.register(MonthlyPoints)
-admin.site.register(QuarterlyPoints)
-admin.site.register(YearlyPoints)
 
 """
 admin.site.register(Employee)

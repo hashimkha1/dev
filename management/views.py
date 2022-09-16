@@ -55,11 +55,7 @@ from .models import (
     Payslip,
     RetirementPackage,
     Loan,
-    LaptopBonus,
     LaptopSaving,
-    MonthlyPoints,
-    QuarterlyPoints,
-    YearlyPoints
 )
 
 import logging
@@ -910,6 +906,7 @@ def payslip(request, user=None, *args, **kwargs):
         net = total_pay + total_bonus - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
+
     context = {
         # deductions
         "laptop_saving": laptop_saving,
@@ -919,11 +916,13 @@ def payslip(request, user=None, *args, **kwargs):
         "loan": loan,
         "kra": kra,
         "total_deduction": total_deduction,
+
         # bonus
         "Night_Bonus": Night_Bonus,
         "pointsearning": pointsearning,
         "holidaypay": holidaypay,
         "yearly": yearly,
+
         # General
         "tasks": tasks,
         "deadline_date": deadline_date,
@@ -934,294 +933,41 @@ def payslip(request, user=None, *args, **kwargs):
         "laptop_bonus": laptop_bonus
     }
 
-    if request.user == employee:
-        # return render(request, 'management/daf/paystub.html', context)
-        return render(request, "management/daf/payslip.html", context)
-    elif request.user.is_superuser:
-        # return render(request, 'management/daf/paystub.html', context)
+    if request.user == employee or request.user.is_superuser:
         return render(request, "management/daf/payslip.html", context)
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 
 def prefix_zero(month:int) -> str:
-    if month < 1:
-        month = 12 + month
     return str(month) if month > 9 else '0' + str(month)
 
 
-def monthly_points_update(employee, year, month, points_earned):
-    period = str(year) + '-' + prefix_zero(month)
-    try:
-        monthly_point_obj = MonthlyPoints.objects.get(user=employee, period__contains=period)
-        monthly_point_obj.points = points_earned
-    except:
-        monthly_point_obj = MonthlyPoints(user=employee, period=period, points=points_earned)
-    finally:
-        monthly_point_obj.save()
+def normalize_period(year:int, month:int) -> str:
+    if month > 12:
+        year = year + (month//12)
+        month = month % 12
+    elif month < 1:
+        year = year - (-month//12)
+        month = (-month) % 12
 
-    quarterly_points_update(employee,year, month)
-    yearly_points_update(employee, year)
+    if month == 0:
+        month = 12
 
+    if month > 0 and month < 10:
+        month_str = '0' + str(month)
+    elif month > 9 and month < 13:
+        month_str = str(month)
 
-def quarterly_points_update(employee, year, month):
-    first_month = prefix_zero(month - 2)
-    second_month = prefix_zero(month - 1)
-    third_month = prefix_zero(month)
-    logger.debug(f'first_month: {first_month}')
-    logger.debug(f'second_month: {second_month}')
-    logger.debug(f'third_month: {third_month}')
-
-    monthly_points_obj = MonthlyPoints.objects.filter(
-        Q(period__contains = str(year) + '-' + first_month)
-        | Q(period__contains = str(year) + '-' + second_month)
-        | Q(period__contains = str(year) + '-' + third_month),
-        user=employee,
-    )
-    logger.debug(f'monthly_points_obj: {monthly_points_obj}')
-    quarterly_points = monthly_points_obj.aggregate(Sum('points')).get('points__sum')
-    logger.debug(f'quarterly_points: {quarterly_points}')
-
-    # what quarter we are working on?
-    # Quarter 1 or jan-2022 to mar-2022 will be 2022-1
-    # Quarter 1 or april-2022 to june-2022 will be 2022-2
-    period = str(year) + '-' + str(month//3)
-    logger.debug(f'period: {period}')
-
-    try:
-        quarterly_point_obj = QuarterlyPoints.objects.get(user=employee, period=period)
-        quarterly_point_obj.points = quarterly_points
-    except:
-        quarterly_point_obj = QuarterlyPoints(user=employee, period=period, points=quarterly_points)
-    finally:
-        quarterly_point_obj.save()
-    logger.debug(f'quarterly_point_obj: {quarterly_point_obj}')
+    return str(year) + '-' + month_str
 
 
-def yearly_points_update(employee, year):
-    quarterly_points_obj = QuarterlyPoints.objects.filter(
-        user=employee,
-        period__contains=year
-    )
-    logger.debug(f'quarterly_points_obj: {quarterly_points_obj}')
-    yearly_points = quarterly_points_obj.aggregate(Sum('points')).get('points__sum')
-    logger.debug(f'quarterly_points: {yearly_points}')
-
-    try:
-        yearly_point_obj = YearlyPoints.objects.get(user=employee, period=year)
-        yearly_point_obj.points = yearly_points
-    except:
-        yearly_point_obj = YearlyPoints(user=employee, period=year, points=yearly_points)
-    finally:
-        yearly_point_obj.save()
-    logger.debug(f'quarterly_point_obj: {yearly_point_obj}')
-
-
-def eom_user(period):
-    eom_users = tuple(MonthlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
-    logger.debug(f'eom_users: {eom_users}')
-    return eom_users
-
-
-def eoq_user(period):
-    eoq_users = tuple(QuarterlyPoints.objects.annotate(max=Max('points')).filter(period__contains=period).values_list('user__username'))
-    logger.debug(f'eoq_users: {eoq_users}')
-    return eoq_users
-
-
-def eoy_user(year):
-    eoq_user_obj = tuple(YearlyPoints.objects.annotate(max=Max('points')).filter(period__contains=year).values_list('user__username'))
-    logger.debug(f'eom_user_obj: {eoq_user_obj}')
-    logger.debug(f'eom_user_obj.user: {eoq_user_obj.user}')
-    return eoq_user_obj.user
-
-
-def generate_payslip(employee, year, month):
-    period = str(year) + '-' + prefix_zero(month)
-    logger.debug(f'period: {period}')
-
-    quarter = str(year) + '-' + str(month//3)
-    tasks = Task.objects.all().filter(employee=employee, submission__contains=period)
-    logger.debug(f'tasks: {tasks}')
-
-    if not tasks:
-        logger.error('there is no task in the database!')
-        # raise Http404("No tasks found!")
-
-    earned_salary = Decimal(0)
-    points_earned = Decimal(0)
-    for t in tasks:
-        earned_salary = earned_salary + t.get_pay
-        points_earned = points_earned + Decimal(t.point)
-    earned_salary = round(earned_salary, 2)
-    points_earned = round(points_earned, 2)
-    logger.debug(f'earned_salary: {earned_salary}')
-    logger.debug(f'points: {points_earned}')
-
-    try:
-        payslip_config_obj = PayslipConfig.objects.get(user=employee)
-    except:
-        logger.error('payslip configuration for this employee is not found!')
-        raise Http404("No Payslip Configuration found!")
-    # logger.debug(f'payslip_config_obj: {payslip_config_obj}')
-
-    # Bonus and Deductions
-    loan_status = payslip_config_obj.loan_status
-    logger.debug(f'loan_status: {loan_status}')
-    if loan_status:
-        loan_deduction = round(earned_salary * payslip_config_obj.loan_repayment_percentage, 2)
-        logger.debug(f'payslip_config_obj.loan_repayment_percentage: {payslip_config_obj.loan_repayment_percentage}')
-        logger.debug(f'initial loan_deduction: {loan_deduction}')
-
-        last_month = prefix_zero(month - 1)
-        if month == 1:
-            last_period = str(year-1) + '-' + last_month
-        else:
-            last_period = str(year) + '-' + last_month
-        logger.debug(f'last_month: {last_month}')
-
-        try:
-            loan_obj = Loan.objects.get(user=employee, period__contains=last_period)
-            logger.debug(f'loan_obj: {loan_obj}')
-            loan_balance = loan_obj.get('balance')
-        except:
-            loan_balance = payslip_config_obj.loan_amount
-        logger.debug(f'initial loan_balance: {loan_balance}')
-
-        if loan_balance <= loan_deduction:
-            loan_deduction = loan_balance
-            loan_balance = Decimal(0)
-        else:
-            loan_balance = loan_balance - loan_deduction
-    else:
-        loan_balance = 0
-        loan_deduction = 0
-    logger.debug(f'final loan_deduction: {loan_deduction}')
-    logger.debug(f'final loan_balance: {loan_balance}')
-
-    lb_amount = Decimal(0)
-    ls_amount = Decimal(0)
-    computer_maintenance = Decimal(0)
-    laptop_status = payslip_config_obj.laptop_status
-    if laptop_status:
-        lb_amount = payslip_config_obj.lb_amount
-    else:
-        ls_amount = payslip_config_obj.ls_amount
-        ls_total = LaptopSaving.objects.filter(user=employee).aggrigate(Max('amount')).get('amount')
-        ls_max_limit = payslip_config_obj.ls_max_limit
-
-        if (ls_amount + ls_total) > ls_max_limit:
-            ls_amount = ls_max_limit - ls_total
-
-        # if employee use company computer, add the charge to the deductions.
-        computer_maintenance = payslip_config_obj.computer_maintenance
-
-    kra = payslip_config_obj.kra
-    food_accommodation = payslip_config_obj.food_accommodation
-    health = payslip_config_obj.health
-
-    deductions = {
-        'computer_maintenance': computer_maintenance,
-        'food_accommodation': food_accommodation,
-        'health': health,
-        'kra': kra,
-        'loan_deduction': loan_deduction,
-        'ls_amount': ls_amount,
-    }
-
-    total_deductions = Decimal(0)
-    for val in deductions.values():
-        total_deductions = total_deductions + val
-
-    # if employee working on night or different timezone will get a bonus.
-    night_bonus = payslip_config_obj.night_bonus
-
-    # we should create an attendance system, who mark an attendance of every employee.
-    # leave it for the time being.
-    logger.debug(f'month: {month}')
-    if month in (12, 1):
-        holiday_pay = payslip_config_obj.holiday_pay
-    else:
-        holiday_pay = Decimal(0)
-
-    eom = Decimal(0)  # employee of month
-    eoq = Decimal(0)  # employee of quarter
-    eoy = Decimal(0)  # employee of year
-    monthly_points_update(employee, year, month, points_earned)
-    logger.debug(f'(str(employee),): {(str(employee),)}')
-    if month == 12 and (str(employee),) in eoy_user(year):
-        eoy = payslip_config_obj.eoy_bonus
-    elif month % 3 == 0 and (str(employee),) in eoq_user(quarter):
-        eoq = payslip_config_obj.eoq_bonus
-    elif (str(employee),) in eom_user(period):
-        eom = payslip_config_obj.eom_bonus
-    logger.debug(f'eom: {eom}')
-    logger.debug(f'eoy: {eoy}')
-    logger.debug(f'eoq: {eoq}')
-
-    # retirement package
-    rp_amount = payslip_config_obj.rp_starting_amount + round(earned_salary * payslip_config_obj.rp_increment_percentage, 2)
-
-    bonus = {
-        'EOM': eom,
-        'EOQ': eoq,
-        'EOY': eoy,
-        'holiday_pay': holiday_pay,
-        'lb_amount': lb_amount,
-        'night_bonus': night_bonus,
-        'points_earned': points_earned,
-    }
-
-    total_bonus = Decimal(0)
-    for val in bonus.values():
-        total_bonus = total_bonus + val
-
-    # Net Pay
-    total_earning = earned_salary + total_bonus
-    net_earning = total_earning - total_deductions
-    round_off = round(net_earning) - net_earning
-    net_pay = net_earning + round_off
-
-    return {
-        'user': employee,
-        'earned_salary': earned_salary,
-        'bonus': bonus,
-        'total_bonus': total_bonus,
-        'deductions': deductions,
-        'total_deductions': total_deductions,
-        'rp_amount': rp_amount,
-        'total_earning': total_earning,
-        'net_earning': net_earning,
-        'net_pay': net_pay,
-        'loan_balance': loan_balance,
-    }
-
-def default_payslip(request, *args, **kwargs):
-    received_username = kwargs.get('username')
-    employee = None
-    if request.user.is_superuser and received_username is not None:
-        logger.debug(f'received_username: {received_username}')
-        try:
-            employee = get_user_model().objects.get(username=received_username)
-        except:
-            logger.error('employee is not found!')
-            raise Http404("employee is not found!")
-    elif request.user.id:
-        logger.debug(f'request.user.id: {request.user.id}')
-        try:
-            employee = get_user_model().objects.get(id=int(request.user.id))
-        except:
-            logger.error('employee is not found!')
-            raise Http404("employee is not found!")
-    logger.debug(f'employee: {employee}')
-
-    today = date.today()
-    month = int(today.strftime("%m"))
-    year = int(today.strftime("%Y"))
-
-    context = generate_payslip(employee, year, month)
-    # context = generate_payslip(employee, year, 12)
-    return render(request, "management/daf/payslip.html", context)
+def best_employee(task_obj):
+    sum_of_tasks = task_obj.annotate(sum=Sum('point'))
+    max_point = task_obj.aggregate(max=Max('sum')).get('max')
+    best_users = tuple(sum_of_tasks.filter(sum=max_point).values_list('employee__username'))
+    logger.debug(f'best_users: {best_users}')
+    return best_users
 
 
 class TaskDetailView(DetailView):
