@@ -980,34 +980,10 @@ class Loan(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2)
 
 
-class LaptopBonus(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
 class LaptopSaving(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class MonthlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    points = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class QuarterlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    points = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class YearlyPoints(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    points = models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class Payslip(models.Model):
