@@ -65,7 +65,6 @@ def SendMsgApplicatUser():
 @shared_task(name="TrainingLoanDetectionHistory")  
 def TrainingLoanDetectionHistory():
     default_payment_fees = Default_Payment_Fees.objects.all().first()
-
     employee = CustomerUser.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),is_active=True)
     for emp in employee:
         emp_id = emp.id
@@ -102,10 +101,15 @@ def TrainingLoanDetectionHistory():
                         LBandLSDetection(emp_id)
 
                     loan = round(loan, 2)
-
-                    TrainingLoan.objects.create(user=emp,total_earnings_amount=total_pay,detection_amount=loan, category="Credit",balance_amount=balance,training_loan_amount=default_payment_fees)
+                    TrainingLoan.objects.create(
+                        user=emp,
+                        total_earnings_amount=total_pay,
+                        detection_amount=loan,
+                        category="Credit",
+                        balance_amount=balance,
+                        training_loan_amount=default_payment_fees
+                    )
             else:
-
                 total_pay = 0
                 for task in tasks:
                     total_pay = total_pay + task.get_pay

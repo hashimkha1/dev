@@ -68,7 +68,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
-    ("* * * * *", "application.msg_send_cron.SendMsgApplicatUser"),
+    # ("* * * * *", "application.msg_send_cron.SendMsgApplicatUser"),
     ("*/5 * * * *", "management.cron.advertisement"),
 ]
 
