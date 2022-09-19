@@ -872,13 +872,14 @@ def payslip(request, user=None, *args, **kwargs):
         training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
         loan = training_loan.detection_amount
         if LoanUsers.objects.filter(user=employee, is_loan=True).exists():
-            balance_amount = training_loan.balance_amount
+            logger.info('is_loan is true!')
+            balance_amount = round(Decimal(training_loan.balance_amount), 2)
         else:
             balance_amount = Decimal(0)
     else:
         if default_payment_fees:
             loan_amount = Decimal(default_payment_fees.loan_amount)
-            balance_amount = round(loan_amount - loan, 2)
+            balance_amount = round(Decimal(loan_amount - loan), 2)
         else:
             loan_amount = Decimal(0)
     logger.debug(f'balance_amount: {balance_amount}')
@@ -897,9 +898,9 @@ def payslip(request, user=None, *args, **kwargs):
             laptop_saving = lbandls.laptop_service
         else:
             laptop_saving = Decimal(0)
-    laptop_bonus = Decimal(laptop_bonus)
-    laptop_saving = Decimal(laptop_saving)
-    loan = Decimal(loan)
+    laptop_bonus = round(Decimal(laptop_bonus), 2)
+    laptop_saving = round(Decimal(laptop_saving), 2)
+    loan = round(Decimal(loan), 2)
 
     food_accomodation = payslip_config.food_accommodation
     computer_maintenance = payslip_config.computer_maintenance
@@ -975,7 +976,7 @@ def payslip(request, user=None, *args, **kwargs):
     total_value = total_pay + total_bonus
     net = total_value - total_deduction
     round_off = round(net) - net
-    net_pay = net - round_off
+    net_pay = net + round_off
 
     context = {
         # bonus
