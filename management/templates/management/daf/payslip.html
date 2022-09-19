@@ -54,68 +54,82 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <th scope="row">Total Earnings</th>
-                            <td>{{total_pay}}</td>
-                            <td>Training Loan</td>
-                            <td>{{loan}}</td>
+                            <th scope="row">Earnings</th>
+                            <td>{{ total_pay }}</td>
+                            <th>Training Loan</th>
+                            <td>{{ loan }}</td>
                         </tr>
                         <tr>
-                            <th scope="row">Points Earnings</th>
-                            <td>{{pointsearning}}</td>
-                            <td>FA</td>
-                            <td>{{food_accomodation}}</td>
+                            <th scope="row">Points</th>
+                            <td>{{ pointsearning }}</td>
+                            <th>FA</th>
+                            <td>{{ food_accomodation }}</td>
                         </tr>
                         <tr>
                             <th scope="row">EOM</th>
-                            <td>0.00</td>
-                            <td>CM</td>
-                            <td>{{computer_maintenance}}</td>
+                            <td>{{ EOM }}</td>
+                            <th>CM</th>
+                            <td>{{ computer_maintenance }}</td>
                         </tr>
                         <tr>
                             <th scope="row">EOQ</th>
-                            <td>0.00 </td>
-                            <td>Health Care</td>
-                            <td>{{health}}</td>
+                            <td>{{ EOQ }}</td>
+                            <th>Health Care</th>
+                            <td>{{ health }}</td>
                         </tr>
                         <tr>
                             <th scope="row">EOY</th>
-                            <td>0.00 </td>
-                            <td>LS</td>
-                            <td>{{laptop_saving}}</td>
+                            <td>{{ EOY }}</td>
+                            <th>LS</th>
+                            <td>{{ laptop_saving }}</td>
                         </tr>
                         <tr>
                             <th scope="row">Laptop Bonus</th>
-                            <td>0.00</td>
-
+                            <td>{{ laptop_bonus }}</td>
+                            <th scope="row">KRA</th>
+                            <td>{{ kra }}</td>
                         </tr>
 
                         <tr>
                             <th scope="row">Holiday Wages</th>
                             <td>{{holidaypay}}</td>
-                            <td colspan="6"></td>
+                            <th scope="row"></th>
+                            <td></td>
                         </tr>
                         <tr>
                             <th scope="row">Night Allowance</th>
                             <td>{{Night_Bonus}}</td>
-                            <td colspan="2"></td>
+                            <th scope="row"></th>
+                            <td></td>
                         </tr>
                         <tr>
                             <th scope="row">Retirement Yearly Package</th>
                             <td>{{yearly}}</td>
-                            <td colspan="2"></td>
+                            <th scope="row"></th>
+                            <td></td>
                         </tr>
 
                         <tr class="border-top">
                             <th scope="row">Total Earning</th>
-                            <td>{{net}}</td>
-                            <td>Total Deductions</td>
+                            <td>{{ total_value }}</td>
+                            <th>Total Deductions</th>
                             <td>{{total_deduction}}</td>
+                        </tr>
+
+                        <tr class="border-top">
+                            <th scope="row"></th>
+                            <td></td>
+                            <th>Net Earnings</th>
+                            <td>{{ net }}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div class="row">
-                <div class="col-md-4"> <br> <span class="fw-bold">Net Pay : {{net}}</span> </div>
+                <div class="col-md-4"> <br> <span class="fw-bold">Net Pay : {{ net_pay }}</span> </div>
+                {% if balance_amount %}
+                    <div class="col-md-4"> <br> <span class="fw-bold">Loan Balance : {{ balance_amount }}</span> </div>
+                {% endif %}
                 <div class="border col-md-8">
                     <div class="d-flex flex-column"> <span>In Words</span> <span>Translate</span> </div>
                 </div>

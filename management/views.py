@@ -50,7 +50,7 @@ from django.db.models import Q
 from django.db.models import Max
 
 from accounts.models import Tracker, Department, TaskGroups
-from .models import (
+from management.models import (
     PayslipConfig,
     Payslip,
     RetirementPackage,
@@ -805,141 +805,6 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     else:
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
-def payslip(request, user=None, *args, **kwargs):
-    try:
-        default_payment_fees = Default_Payment_Fees.objects.all().first()
-    except:
-        default_payment_fees =0
-
-    deadline_date = date(
-        date.today().year,
-        date.today().month,
-        calendar.monthrange(date.today().year, date.today().month)[-1],
-    )
-    today = date(date.today().year, date.today().month, date.today().day)
-    year = date.today().year
-    month = date.today().month
-    day = date.today().day
-
-    employee = get_object_or_404(User, username=kwargs.get("username"))
-    tasks = Task.objects.all().filter(employee=employee)
-    mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    GoalAmount = mxearning.get("Your_Total_AssignedAmt")
-    points = tasks.aggregate(Your_Total_Points=Sum("point"))
-    total_pay = 0
-    for task in tasks:
-        total_pay = total_pay + task.get_pay
-
-    # Deductions
-    payslip_config = PayslipConfig.objects.filter(user=employee)
-    loan = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-
-    balance_amount = 0
-    if TrainingLoan.objects.filter(user=employee).exists():
-        training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
-        loan = training_loan.detection_amount
-        if LoanUsers.objects.filter(user=employee, is_loan=True).exists():
-            balance_amount = training_loan.balance_amount
-        else:
-            balance_amount = 0
-    else:
-        if default_payment_fees:
-            loan_amount = Decimal(default_payment_fees.loan_amount)
-            balance_amount = loan_amount - loan
-        else:
-            loan_amount = 0
-
-    userprofile = UserProfile.objects.get(user_id=employee)
-    if userprofile.laptop_status == True:
-        laptop_saving = 0
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
-        else:
-            laptop_bonus = 0
-    else:
-        laptop_bonus = 0
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_saving = lbandls.laptop_service
-        else:
-            laptop_saving = 0
-    laptop_bonus = '{0:.2f}'.format(laptop_bonus)
-    laptop_saving = '{0:.2f}'.format(laptop_saving)
-    loan = round(loan, 2)
-    balance_amount = round(balance_amount, 2)
-    kra = Decimal(total_pay) * Decimal("0.30")
-    computer_maintenance = 500
-    food_accomodation = 1000
-    health = 500
-
-    total_deduction = (
-            Decimal(loan)
-            + Decimal(computer_maintenance)
-            + Decimal(food_accomodation)
-            + Decimal(health)
-            + Decimal(laptop_saving)
-    )
-    # Bonus Section
-    Lap_Bonus = 500  # make it 1000 later.
-    if points.get("Your_Total_Points") == None:
-        pointsearning = 0
-    else:
-        pointsearning = points.get("Your_Total_Points")
-    Night_Bonus = Decimal(total_pay) * Decimal("0.02")  # 2% of the total pay.
-    if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
-        holidaypay = 3000.00
-    else:
-        holidaypay = 0.00
-    EOM = 0  # employee of month
-    EOQ = 0  # employee of quarter
-    EOY = 0  # employee of year
-    yearly = 12000
-    total_bonus = (
-            Decimal(pointsearning)
-            + Decimal(holidaypay)
-            + Decimal(EOM)
-            + Decimal(EOQ)
-            + Decimal(EOY)
-            + Night_Bonus
-    )
-    # Net Pay
-    try:
-        net = total_pay + total_bonus - total_deduction
-    except (TypeError, AttributeError):
-        net = total_pay
-
-    context = {
-        # deductions
-        "laptop_saving": laptop_saving,
-        "computer_maintenance": computer_maintenance,
-        "food_accomodation": food_accomodation,
-        "health": health,
-        "loan": loan,
-        "kra": kra,
-        "total_deduction": total_deduction,
-
-        # bonus
-        "Night_Bonus": Night_Bonus,
-        "pointsearning": pointsearning,
-        "holidaypay": holidaypay,
-        "yearly": yearly,
-
-        # General
-        "tasks": tasks,
-        "deadline_date": deadline_date,
-        "today": today,
-        "total_pay": total_pay,
-        "net": net,
-        "balance_amount": balance_amount,
-        "laptop_bonus": laptop_bonus
-    }
-
-    if request.user == employee or request.user.is_superuser:
-        return render(request, "management/daf/payslip.html", context)
-    else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
-
 
 def prefix_zero(month:int) -> str:
     return str(month) if month > 9 else '0' + str(month)
@@ -957,19 +822,196 @@ def normalize_period(year:int, month:int) -> str:
         month = 12
 
     if month > 0 and month < 10:
-        month_str = '0' + str(month)
-    elif month > 9 and month < 13:
-        month_str = str(month)
+        month = '0' + str(month)
 
-    return str(year) + '-' + month_str
+    return str(year) + '-' + str(month)
 
 
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))
-    max_point = task_obj.aggregate(max=Max('sum')).get('max')
+    # logger.debug(f'sum_of_tasks: {sum_of_tasks}')
+    max_point = sum_of_tasks.aggregate(max=Max('sum')).get('max')
+    # logger.debug(f'max_point: {max_point}')
     best_users = tuple(sum_of_tasks.filter(sum=max_point).values_list('employee__username'))
-    logger.debug(f'best_users: {best_users}')
+    # logger.debug(f'best_users: {best_users}')
     return best_users
+
+
+def payslip(request, user=None, *args, **kwargs):
+    try:
+        default_payment_fees = Default_Payment_Fees.objects.all().first()
+    except:
+        default_payment_fees = Decimal(0)
+
+    deadline_date = date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+    today = date(date.today().year, date.today().month, date.today().day)
+    year = date.today().year
+    month = date.today().month
+    day = date.today().day
+
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    tasks = Task.objects.all().filter(employee=employee)
+    mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
+    GoalAmount = mxearning.get("Your_Total_AssignedAmt")
+    points = tasks.aggregate(Your_Total_Points=Sum("point"))
+    total_pay = Decimal(0)
+    for task in tasks:
+        total_pay = total_pay + task.get_pay
+
+    # Deductions
+    payslip_config = get_object_or_404(PayslipConfig, user=employee)
+    loan = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+
+    balance_amount = Decimal(0)
+    if TrainingLoan.objects.filter(user=employee).exists():
+        logger.info('training loan exists!')
+        training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
+        loan = training_loan.detection_amount
+        if LoanUsers.objects.filter(user=employee, is_loan=True).exists():
+            balance_amount = training_loan.balance_amount
+        else:
+            balance_amount = Decimal(0)
+    else:
+        if default_payment_fees:
+            loan_amount = Decimal(default_payment_fees.loan_amount)
+            balance_amount = round(loan_amount - loan, 2)
+        else:
+            loan_amount = Decimal(0)
+    logger.debug(f'balance_amount: {balance_amount}')
+    userprofile = UserProfile.objects.get(user_id=employee)
+    if userprofile.laptop_status == True:
+        laptop_saving = Decimal(0)
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_bonus = lbandls.laptop_bonus
+        else:
+            laptop_bonus = Decimal(0)
+    else:
+        laptop_bonus = Decimal(0)
+        if LBandLS.objects.filter(user=employee).exists():
+            lbandls = LBandLS.objects.get(user_id=employee)
+            laptop_saving = lbandls.laptop_service
+        else:
+            laptop_saving = Decimal(0)
+    laptop_bonus = Decimal(laptop_bonus)
+    laptop_saving = Decimal(laptop_saving)
+    loan = Decimal(loan)
+
+    food_accomodation = payslip_config.food_accommodation
+    computer_maintenance = payslip_config.computer_maintenance
+    health = payslip_config.health
+    kra = payslip_config.kra
+
+    total_deduction = (
+            loan
+            + computer_maintenance
+            + food_accomodation
+            + health
+            + laptop_saving
+    )
+
+    # Bonus Section
+    Lap_Bonus = payslip_config.lb_amount
+    pointsearning = points.get("Your_Total_Points")
+    if pointsearning is None:
+        pointsearning = Decimal(0)
+
+    Night_Bonus = payslip_config.night_bonus
+    if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
+        holidaypay = payslip_config.holiday_pay
+    else:
+        holidaypay = Decimal(0)
+
+    EOM = Decimal(0)  # employee of month
+    EOQ = Decimal(0)  # employee of quarter
+    EOY = Decimal(0)  # employee of year
+    
+    if month == 12:
+        task_obj = Task.objects.filter(submission__contains=year)
+        logger.debug(f'task_obj: {task_obj}')
+        eoy_users = best_employee(task_obj)
+        if (employee,) in eoy_users:
+            logger.info('this employee is EOY!')
+            EOY = payslip_config.eoy_bonus
+    elif month % 3 == 0:
+        task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
+                                | Q(submission__contains=normalize_period(year, month-1))
+                                | Q(submission__contains=normalize_period(year, month)))
+        logger.debug(f'task_obj: {task_obj}')
+        eoq_users = best_employee(task_obj)
+        user_tuple = (employee.username,)
+        logger.debug(f'eoq_users: {eoq_users}')
+        logger.debug(f'user_tuple: {user_tuple}')
+
+        if user_tuple in eoq_users:
+            logger.info('this employee is EOQ!')
+            EOQ = payslip_config.eoq_bonus
+            logger.debug(f'EOQ: {EOQ}')
+    else:
+        task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
+        logger.debug(f'task_obj: {task_obj}')
+        eom_users = best_employee(task_obj)
+        if (employee,) in eom_users:
+            logger.info('this employee is EOM!')
+            EOM = payslip_config.eom_bonus
+
+    yearly = round( total_pay * payslip_config.rp_increment_percentage, 2)
+    total_bonus = (
+            pointsearning
+            + EOM
+            + EOQ
+            + EOY
+            + laptop_bonus
+            + holidaypay
+            + Night_Bonus
+    )
+
+    # Net Pay
+
+    total_value = total_pay + total_bonus
+    net = total_value - total_deduction
+    round_off = round(net) - net
+    net_pay = net - round_off
+
+    context = {
+        # bonus
+        "pointsearning": pointsearning,
+        "EOM": EOM,
+        "EOQ": EOQ,
+        "EOY": EOY,
+        "laptop_bonus": laptop_bonus,
+        "holidaypay": holidaypay,
+        "Night_Bonus": Night_Bonus,
+        "yearly": yearly,
+
+        # deductions
+        "loan": loan,
+        "food_accomodation": food_accomodation,
+        "computer_maintenance": computer_maintenance,
+        "health": health,
+        "laptop_saving": laptop_saving,
+        "kra": kra,
+
+        # General
+        "total_pay": total_pay,
+        'total_value': total_value,
+        "total_deduction": total_deduction,
+        'net': net,
+        'net_pay': net_pay,
+        "balance_amount": balance_amount,
+        "tasks": tasks,
+        "deadline_date": deadline_date,
+        "today": today,
+    }
+
+    if request.user == employee or request.user.is_superuser:
+        return render(request, "management/daf/payslip.html", context)
+    else:
+        raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 
 class TaskDetailView(DetailView):
