@@ -117,7 +117,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
-import dj_database_url
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -158,9 +158,9 @@ DATABASES = {
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600)
 
-DATABASES["default"].update(db_from_env)
+import dj_database_url
+DATABASES["default"].update(dj_database_url.config(conn_max_age=600))
 
 # DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
