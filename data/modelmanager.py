@@ -140,3 +140,26 @@ class SubCategoryManager(models.Manager):
 
     def search(self, query):
         return self.get_queryset().active().search(query)
+
+class ActivityManager(models.Manager):
+    def get_queryset(self):
+        return super(ActivityManager, self).get_queryset().filter()
+        # return RoleQuerySet(self.model, using=self._db)
+
+    def all(self):
+        return self.get_queryset()
+
+    def get_by_slug(self, slug):
+        qs = self.get_queryset().filter(slug=slug)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+    def get_by_activity(self, name):
+        qs = self.get_queryset().filter(name=name)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
+    def search(self, query):
+        return self.get_queryset().active().search(query)

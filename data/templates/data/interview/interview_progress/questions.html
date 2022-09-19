@@ -50,20 +50,21 @@
                     {{ object.desc2 }}
                 </li>
               </ol>
+              ""/data/{{path}}/"
               <div class="content-section text-dark h6">
-                <form action="/data/iuploads/" method="POST">
-                  {% csrf_token %}
-                  <fieldset class="form-group">
-                    <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
-                    {{ form|crispy }}
-                  </fieldset>
-                  <div class="form-group">
-                    <button class="btn btn-md btn-bc font-weight-bold" type="submit">
-                      Submit
-                    </button>
+                <form action="/data/interview/{{path}}/" method="POST">
+                    {% csrf_token %}
+                      <fieldset class="form-group">
+                        <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
+                        {{ form|crispy }}
+                      </fieldset>
+                      <div class="form-group">
+                        <button class="btn btn-md btn-bc font-weight-bold" type="submit">
+                          Submit
+                        </button>
+                      </div>
+                    </form>
                   </div>
-                </form>
-              </div>
         </div>
         <div class="col-md-5">
             <div id="img2" class="mt-3">

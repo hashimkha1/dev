@@ -1,3 +1,4 @@
+import itertools
 from typing import List
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -168,6 +169,18 @@ def useruploads(request, pk=None, *args, **kwargs):
 #         form.instance.question_type = "project story"
 #         print("form.instance.question_type")
 #         return super().form_valid(form)
+
+def courseoverivew(request): #, question_type=None, *args, **kwargs):
+    instance = request.path
+    value=request.path.split("/")
+    instance = [i for i in value if i.strip()]
+    context={
+        "instance":instance
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    else:
+         return render(request, "data/training/training_progress/courseoverview.html", context )
 
 class TrainingView(LoginRequiredMixin, ListView):
     model = Interviews
@@ -352,11 +365,14 @@ class InterviewDetailView(DetailView):
 #     ordering = ["-upload_date"]
 
 
-
-def questionview(request, question_type=None, *args, **kwargs):
+def courseview(request, question_type=None, *args, **kwargs):
     instance = JobRole.objects.get_by_question(question_type)
     form= InterviewForm
-    print(instance)
+    questiontopic=['resume','methodology','testing']
+    value=request.path.split("/")
+    pathvalues = [i for i in value if i.strip()]
+    path=pathvalues[-1]
+    print(path)
     # url=f'data/interview/interview_progress/{question_type}s.html'
     url=f'data/interview/interview_progress/questions.html'
     # url="data/interview/interview_progress/" + str(instance) + ".html"
@@ -364,8 +380,31 @@ def questionview(request, question_type=None, *args, **kwargs):
     context = {
         "form":form,
         "object": instance,
-        "interviews": Interviews.objects.all()
+        "interviews": Interviews.objects.all(),
+        "path":path
+    }
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
+
+def questionview(request, question_type=None, *args, **kwargs):
+    instance = JobRole.objects.get_by_question(question_type)
+    form= InterviewForm
+    questiontopic=['resume','methodology','testing']
+    value=request.path.split("/")
+    pathvalues = [i for i in value if i.strip()]
+    path=pathvalues[-1]
+    print(path)
+    # url=f'data/interview/interview_progress/{question_type}s.html'
+    url=f'data/interview/interview_progress/questions.html'
+    # url="data/interview/interview_progress/" + str(instance) + ".html"
+    print(url)
+    context = {
+        "form":form,
+        "object": instance,
+        "interviews": Interviews.objects.all(),
+        "path":path
     }
     if instance is None:
         return render(request, "main/errors/404.html")
@@ -507,18 +546,15 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 def subcategorydetail(request, title=None, *args, **kwargs):
-    instance = FeaturedSubCategory.objects.get_by_category(title)
+    instance = FeaturedSubCategory.objects.get_by_subcategory(title)
     form= InterviewForm
     print(instance)
-    # url=f'data/training/training_progress/{title}s.html'
-    url=f'data/training/training_progress/training.html'
-    # url="data/training/training_progress/" + str(instance) + ".html"
+    url=f'data/training/training_progress/course.html'
     print(url)
     context = {
         "form":form,
         "object": instance,
-        "categories": FeaturedSubCategory.objects.all()
-
+        # "categories": FeaturedSubCategory.objects.all(),
     }
     if instance is None:
         return render(request, "main/errors/404.html")
@@ -533,6 +569,21 @@ class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
+def activitydetail(request, slug=None, *args, **kwargs):
+    # instance = FeaturedActivity.objects.get_by_slug(slug)
+    activities = FeaturedActivity.objects.all()
+    print(activities)
+    url=f'data/training/training_progress/activity.html'
+    print(url)
+    context = {
+        "form":InterviewForm,
+        "activities": activities,
+        "categories": FeaturedSubCategory.objects.all(),
+    }
+    if activities is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
 
 
 @method_decorator(login_required, name="dispatch")
