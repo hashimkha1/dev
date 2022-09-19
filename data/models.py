@@ -293,7 +293,7 @@ class FeaturedActivity(models.Model):
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_name = models.CharField(max_length=255)
-    slug = models.SlugField(max_length=255, blank=True, default="slug")
+    # slug = models.SlugField(max_length=255, blank=True, default="slug")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
