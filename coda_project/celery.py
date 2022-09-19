@@ -23,6 +23,7 @@ app.conf.beat_schedule = {
     },
     'loan_amount_detection': {
         'task': 'TrainingLoanDetectionHistory',
-        'schedule': crontab(day_of_month=28),
-    }, 
+        'schedule': crontab(minute='*/1'),
+        # 'schedule': crontab(day_of_month=28),
+    },
 }
