@@ -927,9 +927,9 @@ def payslip(request, user=None, *args, **kwargs):
     else:
         holidaypay = Decimal(0)
 
-    EOM = Decimal(0)  # employee of month
-    EOQ = Decimal(0)  # employee of quarter
-    EOY = Decimal(0)  # employee of year
+    EOM = Decimal(0.00)  # employee of month
+    EOQ = Decimal(0.00)  # employee of quarter
+    EOY = Decimal(0.00)  # employee of year
     
     if month == 12:
         task_obj = Task.objects.filter(submission__contains=year)
