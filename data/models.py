@@ -292,7 +292,7 @@ class FeaturedActivity(models.Model):
         FeaturedSubCategory, blank=True, related_name="subcategories_fetured"
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    activity_name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True, default="slug")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
