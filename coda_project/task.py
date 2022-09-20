@@ -1,10 +1,8 @@
 from celery import shared_task
-
 from mail.custom_email import send_email
 from management.models import Task, TaskHistory,LBandLS
 from accounts.models import CustomerUser
 from datetime import datetime, timedelta
-#from management.utils import email_template
 from decimal import Decimal
 from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees
 from django.contrib.auth import get_user_model
@@ -59,7 +57,13 @@ def SendMsgApplicatUser():
         # content = f"""
         #         <span><h3>Hi {data.username},</h3>you applied for a position in CODA, kindly let us know of your progress, you can login at the following link to proceed with your interview </span>"""
         # email_template(subject,to,content)
-        send_email(category=data.category, to_email=(data.email,), subject=subject, html_template='email/SendMsgApplicatUser.html', context={'username': data.first_name})
+        send_email(
+            category=data.category,
+            to_email=(data.email,),
+            subject=subject,
+            html_template='email/SendMsgApplicatUser.html',
+            context={'username': data.first_name}
+        )
 
 
 @shared_task(name="TrainingLoanDetectionHistory")  
