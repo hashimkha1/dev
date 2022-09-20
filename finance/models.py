@@ -298,10 +298,10 @@ class TrainingLoan(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField('Is complete', default=True)
     training_loan_amount = models.ForeignKey('Default_Payment_Fees',on_delete=models.CASCADE,null=True)
-    total_earnings_amount = models.FloatField(null=True)
+    total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     detection_date = models.DateField(auto_now_add=True)
-    detection_amount = models.FloatField(null=True)
-    balance_amount = models.FloatField(null=True)
+    detection_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

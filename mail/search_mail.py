@@ -10,6 +10,7 @@ from getdata.models import CashappMail
 
 def parse_mail(request):
     search_query = 'from:cash@square.com is:unread'
+    # search_query = 'from:cash@square.com after:2022/9/1'
 
     service = get_service()  # default service with default scope, gmail-v1
     if not service:

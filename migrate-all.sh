@@ -1,8 +1,5 @@
 #!/bin/bash
 
-python ./manage.py makemigrations
-python ./manage.py makemigrations accounts application codablog data finance getdata globalsearch investing main management projectmanagement store testing
-
 python ./manage.py migrate accounts zero
 python ./manage.py migrate application zero
 python ./manage.py migrate codablog zero
@@ -16,6 +13,10 @@ python ./manage.py migrate management zero
 python ./manage.py migrate projectmanagement zero
 python ./manage.py migrate store zero
 python ./manage.py migrate testing zero
+
+python ./manage.py makemigrations
+
+# python ./manage.py makemigrations accounts application codablog data finance getdata globalsearch investing main management projectmanagement store testing
 
 # python ./manage.py migrate accounts
 # python ./manage.py migrate application
