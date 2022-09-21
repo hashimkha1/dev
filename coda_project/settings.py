@@ -68,7 +68,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 CRONJOBS = [
     # ("*/1 * * * *", "coda_project.cron.my_backup"),
-    # ("* * * * *", "application.msg_send_cron.SendMsgApplicatUser"),
+    ("* * * * *", "application.msg_send_cron.SendMsgApplicatUser"),
     ("*/5 * * * *", "management.cron.advertisement"),
 ]
 
@@ -117,27 +117,18 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
-
+import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DB_HOST'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
-    }
-}
 
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODADB_DEV',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": os.environ.get('POSTGRESDB_NAME'),
+#         "USER": os.environ.get('POSTGRESDB_USER'),
+#         "PASSWORD": "postgres", #  os.environ.get('POSTGRESDB_PASSWORD'),
+#         "HOST": os.environ.get('POSTGRESDB_HOST'),
 #     }
 # }
 
@@ -151,27 +142,19 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    }
+}
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
-#     }
-# }
+db_from_env = dj_database_url.config(conn_max_age=600)
 
+DATABASES["default"].update(db_from_env)
 
-import dj_database_url
-# DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
+# DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

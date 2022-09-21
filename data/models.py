@@ -10,12 +10,11 @@ from django.utils import timezone
 from data.modelmanager import(
                                 InterviewQuerySet,InterviewManager,
                                 RoleQuerySet,RoleManager,
-                                CategoryManager,SubCategoryManager
+                                CategoryManager,SubCategoryManager,ActivityManager
 
                              )
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
-
 
 #Interview Model
 class JobRole(models.Model):
@@ -280,7 +279,7 @@ class FeaturedSubCategory(models.Model):
     # def get_absolute_url(self):
         # return reverse('data:subcategory-detail', kwargs={'title': self.title})
     
-    def get_url(self):
+    def subcat_url(self):
         return reverse("data:subcategory-detail", args=[self.title])
 
     def __str__(self):
@@ -294,20 +293,23 @@ class FeaturedActivity(models.Model):
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     activity_name = models.CharField(max_length=255)
+    # slug = models.SlugField(max_length=255, blank=True, default="slug")
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     is_active = models.IntegerField(default=1)
 
+    objects=ActivityManager()
+
     class Meta:
         verbose_name_plural = "activities"
-
-    def get_absolute_url(self):
-        return reverse("bitraining")
+    
+    def activity_url(self):
+        return reverse("data:activity-detail", args=[self.slug])
 
     def __str__(self):
-        return self.activity_name
+        return self.name
 
 
 class ActivityLinks(models.Model):
@@ -328,6 +330,9 @@ class ActivityLinks(models.Model):
 
     def get_absolute_url(self):
         return reverse("bitraining")
+
+    def get_link_url(self):
+        return self.link
 
     def __str__(self):
         return self.link_name

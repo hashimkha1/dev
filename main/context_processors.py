@@ -1,5 +1,16 @@
 from .models import Service
+from data.models import FeaturedCategory,FeaturedSubCategory
 #availabity of images in this app
+
+def categories (request):
+    return {
+        'categories': FeaturedCategory.objects.all()
+    }
+    
+def subcategories (request):
+    return {
+        'subcategories': FeaturedSubCategory.objects.all()
+    }
 
 def images(request):
     return {

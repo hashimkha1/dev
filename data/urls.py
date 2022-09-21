@@ -51,6 +51,7 @@ urlpatterns = [
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
+    # path("testing/", views.questionview, name="testing"),
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),
     path("resume/", views.ResumeView.as_view(), name="resume"),
     path("project_story/", ProjectStoryView.as_view(), name="project_story"),
@@ -62,7 +63,7 @@ urlpatterns = [
         views.PerformanceView.as_view(),
         name="performance_tuning",
     ),
-    path("testing/", views.TestingView.as_view(), name="testing"),
+    path("testing/", views.questionview, name="testing"),
     path("environment/", views.EnvironmentView.as_view(), name="environment"),
     # path("interview/<str:resume>", views.RoleDetailView.as_view, name="detail-resume"),
     # path("interview/<str:introduction>", views.RoleDetailView.as_view, name="detail-introduction"),
@@ -139,18 +140,18 @@ urlpatterns = [
         name="featuredactivity",
     ),
     path(
-        "link/new",
+        "newlink/",
         FeaturedActivityLinksCreateView.as_view(
             template_name="data/training/form_templates/task_form.html"
         ),
-        name="featuredactivity",
+        name="featuredlink",
     ),
     # path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
     path("dsu/new", views.dsu_entry, name="dsu_entry"),
     # ----------------------List----------------------------------------------------
     path('<str:title>/', views.categorydetail, name='category-detail'),
-    path('<str:title>/', views.subcategorydetail, name='subcategory-detail'),
-    # path('subcategory/new', FeaturedSubCategoryCreateView.as_view(), name='featuredsubcategory'),
+    path('subcategory/<str:title>/', views.subcategorydetail, name='subcategory-detail'),
+    path('activity/<str:title>/', views.activitydetail, name='activity-detail'),
     path("dsu/", DSUListView.as_view(), name="dsu"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
     path("updatelist/", views.table_activity_view, name="activity-list"),

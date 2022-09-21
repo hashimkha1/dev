@@ -1,4 +1,5 @@
 {%extends "main/base_templates/new_base.html"%}
+{% load crispy_forms_tags %}
 {% load static %}
 
 {% block content %}
@@ -6,29 +7,22 @@
     <div class="row">
         <div class="col-md-7 top-coloumn">
             <div class="mt-4" style="width: 75px;height: 4px;background-color: #E7AD4A;"></div>
-            <p class="font-weight-bold text-white">TRAINING</p>
-
-            <h3 class="font-weight-bold" style="color : #E7AD4A">General Introduction</h3>
-
+            <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.title|capfirst }}</h3>
+            <p class="font-weight-bold text-white"> {{object.description}}</p>
             <p class="title-para">
-                In this module we are talking about the prerequisites and what is required to be successful in this
-                course. <br> We'll be focusing on:
             </p>
-
+            {% for activity in object.subcategories_fetured.all%}
             <div>
+                {% for link in activity.activity_featured.all %}
                 <div class="d-flex align-items-center mb-3">
-                    <div class="background-count-bullet">1</div>
-                    <p class="text-white ml-4 mb-0">Course Introduction</p>
+                    <div class="background-count-bullet">{{ forloop.counter }}</div>
+                    <a class="text-white" target="_blank" href="{{link.link}}">
+                        <p class="text-white ml-4 mb-0">{{activity.activity_name|capfirst }}</p>
+                    </a>
                 </div>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="background-count-bullet">2</div>
-                    <p class="text-white ml-4 mb-0">Laptop Specifications</p>
-                </div>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="background-count-bullet">3</div>
-                    <p class="text-white ml-4 mb-0">BI Training Schedule</p>
-                </div>
+                {% endfor %}
             </div>
+            {% endfor %}
         </div>
         <div class="col-md-5 top-left-coloumn" style="padding-left: 0px !important;padding-right: 0px !important;">
             <img class="w-100" style="height: 100%;" src="{% static 'data/img/project1.jpg' %}" />
@@ -37,40 +31,26 @@
 
     <div class="row my-5">
         <div class="col-md-7 top-coloumn bg-white">
-            <h3 class="font-weight-bold" style="color : #E7AD4A">1. Course Summary</h3>
-
-            <p>In this program you will:</p>
-            <ul>
-                <li>Learn all of the skills, tools, and processes you need to become a business or data analyst</li>
-            </ul>
-
-            <p class="font-weight-bold mt-3 mb-0">QUESTIONS:</p>
-
-            <div>
-                <p class="font-weight-bold">Do you understand the introduction to Business Intelligence?</p>
-
-                <div class="d-flex">
-                    <div class="mr-5">
-                        <input type="checkbox">
-                        <label class="ml-2">Yes</label>
-                    </div>
-                    <div class="ml-5">
-                        <input type="checkbox">
-                        <label class="ml-2">No</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-3">
-                <p class="font-weight-bold">According to the video you watched, what is Business Intelligence?</p>
-                <textarea rows="3" style="border-radius: 15px;" class="form-control"></textarea>
-            </div>
-
-
-            <div class="mt-4">
-                <a href="#" class="btn btn-md btn-bc font-weight-bold">SUBMIT</a>
-            </div>
-
+            <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.title|capfirst }} Upload Section</h3>
+            <ol>
+                <li class="text-dark">
+                    {{ object.desc2 }}
+                </li>
+              </ol>
+              <div class="content-section text-dark h6">
+                <form action="#" method="POST">
+                  {% csrf_token %}
+                  <fieldset class="form-group">
+                    <legend class="border-bottom h5 mb-1">Please fill in the form below</legend>
+                    {{ form|crispy }}
+                  </fieldset>
+                  <div class="form-group">
+                    <button class="btn btn-md btn-bc font-weight-bold" type="submit">
+                      Submit
+                    </button>
+                  </div>
+                </form>
+              </div>
         </div>
         <div class="col-md-5">
             <div id="img2" class="mt-3">
