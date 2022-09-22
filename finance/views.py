@@ -237,31 +237,32 @@ class DefaultPaymentUpdateView(UpdateView):
 
 
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
-
+@login_required
 def transact(request):
     if request.method == "POST":
         form = TransactionForm(request.POST, request.FILES)
         if form.is_valid():
-            points,mxpoint = Task.objects.values_list(
-                "point","mxpoint"
-                ).filter(
-                    Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
-                    employee__username=form.instance.sender
-                )[
-                    0
-                ]
-            points = points+1
-            if points >= mxpoint:
-                mxpoint += 5
-            Task.objects.filter(
-                    Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
-                    employee__username=form.instance.sender
-                ).update(point=points, mxpoint=mxpoint)
-                
+            # try:
+            #     points,mxpoint = Task.objects.values_list(
+			# 		"point","mxpoint"
+			# 		).filter(
+			# 			Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
+			# 			employee__username=form.instance.sender
+			# 		)[
+			# 			0
+			# 		]
+            #     points = points+1
+            #     if points >= mxpoint:
+            #         mxpoint += 5
+            #     Task.objects.filter(
+			# 			Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
+			# 			employee__username=form.instance.sender
+			# 		).update(point=points, mxpoint=mxpoint)
+            # except:
             form.save()
-            # instance=form.save(commit=False)
-            # instance.sender=request.user
-            # instance.save()
+                # instance=form.save(commit=False)
+                # instance.sender=request.user
+                # instance.save()
             return redirect("/finance/transaction/")
     else:
         form = TransactionForm()
