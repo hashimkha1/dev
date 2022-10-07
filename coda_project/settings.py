@@ -121,17 +121,15 @@ import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-
 # DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": os.environ.get('POSTGRESDB_NAME'),
-#         "USER": os.environ.get('POSTGRESDB_USER'),
-#         "PASSWORD": "postgres", #  os.environ.get('POSTGRESDB_PASSWORD'),
-#         "HOST": os.environ.get('POSTGRESDB_HOST'),
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('DB_NAME'),
+#         'USER': os.environ.get('DB_USER'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
 #     }
 # }
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -150,9 +148,7 @@ DATABASES = {
 # }
 
 db_from_env = dj_database_url.config(conn_max_age=600)
-
 DATABASES["default"].update(db_from_env)
-
 # DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
 
@@ -271,5 +267,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com/"
-SITEURL = "https://www.codanalytics.net"
+SITEURL = "https://codadev.herokuapp.com/"
+# SITEURL = "https://www.codanalytics.net"
