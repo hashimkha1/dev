@@ -118,48 +118,28 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 
+import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('DB_NAME'),
+#         'USER': os.environ.get('DB_USER'),
+#         'PASSWORD': os.environ.get('DB_PASSWORD'),
+#         'HOST': os.environ.get('DB_HOST'),
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'HOST': os.environ.get('DB_HOST'),
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASSWORD'),
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "postgres",  # Name of Database
+        "USER": "postgres",
+        "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
+        "HOST": "localhost",
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODADB_DEV',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": "postgres",  # Name of Database
-#         "USER": "postgres",
-#         "PASSWORD": "MANAGER2030",  # os.environ.get('POSTGRESSPASS'),
-#         "HOST": "localhost",
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',# Name of Database
-#         'USER':'postgres',
-#         'PASSWORD': 'MANAGER2030', #os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
 
 # DATABASES = {
 #     "default": {
@@ -168,10 +148,10 @@ DATABASES = {
 #     }
 # }
 
-
-import dj_database_url
-# DATABASES = {'default': dj_database_url.config(conn_max_age=600)}
-DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES["default"].update(db_from_env)
+# DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -288,5 +268,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com/"
-SITEURL = "https://www.codanalytics.net"
+SITEURL = "https://codadev.herokuapp.com/"
+# SITEURL = "https://www.codanalytics.net"
