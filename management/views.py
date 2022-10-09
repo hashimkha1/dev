@@ -997,7 +997,7 @@ def payslip(request, user=None, *args, **kwargs):
 
         yearly = round( total_pay * payslip_config.rp_increment_percentage, 2)
     except:
-        pointsearning=0.00
+        pointsearning=Decimal(0.00)
         EOM=Decimal(0.00)
         EOQ=Decimal(0.00)
         EOY=Decimal(0.00)
