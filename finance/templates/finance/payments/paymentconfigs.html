@@ -24,6 +24,7 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>
+            <th>id</th>
             <th>user</th>
             <th>L_status</th>
             <th>loan</th>
@@ -54,6 +55,7 @@
 
         {% for config in  payconfigs  %}
             <tr>
+                <td>{{config.id}}</td>
                 <td>{{config.user}}</td>
                 <td>{{config.loan_status}}</td>
                 <td>{{config.loan_amount}}</td>
@@ -77,6 +79,7 @@
                 <td>{{config.eom_bonus}}</td>
                 <td>{{config.eoq_bonus}}</td>
                 <td>{{config.eoy_bonus}}</td>
+              <td> <a class="article-title" href="{% url 'finance:paymentconfigs-update' config.id %}">Edit</a></td>
             </tr>
         {% endfor %}
       </tbody>
