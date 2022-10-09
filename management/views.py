@@ -864,11 +864,8 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    try:
-        payslip_config = get_object_or_404(PayslipConfig, user=employee)
-        loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-    except:
-        loan_payment = Decimal(0)
+    payslip_config = get_object_or_404(PayslipConfig, user=employee)
+    loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
     # print(total_pay)
     # print(loan_payment)
     # print(employee)
