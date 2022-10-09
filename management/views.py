@@ -878,7 +878,7 @@ def payslip(request, user=None, *args, **kwargs):
         logger.info('training loan not only exists, but this user has loan !')
         training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
         outstanding_balance = training_loan.balance_amount
-        new_balance=outstanding_balance-float(loan_payment)
+        new_balance=Decimal(outstanding_balance)-Decimal(loan_payment)
         balance_amount=new_balance
         if training_loan:
             loan_data=TrainingLoan.objects.filter(user=employee).update(
