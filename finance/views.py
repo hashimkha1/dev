@@ -202,6 +202,7 @@ class PaymentConfigListView(ListView):
 	template_name = "finance/payments/paymentconfigs.html"
 	context_object_name = "payconfigs"
 
+
 class PaymentConfigUpdateView(UpdateView):
 	model = PayslipConfig
 	success_url = "/finance/paymentconfigs/"
