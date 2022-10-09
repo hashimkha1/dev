@@ -864,11 +864,15 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    payslip_config = get_object_or_404(PayslipConfig, user=employee)
-    loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+    try:
+        payslip_config = get_object_or_404(PayslipConfig, user=employee)
+        loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+    except:
+        loan_payment = Decimal(0)
     # print(total_pay)
     # print(loan_payment)
     # print(employee)
+    instance = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
     balance_amount = Decimal(0)
     if TrainingLoan.objects.filter(user=employee, is_active=True).exists():
         logger.info('training loan not only exists, but this user has loan !')
