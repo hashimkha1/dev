@@ -864,35 +864,22 @@ def payslip(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    payslip_config = get_object_or_404(PayslipConfig, user=employee)
-    loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-    # print(total_pay)
-    # print(loan_payment)
-    # print(employee)
-    instance = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
-    balance_amount = Decimal(0)
-    if TrainingLoan.objects.filter(user=employee, is_active=True).exists():
-        logger.info('training loan not only exists, but this user has loan !')
-        training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
-        outstanding_balance = training_loan.balance_amount
-        new_balance=Decimal(outstanding_balance)-Decimal(loan_payment)
-        balance_amount=new_balance
-        if training_loan:
-            loan_data=TrainingLoan.objects.filter(user=employee).update(
-                user=employee,
-                category="Debit",
-                amount=outstanding_balance,
-                # created_at,
-                updated_at=today,
-                # is_active,
-                training_loan_amount=outstanding_balance,
-                total_earnings_amount=total_pay,
-                # deduction_date,
-                deduction_amount=loan_payment,
-                balance_amount=new_balance,
-			)
-        else:
-            loan_data=TrainingLoan(
+    try:
+        payslip_config = get_object_or_404(PayslipConfig, user=employee)
+        loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+        # print(total_pay)
+        # print(loan_payment)
+        # print(employee)
+        instance = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
+        balance_amount = Decimal(0)
+        if TrainingLoan.objects.filter(user=employee, is_active=True).exists():
+            logger.info('training loan not only exists, but this user has loan !')
+            training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
+            outstanding_balance = training_loan.balance_amount
+            new_balance=Decimal(outstanding_balance)-Decimal(loan_payment)
+            balance_amount=new_balance
+            if training_loan:
+                loan_data=TrainingLoan.objects.filter(user=employee).update(
                     user=employee,
                     category="Debit",
                     amount=outstanding_balance,
@@ -904,97 +891,119 @@ def payslip(request, user=None, *args, **kwargs):
                     # deduction_date,
                     deduction_amount=loan_payment,
                     balance_amount=new_balance,
-                    )
-            loan_data.save()
-    else:
-        if payslip_config:
-            loan_amount = Decimal(payslip_config.loan_amount)
-            balance_amount = round(Decimal(loan_amount - loan_payment), 2)
-            instance.loan_amount=loan_amount
-            print(balance_amount)
-
+                )
+            else:
+                loan_data=TrainingLoan(
+                        user=employee,
+                        category="Debit",
+                        amount=outstanding_balance,
+                        # created_at,
+                        updated_at=today,
+                        # is_active,
+                        training_loan_amount=outstanding_balance,
+                        total_earnings_amount=total_pay,
+                        # deduction_date,
+                        deduction_amount=loan_payment,
+                        balance_amount=new_balance,
+                        )
+                loan_data.save()
         else:
-            loan_amount = Decimal(0)
+            if payslip_config:
+                loan_amount = Decimal(payslip_config.loan_amount)
+                balance_amount = round(Decimal(loan_amount - loan_payment), 2)
+                instance.loan_amount=loan_amount
+                print(balance_amount)
 
-    logger.debug(f'balance_amount: {balance_amount}')
-    userprofile = UserProfile.objects.get(user_id=employee)
-    if userprofile.laptop_status == True:
-        laptop_saving = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
+            else:
+                loan_amount = Decimal(0)
+
+        logger.debug(f'balance_amount: {balance_amount}')
+        userprofile = UserProfile.objects.get(user_id=employee)
+        if userprofile.laptop_status == True:
+            laptop_saving = Decimal(0)
+            if LBandLS.objects.filter(user=employee).exists():
+                lbandls = LBandLS.objects.get(user_id=employee)
+                laptop_bonus = lbandls.laptop_bonus
+            else:
+                laptop_bonus = Decimal(0)
         else:
             laptop_bonus = Decimal(0)
-    else:
-        laptop_bonus = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_saving = lbandls.laptop_service
+            if LBandLS.objects.filter(user=employee).exists():
+                lbandls = LBandLS.objects.get(user_id=employee)
+                laptop_saving = lbandls.laptop_service
+            else:
+                laptop_saving = Decimal(0)
+        laptop_bonus = round(Decimal(laptop_bonus), 2)
+        laptop_saving = round(Decimal(laptop_saving), 2)
+        loan = round(Decimal(loan_payment), 2)
+
+        food_accomodation = payslip_config.food_accommodation
+        computer_maintenance = payslip_config.computer_maintenance
+        health = payslip_config.health
+        kra = payslip_config.kra
+
+        total_deduction = (
+                loan
+                + computer_maintenance
+                + food_accomodation
+                + health
+                + laptop_saving
+        )
+
+        # Bonus Section
+        Lap_Bonus = payslip_config.lb_amount
+        pointsearning = points.get("Your_Total_Points")
+        if pointsearning is None:
+            pointsearning = Decimal(0)
+
+        Night_Bonus = payslip_config.night_bonus
+        if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
+            holidaypay = payslip_config.holiday_pay
         else:
-            laptop_saving = Decimal(0)
-    laptop_bonus = round(Decimal(laptop_bonus), 2)
-    laptop_saving = round(Decimal(laptop_saving), 2)
-    loan = round(Decimal(loan_payment), 2)
+            holidaypay = Decimal(0)
 
-    food_accomodation = payslip_config.food_accommodation
-    computer_maintenance = payslip_config.computer_maintenance
-    health = payslip_config.health
-    kra = payslip_config.kra
+        EOM = Decimal(0.00)  # employee of month
+        EOQ = Decimal(0.00)  # employee of quarter
+        EOY = Decimal(0.00)  # employee of year
+        
+        if month == 12:
+            task_obj = Task.objects.filter(submission__contains=year)
+            logger.debug(f'task_obj: {task_obj}')
+            eoy_users = best_employee(task_obj)
+            if (employee,) in eoy_users:
+                logger.info('this employee is EOY!')
+                EOY = payslip_config.eoy_bonus
+        elif month % 3 == 0:
+            task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
+                                    | Q(submission__contains=normalize_period(year, month-1))
+                                    | Q(submission__contains=normalize_period(year, month)))
+            logger.debug(f'task_obj: {task_obj}')
+            eoq_users = best_employee(task_obj)
+            user_tuple = (employee.username,)
+            logger.debug(f'eoq_users: {eoq_users}')
+            logger.debug(f'user_tuple: {user_tuple}')
 
-    total_deduction = (
-            loan
-            + computer_maintenance
-            + food_accomodation
-            + health
-            + laptop_saving
-    )
+            if user_tuple in eoq_users:
+                logger.info('this employee is EOQ!')
+                EOQ = payslip_config.eoq_bonus
+                logger.debug(f'EOQ: {EOQ}')
+        else:
+            task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
+            logger.debug(f'task_obj: {task_obj}')
+            eom_users = best_employee(task_obj)
+            if (employee,) in eom_users:
+                logger.info('this employee is EOM!')
+                EOM = payslip_config.eom_bonus
 
-    # Bonus Section
-    Lap_Bonus = payslip_config.lb_amount
-    pointsearning = points.get("Your_Total_Points")
-    if pointsearning is None:
-        pointsearning = Decimal(0)
-
-    Night_Bonus = payslip_config.night_bonus
-    if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
-        holidaypay = payslip_config.holiday_pay
-    else:
-        holidaypay = Decimal(0)
-
-    EOM = Decimal(0.00)  # employee of month
-    EOQ = Decimal(0.00)  # employee of quarter
-    EOY = Decimal(0.00)  # employee of year
-    
-    if month == 12:
-        task_obj = Task.objects.filter(submission__contains=year)
-        logger.debug(f'task_obj: {task_obj}')
-        eoy_users = best_employee(task_obj)
-        if (employee,) in eoy_users:
-            logger.info('this employee is EOY!')
-            EOY = payslip_config.eoy_bonus
-    elif month % 3 == 0:
-        task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
-                                | Q(submission__contains=normalize_period(year, month-1))
-                                | Q(submission__contains=normalize_period(year, month)))
-        logger.debug(f'task_obj: {task_obj}')
-        eoq_users = best_employee(task_obj)
-        user_tuple = (employee.username,)
-        logger.debug(f'eoq_users: {eoq_users}')
-        logger.debug(f'user_tuple: {user_tuple}')
-
-        if user_tuple in eoq_users:
-            logger.info('this employee is EOQ!')
-            EOQ = payslip_config.eoq_bonus
-            logger.debug(f'EOQ: {EOQ}')
-    else:
-        task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
-        logger.debug(f'task_obj: {task_obj}')
-        eom_users = best_employee(task_obj)
-        if (employee,) in eom_users:
-            logger.info('this employee is EOM!')
-            EOM = payslip_config.eom_bonus
-
-    yearly = round( total_pay * payslip_config.rp_increment_percentage, 2)
+        yearly = round( total_pay * payslip_config.rp_increment_percentage, 2)
+    except:
+        pointsearning=0.00
+        EOM=Decimal(0.00)
+        EOQ=Decimal(0.00)
+        EOY=Decimal(0.00)
+        laptop_bonus=Decimal(0.00)
+        holidaypay=Decimal(0.00)
+        Night_Bonus=Decimal(0.00)
     total_bonus = (
             pointsearning
             + EOM
