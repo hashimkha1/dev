@@ -1,3 +1,4 @@
+from unicodedata import category
 from django.contrib import messages
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect,render
@@ -27,8 +28,10 @@ from django.views.generic import (
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction
+		Inflow,Transaction,PayslipConfig
 	)
+# from management.models import PayslipConfig
+
 from django.contrib.auth import get_user_model
 
 from .forms import LoanForm,TransactionForm,InflowForm
@@ -93,6 +96,7 @@ def contract_form_submission(request):
 					client_date=client_date,
 					rep_date=rep_date)
 			else:
+
 				payment_data=Payment_Information(payment_fees=int(payment_fees),
 					down_payment=down_payment,
 					student_bonus = student_bonus_amount,
@@ -183,7 +187,45 @@ def newcontract(request, *args, **kwargs):
 		# return render(request, 'templates\errors\403.html')
 		raise Http404("Login/Wrong Page: Are You a Client?")
 
+# ==================PAYMENT CONFIGURATIONS VIEWS=======================
+class PaymentConfigCreateView(LoginRequiredMixin, CreateView):
+	model = PayslipConfig
+	success_url = "/finance/paymentconfigs/"
+	fields = "__all__"
 
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
+
+class PaymentConfigListView(ListView):
+	model = PayslipConfig
+	template_name = "finance/payments/paymentconfigs.html"
+	context_object_name = "payconfigs"
+
+class PaymentConfigUpdateView(UpdateView):
+	model = PayslipConfig
+	success_url = "/finance/paymentconfigs/"
+	
+	fields = "__all__"
+
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		if self.request.user.is_superuser:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"management/doc_templates/supportcontract_form.html")
+
+	def test_func(self):
+		# task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		# elif self.request.user == task.employee:
+		#     return True
+		return False
+
+
+# ==================PAYMENTVIEWS=======================
 class PaymentCreateView(LoginRequiredMixin, CreateView):
 	model = Default_Payment_Fees
 	success_url = "/finance/contract_form"
@@ -423,12 +465,11 @@ def loan(request):
 
 class LoanUpdateView(UpdateView):
 	model = TrainingLoan
-	success_url = "/finance/payments"
-	
-	fields = [ "user","category","amount","is_active"]
-   
+	success_url = "/finance/loans"
+	fields="__all__"
+
 	def form_valid(self, form):
-		# form.instance.author=self.request.user
+		# form.instance.user=self.request.user
 		if self.request.user.is_superuser:
 			return super().form_valid(form)
 		else:
@@ -436,7 +477,7 @@ class LoanUpdateView(UpdateView):
 			# return render(request,"management/doc_templates/supportcontract_form.html")
 
 	def test_func(self):
-		task = self.get_object()
+		# task = self.get_object()
 		if self.request.user.is_superuser:
 			return True
 		# elif self.request.user == task.employee:

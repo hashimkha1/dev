@@ -14,7 +14,7 @@ from management.models import (
     TaskHistory,
     Advertisement,
     Payslip,
-    PayslipConfig,
+    # PayslipConfig,
     RetirementPackage,
     Loan,
     LaptopSaving,
@@ -92,7 +92,7 @@ admin.site.register(Advertisement, AdsAdmin)
 admin.site.register(TaskGroups)
 
 admin.site.register(Payslip)
-admin.site.register(PayslipConfig)
+# admin.site.register(PayslipConfig)
 admin.site.register(RetirementPackage)
 admin.site.register(Loan)
 admin.site.register(LaptopSaving)

@@ -58,7 +58,8 @@ class CustomerUser(AbstractUser):
 
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
-        ordering = ["-date_joined"]
+        # ordering = ["-date_joined"]
+        ordering = ["username"]
 
 
 class Department(models.Model):

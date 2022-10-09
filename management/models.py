@@ -929,42 +929,46 @@ class LBandLS(models.Model):
         return self.user.username
 
 
-class PayslipConfig(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+# class PayslipConfig(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
-    # configs for loan
-    loan_status = models.BooleanField(default=True)
-    loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
-    loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
+#     # configs for loan
+#     loan_status = models.BooleanField(default=True)
+#     loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+#     loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
 
-    # configs for laptop service
-    laptop_status = models.BooleanField(default=True)
-    lb_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-    ls_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-    ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+#     # configs for laptop service
+#     laptop_status = models.BooleanField(default=True)
+#     lb_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+#     ls_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+#     ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
 
-    # configs for retirement package
-    rp_starting_period = models.CharField(max_length=10)
-    rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
-    rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
-    rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
-    rp_increment_percentage_increment = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
-    rp_increment_percentage_increment_cycle = models.IntegerField(default=12)
+#     # configs for retirement package
+#     rp_starting_period = models.CharField(max_length=10)
+#     rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
+#     rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+#     rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
+#     rp_increment_percentage_increment = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+#     rp_increment_percentage_increment_cycle = models.IntegerField(default=12)
 
-    # configs for bonus
-    holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
-    night_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+#     # configs for bonus
+#     holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
+#     night_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
 
-    # configs for deductions
-    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-    food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-    health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-    kra = models.DecimalField(max_digits=10, decimal_places=2, default=300.00)
+#     # configs for deductions
+#     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+#     food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+#     health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+#     kra = models.DecimalField(max_digits=10, decimal_places=2, default=300.00)
 
-    # employee of the month, quarter and year
-    eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
-    eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
-    eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+#     # employee of the month, quarter and year
+#     eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+#     eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+#     eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+
+#     def __str__(self):
+#         return str(self.loan_amount)
+
 
 
 class RetirementPackage(models.Model):

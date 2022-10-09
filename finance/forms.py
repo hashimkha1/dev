@@ -2,6 +2,7 @@ from django import forms
 from django.forms import Textarea
 from django.db.models import Q
 from pyexpat import model
+from accounts.models import CustomerUser
 
 from .models import (
     TrainingLoan,
@@ -85,10 +86,17 @@ class InflowForm(forms.ModelForm):
 class LoanForm(forms.ModelForm):
     class Meta:
         model = TrainingLoan
-        fields = [ "user","category","amount","is_active"]
+        # fields = [ "user","category","amount","is_active"]
+        fields = "__all__"
+        
         labels = {
             "user":"user",
             "category":"category",
             "amount":"amount",
             "is_active":"is_active",
         }
+    def __init__(self, **kwargs):
+        super(LoanForm, self).__init__(**kwargs)
+        self.fields["user"].queryset = CustomerUser.objects.filter(
+            Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
+        )

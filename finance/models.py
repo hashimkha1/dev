@@ -1,20 +1,16 @@
 from django.db import models
-from accounts.models import Department
-import calendar
 from datetime import datetime, date
 from decimal import *
 from enum import unique
-from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
-from mptt.models import MPTTModel, TreeForeignKey
 from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
+from accounts.models import Department
 User = get_user_model()
 
 
@@ -88,6 +84,47 @@ class Default_Payment_Fees(models.Model):
     student_bonus_payment_per_month = models.IntegerField(default=250)
 
     loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+
+    def __str__(self):
+        return str(self.loan_amount)
+
+
+class PayslipConfig(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    # configs for loan
+    loan_status = models.BooleanField(default=True)
+    loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+    loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
+
+    # configs for laptop service
+    laptop_status = models.BooleanField(default=True)
+    lb_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    ls_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
+
+    # configs for retirement package
+    rp_starting_period = models.CharField(max_length=10)
+    rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
+    rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+    rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
+    rp_increment_percentage_increment = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
+    rp_increment_percentage_increment_cycle = models.IntegerField(default=12)
+
+    # configs for bonus
+    holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
+    night_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+
+    # configs for deductions
+    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+    food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
+    health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
+    kra = models.DecimalField(max_digits=10, decimal_places=2, default=300.00)
+
+    # employee of the month, quarter and year
+    eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+    eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+    eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
 
     def __str__(self):
         return str(self.loan_amount)
@@ -297,10 +334,11 @@ class TrainingLoan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField('Is complete', default=True)
-    training_loan_amount = models.ForeignKey('Default_Payment_Fees',on_delete=models.CASCADE,null=True)
+    # training_loan_amount = models.ForeignKey('PayslipConfig',on_delete=models.CASCADE,null=True)
+    training_loan_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    detection_date = models.DateField(auto_now_add=True)
-    detection_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    deduction_date = models.DateField(auto_now_add=True)
+    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
 class LoanUsers(models.Model):

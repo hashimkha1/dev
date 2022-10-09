@@ -50,8 +50,9 @@ from django.db.models import Q
 from django.db.models import Max
 
 from accounts.models import Tracker, Department, TaskGroups
+from finance.models import  PayslipConfig
 from management.models import (
-    PayslipConfig,
+   
     Payslip,
     RetirementPackage,
     Loan,
@@ -864,24 +865,56 @@ def payslip(request, user=None, *args, **kwargs):
 
     # Deductions
     payslip_config = get_object_or_404(PayslipConfig, user=employee)
-    loan = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-
+    loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+    # print(total_pay)
+    # print(loan_payment)
+    # print(employee)
     balance_amount = Decimal(0)
-    if TrainingLoan.objects.filter(user=employee).exists():
-        logger.info('training loan exists!')
+    if TrainingLoan.objects.filter(user=employee, is_active=True).exists():
+        logger.info('training loan not only exists, but this user has loan !')
         training_loan = TrainingLoan.objects.filter(user=employee).order_by('-id')[0]
-        loan = training_loan.detection_amount
-        if LoanUsers.objects.filter(user=employee, is_loan=True).exists():
-            logger.info('is_loan is true!')
-            balance_amount = round(Decimal(training_loan.balance_amount), 2)
+        outstanding_balance = training_loan.balance_amount
+        new_balance=outstanding_balance-float(loan_payment)
+        balance_amount=new_balance
+        if training_loan:
+            loan_data=TrainingLoan.objects.filter(user=employee).update(
+                user=employee,
+                category="Debit",
+                amount=outstanding_balance,
+                # created_at,
+                updated_at=today,
+                # is_active,
+                training_loan_amount=outstanding_balance,
+                total_earnings_amount=total_pay,
+                # deduction_date,
+                deduction_amount=loan_payment,
+                balance_amount=new_balance,
+			)
         else:
-            balance_amount = Decimal(0)
+            loan_data=TrainingLoan(
+                    user=employee,
+                    category="Debit",
+                    amount=outstanding_balance,
+                    # created_at,
+                    updated_at=today,
+                    # is_active,
+                    training_loan_amount=outstanding_balance,
+                    total_earnings_amount=total_pay,
+                    # deduction_date,
+                    deduction_amount=loan_payment,
+                    balance_amount=new_balance,
+                    )
+            loan_data.save()
     else:
-        if default_payment_fees:
-            loan_amount = Decimal(default_payment_fees.loan_amount)
-            balance_amount = round(Decimal(loan_amount - loan), 2)
+        if payslip_config:
+            loan_amount = Decimal(payslip_config.loan_amount)
+            balance_amount = round(Decimal(loan_amount - loan_payment), 2)
+            instance.loan_amount=loan_amount
+            print(balance_amount)
+
         else:
             loan_amount = Decimal(0)
+
     logger.debug(f'balance_amount: {balance_amount}')
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
@@ -900,7 +933,7 @@ def payslip(request, user=None, *args, **kwargs):
             laptop_saving = Decimal(0)
     laptop_bonus = round(Decimal(laptop_bonus), 2)
     laptop_saving = round(Decimal(laptop_saving), 2)
-    loan = round(Decimal(loan), 2)
+    loan = round(Decimal(loan_payment), 2)
 
     food_accomodation = payslip_config.food_accommodation
     computer_maintenance = payslip_config.computer_maintenance
@@ -970,14 +1003,11 @@ def payslip(request, user=None, *args, **kwargs):
             + holidaypay
             + Night_Bonus
     )
-
     # Net Pay
-
     total_value = total_pay + total_bonus
     net = total_value - total_deduction
     round_off = round(net) - net
     net_pay = net + round_off
-
     context = {
         # bonus
         "pointsearning": pointsearning,

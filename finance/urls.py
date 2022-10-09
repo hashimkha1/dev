@@ -36,6 +36,10 @@ urlpatterns = [
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
     path('newpayment/', PaymentCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpayment'),
     path('payment/<int:pk>/update/', DefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
+    #Pay configs URLS
+    path('newpaymentconfigs/',views.PaymentConfigCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpaymentconfigs'),
+    path('paymentconfigs/', views.PaymentConfigListView.as_view(), name='paymentconfigs'),
+    path('paymentconfigs/<int:pk>/update/', views.PaymentConfigUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='paymentconfigs-update'),
     #Loans URLS
     path('loans/', LoanListView.as_view(template_name='finance/payments/loans.html'), name='trainingloans'),
     path('newpay/', views.loan, name='newpay'),

@@ -1,11 +1,8 @@
 from django import forms
 from django.forms import Textarea
 from django.db.models import Q
-# from codapp.accounts.models import CustomerUser
-from accounts.models import CustomerUser
 from .models import Interviews ,DSU ,JobRole
 from accounts.models import CustomerUser
-from django.db.models import Q
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interviews
