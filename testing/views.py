@@ -35,10 +35,19 @@ from management.models import Task
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
-
+from testing.utils import target_date
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 register = template.Library()
+
+
+def pay(request):
+    deadline,year=target_date()
+    context={
+         "year":year,
+         "deadline":deadline
+    }
+    return render (request, "testing/testing.html",context)
 class ServicesListView(ListView):
     queryset=Services.objects.all()
     template_name="testing/display.html"
@@ -159,3 +168,7 @@ def task():
             print(i,k)
 
 # task()
+
+
+
+

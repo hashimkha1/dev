@@ -1,5 +1,7 @@
 # import pywhatkit as pwk
 # from time import sleep
+from datetime import date, datetime, timedelta
+import calendar,string
 
 
 # def send_msg_for_group(group_id, group_msg, gh, gm, gd):
@@ -27,3 +29,16 @@
 #             send_msg_for_group(
 #                 grp_id_list[i], content_of_msg, msg_hour, msg_min, send_delay
 #             )
+
+def target_date():
+    year=date.today().year
+    limit= date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+    context={
+         "limit":limit,
+         "year":year
+    }
+    return year,limit
