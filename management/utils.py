@@ -72,12 +72,12 @@ def loan_computation(total_pay,user_data,payslip_config):
             loan_amount = Decimal(0)
             loan_payment = round(Decimal(total_pay) * Decimal(0.2), 2)
             balance_amount = Decimal(0)
-    return training_loan,loan_amount,loan_payment,balance_amount
+    return loan_amount,loan_payment,balance_amount
 
 
 def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
-    # training_loan = user_data.order_by('-id')[0]
-    training_loan,loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    training_loan = user_data.order_by('-id')[0]
+    loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     if training_loan:
         loan_data=user_data.update(
         user=employee,
@@ -173,7 +173,7 @@ def additional_earnings(user_data,tasks,total_pay,payslip_config):
     pointsearning,latenight_Bonus,offpay,yearly=bonus(tasks,total_pay,payslip_config)
     sub_bonus=Decimal(pointsearning)+Decimal(latenight_Bonus)+Decimal(offpay)
     # ===============DEDUCTIONS=======================
-    training_loan,loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
     total_deductions=food_accomodation+computer_maintenance+health+kra+loan_payment
     return total_deductions,sub_bonus
