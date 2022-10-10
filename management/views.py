@@ -53,9 +53,8 @@ from accounts.models import Tracker, Department, TaskGroups
 from finance.models import  PayslipConfig
 from management.utils import (
                                paytime,payinitial,paymentconfigurations,
-                               deductions,lap_save_bonus,loan_deductions,
-                               bonus,additional_earnings,best_employee
-
+                               deductions,loan_computation,loan_update_save,
+                               bonus,additional_earnings,best_employee,
                         )
     
 
@@ -832,6 +831,8 @@ def pay(request, user=None, *args, **kwargs):
     userprofile = UserProfile.objects.get(user_id=employee)
     tasks = Task.objects.all().filter(employee=employee)
     LBLS=LBandLS.objects.filter(user=employee)
+    user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
+    loantable=TrainingLoan()
     # lbandls = LBandLS.objects.get(user_id=employee)
     payslip_config = paymentconfigurations(PayslipConfig,employee)
     today,year,month,day,deadline_date=paytime()
@@ -843,10 +844,12 @@ def pay(request, user=None, *args, **kwargs):
     # Deductions
     # print(loan_amount,loan_payment,balance_amount)
     # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-    loan_amount,loan_payment,balance_amount=loan_deductions(total_pay,payslip_config)
     food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
-    logger.debug(f'balance_amount: {balance_amount}')
 
+    training_loan,loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    print( training_loan,loan_amount,loan_payment,balance_amount)
+    logger.debug(f'balance_amount: {balance_amount}')
+    loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)
@@ -901,7 +904,7 @@ def pay(request, user=None, *args, **kwargs):
             logger.info('this employee is EOM!')
             EOM = payslip_config.eom_bonus
     # ====================Summary Section=============================
-    total_deduction,total_bonus= additional_earnings(tasks,total_pay,payslip_config)
+    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     total_bonus = total_bonus + EOM + EOQ + EOY
     # print("total is---->", total_deduction,total_bonus)
     # Net Pay

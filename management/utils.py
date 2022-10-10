@@ -45,17 +45,70 @@ def paytime():
     )
     return today,year,month,day,target_date
 
-def loan_deductions(total_pay,payslip_config):
+def loan_computation(total_pay,user_data,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
-    if payslip_config:
-        loan_amount = Decimal(payslip_config.loan_amount)
-        loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
-        balance_amount = round(Decimal(loan_amount - loan_payment), 2)
+    if user_data.exists():
+        logger.info('training loan not only exists, but this user has loan !')
+        training_loan = user_data.order_by('-id')[0]
+        if round(Decimal(training_loan.balance_amount), 2)>0:
+            loan_amount = round(Decimal(training_loan.balance_amount), 2)
+            loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+            new_balance=loan_amount-Decimal(loan_payment)
+            balance_amount=new_balance
+        else:
+            loan_amount=Decimal(0)
+            loan_payment = Decimal(0)
+            new_balance=Decimal(0)
+            balance_amount=new_balance
     else:
-        loan_amount = Decimal(0)
-        loan_payment = round(Decimal(total_pay) * Decimal(0.2), 2)
-        balance_amount = Decimal(0)
-    return loan_amount,loan_payment,balance_amount
+        if payslip_config:
+            logger.info('training loan picked from configs !')
+            loan_amount = Decimal(payslip_config.loan_amount)
+            loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+            new_balance=round(Decimal(loan_amount)-Decimal(loan_payment), 2)
+            balance_amount = new_balance
+        else:
+            logger.info('Not not set or yet to be set !')
+            loan_amount = Decimal(0)
+            loan_payment = round(Decimal(total_pay) * Decimal(0.2), 2)
+            balance_amount = Decimal(0)
+    return training_loan,loan_amount,loan_payment,balance_amount
+
+
+def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
+    # training_loan = user_data.order_by('-id')[0]
+    training_loan,loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    if training_loan:
+        loan_data=user_data.update(
+        user=employee,
+        category="Debit",
+        amount=loan_amount,
+        # created_at,
+        # updated_at=2022-10-10,
+        # is_active,
+        training_loan_amount=loan_amount,
+        total_earnings_amount=total_pay,
+        # deduction_date,
+        deduction_amount=loan_payment,
+        balance_amount=balance_amount,
+        )
+    else:
+        loan_data=loantable(
+                user=employee,
+                category="Debit",
+                amount=loan_amount,
+                # created_at,
+                # updated_at=today,
+                # is_active,
+                training_loan_amount=loan_amount,
+                total_earnings_amount=total_pay,
+                # deduction_date,
+                deduction_amount=loan_payment,
+                balance_amount=balance_amount,
+                )
+        loan_data.save()
+    return logger.info('training loan not only exists, but this user has loan !')
+
 
 def lap_save_bonus(userprofile,lbandls,LBLS):
     """Computes the laptop savings, Laptop Bonusloan payment and loan balance for an employee"""
@@ -114,18 +167,16 @@ def bonus(tasks,total_pay,payslip_config):
        yearly = Decimal(12000)
     return bonus_points_ammount,latenight_Bonus,offpay,yearly
 
-def additional_earnings(tasks,total_pay,payslip_config):
+def additional_earnings(user_data,tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     # ================BONUS============================
     pointsearning,latenight_Bonus,offpay,yearly=bonus(tasks,total_pay,payslip_config)
     sub_bonus=Decimal(pointsearning)+Decimal(latenight_Bonus)+Decimal(offpay)
     # ===============DEDUCTIONS=======================
-    loan_amount,loan_payment,balance_amount=loan_deductions(total_pay,payslip_config)
+    training_loan,loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
     total_deductions=food_accomodation+computer_maintenance+health+kra+loan_payment
     return total_deductions,sub_bonus
-
-
 
 # ================================apis for slug==========================
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
