@@ -849,7 +849,7 @@ def pay(request, user=None, *args, **kwargs):
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     print(loan_amount,loan_payment,balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
-    loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
+    loan_update_save(user_data,employee,total_pay,payslip_config)
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)

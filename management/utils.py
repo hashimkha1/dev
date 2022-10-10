@@ -75,7 +75,7 @@ def loan_computation(total_pay,user_data,payslip_config):
     return loan_amount,loan_payment,balance_amount
 
 
-def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
+def loan_update_save(user_data,employee,total_pay,payslip_config):
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     # training_loan = user_data.order_by('-id')[0]
     try:
@@ -97,7 +97,7 @@ def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
         balance_amount=balance_amount,
         )
     else:
-        loan_data=loantable(
+        loan_data=user_data(
                 user=employee,
                 category="Debit",
                 amount=loan_amount,
