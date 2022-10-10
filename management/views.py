@@ -53,8 +53,9 @@ from accounts.models import Tracker, Department, TaskGroups
 from finance.models import  PayslipConfig
 from management.utils import (
                                paytime,payinitial,paymentconfigurations,
-                               deductions,loan_computation,loan_update_save,
-                               bonus,additional_earnings,best_employee,
+                               deductions,loan_computation,
+                               bonus,additional_earnings,best_employee,updateloantable,
+                               addloantable
                         )
     
 
@@ -826,6 +827,19 @@ def normalize_period(year:int, month:int) -> str:
 
     return str(year) + '-' + str(month)
 
+def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
+    # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    # training_loan = user_data.order_by('-id')[0]
+    try:
+        training_loan = user_data.order_by('-id')[0]
+    except:
+        training_loan=None
+    if training_loan:
+        loan_data=updateloantable(user_data,employee,total_pay,payslip_config)
+    else:
+        loan_data=addloantable(loantable,employee,total_pay,payslip_config)
+        loan_data.save()
+
 def pay(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     userprofile = UserProfile.objects.get(user_id=employee)
@@ -844,12 +858,14 @@ def pay(request, user=None, *args, **kwargs):
     # Deductions
     # print(loan_amount,loan_payment,balance_amount)
     # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+    loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
     food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
 
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     print(loan_amount,loan_payment,balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
-    loan_update_save(user_data,employee,total_pay,payslip_config)
+    
+    print("what is this----->",loan_update_save(loantable,user_data,employee,total_pay,payslip_config))
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)

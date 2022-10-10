@@ -74,44 +74,78 @@ def loan_computation(total_pay,user_data,payslip_config):
             balance_amount = Decimal(0)
     return loan_amount,loan_payment,balance_amount
 
-
-def loan_update_save(user_data,employee,total_pay,payslip_config):
+def updateloantable(user_data,employee,total_pay,payslip_config):
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    # training_loan = user_data.order_by('-id')[0]
-    try:
-        training_loan = user_data.order_by('-id')[0]
-    except:
-        training_loan=None
-    if training_loan:
-        loan_data=user_data.update(
-        user=employee,
-        category="Debit",
-        amount=loan_amount,
-        # created_at,
-        # updated_at=2022-10-10,
-        # is_active,
-        training_loan_amount=loan_amount,
-        total_earnings_amount=total_pay,
-        # deduction_date,
-        deduction_amount=loan_payment,
-        balance_amount=balance_amount,
-        )
-    else:
-        loan_data=user_data(
-                user=employee,
-                category="Debit",
-                amount=loan_amount,
-                # created_at,
-                # updated_at=today,
-                # is_active,
-                training_loan_amount=loan_amount,
-                total_earnings_amount=total_pay,
-                # deduction_date,
-                deduction_amount=loan_payment,
-                balance_amount=balance_amount,
-                )
-        loan_data.save()
-    return logger.info('training loan not only exists, but this user has loan !')
+    loan_data=user_data.update(
+    user=employee,
+    category="Debit",
+    amount=loan_amount,
+    # created_at,
+    # updated_at=2022-10-10,
+    # is_active,
+    training_loan_amount=loan_amount,
+    total_earnings_amount=total_pay,
+    # deduction_date,
+    deduction_amount=loan_payment,
+    balance_amount=balance_amount,
+    )
+    return loan_data
+
+def addloantable(loantable,employee,total_pay,payslip_config,user_data=None):
+    loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    loan_data=loantable(
+    user=employee,
+    category="Debit",
+    amount=loan_amount,
+    # created_at,
+    # updated_at=2022-10-10,
+    # is_active,
+    training_loan_amount=loan_amount,
+    total_earnings_amount=total_pay,
+    # deduction_date,
+    deduction_amount=loan_payment,
+    balance_amount=balance_amount,
+    )
+    return loan_data
+
+# def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
+#     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+#     # training_loan = user_data.order_by('-id')[0]
+#     try:
+#         training_loan = user_data.order_by('-id')[0]
+#     except:
+#         training_loan=None
+#     if training_loan:
+#         loan_data=user_data.update(
+#         user=employee,
+#         category="Debit",
+#         amount=loan_amount,
+#         # created_at,
+#         # updated_at=2022-10-10,
+#         # is_active,
+#         training_loan_amount=loan_amount,
+#         total_earnings_amount=total_pay,
+#         # deduction_date,
+#         deduction_amount=loan_payment,
+#         balance_amount=balance_amount,
+#         )
+#     else:
+#         loan_data=loantable(
+#                 user=employee,
+#                 category="Debit",
+#                 amount=loan_amount,
+#                 # created_at,
+#                 # updated_at=today,
+#                 # is_active,
+#                 training_loan_amount=loan_amount,
+#                 total_earnings_amount=total_pay,
+#                 # deduction_date,
+#                 deduction_amount=loan_payment,
+#                 balance_amount=balance_amount,
+#                 )
+#         loan_data.save()
+#     return 
+
 
 
 def lap_save_bonus(userprofile,lbandls,LBLS):
