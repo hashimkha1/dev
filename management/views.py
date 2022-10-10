@@ -948,7 +948,8 @@ def pay(request, user=None, *args, **kwargs):
     if request.user == employee or request.user.is_superuser:
         return render(request, "management/daf/payslip.html", context)
     else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
+        message="Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
+        return render(request, "main/errors/404.html",{"message":message})
 
 class TaskDetailView(DetailView):
     queryset = Task.objects.all()
