@@ -844,7 +844,7 @@ def pay(request, user=None, *args, **kwargs):
     # print(loan_amount,loan_payment,balance_amount)
     # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
     loan_amount,loan_payment,balance_amount=loan_deductions(total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config)
+    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
     logger.debug(f'balance_amount: {balance_amount}')
 
     userprofile = UserProfile.objects.get(user_id=employee)

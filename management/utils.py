@@ -27,7 +27,10 @@ def payinitial(tasks):
     return mxearning,points
 
 def paymentconfigurations(PayslipConfig,employee):
-    payslip_config = get_object_or_404(PayslipConfig, user=employee)
+    try:
+        payslip_config = get_object_or_404(PayslipConfig, user=employee)
+    except:
+        payslip_config=None
     return payslip_config
 
 def paytime():
@@ -50,7 +53,7 @@ def loan_deductions(total_pay,payslip_config):
         balance_amount = round(Decimal(loan_amount - loan_payment), 2)
     else:
         loan_amount = Decimal(0)
-        loan_payment = Decimal(0)
+        loan_payment = round(Decimal(total_pay) * Decimal(0.2), 2)
         balance_amount = Decimal(0)
     return loan_amount,loan_payment,balance_amount
 
@@ -71,7 +74,7 @@ def lap_save_bonus(userprofile,lbandls,LBLS):
             laptop_saving = Decimal(0)
     return laptop_bonus,laptop_saving
     
-def deductions(payslip_config):
+def deductions(payslip_config,total_pay):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     if payslip_config:
        food_accomodation = payslip_config.food_accommodation
@@ -82,7 +85,7 @@ def deductions(payslip_config):
        food_accomodation = 1000
        computer_maintenance = 500
        health = 500
-       kra = 0
+       kra = round(Decimal(total_pay) * Decimal(0.05), 2)
     return food_accomodation,computer_maintenance,health,kra
 
 def bonus(tasks,total_pay,payslip_config):
@@ -103,20 +106,22 @@ def bonus(tasks,total_pay,payslip_config):
        latenight_Bonus =round(total_pay * payslip_config.rp_increment_max_percentage, 2)
        yearly = round(payslip_config.rp_starting_amount + (total_pay * payslip_config.rp_increment_percentage), 2)
     else:
-       latenight_Bonus = total_pay * 0.05
+       latenight_Bonus =round(total_pay * Decimal(0.05), 2)
        bonus_points_ammount= points.get("Your_Total_Points")
-       offpay = 0
-       yearly = 12000
+       if bonus_points_ammount is None:
+           bonus_points_ammount = Decimal(0)
+       offpay =Decimal(0)
+       yearly = Decimal(12000)
     return bonus_points_ammount,latenight_Bonus,offpay,yearly
 
 def additional_earnings(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     # ================BONUS============================
     pointsearning,latenight_Bonus,offpay,yearly=bonus(tasks,total_pay,payslip_config)
-    sub_bonus=pointsearning+latenight_Bonus+offpay
+    sub_bonus=Decimal(pointsearning)+Decimal(latenight_Bonus)+Decimal(offpay)
     # ===============DEDUCTIONS=======================
     loan_amount,loan_payment,balance_amount=loan_deductions(total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config)
+    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
     total_deductions=food_accomodation+computer_maintenance+health+kra+loan_payment
     return total_deductions,sub_bonus
 
