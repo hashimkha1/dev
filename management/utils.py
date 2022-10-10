@@ -91,7 +91,7 @@ def updateloantable(user_data,employee,total_pay,payslip_config):
     )
     return loan_data
 
-def addloantable(loantable,employee,total_pay,payslip_config,user_data=None):
+def addloantable(loantable,employee,total_pay,payslip_config,user_data):
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     loan_data=loantable(
     user=employee,

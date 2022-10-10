@@ -1,22 +1,14 @@
 from unicodedata import category
 from django.contrib import messages
-from django.urls import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404, redirect,render
-from requests import request
-from accounts.forms import UserForm
-from accounts.models import CustomerUser
-from management.models import Task
-from django.db.models import Q
-from django.http import QueryDict
-from django.shortcuts import render
-from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-from django.http import Http404, JsonResponse
-from django.utils.decorators import method_decorator
-from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.db.models import Sum
+from django.http import QueryDict, Http404, JsonResponse
+from requests import request
 from datetime import datetime,date
 from django.views.generic import (
 	CreateView,
@@ -25,17 +17,14 @@ from django.views.generic import (
 	DetailView,
 	DeleteView,
 )
+from accounts.forms import UserForm
+from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig
 	)
-# from management.models import PayslipConfig
-
-from django.contrib.auth import get_user_model
-
 from .forms import LoanForm,TransactionForm,InflowForm
-
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
@@ -453,16 +442,26 @@ class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ============LOAN VIEWS========================
-def loan(request):
-	if request.method == "POST":
-		form = LoanForm(request.POST, request.FILES)
-		if form.is_valid():
-			form.save()
-			return redirect('finance:trainingloans')
-	else:
-		form=LoanForm()
-	return render(request, "finance/payments/payment_form.html", {"form":form})
+# def loan(request):
+# 	if request.method == "POST":
+# 		form = LoanForm(request.POST, request.FILES)
+# 		if form.is_valid():
+# 			form.save()
+# 			return redirect('finance:trainingloans')
+# 	else:
+# 		form=LoanForm()
+# 	return render(request, "finance/payments/payment_form.html", {"form":form})
 	
+class LoanCreateView(LoginRequiredMixin, CreateView):
+	model = PayslipConfig
+	success_url = "/finance/loans"
+	fields = "__all__"
+	form = LoanForm()
+
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
+
 
 class LoanUpdateView(UpdateView):
 	model = TrainingLoan
