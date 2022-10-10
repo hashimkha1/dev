@@ -216,7 +216,7 @@ EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST = "smtp.privateemail.com"
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")  # "info@codanalytics.net"
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
@@ -267,5 +267,5 @@ CELERYBEAT_SCHEDULE = {
 }
 
 # SITEURL="http://localhost:8000"
-SITEURL = "https://codadev.herokuapp.com/"
-# SITEURL = "https://www.codanalytics.net"
+# SITEURL = "https://codadev.herokuapp.com/"
+SITEURL = "https://www.codanalytics.net"
