@@ -31,6 +31,13 @@ def error404(request):
     
 def error500(request):
     return render(request, "main/errors/500.html", {"title": "500Error"})
+
+#Other Error pages or no results error
+# def result(request):
+#     return render(request, "main/errors/result.html", {"title": "result"})
+
+# def noresult(request):
+#     return render(request, "main/errors/noresult.html", {"title": "result"})
 #  ===================================================================================   
 def hendler400(request,exception):
     return render(request, "errors/400.html")
