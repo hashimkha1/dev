@@ -15,7 +15,7 @@ db.sqlite3-journal
 .vscode/
 .venv/
 /gapi/creds/credentials.json
-/gapi/stored_mails/*
+# /gapi/stored_mails/*
 
 ### Apps ###
 #testing
