@@ -47,7 +47,7 @@ def parse_mail(request):
             logger.error('error msg is ' + str(e))
             logger.error(f'msg id is: msg_dict.get("id")')
             # return HttpResponse("Error on createing a record!")
-    message=f' {search_results_len} resuts were/was found and processed!'
+    message=f' {search_results_len} results were/was found and processed!'
     # context={
     #     # "results": search_results_len
     #     "message":message
