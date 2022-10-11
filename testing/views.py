@@ -41,7 +41,7 @@ User = get_user_model()
 register = template.Library()
 
 
-def pay(request):
+def testing(request):
     deadline,year=target_date()
     context={
          "year":year,

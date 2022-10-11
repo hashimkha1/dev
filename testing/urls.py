@@ -7,7 +7,7 @@ from .views import (
 app_name = 'testing'
 urlpatterns = [
     path('', views.Services_List, name='testing-home'),
-    path('pay/', views.pay, name='testing-pay'),
+    path('testing/', views.testing, name='testing-pay'),
     #-----------COMPANY REPORTS---------------------------------------
     path('display/', views.Services_List, name='services'),
     path('interview/<int:pk>', ServicesDetailView.as_view(template_name="testing/resume.html"), name='resume'),
