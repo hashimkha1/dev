@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from mail.custom_email import send_email
 from application.models import UserProfile
+from management.utils import email_template
 from management.forms import (
     DepartmentForm,
     PolicyForm,
@@ -1166,7 +1167,7 @@ def active_requirements(request, Status=None, *args, **kwargs):
 
 
 def requirements(request):
-    requirements = Requirement.objects.all().order_by("-created_by")
+    requirements = Requirement.objects.all().order_by("created_by")
     return render(
         request,
         "management/doc_templates/requirements.html",
@@ -1217,85 +1218,46 @@ def newrequirement(request):
 class RequirementDetailView(DetailView):
     template_name = "management/doc_templates/single_requirement.html"
     model = Requirement
-    ordering = ["-created_at "]
-
+    ordering = ["created_at "]
 
 class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     model = Requirement
     success_url = "/management/activerequirements"
     fields = [
-        "created_by",
-        "assigned_to",
-        "requestor",
-        "company",
-        "category",
-        "app",
-        "delivery_date",
-        "duration",
-        "what",
-        "why",
-        "how",
-        "doc",
-        "is_active",
-    ]
+                "created_by","assigned_to","requestor","company",
+                "category","app","delivery_date","duration","what",
+                "why","how","comments","doc","is_active",
+             ]
     form = RequirementForm
-
     def form_valid(self, form):
         # form.instance.author=self.request.user
         if self.request.user.is_superuser:
-            req_obj = Requirement.objects.get(pk=form.instance.id)
-            old_dev = req_obj.assigned_to
-
-            if (not get_user_model().objects.get(pk=self.request.POST["assigned_to"]) == self.request.user
-                    and not get_user_model().objects.get(pk=self.request.POST["assigned_to"]
-                                                         ) == old_dev
-            ):
-                if self.request.is_secure():
-                    protocol = "https://"
-                else:
-                    protocol = "http://"
-
-                subject = 'Task has been reassigned on CodaTraining'
-                old_dev_obj = get_user_model().objects.get(username=old_dev)
-                old_dev_email = old_dev_obj.email
-                context = {
-                    'user': old_dev,
-                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
-                                                                        kwargs={'pk': form.instance.id}),
-                    'req_id': req_obj.id,
-                    'delivery_date': req_obj.delivery_date,
-                }
-                # logger.debug(f'old_dev_email: {old_dev_email}')
-                # logger.debug(f'context: {context}')
-                send_email(
-                    category=old_dev_obj.category,
-                    to_email=[old_dev_email, ],
-                    subject=subject,
-                    html_template='email/requirement_reassigned.html',
-                    context=context
+            if (
+                not get_user_model().objects.get(pk=self.request.POST["assigned_to"])
+                == self.request.user
+                and not get_user_model().objects.get(
+                    pk=self.request.POST["assigned_to"]
                 )
-
+                == Requirement.objects.get(pk=form.instance.id).assigned_to
+            ):
                 subject = "Task assign on CodaTraining"
                 to = (
                     get_user_model()
                     .objects.get(pk=self.request.POST["assigned_to"])
                     .email
                 )
-                context = {
-                    'request_what': self.request.POST['what'],
-                    'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
-                                                                        kwargs={'pk': form.instance.id}),
-                    'delivery_date': self.request.POST['delivery_date'],
-                    'user': self.request.user,
-                }
-                send_email(
-                    category=self.request.user.category,
-                    to_email=[to, ],
-                    subject=subject,
-                    html_template='email/RequirementUpdateView.html',
-                    context=context
-                )
-
+                if self.request.is_secure():
+                    protocol = "https://"
+                else:
+                    protocol = "http://"
+                html_content = f"""
+                    <span><h3>Requirement: </h3>{self.request.POST['what']}<br>
+                    <a href='{protocol+self.request.get_host()+reverse('management:RequirementDetail',
+                    kwargs={'pk':form.instance.id})}'>click here</a><br>
+                    <b>Dead Line: </b><b style='color:red;'>
+                    {self.request.POST['delivery_date']}</b><br><b>Created by: 
+                    {self.request.user}</b></span>"""
+                email_template(subject, to, html_content)
             return super().form_valid(form)
         else:
             return redirect("management:requirements-active")
@@ -1307,6 +1269,95 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
         elif self.request.user == requirement.created_by:
             return True
         return False
+
+
+# class RequirementUpdateView(LoginRequiredMixin, UpdateView):
+#     model = Requirement
+#     success_url = "/management/activerequirements"
+#     fields = [
+#         "created_by",
+#         "assigned_to",
+#         "requestor",
+#         "company",
+#         "category",
+#         "app",
+#         "delivery_date",
+#         "duration",
+#         "what",
+#         "why",
+#         "how",
+#         "doc",
+#         "is_active",
+#     ]
+#     form = RequirementForm
+
+#     def form_valid(self, form):
+#         # form.instance.author=self.request.user
+#         if self.request.user.is_superuser:
+#             req_obj = Requirement.objects.get(pk=form.instance.id)
+#             old_dev = req_obj.assigned_to
+
+#             if (not get_user_model().objects.get(pk=self.request.POST["assigned_to"]) == self.request.user
+#                     and not get_user_model().objects.get(pk=self.request.POST["assigned_to"]
+#                                                          ) == old_dev
+#             ):
+#                 if self.request.is_secure():
+#                     protocol = "https://"
+#                 else:
+#                     protocol = "http://"
+
+#                 subject = 'Task has been reassigned on CodaTraining'
+#                 old_dev_obj = get_user_model().objects.get(username=old_dev)
+#                 old_dev_email = old_dev_obj.email
+#                 context = {
+#                     'user': old_dev,
+#                     'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
+#                                                                         kwargs={'pk': form.instance.id}),
+#                     'req_id': req_obj.id,
+#                     'delivery_date': req_obj.delivery_date,
+#                 }
+#                 # logger.debug(f'old_dev_email: {old_dev_email}')
+#                 # logger.debug(f'context: {context}')
+#                 send_email(
+#                     category=old_dev_obj.category,
+#                     to_email=[old_dev_email, ],
+#                     subject=subject,
+#                     html_template='email/requirement_reassigned.html',
+#                     context=context
+#                 )
+
+#                 subject = "Task assign on CodaTraining"
+#                 to = (
+#                     get_user_model()
+#                     .objects.get(pk=self.request.POST["assigned_to"])
+#                     .email
+#                 )
+#                 context = {
+#                     'request_what': self.request.POST['what'],
+#                     'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
+#                                                                         kwargs={'pk': form.instance.id}),
+#                     'delivery_date': self.request.POST['delivery_date'],
+#                     'user': self.request.user,
+#                 }
+#                 send_email(
+#                     category=self.request.user.category,
+#                     to_email=[to, ],
+#                     subject=subject,
+#                     html_template='email/RequirementUpdateView.html',
+#                     context=context
+#                 )
+
+#             return super().form_valid(form)
+#         else:
+#             return redirect("management:requirements-active")
+
+#     def test_func(self):
+#         requirement = self.get_object()
+#         if self.request.user.is_superuser:
+#             return True
+#         elif self.request.user == requirement.created_by:
+#             return True
+#         return False
 
 
 class RequirementDeleteView(LoginRequiredMixin, DeleteView):

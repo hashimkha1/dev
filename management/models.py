@@ -818,7 +818,6 @@ class TaskHistory(models.Model):
             pay = round(compute_pay, 2)
             return pay
 
-
 class Requirement(models.Model):
     # Apps
     Reporting = "Reporting"
@@ -875,16 +874,18 @@ class Requirement(models.Model):
     how = (
         models.TextField()
     )  # how should it be delivered/Which platform or mode of delivery?
+    comments = models.TextField(default='No Comment',null=True, blank=True)  # What is needed?
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Requirements"
+        ordering = ["-created_at","-updated_at"]
 
     @property
     def doc_url(self):
         if self.doc and hasattr(self.doc, 'url'):
             return self.doc.url
-
-    class Meta:
-        verbose_name_plural = "Requirements"
 
     def get_absolute_url(self):
         return reverse("management:requirements")

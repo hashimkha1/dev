@@ -24,7 +24,7 @@ def parse_mail(request):
         message=f'No results found.Please Try again later!'
         # return HttpResponse('No results found!')
         # return redirect('main:noresult')
-        return render(request,'main/errors/result.html',{"message":message})
+        return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
 
     for result in search_results:
         msg_dict = get_message(service=service, msg_id=result.get('id'))
@@ -54,7 +54,7 @@ def parse_mail(request):
 
     # }
     # return HttpResponse(f'{search_results_len} results processed!')
-    return render(request,'main/errors/result.html',{"message":message})
+    return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
     
 
 

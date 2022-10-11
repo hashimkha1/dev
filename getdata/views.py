@@ -1,31 +1,26 @@
-from re import M
-from django.shortcuts import render
 # imports added below
 import json
 import os
 import requests
+from requests import request 
 import threading
 import time
-from django.shortcuts import render
-from http.client import HTTPResponse
-from django.http import HttpResponseRedirect
-from requests import request 
-from . import forms
-from django.views import View
-from django.utils.dateformat import format
-from django.shortcuts import redirect
-from django.contrib import admin
-from django.contrib import messages
-from django import forms
 
-from django.urls import path, reverse, reverse_lazy
-from main.utils import Finance,Data,Management
-from django.contrib.auth.decorators import login_required
-from django.http import Http404, JsonResponse
-from django.utils.decorators import method_decorator
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from re import M
+from django import forms
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime,date
+from http.client import HTTPResponse
+from django.http import HttpResponseRedirect, Http404, JsonResponse
+from django.views import View
+from django.utils.dateformat import format
+from django.contrib import admin, messages
+from . import forms
+from django.urls import path, reverse, reverse_lazy
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -34,9 +29,11 @@ from django.views.generic import (
 	DeleteView, 
     FormView
 )
+from main.utils import Finance,Data,Management
 from finance.models import (
         Transaction
 	)
+from .models import CashappMail
 from django.contrib.auth import get_user_model
 
 from .forms import CsvImportForm
@@ -63,8 +60,19 @@ def uploaddata(request):
         "Data": Data,
         "Management": Management,
     }
-    return render(request,"getdata/uploaddata.html", context)  
+    return render(request,"getdata/uploaddata.html", context) 
 
+
+
+# ========================. DISPLAY/LIST VIEWS============================
+# class CashappListView(ListView):
+#     queryset = CashappMail.objects.all()
+#     template_name = "main/snippets_templates/interview_snippets/result.html"
+
+class CashappListView(ListView):
+	model = CashappMail
+	template_name = "main/snippets_templates/interview_snippets/result.html"
+	context_object_name = "cashappdata"
 # # ==================GOTOMEETING===========================
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # print('---dir_path-- : ',dir_path)

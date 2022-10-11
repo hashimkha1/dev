@@ -160,7 +160,6 @@ class ManagementForm(forms.ModelForm):
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
 
-
 class RequirementForm(forms.ModelForm):
     class Meta:
         model = Requirement
@@ -176,6 +175,7 @@ class RequirementForm(forms.ModelForm):
             "what",
             "why",
             "how",
+            "comments",
             "doc",
             "is_active",
         ]
@@ -194,7 +194,6 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
-
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
     #     self.fields["created_by"].queryset = CustomerUser.objects.filter(

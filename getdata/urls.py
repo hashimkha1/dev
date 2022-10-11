@@ -9,7 +9,8 @@ urlpatterns = [
     path('index/', views.index, name='data-index'),
     path('upload/', views.upload_csv, name='upload'),
     path('dataupload/', views.uploaddata, name='upload-data'),
-    path('cashapp/',parse_mail, name='cashapp-data'),
+    path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
+    path('cashapp/',parse_mail, name='cashapp-email'),
 #     path('gotomeeting/',views.meetingFormView,name='meetingform1'),
 #     # trying a url pattern for dates
 #     # gotomeetingresult
