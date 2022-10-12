@@ -1,5 +1,7 @@
 import random
 from django.db.models import Sum,Max
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
 from decimal import Decimal
 import calendar,string
 from django.utils.text import slugify
@@ -7,6 +9,7 @@ from datetime import date, datetime, timedelta
 from django.shortcuts import get_object_or_404, redirect, render
 import logging
 logger = logging.getLogger(__name__)
+
 # from .models import Task
 
 # ================================apis for payslip==========================
@@ -241,6 +244,10 @@ def unique_slug_generator(instance, new_slug=None):
         return unique_slug_generator(instance, new_slug=new_slug)
     return slug
 
-
+def email_template(subject, to, html_content):
+    msg = EmailMultiAlternatives(
+        subject, '', settings.EMAIL_HOST_USER, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 

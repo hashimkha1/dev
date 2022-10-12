@@ -13,9 +13,21 @@
         <p>
             Upload only a CSV File, Check field formats to minimize errors during upload.
         </p>
-        <p><a href="{% url 'main:images'%}" class="btn btn-secondary btn-sm"
-            >Add Images/Assets
-          </a></p>
+          <div class="row text-center">
+            <div class="col-md-4" id="gi">
+                <p><a href="{% url 'main:images'%}" class="btn btn-secondary btn-sm"
+                    >Add Images/Assets
+                </a></p>
+            </div>
+            <div class="col-md-4" id="gi">
+              <p>
+                <a href="{% url 'getdata:cashapp-data'%}" class="btn btn-secondary btn-sm"
+                  >Get Inflow from Cash app
+                </a>
+             </p>
+            </div>
+        </div>
+        
         <div class="row text-center">
             <div class="col-md-4" id="gi">
                 <h3 class="title">Finance App</h3>

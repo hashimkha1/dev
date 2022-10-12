@@ -160,14 +160,15 @@ class ManagementForm(forms.ModelForm):
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
 
-
 class RequirementForm(forms.ModelForm):
     class Meta:
         model = Requirement
         fields = [
-            "created_by",
+            # "created_by",
+            "creator",
             "assigned_to",
             "requestor",
+            "status",
             "company",
             "category",
             "app",
@@ -176,12 +177,14 @@ class RequirementForm(forms.ModelForm):
             "what",
             "why",
             "how",
+            "comments",
             "doc",
             "is_active",
         ]
 
         labels = {
-            "created_by": "Creator",
+            # "created_by": "oldcreator",
+            "creator": "Creator",
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
             "app": "Specify app if Website",
@@ -194,7 +197,6 @@ class RequirementForm(forms.ModelForm):
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
         }
-
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
     #     self.fields["created_by"].queryset = CustomerUser.objects.filter(

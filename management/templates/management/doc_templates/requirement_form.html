@@ -37,13 +37,20 @@
         </div>
 </div>
 <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <div class="row">
+          <div class="col-md-3">Critical:Needed Within 24 hours </div>
+          <div class="col-md-3">High:Within 3 Days and Less </div>
+          <div class="col-md-3">Medium:Takes 3-10 days</div>
+          <div class="col-md-3">Low : Not urgent</div>
+        </div>
+<hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
       <div class="row">
-        <div class="col-md-2">{{ form.created_by|as_crispy_field }}</div>
         <div class="col-md-2">{{ form.assigned_to|as_crispy_field }}</div>
         <div class="col-md-2">{{ form.requestor |as_crispy_field }}</div>
         <div class="col-md-2">{{ form.company|as_crispy_field }}</div>
         <div class="col-md-2">{{ form.category|as_crispy_field }}</div>
         <div class="col-md-2">{{ form.app|as_crispy_field }}</div>
+        <div class="col-md-2">{{ form.status|as_crispy_field }}</div>
       </div>
       <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
       <div class="row">
@@ -53,14 +60,18 @@
       </div>
       <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
       <div class="row">
-        <div class="col-md-4">{{ form.duration |as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.delivery_date|as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.doc|as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.is_active|as_crispy_field }}</div>
-        
+        <div class="col-md-3">{{ form.duration |as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.delivery_date|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.doc|as_crispy_field }}</div>
+        <div class="col-md-3">{{ form.is_active|as_crispy_field }}</div>
+      </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <div class="row">
+        <div class="col-md-12">{{ form.comments |as_crispy_field }}</div>
       </div>
       <hr style="height:3px;border:none;color:#666669;background-color:rgb(106, 106, 155);" />
     </fieldset>
+ 
     <div class="form-group">
       <button class="btn btn-outline-info" type="submit">Submit</button>
     </div>

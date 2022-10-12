@@ -43,6 +43,8 @@ urlpatterns = [
     path('403Error/', views.error403, name='403error'),
     path('404Error/', views.error404, name='404error'),
     path('500Error/', views.error500, name='500error'),
+    # path('result/', views.result, name='result'),
+    # path('noresult/', views.noresult, name='noresult'),
 
     path('400/', views.hendler400, name='400-error'),
     path('403/', views.hendler403, name='403-error'),

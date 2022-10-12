@@ -818,7 +818,6 @@ class TaskHistory(models.Model):
             pay = round(compute_pay, 2)
             return pay
 
-
 class Requirement(models.Model):
     # Apps
     Reporting = "Reporting"
@@ -830,6 +829,12 @@ class Requirement(models.Model):
     Management = "Management"
     Client = "Client"
     Other = "Other"
+
+    # Priority Status
+    Critical= "Critical"
+    High= "High"
+    Medium= "Medium"
+    Low= "Low"
 
     CAT_CHOICES = [
         (Reporting, "Reporting"),
@@ -843,6 +848,12 @@ class Requirement(models.Model):
         (Client, "Client"),
         (Other, "Other"),
     ]
+    STATUS_CHOICES = [
+        (Critical, "Critical"),
+        (High, "High"),
+        (Medium, "Medium"),
+        (Low, "Low"),
+    ]
     category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
@@ -853,11 +864,26 @@ class Requirement(models.Model):
         choices=BEN_CHOICES,
         default=Other,
     )
+    status = models.CharField(
+        max_length=25,
+        choices=STATUS_CHOICES,
+        default=Low,
+    )
+    creator = models.ForeignKey(
+        User,
+        verbose_name=_("creator"),
+        related_name="creator",
+        null=True,
+        blank=True,
+        default=1,
+        on_delete=models.SET_NULL,
+        limit_choices_to=Q(is_active=True)
+        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+    )
     assigned_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         default=1,
-        # limit_choices_to={"is_active": True,"is_employee": True,"is_admin": True,"is_superuser": True},
         limit_choices_to=Q(is_active=True)
         and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
@@ -875,16 +901,18 @@ class Requirement(models.Model):
     how = (
         models.TextField()
     )  # how should it be delivered/Which platform or mode of delivery?
+    comments = models.TextField(default='No Comment',null=True, blank=True)  # What is needed?
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Requirements"
+        ordering = ["-created_at","-updated_at"]
 
     @property
     def doc_url(self):
         if self.doc and hasattr(self.doc, 'url'):
             return self.doc.url
-
-    class Meta:
-        verbose_name_plural = "Requirements"
 
     def get_absolute_url(self):
         return reverse("management:requirements")
@@ -892,14 +920,11 @@ class Requirement(models.Model):
     def __str__(self):
         return self.category
 
-
 def task_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
 
-
 pre_save.connect(task_pre_save_receiver, sender=Task)
-
 
 class Advertisement(models.Model):
     # Twitter
