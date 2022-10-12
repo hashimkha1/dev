@@ -1,5 +1,6 @@
 import random
 from django.db.models import Sum,Max
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from decimal import Decimal
 import calendar,string

@@ -164,9 +164,11 @@ class RequirementForm(forms.ModelForm):
     class Meta:
         model = Requirement
         fields = [
-            "created_by",
+            # "created_by",
+            "creator",
             "assigned_to",
             "requestor",
+            "status",
             "company",
             "category",
             "app",
@@ -181,7 +183,8 @@ class RequirementForm(forms.ModelForm):
         ]
 
         labels = {
-            "created_by": "Creator",
+            # "created_by": "oldcreator",
+            "creator": "Creator",
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
             "app": "Specify app if Website",

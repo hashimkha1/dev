@@ -1170,7 +1170,7 @@ def requirements(request):
     requirements = Requirement.objects.all().order_by("created_by")
     return render(
         request,
-        "management/doc_templates/requirements.html",
+        "management/doc_templates/requirementlist.html",
         {"requirements": requirements},
     )
 
@@ -1179,7 +1179,11 @@ def newrequirement(request):
     if request.method == "POST":
         form = RequirementForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
+            instance=form.save(commit=False)
+            instance.creator=request.user
+            print(instance.creator)
+            instance.save()
+            # form.save()
             if (
                     not get_user_model().objects.get(pk=request.POST["assigned_to"])
                         == request.user
@@ -1205,8 +1209,8 @@ def newrequirement(request):
                     'delivery_date': request.POST['delivery_date'],
                     'user': request.user,
                 }
-                send_email(category=request.user.category, to_email=[to, ], subject=subject,
-                           html_template='email/newrequirement.html', context=context)
+                # send_email(category=request.user.category, to_email=[to, ], subject=subject,
+                #            html_template='email/newrequirement.html', context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1222,9 +1226,9 @@ class RequirementDetailView(DetailView):
 
 class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     model = Requirement
-    success_url = "/management/activerequirements"
+    success_url = "/management/requirements"
     fields = [
-                "created_by","assigned_to","requestor","company",
+                "status","assigned_to","requestor","company",
                 "category","app","delivery_date","duration","what",
                 "why","how","comments","doc","is_active",
              ]

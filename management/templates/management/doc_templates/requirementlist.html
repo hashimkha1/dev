@@ -18,11 +18,15 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>id</th>
+          <th>Created On</th>
+          <th>Created_By</th>
           <th>requestor</th>
-          <th>assigned_to</th>
+          <th>Assigned To</th>
           <th>duration</th>
           <th>delivery_date</th>
           <th>is_active</th>
+          <th>status</th>
+          <th>category</th>
           <th>Update</th>
           <th>Delete</th>
         </tr>
@@ -32,11 +36,15 @@
          
             <tr>
               <td>CODA000{{requirement.id}}</td>
+              <td>{{requirement.created_at|date:"n-d-Y"}}</td>
+              <td>{{requirement.creator}}</td>
               <td>{{requirement.requestor}}</td>
               <td>{{requirement.assigned_to}}</td>
               <td>{{requirement.duration}}</td>
-              <td>{{requirement.delivery_date|date:"F d, Y"}}</td>
-              <td>{{applicant.is_active}}</td>
+              <td>{{requirement.delivery_date|date:"n-d-Y"}}</td>
+              <td>{{requirement.is_active}}</td>
+              <td>{{requirement.status}}</td>
+              <td>{{requirement.category}}</td>
               <!-------
               <td>{{client.id}}</td>
               <td>{{client.category}}</td>
