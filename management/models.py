@@ -920,6 +920,51 @@ class Requirement(models.Model):
     def __str__(self):
         return self.category
 
+class Estimate(models.Model):
+    # Apps
+    CAT_CHOICES = [
+            ("Table","Table"),
+            ("Api_Integration","Api_Integration"),
+            ("View","View"),
+            ("Diagram","Diagram"),
+            ("Templates","Templates"),
+            ("Forms","Forms"),
+            ("Other","Other"),
+       ]
+        # activity
+    TASK_CHOICES = [
+            ("creation","creation"),
+            ("Testing","Testing"),
+            ("dictionary","dictionary"),
+            ("diagram","diagram"),
+            ("Other","Other"),
+       ]
+    requirement = models.ForeignKey(
+         Requirement,
+         on_delete=models.CASCADE,
+         default=1,
+      )
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+    )
+    task = models.CharField(
+        max_length=25,
+        choices=TASK_CHOICES,
+        default="Other",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    qty = models.CharField(max_length=50)
+    duration = models.IntegerField(null=False, default=4)
+    comment = models.TextField()
+    is_active = models.BooleanField(default=True)
+
+    @property
+    def estimated_time(self):
+        est_time=round(Decimal(self.qty* self.duration), 2)
+        return est_time
+
 def task_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
         instance.slug = unique_slug_generator(instance)
@@ -935,7 +980,6 @@ class Advertisement(models.Model):
     twitter_access_token_secret = models.CharField(
         max_length=500, null=True, blank=True
     )
-    
     # Facebook
     facebook_access_token = models.CharField(max_length=500, null=True, blank=True)
     facebook_page_id = models.CharField(max_length=100, null=True, blank=True)
@@ -953,54 +997,10 @@ class LBandLS(models.Model):
     def __str__(self):
         return self.user.username
 
-
-# class PayslipConfig(models.Model):
-#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-
-#     # configs for loan
-#     loan_status = models.BooleanField(default=True)
-#     loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
-#     loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
-
-#     # configs for laptop service
-#     laptop_status = models.BooleanField(default=True)
-#     lb_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-#     ls_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-#     ls_max_limit = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
-
-#     # configs for retirement package
-#     rp_starting_period = models.CharField(max_length=10)
-#     rp_starting_amount = models.DecimalField(max_digits=10, decimal_places=2, default=10000.00)
-#     rp_increment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
-#     rp_increment_max_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.05)
-#     rp_increment_percentage_increment = models.DecimalField(max_digits=5, decimal_places=2, default=0.01)
-#     rp_increment_percentage_increment_cycle = models.IntegerField(default=12)
-
-#     # configs for bonus
-#     holiday_pay = models.DecimalField(max_digits=10, decimal_places=2, default=3000.00)
-#     night_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-
-#     # configs for deductions
-#     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-#     food_accommodation = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
-#     health = models.DecimalField(max_digits=10, decimal_places=2, default=500.00)
-#     kra = models.DecimalField(max_digits=10, decimal_places=2, default=300.00)
-
-#     # employee of the month, quarter and year
-#     eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
-#     eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
-#     eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
-
-#     def __str__(self):
-#         return str(self.loan_amount)
-
-
-
 class RetirementPackage(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     period = models.CharField(max_length=10)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-
 
 class Loan(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

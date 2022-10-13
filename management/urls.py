@@ -72,6 +72,9 @@ urlpatterns = [
     path('requirement/<int:pk>/update/', RequirementUpdateView.as_view(template_name='management/doc_templates/requirement_form.html'), name='requirement-update'),
     path('requirement/<int:pk>/delete/', RequirementDeleteView.as_view(), name='requirement-delete'),
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),
+    path('estimate/', views.EstimateCreateView.as_view(template_name='management/activity_form.html'), name='RequirementDetail'),
+    path('estimates/', views.EstimateListView.as_view(), name='estimates'),
+
     # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("create_advertisement/", views.AdsCreateView.as_view(), name="create_advertisement"),
     path("advertisement/", views.AdsContent.as_view(), name="advertisement"),

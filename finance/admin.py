@@ -3,7 +3,8 @@ from django import forms
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
-
+from datetime import datetime
+# dt_string = "12/11/2018 09:15:32"
 # Register your models here.
 from django.urls import path, reverse
 from .models import (
@@ -14,7 +15,7 @@ from .models import (
     Transaction,Inflow,
     TrainingLoan
 )  # , DocUpload
-
+from accounts.models import Department
 
 class CsvImportForm(forms.Form):
     csv_upload = forms.FileField()
@@ -47,15 +48,26 @@ class TransactionAdmin(admin.ModelAdmin):
             print(csv_data)
             for x in csv_data:
                 fields = x.split(",")
+                new_date = datetime.strptime(fields[0], "%m/%d/%Y")
+                idval = Department.objects.values_list("id")[0]
+                dept_id=idval[0]
+                department = Department.objects.get_by_id(id=fields[7])
+                # idval = Department.objects.values_list("id")[0]
+                # department = Department.objects.all().first
+                print(department)
+                print(new_date)
                 created = Transaction.objects.update_or_create(
-                    activity_date=fields[0],
-                    sender=fields[1],
+                    # activity_date=fields[0],
+                    activity_date=new_date,
+                    # sender=fields[1],
+                    sender=request.user,
                     receiver=fields[2],
                     phone=fields[3],
                     qty=fields[4],
                     amount=fields[5],
                     payment_method=fields[6],
-                    department=fields[7],
+                    # department=fields[7],
+                    department=department,
                     category=fields[8],
                     type=fields[9],
                     description=fields[10],

@@ -32,7 +32,7 @@ from management.models import (
     Advertisement,
     Policy,
     Tag,
-    # TaskGroups,
+    Estimate,
     Task,
     TaskHistory,
     TaskLinks,
@@ -1374,7 +1374,21 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+# ====================ESTIMATEVIEWS===============================
+class EstimateCreateView(LoginRequiredMixin, CreateView):
+    model=Estimate
+    success_url = "/management/activerequirements"
+    fields= "__all__"
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class EstimateListView(ListView):
+    model = Estimate
+    template_name = "management/doc_templates/estimates.html"
+    context_object_name = "estimates"
+    ordering = ["-created_at"]
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")

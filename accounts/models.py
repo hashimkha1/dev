@@ -7,6 +7,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.db.models.signals import pre_save
 from django.utils.translation import gettext_lazy as _
+from accounts.modelmanager import DepartmentManager
 from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
 
@@ -98,6 +99,8 @@ class Department(models.Model):
     # created_date = models.DateTimeField(_('entered on'),default=timezone.now, editable=True)
     is_featured = models.BooleanField("Is featured", default=True)
     is_active = models.BooleanField(default=True)
+
+    objects=DepartmentManager()
 
     @classmethod
     def get_default_pk(cls):
