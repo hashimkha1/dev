@@ -49,8 +49,8 @@ class TransactionAdmin(admin.ModelAdmin):
             for x in csv_data:
                 fields = x.split(",")
                 new_date = datetime.strptime(fields[0], "%m/%d/%Y")
-                idval = Department.objects.values_list("id")[0]
-                dept_id=idval[0]
+                # idval = Department.objects.values_list("id")[0]
+                # dept_id=idval[0]
                 department = Department.objects.get_by_id(id=fields[7])
                 # idval = Department.objects.values_list("id")[0]
                 # department = Department.objects.all().first
