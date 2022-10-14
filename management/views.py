@@ -1142,7 +1142,6 @@ def evidence_update_view(request, id, *args, **kwargs):
     }
     return render(request, "main/snippets_templates/forms/generalform.html", context)
 
-
 # @method_decorator(login_required, name="dispatch")
 # class EvidenceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #     model = TaskLinks
