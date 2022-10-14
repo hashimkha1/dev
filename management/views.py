@@ -1167,7 +1167,7 @@ def active_requirements(request, Status=None, *args, **kwargs):
 
 
 def requirements(request):
-    requirements = Requirement.objects.all().order_by("created_by")
+    requirements = Requirement.objects.all().order_by("id")
     return render(
         request,
         "management/doc_templates/requirementlist.html",
