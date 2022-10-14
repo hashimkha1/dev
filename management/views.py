@@ -1118,7 +1118,6 @@ def userevidence(request, user=None, *args, **kwargs):
     userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
 
-
 def evidence_update_view(request, id, *args, **kwargs):
     context = {}
     # fetch the object related to passed id
@@ -1135,8 +1134,45 @@ def evidence_update_view(request, id, *args, **kwargs):
         # except:
         return redirect('management:evidence')
     # add form dictionary to context
-    context["form"] = form
-    return render(request, "management/daf/evidence_form.html", context)
+    # context["form"] = form
+    message='Edit Evidence'
+    context={
+        "form":form,
+        "message":message
+    }
+    return render(request, "main/snippets_templates/forms/generalform.html", context)
+
+
+# @method_decorator(login_required, name="dispatch")
+# class EvidenceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+#     model = TaskLinks
+#     success_url = "/management/evidence"
+#     message="Edit Evidence"
+   
+#     fields = [
+#             #    "task",
+#             #    "added_by",
+#                "link_name",
+#                "linkpassword",
+#                "description",
+#                "doc",
+#                "link",
+#                "linkpassword",
+#                "is_active",
+#                "is_featured",
+#            ]
+#     def form_valid(self, form):
+#         # form.instance.author=self.request.user
+#         return super().form_valid(form)
+
+#     def test_func(self):
+#         evidence = self.get_object()
+#         if self.request.user.is_admin or self.request.user.is_superuser:
+#             return True
+#         elif self.request.user == evidence.added_by:
+#             return True
+#         return False
+
 
 
 # =============================EMPLOYEE ASSESSMENTS========================================

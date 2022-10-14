@@ -36,6 +36,7 @@ urlpatterns = [
     path('evidence/',views.evidence, name='evidence'),
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
+    # path('<int:pk>/update', views.EvidenceUpdateView.as_view(template_name='management/daf/evidence_form.html') ,name='evidence_update'),
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
