@@ -836,10 +836,15 @@ def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
     except:
         training_loan=None
     if training_loan:
-        loan_data=updateloantable(user_data,employee,total_pay,payslip_config)
+        loan_data = addloantable(loantable, employee, total_pay, payslip_config, user_data)
+        if loan_data:
+            loan_data.save()
+        else:
+            pass
+        # loan_data=updateloantable(user_data,employee,total_pay,payslip_config)
     else:
-        loan_data=addloantable(loantable,employee,total_pay,payslip_config,user_data)
-        loan_data.save()
+        loan_data = updateloantable(user_data, employee, total_pay, payslip_config)
+        # loan_data=addloantable(loantable,employee,total_pay,payslip_config,user_data)
 
 def pay(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))

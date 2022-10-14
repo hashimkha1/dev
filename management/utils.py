@@ -95,21 +95,26 @@ def updateloantable(user_data,employee,total_pay,payslip_config):
     return loan_data
 
 def addloantable(loantable,employee,total_pay,payslip_config,user_data):
+    previous_balance_amount = user_data.order_by('-id')[0].balance_amount
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    loan_data=loantable(
-    user=employee,
-    category="Debit",
-    amount=loan_amount,
-    # created_at,
-    # updated_at=2022-10-10,
-    # is_active,
-    training_loan_amount=loan_amount,
-    total_earnings_amount=total_pay,
-    # deduction_date,
-    deduction_amount=loan_payment,
-    balance_amount=balance_amount,
-    )
-    return loan_data
+    # balance_amount = 21000
+    print("after_loan_computation", balance_amount)
+    if previous_balance_amount != balance_amount:
+        loan_data=loantable(
+        user=employee,
+        category="Debit",
+        amount=loan_amount,
+        # created_at,
+        # updated_at=2022-10-10,
+        # is_active,
+        training_loan_amount=loan_amount,
+        total_earnings_amount=total_pay,
+        # deduction_date,
+        deduction_amount=loan_payment,
+        balance_amount=balance_amount,
+        )
+        return loan_data
+    return None
 
 # def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
 #     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)

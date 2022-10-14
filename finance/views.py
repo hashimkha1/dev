@@ -26,6 +26,12 @@ from .models import (
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
 # User=settings.AUTH_USER_MODEL
+from management.utils import paymentconfigurations
+from management.views import loan_update_save
+from management.utils import loan_computation
+
+from management.views import pay
+
 User = get_user_model()
 
 # Create your views here.
@@ -471,6 +477,17 @@ class LoanUpdateView(UpdateView):
 	def form_valid(self, form):
 		# form.instance.user=self.request.user
 		if self.request.user.is_superuser:
+			user_data = TrainingLoan.objects.filter(id=self.kwargs['pk'], is_active=True)
+			username=user_data.order_by('-id')[0].user.username
+			pay(self.request, **{"username":username})
+			# # user_data = TrainingLoan.objects.filter(user=employee, is_active=True)
+			# loantable = TrainingLoan
+			# print(employee, "EEEEEE")
+			# payslip_config = paymentconfigurations(PayslipConfig, employee)
+			# print("AAAAAAAAAA", payslip_config)
+			# total_pay = form.cleaned_data['total_earnings_amount']
+			# a=loan_update_save(loantable, user_data, employee, total_pay, payslip_config)
+			# print(7777777, a)
 			return super().form_valid(form)
 		else:
 			return redirect("finance:trainingloans")
@@ -488,6 +505,7 @@ class LoanListView(ListView):
 	model = TrainingLoan
 	template_name = "finance/payments/loans.html"
 	context_object_name = "payments"
+	ordering = ['created_at']
 
 class userLoanListView(ListView):
 	model = LoanUsers
