@@ -1140,7 +1140,7 @@ def evidence_update_view(request, id, *args, **kwargs):
         "form":form,
         "message":message
     }
-    return render(request, "main/snippets_templates/forms/generalform.html", context)
+    return render(request, "main/snippets_templates/generalform.html", context)
 
 # @method_decorator(login_required, name="dispatch")
 # class EvidenceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
