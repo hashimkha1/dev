@@ -468,6 +468,30 @@ class LoanCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
+def admin_loan_data_modified(form, username, user_data):
+	previous_balance_amount = user_data.order_by('-id')[0].balance_amount
+	try:
+		employee = CustomerUser.objects.get(username=username)
+	except:
+		employee=None
+	data = form.cleaned_data
+	if previous_balance_amount != data['balance_amount']:
+		loan_data = TrainingLoan(
+			user=employee,
+			category="Debit",
+			amount=data['amount'],
+			# created_at,
+			# updated_at=2022-10-10,
+			# is_active,
+			training_loan_amount=data['training_loan_amount'],
+			total_earnings_amount=data['total_earnings_amount'],
+			# deduction_date,
+			deduction_amount=data['deduction_amount'],
+			balance_amount=data['balance_amount'],
+		)
+		loan_data.save()
+		return loan_data
+	return None
 
 class LoanUpdateView(UpdateView):
 	model = TrainingLoan
@@ -479,16 +503,8 @@ class LoanUpdateView(UpdateView):
 		if self.request.user.is_superuser:
 			user_data = TrainingLoan.objects.filter(id=self.kwargs['pk'], is_active=True)
 			username=user_data.order_by('-id')[0].user.username
-			pay(self.request, **{"username":username})
-			# # user_data = TrainingLoan.objects.filter(user=employee, is_active=True)
-			# loantable = TrainingLoan
-			# print(employee, "EEEEEE")
-			# payslip_config = paymentconfigurations(PayslipConfig, employee)
-			# print("AAAAAAAAAA", payslip_config)
-			# total_pay = form.cleaned_data['total_earnings_amount']
-			# a=loan_update_save(loantable, user_data, employee, total_pay, payslip_config)
-			# print(7777777, a)
-			return super().form_valid(form)
+			admin_loan_data_modified(form=form, username=username, user_data=user_data)
+			return redirect("finance:trainingloans")
 		else:
 			return redirect("finance:trainingloans")
 			# return render(request,"management/doc_templates/supportcontract_form.html")

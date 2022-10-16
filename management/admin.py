@@ -20,6 +20,7 @@ from management.models import (
     LaptopSaving,
 )
 from accounts.models import TaskGroups
+from django.contrib import messages
 
 # from .models import Activity, Category, Employee, Transaction , Department
 
@@ -79,11 +80,19 @@ class TransactionAdmin(admin.ModelAdmin):
 class AdsAdmin(admin.ModelAdmin):
     list_display = ("facebook_page_id", "page_name", "created_at")
 
+class TaskAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        if obj.employee.is_employee:
+            super().save_model(request, obj, form, change)
+        else:
+            messages.set_level(request, messages.ERROR)
+            messages.error(request, 'User is not an Employee')
+
 
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Policy)
-admin.site.register(Task)
+admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskLinks)
 admin.site.register(TaskHistory)
 admin.site.register(Tag)

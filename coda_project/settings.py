@@ -18,8 +18,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# DEBUG = True
-DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+DEBUG = True
+# DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -133,10 +133,10 @@ import dj_database_url
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "coda1",  # Name of Database
-        "USER": "coda1",
-        "PASSWORD": "coda1",  # os.environ.get('POSTGRESSPASS'),
-        "HOST": "localhost",
+        "NAME": "das6459qgcjbmv",  # Name of Database
+        "USER": "xgsxxbmwywwmoj",
+        "PASSWORD": "91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1",  # os.environ.get('POSTGRESSPASS'),
+        "HOST": "ec2-3-223-169-166.compute-1.amazonaws.com",
     }
 }
 
