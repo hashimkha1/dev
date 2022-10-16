@@ -33,7 +33,7 @@ def paymentconfigurations(PayslipConfig,employee):
     try:
         payslip_config = get_object_or_404(PayslipConfig, user=employee)
     except:
-        payslip_config=None
+        payslip_config=PayslipConfig.objects.filter(user__username="coda_info").latest('id')
     return payslip_config
 
 def paytime():
@@ -56,8 +56,11 @@ def loan_computation(total_pay,user_data,payslip_config):
         if round(Decimal(training_loan.balance_amount), 2)>0:
             loan_amount = round(Decimal(training_loan.balance_amount), 2)
             loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+            if loan_amount < loan_payment:
+                loan_payment = loan_amount
             new_balance=loan_amount-Decimal(loan_payment)
             balance_amount=new_balance
+
         else:
             loan_amount=Decimal(0)
             loan_payment = Decimal(0)
@@ -68,6 +71,8 @@ def loan_computation(total_pay,user_data,payslip_config):
             logger.info('training loan picked from configs !')
             loan_amount = Decimal(payslip_config.loan_amount)
             loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
+            if loan_amount < loan_payment:
+                loan_payment = loan_amount
             new_balance=round(Decimal(loan_amount)-Decimal(loan_payment), 2)
             balance_amount = new_balance
         else:
@@ -78,6 +83,7 @@ def loan_computation(total_pay,user_data,payslip_config):
     return loan_amount,loan_payment,balance_amount
 
 def updateloantable(user_data,employee,total_pay,payslip_config):
+    print("in update ")
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     loan_data=user_data.update(
     user=employee,
@@ -95,21 +101,45 @@ def updateloantable(user_data,employee,total_pay,payslip_config):
     return loan_data
 
 def addloantable(loantable,employee,total_pay,payslip_config,user_data):
-    loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    loan_data=loantable(
-    user=employee,
-    category="Debit",
-    amount=loan_amount,
-    # created_at,
-    # updated_at=2022-10-10,
-    # is_active,
-    training_loan_amount=loan_amount,
-    total_earnings_amount=total_pay,
-    # deduction_date,
-    deduction_amount=loan_payment,
-    balance_amount=balance_amount,
-    )
-    return loan_data
+    if user_data.exists():
+        previous_balance_amount = user_data.order_by('-id')[0].balance_amount
+        print("previous_balance_amount", previous_balance_amount)
+        loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+        # balance_amount = 999000
+        if previous_balance_amount != balance_amount:
+            loan_data=loantable(
+            user=employee,
+            category="Debit",
+            amount=loan_amount,
+            # created_at,
+            # updated_at=2022-10-10,
+            # is_active,
+            training_loan_amount=loan_amount,
+            total_earnings_amount=total_pay,
+            # deduction_date,
+            deduction_amount=loan_payment,
+            balance_amount=balance_amount,
+            )
+            return loan_data
+
+    else:
+        loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+        loan_data = loantable(
+            user=employee,
+            category="Debit",
+            amount=loan_amount,
+            # created_at,
+            # updated_at=2022-10-10,
+            # is_active,
+            training_loan_amount=loan_amount,
+            total_earnings_amount=total_pay,
+            # deduction_date,
+            deduction_amount=loan_payment,
+            balance_amount=balance_amount,
+        )
+        return loan_data
+
+    return None
 
 # def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
 #     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)

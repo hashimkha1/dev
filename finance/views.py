@@ -26,6 +26,12 @@ from .models import (
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
 # User=settings.AUTH_USER_MODEL
+from management.utils import paymentconfigurations
+from management.views import loan_update_save
+from management.utils import loan_computation
+
+from management.views import pay
+
 User = get_user_model()
 
 # Create your views here.
@@ -462,6 +468,30 @@ class LoanCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
+def admin_loan_data_modified(form, username, user_data):
+	previous_balance_amount = user_data.order_by('-id')[0].balance_amount
+	try:
+		employee = CustomerUser.objects.get(username=username)
+	except:
+		employee=None
+	data = form.cleaned_data
+	if previous_balance_amount != data['balance_amount']:
+		loan_data = TrainingLoan(
+			user=employee,
+			category="Debit",
+			amount=data['amount'],
+			# created_at,
+			# updated_at=2022-10-10,
+			# is_active,
+			training_loan_amount=data['training_loan_amount'],
+			total_earnings_amount=data['total_earnings_amount'],
+			# deduction_date,
+			deduction_amount=data['deduction_amount'],
+			balance_amount=data['balance_amount'],
+		)
+		loan_data.save()
+		return loan_data
+	return None
 
 class LoanUpdateView(UpdateView):
 	model = TrainingLoan
@@ -471,7 +501,10 @@ class LoanUpdateView(UpdateView):
 	def form_valid(self, form):
 		# form.instance.user=self.request.user
 		if self.request.user.is_superuser:
-			return super().form_valid(form)
+			user_data = TrainingLoan.objects.filter(id=self.kwargs['pk'], is_active=True)
+			username=user_data.order_by('-id')[0].user.username
+			admin_loan_data_modified(form=form, username=username, user_data=user_data)
+			return redirect("finance:trainingloans")
 		else:
 			return redirect("finance:trainingloans")
 			# return render(request,"management/doc_templates/supportcontract_form.html")
@@ -488,6 +521,7 @@ class LoanListView(ListView):
 	model = TrainingLoan
 	template_name = "finance/payments/loans.html"
 	context_object_name = "payments"
+	ordering = ['created_at']
 
 class userLoanListView(ListView):
 	model = LoanUsers
