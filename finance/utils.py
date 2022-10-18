@@ -45,49 +45,50 @@ def balance_loan(user):
     balloan = debit['value__sum'] - credit['value__sum']
     return balloan
 
-
+from django.contrib import messages
 def upload_csv(request):
+    context = {
+        "Finance": Finance,
+        "Data": Data,
+        "Management": Management,
+    }
     if request.method == "POST":
         csv_file = request.FILES.get("csv_upload")
         if not csv_file.name.endswith(".csv"):
-
             # return HttpResponseRedirect(request.path_info)
-            context = {
-                "Finance": Finance,
-                "Data": Data,
-                "Management": Management,
-            }
+            messages.warning(request, "Not a CSV file")
             return render(request, "getdata/uploaddata.html", context)
-
         # file= csv_file.read().decode("utf-8")
-        file = csv_file.read().decode("ISO-8859-1")
-        file_data = file.split("\n")
-        csv_data = [line for line in file_data if line.strip() != ""]
-        print(csv_data)
-        for x in csv_data:
-            fields = x.split(",")
-            date = datetime.strptime(str(fields[0]), '%m/%d/%Y').date()
-            created = Transaction.objects.update_or_create(
-                activity_date=date,
-                sender=CustomUser.objects.filter(first_name=fields[0]).first(),
-                receiver=fields[2],
-                phone=fields[3],
-                qty=fields[4],
-                amount=fields[5],
-                payment_method=fields[6],
-                department=Department.objects.filter(id=fields[7]).first(),
-                category=fields[8],
-                type=fields[9],
-                description=fields[10],
-                receipt_link=fields[11],
-            )
-        # url = reverse("admin:index")
-        context = {
-            "Finance": Finance,
-            "Data": Data,
-            "Management": Management,
-        }
+        try:
+            file = csv_file.read().decode("ISO-8859-1")
+            file_data = file.split("\n")
+            csv_data = [line for line in file_data if line.strip() != ""]
+            for x in csv_data:
+                fields = x.split(",")
+                date = datetime.strptime(str(fields[0]), '%m/%d/%Y').date()
+                created = Transaction.objects.update_or_create(
+                    activity_date=date,
+                    sender=CustomUser.objects.filter(first_name=fields[0]).first(),
+                    receiver=fields[2],
+                    phone=fields[3],
+                    qty=fields[4],
+                    amount=fields[5],
+                    payment_method=fields[6],
+                    department=Department.objects.filter(id=fields[7]).first(),
+                    category=fields[8],
+                    type=fields[9],
+                    description=fields[10],
+                    receipt_link=fields[11],
+                )
+            # url = reverse("admin:index")
+            messages.info(request, "data populated successsfully")
+            return render(request, "getdata/uploaddata.html", context)
+        except Exception as e:
+            messages.warning(request, e)
+            return render(request, "getdata/uploaddata.html", context)
+    if request.method == 'GET':
         return render(request, "getdata/uploaddata.html", context)
+
     # form = CsvImportForm()
     # data = {"form": form}
     # return render(request, "admin/csv_upload.html", data)
