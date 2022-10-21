@@ -136,7 +136,12 @@
   </div>
   <div class="row">
       <div class="w-100 d-flex justify-content-center" style="padding:2rem">
+          {% if title %}
+          <a href="{% url 'data:category-detail' title=title %}" class="btn btn-md btn-bc font-weight-bold">Begin Course</a>
+          {% else %}
           <a href="#" class="btn btn-md btn-bc font-weight-bold">Begin Course</a>
+          {% endif %}
+
       </div>
   </div>
 </div>

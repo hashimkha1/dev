@@ -14,6 +14,8 @@ from data.modelmanager import(
 
                              )
 # User=settings.AUTH_USER_MODEL
+from accounts.models import CustomerUser
+
 User = get_user_model()
 
 #Interview Model
@@ -184,6 +186,19 @@ class Interviews(models.Model):
 
     def __str__(self):
         return f"{self.client} upload"
+
+class Interview_Questions(models.Model):
+    user = models.ForeignKey(
+        CustomerUser, on_delete=models.CASCADE, related_name="user_assigned", null=True, blank=True
+    )
+    question = models.CharField(max_length=200)
+    is_active = models.BooleanField(default=True)
+    doc = models.FileField(default="None", upload_to="Uploads/doc/")
+    comment = models.TextField()
+    score = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return str(self.user)
 
 
 """
