@@ -18,13 +18,13 @@ urlpatterns = [
     path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
     path('finance/', views.finance, name='finance'),
     path('hr/', views.hr, name='hr'),
-    #path('other/', views.transact, name='management-transact'), 
+    #path('other/', views.transact, name='management-transact'),
 
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),
     path('policies/', views.policies, name='policies'),
     path("policy/<int:pk>/update/", views.PolicyUpdateView.as_view(template_name="management/departments/hr/policy_form.html"), name="policy-update"),
-    
+
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
@@ -66,7 +66,7 @@ urlpatterns = [
     path('newdepartment/', views.newdepartment, name='newdepartment'),
     path('departments/', views.department, name='departments'),
     path('department/<int:pk>/', DepartmentUpdateView.as_view(template_name='management/tag_form.html'), name='department-update'),
-    
+
     path('requirement/new', views.newrequirement, name='new_requirement'),
     path('requirements/', views.requirements, name='requirements'),
     path('activerequirements/', views.active_requirements, name='requirements-active'),
@@ -83,4 +83,3 @@ urlpatterns = [
     path('FilterUsersByLoan/', views.FilterUsersByLoan, name='FilterUsersByLoan'),
 
 ]
- 

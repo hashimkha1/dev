@@ -29,6 +29,8 @@ from data.models import (
 from data.filters import InterviewFilter, BitrainingFilter  # ,UserFilter
 
 # User=settings.AUTH_USER_MODEL
+from data.forms import InterviewQuestionsForm
+
 User = get_user_model()
 
 
@@ -180,12 +182,20 @@ def courseoverivew(request): #, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     else:
-         return render(request, "data/training/training_progress/courseoverview.html", context )
+         return render(request, "data/training/training_progress/courseoverview.html", context)
 
 class TrainingView(LoginRequiredMixin, ListView):
     model = Interviews
     template_name = "data/training/training_progress/train.html"
     success_url = "/data/course"
+
+    def get_context_data(self, **kwargs):
+        try:
+            context = super(TrainingView, self).get_context_data(**kwargs)
+            context['title'] = FeaturedCategory.objects.all().first().title
+            return context
+        except:
+            return render(self.request, "data/training/training_progress/train.html")
 
 class CourseView(LoginRequiredMixin, ListView):
     model = Interviews
@@ -519,15 +529,11 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
 def categorydetail(request, title=None, *args, **kwargs):
     instance = FeaturedCategory.objects.get_by_category(title)
     form= InterviewForm
-    print(instance)
-    # url=f'data/training/training_progress/{title}s.html'
     url=f'data/training/training_progress/training.html'
-    # url="data/training/training_progress/" + str(instance) + ".html"
-    print(url)
     context = {
         "form":form,
         "object": instance,
-        "categories": FeaturedCategory.objects.all()
+        # "categories": FeaturedCategory.objects.all()
 
     }
     if instance is None:
@@ -546,19 +552,41 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 def subcategorydetail(request, title=None, *args, **kwargs):
-    instance = FeaturedSubCategory.objects.get_by_subcategory(title)
-    form= InterviewForm
-    print(instance)
-    url=f'data/training/training_progress/course.html'
-    print(url)
-    context = {
-        "form":form,
-        "object": instance,
-        # "categories": FeaturedSubCategory.objects.all(),
-    }
-    if instance is None:
-        return render(request, "main/errors/404.html")
-    return render(request, url, context)
+    if request.method == "GET":
+        instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+        # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id').first()
+        form= InterviewQuestionsForm
+        url=f'data/training/training_progress/course.html'
+        context = {
+            "form":form,
+            "object": instance,
+            "title_":title
+            # "categories": FeaturedSubCategory.objects.all(),
+        }
+        if instance is None:
+            return render(request, "main/errors/404.html")
+        return render(request, url, context)
+
+    if request.method == 'POST':
+        try:
+            form=InterviewQuestionsForm(request.POST, request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.user = request.user
+                instance.save()
+                # data = form.cleaned_data
+        except Exception as e:
+            print(e)
+            return render(request, "main/errors/404.html")
+        instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+        if instance is None:
+            return render(request, "main/errors/404.html")
+        next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id')
+        if not next_title.exists():
+            next_category = FeaturedCategory.objects.filter(id__gt=instance.featuredcategory.id).order_by('id').first()
+            return redirect('data:category-detail', title=next_category.title)
+        next_title = next_title.first()
+        return redirect('data:subcategory-detail', title=next_title.title)
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):

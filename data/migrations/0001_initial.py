@@ -106,6 +106,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Interview_Questions',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('question', models.CharField(max_length=200)),
+                ('is_active', models.BooleanField(default=True)),
+                ('doc', models.FileField(default='None', upload_to='Uploads/doc/')),
+                ('comment', models.TextField()),
+                ('score', models.DecimalField(decimal_places=2, max_digits=5)),
+                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='user_assigned', to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
             name='FeaturedSubCategory',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
