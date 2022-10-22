@@ -121,15 +121,15 @@ import dj_database_url
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'CODA_UAT',
-        'USER': 'postgres',
-        'PASSWORD': 'MANAGER2030',
-        'HOST': 'localhost',
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'CODA_UAT',
+#         'USER': os.environ.get('POSTGRESDB_USER'),
+#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
+#         'HOST': 'localhost',
+#     }
+# }
 # =======================HEROKU CODADEV: Need Privilege=================
 # DATABASES = {
 #     'default': {
@@ -141,15 +141,15 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME":os.environ.get('POSTGRES_DB_NAME'),
-#         "USER":os.environ.get('POSTGRESDB_USER'),
-#         "PASSWORD":os.environ.get('POSTGRESSPASS'),
-#         "HOST": "localhost",
-#     }
-# }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME":os.environ.get('POSTGRES_DB_NAME'),
+        "USER":os.environ.get('POSTGRESDB_USER'),
+        "PASSWORD":os.environ.get('POSTGRESSPASS'),
+        "HOST": "localhost",
+    }
+}
 
 # DATABASES = {
 #     "default": {
