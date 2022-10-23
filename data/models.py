@@ -324,7 +324,7 @@ class FeaturedActivity(models.Model):
         return reverse("data:activity-detail", args=[self.slug])
 
     def __str__(self):
-        return self.name
+        return self.activity_name
 
 
 class ActivityLinks(models.Model):
