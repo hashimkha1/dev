@@ -856,7 +856,18 @@ def pay(request, user=None, *args, **kwargs):
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     loantable=TrainingLoan
     # lbandls = LBandLS.objects.get(user_id=employee)
-    payslip_config = paymentconfigurations(PayslipConfig,employee)
+    try:
+        payslip_config = paymentconfigurations(PayslipConfig,employee)
+    except PayslipConfig.DoesNotExist:
+        link=f"finance:paymentconfigs"
+        title='CONFIGURATIONS'
+        message=f'We dont have existing configs for this employee/admin,proceed to set configs'
+        context={
+            "link":link,
+            "title":title,
+            "message":message
+        }
+        return render(request,'main/errors/generalerrors.html',context)
     today,year,month,day,deadline_date=paytime()
     task_obj=Task.objects.filter(submission__contains=year)
     mxearning,points=payinitial(tasks)
