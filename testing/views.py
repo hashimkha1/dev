@@ -23,7 +23,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    Services,#Supplier,Food
+    Services, Logs,  # Supplier,Food
 )
 from data.models import DSU
 
@@ -241,5 +241,12 @@ def task():
 # task()
 
 
+def LogsViewSet(request):
+    logs = Logs.objects.all().order_by("-id")
+    if request.user.is_superuser:
+        return render(request, "testing/logs.html", {"logs": logs})
+
+    else:
+        return redirect("main:layout")
 
 

@@ -81,6 +81,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'Middleware.MiddlewareFile.MailMiddleware'
+
 ]
 
 CSRF_COOKIE_SECURE = False
@@ -140,6 +142,7 @@ import dj_database_url
 #         'HOST': os.environ.get('HEROKU_UAT_HOST'),
 #     }
 # }
+
 
 DATABASES = {
     "default": {
