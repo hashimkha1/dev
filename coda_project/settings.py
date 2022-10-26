@@ -147,23 +147,12 @@ import dj_database_url
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "coda",  # Name of Database
-        "USER": "admin",
-        "PASSWORD": "admin",  # os.environ.get('POSTGRESSPASS'),
+        "NAME":os.environ.get('POSTGRES_DB_NAME'),
+        "USER":os.environ.get('POSTGRESDB_USER'),
+        "PASSWORD":os.environ.get('POSTGRESSPASS'),
         "HOST": "localhost",
-        'PORT': 5432
     }
 }
-#
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME":os.environ.get('POSTGRES_DB_NAME'),
-#         "USER":os.environ.get('POSTGRESDB_USER'),
-#         "PASSWORD":os.environ.get('POSTGRESSPASS'),
-#         "HOST": "localhost",
-#     }
-# }
 
 # DATABASES = {
 #     "default": {
