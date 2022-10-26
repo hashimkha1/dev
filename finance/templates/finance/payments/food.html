@@ -30,7 +30,6 @@
             <!-- <th>slug</th> -->
             <th>phone</th>
             <th>location</th>
-            <th>description</th>
             <th>created_at</th>
             <th>featured</th>
             <th>update</th>
@@ -40,11 +39,16 @@
           {% for supplier in  suppliers  %}
               <tr>
                 <td>{{supplier.added_by}}</td>
-                <td>{{supplier.supplier}}</td>
+                <td>
+                    <a class="text-dark  text-decoration-none" 
+                    data-toggle="tooltip" title="{{  supplier.description  }}"
+                    href="">
+                    {{supplier.supplier}}
+                    </a>
+                </td>
                 <!-- <td>{{supplier.slug}}</td> -->
                 <td>{{supplier.phone}}</td>
                 <td>{{supplier.location}}</td>
-                <td>{{supplier.description}}</td>
                 <td>{{supplier.created_at|date:"n-d-Y"}}</td>
                 <td>{{supplier.featured}}</td>
                 <td> <a class="article-title" href="{% url 'finance:update-supplier' supplier.id %}">Edit</a></td>
@@ -61,16 +65,14 @@
                 <th>supplier</th> 
                 <th>item</th> 
                 <!-- <th>slug</th>  -->
-                <th>item</th> 
                 <th>qty</th> 
                 <th>bal_qty</th> 
-                <th>budgeted_items</th> 
-                <th>Unit Price</th> 
+                <th>budgeted</th> 
+                <th>U_Price</th> 
                 <th>total_amt</th> 
-                <th>description</th> 
                 <th>created_at</th> 
-                <th>featured</th> 
-                <th>active</th> 
+                <!-- <th>featured</th> 
+                <th>active</th>  -->
                 <th>Update</th> 
             </tr>
           </thead>
@@ -78,18 +80,22 @@
             {% for food in supplies  %}
                 <tr>
                     <td>{{food.supplier}}</td>
-                    <td>{{food.item}}</td>
                     <!-- <td>{{food.slug}}</td> -->
-                    <td>{{food.item}}</td>
+                    <td>
+                        <a class="text-dark  text-decoration-none" 
+                        data-toggle="tooltip" title="{{  food.description  }}"
+                        href="">
+                        {{food.item}}
+                        </a>
+                    </td>
                     <td>{{food.qty}}</td>
                     <td>{{food.bal_qty}}</td>
                     <td>{{food.budgeted_items}}</td>
                     <td>{{food.unit_amt}}</td>
                     <td>{{food.total_amt}}</td>
-                    <td>{{food.description}}</td>
                     <td>{{food.created_at|date:"n-d-Y"}}</td>
-                    <td>{{food.featured}}</td>
-                    <td>{{food.active}}</td>
+                    <!-- <td>{{food.featured}}</td>
+                    <td>{{food.active}}</td> -->
                   <td> <a class="article-title" href="{% url 'finance:update-food' food.id %}">Edit</a></td>
                 </tr>
             {% endfor %}
