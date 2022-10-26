@@ -23,7 +23,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import (
-    Services,Supplier,Food
+    Services,#Supplier,Food
 )
 from data.models import DSU
 
@@ -65,78 +65,79 @@ class ServicesDetailView(DetailView):
 
 
 # ==================================TESTING FOOD VIEWS==========================
-@method_decorator(login_required, name="dispatch")
-class FoodCreateView(LoginRequiredMixin, CreateView):
-    model = Food
-    success_url = "/testing/food"
-    fields = "__all__"
+# @method_decorator(login_required, name="dispatch")
+# class FoodCreateView(LoginRequiredMixin, CreateView):
+#     model = Food
+#     success_url = "/testing/food"
+#     fields = "__all__"
 
-    def form_valid(self, form):
-        if self.request.user:
-            return super().form_valid(form)
+#     def form_valid(self, form):
+#         if self.request.user:
+#             return super().form_valid(form)
 
-class SupplierCreateView(LoginRequiredMixin, CreateView):
-    model = Supplier
-    success_url = "/testing/food"
-    fields = "__all__"
+# class SupplierCreateView(LoginRequiredMixin, CreateView):
+#     model = Supplier
+#     success_url = "/testing/food"
+#     fields = "__all__"
 
-    def form_valid(self, form):
-        if self.request.user:
-            return super().form_valid(form)
-
-
-@method_decorator(login_required, name="dispatch")
-class SupplierUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Supplier
-    success_url = "/testing/food"
-    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    fields = "__all__"
-
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        return super().form_valid(form)
-
-    def test_func(self):
-        Supplier = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user == Supplier.added_by:
-            return True
-        return redirect("testing:food")
+#     def form_valid(self, form):
+#         if self.request.user:
+#             return super().form_valid(form)
 
 
-@method_decorator(login_required, name="dispatch")
-class FoodUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Food
-    success_url = "/testing/food"
-    fields = "__all__"
+# @method_decorator(login_required, name="dispatch")
+# class SupplierUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+#     model = Supplier
+#     success_url = "/testing/food"
+#     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+#     fields = "__all__"
 
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         # form.instance.author=self.request.user
+#         return super().form_valid(form)
 
-    def test_func(self):
-        Food = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user == Food.added_by:
-            return True
-        return redirect("testing:food")
+#     def test_func(self):
+#         Supplier = self.get_object()
+#         if self.request.user.is_superuser:
+#             return True
+#         elif self.request.user == Supplier.added_by:
+#             return True
+#         return redirect("testing:food")
 
 
-class SupplierListView(ListView):
-    model = Supplier
-    template_name = "testing/food.html"
-    context_object_name = "suppliers"
-    ordering = ["-created_at"]
+# @method_decorator(login_required, name="dispatch")
+# class FoodUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+#     model = Food
+#     success_url = "/testing/food"
+#     fields = "__all__"
+
+#     def form_valid(self, form):
+#         # form.instance.author=self.request.user
+#         return super().form_valid(form)
+
+#     def test_func(self):
+#         Food = self.get_object()
+#         if self.request.user.is_superuser:
+#             return True
+#         elif self.request.user == Food.added_by:
+#             return True
+#         return redirect("testing:food")
+
+
+# class SupplierListView(ListView):
+#     model = Supplier
+#     template_name = "testing/food.html"
+#     context_object_name = "suppliers"
+#     ordering = ["-created_at"]
     
 
-class FoodListView(ListView):
-    model = Food
-    template_name = "testing/food.html"
-    context_object_name = "supplies"
-    ordering = ["-created_at"]
+# class FoodListView(ListView):
+#     model = Food
+#     template_name = "testing/food.html"
+#     context_object_name = "supplies"
+#     ordering = ["-created_at"]
     
+
 # ===============================RESEARCH==============================================
 @register.filter
 def in_list(value, the_list):

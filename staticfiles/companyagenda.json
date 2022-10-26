@@ -19,9 +19,10 @@
             "General HR Report": "https://public.tableau.com/app/profile/coda2331/viz/EmployeeProductivityVersion08/LandingPageReport?publish=yes",
             "HR Report": "https://www.codanalytics.net/management//"
         },
-        "APPLICANTS": {
+        "RECRUITMENT": {
             "Applicants": "https://www.codanalytics.net/management/hr/",
-            "Interview": "https://www.codanalytics.net/application/first_interview/section_a/"
+            "Interview": "https://www.codanalytics.net/application/first_interview/section_a/",
+            "Developers": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133"
         },
         "TRAINING": {
             "1-1": "https://www.codanalytics.net/application/internal_training/",
@@ -41,11 +42,17 @@
         },
         "STOCKS & OPTIONS": {
             "Stocks and Options Trading": "https://www.google.com/"
+        },
+        "HOUSEHOLDS": {
+            "Food & Supplies": "https://www.codanalytics.net/finance/food/"
         }
     },
     "IT": {
         "WEBSITE DEVELOPMENT": {
-            "Requirements": "https://www.codanalytics.net/management/requirements/"
+            "Requirements": "https://www.codanalytics.net/management/requirements/",
+            "Django Training": "https://docs.google.com/presentation/d/1ThVn9NYI2UU4QEc3UJTyCcgxOl5sKbSwpLzUDzPxuKM/edit#slide=id.g167f8d0d9ad_0_51",
+            "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431"
+
         },
         "DATA ANALYSIS": {
             "Training": "https://www.codanalytics.net/data/bitraining/",
@@ -64,6 +71,26 @@
             },
             "REPORT": {
                 "MKT Report": "https://www.codanalytics.net/#/"
+            }
+        },
+    "PROJECTS": {
+            "D2A": {
+                "PPT": "https://www.codanalytics.net/#/",
+                "website": "https://gadcafrica.org/",
+                "SocialMedia": "https://www.facebook.com/people/African-Diaspora-Week/100086765367870/"
+            },
+            "GADC": {
+                "PPT": "https://www.codanalytics.net/#/",
+                "website": "https://gadcafrica.org/",
+                "SocialMedia": "https://www.facebook.com/people/African-Diaspora-Week/100086765367870/"
+            },
+            "DC48KENYA": {
+                "PPT": "https://www.codanalytics.net/#/",
+                "website": "#",
+                "other": "https://www.codanalytics.net/#/"
+            },
+            "OTHER": {
+                "Other": "https://www.codanalytics.net/#/"
             }
         }
 }

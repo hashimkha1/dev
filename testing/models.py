@@ -49,67 +49,68 @@ class Services(models.Model):
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
-class Supplier(models.Model):
-    added_by= models.ForeignKey(
-        User,
-        verbose_name=_("staff"),
-        related_name="staff",
-        null=True,
-        blank=True,
-        on_delete=models.RESTRICT,
-        limit_choices_to={"is_employee": True, "is_active": True},
-    )
-    supplier = models.CharField(
-        max_length=255,
-    )
-    slug = models.SlugField(blank=True, null=True)
-    phone = models.CharField(default="90001",
-            max_length=100,
-            help_text=_("Start with Country Code ie 254******"),
-    )
-    location = models.CharField(max_length=255,default='Makutano')
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    featured=models.BooleanField(default=True)
-    active=models.BooleanField(default=True)
+# class Supplier(models.Model):
+#     added_by= models.ForeignKey(
+#         User,
+#         verbose_name=_("staff"),
+#         related_name="staff",
+#         null=True,
+#         blank=True,
+#         on_delete=models.RESTRICT,
+#         limit_choices_to={"is_employee": True, "is_active": True},
+#     )
+#     supplier = models.CharField(
+#         max_length=255,
+#     )
+#     slug = models.SlugField(blank=True, null=True)
+#     phone = models.CharField(default="90001",
+#             max_length=100,
+#             help_text=_("Start with Country Code ie 254******"),
+#     )
+#     location = models.CharField(max_length=255,default='Makutano')
+#     description = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     featured=models.BooleanField(default=True)
+#     active=models.BooleanField(default=True)
 
-    def get_absolute_url(self):
-        return "/services/{slug}/".format(slug=self.slug)
+#     def get_absolute_url(self):
+#         return "/services/{slug}/".format(slug=self.slug)
 
-    def __str__(self):
-        return self.supplier
+#     def __str__(self):
+#         return self.supplier
 
-class Food(models.Model):
-    supplier = models.ForeignKey(
-        Supplier,
-        on_delete=models.RESTRICT,
-        limit_choices_to=Q(active=True)
-    )
-    item = models.CharField(
-        max_length=255,
-        unique=True,
-    )
-    unit_amt = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    slug = models.SlugField(blank=True, null=True)
-    qty=models.PositiveIntegerField()
-    bal_qty=models.PositiveIntegerField()
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    featured=models.BooleanField(default=False)
-    active=models.BooleanField(default=True)
+# class Food(models.Model):
+#     supplier = models.ForeignKey(
+#         Supplier,
+#         on_delete=models.RESTRICT,
+#         limit_choices_to=Q(active=True)
+#     )
+#     item = models.CharField(
+#         max_length=255,
+#         unique=True,
+#     )
+#     unit_amt = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     slug = models.SlugField(blank=True, null=True)
+#     qty=models.PositiveIntegerField()
+#     bal_qty=models.PositiveIntegerField()
+#     description = models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     featured=models.BooleanField(default=False)
+#     active=models.BooleanField(default=True)
 
-    def get_absolute_url(self):
-        return "/services/{slug}/".format(slug=self.slug)
+#     def get_absolute_url(self):
+#         return "/services/{slug}/".format(slug=self.slug)
 
-    def __str__(self):
-        return self.item
+#     def __str__(self):
+#         return self.item
     
-    @property
-    def budgeted_items(self):
-        budgeted_qty=self.qty-self.bal_qty
-        return budgeted_qty
+#     @property
+#     def budgeted_items(self):
+#         budgeted_qty=self.qty-self.bal_qty
+#         return budgeted_qty
 
-    @property
-    def total_amt(self):
-        total_amt=Decimal(self.qty-self.bal_qty)*self.unit_amt
-        return total_amt
+#     @property
+#     def total_amt(self):
+#         total_amt=Decimal(self.qty-self.bal_qty)*self.unit_amt
+#         return total_amt
+

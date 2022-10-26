@@ -22,7 +22,7 @@ from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction,PayslipConfig
+		Inflow,Transaction,PayslipConfig,Supplier,Food
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
 # User=settings.AUTH_USER_MODEL
@@ -527,3 +527,79 @@ class userLoanListView(ListView):
 	model = LoanUsers
 	template_name = "finance/payments/loanpage.html"
 	context_object_name = "loans"
+
+
+# ==================================TESTING FOOD VIEWS==========================
+@method_decorator(login_required, name="dispatch")
+class FoodCreateView(LoginRequiredMixin, CreateView):
+    model = Food
+    success_url = "/finance/food"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        if self.request.user:
+            return super().form_valid(form)
+
+class SupplierCreateView(LoginRequiredMixin, CreateView):
+    model = Supplier
+    success_url = "/finance/food"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        if self.request.user:
+            return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class SupplierUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Supplier
+    success_url = "/finance/food"
+    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields = "__all__"
+
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        Supplier = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == Supplier.added_by:
+            return True
+        return redirect("finance:food")
+
+
+@method_decorator(login_required, name="dispatch")
+class FoodUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Food
+    success_url = "/finance/food"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        Food = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == Food.added_by:
+            return True
+        return redirect("finance:food")
+
+
+class SupplierListView(ListView):
+    model = Supplier
+    template_name = "finance/payments/food.html"
+	
+    context_object_name = "suppliers"
+    ordering = ["-created_at"]
+    
+
+class FoodListView(ListView):
+    model = Food
+    template_name = "finance/payments/food.html"
+    context_object_name = "supplies"
+    ordering = ["-created_at"]
+    

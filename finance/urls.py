@@ -46,5 +46,23 @@ urlpatterns = [
     path('newpay/', LoanCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpay'),
     path('loanuser/', views.userLoanListView, name='loanuser'),
     path('loan/<int:pk>/update/', LoanUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='loan-update'),
- 
+     #FOOD & SUPPLIERS
+    path(
+        "newsupplies/",
+        views.FoodCreateView.as_view(
+            template_name='main/snippets_templates/generalform.html'
+        ),
+        name="newsupplies",
+    ),
+    path(
+        "newsupplier/",
+        views.SupplierCreateView.as_view(
+            template_name='main/snippets_templates/generalform.html'
+        ),
+        name="newsupplier",
+    ),
+    path("update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
+    path("update/<int:pk>/",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
+    path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
+    path("food/",views.FoodListView.as_view(),name="supplies"),
 ]
