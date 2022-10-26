@@ -53,10 +53,10 @@ class ServicesListView(ListView):
     template_name="testing/display.html"
 
 def Services_List(request):
-    services = Services.objects.all()
-    context={
-        "services":services
-    }
+    # services = Services.objects.all()
+    # context={
+    #     "services":services
+    # }
     return render (request, "testing/display.html",context)
 
 class ServicesDetailView(DetailView):
