@@ -32,4 +32,6 @@ urlpatterns = [
     # path("food/",views.FoodListView.as_view(),name="supplies"),
     # path('/services/analysis', ServicesDetailView.as_view(template_name="testing/resume.html"), name='analysis'),
     # path('/services/pmanagement', ServicesDetailView.as_view(template_name="testing/resume.html"), name='pmanagement'),
+    path('all_logs/', views.LogsViewSet, name='all_logs'),
+
 ]  

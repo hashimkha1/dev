@@ -114,3 +114,11 @@ User = get_user_model()
 #         total_amt=Decimal(self.qty-self.bal_qty)*self.unit_amt
 #         return total_amt
 
+
+class Logs(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_in_logs", null=True, blank=True)
+    location_in_code = models.CharField(max_length=255, null=True, blank=True)
+    reason_code_crash = models.CharField(max_length=255, null=True, blank=True)
+    exception = models.CharField(max_length=255, null=True, blank=True)
+    api = models.URLField(max_length=255, null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
