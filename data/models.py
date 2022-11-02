@@ -196,6 +196,7 @@ class Interview_Questions(models.Model):
     doc = models.FileField(default="None", upload_to="Uploads/doc/")
     comment = models.TextField()
     score = models.DecimalField(max_digits=5, decimal_places=2)
+    upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     def __str__(self):
         return str(self.user)
