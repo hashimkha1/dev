@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.http import Http404, JsonResponse
-from django.urls import reverse
+from django.urls import path, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -16,6 +16,7 @@ from django.views.generic import (
     UpdateView,
 )
 from data.forms import InterviewForm, DSUForm ,RoleForm
+from main.utils import data_interview
 
 from data.models import (
     Interviews,
@@ -70,7 +71,10 @@ def bi_training(request):
 # interview starts
 @login_required
 def interview(request):
-    return render(request, "data/interview/interview.html")
+    context={
+        "data_interview":data_interview
+    }
+    return render(request, "data/interview/interview_progress/start_interview.html",context)
 
 
 def payroll(request):
@@ -437,24 +441,17 @@ def questionview(request, question_type=None, *args, **kwargs):
                 # data = form.cleaned_data
         except Exception as e:
             print(e)
-            return render(request, "main/errors/404.html")
+            value=request.path
+            message=value
+            context={
+                "message":message
+            }
+            print(message)
+            return render(request, "main/errors/404.html",{"message":message})
         next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
         if not next_topic.exists():
             return redirect('data:question-detail', question_type=question_type)
         return redirect('data:question-detail', question_type=next_topic.first().question_type)
-
-
-
-
-        # instance = FeaturedSubCategory.objects.get_by_subcategory(title)
-        # if instance is None:
-        #     return render(request, "main/errors/404.html")
-        # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id')
-        # if not next_title.exists():
-        #     next_category = FeaturedCategory.objects.filter(id__gt=instance.featuredcategory.id).order_by('id').first()
-        #     return redirect('data:category-detail', title=next_category.title)
-        # next_title = next_title.first()
-        # return redirect('data:subcategory-detail', title=next_title.title)
 
 
 @method_decorator(login_required, name="dispatch")

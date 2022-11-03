@@ -136,11 +136,14 @@
   </div>
   <div class="row">
       <div class="w-100 d-flex justify-content-center" style="padding:2rem">
-          {% if title %}
+          <!-- {% if title %}
           <a href="{% url 'data:category-detail' title=title %}" class="btn btn-md btn-bc font-weight-bold">Begin Course</a>
           {% else %}
           <a href="#" class="btn btn-md btn-bc font-weight-bold">Begin Course</a>
-          {% endif %}
+          {% endif %} -->
+          {% with 'Introduction' as Introduction %}
+          <a href="{% url 'data:subcategory-detail' Introduction %}" class="btn btn-md btn-bc font-weight-bold">Begin Course</a>
+          {%endwith%}
 
       </div>
   </div>
