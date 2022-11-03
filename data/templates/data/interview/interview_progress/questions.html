@@ -41,8 +41,63 @@
             <img class="w-100" style="height: 100%;" src="{% static 'data/img/project1.jpg' %}" />
         </div>
     </div>
-
     <div class="row my-5">
+        <div class="col-md-12 top-coloumn bg-white">
+              <div class="content-section text-dark h6">
+                  <form action="#" method="post" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <fieldset class="form-group">
+                    <div class="row text-center">
+                      <div class="col-md-12" id="bada">
+                        <div class="card">
+                        <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                          <div class="card-body">
+                            <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.title|capfirst }} Upload Section</h3>
+                            <hr/>
+                            
+                                <p class="text-dark">
+                                    {{ object.desc2 }} Description Goes Here
+                                </p>
+                          </div>
+                        </div>
+                      </div>
+              </div>
+              <!-- <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                      <div class="row">
+                        <div class="col-md-3"><b>Critical:Required Within 24 hours</b> </div>
+                        <div class="col-md-3"><b>High:Within 1-3 days</b></div>
+                        <div class="col-md-3"><b>Medium:Takes 3-10 days</b></div>
+                        <div class="col-md-3"><b>Low : Not urgent</b></div>
+                      </div> -->
+              <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                    <div class="row">
+                        <div class="col-md-6 top-coloumn bg-white">
+                            <div class="col-md-12">{{ form.category |as_crispy_field }}</div>
+                            <div class="col-md-12">{{ form.question_type|as_crispy_field }}</div>
+                            <div class="col-md-12">{{ form.doc|as_crispy_field }}</div>
+                            <div class="col-md-12">{{ form.link|as_crispy_field }}</div>
+                        </div>
+                        <div class="col-md-6 top-coloumn bg-white">
+                            <div>{{ form.comment|as_crispy_field}}</div>
+                        </div>
+                    </div>
+                    <hr style="height:3px;border:none;color:#666669;background-color:rgb(106, 106, 155);" />
+                  </fieldset>
+                  <div class="form-group text-center">
+                    <button class="btn btn-md btn-bc font-weight-bold" type="submit">
+                      Submit
+                    </button>
+                      <button class="btn btn-md btn-bc font-weight-bold" type="submit" onclick="history.back()">
+                      Back
+                    </button>
+                  </div>
+                </form>
+              </div>
+        </div>
+
+    </div>
+
+    <!-- <div class="row my-5">
         <div class="col-md-7 top-coloumn bg-white">
             <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.question_type|capfirst }} Upload Section</h3>
             <ol>
@@ -71,16 +126,16 @@
                 <iframe
                   width="100%"
                   height="400"
-                  src="https://www.youtube.com/embed/KCm6JVtoRdo"
+                  src="{{object.videolink}}"
                   title="Interview Questions and Answers! (How to PASS a JOB INTERVIEW!)"
                   frameborder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowfullscreen
                 ></iframe>
               </div>
-            <!-- <img src="{% static 'data/img/videoPlaceHolder.png' %}" /> -->
+            <img src="{% static 'data/img/videoPlaceHolder.png' %}" />
         </div>
-    </div>
+    </div> -->
 </div>
 
 {% endblock %}

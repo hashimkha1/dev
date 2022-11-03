@@ -482,7 +482,8 @@ class RoleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = JobRole
     template_name = "data/jobroles/role.html"
     success_url = "/data/roles"
-    fields =['category','question_type','doc','doclink','doclink',"desc1","desc2"]
+    fields ="__all__"
+    # fields =['category','question_type','doc','doclink','doclink',"desc1","desc2"]
 
     def form_valid(self, form):
         form.instance.user=self.request.user
