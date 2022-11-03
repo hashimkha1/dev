@@ -399,26 +399,55 @@ def courseview(request, question_type=None, *args, **kwargs):
 
 
 def questionview(request, question_type=None, *args, **kwargs):
-    instance = JobRole.objects.get_by_question(question_type)
-    form= InterviewForm
-    questiontopic=['resume','methodology','testing']
-    value=request.path.split("/")
-    pathvalues = [i for i in value if i.strip()]
-    path=pathvalues[-1]
-    print(path)
-    # url=f'data/interview/interview_progress/{question_type}s.html'
-    url=f'data/interview/interview_progress/questions.html'
-    # url="data/interview/interview_progress/" + str(instance) + ".html"
-    print(url)
-    context = {
-        "form":form,
-        "object": instance,
-        "interviews": Interviews.objects.all(),
-        "path":path
-    }
-    if instance is None:
-        return render(request, "main/errors/404.html")
-    return render(request, url, context)
+    if request.method == 'GET':
+        instance = JobRole.objects.get_by_question(question_type)
+        form= InterviewForm
+        questiontopic=['resume','methodology','testing']
+        value=request.path.split("/")
+        pathvalues = [i for i in value if i.strip()]
+        path=pathvalues[-1]
+        print(path)
+        # url=f'data/interview/interview_progress/{question_type}s.html'
+        url=f'data/interview/interview_progress/questions.html'
+        # url="data/interview/interview_progress/" + str(instance) + ".html"
+        print(url)
+        context = {
+            "form":form,
+            "object": instance,
+            "interviews": Interviews.objects.all(),
+            "path":path
+        }
+        if instance is None:
+            return render(request, "main/errors/404.html")
+        return render(request, url, context)
+    if request.method == 'POST':
+        try:
+            form = InterviewForm(request.POST, request.FILES)
+            if form.is_valid():
+                instance = form.save(commit=False)
+                instance.client = request.user
+                instance.save()
+                # data = form.cleaned_data
+        except Exception as e:
+            print(e)
+            return render(request, "main/errors/404.html")
+        next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
+        if not next_topic.exists():
+            return redirect('data:question-detail', question_type=question_type)
+        return redirect('data:question-detail', question_type=next_topic.first().question_type)
+
+
+
+
+        # instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+        # if instance is None:
+        #     return render(request, "main/errors/404.html")
+        # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id')
+        # if not next_title.exists():
+        #     next_category = FeaturedCategory.objects.filter(id__gt=instance.featuredcategory.id).order_by('id').first()
+        #     return redirect('data:category-detail', title=next_category.title)
+        # next_title = next_title.first()
+        # return redirect('data:subcategory-detail', title=next_title.title)
 
 
 @method_decorator(login_required, name="dispatch")
