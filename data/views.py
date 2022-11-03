@@ -403,11 +403,11 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'GET':
         instance = JobRole.objects.get_by_question(question_type)
         form= InterviewForm
-        questiontopic=['resume','methodology','testing']
-        value=request.path.split("/")
-        pathvalues = [i for i in value if i.strip()]
-        path=pathvalues[-1]
-        print(path)
+        # questiontopic=['resume','methodology','testing']
+        # value=request.path.split("/")
+        # pathvalues = [i for i in value if i.strip()]
+        # path=pathvalues[-1]
+        # print(path)
         # url=f'data/interview/interview_progress/{question_type}s.html'
         url=f'data/interview/interview_progress/questions.html'
         # url="data/interview/interview_progress/" + str(instance) + ".html"
@@ -416,7 +416,7 @@ def questionview(request, question_type=None, *args, **kwargs):
             "form":form,
             "object": instance,
             "interviews": Interviews.objects.all(),
-            "path":path
+            # "path":path
         }
         if instance is None:
             return render(request, "main/errors/404.html")
