@@ -2,6 +2,7 @@ import itertools
 from typing import List
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
 from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -423,7 +424,13 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'POST':
         try:
             form = InterviewForm(request.POST, request.FILES)
+            # instance = Interviews.objects.filter(category, question_type, link)
             if form.is_valid():
+                form_data = form.cleaned_data
+                data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=form_data['question_type'], link=form_data['link'])
+                if data.exists():
+                    messages.error(request, "you have already asked this question before")
+                    return redirect('data:question-detail', question_type=question_type)
                 instance = form.save(commit=False)
                 instance.client = request.user
                 instance.save()

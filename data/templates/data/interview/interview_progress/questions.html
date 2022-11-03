@@ -3,7 +3,19 @@
 {% load static %}
 
 {% block content %}
+
 <div class="container-fluid">
+    <div>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <div class="alert alert-dismissible alert-danger">
+                <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            </div>
+        {% endfor %}
+    </ul>
+        </div>
+{% endif %}
     <div class="row">
         <div class="col-md-7 top-coloumn">
             <div class="mt-4" style="width: 75px;height: 4px;background-color: #E7AD4A;"></div>
@@ -62,6 +74,9 @@
                         <button class="btn btn-md btn-bc font-weight-bold" type="submit">
                           Submit
                         </button>
+                          <button class="btn btn-md btn-bc font-weight-bold" type="submit" onclick="history.back()">
+                              Back
+                          </button>
                       </div>
                     </form>
                   </div>
