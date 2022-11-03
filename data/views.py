@@ -427,7 +427,7 @@ def questionview(request, question_type=None, *args, **kwargs):
             # instance = Interviews.objects.filter(category, question_type, link)
             if form.is_valid():
                 form_data = form.cleaned_data
-                data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=form_data['question_type'], link=form_data['link'])
+                data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=form_data['question_type'], link=form_data['link'], comment=form_data['comment'] )
                 if data.exists():
                     messages.error(request, "you have already asked this question before")
                     return redirect('data:question-detail', question_type=question_type)
