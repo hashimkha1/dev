@@ -108,6 +108,7 @@ def send_reply(service, msg_id):
         msg.attach(part)
     except Exception as e:
         print(e)
+        pass
     msg.attach(MIMEText(mssg))
     import ssl
     context = ssl.create_default_context()
