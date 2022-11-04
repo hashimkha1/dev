@@ -5,7 +5,8 @@ logger = logging.getLogger(__name__)
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from gapi.gservices import get_service, search_messages, get_message
-from getdata.models import CashappMail
+from mail.custom_email import send_reply
+from getdata.models import CashappMail, ReplyMail
 
 
 def parse_mail(request):
@@ -56,44 +57,43 @@ def parse_mail(request):
     # return HttpResponse(f'{search_results_len} results processed!')
     return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
     
+def search_job_mail(request):
 
+    search_results=[]
+    search_query = ['jobs role', 'hiring', 'recruitment']
+    # search_query = 'ranjeetgup19@gmail.com is:unread'
+    service = get_service()  # default service with default scope, gmail-v1
+    if not service:
+        return HttpResponse('No service!')
+    for search in search_query:
+        se=search+" is:unread"
+        search_results += search_messages(service, se)
 
+    # search_results += search_messages(service, search_query)
+    # search_results_len = len(search_results)
 
-# def parse_mail(request):
-#     search_query = 'from:cash@square.com is:unread'
-#     # search_query = 'from:cash@square.com after:2022/9/1'
+    if not search_results:
+        # return HttpResponse('No results found!')
+        mails = ReplyMail.objects.all()
+        return render(request, "getdata/Repliedmail.html", {'mails': mails, 'msg': "no new result found"})
+        # return redirect('main:noresult')
+        # return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
 
-#     service = get_service()  # default service with default scope, gmail-v1
-#     if not service:
-#         return HttpResponse('No service!')
-
-#     search_results = search_messages(service, search_query)
-#     search_results_len = len(search_results)
-#     logger.debug(f'search_results_len: {search_results_len}')
-
-#     if not search_results:
-#         return HttpResponse('No results found!')
-
-#     for result in search_results:
-#         msg_dict = get_message(service=service, msg_id=result.get('id'))
-#         # print(f'msg_dict: {msg_dict}')
-#         # logger.debug(f'msg_dict: {msg_dict}')
-
-#         try:
-#             CashappMail.objects.create(
-#                 id=msg_dict.get('id'),
-#                 from_mail=msg_dict.get('from_mail'),
-#                 to_mail=msg_dict.get('to_mail'),
-#                 subject=msg_dict.get('subject'),
-#                 file_name=msg_dict.get('file_name'),
-#                 full_path=msg_dict.get('full_path'),
-#                 text_mail=msg_dict.get('text_mail'),
-#                 received_date=msg_dict.get('received_date')
-#             )
-#         except Exception as e:
-#             logger.error('error on adding new record!')
-#             logger.error('error msg is ' + str(e))
-#             logger.error(f'msg id is: msg_dict.get("id")')
-#             # return HttpResponse("Error on createing a record!")
-
-#     return HttpResponse(f'{search_results_len} results processed!')
+    for result in search_results:
+        msg_dict = send_reply(service=service, msg_id=result.get('id'))
+        if msg_dict:
+            try:
+                ReplyMail.objects.create(
+                    id=msg_dict.get('id'),
+                    from_mail=msg_dict.get('from_mail'),
+                    to_mail=msg_dict.get('to_mail'),
+                    subject=msg_dict.get('subject'),
+                    text_mail=msg_dict.get('text_mail'),
+                    received_date=msg_dict.get('received_date')
+                )
+            except Exception as e:
+                logger.error('error on adding new record!')
+                logger.error('error msg is ' + str(e))
+                logger.error(f'msg id is: msg_dict.get("id")')
+    mails = ReplyMail.objects.all()
+    return render(request, "getdata/Repliedmail.html", {'mails': mails})

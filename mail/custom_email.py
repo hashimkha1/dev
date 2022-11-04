@@ -1,13 +1,20 @@
 import logging
+import os
+from email import encoders
+
 logger = logging.getLogger(__name__)
 
 # send_email imports
 import smtplib
 from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+from base64 import urlsafe_b64decode
 from coda_project.settings import EMAIL_INFO, EMAIL_HR
+from email.utils import COMMASPACE, formatdate
+from getdata.models import ReplyMail
 
 
 def send_email(category, to_email, subject, html_template, context):
@@ -42,3 +49,87 @@ def send_email(category, to_email, subject, html_template, context):
         server.login(from_email, __smtp_user.get('PASS'))
         server.sendmail(from_email, to_email, msg_str)
         logger.info('the mail is sent!)')
+
+
+
+def send_reply(service, msg_id):
+    if msg_id:
+        check = ReplyMail.objects.filter(id=msg_id)
+        if check.exists():
+            return None
+    msg = service.users().messages().modify(
+        userId='me',
+        id=msg_id,
+        body={
+            'addLabelIds': [],
+            'removeLabelIds': ['UNREAD'],
+        },
+        x__xgafv='1').execute()
+
+    # get all the data about msg.
+    msg = service.users().messages().get(userId='me', id=msg_id).execute()
+    if not msg:
+        logger.error('message not found!')
+        return
+
+    msg_payload = msg.get('payload')
+    headers = msg_payload.get('headers')
+    received_date=''
+    from_mail=[]
+    to_mail=''
+    subject=''
+    for header in headers:
+        if header.get('name') == 'Date':
+            received_date = header.get('value')
+        if header.get('name') == 'From':
+            # from_mail = header.get('value').split('<')[1].split('>')[0]
+            from_mail = header.get('value')
+        if header.get('name') == 'To':
+            to_mail = header.get('value')
+        if header.get('name') == 'Subject':
+            subject = header.get('value')
+
+    mssg = "Hi there, Call me for this role(4174137966)"
+
+    msg = MIMEMultipart()
+    msg['From'] = to_mail
+    msg['To'] = COMMASPACE.join(from_mail)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    try:
+        cwd=os.getcwd()
+        doc = 'BIResume_10022021_v1_CM'  #make sure the document is in .docx format
+        resumes = 'resumes'
+        part = MIMEBase('application', "octet-stream")
+        part.set_payload(open('''{}\media\{}\doc\{}.docx'''.format(cwd, resumes, doc), "rb").read())
+        encoders.encode_base64(part)
+        part.add_header('Content-Disposition',
+                        'attachment; filename="{0}"'.format(doc))
+        msg.attach(part)
+    except Exception as e:
+        print(e)
+    msg.attach(MIMEText(mssg))
+    import ssl
+    context = ssl.create_default_context()
+    with smtplib.SMTP(host='smtp.gmail.com', port=587) as server:
+        server.ehlo()
+        server.starttls(context=context)
+        server.login('chris.c.maghas@gmail.com', 'umrjdmxetfmdonqf')
+        server.sendmail(to_mail, from_mail, msg.as_string())
+        logger.info('the mail is sent!)')
+    try:
+        text_part = msg.get('payload').get('parts')[0]
+        encoded_data = text_part.get('body').get('data')
+        decoded_str = str(urlsafe_b64decode(encoded_data), 'UTF-8')
+    except:
+        decoded_str = 'None'
+
+    return {
+        'id': msg_id,
+        'from_mail': from_mail,
+        'to_mail': to_mail,
+        'subject': subject,
+        'text_mail': decoded_str,
+        'received_date': received_date,
+    }
+
