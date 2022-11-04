@@ -37,6 +37,7 @@ urlpatterns = [
     path('image/<int:pk>/', views.ImageUpdateView.as_view(template_name='main/form.html'), name='updateimage'),
     path('images/', views.images, name='images'),
     path('testing/', views.testing, name='testing'),
+    path('interview/', views.interview, name='interview'),
 
    #==============ERRORS==============================================
     path('400Error/', views.error400, name='400error'),

@@ -83,7 +83,10 @@ def it(request):
 
 def testing(request):
     return render(request, "main/testing.html", {"title": "testing"})
-
+    
+def interview(request):
+    return redirect('data:interview')
+    # return render(request, "main/coach_profile.html", {"title": "coach_profile"})
 
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})

@@ -6,15 +6,16 @@ from accounts.models import CustomerUser
 class InterviewForm(forms.ModelForm):
     class Meta:
         model = Interviews
-        fields =['category','question_type','doc','link']
+        fields =['category','question_type','doc','link','comment']
         # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',
                 'client':'username', 
-                'category':'Category',
-                'question_type':'Question',
-                'doc':'Assignment',
-                'link':'Google Share Url',
+                'category':'Select Job Category',
+                'question_type':'Interview Question/topic',
+                'doc':'Upload assignment',
+                'link':'Paste Your link',
+                'comment':'Questions/comments on this section?'
                 }
 
 class InterviewQuestionsForm(forms.ModelForm):

@@ -174,7 +174,7 @@ class Interviews(models.Model):
         choices=QUESTION_CHOICES,
         default=Other,
     )
-
+    comment = models.TextField()
     doc = models.FileField(default="None", upload_to="Uploads/doc/")
     link = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=True)
