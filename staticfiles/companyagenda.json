@@ -20,6 +20,10 @@
         "COMMUNICATION": {
             "Gotomeeting": "https://global.gotomeeting.com/#/meetings/anytime-meetings",
             "Zoom": "https://zoom.us/s/89047067590#success"
+        },
+        "REFERENCE": {
+            "DAF REPORT": "https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE",
+            "Web Evidence": "https://www.codanalytics.net/management/evidence/"
         }
     },
     "HUMAN RESOURCE": {
