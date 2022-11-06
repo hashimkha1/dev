@@ -1,5 +1,7 @@
 import calendar,string
 from logging import exception
+
+import requests
 from django import template
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -58,6 +60,8 @@ from management.utils import (
                                bonus,additional_earnings,best_employee,updateloantable,
                                addloantable
                         )
+
+from django.contrib import messages
     
 
 import logging
@@ -1113,9 +1117,24 @@ def newevidence(request, taskid):
             if points != maxpoints and taskname.lower() not in jobsup_list:
                 Task.objects.filter(id=taskid).update(point=points + 1)
 
-            # User will taken from the request 
-            form.save()
-            return redirect("management:evidence")
+            # User will taken from the request
+            data = form.cleaned_data
+            link = data['link']
+            if not link:
+                messages.error(request, "please provide evidence link")
+                return render(request, "management/daf/evidence_form.html", {"form": form})
+            try:
+                a=requests.get(link)
+                if a.status_code == 200:
+                    form.save()
+                    return redirect("management:evidence")
+                else:
+                    messages.error(request, "link is not valid,please check again")
+                    return render(request, "management/daf/evidence_form.html", {"form": form})
+
+            except:
+                messages.error(request, "please provide valid link")
+                return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
         form = EvidenceForm()
