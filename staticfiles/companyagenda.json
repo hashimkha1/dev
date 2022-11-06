@@ -1,13 +1,34 @@
 {
-    "DEPARTMENTS": {
-        "Agenda": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
-        "departments": "https://docs.google.com/spreadsheets/d/1vsxZjFGuSb7T4OqG_ZTQu93C7EF3ZyzgwxskbRlJfMY/edit#gid=0",
-        "Projects": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
-        "Credentials": "https://www.codanalytics.net/accounts/credentials/",
-        "Policies": "https://www.codanalytics.net/management/policies/"
-    },
-    "HUMANA RESOURCE": {
+    "BASICS": {
         "MEETINGS": {
+            "Training Sessions": "#",
+            "General": "#",
+            "Sprint": "#",
+            "DAF session": "#",
+            "BI session": "#"
+        },
+        "POLICIES &CREDENTIALS": {
+            "Credentials": "https://www.codanalytics.net/accounts/credentials/",
+            "Policies": "https://www.codanalytics.net/management/policies/"
+        },
+        "BILLS & BANKING": {
+            "Internet": "https://www.codanalytics.net/management/hr/",
+            "KPLC & Solar": "https://www.codanalytics.net/application/first_interview/section_a/",
+            "Food & Supplies": "https://www.codanalytics.net/finance/food/",
+            "Banking": "https://transcripts.gotomeeting.com/#/s/385dba162e433befe498320f371e3f8cbce1ca3f130659f317c0ab6e1da8a788"
+        },
+        "COMMUNICATION": {
+            "Gotomeeting": "https://global.gotomeeting.com/#/meetings/anytime-meetings",
+            "Zoom": "https://zoom.us/s/89047067590#success"
+        }
+    },
+    "HUMAN RESOURCE": {
+        "General": {
+            "departments": "https://docs.google.com/spreadsheets/d/1vsxZjFGuSb7T4OqG_ZTQu93C7EF3ZyzgwxskbRlJfMY/edit#gid=0",
+            "Projects": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
+        },
+        "MEETINGS": {
+            "Agenda": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
             "Scrum": "https://www.codanalytics.net/management/assess/",
             "General": "https://www.codanalytics.net/management/finance/",
             "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
@@ -27,7 +48,6 @@
         "TRAINING": {
             "1-1": "https://www.codanalytics.net/application/internal_training/",
             "Report": "https://public.tableau.com/app/profile/coda2331/viz/OneononeSessionsReportv5/OneonOneSessionsReport?publish=yes"
-
         }
     },
     "FINANCE": {
