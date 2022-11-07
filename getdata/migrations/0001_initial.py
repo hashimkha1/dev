@@ -50,17 +50,17 @@ class Migration(migrations.Migration):
                 ('location_name', models.CharField(blank=True, max_length=1000, null=True)),
             ],
         ),
-        migrations.CreateModel(
-            name='ReplyMail',
-            fields=[
-                ('id', models.CharField(max_length=30, primary_key=True, serialize=False, unique=True)),
-                ('from_mail', models.CharField(max_length=255)),
-                ('to_mail', models.CharField(max_length=255)),
-                ('subject', models.CharField(max_length=255)),
-                ('text_mail', models.TextField()),
-                ('received_date', models.CharField(max_length=255)),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='ReplyMail',
+        #     fields=[
+        #         ('id', models.CharField(max_length=30, primary_key=True, serialize=False, unique=True)),
+        #         ('from_mail', models.CharField(max_length=255)),
+        #         ('to_mail', models.CharField(max_length=255)),
+        #         ('subject', models.CharField(max_length=255)),
+        #         ('text_mail', models.TextField()),
+        #         ('received_date', models.CharField(max_length=255)),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='Traffic_Data',
             fields=[
