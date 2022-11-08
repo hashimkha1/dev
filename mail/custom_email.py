@@ -18,7 +18,6 @@ from getdata.models import ReplyMail
 
 
 def send_email(category, to_email, subject, html_template, context):
-    print(111111111, to_email)
     if category == 1:
         __smtp_user = EMAIL_HR
     else:
