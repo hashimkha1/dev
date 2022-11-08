@@ -448,6 +448,7 @@ def security_verification(request):
     subject = "One time verification code to view passwords"
     # to = request.user.email
     otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
+    print(222222222,otp)
     request.session["security_otp"] = otp
     # html_content = "Your One time verification code is " + otp
     # print(to, otp)
