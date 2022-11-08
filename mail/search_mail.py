@@ -80,20 +80,23 @@ def search_job_mail(request):
         # return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
 
     for result in search_results:
-        msg_dict = send_reply(service=service, msg_id=result.get('id'))
-        if msg_dict:
-            try:
-                ReplyMail.objects.create(
-                    id=msg_dict.get('id'),
-                    from_mail=msg_dict.get('from_mail'),
-                    to_mail=msg_dict.get('to_mail'),
-                    subject=msg_dict.get('subject'),
-                    text_mail=msg_dict.get('text_mail'),
-                    received_date=msg_dict.get('received_date')
-                )
-            except Exception as e:
-                logger.error('error on adding new record!')
-                logger.error('error msg is ' + str(e))
-                logger.error(f'msg id is: msg_dict.get("id")')
+        try:
+            msg_dict = send_reply(service=service, msg_id=result.get('id'))
+            if msg_dict:
+                try:
+                    ReplyMail.objects.create(
+                        id=msg_dict.get('id'),
+                        from_mail=msg_dict.get('from_mail'),
+                        to_mail=msg_dict.get('to_mail'),
+                        subject=msg_dict.get('subject'),
+                        text_mail=msg_dict.get('text_mail'),
+                        received_date=msg_dict.get('received_date')
+                    )
+                except Exception as e:
+                    logger.error('error on adding new record!')
+                    logger.error('error msg is ' + str(e))
+                    logger.error(f'msg id is: msg_dict.get("id")')
+        except:
+            continue
     mails = ReplyMail.objects.all()
     return render(request, "getdata/Repliedmail.html", {'mails': mails})
