@@ -102,7 +102,7 @@ def send_reply(service, msg_id):
         doc = 'BIResume_10022021_v1_CM'  #make sure the document is in .docx format
         resumes = 'resumes'
         part = MIMEBase('application', "octet-stream")
-        part.set_payload(open('''{}\media\{}\doc\{}.docx'''.format(cwd, resumes, doc), "rb").read())
+        part.set_payload(open('''{}/media/{}/doc/{}.docx'''.format(cwd, resumes, doc), "rb").read())
         encoders.encode_base64(part)
         part.add_header('Content-Disposition',
                         'attachment; filename="{0}"'.format(doc))
