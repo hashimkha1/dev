@@ -84,6 +84,7 @@ def send_reply(service, msg_id):
         if header.get('name') == 'From':
             # from_mail = header.get('value').split('<')[1].split('>')[0]
             from_mail = header.get('value')
+            from_mail = [from_mail,]
         if header.get('name') == 'To':
             to_mail = header.get('value')
         if header.get('name') == 'Subject':
