@@ -97,6 +97,7 @@ def search_job_mail(request):
                     logger.error('error msg is ' + str(e))
                     logger.error(f'msg id is: msg_dict.get("id")')
         except:
-            continue
+            mails = ReplyMail.objects.all()
+            return render(request, "getdata/Repliedmail.html", {'mails': mails})
     mails = ReplyMail.objects.all()
     return render(request, "getdata/Repliedmail.html", {'mails': mails})
