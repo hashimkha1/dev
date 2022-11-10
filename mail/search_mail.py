@@ -81,7 +81,7 @@ def search_job_mail(request):
 
     for result in search_results:
         try:
-            msg_dict = send_reply(service=service, msg_id=result.get('id'))
+            msg_dict = send_reply(service=service, msg_id=result.get('id'), request=request)
             if msg_dict:
                 try:
                     ReplyMail.objects.create(
