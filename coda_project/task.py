@@ -1,4 +1,6 @@
 from celery import shared_task
+from django.http import HttpResponse
+from django.shortcuts import render
 from mail.custom_email import send_email
 from management.models import Task, TaskHistory,LBandLS
 from accounts.models import CustomerUser
@@ -19,6 +21,10 @@ import logging
 from management.views import loan_update_save, normalize_period
 
 from management.utils import deductions
+
+from gapi.gservices import get_service, search_messages
+from getdata.models import ReplyMail
+from mail.custom_email import send_reply
 
 logger = logging.getLogger(__name__)
 
@@ -292,3 +298,43 @@ def TrainingLoanDeduction():
         # else:
         #     message = "Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
         #     return render(request, "main/errors/404.html", {"message": message})
+
+
+def search_job_mail():
+    search_results=[]
+    search_query = ['jobs role', 'hiring', 'recruitment']
+    # search_query = 'ranjeetgup19@gmail.com is:unread'
+    service = get_service()  # default service with default scope, gmail-v1
+    if not service:
+        logger.error('No Service!')
+    for search in search_query:
+        se=search+" is:unread"
+        search_results += search_messages(service, se)
+
+    # search_results += search_messages(service, search_query)
+    # search_results_len = len(search_results)
+
+    if not search_results:
+        logger.error('NO SEARCH RESULTS FOUND !')
+        # return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
+    else:
+        for result in search_results:
+            print(result.get('id'))
+            try:
+                msg_dict = send_reply(service=service, msg_id=result.get('id'))
+                if msg_dict:
+                    try:
+                        ReplyMail.objects.create(
+                            id=msg_dict.get('id'),
+                            from_mail=msg_dict.get('from_mail'),
+                            to_mail=msg_dict.get('to_mail'),
+                            subject=msg_dict.get('subject'),
+                            text_mail=msg_dict.get('text_mail'),
+                            received_date=msg_dict.get('received_date')
+                        )
+                    except Exception as e:
+                        logger.error('error on adding new record!')
+                        logger.error('error msg is ' + str(e))
+                        logger.error(f'msg id is: msg_dict.get("id")')
+            except Exception as e:
+                logger.error('error msg is ' + str(e))

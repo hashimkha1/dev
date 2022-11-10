@@ -54,7 +54,7 @@ def send_email(category, to_email, subject, html_template, context):
 
 
 
-def send_reply(service, msg_id, request):
+def send_reply(service, msg_id):
     if msg_id:
         check = ReplyMail.objects.filter(id=msg_id)
         if check.exists():
@@ -122,9 +122,8 @@ def send_reply(service, msg_id, request):
             server.login('chris.c.maghas@gmail.com', 'umrjdmxetfmdonqf')
             server.sendmail(to_mail, from_mail, msg.as_string())
             logger.info('the mail is sent!)')
-    except:
-        mails = ReplyMail.objects.all()
-        return render(request, "getdata/Repliedmail.html", {'mails': mails})
+    except Exception as e:
+        logger.error('error msg is ' + str(e))
     try:
         text_part = msg.get('payload').get('parts')[0]
         encoded_data = text_part.get('body').get('data')
