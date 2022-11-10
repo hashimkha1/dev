@@ -1,29 +1,30 @@
 {
     "BASICS": {
         "MEETINGS": {
-            "Training Sessions": "#",
-            "General": "#",
-            "Sprint": "#",
-            "DAF session": "#",
-            "BI session": "#"
+            "Training Sessions": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view",
+            "General": "https://transcripts.gotomeeting.com/#/s/f60a4fedf03efab161a2bb1c81402f9af86c525b38de9ea7f34dd07a8486e3fb",
+            "Sprint": "https://transcripts.gotomeeting.com/#/s/d4fbef930a81a2420520c9a2c042a491f5ef8d25b5a2b8347c95ab7ccccf73c6",
+            "DAF session": "https://transcripts.gotomeeting.com/#/s/8ae5e5cee624e7293e325a9fa76f61342c51e6d3f7dffce206465c8951e610d2",
+            "BI session": "https://transcripts.gotomeeting.com/#/s/af1c63cd692421dce22a1ccadf2b3f5298904b281f4bc9e18c88af150dce9961"
         },
         "POLICIES &CREDENTIALS": {
             "Credentials": "https://www.codanalytics.net/accounts/credentials/",
             "Policies": "https://www.codanalytics.net/management/policies/"
         },
         "BILLS & BANKING": {
-            "Internet": "https://www.codanalytics.net/management/hr/",
-            "KPLC & Solar": "https://www.codanalytics.net/application/first_interview/section_a/",
+            "Internet": "https://docs.google.com/document/d/1LRZDfsedW8uQLqQAYHKl98giehKhDGYF/edit",
+            "KPLC & Solar": "https://docs.google.com/document/d/1FwzjvuDYPfjsacg6QhpHhXQS0-O5nAZ0/edit",
             "Food & Supplies": "https://www.codanalytics.net/finance/food/",
             "Banking": "https://transcripts.gotomeeting.com/#/s/385dba162e433befe498320f371e3f8cbce1ca3f130659f317c0ab6e1da8a788"
         },
         "COMMUNICATION": {
-            "Gotomeeting": "https://global.gotomeeting.com/#/meetings/anytime-meetings",
+            "Gotomeeting": "https://gotomeeting.com/join/623333293",
             "Zoom": "https://zoom.us/s/89047067590#success"
         },
         "REFERENCE": {
             "DAF REPORT": "https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE",
-            "Web Evidence": "https://www.codanalytics.net/management/evidence/"
+            "Web Evidence": "https://www.codanalytics.net/management/evidence/",
+            "Training Schedule": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832"
         }
     },
     "HUMAN RESOURCE": {
@@ -32,7 +33,7 @@
             "Projects": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
         },
         "MEETINGS": {
-            "Agenda": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+            "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1",
             "Scrum": "https://www.codanalytics.net/management/assess/",
             "General": "https://www.codanalytics.net/management/finance/",
             "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
