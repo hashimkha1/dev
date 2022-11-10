@@ -59,41 +59,48 @@ def parse_mail(request):
     
 def search_job_mail(request):
 
-    search_results=[]
-    search_query = ['jobs role', 'hiring', 'recruitment']
-    # search_query = 'ranjeetgup19@gmail.com is:unread'
-    service = get_service()  # default service with default scope, gmail-v1
-    if not service:
-        return HttpResponse('No service!')
-    for search in search_query:
-        se=search+" is:unread"
-        search_results += search_messages(service, se)
-
-    # search_results += search_messages(service, search_query)
-    # search_results_len = len(search_results)
-
-    if not search_results:
-        # return HttpResponse('No results found!')
-        mails = ReplyMail.objects.all()
-        return render(request, "getdata/Repliedmail.html", {'mails': mails, 'msg': "no new result found"})
-        # return redirect('main:noresult')
-        # return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
-
-    for result in search_results:
-        msg_dict = send_reply(service=service, msg_id=result.get('id'))
-        if msg_dict:
-            try:
-                ReplyMail.objects.create(
-                    id=msg_dict.get('id'),
-                    from_mail=msg_dict.get('from_mail'),
-                    to_mail=msg_dict.get('to_mail'),
-                    subject=msg_dict.get('subject'),
-                    text_mail=msg_dict.get('text_mail'),
-                    received_date=msg_dict.get('received_date')
-                )
-            except Exception as e:
-                logger.error('error on adding new record!')
-                logger.error('error msg is ' + str(e))
-                logger.error(f'msg id is: msg_dict.get("id")')
     mails = ReplyMail.objects.all()
     return render(request, "getdata/Repliedmail.html", {'mails': mails})
+
+    # search_results=[]
+    # search_query = ['jobs role', 'hiring', 'recruitment']
+    # # search_query = 'ranjeetgup19@gmail.com is:unread'
+    # service = get_service()  # default service with default scope, gmail-v1
+    # if not service:
+    #     return HttpResponse('No service!')
+    # for search in search_query:
+    #     se=search+" is:unread"
+    #     search_results += search_messages(service, se)
+    #
+    # # search_results += search_messages(service, search_query)
+    # # search_results_len = len(search_results)
+    #
+    # if not search_results:
+    #     # return HttpResponse('No results found!')
+    #     mails = ReplyMail.objects.all()
+    #     return render(request, "getdata/Repliedmail.html", {'mails': mails, 'msg': "no new result found"})
+    #     # return redirect('main:noresult')
+    #     # return render(request,'main/snippets_templates/interview_snippets/result.html',{"message":message})
+    #
+    # for result in search_results:
+    #     try:
+    #         msg_dict = send_reply(service=service, msg_id=result.get('id'), request=request)
+    #         if msg_dict:
+    #             try:
+    #                 ReplyMail.objects.create(
+    #                     id=msg_dict.get('id'),
+    #                     from_mail=msg_dict.get('from_mail'),
+    #                     to_mail=msg_dict.get('to_mail'),
+    #                     subject=msg_dict.get('subject'),
+    #                     text_mail=msg_dict.get('text_mail'),
+    #                     received_date=msg_dict.get('received_date')
+    #                 )
+    #             except Exception as e:
+    #                 logger.error('error on adding new record!')
+    #                 logger.error('error msg is ' + str(e))
+    #                 logger.error(f'msg id is: msg_dict.get("id")')
+    #     except:
+    #         mails = ReplyMail.objects.all()
+    #         return render(request, "getdata/Repliedmail.html", {'mails': mails})
+    # mails = ReplyMail.objects.all()
+    # return render(request, "getdata/Repliedmail.html", {'mails': mails})
