@@ -26,7 +26,7 @@ app.conf.beat_schedule = {
     'replies_mails': {
         'task': 'replies_job_mail',
         # 'schedule': crontab(minute='*/1'),
-        'schedule': crontab(hour=24),
+        'schedule': crontab(hour=23),
     },
 
 }
