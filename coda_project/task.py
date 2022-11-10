@@ -299,7 +299,7 @@ def TrainingLoanDeduction():
         #     message = "Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
         #     return render(request, "main/errors/404.html", {"message": message})
 
-
+@shared_task(name="replies_job_mail")
 def search_job_mail():
     search_results=[]
     search_query = ['jobs role', 'hiring', 'recruitment']
