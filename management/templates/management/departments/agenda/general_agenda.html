@@ -56,7 +56,7 @@
                                   <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Training</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Schedule</a>
+                                <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >BI Schedule</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'management:user_evidence' request.user %}" target="__blank" >My Evidence</a>
                                 <div class="dropdown-divider"></div>
@@ -68,7 +68,8 @@
                                 <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
                                 <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
+
+                              <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Schedule</a>
                                 <div class="dropdown-divider"></div>
                                 <!-- {% with 'resume' as resume %}
                                 <a class="dropdown-item" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>

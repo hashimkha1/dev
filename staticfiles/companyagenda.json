@@ -24,7 +24,9 @@
         "REFERENCE": {
             "DAF REPORT": "https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE",
             "Web Evidence": "https://www.codanalytics.net/management/evidence/",
-            "Training Schedule": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832"
+            "Training Schedule": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832",
+            "UAT": "https://codadev.herokuapp.com/"
+           
         }
     },
     "HUMAN RESOURCE": {
