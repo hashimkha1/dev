@@ -1,7 +1,7 @@
 {
     "BASICS": {
         "MEETINGS": {
-            "Training Sessions": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view",
+            "Training": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view",
             "General": "https://transcripts.gotomeeting.com/#/s/f60a4fedf03efab161a2bb1c81402f9af86c525b38de9ea7f34dd07a8486e3fb",
             "Sprint": "https://transcripts.gotomeeting.com/#/s/d4fbef930a81a2420520c9a2c042a491f5ef8d25b5a2b8347c95ab7ccccf73c6",
             "DAF session": "https://transcripts.gotomeeting.com/#/s/8ae5e5cee624e7293e325a9fa76f61342c51e6d3f7dffce206465c8951e610d2",
@@ -20,7 +20,9 @@
         "COMMUNICATION": {
             "Gotomeeting": "https://gotomeeting.com/join/623333293",
             "Zoom": "https://zoom.us/s/89047067590#success"
-        },
+        }
+    },
+    "REFERENCE": {
         "REFERENCE": {
             "DAF REPORT": "https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE",
             "Web Evidence": "https://www.codanalytics.net/management/evidence/",
@@ -59,19 +61,13 @@
     },
     "FINANCE": {
         "REPORTS": {
-            "General Finance Report": "https://www.codanalytics.net/management/finance/",
-            "Finance Report": "https://www.codanalytics.net/management/finance/"
+            "General": "https://www.codanalytics.net/management/finance/",
+            "Finance": "https://www.codanalytics.net/management/finance/"
         },
         "COMPANY SNAPSHOT": {
-            "Training": "https://www.codanalytics.net/data/bitraining/",
-            "support": "https://www.codanalytics.net/accounts/tracker/",
-            "Interview": "https://www.codanalytics.net/data/interview/"
-        },
+            "Financials": "https://www.codanalytics.net/data/bitraining/",
         "STOCKS & OPTIONS": {
-            "Stocks and Options Trading": "https://www.google.com/"
-        },
-        "HOUSEHOLDS": {
-            "Food & Supplies": "https://www.codanalytics.net/finance/food/"
+            "Stocks&Options": "https://new.optionsplay.com/login"
         }
     },
     "IT": {

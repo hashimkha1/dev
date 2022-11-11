@@ -46,7 +46,7 @@
                 <div class="col-md-3">
                     <div style="border: 1px solid black;padding:20px;">
                             <h5 class="text-center text-dark">My Dashboard</h5>
-                            {% if user.is_employee or user.is_superuser %}
+                            {% if user.is_employee %}
                             <div style="border: 1px solid black;padding:20px;">
                                 <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
                                 <div class="dropdown-divider"></div>
@@ -62,13 +62,18 @@
                                 <div class="dropdown-divider"></div>
                             {%endif%}
                             {% if user.is_superuser %}
-                                <a class="dropdown-item" href="{% url 'management:evidence'%}" target="__blank" >Evidence</a>
+                            <a class="dropdown-item" href="{% url 'accounts:tracker-list'%}" target="" >Client Tracker</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
+                            <a class="dropdown-item" href="{% url 'management:evidence'%}" target="__blank" >Evidence</a>
+                                <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
                                 <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
                                 <div class="dropdown-divider"></div>
-
+                             <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Training</a>
+                                <div class="dropdown-divider"></div>
+                              <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >BI Schedule</a>
+                                <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Schedule</a>
                                 <div class="dropdown-divider"></div>
                                 <!-- {% with 'resume' as resume %}
@@ -80,7 +85,7 @@
                                {% endif %}
                             </div>
                         {% for departments,sub_departments in  data.items  %}
-                        {% if   departments == "HUMAN RESOURCE" or  departments == "FINANCE" %} 
+                        {% if departments == "HUMAN RESOURCE" or  departments == "FINANCE" or departments == "REFERENCE" %} 
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
                                 <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
