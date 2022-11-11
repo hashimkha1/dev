@@ -2,6 +2,8 @@ import logging
 import os
 from email import encoders
 
+from django.shortcuts import render
+
 logger = logging.getLogger(__name__)
 
 # send_email imports
@@ -113,12 +115,15 @@ def send_reply(service, msg_id):
     msg.attach(MIMEText(mssg))
     import ssl
     context = ssl.create_default_context()
-    with smtplib.SMTP(host='smtp.gmail.com', port=587) as server:
-        server.ehlo()
-        server.starttls(context=context)
-        server.login('chris.c.maghas@gmail.com', 'umrjdmxetfmdonqf')
-        server.sendmail(to_mail, from_mail, msg.as_string())
-        logger.info('the mail is sent!)')
+    try:
+        with smtplib.SMTP(host='smtp.gmail.com', port=587) as server:
+            server.ehlo()
+            server.starttls(context=context)
+            server.login('chris.c.maghas@gmail.com', 'umrjdmxetfmdonqf')
+            server.sendmail(to_mail, from_mail, msg.as_string())
+            logger.info('the mail is sent!)')
+    except Exception as e:
+        logger.error('error msg is ' + str(e))
     try:
         text_part = msg.get('payload').get('parts')[0]
         encoded_data = text_part.get('body').get('data')
