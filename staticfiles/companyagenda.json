@@ -113,8 +113,10 @@
                 "PPT": "https://www.codanalytics.net/#/",
                 "website": "#",
                 "other": "https://www.codanalytics.net/#/"
+            },
+            "OTHER": {
+                "Other": "https://www.codanalytics.net/#/"
             }
-
         }
 }
 
