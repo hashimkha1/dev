@@ -333,6 +333,8 @@ def rate(request):
             form.instance.totalpoints = totalpoints
             # Saving form data to rating table only if the user is applicant
             if form.instance.employeename.is_applicant == True:
+                if not form.cleaned_data['uploadlinkurl']:
+                    return render(request, "application/orientation/rate.html", {"form": form, "applicant_error": "please provide the evidence link"})
                 form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
                 if userprof.section == "D":
@@ -367,6 +369,7 @@ def rate(request):
                             "management:new_evidence", taskid=idval
                         )
             except:
+                print("under except")
                 form = RatingForm()
                 return render(request, "application/orientation/rate.html", {"form": form,"error":True})
         
