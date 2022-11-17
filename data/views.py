@@ -32,6 +32,8 @@ from data.filters import InterviewFilter, BitrainingFilter  # ,UserFilter
 
 # User=settings.AUTH_USER_MODEL
 from data.forms import InterviewQuestionsForm
+import json
+from coda_project import settings
 
 User = get_user_model()
 
@@ -909,3 +911,11 @@ def userjobtracker(request, user=None, *args, **kwargs):
     }
 
     return render(request, "data/interview/userjobtracker.html", context)
+
+def employetraining(request):
+    with open(settings.STATIC_ROOT + '/employeetraining.json', 'r') as file:
+        data = json.load(file)
+
+    return render(
+        request, "data/training/employeetraining.html", {"title": "employeeetraining", "data":data}
+    )

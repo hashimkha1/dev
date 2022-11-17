@@ -1,0 +1,207 @@
+{
+  "BASICS": {
+                "FINANCE USECASE": {
+                                  "Orientation": {
+                                    "VIDEOS": "https://transcripts.gotomeeting.com/#/s/b29d262c4c6d0dc5b4dccd8f413cef67cc3e4fd66177ad38502cea316958c933",
+                                    "POWER POINT": "https://docs.google.com/presentation/d/1s_gyIoCjKq-IGFrmQ8Kxvk0Tb7lNlCoj/edit#slide=id.p14"
+                                  },
+                                  "Project Description": {
+                                    "VIDEOS": "https://drive.google.com/file/d/1XTzbWMXZIWVVkUKB7RfxcOZojbIOvmVD/view",
+                                    "POWER POINT": "https://transcripts.gotomeeting.com/#/s/0fbc740d8a0d78fa4e0dc0473be6ee4a015d1d5892cb04076dc1021b6da133d0"
+                                  },
+                                  "landing page": {
+                                    "VIDEOS": "https://drive.google.com/file/d/1qufX3OsCpHNUIxuFzrJyuHe9ukhA8QWF/view?usp=sharing",
+                                    "POWER POINT": "#"
+                                  },
+                                  "Executive Overview Report": {
+                                    "VIDEOS": "https://drive.google.com/file/d/1ANWbChv0YZLIKwNW-4iB1wVEuYS1Jcc5/view?usp=sharing",
+                                    "POWER POINT": "https://drive.google.com/drive/u/0/folders/1tGTpUhe_eTf6veNQB7Mnid4Z_cv9Ai86"
+                                  },
+                                  "Finance Mordern  Dashboard": {
+                                    "VIDEOS": "#",
+                                    "POWER POINT": "#"
+                                  },
+                                  "Finance workflow": {
+                                    "VIDEOS": "https://drive.google.com/file/d/15-itfrUKJT-GNWBTOa7F3SuWmwZBvyNN/view?usp=sharing",
+                                    "POWER POINT": "https://docs.google.com/presentation/d/1RkIlEKY156P9vGbVsnpvq6JiG3Ywli81USxhPfts4CI/edit#slide=id.p7"
+                                  },
+                                  "End To End": {
+                                    "VIDEOS": "https://transcripts.gotomeeting.com/#/s/b2fec88673f0527196895915d48651ab288545c4190eb55189d6e1ce8345428e",
+                                    "POWER POINT": "#"
+                                  }
+                },
+
+                "INTERVIEW": {
+                              "Self Training First Session": {
+                                "VIDEOS":"https://transcripts.gotomeeting.com/#/s/ba422390567c4a66c14466d895c6a170ea54691b26cb3b21f4e35ca756d11ffb",
+                                "POWER POINT":"https://docs.google.com/presentation/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/edit#slide=id.gb867311a18_4_0"
+                              },
+                              "Improving On The First Session": {
+                                "VIDEOS": "https://transcripts.gotomeeting.com/#/s/ba422390567c4a66c14466d895c6a170ea54691b26cb3b21f4e35ca756d11ffb",
+                                "POWER POINT": "#"
+                              },
+                              "Teaching a Partner": {
+                                "VIDEOS": "#",
+                                "POWER POINT": "#"
+                              },
+                              "Simulation": {
+                                "VIDEOS": "#",
+                                "POWER POINT": "#"
+                              }
+                },
+
+                "MORTGAGE USECASE": {
+                                    "Project Description": {
+                                      "VIDEOS": "https://drive.google.com/file/d/1LUxXWzWo9rxUA6mcRwukaEoKRMjr21rH/view?usp=sharing",
+                                      "POWER POINT": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1"
+                                    },
+                                    "Executive overview report": {
+                                      "VIDEOS": "https://drive.google.com/file/d/1X4XoyzzGGV_lXEa7RMJytguVmqyx71yZ/view?usp=sharing",
+                                      "POWER POINT": "https://docs.google.com/presentation/d/1pXfwU396rvBaLahmvEhCoiWR7pYGIoT7/edit#slide=id.p4"
+                                    },
+                                    "List Report": {
+                                      "VIDEOS": "https://drive.google.com/file/d/1lifdRM8q5BsG0L_NQwlQJiZ3lroNm9OV/view?usp=sharing",
+                                      "POWER POINT": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1"
+                                    },
+                                    "Landing Page": {
+                                      "VIDEOS": "Mortgage Landing Page.avi - Google Drive",
+                                      "POWER POINT": "https://drive.google.com/file/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/view?usp=sharing"
+                                    },
+                                    "Detailed Report": {
+                                      "VIDEOS": "https://drive.google.com/file/d/1M9oZlIE8yFjefK3MRmzmrRyqixBnkVP7/view?usp=sharing",
+                                      "POWER POINT": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1"
+                                    }
+                },
+                "INTERVIEW QUESTIONS": {
+                                        "SDLC Assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1vdFyPQsadtDxEAySQnEW1R1bYaq4zAe2/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1Ipwsu01gANc5-bi1tOU5dSi1nF-q8f02/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Testing Assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1cHJzwsxWh4NdRgEEBwgHZJC-Y8Uubh7o/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/19jZhSd6o9dUXoSX82rFeN2Qj8GLrcNfc/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Project story assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1YfsiTH1fKDQAtUvqVUFRm5PI6i0iGR5d/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1gS7hCOCFUDKYKRKoalxQeM4sBvrVfy98/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Performance tuning assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1ryZjvmSJlE08dQLDCtGWz6azcDtHza4w/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1AssI2x4NSIqWC4_HbFPkhN65ickyo1AD/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Methodology assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1RePYRgGjjcGOmMRWa7fwDAnbgFAq_N2r/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1HPoU2ZCFDrURCEeDD54nwApdXhkTNjX8/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Introduction assignment": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1xYKwPMmrmhMvaZQlqH8YMUlZ9p7XgfUX/view?usp=sharing",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1LubiI07USAIaoIRqu8HDpHLBcjCTO_1z/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        },
+                                        "Resume assignment": {
+                                          "VIDEOS": "#",
+                                          "POWER POINT": "https://docs.google.com/presentation/d/1y-JWtNTZ4Ioup_OXpLsrV1oNsoViC6Ti/edit?usp=sharing&ouid=115037154650831613074&rtpof=true&sd=true"
+                                        }
+                },
+                "DATABASE": {
+                          "Normalization": {
+                                          "VIDEOS": "https://transcripts.gotomeeting.com/#/s/ee09457a8bec84b6e27fd0a24bb8e2bdf9186c30b88a1ef48171b2f443e61635",
+                                          "POWER POINT": "#"
+                                          },
+                          "Normalization1": {
+                                          "VIDEOS": "#",
+                                          "POWER POINT": "#"
+                                          },
+                          "table Creation and Insertion": {
+                                                        "VIDEOS": "https://drive.google.com/file/d/1NBirJ0t8WTcp8wv6tAMN8EWq1d4FS43-/view?usp=sharing",
+                                                        "POWER POINT": "#"
+                                                        },
+                          "table Creation and Insertion1": {
+                                                          "VIDEOS": "#",
+                                                          "POWER POINT": "#"
+                                                        },
+                          "Data Retrivial": {
+                                          "VIDEOS": "https://drive.google.com/file/d/1ekQLsIRYxk7XZWpWf0rAMpAE8gG5WD4T/view?usp=sharing",
+                                          "POWER POINT": "#"
+                                          },
+                          "Data Retrivial1": {
+                                          "VIDEOS": "#",
+                                          "POWER POINT": "#"
+                                          },
+                          "Interview Practice SQL": {
+                                                  "VIDEOS": "#",
+                                                  "POWER POINT": "#"
+                                                  }
+                },
+                "DEPARTMENTAL": {
+                              "Recruitment practice": {
+                                                    "VIDEOS": "https://transcripts.gotomeeting.com/#/s/4febb32de514c78fa85c5f6bd8d025dfa851c6068d86f73bedb2a6c1feb300cb",
+                                                    "POWER POINT": "https://docs.google.com/presentation/d/1ZEwDAc1d6kECE5gWYjuodo5otktYVfBZ/edit#slide=id.p5"
+                                                  },
+                              "Recruitment Simulation": {
+                                                    "VIDEOS": "https://drive.google.com/file/d/1EUlXe0cP_n4ULQ27aZyTcG4iirShwYaM/view?usp=sharing",
+                                                    "POWER POINT": "https://docs.google.com/presentation/d/1ZEwDAc1d6kECE5gWYjuodo5otktYVfBZ/edit#slide=id.p6"
+                                                  },
+                              "VSDC": {
+                                    "VIDEOS": "https://transcripts.gotomeeting.com/#/s/0f0826c4c478f89f7ba8c4d068540cddae2c764bb2aa101e7b13d69b25656f80",
+                                    "POWER POINT": "#"
+                                  },
+                              "Website": {
+                                        "VIDEOS": "#",
+                                        "POWER POINT": "https://docs.google.com/presentation/d/13RwPzE8KLqWaTZcAjiXJSdzfNDyYpigkhN7ozdsX770/edit#slide=id.p1"
+                                        }
+                },
+                "OPTIONS TRADEING": {
+                                  "Introduction to Options Trading": {
+                                                                "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D44",
+                                                                "POWER POINT": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=F44"
+                                  },
+                                  "Pyschology of Trading": {
+                                                        "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D45",
+                                                        "POWER POINT": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=F45"
+                                  },
+                                  "Credit Spreads(Presentation)": {
+                                                                "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D46",
+                                                                "POWER POINT": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=F46"
+                                  },
+                                  "How to use ThinkorSwim Platform": {
+                                                                    "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D47",
+                                                                    "POWER POINT": "#"
+                                  },
+                                  "How to use OptionsPlay Platform": {
+                                                                    "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D48",
+                                                                    "POWER POINT": "#"
+                                  },
+                                  "Credit Spreads (Review and Trade Setup)": {
+                                                                            "VIDEOS": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D49",
+                                                                            "POWER POINT": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=F49"
+                                  }
+
+                },
+                "EMPLOYEE PRODUCTIVITY": {
+                                        "Project": {
+                                                  "VIDEOS": "https://transcripts.gotomeeting.com/#/s/3e511a66e579826c44c43979bf6fabcaad36715b82c18f147b4661bfab06376a",
+                                                  "POWER POINT": "https://drive.google.com/file/d/1_iSV5_AUpEVJnzzr5PJjYd0a63jR0jSB/view?usp=sharing"
+                                        },
+                                        "Client Introduction": {
+                                                            "VIDEOS": "https://transcripts.gotomeeting.com/#/s/f4af3d214c20119b2650204ef7f01ee928a0525dacd6a87710adc33a1b534e6a",
+                                                            "POWER POINT": ""
+                                        },
+                                        "Alteryx/Tableau1": {
+                                                          "VIDEOS": "https://youtu.be/dGjzLldVX3s",
+                                                          "POWER POINT": "#"
+                                        },
+                                        "Alteryx/Tableau2": {
+                                                          "VIDEOS": "https://www.youtube.com/watch?v=IaZN1nsX8qk",
+                                                          "POWER POINT": "#"
+                                        },
+                                        "Alteryx/Tableau3": {
+                                                          "VIDEOS": "https://transcripts.gotomeeting.com/#/s/9a170aae00158a3275cbd93420945fdbb89eb68027f4c923bc5d6d244ab86e85",
+                                                          "POWER POINT": "#"
+                                        },
+                                        "Alteryx/Tableau4": {
+                                                          "VIDEOS": "https://transcripts.gotomeeting.com/#/s/052264353331439bc0c372c14a0f547dd642a2cef016dd162e9e5aac2d4135e6",
+                                                          "POWER POINT": "https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20"
+                                        }
+                }
+    }
+}
