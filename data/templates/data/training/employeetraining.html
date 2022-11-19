@@ -48,23 +48,19 @@
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "BASICS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
+                        {% if departments == "POWER POINTS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">POWER POINTS</p>
+                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
                                     <button class="update_links" onclick="update_links(this)">Update links</button>
                                 </div>
                                 <div class="links">
-                                    {% for sub,links in  sub_departments.items  %}
+                                   {% for sub,links in  sub_departments.items  %}
 
                                         {% if links.items|length != 0 %}
                                             <span>{{sub}}</span>
-                                            {% for key,value in links.items %}
-                                                {% for linkname,link in value.items %}
-                                                    {% if linkname == "POWER POINT" %}
-                                                    <a href="{{link}}" style="display: block"/>{{key}} </i></a>
-                                                    {% endif %}
-                                                {% endfor %}
+                                            {% for linkname,link in links.items %}
+                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
                                             {% endfor %}
                                         {% else %}
                                             <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
@@ -100,23 +96,19 @@
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "BASICS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
+                        {% if departments == "VIDEOS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">VIDEOS</p>
+                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
                                     <button class="update_links" onclick="update_links(this)">Update links</button>
                                 </div>
                                 <div class="links">
-                                    {% for sub,links in  sub_departments.items  %}
+                                   {% for sub,links in  sub_departments.items  %}
 
                                         {% if links.items|length != 0 %}
                                             <span>{{sub}}</span>
-                                            {% for key,value in links.items %}
-                                                {% for linkname,link in value.items %}
-                                                    {% if linkname == "VIDEOS" %}
-                                                    <a href="{{link}}" style="display: block"/>{{key}} </i></a>
-                                                    {% endif %}
-                                                {% endfor %}
+                                            {% for linkname,link in links.items %}
+                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
                                             {% endfor %}
                                         {% else %}
                                             <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
@@ -233,7 +225,7 @@
     $("#submit_updatelink").on("click",function(){
         $.ajax({
             type: "POST",
-            url:  siteurl+"/management/companyagenda/updatelinks",
+            url:  siteurl+"/data/employetrainig/updatelinks",
             mode: 'cors',
             withCredentials: false,
             headers: { 'Access-Control-Allow-Origin': '*', "X-CSRFToken": csrftoken },
@@ -241,7 +233,7 @@
             data : { department:$('#departments').val(),subdepartment:$('#sub_departments').val(),linkname:$('#linkname').val(),link_url:$('#link_url').val()},
             success: function(result){
                 if(result["success"]){
-                    window.location.href = "/management/companyagenda/"
+                    window.location.href = "/data/employetraining/"
                 }
             }
 
