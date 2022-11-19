@@ -61,7 +61,7 @@ urlpatterns = [
         ),
         name="newsupplier",
     ),
-    path("update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
+    path("supplier/update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
     path("food/",views.FoodListView.as_view(),name="supplies"),

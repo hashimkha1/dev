@@ -567,7 +567,7 @@ class SupplierUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         elif self.request.user == Supplier.added_by:
             return True
-        return redirect("finance:food")
+        return redirect("finance:supplies")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -584,9 +584,10 @@ class FoodUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         Food = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == Food.added_by:
+        # elif self.request.user == Food.added_by:
+        elif self.request.user:
             return True
-        return redirect("finance:food")
+        return redirect("finance:supplies")
 
 
 class SupplierListView(ListView):
