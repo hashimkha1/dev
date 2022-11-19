@@ -919,3 +919,22 @@ def employetraining(request):
     return render(
         request, "data/training/employeetraining.html", {"title": "employeeetraining", "data":data}
     )
+
+def updatelinks_employetraining(request):
+    department = request.POST["department"]
+    subdepartment = request.POST["subdepartment"]
+    linkname = request.POST["linkname"]
+    link_url = request.POST["link_url"]
+
+    with open(settings.STATIC_ROOT + '/employeetraining.json', "r") as jsonFile:
+        data = json.load(jsonFile)
+
+    if subdepartment == "":
+        data[department][linkname] = link_url
+    else:
+        data[department][subdepartment][linkname] = link_url
+
+    with open(settings.STATIC_ROOT + '/employeetraining.json', "w") as jsonFile:
+        json.dump(data, jsonFile)
+
+    return JsonResponse({"success": True})

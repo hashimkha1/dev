@@ -37,6 +37,7 @@ urlpatterns = [
     path("payroll/", views.payroll, name="payroll"),
     path("project/", views.project, name="project"),
     path("employetraining/", views.employetraining, name="employeetraining"),
+    path("employetrainig/updatelinks", views.updatelinks_employetraining, name="updatelinks_employetraining"),
     # Training SEction Urls starts
     path("training/", views.training, name="training"),
     path("train/", views.TrainingView.as_view(), name="train"),
