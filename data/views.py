@@ -921,10 +921,15 @@ def employetraining(request):
     )
 
 def updatelinks_employetraining(request):
+    print(111111111111)
     department = request.POST["department"]
+    print(department,111111)
     subdepartment = request.POST["subdepartment"]
+    print(subdepartment,22222)
     linkname = request.POST["linkname"]
+    print(linkname,33333333)
     link_url = request.POST["link_url"]
+    print(link_url,4444444444)
 
     with open(settings.STATIC_ROOT + '/employeetraining.json', "r") as jsonFile:
         data = json.load(jsonFile)
@@ -936,5 +941,5 @@ def updatelinks_employetraining(request):
 
     with open(settings.STATIC_ROOT + '/employeetraining.json', "w") as jsonFile:
         json.dump(data, jsonFile)
-
+    print(222222222222222)
     return JsonResponse({"success": True})
