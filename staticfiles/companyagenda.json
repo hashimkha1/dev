@@ -35,7 +35,6 @@
         "MEETINGS": {
             "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1",
             "Scrum": "https://www.codanalytics.net/management/assess/",
-            "General": "https://www.codanalytics.net/management/finance/",
             "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
             "Departmental": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
             "BOG": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
@@ -48,7 +47,8 @@
         "RECRUITMENT": {
             "Applicants": "https://www.codanalytics.net/management/hr/",
             "Interview": "https://www.codanalytics.net/application/first_interview/section_a/",
-            "Developers": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133"
+            "Developers(ppt)": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133",
+            "Developers(video)": "https://drive.google.com/file/d/1vw9dnbrskAn04_FrmbujHhfmuy_AYqIQ/view"
         },
         "TRAINING": {
             "1-1": "https://www.codanalytics.net/application/internal_training/",
@@ -57,8 +57,8 @@
     },
     "FINANCE": {
         "REPORTS": {
-            "General Finance Report": "https://www.codanalytics.net/management/finance/",
-            "Finance Report": "https://www.codanalytics.net/management/finance/"
+            "Cashflow": "https://www.codanalytics.net/finance/transaction/",
+            "Report":"https://www.codanalytics.net/finance/finance/"
         },
         "COMPANY SNAPSHOT": {
             "Training": "https://www.codanalytics.net/data/bitraining/",
