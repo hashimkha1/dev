@@ -68,14 +68,6 @@
                                 <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
                                 <div class="dropdown-divider"></div>
-                              <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
-                                <div class="dropdown-divider"></div>
-                                <!-- {% with 'resume' as resume %}
-                                <a class="dropdown-item" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>
-                                <div class="dropdown-divider"></div>
-                                {%endwith%} -->
-                                <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                                {% endif %}
                             </div>
                         {% for departments,sub_departments in  data.items  %}
