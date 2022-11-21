@@ -150,6 +150,7 @@ def companyagenda(request):
     # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
     # data = json.load(f)
     # f.close()
+    request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
 
@@ -595,6 +596,7 @@ def activitieslist(value, myactivities):
 
 
 def usertask(request, user=None, *args, **kwargs):
+    request.session["siteurl"] = settings.SITEURL
     # tasks=Task.objects.all().order_by('-submission')
     # user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
     # Amount=Task.objects.all().aggregate(Your_Total_GoalAmount=Sum('mxearning'))
