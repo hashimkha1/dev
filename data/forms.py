@@ -18,6 +18,11 @@ class InterviewForm(forms.ModelForm):
                 'comment':'Questions/comments on this section?'
                 }
 
+    def __init__(self, *args, **kwargs):
+        # first call parent's constructor
+        super(InterviewForm, self).__init__(*args, **kwargs)
+        self.fields['question_type'].required = False
+
 class InterviewQuestionsForm(forms.ModelForm):
     class Meta:
         model = Interview_Questions
