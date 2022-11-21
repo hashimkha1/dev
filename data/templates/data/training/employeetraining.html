@@ -155,7 +155,7 @@
 <script>
     //  siteurl = "http://localhost:8000"
     siteurl ="{{request.session.siteurl}}"
-
+    console.log(siteurl)
     var jsondata = {{data | safe }}
 
     function update_links(e){
