@@ -944,5 +944,4 @@ def updatelinks_employetraining(request):
 
     with open(settings.STATIC_ROOT + '/employeetraining.json', "w") as jsonFile:
         json.dump(data, jsonFile)
-
     return JsonResponse({"success": True})

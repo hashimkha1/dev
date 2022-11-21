@@ -195,6 +195,7 @@ class Transaction(models.Model):
 
     class Meta:
         verbose_name_plural = "Transactions"
+        ordering = ["-activity_date"]
 
     def __str__(self):
         return f"{self.id} Transactions"

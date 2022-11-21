@@ -1,7 +1,7 @@
 {
     "BASICS": {
         "MEETINGS": {
-            "Training Sessions": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view",
+            "1 on 1": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view",
             "General": "https://transcripts.gotomeeting.com/#/s/f60a4fedf03efab161a2bb1c81402f9af86c525b38de9ea7f34dd07a8486e3fb",
             "Sprint": "https://transcripts.gotomeeting.com/#/s/d4fbef930a81a2420520c9a2c042a491f5ef8d25b5a2b8347c95ab7ccccf73c6",
             "DAF session": "https://transcripts.gotomeeting.com/#/s/8ae5e5cee624e7293e325a9fa76f61342c51e6d3f7dffce206465c8951e610d2",
@@ -30,40 +30,31 @@
     "HUMAN RESOURCE": {
         "General": {
             "departments": "https://docs.google.com/spreadsheets/d/1vsxZjFGuSb7T4OqG_ZTQu93C7EF3ZyzgwxskbRlJfMY/edit#gid=0",
-            "Projects": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
+            "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1"
         },
         "MEETINGS": {
-            "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1",
-            "Scrum": "https://www.codanalytics.net/management/assess/",
-            "General": "https://www.codanalytics.net/management/finance/",
             "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
             "Departmental": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
             "BOG": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
             "DAF SESSIONS": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
         },
         "REPORTS": {
-            "General HR Report": "https://public.tableau.com/app/profile/coda2331/viz/EmployeeProductivityVersion08/LandingPageReport?publish=yes",
-            "HR Report": "https://www.codanalytics.net/management//"
+            "HR Report": "https://www.codanalytics.net/management/"
         },
         "RECRUITMENT": {
-            "Applicants": "https://www.codanalytics.net/management/hr/",
+            "Applicants": "https://www.codanalytics.net/application/applicants/",
             "Interview": "https://www.codanalytics.net/application/first_interview/section_a/",
-            "Developers": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133"
+            "Developers(ppt)": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133",
+            "Developers(video)": "https://drive.google.com/file/d/1vw9dnbrskAn04_FrmbujHhfmuy_AYqIQ/view"
         },
         "TRAINING": {
-            "1-1": "https://www.codanalytics.net/application/internal_training/",
-            "Report": "https://public.tableau.com/app/profile/coda2331/viz/OneononeSessionsReportv5/OneonOneSessionsReport?publish=yes"
+            "Report": "https://public.tableau.com/app/profile/coda.production/viz/OneononeSessionsReportv2_16535943094260/OneonOneSessionsReport"
         }
     },
     "FINANCE": {
         "REPORTS": {
-            "General Finance Report": "https://www.codanalytics.net/management/finance/",
-            "Finance Report": "https://www.codanalytics.net/management/finance/"
-        },
-        "COMPANY SNAPSHOT": {
-            "Training": "https://www.codanalytics.net/data/bitraining/",
-            "support": "https://www.codanalytics.net/accounts/tracker/",
-            "Interview": "https://www.codanalytics.net/data/interview/"
+            "Cashflow": "https://www.codanalytics.net/finance/transaction/",
+            "Report":"https://www.codanalytics.net/finance/finance/"
         },
         "STOCKS & OPTIONS": {
             "Stocks and Options Trading": "https://www.google.com/"
@@ -113,9 +104,6 @@
                 "PPT": "https://www.codanalytics.net/#/",
                 "website": "#",
                 "other": "https://www.codanalytics.net/#/"
-            },
-            "OTHER": {
-                "Other": "https://www.codanalytics.net/#/"
             }
         }
 }
