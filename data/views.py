@@ -920,6 +920,7 @@ def userjobtracker(request, user=None, *args, **kwargs):
     return render(request, "data/interview/userjobtracker.html", context)
 
 def employetraining(request):
+    request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/employeetraining.json', 'r') as file:
         data = json.load(file)
 

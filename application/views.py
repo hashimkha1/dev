@@ -211,6 +211,7 @@ def FI_sectionC(request):
 
 
 def first_interview(request):
+    request.session["siteurl"] = settings.SITEURL
     section = UserProfile.objects.values_list("section", flat=True).get(
         user=request.user
     )

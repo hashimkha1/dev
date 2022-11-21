@@ -429,6 +429,7 @@ def credential_view(request):
     }
 
     try:
+        request.session["siteurl"] = settings.SITEURL
         otp = request.POST["otp"]
         if otp == request.session["security_otp"]:
             del request.session["security_otp"]
@@ -449,6 +450,7 @@ def security_verification(request):
     # to = request.user.email
     otp = "".join(random.choices(string.ascii_uppercase + string.digits, k=5))
     request.session["security_otp"] = otp
+    request.session["siteurl"] = settings.SITEURL
     # html_content = "Your One time verification code is " + otp
     # print(to, otp)
     # email_template(subject, to, html_content)
