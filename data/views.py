@@ -408,7 +408,7 @@ def courseview(request, question_type=None, *args, **kwargs):
 def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'GET':
         instance = JobRole.objects.get_by_question(question_type)
-        form= InterviewForm
+        form= InterviewForm()
         # questiontopic=['resume','methodology','testing']
         # value=request.path.split("/")
         # pathvalues = [i for i in value if i.strip()]
@@ -430,7 +430,6 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'POST':
         try:
             form = InterviewForm(request.POST, request.FILES)
-            # instance = Interviews.objects.filter(category, question_type, link)
             if form.is_valid():
                 form_data = form.cleaned_data
                 data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=question_type, link=form_data['link'], comment=form_data['comment'] )
@@ -439,6 +438,7 @@ def questionview(request, question_type=None, *args, **kwargs):
                     return redirect('data:question-detail', question_type=question_type)
                 instance = form.save(commit=False)
                 instance.client = request.user
+                instance.question_type = question_type
                 instance.save()
                 # data = form.cleaned_data
         except Exception as e:
