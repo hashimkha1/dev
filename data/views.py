@@ -26,7 +26,8 @@ from data.models import (
     ActivityLinks,
     DSU,
     Job_Tracker,
-    JobRole
+    JobRole,
+    Interview_Questions
 )
 from data.filters import InterviewFilter, BitrainingFilter  # ,UserFilter
 
@@ -354,6 +355,12 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
 class InterviewListView(ListView):
     queryset = Interviews.objects.all()
     template_name = "data/interview/iuploads.html"
+    ordering = ["-upload_date"]
+
+@method_decorator(login_required, name="dispatch")
+class InterviewQuestionListView(ListView):
+    queryset =Interview_Questions.objects.all()
+    template_name = "data/interview/interviewquestion_upload.html"
     ordering = ["-upload_date"]
 
 
