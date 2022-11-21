@@ -9,7 +9,7 @@
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token%}
     <div class="row">
-      <div class="col-md-4">{{ form.sender|as_crispy_field }}</div>
+      <!-- <div class="col-md-4">{{ form.sender|as_crispy_field }}</div> -->
       <div class="col-md-6">{{ form.receiver|as_crispy_field }}</div>
       <div class="col-md-6">{{ form.phone|as_crispy_field }}</div>
     </div>
