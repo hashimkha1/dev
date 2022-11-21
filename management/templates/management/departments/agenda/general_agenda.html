@@ -59,7 +59,6 @@
                                 <a class="dropdown-item" href="{% url 'application:internal' %}" target="" >My Schedule</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'management:user_evidence' request.user %}" target="__blank" >My Evidence</a>
-                                <div class="dropdown-divider"></div>
                             {%endif%}
                             {% if user.is_superuser %}
                                 <a class="dropdown-item" href="{% url 'management:evidence'%}" target="__blank" >Evidence</a>
@@ -67,11 +66,10 @@
                                 <a class="dropdown-item" href="{% url 'management:tasks'%}" target="" >Tasks</a>
                                 <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
-                                <div class="dropdown-divider"></div>
                                {% endif %}
                             </div>
                         {% for departments,sub_departments in  data.items  %}
-                        {% if   departments == "HUMAN RESOURCE" or  departments == "FINANCE" %} 
+                        {% if   departments == "HUMAN RESOURCE" or  departments == "FINANCE" or  departments == "MARKETING" %} 
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
                                 <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
@@ -119,7 +117,7 @@
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Company Agenda</h5>
                         {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "BASICS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %} 
+                        {% if departments == "BASICS" or departments == "IT"  or  departments == "PROJECTS" %} 
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
                                 <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
                                 <div style="float: right;">
