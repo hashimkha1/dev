@@ -280,27 +280,10 @@ def transact(request):
     if request.method == "POST":
         form = TransactionForm(request.POST, request.FILES)
         if form.is_valid():
-            # try:
-            #     points,mxpoint = Task.objects.values_list(
-			# 		"point","mxpoint"
-			# 		).filter(
-			# 			Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
-			# 			employee__username=form.instance.sender
-			# 		)[
-			# 			0
-			# 		]
-            #     points = points+1
-            #     if points >= mxpoint:
-            #         mxpoint += 5
-            #     Task.objects.filter(
-			# 			Q(activity_name__contains="Cashflow") | Q(activity_name__contains="cashflow"),
-			# 			employee__username=form.instance.sender
-			# 		).update(point=points, mxpoint=mxpoint)
-            # except:
             form.save()
-                # instance=form.save(commit=False)
-                # instance.sender=request.user
-                # instance.save()
+            instance=form.save(commit=False)
+            instance.sender=request.user
+            instance.save()
             return redirect("/finance/transaction/")
     else:
         form = TransactionForm()
@@ -567,7 +550,7 @@ class SupplierUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         elif self.request.user == Supplier.added_by:
             return True
-        return redirect("finance:food")
+        return redirect("finance:supplies")
 
 
 @method_decorator(login_required, name="dispatch")
@@ -584,9 +567,10 @@ class FoodUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         Food = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == Food.added_by:
+        # elif self.request.user == Food.added_by:
+        elif self.request.user:
             return True
-        return redirect("finance:food")
+        return redirect("finance:supplies")
 
 
 class SupplierListView(ListView):

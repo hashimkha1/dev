@@ -5,6 +5,20 @@
     <div class="rating text-center">
       <h2>Cashflows</h2>
       <hr>
+      <div class="row text-center">
+        <div class="col-md-4" id="gi">
+            <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
+                >Add Transaction
+            </a></p>
+        </div>
+        <div class="col-md-4" id="gi">
+          <p>
+            <a href="{% url 'finance:finance'%}" class="btn btn-secondary btn-sm"
+              >Finance Report
+            </a>
+         </p>
+        </div>
+    </div>
       <table class="table table-borderless" style="width: 100%">
         <thead class="border-bottom font-weight-bold">
           <tr>

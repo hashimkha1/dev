@@ -44,7 +44,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-3">
-
+                    {% if user.is_employee or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}
@@ -71,6 +71,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
+                    {% endif %}
                 </div>
 
                 <div class="col-md-6">
@@ -93,6 +94,7 @@
                 </div>
 
                 <div class="col-md-3">
+                    {% if user.is_employee or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}
@@ -119,6 +121,7 @@
                             {% endif %}
                         {% endfor %}
                     </div>
+                  {% endif %}
                 </div>
             </div>
         </div>

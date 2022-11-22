@@ -81,7 +81,8 @@ class CredentialForm(forms.ModelForm):
         fields = ['category','name', 'added_by','slug','user_types','description','password','link_name','link','is_active','is_featured']
         widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
         labels={
-                'link_name':'Enter User Name/Email',
+                'link_name':'username/email',
+                'link':'Link/url',
                 'user_types':'Specify Who Can Access this Credential?'
         }
 """ 
