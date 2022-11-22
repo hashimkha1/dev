@@ -47,8 +47,8 @@
             </button>
           </td>
           
-         <td><h4 ><a href="{% url 'data:role-update' user.id %}">Edit</H4></a></p></td>  
-         <td><h4 ><a href="{% url 'data:role-delete' user.id %}">Del</H4></a></p></td>  
+         <td><h4 ><a href="{% url 'data:role-update' role.id %}">Edit</H4></a></p></td>  
+         <td><h4 ><a href="{% url 'data:role-delete' role.id %}">Del</H4></a></p></td>  
       </tr>
         {% endfor %}
       </tbody>
