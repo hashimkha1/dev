@@ -1225,8 +1225,8 @@ def assess(request):
 
 
 class AssessListView(ListView):
-    queryset = DSU.objects.filter(type="Staff").order_by("-created_at")
-    # queryset=DSU.objects.all()
+    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+    queryset=DSU.objects.all().order_by("-created_at")
     template_name = "management/departments/hr/assessment.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
