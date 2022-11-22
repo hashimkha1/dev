@@ -1128,6 +1128,10 @@ def newevidence(request, taskid):
             try:
                 a=requests.get(link)
                 if a.status_code == 200:
+                    check = TaskLinks.objects.filter(link=link)
+                    if check.exists():
+                        messages.error(request, "this link belogs to another user")
+                        return render(request, "management/daf/evidence_form.html", {"form": form})
                     form.save()
                     return redirect("management:evidence")
                 else:
