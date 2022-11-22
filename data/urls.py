@@ -84,7 +84,7 @@ urlpatterns = [
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
-    path("quploads/", InterviewQuestionListView.as_view(), name="questionlist"),
+    path("courseuploads/", InterviewQuestionListView.as_view(), name="questionlist"),
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     # path('clientuploads/<str:username>', ClientInterviewListView.as_view(), name='client_uploads'),
     path("useruploads/", views.useruploads, name="user-list"),
