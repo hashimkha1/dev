@@ -1108,7 +1108,8 @@ def newevidence(request, taskid):
         form = EvidenceForm(request.POST)
         # Check whether the task exist then only we allow to create evidence
         try:
-            Task.objects.get(id=taskid)
+            task = Task.objects.get(id=taskid)
+            activity_name = task.activity_name
         except:
             return render(request, "errors/404.html")
 
@@ -1128,10 +1129,23 @@ def newevidence(request, taskid):
             try:
                 a=requests.get(link)
                 if a.status_code == 200:
+                    user_list=[]
                     check = TaskLinks.objects.filter(link=link)
                     if check.exists():
-                        messages.error(request, "this link belogs to another user")
-                        return render(request, "management/daf/evidence_form.html", {"form": form})
+                        users = check.values_list('added_by__username')
+                        for username in users:
+                            user_list.append(username[0])
+                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions']
+                        if activity_name in act_list:
+                            if request.user.username in user_list:
+                                messages.error(request, "you have already uploaded this link")
+                                return render(request, "management/daf/evidence_form.html", {"form": form})
+                            form.save()
+                            return redirect("management:evidence")
+                        else:
+                            messages.error(request, "this link is already uploaded")
+                            return render(request, "management/daf/evidence_form.html", {"form": form})
+
                     form.save()
                     return redirect("management:evidence")
                 else:
@@ -1139,7 +1153,7 @@ def newevidence(request, taskid):
                     return render(request, "management/daf/evidence_form.html", {"form": form})
 
             except:
-                messages.error(request, "please provide valid link")
+                messages.error(request, "Please check your link")
                 return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
