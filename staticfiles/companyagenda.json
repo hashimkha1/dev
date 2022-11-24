@@ -73,7 +73,9 @@
         "DATA ANALYSIS": {
             "Training": "https://www.codanalytics.net/data/bitraining/",
             "support": "https://www.codanalytics.net/accounts/tracker/",
-            "Interview": "https://www.codanalytics.net/data/interview/"
+            "Interview": "https://www.codanalytics.net/data/interview/",
+            "Edit Interview": "https://www.codanalytics.net/data/interview/",
+            "Edit Training": "https://www.codanalytics.net/data/interview/"
         },
         "OTHER": {
             "Trainee powerpoint": "https://www.google.com/"
