@@ -14,6 +14,7 @@ from data.views import (
     FeaturedActivityDeleteView,
     FeaturedActivityLinksDeleteView,
     DSUListView,
+    LinksListView,
     ProjectStoryView,
     RoleUpdateView,
     InterviewDetailView,
@@ -157,6 +158,7 @@ urlpatterns = [
     path('subcategory/<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     path('activity/<str:title>/', views.activitydetail, name='activity-detail'),
     path("dsu/", DSUListView.as_view(), name="dsu"),
+    path("links/", LinksListView.as_view(), name="listlinks"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
     path("updatelist/", views.table_activity_view, name="activity-list"),
     
