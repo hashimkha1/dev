@@ -30,10 +30,19 @@ from django.views.generic import (
     FormView
 )
 from main.utils import Finance,Data,Management
+from getdata.utils import (
+                    get_gmail_service,
+                    search_messages,
+                    get_message,
+                    getdata,
+                    GetSubject,
+                    get_executed_info
+
+)
 from finance.models import (
         Transaction
 	)
-from .models import CashappMail
+from .models import CashappMail,stockmarket
 from django.contrib.auth import get_user_model
 
 from .forms import CsvImportForm
@@ -293,3 +302,35 @@ def upload_csv(request):
     data = {"form": form}
     # return render(request, "admin/csv_upload.html", data)
     return render(request, "getdata/uploaddata.html", data)
+
+
+def options(request):
+    service = get_gmail_service()
+    messages = search_messages(service= service, query= 'Robinhood')
+    for message in messages[:100]:
+        msg_id = message['id']
+        print(msg_id)
+        data = get_message(service=service, msg_id=msg_id)
+        soup = getdata(data)
+        if soup == 0:
+            continue
+        try:
+            subjectname = GetSubject(soup)
+            if subjectname == None:
+                continue
+        except:
+            continue
+
+        if subjectname == 'Option Order Executed':
+            get_executed_info(soup, subjectname)
+            os.remove(data)
+        else:
+            os.remove(data)
+        # return render(request, "getdata\options.html")
+        return redirect("getdata:stockmarket")
+
+class OptionList(ListView):
+    model=stockmarket
+    template_name="getdata\options.html"
+    context_object_name = "stocks"
+
