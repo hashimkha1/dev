@@ -1257,7 +1257,7 @@ def active_requirements(request, Status=None, *args, **kwargs):
 
 
 def requirements(request):
-    requirements = Requirement.objects.all().order_by("id")
+    requirements = Requirement.objects.all().order_by("-id")
     return render(
         request,
         "management/doc_templates/requirementlist.html",
@@ -1325,7 +1325,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     form = RequirementForm
     def form_valid(self, form):
         # form.instance.author=self.request.user
-        if self.request.user.is_superuser:
+        if self.request.user.is_superuser or self.request.user :
             if (
                 not get_user_model().objects.get(pk=self.request.POST["assigned_to"])
                 == self.request.user
@@ -1360,8 +1360,10 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
         requirement = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == requirement.created_by:
+        elif self.request.user:
             return True
+        # elif self.request.user == requirement.created_by:
+        #     return True
         return False
 
 

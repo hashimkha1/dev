@@ -858,6 +858,10 @@ def table_activity_view(request):
         request=request, template_name="data/training/updatelist.html", context=context
     )
 
+class LinksListView(ListView):
+    model= ActivityLinks
+    template_name = "data/training/links.html"
+    context_object_name='links'
 
 class DSUListView(ListView):
     queryset = DSU.objects.all().order_by("-created_at")

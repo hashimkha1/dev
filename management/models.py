@@ -907,7 +907,7 @@ class Requirement(models.Model):
 
     class Meta:
         verbose_name_plural = "Requirements"
-        ordering = ["-created_at","-updated_at"]
+        # ordering = ["-created_at","-updated_at"]
 
     @property
     def doc_url(self):
