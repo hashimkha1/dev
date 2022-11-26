@@ -47,6 +47,8 @@ urlpatterns = [
     path("training_v2/", views.training_v2, name="training_v2"),
     path("bitraining/", views.bitraining, name="bitraining"),
     path("bitraining2/", views.activity_view, name="bitraining2"),
+    path("updatelist/", views.table_activity_view, name="activity-list"),
+    path("links/", views.LinksListView.as_view(), name="listlinks"),
     path("bi_training/", views.bi_training, name="bi_training"),
     path("role/", views.RoleCreateView.as_view(), name="jobrole"),
     path("roles/", views.RolesView.as_view(), name="jobroles"),
@@ -158,9 +160,6 @@ urlpatterns = [
     path('subcategory/<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     path('activity/<str:title>/', views.activitydetail, name='activity-detail'),
     path("dsu/", DSUListView.as_view(), name="dsu"),
-    path("links/", LinksListView.as_view(), name="listlinks"),
-    path("bitraining2/", views.activity_view, name="bitraining2"),
-    path("updatelist/", views.table_activity_view, name="activity-list"),
     
     # ----------------------Update----------------------------------------------------
     path(
