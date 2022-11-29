@@ -5,29 +5,26 @@
       "Client Introduction":"https://transcripts.gotomeeting.com/#/s/f4af3d214c20119b2650204ef7f01ee928a0525dacd6a87710adc33a1b534e6a"
     },
     "FINANCE USECASE": {
-      "Orientation": "https://transcripts.gotomeeting.com/#/s/b29d262c4c6d0dc5b4dccd8f413cef67cc3e4fd66177ad38502cea316958c933",
       "Project Description": "https://drive.google.com/file/d/1XTzbWMXZIWVVkUKB7RfxcOZojbIOvmVD/view",
       "landing page": "https://drive.google.com/file/d/1qufX3OsCpHNUIxuFzrJyuHe9ukhA8QWF/view?usp=sharing",
-      "Executive Overview Report": "https://drive.google.com/file/d/1ANWbChv0YZLIKwNW-4iB1wVEuYS1Jcc5/view?usp=sharing",
+      "Executive Report": "https://drive.google.com/file/d/1ANWbChv0YZLIKwNW-4iB1wVEuYS1Jcc5/view?usp=sharing",
       "Finance workflow": "https://drive.google.com/file/d/15-itfrUKJT-GNWBTOa7F3SuWmwZBvyNN/view?usp=sharing",
-      "End To End": "https://transcripts.gotomeeting.com/#/s/b2fec88673f0527196895915d48651ab288545c4190eb55189d6e1ce8345428e"
-    },
-    "MORTGAGE USECASE": {
-      "Project Description": "https://drive.google.com/file/d/1LUxXWzWo9rxUA6mcRwukaEoKRMjr21rH/view?usp=sharing",
-      "Executive overview report": "https://drive.google.com/file/d/1X4XoyzzGGV_lXEa7RMJytguVmqyx71yZ/view?usp=sharing",
-      "List Report": "https://drive.google.com/file/d/1lifdRM8q5BsG0L_NQwlQJiZ3lroNm9OV/view?usp=sharing",
-      "Landing Page": "Mortgage Landing Page.avi - Google Drive",
-      "Detailed Report": "https://drive.google.com/file/d/1M9oZlIE8yFjefK3MRmzmrRyqixBnkVP7/view?usp=sharing"
+      "End To End": "https://transcripts.gotomeeting.com/#/s/b2fec88673f0527196895915d48651ab288545c4190eb55189d6e1ce8345428e",
+      "Dataset": "#"
     },
     "INTERVIEW QUESTIONS": {
       "EndToEnd": "https://drive.google.com/file/d/1lJ8amvMng4gAC5sryKDzd1ViD4v9HBH9/view?usp=share_link",
       "EndToEndSimulation": "#"
     },
-    "DATABASE": {
-      "EndToEnd":"https://transcripts.gotomeeting.com/#/s/ee09457a8bec84b6e27fd0a24bb8e2bdf9186c30b88a1ef48171b2f443e61635",
-      "EndToEndSimulation": "#",
-      "Student Training1": "https://drive.google.com/file/d/1NBirJ0t8WTcp8wv6tAMN8EWq1d4FS43-/view?usp=sharing",
-      "Student Training2": "https://drive.google.com/file/d/1ekQLsIRYxk7XZWpWf0rAMpAE8gG5WD4T/view?usp=sharing"
+    "EMPLOYEE PRODUCTIVITY": {
+      "Project Description": "https://transcripts.gotomeeting.com/#/s/3e511a66e579826c44c43979bf6fabcaad36715b82c18f147b4661bfab06376a",
+      "Alteryx/Tableau1": "https://youtu.be/dGjzLldVX3s",
+      "Alteryx/Tableau2": "https://www.youtube.com/watch?v=IaZN1nsX8qk",
+      "DBAEndToEnd":"https://transcripts.gotomeeting.com/#/s/ee09457a8bec84b6e27fd0a24bb8e2bdf9186c30b88a1ef48171b2f443e61635",
+      "DBAEndToEndSimulation": "#",
+      "DBAStudent Training1": "https://drive.google.com/file/d/1NBirJ0t8WTcp8wv6tAMN8EWq1d4FS43-/view?usp=sharing",
+      "DBAStudent Training2": "https://drive.google.com/file/d/1ekQLsIRYxk7XZWpWf0rAMpAE8gG5WD4T/view?usp=sharing",
+      "Dataset": "#"
     },
     "DEPARTMENTAL": {
       "Recruitment practice": "https://transcripts.gotomeeting.com/#/s/4febb32de514c78fa85c5f6bd8d025dfa851c6068d86f73bedb2a6c1feb300cb",
@@ -35,7 +32,7 @@
       "VSDC": "https://transcripts.gotomeeting.com/#/s/0f0826c4c478f89f7ba8c4d068540cddae2c764bb2aa101e7b13d69b25656f80",
       "Website": "https://www.codanalytics.net/management/companyagenda/"
     },
-    "OPTIONS TRADEING": {
+    "OPTIONS TRADING": {
       "Introduction": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D44",
       "Pyschology": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D45",
       "Credit Spreads": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D46",
@@ -43,10 +40,13 @@
       "OptionsPlay": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D48",
       "Credit Spreads Review": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=D49"
     },
-    "EMPLOYEE PRODUCTIVITY": {
-      "Project Description": "https://transcripts.gotomeeting.com/#/s/3e511a66e579826c44c43979bf6fabcaad36715b82c18f147b4661bfab06376a",
-      "Alteryx/Tableau1": "https://youtu.be/dGjzLldVX3s",
-      "Alteryx/Tableau2": "https://www.youtube.com/watch?v=IaZN1nsX8qk"
+    "MORTGAGE USECASE": {
+      "Project Description": "https://drive.google.com/file/d/1LUxXWzWo9rxUA6mcRwukaEoKRMjr21rH/view?usp=sharing",
+      "Executive overview report": "https://drive.google.com/file/d/1X4XoyzzGGV_lXEa7RMJytguVmqyx71yZ/view?usp=sharing",
+      "List Report": "https://drive.google.com/file/d/1lifdRM8q5BsG0L_NQwlQJiZ3lroNm9OV/view?usp=sharing",
+      "Landing Page": "Mortgage Landing Page.avi - Google Drive",
+      "Detailed Report": "https://drive.google.com/file/d/1M9oZlIE8yFjefK3MRmzmrRyqixBnkVP7/view?usp=sharing",
+      "Dataset": "#"
     }
   },
   "POWER POINTS": {
@@ -55,29 +55,26 @@
       "Client Introduction": "#"
     },
     "FINANCE USECASE": {
-      "Orientation": "https://docs.google.com/presentation/d/1s_gyIoCjKq-IGFrmQ8Kxvk0Tb7lNlCoj/edit#slide=id.p14",
       "Project Description": "https://drive.google.com/file/d/1XTzbWMXZIWVVkUKB7RfxcOZojbIOvmVD/view",
       "landing page": "#",
       "Executive Overview Report": "https://drive.google.com/drive/u/0/folders/1tGTpUhe_eTf6veNQB7Mnid4Z_cv9Ai86",
       "Finance workflow": "https://docs.google.com/presentation/d/1RkIlEKY156P9vGbVsnpvq6JiG3Ywli81USxhPfts4CI/edit#slide=id.p7",
-      "End To End": "#"
-    },
-    "MORTGAGE USECASE": {
-      "Project Description": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1",
-      "Executive overview report": "https://docs.google.com/presentation/d/1pXfwU396rvBaLahmvEhCoiWR7pYGIoT7/edit#slide=id.p4",
-      "List Report": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1",
-      "Landing Page": "https://drive.google.com/file/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/view?usp=sharing",
-      "Detailed Report": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1"
+      "End To End": "#",
+      "Dataset": "#"
     },
     "INTERVIEW QUESTIONS": {
       "EndToEnd": "https://docs.google.com/presentation/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/edit#slide=id.p1",
       "EndToEndSimulation": "#"
     },
-    "DATABASE": {
-      "EndToEnd":"#",
-      "EndToEndSimulation": "#",
-      "Student Training1": "# ",
-      "Student Training2":"#"
+    "EMPLOYEE PRODUCTIVITY": {
+      "Project Description": "https://drive.google.com/file/d/1_iSV5_AUpEVJnzzr5PJjYd0a63jR0jSB/view?usp=sharing",
+      "Alteryx/Tableau1": "https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20",
+      "Alteryx/Tableau2": "https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20",
+      "DBAEndToEnd":"#",
+      "DBAEndToEndSimulation": "#",
+      "DBAStudent Training1": "# ",
+      "DBAStudent Training2":"#",
+      "Dataset": "#"
     },
     "DEPARTMENTAL": {
       "Recruitment practice": "https://docs.google.com/presentation/d/1ZEwDAc1d6kECE5gWYjuodo5otktYVfBZ/edit#slide=id.p5",
@@ -93,10 +90,13 @@
       "OptionsPlay": "#",
       "Credit Spreads Review": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832&range=F49"
     },
-    "EMPLOYEE PRODUCTIVITY": {
-      "Project Description": "https://drive.google.com/file/d/1_iSV5_AUpEVJnzzr5PJjYd0a63jR0jSB/view?usp=sharing",
-      "Alteryx/Tableau1": "https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20",
-      "Alteryx/Tableau2": "https://docs.google.com/presentation/d/1yWJkOt_1Ovb_Dp_YjyJrOx3fKNX4bM9O/edit#slide=id.ga679445aa0_0_20"
+    "MORTGAGE USECASE": {
+      "Project Description": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1",
+      "Executive overview report": "https://docs.google.com/presentation/d/1pXfwU396rvBaLahmvEhCoiWR7pYGIoT7/edit#slide=id.p4",
+      "List Report": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1",
+      "Landing Page": "https://drive.google.com/file/d/1FK8zeULES9jSZclJfbEDN_UKPSRSQHtH/view?usp=sharing",
+      "Detailed Report": "https://docs.google.com/presentation/d/1cvNAa5wmntmMoTyo_xyIMvc6KV0Lgrqn/edit#slide=id.p1",
+      "Dataset": "#"
     }
   }
 }
