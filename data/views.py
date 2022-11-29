@@ -828,8 +828,7 @@ class FeaturedActivityLinksDeleteView(
 # ========================4. DISPLAY/LIST VIEWS============================
 class FeaturedCategoryListView(ListView):
     queryset = FeaturedCategory.objects.all()
-    template_name = "management/daf/updatelist.html"
-
+    template_name = "data/training/updatelist.html"
 
 def activity_view(request):
     categories = (

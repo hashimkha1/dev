@@ -39,7 +39,8 @@ from management.models import (
     TaskHistory,
     TaskLinks,
     Requirement,
-    LBandLS
+    LBandLS,
+    Training
 )
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
@@ -1228,6 +1229,37 @@ def evidence_update_view(request, id, *args, **kwargs):
 #         return False
 
 
+
+# =============================EMPLOYEE SESSIONS========================================
+class SessionCreateView(LoginRequiredMixin, CreateView):
+    model=Training
+    success_url = "/management/session"
+    fields= "__all__"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class SessionListView(ListView):
+    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+    queryset=Training.objects.all().order_by("-created_date")
+    template_name = "management/departments/hr/sessions.html"
+
+class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Training
+    success_url = "/management/sessions"
+    # fields = ["name", "slug", "description", "is_active", "is_featured"]
+    fields = "__all__"
+    # form = DepartmentForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
 
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
