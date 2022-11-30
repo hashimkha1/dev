@@ -1,6 +1,5 @@
 from __future__ import print_function
 import os
-import pandas as pd
 import re
 from dateutil import parser
 from bs4 import BeautifulSoup
@@ -133,7 +132,8 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     try:
         with psycopg2.connect(
                             host = 'localhost',
-                            dbname = 'Stock Price Index',
+                            # dbname = 'Stock Price Index',
+                            dbname = 'testing',
                             user = 'postgres',
                             password = 'Honnappa001@500',
                             port = 5432
@@ -150,7 +150,7 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
                 )'''
                 cursor.execute(creating_db)
 
-                insert_query = '''INSERT INTO stockmarket VALUES (%s,%s,%s,%s,%s,%s)'''
+                insert_query = '''INSERT INTO getdata_stockmarket(symbol,action,qty,unit_price,total_price,date) VALUES (%s,%s,%s,%s,%s,%s)'''
                 values = (symbol,action, qty,unit_price,total_price,date)
                 cursor.execute(insert_query,vars = values)
     except Exception as err:
@@ -159,17 +159,16 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 
 #inserting data into cryptodatabase
 def crypto_data(symbol,action,unit_price, total_price,date):
-    #Database connection 
     try:
         with psycopg2.connect(
                             host = 'localhost',
-                            dbname = 'Stock Price Index',
+                            dbname = 'testing',
                             user = 'postgres',
                             password = 'Honnappa001@500',
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
-                #Creating database named RobinhoodEmailInfo
+                #getdata_cryptomarket
                 creating_db = '''CREATE TABLE IF NOT EXISTS getdata_cryptomarket(
                     symbol varchar(250),
                     action varchar(200),
@@ -179,7 +178,7 @@ def crypto_data(symbol,action,unit_price, total_price,date):
                 )'''
                 cursor.execute(creating_db)
 
-                insert_query = '''INSERT INTO cryptomarket VALUES (%s,%s,%s,%s,%s)'''
+                insert_query = '''INSERT INTO getdata_cryptomarket(symbol,action,unit_price,total_price,date) VALUES (%s,%s,%s,%s,%s)'''
                 values = (symbol,action,unit_price,total_price,date)
                 cursor.execute(insert_query,vars = values)
     
@@ -206,14 +205,17 @@ def GetSubject(soup):
     try:
         name = soup.find_all('div', {'class' : 'mj-section-rh'})
         subject = name[1].find('div').text
+        sub_pat = re.compile(r'Order Executed|Option Order Executed')
+        sub_match = sub_pat.findall(subject)
+        subject = sub_match[0].strip()
         print(subject)
-        print("-----------------------------")
+
         return subject
     except:
         return None
 
-#fetch order executed information
-def get_executed_info(soup, header):
+#Stock Price Index info
+def get_stock_price(soup, header):
     try:
         name = soup.find_all('div', {'class' : 'mj-section-rh'})
         text_body = name[2].find_all('div')
@@ -235,86 +237,93 @@ def get_executed_info(soup, header):
         qty_match = qty_pat.findall(text)
         qty = qty_match[0]
 
-        if len(qty_match) > 1:
-            #selling stocks
-            print(f'Quantifty of stocks sold : {qty}')
+        #selling stocks
+        print(f'Quantifty of stocks sold : {qty}')
 
-            #Company name
-            cmp_pat = re.compile(r"[A-Z]+\s")
-            cmp_match = cmp_pat.findall(text)
-            symbol = cmp_match[0].strip()
-            print(f"Symbol : {symbol}")
+        #Company name
+        cmp_pat = re.compile(r"[A-Z]+\s")
+        cmp_match = cmp_pat.findall(text)
+        symbol = cmp_match[0].strip()
+        print(f"Symbol : {type(symbol)}")
 
-            #average price and Total price
-            price_pat = re.compile(r'[$]\d+[0-9.]+\d+')
-            price_match = price_pat.findall(text)
-            if len(price_match) <= 2:
-                avg_price = price_match[0].replace('$','')
-                total_price = price_match[1].replace('$','')
-            else:
-                avg_price = price_match[1].replace('$','')
-                total_price = price_match[2].replace('$','')
-
-            try:
-                total_price = float(total_price.replace(',',''))
-            except:
-                total_price = float(total_price)
-
-            #strike_price
-            try:
-                avg_price = float(avg_price.replace(',',''))
-            except:
-                avg_price = float(avg_price)
-
-            print(f'avg price and total_price: {avg_price} {total_price}')
-
-            #Date Primary Key
-            date_pat = re.compile(r'(januarary|February|March|April|May|June|July|August|September|October|November|December)+')
-            date_match = date_pat.finditer(text)
-            for i in date_match:
-                start = i.start()
-            date = (parser.parse(text[start:],fuzzy_with_tokens = True,ignoretz = True))[0]
-            print(f'date : {date}')
-            print('--------------------------------------')
-            stock_data(symbol=symbol,action=action,qty=qty,unit_price=avg_price, total_price=total_price,date=date)
-
-        #CryptoTrade
+        #average price and Total price
+        price_pat = re.compile(r'[$]\d+[0-9.]+\d+')
+        price_match = price_pat.findall(text)
+        if len(price_match) <= 2:
+            avg_price = price_match[0].replace('$','')
+            total_price = price_match[1].replace('$','')
         else:
-            print(f'Action : {action}')
-            #Company
-            cmp_pat = re.compile(r'of\s\w+')
-            cmp_match = cmp_pat.findall(text)
-            symbol = cmp_match[0].split(' ')
-            symbol = symbol[-1].strip()
+            avg_price = price_match[1].replace('$','')
+            total_price = price_match[2].replace('$','')
 
-            #Selling price and buying price
-            price_pat = re.compile(r'[$]\d+[0-9.]+\d+')
-            price_match = price_pat.findall(text)
+        try:
+            total_price = float(total_price.replace(',',''))
+        except:
+            total_price = float(total_price)
 
-            unit_price = price_match[1].replace('$','')
-            total_price = price_match[0].replace('$','')
+        #strike_price
+        try:
+            avg_price = float(avg_price.replace(',',''))
+        except:
+            avg_price = float(avg_price)
 
-            try:
-                unit_price = float(unit_price.replace(',',''))
-            except:
-                unit_price = float(unit_price)
-            
-            try:
-                total_price = float(total_price.replace(',',''))
-            except:
-                toal_price = float(total_price)
-            
-            #Date Primary Key
-            date_pat = re.compile(r'(januarary|February|March|April|May|June|July|August|September|October|November|December)+')
-            date_match = date_pat.finditer(text)
-            for i in date_match:
-                start = i.start()
-            date = (parser.parse(text[start:],fuzzy_with_tokens = True,ignoretz = True))[0]
-            print(f'date : {date}')
-            print('--------------------------------------')
-            crypto_data(symbol=symbol,action = action,unit_price=unit_price,total_price=total_price, date= date)
+        print(f'avg price and total_price: {avg_price} {total_price}')
 
+        #Date Primary Key
+        date_pat = re.compile(r'(januarary|February|March|April|May|June|July|August|September|October|November|December)+')
+        date_match = date_pat.finditer(text)
+        for i in date_match:
+            start = i.start()
+        date = (parser.parse(text[start:],fuzzy_with_tokens = True,ignoretz = True))[0]
+        print(f'date : {type(date)}')
+        print('--------------------------------------')
+        stock_data(symbol=symbol,action=action,qty=qty,unit_price=avg_price, total_price=total_price,date=date)
     except Exception as err:
         print(err)
 
+def get_crypto_price(soup, header):
+    try:
+        print("Crypto ------------------")
+        name = soup.find_all('div', {'class' : 'mj-section-rh'})
+        text_body = name[2].find_all('div')
+        text = str(text_body[2])
+
+        sell_buy_pat = re.compile(r'(buy|sell)')
+        sell_buy_match = sell_buy_pat.findall(text)
+        action = sell_buy_match[0]
+        print(f'Action : {action}')
+
+        #Company
+        cmp_pat = re.compile(r'of\s\w+')
+        cmp_match = cmp_pat.findall(text)
+        symbol = cmp_match[0].split(' ')
+        symbol = symbol[-1].strip()
+        print(f'Symbol : {symbol}')
+
+        #Selling price and buying price
+        price_pat = re.compile(r'[$]\d+[0-9.]+\d+')
+        price_match = price_pat.findall(text)
+        unit_price = price_match[1].replace('$','')
+        total_price = price_match[0].replace('$','')
+
+        try:
+            unit_price = float(unit_price.replace(',',''))
+        except:
+            unit_price = float(unit_price)
         
+        try:
+            total_price = float(total_price.replace(',',''))
+        except:
+            total_price = float(total_price)
+        
+        #Date Primary Key
+        date_pat = re.compile(r'(januarary|February|March|April|May|June|July|August|September|October|November|December)+')
+        date_match = date_pat.finditer(text)
+        for i in date_match:
+            start = i.start()
+        date = (parser.parse(text[start:],fuzzy_with_tokens = True,ignoretz = True))[0]
+        print(f'date : {type(date)}')
+        
+        crypto_data(symbol=symbol,action = action,unit_price=unit_price,total_price=total_price, date= date)
+    except Exception as err:
+        print(f"Alert Message : {err}")

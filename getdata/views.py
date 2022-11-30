@@ -36,7 +36,8 @@ from getdata.utils import (
                     get_message,
                     getdata,
                     GetSubject,
-                    get_executed_info
+                    get_crypto_price,
+                    get_stock_price
 
 )
 from finance.models import (
@@ -307,22 +308,29 @@ def upload_csv(request):
 def options(request):
     service = get_gmail_service()
     messages = search_messages(service= service, query= 'Robinhood')
-    for message in messages[:100]:
+    for message in messages:
         msg_id = message['id']
         print(msg_id)
         data = get_message(service=service, msg_id=msg_id)
         soup = getdata(data)
         if soup == 0:
+            os.remove(data)
             continue
         try:
             subjectname = GetSubject(soup)
             if subjectname == None:
+                os.remove(data)
                 continue
         except:
             continue
-
+        print(f'Order executed : {subjectname}')
+        #This is for stock price
         if subjectname == 'Option Order Executed':
-            get_executed_info(soup, subjectname)
+            get_stock_price(soup, subjectname)
+            os.remove(data)
+        #This is for crypto currency
+        elif subjectname == 'Order Executed':
+            get_crypto_price(soup, subjectname)
             os.remove(data)
         else:
             os.remove(data)
