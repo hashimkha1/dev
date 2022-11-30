@@ -1233,11 +1233,12 @@ def evidence_update_view(request, id, *args, **kwargs):
 # =============================EMPLOYEE SESSIONS========================================
 class SessionCreateView(LoginRequiredMixin, CreateView):
     model=Training
-    success_url = "/management/session"
-    fields= "__all__"
+    success_url = "/management/sessions"
+    # fields= "__all__"
+    fields = ["department","category","subcategory","topic","level","session","session_link","expiration_date","description","is_active","featured"]
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.presenter = self.request.user
         return super().form_valid(form)
 
 class SessionListView(ListView):

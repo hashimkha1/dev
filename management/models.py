@@ -39,24 +39,25 @@ class Training(models.Model):
         related_name="department_name")
     category = models.ForeignKey(
         FeaturedCategory,
-        verbose_name=("departments"),
+        verbose_name=("categories"),
         on_delete=models.CASCADE,
-        related_name="department_name")
+        related_name="category_name")
     subcategory = models.ForeignKey(
         FeaturedSubCategory,
         verbose_name=("Subcategory"),
         on_delete=models.CASCADE,
-        related_name="department_name")
+        related_name="subcategory_name")
     topic = models.ForeignKey(
         FeaturedActivity,
-        verbose_name=("departments"),
+        verbose_name=("topic"),
         on_delete=models.CASCADE,
-        related_name="department_name")
+        related_name="title")
     level = models.IntegerField(choices=Level.choices)
     session=models.PositiveIntegerField()
     session_link = models.CharField(max_length=500, blank=True, null=True)
     created_date = models.DateTimeField(default=timezone.now)
     expiration_date = models.DateTimeField(blank=True,null=True)
+    description = models.TextField(default='No Comment',null=True, blank=True)
     is_active = models.BooleanField(default=True)
     featured= models.BooleanField(default=True)
 # --------------------------------------
