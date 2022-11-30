@@ -15,6 +15,7 @@
         </a></p>
       </div>
     </div>
+    
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
@@ -37,7 +38,13 @@
       <tbody>
         {% for session in  object_list  %}
             <tr>
-            <td>{{session.presenter}}</td>
+            <td>
+                <a class="text-dark  text-decoration-none" 
+                data-toggle="tooltip" title="#"
+                href="{% url 'management:user_session' request.session.employee_name%}">
+                {{session.presenter}}
+                </a>
+            </td>
             <td>{{session.department}}</td>
             <td>{{session.category}}</td>
             <td>{{session.subcategory}}</td>
@@ -48,6 +55,7 @@
                 {{session.topic}}
                 </a>
             </td>
+            user_session
             <td>{{session.created_date|date:"F d, Y"}}</td>
             <!-- <td>{{session.employee_type}}</td> -->
             <td>{{session.level}}</td>
@@ -62,6 +70,7 @@
         {% endfor %}
       </tbody>
     </table>
+
   </div>
 </section>
 {% endblock content %}

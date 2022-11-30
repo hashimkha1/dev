@@ -65,6 +65,7 @@ urlpatterns = [
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),
     path('session/<int:pk>/', views.SessionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='updatesession'),
     path('sessions/', views.SessionListView.as_view(), name='sessions'),
+    path('user/<str:username>/',views.usersession, name='user_session'),
 
     path('newdepartment/', views.newdepartment, name='newdepartment'),
     path('departments/', views.department, name='departments'),

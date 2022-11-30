@@ -1262,6 +1262,40 @@ class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+def usersession(request, user=None, *args, **kwargs):
+    request.session["siteurl"] = settings.SITEURL
+    current_user = request.user
+    deadline_date = date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    sessions = Training.objects.all().filter(presenter=employee)
+    target_sessions =75
+    num_sessions = sessions.count()
+    # points = sessions.aggregate(Your_Total_Points=Sum("point"))
+    # Points = points.get("Your_Total_Points")
+    bal_session = target_sessions - num_sessions
+    context = {
+        "sessions":sessions,
+        'target_sessions': target_sessions,
+        "num_sessions": num_sessions,
+        "bal_session": bal_session,
+        "deadline_date": deadline_date,
+    }
+    # setting  up session
+    request.session["employee_name"] = kwargs.get("username")
+
+    if request.user.is_superuser or request.user == employee:
+        return render(request, "management/departments/hr/usersessions.html", context)
+    elif request.user.is_superuser:
+        return render(request, "management/departments/hr/sessions.html", context)
+    else:
+        # raise Http404("Login/Wrong Page: Contact Admin Please!")
+        return redirect("main:layout")
+
+
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
 def assess(request):
