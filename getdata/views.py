@@ -334,11 +334,11 @@ def options(request):
             os.remove(data)
         else:
             os.remove(data)
-        # return render(request, "getdata\options.html")
+        # return render(request, "getdata/options.html")
         return redirect("getdata:stockmarket")
 
 class OptionList(ListView):
     model=stockmarket
-    template_name="getdata\options.html"
+    template_name="getdata/options.html"
     context_object_name = "stocks"
 
