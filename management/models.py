@@ -18,6 +18,8 @@ from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
 User = get_user_model()
 
 # --------------------------------------
+
+
 class Training(models.Model):
     class Level(models.IntegerChoices):
         Level_1 = 1
@@ -60,7 +62,9 @@ class Training(models.Model):
     description = models.TextField(default='No Comment',null=True, blank=True)
     is_active = models.BooleanField(default=True)
     featured= models.BooleanField(default=True)
-# --------------------------------------
+
+
+
 
 class Transaction(models.Model):
     # Method of Payment
