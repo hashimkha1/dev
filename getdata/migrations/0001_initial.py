@@ -26,17 +26,17 @@ class Migration(migrations.Migration):
                 ('parsed_date', models.DateTimeField(auto_now_add=True)),
             ],
         ),
-        migrations.CreateModel(
-            name='cryptomarket',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('symbol', models.CharField(max_length=255)),
-                ('action', models.CharField(max_length=255)),
-                ('unit_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
-                ('total_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
-                ('date', models.DateTimeField()),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='cryptomarket',
+        #     fields=[
+        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('symbol', models.CharField(max_length=255)),
+        #         ('action', models.CharField(max_length=255)),
+        #         ('unit_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
+        #         ('total_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
+        #         ('date', models.DateTimeField()),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='Daily_Date',
             fields=[
@@ -72,18 +72,18 @@ class Migration(migrations.Migration):
                 ('received_date', models.CharField(max_length=255)),
             ],
         ),
-        migrations.CreateModel(
-            name='stockmarket',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('symbol', models.CharField(max_length=255)),
-                ('action', models.CharField(max_length=255)),
-                ('qty', models.PositiveIntegerField()),
-                ('unit_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
-                ('total_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
-                ('date', models.DateTimeField()),
-            ],
-        ),
+        # migrations.CreateModel(
+        #     name='stockmarket',
+        #     fields=[
+        #         ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+        #         ('symbol', models.CharField(max_length=255)),
+        #         ('action', models.CharField(max_length=255)),
+        #         ('qty', models.PositiveIntegerField()),
+        #         ('unit_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
+        #         ('total_price', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
+        #         ('date', models.DateTimeField()),
+        #     ],
+        # ),
         migrations.CreateModel(
             name='Traffic_Data',
             fields=[
