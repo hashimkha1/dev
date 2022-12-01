@@ -11,11 +11,57 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save
 from management.utils import unique_slug_generator
 from django.contrib.auth import get_user_model
-from accounts.models import TaskGroups
+from accounts.models import TaskGroups,Department
+from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
+
 # --------------------------------------
+class Training(models.Model):
+    class Level(models.IntegerChoices):
+        Level_1 = 1
+        Level_2 = 2
+        Level_3 = 3
+        Level_4 = 4
+        Level_5 = 5
+    presenter = models.ForeignKey(
+        User,
+        verbose_name=("presenter name"),
+        on_delete=models.CASCADE,
+        # limit_choices_to={"is_employee": True,"is_client": True, "is_active": True},
+        limit_choices_to=Q(is_employee=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        related_name="employee_name")
+    department = models.ForeignKey(
+        Department,
+        verbose_name=("departments"),
+        on_delete=models.CASCADE,
+        related_name="department_name")
+    category = models.ForeignKey(
+        FeaturedCategory,
+        verbose_name=("categories"),
+        on_delete=models.CASCADE,
+        related_name="category_name")
+    subcategory = models.ForeignKey(
+        FeaturedSubCategory,
+        verbose_name=("Subcategory"),
+        on_delete=models.CASCADE,
+        related_name="subcategory_name")
+    topic = models.ForeignKey(
+        FeaturedActivity,
+        verbose_name=("topic"),
+        on_delete=models.CASCADE,
+        related_name="title")
+    level = models.IntegerField(choices=Level.choices)
+    session=models.PositiveIntegerField()
+    session_link = models.CharField(max_length=500, blank=True, null=True)
+    created_date = models.DateTimeField(default=timezone.now)
+    expiration_date = models.DateTimeField(blank=True,null=True)
+    description = models.TextField(default='No Comment',null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    featured= models.BooleanField(default=True)
+# --------------------------------------
+
 class Transaction(models.Model):
     # Method of Payment
     Cash = "Cash"

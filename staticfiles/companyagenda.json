@@ -30,7 +30,8 @@
     "HUMAN RESOURCE": {
         "General": {
             "departments": "https://docs.google.com/spreadsheets/d/1vsxZjFGuSb7T4OqG_ZTQu93C7EF3ZyzgwxskbRlJfMY/edit#gid=0",
-            "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1"
+            "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1",
+            "Notes": "https://docs.google.com/spreadsheets/d/1jfmrZeUbRC3ihJ0aV0ENmIwPrAtl1B7LcbhHwc78Q1A/edit#gid=566553932"
         },
         "MEETINGS": {
             "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
@@ -64,21 +65,23 @@
         }
     },
     "IT": {
+        "GOALS": {
+            "Report": "#",
+            "Goals": "https://docs.google.com/presentation/d/1Jjtg8eRQ9CqiLghKlH5hQ7hCv5-eH9NV/edit#slide=id.p12"
+        },
         "WEBSITE DEVELOPMENT": {
-            "Requirements": "https://www.codanalytics.net/management/requirements/",
-            "Django Training": "https://docs.google.com/presentation/d/1ThVn9NYI2UU4QEc3UJTyCcgxOl5sKbSwpLzUDzPxuKM/edit#slide=id.g167f8d0d9ad_0_51",
-            "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431"
-
+            "Requirements": "https://www.codanalytics.net/management/requirements/"
         },
         "DATA ANALYSIS": {
             "Training": "https://www.codanalytics.net/data/bitraining/",
             "support": "https://www.codanalytics.net/accounts/tracker/",
-            "Interview": "https://www.codanalytics.net/data/interview/",
-            "Edit Interview": "https://www.codanalytics.net/data/interview/",
-            "Edit Training": "https://www.codanalytics.net/data/interview/"
+            "Interview": "https://www.codanalytics.net/data/interview/"
         },
-        "OTHER": {
-            "Trainee powerpoint": "https://www.google.com/"
+        "TROUBLESHOOTING": {
+            "Web Training":"https://docs.google.com/presentation/d/1ThVn9NYI2UU4QEc3UJTyCcgxOl5sKbSwpLzUDzPxuKM/edit#slide=id.g167f8d0d9ad_0_51",
+            "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431",
+            "Edit Interview": "https://www.codanalytics.net/data/roles/",
+            "Edit Training": "https://www.codanalytics.net/data/interview/"
         }
     },
     "MARKETING": {
@@ -93,8 +96,8 @@
         },
     "PROJECTS": {
             "D2A": {
-                "PPT": "https://www.codanalytics.net/#/",
-                "website": "https://gadcafrica.org/",
+                "PPT": "#",
+                "website": "#",
                 "SocialMedia": "https://www.facebook.com/people/African-Diaspora-Week/100086765367870/"
             },
             "GADC": {
@@ -106,7 +109,12 @@
                 "PPT": "https://www.codanalytics.net/#/",
                 "website": "#",
                 "other": "https://www.codanalytics.net/#/"
-            }
+            },
+            "FIELD_PROJECTS": {
+                    "Solar_PPT": "#",
+                    "Phase_Video": "htps://transcripts.gotomeeting.com/#/s/8f8e12241ae5c3ff8ce43435afcc1055d7b180ff970b48cb17f7452a1856901e",
+                    "Other_Phases":"#"
+                }
         }
 }
 

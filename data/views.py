@@ -828,8 +828,7 @@ class FeaturedActivityLinksDeleteView(
 # ========================4. DISPLAY/LIST VIEWS============================
 class FeaturedCategoryListView(ListView):
     queryset = FeaturedCategory.objects.all()
-    template_name = "management/daf/updatelist.html"
-
+    template_name = "data/training/updatelist.html"
 
 def activity_view(request):
     categories = (
@@ -858,6 +857,10 @@ def table_activity_view(request):
         request=request, template_name="data/training/updatelist.html", context=context
     )
 
+class LinksListView(ListView):
+    model= ActivityLinks
+    template_name = "data/training/links.html"
+    context_object_name='links'
 
 class DSUListView(ListView):
     queryset = DSU.objects.all().order_by("-created_at")

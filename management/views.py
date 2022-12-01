@@ -39,7 +39,8 @@ from management.models import (
     TaskHistory,
     TaskLinks,
     Requirement,
-    LBandLS
+    LBandLS,
+    Training
 )
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
@@ -1108,7 +1109,8 @@ def newevidence(request, taskid):
         form = EvidenceForm(request.POST)
         # Check whether the task exist then only we allow to create evidence
         try:
-            Task.objects.get(id=taskid)
+            task = Task.objects.get(id=taskid)
+            activity_name = task.activity_name
         except:
             return render(request, "errors/404.html")
 
@@ -1128,10 +1130,23 @@ def newevidence(request, taskid):
             try:
                 a=requests.get(link)
                 if a.status_code == 200:
+                    user_list=[]
                     check = TaskLinks.objects.filter(link=link)
                     if check.exists():
-                        messages.error(request, "this link belogs to another user")
-                        return render(request, "management/daf/evidence_form.html", {"form": form})
+                        users = check.values_list('added_by__username')
+                        for username in users:
+                            user_list.append(username[0])
+                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions']
+                        if activity_name in act_list:
+                            if request.user.username in user_list:
+                                messages.error(request, "you have already uploaded this link")
+                                return render(request, "management/daf/evidence_form.html", {"form": form})
+                            form.save()
+                            return redirect("management:evidence")
+                        else:
+                            messages.error(request, "this link is already uploaded")
+                            return render(request, "management/daf/evidence_form.html", {"form": form})
+
                     form.save()
                     return redirect("management:evidence")
                 else:
@@ -1139,7 +1154,7 @@ def newevidence(request, taskid):
                     return render(request, "management/daf/evidence_form.html", {"form": form})
 
             except:
-                messages.error(request, "please provide valid link")
+                messages.error(request, "Please check your link")
                 return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
@@ -1213,6 +1228,72 @@ def evidence_update_view(request, id, *args, **kwargs):
 #             return True
 #         return False
 
+
+
+# =============================EMPLOYEE SESSIONS========================================
+class SessionCreateView(LoginRequiredMixin, CreateView):
+    model=Training
+    success_url = "/management/sessions"
+    # fields= "__all__"
+    fields = ["department","category","subcategory","topic","level","session","session_link","expiration_date","description","is_active","featured"]
+
+    def form_valid(self, form):
+        form.instance.presenter = self.request.user
+        return super().form_valid(form)
+
+class SessionListView(ListView):
+    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+    queryset=Training.objects.all().order_by("-created_date")
+    template_name = "management/departments/hr/sessions.html"
+
+class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Training
+    success_url = "/management/sessions"
+    # fields = ["name", "slug", "description", "is_active", "is_featured"]
+    fields = "__all__"
+    # form = DepartmentForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+
+def usersession(request, user=None, *args, **kwargs):
+    request.session["siteurl"] = settings.SITEURL
+    current_user = request.user
+    deadline_date = date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    sessions = Training.objects.all().filter(presenter=employee)
+    target_sessions =75
+    num_sessions = sessions.count()
+    # points = sessions.aggregate(Your_Total_Points=Sum("point"))
+    # Points = points.get("Your_Total_Points")
+    bal_session = target_sessions - num_sessions
+    context = {
+        "sessions":sessions,
+        'target_sessions': target_sessions,
+        "num_sessions": num_sessions,
+        "bal_session": bal_session,
+        "deadline_date": deadline_date,
+    }
+    # setting  up session
+    request.session["employee_name"] = kwargs.get("username")
+
+    if request.user.is_superuser or request.user == employee:
+        return render(request, "management/departments/hr/usersessions.html", context)
+    elif request.user.is_superuser:
+        return render(request, "management/departments/hr/sessions.html", context)
+    else:
+        # raise Http404("Login/Wrong Page: Contact Admin Please!")
+        return redirect("main:layout")
 
 
 # =============================EMPLOYEE ASSESSMENTS========================================
