@@ -22,6 +22,27 @@ def best_employee(task_obj):
     # logger.debug(f'best_users: {best_users}')
     return best_users
 
+def employee_reward(tasks):
+    # sum_of_tasks = task_obj.annotate(sum=Sum('point'))
+    # sum_of_tasks = task_obj.annotate(sum=Sum('mxpoint'))
+    # max_point = sum_of_tasks.aggregate(max=Max('sum')).get('max')
+    # point = sum_of_tasks.aggregate(max=Max('sum')).get('max')
+    points = tasks.aggregate(Your_Total_Points=Sum("point"))
+    mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
+    try:
+        Points = points.get("Your_Total_Points")
+    except (TypeError, AttributeError):
+        Points = 0
+    try:
+        MaxPoints = mxpoints.get("Your_Total_MaxPoints")
+    except (TypeError, AttributeError):
+        MaxPoints = 0
+    try:
+        point_percentage=round((Points/MaxPoints),2)
+    except (TypeError, AttributeError):
+        point_percentage = 0
+    return Points,MaxPoints,point_percentage
+
 def payinitial(tasks):
     # tasks = Task.objects.all().filter(employee=employee)
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))

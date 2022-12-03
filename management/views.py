@@ -59,7 +59,7 @@ from management.utils import (
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable
+                               addloantable,employee_reward
                         )
 
 from django.contrib import messages
@@ -630,12 +630,16 @@ def usertask(request, user=None, *args, **kwargs):
         employee=employee)
     point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
-    points = tasks.aggregate(Your_Total_Points=Sum("point"))
-    mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
+    # points = tasks.aggregate(Your_Total_Points=Sum("point"))
+    # mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    Points = points.get("Your_Total_Points")
-    MaxPoints = mxpoints.get("Your_Total_MaxPoints")
+    # Points = points.get("Your_Total_Points")
+    # MaxPoints = mxpoints.get("Your_Total_MaxPoints")
+    Points,MaxPoints,point_percentage=employee_reward(tasks)
+    print(Points)
+    print(MaxPoints)
+    print(point_percentage)
     pay = earning.get("Your_Total_Pay")
     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
     pay = earning.get("Your_Total_Pay")
@@ -704,6 +708,7 @@ def usertask(request, user=None, *args, **kwargs):
         "tasks": tasks,
         "Points": Points,
         "MaxPoints": MaxPoints,
+        "point_percentage": point_percentage,
         "pay": pay,
         "GoalAmount": GoalAmount,
         "paybalance": paybalance,
@@ -911,8 +916,12 @@ def pay(request, user=None, *args, **kwargs):
     # ====================Bonus Section=============================
     pointsearning,Night_Bonus,holidaypay,yearly=bonus(tasks,total_pay,payslip_config)
     # print(pointsearning,Night_Bonus,holidaypay,yearly)
-
-    EOM = Decimal(0.00)  # employee of month
+    Points,MaxPoints,point_percentage=employee_reward(tasks)
+    if point_percentage<=0.75:
+        # EOM=Decimal(1500.00)  # employee of month
+        EOM =payslip_config.eom_bonus 
+    else:
+        EOM = Decimal(0.00)  # employee of month
     EOQ = Decimal(0.00)  # employee of quarter
     EOY = Decimal(0.00)  # employee of year
     if month == 12:
