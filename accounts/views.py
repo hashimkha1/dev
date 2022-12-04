@@ -509,7 +509,7 @@ def Employeelist(request):
 def clientlist(request):
     students = CustomerUser.objects.filter(
                                              Q(category=3), Q(sub_category=2)
-                                            #  Q(is_client=True),Q(is_active=True)
+                                             Q(is_client=True),Q(is_active=True)
                                           ).order_by("-date_joined")
     jobsupport = CustomerUser.objects.filter(
                                              Q(category=3), Q(sub_category=1),

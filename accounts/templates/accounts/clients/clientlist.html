@@ -134,9 +134,9 @@
               <td>{{client.last_name|slice:":15" }}</td>
               <td>{{client.phone}}</td>
               <td>{{client.email}}</td>
-              <td>{{client.city}}</td>
-              <td>{{client.state}}</td>
-              <td>{{client.country}}</td>
+              <td>{{client.city|slice:":10"}}</td>
+              <td>{{client.state|slice:":10"}}</td>
+              <td>{{client.country|slice:":10"}}</td>
               <!-------
               <td>{{client.id}}</td>
               <td>{{client.category}}</td>
