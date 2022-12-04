@@ -917,7 +917,7 @@ def pay(request, user=None, *args, **kwargs):
     pointsearning,Night_Bonus,holidaypay,yearly=bonus(tasks,total_pay,payslip_config)
     # print(pointsearning,Night_Bonus,holidaypay,yearly)
     Points,MaxPoints,point_percentage=employee_reward(tasks)
-    if point_percentage<=0.75:
+    if point_percentage>=0.75:
         # EOM=Decimal(1500.00)  # employee of month
         EOM =payslip_config.eom_bonus 
     else:

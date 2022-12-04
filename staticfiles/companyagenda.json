@@ -69,19 +69,17 @@
             "Report": "#",
             "Goals": "https://docs.google.com/presentation/d/1Jjtg8eRQ9CqiLghKlH5hQ7hCv5-eH9NV/edit#slide=id.p12"
         },
-        "WEBSITE DEVELOPMENT": {
-            "Requirements": "https://www.codanalytics.net/management/requirements/"
-        },
         "DATA ANALYSIS": {
-            "Training": "https://www.codanalytics.net/data/bitraining/",
+            "clients" : "https://www.codanalytics.net/accounts/client",
+            "Training": "https://www.codanalytics.net/data/train/",
             "support": "https://www.codanalytics.net/accounts/tracker/",
-            "Interview": "https://www.codanalytics.net/data/interview/"
+            "Interview": "https://www.codanalytics.net/data/interview/",
+            "Schedule": "https://docs.google.com/spreadsheets/d/1tDzmn4c5slCxKIq_wzpPseuvarifbw7d/edit#gid=632235438"
         },
-        "TROUBLESHOOTING": {
+        "WEBSITE DEVELOPMENT": {
+            "Requirements": "https://www.codanalytics.net/management/requirements/",
             "Web Training":"https://docs.google.com/presentation/d/1ThVn9NYI2UU4QEc3UJTyCcgxOl5sKbSwpLzUDzPxuKM/edit#slide=id.g167f8d0d9ad_0_51",
-            "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431",
-            "Edit Interview": "https://www.codanalytics.net/data/roles/",
-            "Edit Training": "https://www.codanalytics.net/data/interview/"
+            "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431"
         }
     },
     "MARKETING": {
