@@ -132,14 +132,14 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     #Database connection 
     try:
         with psycopg2.connect(
-                            host = 'localhost',
-                            # dbname = 'Stock Price Index',
-                            # dbname = 'testing',
-                            # user = 'postgres',
-                            # password = 'Honnappa001@500',
-                            dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
+                            host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
+                            dbname = 'dce03ou5n6vak',
+                            user = 'scbgdqffbkecgx',
+                            password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
+                            # host = 'localhost',
+                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
+                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
+                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
@@ -165,13 +165,14 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 def crypto_data(symbol,action,unit_price, total_price,date):
     try:
         with psycopg2.connect(
-                            host = 'localhost',
-                            # dbname = 'testing',
-                            # user = 'postgres',
-                            # password = 'Honnappa001@500',
-                            dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
+                            host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
+                            dbname = 'dce03ou5n6vak',
+                            user = 'scbgdqffbkecgx',
+                            password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
+                            # host = 'localhost',
+                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
+                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
+                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
