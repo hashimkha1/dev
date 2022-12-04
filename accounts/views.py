@@ -507,9 +507,10 @@ def Employeelist(request):
 
 # ================================CLIENT SECTION================================
 def clientlist(request):
-    clients = CustomerUser.objects.filter(Q(category=3) | Q(is_client=True)).order_by(
-        "-date_joined"
-    )
+    clients = CustomerUser.objects.filter(
+                                             Q(category=3)|Q(is_client=True),
+                                             Q(is_active=True)
+                                          ).order_by("-date_joined")
     return render(request, "accounts/clients/clientlist.html", {"clients": clients})
 
 

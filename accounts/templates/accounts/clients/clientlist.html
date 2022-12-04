@@ -25,7 +25,7 @@
         {% for client in clients %}
             <tr>
               <td>{{client.date_joined|date:"F d, Y"}}</td>
-              <td>{{client.first_name}}</td>
+              <td>{{client.first_name|slice:":15"}}</td>
               <td>{{client.last_name|slice:":15" }}</td>
               <td>{{client.phone}}</td>
               <td>{{client.email}}</td>
