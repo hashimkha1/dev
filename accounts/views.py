@@ -507,11 +507,29 @@ def Employeelist(request):
 
 # ================================CLIENT SECTION================================
 def clientlist(request):
-    clients = CustomerUser.objects.filter(
-                                             Q(category=3)|Q(is_client=True),
-                                             Q(is_active=True)
+    students = CustomerUser.objects.filter(
+                                             Q(category=3), Q(sub_category=2)
+                                            #  Q(is_client=True),Q(is_active=True)
                                           ).order_by("-date_joined")
-    return render(request, "accounts/clients/clientlist.html", {"clients": clients})
+    jobsupport = CustomerUser.objects.filter(
+                                             Q(category=3), Q(sub_category=1),
+                                             Q(is_client=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
+    interview = CustomerUser.objects.filter(
+                                             Q(category=3), Q(sub_category=2),
+                                             Q(is_client=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
+    past = CustomerUser.objects.filter(
+                                             Q(category=3)|Q(is_client=True),
+                                             Q(is_active=False)
+                                          ).order_by("-date_joined")
+    context={
+        "students": students,
+        "jobsupport": jobsupport,
+        "interview": interview,
+        "past": past
+    }
+    return render(request, "accounts/clients/clientlist.html", context)
 
 
 @method_decorator(login_required, name="dispatch")
