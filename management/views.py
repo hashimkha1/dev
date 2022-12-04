@@ -758,11 +758,13 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     try:
         task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
         employee = get_object_or_404(User, username=task_history.employee)
+        tasks = TaskHistory.objects.all().filter(
+            employee=employee, submission__month=task_history.submission.strftime("%m")
+        )
     except TaskHistory.DoesNotExist:
+        tasks = TaskHistory.objects.all()
+        employee=request.user
         print("You dont have any matching records in the database")
-    tasks = TaskHistory.objects.all().filter(
-        employee=employee, submission__month=task_history.submission.strftime("%m")
-    )
     # tasks = Task.objects.filter(user__username=request.user)
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))

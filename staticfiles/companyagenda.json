@@ -5,7 +5,9 @@
             "General": "https://transcripts.gotomeeting.com/#/s/f60a4fedf03efab161a2bb1c81402f9af86c525b38de9ea7f34dd07a8486e3fb",
             "Sprint": "https://transcripts.gotomeeting.com/#/s/d4fbef930a81a2420520c9a2c042a491f5ef8d25b5a2b8347c95ab7ccccf73c6",
             "DAF session": "https://transcripts.gotomeeting.com/#/s/8ae5e5cee624e7293e325a9fa76f61342c51e6d3f7dffce206465c8951e610d2",
-            "BI session": "https://transcripts.gotomeeting.com/#/s/af1c63cd692421dce22a1ccadf2b3f5298904b281f4bc9e18c88af150dce9961"
+            "BI session": "https://transcripts.gotomeeting.com/#/s/af1c63cd692421dce22a1ccadf2b3f5298904b281f4bc9e18c88af150dce9961",
+            "Departmental": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+            "BOG": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
         },
         "POLICIES &CREDENTIALS": {
             "Credentials": "https://www.codanalytics.net/accounts/credentials/",
@@ -23,8 +25,8 @@
         },
         "REFERENCE": {
             "DAF REPORT": "https://public.tableau.com/app/profile/coda2331/viz/DAFEVIDENCEREPORT/CODAANALYTICSDAFEVIDENCE",
-            "Web Evidence": "https://www.codanalytics.net/management/evidence/",
-            "Training Schedule": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832"
+            "Web Evidence": "https://www.codanalytics.net/management/evidence/"
+            
         }
     },
     "HUMAN RESOURCE": {
@@ -33,11 +35,10 @@
             "Agenda": "https://docs.google.com/presentation/d/1uz_hQ_PeH-C4YE87VZ8SCjM2N4pW839L/edit?copiedFromTrash#slide=id.p1",
             "Notes": "https://docs.google.com/spreadsheets/d/1jfmrZeUbRC3ihJ0aV0ENmIwPrAtl1B7LcbhHwc78Q1A/edit#gid=566553932"
         },
-        "MEETINGS": {
-            "Sprint": "https://docs.google.com/spreadsheets/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=943761875",
-            "Departmental": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
-            "BOG": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
-            "DAF SESSIONS": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view"
+        "EMPLOYEE/TRAINEE": {
+            "My Training": "https://www.codanalytics.net/data/employetraining/",
+            "My Schedule": "https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+            "Training Report": "https://public.tableau.com/app/profile/coda.production/viz/OneononeSessionsReportv2_16535943094260/OneonOneSessionsReport"
         },
         "REPORTS": {
             "HR Report": "https://www.codanalytics.net/management/"
@@ -49,7 +50,7 @@
             "Developers(video)": "https://drive.google.com/file/d/1vw9dnbrskAn04_FrmbujHhfmuy_AYqIQ/view"
         },
         "TRAINING": {
-            "Report": "https://public.tableau.com/app/profile/coda.production/viz/OneononeSessionsReportv2_16535943094260/OneonOneSessionsReport"
+            "Training Schedule": "https://docs.google.com/spreadsheets/d/1eNPE4_Og_5JOQrEejrbJVZs-zrWVTmTM650xN85KBxo/edit#gid=1057298832"
         }
     },
     "FINANCE": {
@@ -93,21 +94,18 @@
             }
         },
     "PROJECTS": {
-            "D2A": {
-                "PPT": "#",
-                "website": "#",
-                "SocialMedia": "https://www.facebook.com/people/African-Diaspora-Week/100086765367870/"
-            },
-            "GADC": {
-                "PPT": "https://www.codanalytics.net/#/",
-                "website": "https://gadcafrica.org/",
-                "SocialMedia": "https://www.facebook.com/people/African-Diaspora-Week/100086765367870/"
-            },
-            "DC48KENYA": {
-                "PPT": "https://www.codanalytics.net/#/",
-                "website": "#",
-                "other": "https://www.codanalytics.net/#/"
-            },
+        "CODA-CLIENTS": {
+            "Clients": "https://www.codanalytics.net/accounts/clients/",
+            "Client Tracker": "https://www.codanalytics.net/accounts/tracker/"
+        },
+        "OTHER IT PROJECTS": {
+            "D2A-PPT": "#",
+            "D2A-SITE": "#",
+            "GADC-PPT": "#",
+            "GADC-SITE": "https://gadcafrica.org/",
+            "DC48KENYA-PPT": "#",
+            "DC48KENYA-SITE": "#"
+        },
             "FIELD_PROJECTS": {
                     "Solar_PPT": "#",
                     "Phase_Video": "htps://transcripts.gotomeeting.com/#/s/8f8e12241ae5c3ff8ce43435afcc1055d7b180ff970b48cb17f7452a1856901e",
