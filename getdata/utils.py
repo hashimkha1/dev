@@ -132,14 +132,14 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     #Database connection 
     try:
         with psycopg2.connect(
-                            # host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
-                            # dbname = 'dce03ou5n6vak',
-                            # user = 'scbgdqffbkecgx',
-                            # password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
-                            host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            dbname = 'das6459qgcjbmv',
-                            user = 'xgsxxbmwywwmoj',
-                            password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
+                            host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
+                            dbname = 'dce03ou5n6vak',
+                            user = 'scbgdqffbkecgx',
+                            password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
+                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
+                            # dbname = 'das6459qgcjbmv',
+                            # user = 'xgsxxbmwywwmoj',
+                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
                             # host = 'localhost',
                             # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
                             # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
@@ -169,14 +169,14 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 def crypto_data(symbol,action,unit_price, total_price,date):
     try:
         with psycopg2.connect(
-                            # host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
-                            # dbname = 'dce03ou5n6vak',
-                            # user = 'scbgdqffbkecgx',
-                            # password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
-                            host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            dbname = 'das6459qgcjbmv',
-                            user = 'xgsxxbmwywwmoj',
-                            password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
+                            host = 'ec2-35-175-8-168.compute-1.amazonaws.com',
+                            dbname = 'dce03ou5n6vak',
+                            user = 'scbgdqffbkecgx',
+                            password = 'a7e1b52662439ac154ef67612f03de2c09084435c1322f3a1b4a5e88302f074a',
+                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
+                            # dbname = 'das6459qgcjbmv',
+                            # user = 'xgsxxbmwywwmoj',
+                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
                             # host = 'localhost',
                             # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
                             # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
