@@ -280,6 +280,7 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
+
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
 #Uncomment for prod purposes
