@@ -736,15 +736,14 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, user=None, *args, **kwargs):
-    # tasks=Task.objects.all().order_by('-submission')
-    # user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-    # Amount=Task.objects.all().aggregate(Your_Total_GoalAmount=Sum('mxearning'))
-    # total_duration=Task.objects.all().aggregate(Sum('duration'))
-    # mxearning=Task.objects.filter().aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
-    # paybalance=round(bal,2)
-    # balance=paybalance.quantize(Decimal('0.01'))
-    # salary = [task.pay for pay in Task.objects.all().values()]
+def usertaskhistory(request, pk=None, *args, **kwargs):
+    task_history = TaskHistory.objects.get_by_pk(pk)
+    current_user = request.user
+    if task_history is None:
+        message=f'Hi {current_user}, you do not have history information,kindly contact admin!'
+        return render(request, "main/errors/404.html",{"message":message})
+    # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+    print(task_history)
     computer_maintenance = 500
     food_accomodation = 1000
     deadline_date = date(
@@ -754,17 +753,11 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     )
     delta = deadline_date - date.today()
     time_remaining = delta.days
-    current_user = request.user
-    try:
-        task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-        employee = get_object_or_404(User, username=task_history.employee)
-        tasks = TaskHistory.objects.all().filter(
+    employee = get_object_or_404(User, username=task_history.employee)
+    tasks = TaskHistory.objects.all().filter(
             employee=employee, submission__month=task_history.submission.strftime("%m")
         )
-    except TaskHistory.DoesNotExist:
-        tasks = TaskHistory.objects.all()
-        employee=request.user
-        print("You dont have any matching records in the database")
+    # print("You dont have any matching records in the database")
     # tasks = Task.objects.filter(user__username=request.user)
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
@@ -794,7 +787,7 @@ def usertaskhistory(request, user=None, *args, **kwargs):
         pointsbalance = Decimal(MaxPoints) - Decimal(Points)
     except (TypeError, AttributeError):
         pointsbalance = 0
-
+    
     context = {
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
@@ -810,7 +803,6 @@ def usertaskhistory(request, user=None, *args, **kwargs):
         "loan": loan,
         "net": net,
     }
-
     # setting  up session
     request.session["task_id"] = kwargs.get("pk")
 
