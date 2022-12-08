@@ -478,8 +478,14 @@ class TaskHistoryView(ListView):
     template_name = "management/daf/taskhistory.html"
 
 
-def task_payslip(request, *args, **kwargs):
-    task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+def task_payslip(request, pk=None, *args, **kwargs):
+    # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+    task_history = TaskHistory.objects.get_by_pk(pk)
+    current_user = request.user
+    payslip_config=paymentconfigurations(PayslipConfig,employee)
+    if task_history is None:
+        message=f'Hi {current_user}, you do not have history information,kindly contact admin!'
+        return render(request, "main/errors/404.html",{"message":message})
     today = date(date.today().year, date.today().month, date.today().day)
     year = task_history.submission.strftime("%Y")
     month = task_history.submission.strftime("%b")
@@ -504,11 +510,12 @@ def task_payslip(request, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-
+    
+    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
-    computer_maintenance = 500
-    food_accomodation = 1000
-    health = 500
+    computer_maintenance = computer_maintenance
+    food_accomodation = food_accomodation
+    health = health
     laptop_saving = 1000
     total_deduction = (
             Decimal(loan)
@@ -530,7 +537,13 @@ def task_payslip(request, *args, **kwargs):
         holidaypay = 3000.00
     else:
         holidaypay = 0.00
-    EOM = 0
+
+    Points,MaxPoints,point_percentage=employee_reward(tasks)
+    if point_percentage>=0.75:
+        # EOM=Decimal(1500.00)  # employee of month
+        EOM =payslip_config.eom_bonus 
+    else:
+        EOM = Decimal(0.00)  # employee of month
     EOQ = 0
     EOY = 0
     yearly = 12000
@@ -862,18 +875,19 @@ def pay(request, user=None, *args, **kwargs):
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     loantable=TrainingLoan
     # lbandls = LBandLS.objects.get(user_id=employee)
-    try:
-        payslip_config = paymentconfigurations(PayslipConfig,employee)
-    except PayslipConfig.DoesNotExist:
-        link=f"finance:paymentconfigs"
-        title='CONFIGURATIONS'
-        message=f'We dont have existing configs for this employee/admin,proceed to set configs'
-        context={
-            "link":link,
-            "title":title,
-            "message":message
-        }
-        return render(request,'main/errors/generalerrors.html',context)
+    payslip_config=paymentconfigurations(PayslipConfig,employee)
+    # try:
+    #     payslip_config = paymentconfigurations(PayslipConfig,employee)
+    # except PayslipConfig.DoesNotExist:
+    #     link=f"finance:paymentconfigs"
+    #     title='CONFIGURATIONS'
+    #     message=f'We dont have existing configs for this employee/admin,proceed to set configs'
+    #     context={
+    #         "link":link,
+    #         "title":title,
+    #         "message":message
+    #     }
+    #     return render(request,'main/errors/generalerrors.html',context)
     today,year,month,day,deadline_date=paytime()
     task_obj=Task.objects.filter(submission__contains=year)
     mxearning,points=payinitial(tasks)
