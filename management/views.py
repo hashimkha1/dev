@@ -537,7 +537,13 @@ def task_payslip(request, pk=None, *args, **kwargs):
         holidaypay = 3000.00
     else:
         holidaypay = 0.00
-    EOM = 0
+
+    Points,MaxPoints,point_percentage=employee_reward(tasks)
+    if point_percentage>=0.75:
+        # EOM=Decimal(1500.00)  # employee of month
+        EOM =payslip_config.eom_bonus 
+    else:
+        EOM = Decimal(0.00)  # employee of month
     EOQ = 0
     EOY = 0
     yearly = 12000
