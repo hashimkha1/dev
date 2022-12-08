@@ -267,7 +267,6 @@ class TagCreateView(LoginRequiredMixin, CreateView):
 
 class TaskGroupCreateView(LoginRequiredMixin, CreateView):
     model = TaskGroups
-    # success_url = "/management/newtask"
     success_url = "/management/tasks/"
     fields = ["title", "description"]
 
