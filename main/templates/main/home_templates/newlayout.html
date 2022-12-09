@@ -84,69 +84,30 @@
   <div class="container">
       <h1>CLIENT SUCCESS STORIES</h1>
       <div class="owl-carousel">
+        {% for post in posts %}
           <div class="carousel-card">
               <div class="img-div p-3">
                   <span></span>
               </div>
-              <h2>danial stima</h2>
-              <p>Consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy
-                  nibh.dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy.
-              </p>
-              <h3>HOUSE CONSTRUCTION</h3>
-              <h4>ZIMBABWE, SOUTHERN AFRICA</h4>
+              
+              <h2>{{post.author}}</h2>
+              <p>{{post.content}}</p>
+              <h3>{{post.title}}</h3>
+             
+              
           </div>
+          {% endfor %}
 
-          <div class="carousel-card">
-              <div class="img-div p-3">
-                  <span></span>
-              </div>
-              <h2>danial stima</h2>
-              <p>Consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy
-                  nibh.dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy.
-              </p>
-              <h3>HOUSE CONSTRUCTION</h3>
-              <h4>ZIMBABWE, SOUTHERN AFRICA</h4>
-          </div>
-
-          <div class="carousel-card">
-              <div class="img-div p-3">
-                  <span></span>
-              </div>
-              <h2>danial stima</h2>
-              <p>Consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy
-                  nibh.dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy.
-              </p>
-              <h3>HOUSE CONSTRUCTION</h3>
-              <h4>ZIMBABWE, SOUTHERN AFRICA</h4>
-          </div>
-
-          <div class="carousel-card">
-              <div class="img-div p-3">
-                  <span></span>
-              </div>
-              <h2>danial stima</h2>
-              <p>Consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy nibh.
-                  dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy
-                  nibh.dolore magna nonummy nibh euismod tincidunt ut laoreet dolore magna nonummy.
-              </p>
-              <h3>HOUSE CONSTRUCTION</h3>
-              <h4>ZIMBABWE, SOUTHERN AFRICA</h4>
-          </div>
       </div>
   </div>
 </div>
-
+<div class="text-center">
+<button >
+    <a class="text-center" href="{% url 'codablog:post-create' %}">
+       Add Your Story 
+      </a>
+  </button>
+</div>
 <div class="back-to-top-btn d-flex justify-content-center">
   <a href="">back to top</a>
 </div>
