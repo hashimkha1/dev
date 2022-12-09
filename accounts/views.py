@@ -245,7 +245,7 @@ def login_view(request):
             #         return redirect("application:sectionC")
 
     return render(
-        request, "accounts/registration/login.html", {"form": form, "msg": msg}
+        request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
     )
 
 
