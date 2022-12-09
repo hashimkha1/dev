@@ -7,6 +7,7 @@ import json
 from .models import Service
 from main.forms import TransactionForm
 from main.models import Expenses
+from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -62,7 +63,12 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    return render(request, "main/home_templates/layout.html", {"title": "layout"})
+    posts=Post.objects.all()
+    context={
+        "posts":posts,
+        "title": "layout"
+    }
+    return render(request, "main/home_templates/newlayout.html",context)
 
 
 def about(request):
