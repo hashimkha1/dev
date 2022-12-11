@@ -42,26 +42,48 @@
     <div class="album py-5 bg-light">
         <h4 class="text-center text-dark">WELCOME TO YOUR TRAINING/1-1 SESSIONS</h4>
         <div class="row text-center">
-            <div class="col-md-6" id="bada">
+            <div class="col-md-3" id="bada">
               <div class="card">
               <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
               <div class="card-body">
                 <h5><b>GUIDE ON SESSIONS</b></h5>
                 <hr/>
-                <i><h6>1. Powerpoints are on the left and Videos on the right.</h6></i>
-                <i><h6>2. Click <a class="" href="https://docs.google.com/presentation/d/1QJ_ArmJtQi-JYoNy5_wTjqbxDlFpuC03ZSZahFIYoyc/edit#slide=id.g19fff9bab57_0_463">Here</a> for guidelines before starting your presentation</h6></i>
-              </div>
-
-              </div>
+                <i><h6><a class="" href="https://docs.google.com/presentation/d/1QJ_ArmJtQi-JYoNy5_wTjqbxDlFpuC03ZSZahFIYoyc/edit#slide=id.g19fff9bab57_0_463">Guidelines</a></h6></i>
+                <i><h6><a class="" href="{% url 'management:session'%}">Record Session</a></h6></i>
+                <i><h6><a class="" href="{% url 'management:user_session' request.user %}">Progress Report</a></h6></i>
             </div>
-            <div class="col-md-6" id="bada">
-              <div class="card">
-              <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-              <div class="card-body">
-                <h5><b>RECORD & PROGRESS</b></h5>
+        </div>
+    </div>
+    <div class="col-md-3" id="bada">
+        <div class="card">
+            <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+                <h5><b>Employee Productivity</b></h5>
                 <hr/>
-                <i><h6>1. Click <a class="" href="{% url 'management:session'%}">Here</a> to record your presentation</h6></i>
-                <i><h6>2. Click <a class="" href="{% url 'management:user_session' request.user %}">Here</a> to see your progress on report</h6></i>
+                <i><h6><a class="" href="https://docs.google.com/spreadsheets/d/1p9PqUybFu55jkbd6BZ9XwB7svqj-YXzM/edit#gid=295906894">Whatsaap data</a></h6></i>
+                <i><h6><a class="" href="https://docs.google.com/spreadsheets/d/1p9PqUybFu55jkbd6BZ9XwB7svqj-YXzM/edit#gid=295906894">Meetings data</a></h6></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" id="bada">
+        <div class="card">
+            <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+                <h5><b>Finance Usecase</b></h5>
+                <hr/>
+                <i><h6><a class="" href="https://docs.google.com/spreadsheets/d/1nLbOV4BpQ_BQNr3FoOwxz2ZWaNto9JOzFZnxQckcKVk/edit#gid=570974204">Cashflow data</a></h6></i>
+                <i><h6><a class="" href="https://docs.google.com/spreadsheets/d/1nLbOV4BpQ_BQNr3FoOwxz2ZWaNto9JOzFZnxQckcKVk/edit#gid=570974204">Other data</a></h6></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3" id="bada">
+        <div class="card">
+            <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+                <h5><b>Mortgage Usecase</b></h5>
+                <hr/>
+                <i><h6><a class="" href="#"> data</a></h6></i>
+                <i><h6><a class="" href="#"> data</a></h6></i>
               </div>
               </div>
             </div>
