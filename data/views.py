@@ -203,7 +203,8 @@ class TrainingView(LoginRequiredMixin, ListView):
             context['title'] = FeaturedCategory.objects.all().first().title
             return context
         except:
-            return render(self.request, "data/training/training_progress/train.html")
+            return redirect('data:jobroles')
+            # return render(self.request, "data/training/training_progress/train.html")
 
 class CourseView(LoginRequiredMixin, ListView):
     model = Interviews
