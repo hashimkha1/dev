@@ -76,7 +76,10 @@
             "Training": "https://www.codanalytics.net/data/train/",
             "support": "https://www.codanalytics.net/accounts/tracker/",
             "Interview": "https://www.codanalytics.net/data/interview/",
-            "Schedule": "https://docs.google.com/spreadsheets/d/1tDzmn4c5slCxKIq_wzpPseuvarifbw7d/edit#gid=632235438"
+            "Schedule": "https://docs.google.com/spreadsheets/d/1tDzmn4c5slCxKIq_wzpPseuvarifbw7d/edit#gid=632235438",
+            "Clients Assignment": "https://www.codanalytics.net/data/iuploads/",
+            "Support Tracker": "https://www.codanalytics.net/accounts/tracker/"
+
         },
         "WEBSITE DEVELOPMENT": {
             "Requirements": "https://www.codanalytics.net/management/requirements/",
