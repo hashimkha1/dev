@@ -383,12 +383,7 @@ def reset_password(email, from_email, template='registration/password_reset_emai
     #form = PasswordResetForm({'email':'sample@sample.com'})
     return form.save(from_email=from_email, email_template_name=template)
 ''' 
-#================================EMPLOYEE SECTION================================
-def Employeelist(request):
-    employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
-    return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
-#================================CLIENT SECTION================================
 
 def newcredentialCategory(request):
     if request.method == "POST":
@@ -496,15 +491,31 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 # ================================EMPLOYEE SECTION================================
+# def Employeelist(request):
+#     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
+#     return render(request, 'accounts/employees/employees.html', {'employees': employees})
+
 def Employeelist(request):
-    employees = CustomerUser.objects.filter(
-        Q(category=2) | Q(is_employee=True)
-    ).order_by("-date_joined")
-    return render(
-        request, "accounts/employees/employees.html", {"employees": employees}
-    )
+    full_time = CustomerUser.objects.filter(
+                                             Q(category=2), Q(sub_category=3),
+                                             Q(is_employee=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
 
+    contractual_agent = CustomerUser.objects.filter(
+                                             Q(category=2), Q(sub_category=4),
+                                             Q(is_employee=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
 
+    past = CustomerUser.objects.filter(
+                                             Q(category=2)|Q(is_employee=True),
+                                             Q(is_active=False)
+                                          ).order_by("-date_joined")
+    context={
+        "full_time": full_time,
+        "contractual_agent": contractual_agent,
+        "past": past
+    }
+    return render(request, 'accounts/employees/employeelist.html', context)
 # ================================CLIENT SECTION================================
 def clientlist(request):
     students = CustomerUser.objects.filter(
