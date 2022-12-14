@@ -41,7 +41,7 @@
             <td>
                 <a class="text-dark  text-decoration-none" 
                 data-toggle="tooltip" title="#"
-                href="{% url 'management:user_session' request.session.employee_name%}">
+                href="{% url 'management:user_session' request.user %}">
                 {{session.presenter}}
                 </a>
             </td>

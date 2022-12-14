@@ -1288,14 +1288,18 @@ def usersession(request, user=None, *args, **kwargs):
     )
     employee = get_object_or_404(User, username=kwargs.get("username"))
     sessions = Training.objects.all().filter(presenter=employee)
-    target_sessions =75
+    emp_target_sessions =75
+    client_target_sessions =27
     num_sessions = sessions.count()
     # points = sessions.aggregate(Your_Total_Points=Sum("point"))
     # Points = points.get("Your_Total_Points")
-    bal_session = target_sessions - num_sessions
+    bal_session = emp_target_sessions - num_sessions
+    client_bal_session = client_target_sessions - num_sessions
     context = {
         "sessions":sessions,
-        'target_sessions': target_sessions,
+        'emp_target_sessions': emp_target_sessions,
+        'client_target_sessions': client_target_sessions,
+        'client_bal_session': client_bal_session,
         "num_sessions": num_sessions,
         "bal_session": bal_session,
         "deadline_date": deadline_date,
@@ -1303,10 +1307,12 @@ def usersession(request, user=None, *args, **kwargs):
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
 
-    if request.user.is_superuser or request.user == employee:
+    if request.user.is_superuser or request.user.is_employee:
         return render(request, "management/departments/hr/usersessions.html", context)
     elif request.user.is_superuser:
         return render(request, "management/departments/hr/sessions.html", context)
+    elif request.user.is_client:
+        return render(request, "management/departments/hr/clientsessions.html", context)
     else:
         # raise Http404("Login/Wrong Page: Contact Admin Please!")
         return redirect("main:layout")

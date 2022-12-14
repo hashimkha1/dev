@@ -28,21 +28,21 @@
                         <a class="dropdown-item" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>
                         <div class="dropdown-divider"></div>
                         {%endwith%}
+                        <a class="dropdown-item" href="{% url 'management:user_session' request.user %}" target="__blank" >My Sessions</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'finance:newcontract' request.user %}" target="__blank" >New Contract</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     {%endif%}
                        {% if user.is_applicant%}
                        <a class="dropdown-item" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
                        <div class="dropdown-divider"></div>
                        <a class="dropdown-item" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
                        <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                        {% endif %}
+                       <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     </div>
                 </div>
 

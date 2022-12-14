@@ -2,6 +2,7 @@
   "VIDEOS": {
     "COURSE": {
       "Orientation": "https://transcripts.gotomeeting.com/#/s/b29d262c4c6d0dc5b4dccd8f413cef67cc3e4fd66177ad38502cea316958c933",
+      "Organization": "#",
       "Client Introduction": "https://drive.google.com/file/d/1B6_1NuZ3_Bzv4sjRftFMyYtWXQFGBLmQ/view"
     },
     "EMPLOYEE PRODUCTIVITY": {
@@ -51,6 +52,8 @@
   "POWER POINTS": {
     "COURSE": {
       "Orientation": "https://docs.google.com/presentation/d/1s_gyIoCjKq-IGFrmQ8Kxvk0Tb7lNlCoj/edit#slide=id.p14",
+      
+      "Organization": "https://docs.google.com/presentation/d/1rC0EvhITsFeY9212dWVOP6rroGOVp0FG/edit#slide=id.p5",
       "Client Introduction": "https://docs.google.com/presentation/d/1uhGV-1FQZgKkOdUhG5dSFt-5c-u8rTans5xyGYtvIrg/edit#slide=id.g167f8d0d9ad_0_0"
     },
     "EMPLOYEE PRODUCTIVITY": {

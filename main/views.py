@@ -5,7 +5,7 @@ from django.views.generic import (
 )
 import json
 from .models import Service
-from main.forms import TransactionForm
+from main.forms import TransactionForm,ContactForm
 from main.models import Expenses
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
@@ -97,9 +97,16 @@ def interview(request):
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})
 
-
+@login_required
 def contact(request):
-    return render(request, "main/contact.html", {"title": "contact"})
+    if request.method == "POST":
+        form = ContactForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("management:assessment")
+    else:
+        form = ContactForm()
+    return render(request, "main/contact.html", {"form": form})
 
 
 def report(request):

@@ -9,44 +9,6 @@
 
 <section id="data_training">
 <div class="data_training text-center">
-  <!-- <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3> -->
-  <div class="row text-center">
-    <div class="col-md-2 amount_msg" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <h5><b>WELCOME BACK</b></h5>
-            <hr/>
-            <i><h6>{{user.first_name|upper }}</h6></i>
-            <hr/>
-            <i><p>Please Proceed!</p></i>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-8" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <h5><b>YOU HAVE 30 DAYS TO MEET THE TARGET</b></h5>
-            <hr/>
-            <i><h6><b>Target Date: {{deadline_date}}</b></i>
-            <hr/>
-            <i><h6><b>{{bal_session}}</b> sessions left to join the Team</b></i>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <h5><b>MY TRAINING</b></h5>
-            <hr/>
-            <i><h6>Click Below</h6></i>
-            <hr/>
-            <i><p>
-                <a href="{% url 'data:employeetraining' %}">Training</a>
-              </p></i>
-          </div>
-        </div>
-      </div>
-    </div>
   <h3 class="title">{{time_remaining}}</h3>
   <!-- <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p> -->
 <input type="hidden" name="amounts" value="{{GoalAmount}} {{total_pay}}" id="total_amount">
@@ -58,9 +20,9 @@
                           <h5><b>Lever 1 Target</b></h5>
                           <hr/>
                           <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                          <i><h6>{{emp_target_sessions}}</h6></i>
+                          <i><h6>{{client_target_sessions}}</h6></i>
                           <hr/>
-                          <i><p>Meet this Target to Payroll</p></i>
+                          <i><p>Meet Your Target</p></i>
                         </div>
                       </div>
                     </div>
@@ -83,7 +45,7 @@
                         <div class="card-body">
                           <h5><b>Pending</b></h5>
                           <hr/>
-                          <i><h6> {{bal_session}}</h6></i>
+                          <i><h6> {{client_bal_session}}</h6></i>
                           <hr/>
                           <i><p>Complete More Sessions</p></i>
                         </div>
@@ -97,9 +59,9 @@
                           <hr/>
                           <i><h6>Access Past Report</h6></i>
                           <hr/>
-                          <i><p>Thank You!
-                            <a href="https://public.tableau.com/app/profile/coda.production/viz/OneononeSessionsReportv2_16535943094260/OneonOneSessionsReport">More</a>
-                          </p></i>
+                          <p>
+                            <a href="{% url 'management:session' %}">Add Session</a>
+                          </p>
                         </div>
                       </div>
                     </div>
