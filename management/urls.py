@@ -40,7 +40,8 @@ urlpatterns = [
     path('taskhistory/', TaskHistoryView.as_view(), name='taskhistory'),
     path('getaveragetargets/', views.getaveragetargets, name='getaveragetargets'),
     path('employee/<str:username>/',views.usertask, name='user_task'),
-    path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
+    path('task_employee/<str:username>/',views.usertaskhistory, name='user_task_history'),
+    # path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
 
     path('payslip/<str:username>/',views.pay, name='user_payslip'),
     # path('payslip/<str:username>/',views.payslip, name='user_payslip'),

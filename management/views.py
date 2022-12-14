@@ -816,7 +816,9 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
         "net": net,
     }
     # setting  up session
-    request.session["task_id"] = kwargs.get("pk")
+       # setting  up session
+    request.session["employee_name"] = kwargs.get("username")
+    # request.session["task_id"] = kwargs.get("pk")
 
     if request.user == employee:
         return render(request, "management/daf/usertaskhistory.html", context)
