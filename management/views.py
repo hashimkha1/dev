@@ -706,9 +706,9 @@ def usertaskhistory(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
     employee = get_object_or_404(User, username=kwargs.get("username"))
     task_history = TaskHistory.objects.get_by_employee(employee)
-    if task_history is None:
-        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
-        return render(request, "main/errors/404.html",{"message":message})
+    # if task_history is None:
+    #     message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
+    #     return render(request, "main/errors/404.html",{"message":message})
     tasks = TaskHistory.objects.all().filter(
             employee=employee, submission__month=task_history.submission.strftime("%m")
         )
