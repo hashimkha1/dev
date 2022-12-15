@@ -822,39 +822,40 @@ def pay(request, user=None, *args, **kwargs):
     # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
     # ====================Bonus Section=============================
     bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
-    if month == 12:
-        task_obj = Task.objects.filter(submission__contains=year)
-        logger.debug(f'task_obj: {task_obj}')
-        eoy_users = best_employee(task_obj)
-        if (employee,) in eoy_users:
-            logger.info('this employee is EOY!')
-            EOY = payslip_config.eoy_bonus
-    elif month % 3 == 0:
-        task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
-                                | Q(submission__contains=normalize_period(year, month-1))
-                                | Q(submission__contains=normalize_period(year, month)))
-        logger.debug(f'task_obj: {task_obj}')
-        eoq_users = best_employee(task_obj)
-        user_tuple = (employee.username,)
-        logger.debug(f'eoq_users: {eoq_users}')
-        logger.debug(f'user_tuple: {user_tuple}')
+    # if month == 12:
+    #     task_obj = Task.objects.filter(submission__contains=year)
+    #     logger.debug(f'task_obj: {task_obj}')
+    #     eoy_users = best_employee(task_obj)
+    #     if (employee,) in eoy_users:
+    #         logger.info('this employee is EOY!')
+    #         EOY = payslip_config.eoy_bonus
+    # elif month % 3 == 0:
+    #     task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
+    #                             | Q(submission__contains=normalize_period(year, month-1))
+    #                             | Q(submission__contains=normalize_period(year, month)))
+    #     logger.debug(f'task_obj: {task_obj}')
+    #     eoq_users = best_employee(task_obj)
+    #     user_tuple = (employee.username,)
+    #     logger.debug(f'eoq_users: {eoq_users}')
+    #     logger.debug(f'user_tuple: {user_tuple}')
 
-        if user_tuple in eoq_users:
-            logger.info('this employee is EOQ!')
-            EOQ = payslip_config.eoq_bonus
-            logger.debug(f'EOQ: {EOQ}')
-    else:
-        task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
-        logger.debug(f'task_obj: {task_obj}')
-        eom_users = best_employee(task_obj)
-        if (employee,) in eom_users:
-            logger.info('this employee is EOM!')
-            EOM = payslip_config.eom_bonus
+    #     if user_tuple in eoq_users:
+    #         logger.info('this employee is EOQ!')
+    #         EOQ = payslip_config.eoq_bonus
+    #         logger.debug(f'EOQ: {EOQ}')
+    # else:
+    #     task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
+    #     logger.debug(f'task_obj: {task_obj}')
+    #     eom_users = best_employee(task_obj)
+    #     if (employee,) in eom_users:
+    #         logger.info('this employee is EOM!')
+    #         EOM = payslip_config.eom_bonus
     # ====================Summary Section=============================
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    total_bonus = total_bonus + EOM + EOQ + EOY
+    # total_bonus = total_bonus + EOM + EOQ + EOY
     # Net Pay
-    net = total_pay + total_bonus - total_deduction
+    total_value=total_pay + total_bonus
+    net = total_value - total_deduction
     round_off = round(net) - net
     net_pay = net + round_off
     logger.debug(f'total deductions: {total_deduction}')
