@@ -43,14 +43,27 @@ def employee_reward(tasks):
         point_percentage=round((Points/MaxPoints),2)
     except (TypeError, AttributeError):
         point_percentage = 0
-    return Points,MaxPoints,point_percentage
+
+    else:
+        EOM = Decimal(0.00)  # employee of month
+    return point_percentage
 
 def payinitial(tasks):
-    # tasks = Task.objects.all().filter(employee=employee)
-    mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    # GoalAmount = mxearning.get("Your_Total_AssignedAmt")
-    points = tasks.aggregate(Your_Total_Points=Sum("point"))
-    return mxearning,points
+    num_tasks = tasks.count()
+    Points = tasks.aggregate(Your_Total_Points=Sum("point"))
+    Maxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
+    Earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
+    Maxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
+    # current Pay Values
+    points = Points.get("Your_Total_Points")
+    mxpoints = Maxpoints.get("Your_Total_MaxPoints")
+    pay = Earning.get("Your_Total_Pay")
+    GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
+    try:
+        pointsbalance = Decimal(mxpoints) - Decimal(points)
+    except (TypeError, AttributeError):
+        pointsbalance = 0
+    return (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)
 
 def paymentconfigurations(PayslipConfig,employee):
     try:
@@ -109,8 +122,8 @@ def paytime():
     # 3rd month
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
-
-    return (today,year, month,day,target_date,
+    last_month=last_day_of_prev_month1.strftime("%m")
+    return (today,year, month,last_month,day,target_date,
             time_remaining_days,time_remaining_hours,time_remaining_minutes,
             payday,deadline_date,last_day_of_prev_month1,last_day_of_prev_month2,
             start_day_of_prev_month3,last_day_of_prev_month3)
@@ -280,46 +293,55 @@ def deductions(payslip_config,total_pay):
        kra = round(Decimal(total_pay) * Decimal(0.05), 2)
        lap_saving=500
     total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving
-    return food_accomodation,computer_maintenance,health,kra,total_deductions
+    return food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions
 
 def bonus(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
-    (today,year, month,day,target_date,
-     time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date
-     )=paytime()
-    mxearning,points=payinitial(tasks)
+    (today,year, month,last_month,day,target_date,
+     time_remaining_days,time_remaining_hours,time_remaining_minutes,
+     payday,deadline_date,last_day_of_prev_month1,last_day_of_prev_month2,
+     start_day_of_prev_month3,last_day_of_prev_month3)=paytime()
+    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     if payslip_config:
-       # -------------points earning-----------
-       bonus_points_ammount= points.get("Your_Total_Points")
-       if bonus_points_ammount is None:
-           bonus_points_ammount = Decimal(0)
-       # -------------holiday earning-----------
-       if month in (12, 1) and day in (24, 25, 26, 31, 1, 2):
-           offpay = payslip_config.holiday_pay
-       else:
-           offpay = Decimal(0)
-       # -------------late Night earning-----------
-       latenight_Bonus =round(total_pay * payslip_config.rp_increment_max_percentage, 2)
-       yearly = round(payslip_config.rp_starting_amount + (total_pay * payslip_config.rp_increment_percentage), 2)
+        # -------------points earning-----------
+        bonus_points_ammount= points
+        if bonus_points_ammount is None:
+                bonus_points_ammount = Decimal(0)
+                # EOM =payslip_config.eom_bonus   # employee of month
+        # -------------Laptop Bonus-----------
+        Lap_Bonus = payslip_config.lb_amount
+        # -------------holiday earning-----------
+        offpay = payslip_config.holiday_pay if month in (12, 1) and day in (24, 25, 26, 31, 1, 2) else Decimal(0.00)
+        # -------------late Night earning-----------
+        latenight_Bonus =round(total_pay * payslip_config.rp_increment_max_percentage, 2)
+        yearly = round(payslip_config.rp_starting_amount + (total_pay * payslip_config.rp_increment_percentage), 2)
+        # -------------Employee of Award(EOM,EOQ,EOY)-----------
+        point_percentage=employee_reward(tasks)
+        EOM = payslip_config.eom_bonus if point_percentage>=0.75 else Decimal(0.00)
+        EOQ =  Decimal(0.00)
+        EOY =  Decimal(0.00)
     else:
-       latenight_Bonus =round(total_pay * Decimal(0.05), 2)
-       bonus_points_ammount= points.get("Your_Total_Points")
-       if bonus_points_ammount is None:
-           bonus_points_ammount = Decimal(0)
-       offpay =Decimal(0)
-       yearly = Decimal(12000)
-    return bonus_points_ammount,latenight_Bonus,offpay,yearly
+        EOM = Decimal(0.00)  # employee of month
+        EOQ =  Decimal(0.00)
+        EOY =  Decimal(0.00)
+        latenight_Bonus =round(total_pay * Decimal(0.05), 2)
+        bonus_points_ammount= Decimal(0.00)
+        yearly = Decimal(12000)
+        Lap_Bonus =  Decimal(0.00)
+    return bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus
 
 def additional_earnings(user_data,tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     # ================BONUS============================
-    pointsearning,latenight_Bonus,offpay,yearly=bonus(tasks,total_pay,payslip_config)
-    sub_bonus=Decimal(pointsearning)+Decimal(latenight_Bonus)+Decimal(offpay)
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
+    sub_bonus=(Decimal(bonus_points_ammount)+Decimal(latenight_Bonus)+
+              +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+
+              Decimal(Lap_Bonus))
     # ===============DEDUCTIONS=======================
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
+    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
     total_deduction=total_deductions+loan_payment
+    print(f'LOAN AMOUNT={loan_payment}')
     return total_deduction,sub_bonus
 
 # ================================apis for slug==========================
