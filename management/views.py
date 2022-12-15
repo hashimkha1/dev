@@ -478,6 +478,12 @@ class TaskHistoryView(ListView):
 
 def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
+    (today,year, month,last_month,day,target_date,
+     time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,deadline_date,
+     last_day_of_prev_month1,last_day_of_prev_month2,
+     start_day_of_prev_month3,last_day_of_prev_month3
+     )=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     task_history = TaskHistory.objects.get_by_employee(employee)
@@ -497,9 +503,10 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "%Y-%m-%d",
     ).date()
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks = TaskHistory.objects.all().filter(
-        employee=employee, submission__month=task_history.submission.strftime("%m")
-    )
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
+    # tasks = TaskHistory.objects.all().filter(
+    #     employee=employee, submission__month=task_history.submission.strftime("%m")
+    # )
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
@@ -677,7 +684,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=12)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
 
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
