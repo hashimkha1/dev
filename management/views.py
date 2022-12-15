@@ -503,7 +503,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "%Y-%m-%d",
     ).date()
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=12)
     # tasks = TaskHistory.objects.all().filter(
     #     employee=employee, submission__month=task_history.submission.strftime("%m")
     # )
@@ -684,7 +684,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=12)
 
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
