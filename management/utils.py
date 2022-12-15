@@ -62,7 +62,17 @@ def paymentconfigurations(PayslipConfig,employee):
              ).latest('id')
     return payslip_config
 
+    # 1st month
+    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
 
+    # 2nd month
+    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
+
+    # 3rd month
+    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
 
 
 def paytime():
@@ -88,9 +98,22 @@ def paytime():
         date.today().month,
         calendar.monthrange(date.today().year, date.today().month)[-1],
     )
+    # 1st month
+    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
+
+    # 2nd month
+    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
+
+    # 3rd month
+    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
+    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
+
     return (today,year, month,day,target_date,
             time_remaining_days,time_remaining_hours,time_remaining_minutes,
-            payday,deadline_date)
+            payday,deadline_date,last_day_of_prev_month1,last_day_of_prev_month2,
+            start_day_of_prev_month3,last_day_of_prev_month3)
 
 def loan_computation(total_pay,user_data,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""

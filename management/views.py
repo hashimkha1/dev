@@ -604,7 +604,9 @@ def usertask(request, user=None, *args, **kwargs):
     tasks = Task.objects.all().filter(employee=employee)
     (today,year, month,day,target_date,
      time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date
+     time_remaining_minutes,payday,deadline_date,
+     last_day_of_prev_month1,last_day_of_prev_month2,
+     start_day_of_prev_month3,last_day_of_prev_month3
      )=paytime()
     points_count = Task.objects.filter(
         description__in=['Meetings', 'General', 'Sprint', 'DAF', 'Recruitment', 'Job Support', 'BI Support'],
@@ -638,16 +640,7 @@ def usertask(request, user=None, *args, **kwargs):
     except (TypeError, AttributeError):
         pointsbalance = 0
 
-    # 1st month
-    last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
-    start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)
 
-    last_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=1)
-    start_day_of_prev_month2 = last_day_of_prev_month1.replace(day=1) - timedelta(days=last_day_of_prev_month2.day)
-
-    # 3rd month
-    last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
-    start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
 
     history = TaskHistory.objects.filter(
         Q(submission__gte=start_day_of_prev_month3),
@@ -701,18 +694,21 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, employee=None, *args, **kwargs):
+def usertaskhistory(request, pk=None, *args, **kwargs):
     # task_history = TaskHistory.objects.all().filter(employee=employee)
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    task_history = TaskHistory.objects.get_by_employee(employee)
-    # if task_history is None:
-    #     message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
-    #     return render(request, "main/errors/404.html",{"message":message})
-    tasks = TaskHistory.objects.all().filter(
-            employee=employee, submission__month=task_history.submission.strftime("%m")
-        )
-
+    task_history = TaskHistory.objects.all().filter(employee=employee)
+    # employee = get_object_or_404(User, username=kwargs.get("username"))
+    # task_history = TaskHistory.objects.get_by_employee(employee)
+    print(task_history)
+    if task_history is None:
+        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
+        return render(request, "main/errors/404.html",{"message":message})
+    tasks = TaskHistory.objects.all().filter(employee=employee)
+    # tasks = TaskHistory.objects.all().filter(
+    #         employee=employee, submission__month=task_history.submission.strftime("%m")
+    #     )
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -821,7 +817,9 @@ def pay(request, user=None, *args, **kwargs):
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     (today,year, month,day,target_date,
      time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date
+     time_remaining_minutes,payday,deadline_date,
+     last_day_of_prev_month1,last_day_of_prev_month2,
+     start_day_of_prev_month3,last_day_of_prev_month3
      )=paytime()
     task_obj=Task.objects.filter(submission__contains=year)
     mxearning,points=payinitial(tasks)
@@ -1330,7 +1328,6 @@ def newrequirement(request):
         request, "management/doc_templates/requirement_form.html", {"form": form}
     )
 
-
 class RequirementDetailView(DetailView):
     template_name = "management/doc_templates/single_requirement.html"
     model = Requirement
@@ -1387,96 +1384,6 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
         # elif self.request.user == requirement.created_by:
         #     return True
         return False
-
-
-# class RequirementUpdateView(LoginRequiredMixin, UpdateView):
-#     model = Requirement
-#     success_url = "/management/activerequirements"
-#     fields = [
-#         "created_by",
-#         "assigned_to",
-#         "requestor",
-#         "company",
-#         "category",
-#         "app",
-#         "delivery_date",
-#         "duration",
-#         "what",
-#         "why",
-#         "how",
-#         "doc",
-#         "is_active",
-#     ]
-#     form = RequirementForm
-
-#     def form_valid(self, form):
-#         # form.instance.author=self.request.user
-#         if self.request.user.is_superuser:
-#             req_obj = Requirement.objects.get(pk=form.instance.id)
-#             old_dev = req_obj.assigned_to
-
-#             if (not get_user_model().objects.get(pk=self.request.POST["assigned_to"]) == self.request.user
-#                     and not get_user_model().objects.get(pk=self.request.POST["assigned_to"]
-#                                                          ) == old_dev
-#             ):
-#                 if self.request.is_secure():
-#                     protocol = "https://"
-#                 else:
-#                     protocol = "http://"
-
-#                 subject = 'Task has been reassigned on CodaTraining'
-#                 old_dev_obj = get_user_model().objects.get(username=old_dev)
-#                 old_dev_email = old_dev_obj.email
-#                 context = {
-#                     'user': old_dev,
-#                     'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
-#                                                                         kwargs={'pk': form.instance.id}),
-#                     'req_id': req_obj.id,
-#                     'delivery_date': req_obj.delivery_date,
-#                 }
-#                 # logger.debug(f'old_dev_email: {old_dev_email}')
-#                 # logger.debug(f'context: {context}')
-#                 send_email(
-#                     category=old_dev_obj.category,
-#                     to_email=[old_dev_email, ],
-#                     subject=subject,
-#                     html_template='email/requirement_reassigned.html',
-#                     context=context
-#                 )
-
-#                 subject = "Task assign on CodaTraining"
-#                 to = (
-#                     get_user_model()
-#                     .objects.get(pk=self.request.POST["assigned_to"])
-#                     .email
-#                 )
-#                 context = {
-#                     'request_what': self.request.POST['what'],
-#                     'url': protocol + self.request.get_host() + reverse('management:RequirementDetail',
-#                                                                         kwargs={'pk': form.instance.id}),
-#                     'delivery_date': self.request.POST['delivery_date'],
-#                     'user': self.request.user,
-#                 }
-#                 send_email(
-#                     category=self.request.user.category,
-#                     to_email=[to, ],
-#                     subject=subject,
-#                     html_template='email/RequirementUpdateView.html',
-#                     context=context
-#                 )
-
-#             return super().form_valid(form)
-#         else:
-#             return redirect("management:requirements-active")
-
-#     def test_func(self):
-#         requirement = self.get_object()
-#         if self.request.user.is_superuser:
-#             return True
-#         elif self.request.user == requirement.created_by:
-#             return True
-#         return False
-
 
 class RequirementDeleteView(LoginRequiredMixin, DeleteView):
     model = Requirement
