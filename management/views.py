@@ -4,7 +4,6 @@ from logging import exception
 import requests
 from django import template
 from datetime import date, datetime, timedelta
-from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -477,13 +476,12 @@ class TaskHistoryView(ListView):
     template_name = "management/daf/taskhistory.html"
 
 
-def task_payslip(request, pk=None, *args, **kwargs):
+def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    task_history = TaskHistory.objects.get_by_pk(pk)
-    current_user = request.user
-    payslip_config=paymentconfigurations(PayslipConfig,employee)
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    task_history = TaskHistory.objects.get_by_employee(employee)
     if task_history is None:
-        message=f'Hi {current_user}, you do not have history information,kindly contact admin!'
+        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
     today = date(date.today().year, date.today().month, date.today().day)
     year = task_history.submission.strftime("%Y")
@@ -498,6 +496,7 @@ def task_payslip(request, pk=None, *args, **kwargs):
         "%Y-%m-%d",
     ).date()
     employee = get_object_or_404(User, username=task_history.employee.username)
+    payslip_config=paymentconfigurations(PayslipConfig,employee)
     tasks = TaskHistory.objects.all().filter(
         employee=employee, submission__month=task_history.submission.strftime("%m")
     )
@@ -509,20 +508,11 @@ def task_payslip(request, pk=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions
-    
-    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
+    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
-    computer_maintenance = computer_maintenance
-    food_accomodation = food_accomodation
-    health = health
     laptop_saving = 1000
-    total_deduction = (
-            Decimal(loan)
-            + Decimal(computer_maintenance)
-            + Decimal(food_accomodation)
-            + Decimal(health)
-            + Decimal(laptop_saving)
-    )
+    total_deduction = Decimal(loan)+total_deductions
 
     # Bonus
     Lap_Bonus = 500
@@ -610,48 +600,20 @@ def activitieslist(value, myactivities):
 
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
-    # tasks=Task.objects.all().order_by('-submission')
-    # user= get_object_or_404(CustomerUser, username=self.kwargs.get('username'))
-    # Amount=Task.objects.all().aggregate(Your_Total_GoalAmount=Sum('mxearning'))
-    # total_duration=Task.objects.all().aggregate(Sum('duration'))
-    # mxearning=Task.objects.filter().aggregate(Your_Total_AssignedAmt=Sum('mxearning'))
-    # paybalance=round(bal,2)
-    # balance=paybalance.quantize(Decimal('0.01'))
-    # salary = [task.pay for pay in Task.objects.all().values()]
-    computer_maintenance = 500
-    food_accomodation = 1000
-    deadline_date = date(
-        date.today().year,
-        date.today().month,
-        calendar.monthrange(date.today().year, date.today().month)[-1],
-    )
-    # delta = deadline_date - date.today()
-    payday = deadline_date + timedelta(days=15)
-    delta = relativedelta(deadline_date, date.today())
-    # year=delta.years
-    # months=delta.months
-    time_remaining_days = delta.days
-    time_remaining_hours = delta.hours
-    time_remaining_minutes = delta.minutes
-    current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
     tasks = Task.objects.all().filter(employee=employee)
-    # tasks = Task.objects.filter(user__username=request.user)
+    (today,year, month,day,target_date,
+     time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,deadline_date
+     )=paytime()
     points_count = Task.objects.filter(
         description__in=['Meetings', 'General', 'Sprint', 'DAF', 'Recruitment', 'Job Support', 'BI Support'],
         employee=employee)
     point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
     num_tasks = tasks.count()
-    # points = tasks.aggregate(Your_Total_Points=Sum("point"))
-    # mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    # Points = points.get("Your_Total_Points")
-    # MaxPoints = mxpoints.get("Your_Total_MaxPoints")
     Points,MaxPoints,point_percentage=employee_reward(tasks)
-    print(Points)
-    print(MaxPoints)
-    print(point_percentage)
     pay = earning.get("Your_Total_Pay")
     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
     pay = earning.get("Your_Total_Pay")
@@ -664,11 +626,13 @@ def usertask(request, user=None, *args, **kwargs):
         paybalance = 0
 
     loan = Decimal(total_pay) * Decimal("0.2")
-
+    payslip_config=paymentconfigurations(PayslipConfig,employee)
+    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
     try:
-        net = total_pay - computer_maintenance - food_accomodation - loan
+        net = total_pay - total_deductions - loan
     except (TypeError, AttributeError):
-        net = total_pay - computer_maintenance - food_accomodation
+        net = total_pay - total_deductions
     try:
         pointsbalance = Decimal(MaxPoints) - Decimal(Points)
     except (TypeError, AttributeError):
@@ -684,15 +648,12 @@ def usertask(request, user=None, *args, **kwargs):
     # 3rd month
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
-    # employee__username=request.user
-    print(request.user)
-    # print(employee__username)
+
     history = TaskHistory.objects.filter(
         Q(submission__gte=start_day_of_prev_month3),
         Q(submission__lte=last_day_of_prev_month1),
         Q(employee__username=request.user)
     )
-
     average_earnings = 0
     counter = 3
     for data in history.all():
@@ -703,11 +664,6 @@ def usertask(request, user=None, *args, **kwargs):
     if average_earnings == 0:
         average_earnings = GoalAmount
 
-    # try:
-    #     average_earnings = average_earnings / counter 
-    # except Exception as ZeroDivisionError:
-    #     average_earnings = GoalAmount
-    # activitysession="one one one session"
     activities = ["one one one", "one one one session", "one one one sessions"]
     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
                           activities]
@@ -725,9 +681,6 @@ def usertask(request, user=None, *args, **kwargs):
         "GoalAmount": GoalAmount,
         "paybalance": paybalance,
         "pointsbalance": pointsbalance,
-        "time_remaining_days": time_remaining_days,
-        "time_remaining_hours": time_remaining_hours,
-        "time_remaining_minutes": time_remaining_minutes,
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
@@ -748,29 +701,18 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, pk=None, *args, **kwargs):
-    task_history = TaskHistory.objects.get_by_pk(pk)
-    current_user = request.user
-    if task_history is None:
-        message=f'Hi {current_user}, you do not have history information,kindly contact admin!'
-        return render(request, "main/errors/404.html",{"message":message})
+def usertaskhistory(request, employee=None, *args, **kwargs):
+    # task_history = TaskHistory.objects.all().filter(employee=employee)
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    print(task_history)
-    computer_maintenance = 500
-    food_accomodation = 1000
-    deadline_date = date(
-        date.today().year,
-        date.today().month,
-        calendar.monthrange(date.today().year, date.today().month)[-1],
-    )
-    delta = deadline_date - date.today()
-    time_remaining = delta.days
-    employee = get_object_or_404(User, username=task_history.employee)
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    task_history = TaskHistory.objects.get_by_employee(employee)
+    if task_history is None:
+        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
+        return render(request, "main/errors/404.html",{"message":message})
     tasks = TaskHistory.objects.all().filter(
             employee=employee, submission__month=task_history.submission.strftime("%m")
         )
-    # print("You dont have any matching records in the database")
-    # tasks = Task.objects.filter(user__username=request.user)
+
     num_tasks = tasks.count()
     points = tasks.aggregate(Your_Total_Points=Sum("point"))
     mxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
@@ -788,19 +730,22 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
         paybalance = Decimal(GoalAmount) - Decimal(total_pay)
     except (TypeError, AttributeError):
         paybalance = 0
-
+    payslip_config=paymentconfigurations(PayslipConfig,employee)
+    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
 
     try:
-        net = total_pay - computer_maintenance - food_accomodation - loan
+        net = total_pay - total_deductions - loan
     except (TypeError, AttributeError):
-        net = total_pay - computer_maintenance - food_accomodation
+        net = total_pay - total_deductions
     try:
         pointsbalance = Decimal(MaxPoints) - Decimal(Points)
     except (TypeError, AttributeError):
         pointsbalance = 0
-    
+
     context = {
+        'employee':employee,
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
         "tasks": tasks,
@@ -810,15 +755,12 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
         "GoalAmount": GoalAmount,
         "paybalance": paybalance,
         "pointsbalance": pointsbalance,
-        "time_remaining": time_remaining,
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
     }
     # setting  up session
-       # setting  up session
     request.session["employee_name"] = kwargs.get("username")
-    # request.session["task_id"] = kwargs.get("pk")
 
     if request.user == employee:
         return render(request, "management/daf/usertaskhistory.html", context)
@@ -877,33 +819,22 @@ def pay(request, user=None, *args, **kwargs):
     loantable=TrainingLoan
     # lbandls = LBandLS.objects.get(user_id=employee)
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    # try:
-    #     payslip_config = paymentconfigurations(PayslipConfig,employee)
-    # except PayslipConfig.DoesNotExist:
-    #     link=f"finance:paymentconfigs"
-    #     title='CONFIGURATIONS'
-    #     message=f'We dont have existing configs for this employee/admin,proceed to set configs'
-    #     context={
-    #         "link":link,
-    #         "title":title,
-    #         "message":message
-    #     }
-    #     return render(request,'main/errors/generalerrors.html',context)
-    today,year,month,day,deadline_date=paytime()
+    (today,year, month,day,target_date,
+     time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,deadline_date
+     )=paytime()
     task_obj=Task.objects.filter(submission__contains=year)
     mxearning,points=payinitial(tasks)
     total_pay = Decimal(0)
     for task in tasks:
         total_pay = total_pay + task.get_pay
     # Deductions
-    # print(loan_amount,loan_payment,balance_amount)
-    # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
     loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
     print(loan_amount, loan_payment, balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
     loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
-    # print("what is this----->",loan_update_save(loantable,user_data,employee,total_pay,payslip_config))
+    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)

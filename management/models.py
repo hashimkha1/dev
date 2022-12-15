@@ -555,6 +555,12 @@ class TaskManager(models.Manager):
             return qs.first()
         return None
 
+    def get_by_employee(self, employee):
+        qs = self.get_queryset().filter(employee=employee)
+        if qs.count() == 1:
+            return qs.first()
+        return None
+
     """
     def get_by_slug(self,slug):
         qs=self.get_queryset().filter(slug=slug)

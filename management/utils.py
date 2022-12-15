@@ -6,7 +6,9 @@ from decimal import Decimal
 import calendar,string
 from django.utils.text import slugify
 from datetime import date, datetime, timedelta
+from dateutil.relativedelta import relativedelta
 from django.shortcuts import get_object_or_404, redirect, render
+from django.db.models import Q
 import logging
 logger = logging.getLogger(__name__)
 
@@ -54,10 +56,29 @@ def paymentconfigurations(PayslipConfig,employee):
     try:
         payslip_config = get_object_or_404(PayslipConfig, user=employee)
     except:
-        payslip_config=PayslipConfig.objects.filter(user__username="coda_info").latest('id')
+        payslip_config=PayslipConfig.objects.filter(
+             Q(user__username="admin")| 
+             Q(user__username="coda_info") 
+             ).latest('id')
     return payslip_config
 
+
+
+
 def paytime():
+    deadline_date = date(
+        date.today().year,
+        date.today().month,
+        calendar.monthrange(date.today().year, date.today().month)[-1],
+    )
+    # delta = deadline_date - date.today()
+    payday = deadline_date + timedelta(days=15)
+    delta = relativedelta(deadline_date, date.today())
+    # year=delta.years
+    # months=delta.months
+    time_remaining_days = delta.days
+    time_remaining_hours = delta.hours
+    time_remaining_minutes = delta.minutes
     today = date(date.today().year, date.today().month, date.today().day)
     year = date.today().year
     month = date.today().month
@@ -67,7 +88,9 @@ def paytime():
         date.today().month,
         calendar.monthrange(date.today().year, date.today().month)[-1],
     )
-    return today,year,month,day,target_date
+    return (today,year, month,day,target_date,
+            time_remaining_days,time_remaining_hours,time_remaining_minutes,
+            payday,deadline_date)
 
 def loan_computation(total_pay,user_data,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
@@ -226,16 +249,22 @@ def deductions(payslip_config,total_pay):
        computer_maintenance = payslip_config.computer_maintenance
        health = payslip_config.health
        kra = payslip_config.kra
+       lap_saving=payslip_config.ls_amount
     else:
        food_accomodation = 1000
        computer_maintenance = 500
        health = 500
        kra = round(Decimal(total_pay) * Decimal(0.05), 2)
-    return food_accomodation,computer_maintenance,health,kra
+       lap_saving=500
+    total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving
+    return food_accomodation,computer_maintenance,health,kra,total_deductions
 
 def bonus(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
-    today,year,month,day,target_date= paytime()
+    (today,year, month,day,target_date,
+     time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,deadline_date
+     )=paytime()
     mxearning,points=payinitial(tasks)
     if payslip_config:
        # -------------points earning-----------
@@ -266,9 +295,9 @@ def additional_earnings(user_data,tasks,total_pay,payslip_config):
     sub_bonus=Decimal(pointsearning)+Decimal(latenight_Bonus)+Decimal(offpay)
     # ===============DEDUCTIONS=======================
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    food_accomodation,computer_maintenance,health,kra=deductions(payslip_config,total_pay)
-    total_deductions=food_accomodation+computer_maintenance+health+kra+loan_payment
-    return total_deductions,sub_bonus
+    food_accomodation,computer_maintenance,health,kra,total_deductions=deductions(payslip_config,total_pay)
+    total_deduction=total_deductions+loan_payment
+    return total_deduction,sub_bonus
 
 # ================================apis for slug==========================
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):

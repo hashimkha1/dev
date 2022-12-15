@@ -46,7 +46,8 @@ urlpatterns = [
     path('payslip/<str:username>/',views.pay, name='user_payslip'),
     # path('payslip/<str:username>/',views.payslip, name='user_payslip'),
 
-    path('task_payslip/<int:pk>/',views.task_payslip, name='task_payslip'),
+    path('task_payslip/<str:username>/',views.task_payslip, name='task_payslip'),
+    # path('task_payslip/<int:pk>/',views.task_payslip, name='task_payslip'),
     # path('newtask/', TaskCreateView.as_view(), name='newtask'),
     path('newtask/', views.newtaskcreation, name='newtask'),
     path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
