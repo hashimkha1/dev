@@ -542,7 +542,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "net": net,
     }
 
-    if request.user == employee:
+    if request.user == employee or request.user.is_superuser:
         # return render(request, 'management/daf/paystub.html', context)
         return render(request, "management/daf/payslip.html", context)
     elif request.user.is_superuser:
@@ -706,7 +706,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
 
-    if request.user == employee:
+    if request.user == employee or request.user.is_superuser:
         return render(request, "management/daf/usertaskhistory.html", context)
     elif request.user.is_superuser:
         return render(request, "management/daf/usertaskhistory.html", context)
