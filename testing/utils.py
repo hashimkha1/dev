@@ -133,3 +133,18 @@ def target_date():
          "year":year
     }
     return year,limit
+
+# @register.filter
+# def in_list(value, the_list):
+#     value = str(value)
+#     return value in the_list.split(',')
+
+# activities = ["one one one", "one one one session", "one one one sessions"]
+# myactivities = ["oneoneone", "oneoneonesession", "oneoneonesessions"]
+# activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities]
+# print(activitiesmodified)
+
+
+# @register.filter(name='activitieslist')
+# def activitieslist(value, myactivities):
+#     return True if value in myactivities else False

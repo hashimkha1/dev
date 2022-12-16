@@ -478,12 +478,8 @@ class TaskHistoryView(ListView):
 
 def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    (today,year, month,last_month,day,target_date,
-     time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date,
-     last_day_of_prev_month1,last_day_of_prev_month2,
-     start_day_of_prev_month3,last_day_of_prev_month3
-     )=paytime()
+    last_month=paytime()[4]
+    print(last_month)
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     task_history = TaskHistory.objects.get_by_employee(employee)
@@ -503,7 +499,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "%Y-%m-%d",
     ).date()
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=12)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
     # tasks = TaskHistory.objects.all().filter(
     #     employee=employee, submission__month=task_history.submission.strftime("%m")
     # )
@@ -555,35 +551,16 @@ def task_payslip(request, employee=None, *args, **kwargs):
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 
-@register.filter
-def in_list(value, the_list):
-    value = str(value)
-    return value in the_list.split(',')
-
-
-activities = ["one one one", "one one one session", "one one one sessions"]
-myactivities = ["oneoneone", "oneoneonesession", "oneoneonesessions"]
-activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in activities]
-print(activitiesmodified)
-
-
-@register.filter(name='activitieslist')
-def activitieslist(value, myactivities):
-    return True if value in myactivities else False
-
-
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     tasks = Task.objects.all().filter(employee=employee)
     # -----------Time from utils------------------
-    (today,year, month,last_month,day,target_date,
-     time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date,
-     last_day_of_prev_month1,last_day_of_prev_month2,
-     start_day_of_prev_month3,last_day_of_prev_month3
-     )=paytime()
+    deadline_date=paytime()[2]
+    payday=paytime()[10]
+    last_day_of_prev_month1=paytime()[-3]
+    start_day_of_prev_month3=paytime()[-2]
      # -----------Points/Earnings from utils------------------
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     points_count = Task.objects.filter(
@@ -604,17 +581,17 @@ def usertask(request, user=None, *args, **kwargs):
         paybalance = Decimal(GoalAmount) - Decimal(total_pay)
     except (TypeError, AttributeError):
         paybalance = 0
-
     loan = Decimal(total_pay) * Decimal("0.2")
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     message=f'VALES ARE :{total_deduction},{total_bonus}'
     print(message)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
+    # *_,total_deductions=deductions(payslip_config,total_pay)
+    total_deduction,*_= additional_earnings(user_data,tasks,total_pay,payslip_config)
     try:
-        net = total_pay - total_deductions - loan
+        net = total_pay - total_deduction
     except (TypeError, AttributeError):
-        net = total_pay - total_deductions
+        net = 0.00
 
     history = TaskHistory.objects.filter(
         Q(submission__gte=start_day_of_prev_month3),
@@ -674,17 +651,14 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # ------------TIME----------------------------------
-    (today,year, month,last_month,day,target_date,
-     time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date,
-     last_day_of_prev_month1,last_day_of_prev_month2,
-     start_day_of_prev_month3,last_day_of_prev_month3
-     )=paytime()
+    # today, *__ = paytime()
+    last_month=paytime()[4]
+    print(f'LAST MONTH:{last_month}')
     task_history = TaskHistory.objects.all().filter(employee=employee)
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=12)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
 
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
@@ -790,10 +764,9 @@ def pay(request, user=None, *args, **kwargs):
     # lbandls = LBandLS.objects.get(user_id=employee)
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     #  ===========Time==============
-    (today,year, month,last_month,day,target_date,
+    (today,year,deadline_date, month,last_month,day,target_date,
      time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,deadline_date,
-     last_day_of_prev_month1,last_day_of_prev_month2,
+     time_remaining_minutes,payday,last_day_of_prev_month1,last_day_of_prev_month2,
      start_day_of_prev_month3,last_day_of_prev_month3
      )=paytime()
     #  ===========Points and Pay==============

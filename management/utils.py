@@ -123,10 +123,12 @@ def paytime():
     last_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=1)
     start_day_of_prev_month3 = last_day_of_prev_month2.replace(day=1) - timedelta(days=last_day_of_prev_month3.day)
     last_month=last_day_of_prev_month1.strftime("%m")
-    return (today,year, month,last_month,day,target_date,
+    return (today,year,deadline_date,month,last_month,day,target_date,
             time_remaining_days,time_remaining_hours,time_remaining_minutes,
-            payday,deadline_date,last_day_of_prev_month1,last_day_of_prev_month2,
+            payday,last_day_of_prev_month1,last_day_of_prev_month2,
             start_day_of_prev_month3,last_day_of_prev_month3)
+
+
 
 def loan_computation(total_pay,user_data,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
@@ -278,7 +280,7 @@ def lap_save_bonus(userprofile,lbandls,LBLS):
             laptop_saving = Decimal(0)
     return laptop_bonus,laptop_saving
     
-def deductions(payslip_config,total_pay):
+def deductions(user_data,payslip_config,total_pay):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     if payslip_config:
        food_accomodation = payslip_config.food_accommodation
@@ -286,21 +288,23 @@ def deductions(payslip_config,total_pay):
        health = payslip_config.health
        kra = payslip_config.kra
        lap_saving=payslip_config.ls_amount
+       loan_payment=loan_computation(total_pay,user_data,payslip_config)[1]
     else:
        food_accomodation = 1000
        computer_maintenance = 500
        health = 500
        kra = round(Decimal(total_pay) * Decimal(0.05), 2)
        lap_saving=500
+       loan_payment=0
     total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving
-    return food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions
+    return food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions
 
 def bonus(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
-    (today,year, month,last_month,day,target_date,
-     time_remaining_days,time_remaining_hours,time_remaining_minutes,
-     payday,deadline_date,last_day_of_prev_month1,last_day_of_prev_month2,
-     start_day_of_prev_month3,last_day_of_prev_month3)=paytime()
+    month=paytime()[3]
+    day=paytime()[5]
+    print(month)
+    print(day)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     if payslip_config:
         # -------------points earning-----------
@@ -338,10 +342,10 @@ def additional_earnings(user_data,tasks,total_pay,payslip_config):
               +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+
               Decimal(Lap_Bonus))
     # ===============DEDUCTIONS=======================
-    loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
-    total_deduction=total_deductions+loan_payment
-    print(f'LOAN AMOUNT={loan_payment}')
+    # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
+    # *_,total_deductions=deductions(payslip_config,total_pay)
+    total_deduction=deductions(user_data,payslip_config,total_pay)[-1]
+    print(f'LOAN AMOUNT={total_deduction}')
     return total_deduction,sub_bonus
 
 # ================================apis for slug==========================
