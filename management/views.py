@@ -1151,14 +1151,10 @@ class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 def usersession(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
-    current_user = request.user
-    deadline_date = date(
-        date.today().year,
-        date.today().month,
-        calendar.monthrange(date.today().year, date.today().month)[-1],
-    )
+    deadline_date=paytime()[2]
+    print(f'Write Value:{deadline_date}')
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    sessions = Training.objects.all().filter(presenter=employee)
+    sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     emp_target_sessions =75
     client_target_sessions =27
     num_sessions = sessions.count()
@@ -1182,7 +1178,7 @@ def usersession(request, user=None, *args, **kwargs):
         return render(request, "management/departments/hr/usersessions.html", context)
     elif request.user.is_superuser:
         return render(request, "management/departments/hr/sessions.html", context)
-    elif request.user.is_client:
+    elif request.user.is_superuser or request.user.is_client:
         return render(request, "management/departments/hr/clientsessions.html", context)
     else:
         # raise Http404("Login/Wrong Page: Contact Admin Please!")
