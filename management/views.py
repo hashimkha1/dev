@@ -510,7 +510,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
 
     # Deductions & Bonus
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
+    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
     # Net Pay
     total_value=total_pay + total_bonus
@@ -586,7 +586,6 @@ def usertask(request, user=None, *args, **kwargs):
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     message=f'VALES ARE :{total_deduction},{total_bonus}'
     print(message)
-    # *_,total_deductions=deductions(payslip_config,total_pay)
     total_deduction,*_= additional_earnings(user_data,tasks,total_pay,payslip_config)
     try:
         net = total_pay - total_deduction
@@ -676,7 +675,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
+    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     # loan = Decimal(total_pay) * Decimal("0.2")
     loan=loan_payment
     point_percentage=point_percentage*100
@@ -764,11 +763,7 @@ def pay(request, user=None, *args, **kwargs):
     # lbandls = LBandLS.objects.get(user_id=employee)
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     #  ===========Time==============
-    (today,year,deadline_date, month,last_month,day,target_date,
-     time_remaining_days,time_remaining_hours,
-     time_remaining_minutes,payday,last_day_of_prev_month1,last_day_of_prev_month2,
-     start_day_of_prev_month3,last_day_of_prev_month3
-     )=paytime()
+    today,year,deadline_date,*_=paytime()
     #  ===========Points and Pay==============
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     task_obj=Task.objects.filter(submission__contains=year)
@@ -781,7 +776,7 @@ def pay(request, user=None, *args, **kwargs):
     logger.debug(f'balance_amount: {balance_amount}')
     loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
     # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,total_deductions=deductions(payslip_config,total_pay)
+    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)
@@ -842,6 +837,10 @@ def pay(request, user=None, *args, **kwargs):
     logger.debug(f'total_bonus: {total_bonus}')
     logger.debug(f'net: {net}')
     logger.debug(f'net_pay: {net_pay}')
+    print(f'total deductions: {total_deduction}')
+    print(f'total_bonus: {total_bonus}')
+    print(f'net: {net}')
+    print(f'net_pay: {net_pay}')
     context = {
         # bonus
         "pointsearning": bonus_points_ammount,
