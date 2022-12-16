@@ -478,7 +478,7 @@ class TaskHistoryView(ListView):
 
 def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    last_month=paytime()[4]
+    last_month=11#paytime()[4]
     print(last_month)
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
@@ -651,7 +651,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # ------------TIME----------------------------------
     # today, *__ = paytime()
-    last_month=paytime()[4]
+    last_month=11 #paytime()[4]
     print(f'LAST MONTH:{last_month}')
     task_history = TaskHistory.objects.all().filter(employee=employee)
     if task_history is None:
