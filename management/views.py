@@ -478,26 +478,27 @@ class TaskHistoryView(ListView):
 
 def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    last_month=paytime()[4]
-    print(last_month)
+    today,year,deadline_date,month,last_month,*_=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
-    task_history = TaskHistory.objects.get_by_employee(employee)
+    # task_history = TaskHistory.objects.get_by_employee(employee)
+    task_history = TaskHistory.objects.all().filter(employee=employee)
+    print(f'OBJECT:{task_history}')
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    today = date(date.today().year, date.today().month, date.today().day)
-    year = task_history.submission.strftime("%Y")
-    month = task_history.submission.strftime("%b")
-    day = task_history.submission.strftime("%d")
-    last_date = calendar.monthrange(
-        int(year), int(task_history.submission.strftime("%m"))
-    )[1]
-    # deadline_date = year+'-'+task_history.submission.strftime("%m")+'-'+str(last_date)
-    deadline_date = datetime.strptime(
-        year + "-" + task_history.submission.strftime("%m") + "-" + str(last_date),
-        "%Y-%m-%d",
-    ).date()
+    # today = date(date.today().year, date.today().month, date.today().day)
+    # year = task_history.submission.strftime("%Y")
+    # month = task_history.submission.strftime("%b")
+    # day = task_history.submission.strftime("%d")
+    # last_date = calendar.monthrange(
+    #     int(year), int(task_history.submission.strftime("%m"))
+    # )[1]
+    # deadline_date = datetime.strptime(
+    #     year + "-" + task_history.submission.strftime("%m") + "-" + str(last_date),
+    #     "%Y-%m-%d",
+    # ).date()
+    
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
     # tasks = TaskHistory.objects.all().filter(
@@ -521,7 +522,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
     bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
     context = {
         # deductions
-        # "laptop_saving": laptop_saving,
+        "laptop_saving": lap_saving,
         "computer_maintenance": computer_maintenance,
         "food_accomodation": food_accomodation,
         "health": health,
@@ -652,7 +653,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     # ------------TIME----------------------------------
     # today, *__ = paytime()
     last_month=paytime()[4]
-    print(f'LAST MONTH:{last_month}')
+    # print(f'LAST MONTH:{last_month}')
     task_history = TaskHistory.objects.all().filter(employee=employee)
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
@@ -675,7 +676,7 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
+    *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     # loan = Decimal(total_pay) * Decimal("0.2")
     loan=loan_payment
     point_percentage=point_percentage*100
