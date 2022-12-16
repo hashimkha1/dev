@@ -133,6 +133,13 @@ def target_date():
          "year":year
     }
     return year,limit
+# =====================picking values from url============
+# def usertaskhistory(request, username=None, *args, **kwargs):
+#     print('===============TESTING==================')
+#     url_path=request.path.split("/")
+#     new_list = [value for value in url_path if value != '']
+#     username=new_list[-1]
+#     employee =username
 
 # @register.filter
 # def in_list(value, the_list):

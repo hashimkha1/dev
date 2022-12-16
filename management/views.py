@@ -555,6 +555,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     employee = get_object_or_404(User, username=kwargs.get("username"))
+    print('================USERTASK===================')
+    print(employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     tasks = Task.objects.all().filter(employee=employee)
     # -----------Time from utils------------------
@@ -644,7 +646,7 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, pk=None, *args, **kwargs):
+def usertaskhistory(request, user=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
     # employee = get_object_or_404(User, username=kwargs.get("username"))
     # task_history = TaskHistory.objects.get_by_employee(employee)
@@ -654,11 +656,12 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
     # today, *__ = paytime()
     last_month=paytime()[4]
     # print(f'LAST MONTH:{last_month}')
-    task_history = TaskHistory.objects.all().filter(employee=employee)
-    if task_history is None:
+    # task_history = TaskHistory.objects.all().filter(employee=employee)
+    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
+    print(f'object:{tasks}')
+    if tasks is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
 
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
@@ -684,9 +687,6 @@ def usertaskhistory(request, pk=None, *args, **kwargs):
         net = total_pay - total_deduction+total_bonus
     except (TypeError, AttributeError):
         net = 0.00
-    # ==================PRINT=================
-    print(f'Object={task_history}')
-    print(f'Tasks={num_tasks}')
     context = {
         'employee':employee,
         "tasksummary": tasksummary,
