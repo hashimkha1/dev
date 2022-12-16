@@ -655,14 +655,12 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     # ------------TIME----------------------------------
     # today, *__ = paytime()
     last_month=paytime()[4]
-    # print(f'LAST MONTH:{last_month}')
-    # task_history = TaskHistory.objects.all().filter(employee=employee)
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
-    print(f'object:{tasks}')
-    if tasks is None:
+    print(f'LAST MONTH:{last_month}')
+    task_history = TaskHistory.objects.all().filter(employee=employee)
+    if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-
+    tasks = task_history.filter(employee=employee,submission__month=last_month)
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
@@ -687,6 +685,9 @@ def usertaskhistory(request, user=None, *args, **kwargs):
         net = total_pay - total_deduction+total_bonus
     except (TypeError, AttributeError):
         net = 0.00
+    # ==================PRINT=================
+    print(f'Object={task_history}')
+    print(f'Tasks={num_tasks}')
     context = {
         'employee':employee,
         "tasksummary": tasksummary,
@@ -711,8 +712,8 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     elif request.user.is_superuser:
         return render(request, "management/daf/usertaskhistory.html", context)
     else:
-        raise Http404("Login/Wrong Page: Contact Admin Please!")
-
+        message=f'Hi {request.user}, You are Prohibited from accessing this Page!'
+        return render(request, "main/errors/403.html",{"message":message})
 
 def prefix_zero(month:int) -> str:
     return str(month) if month > 9 else '0' + str(month)
