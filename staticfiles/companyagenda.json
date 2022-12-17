@@ -11,7 +11,7 @@
         },
         "POLICIES &CREDENTIALS": {
             "Credentials": "https://www.codanalytics.net/accounts/credentials/",
-            "Policies": "https://dashboard.heroku.com/apps/codamakutano/deploy/github"
+            "Policies": "https://dashboard.heroku.com/terms-of-service"
         },
         "BILLS & BANKING": {
             "Internet": "https://docs.google.com/document/d/1LRZDfsedW8uQLqQAYHKl98giehKhDGYF/edit",
