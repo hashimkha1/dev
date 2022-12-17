@@ -83,6 +83,8 @@
         },
         "WEBSITE DEVELOPMENT": {
             "Requirements": "https://www.codanalytics.net/management/requirements/",
+            "Code Testing Templates": "https://github.com/coachofanalytics/uat",
+            "Heroku Testing Environment": "https://dashboard.heroku.com/apps/codamakutano",
             "Web Training":"https://docs.google.com/presentation/d/1ThVn9NYI2UU4QEc3UJTyCcgxOl5sKbSwpLzUDzPxuKM/edit#slide=id.g167f8d0d9ad_0_51",
             "Error-Handling": "https://docs.google.com/spreadsheets/d/14zhBw47Va05SxyvCEu4xXNs4z0C70WuuNWjaQDR2pTE/edit#gid=965191431"
         }
