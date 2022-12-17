@@ -1,0 +1,141 @@
+{%extends "main/base_templates/base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>ALL CLIENTS</h2>
+    <hr>
+    <div class="col-md-12">
+      <p><a href="#" class="btn btn-primary btn-sm"
+        >FULL TIME EMPLOYEES
+      </a></p>
+    </div>
+    <hr>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>First</th>
+          <th>Last</th>
+          <th>Phone Number</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Update</th>
+          <!---
+          <th>CustomerId</th>
+          <th>Registering For:</th>
+        -->
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in full_time %}
+            <tr>
+              <td>{{employee.date_joined|date:"F d, Y"}}</td>
+              <td>{{employee.first_name|slice:":15"}}</td>
+              <td>{{employee.last_name|slice:":15" }}</td>
+              <td>{{employee.phone}}</td>
+              <td>{{employee.email}}</td>
+              <td>{{employee.city}}</td>
+              <td>{{employee.state}}</td>
+              <td>{{employee.country}}</td>
+              <!-------
+              <td>{{employee.id}}</td>
+              <td>{{employee.category}}</td>
+               {% if employee.category == 1 or employee.category == 2 %}
+                {% endif %}
+              --->
+              <td> <a class="article-title" href="{% url 'accounts:superuser-update' employee.id %}">Edit</a></td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="col-md-12">
+      <p><a href="#" class="btn btn-primary btn-sm"
+        >Contractual-Agents
+      </a></p>
+    </div>
+    <hr>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>First</th>
+          <th>Last</th>
+          <th>Phone Number</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in contractual_agent %}
+            <tr>
+              <td>{{employee.date_joined|date:"F d, Y"}}</td>
+              <td>{{employee.first_name|slice:":15"}}</td>
+              <td>{{employee.last_name|slice:":15" }}</td>
+              <td>{{employee.phone}}</td>
+              <td>{{employee.email}}</td>
+              <td>{{employee.city}}</td>
+              <td>{{employee.state}}</td>
+              <td>{{employee.country}}</td>
+              <!-------
+              <td>{{employee.id}}</td>
+              <td>{{employee.category}}</td>
+               {% if employee.category == 1 or employee.category == 2 %}
+                {% endif %}
+              --->
+              <td> <a class="article-title" href="{% url 'accounts:superuser-update' employee.id %}">Edit</a></td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="col-md-12">
+      <p><a href="#" class="btn btn-primary btn-sm"
+        >Past Employees
+      </a></p>
+    </div>
+    <hr>
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>First</th>
+          <th>Last</th>
+          <th>Phone Number</th>
+          <th>Email</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Country</th>
+          <th>Update</th>
+  
+        </tr>
+      </thead>
+      <tbody>
+        {% for employee in past %}
+            <tr>
+              <td>{{employee.date_joined|date:"F d, Y"}}</td>
+              <td>{{employee.first_name|slice:":15"}}</td>
+              <td>{{employee.last_name|slice:":15" }}</td>
+              <td>{{employee.phone}}</td>
+              <td>{{employee.email}}</td>
+              <td>{{employee.city|slice:":10"}}</td>
+              <td>{{employee.state|slice:":10"}}</td>
+              <td>{{employee.country|slice:":10"}}</td>
+              <!-------
+              <td>{{employee.id}}</td>
+              <td>{{employee.category}}</td>
+               {% if employee.category == 1 or employee.category == 2 %}
+                {% endif %}
+              --->
+              <td> <a class="article-title" href="{% url 'accounts:superuser-update' employee.id %}">Edit</a></td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+
+  </div>
+</section>
+{% endblock content %}

@@ -1,0 +1,5 @@
+{% if user.sub_category == 3 or user.is_superuser %}
+{% include 'management/departments/agenda/general_agenda.html' %}
+{% else %}
+{% include 'management/departments/agenda/users_dashboard.html' %}
+{% endif %}
