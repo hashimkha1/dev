@@ -225,7 +225,7 @@ def advertisement():
     twitter_context = Advertisement.objects.all().first()
     facebook_context = Advertisement.objects.all().first()
     apiKey =twitter_context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
-    apiSecret = twitter_context.twitter_api_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
+    apiSecret = twitter_context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
     accessToken = twitter_context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
     accessTokenSecret =twitter_context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
 
@@ -236,7 +236,7 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    # media = api.media_upload(twitter_context.image)
+    media = api.media_upload(twitter_context.image)
 
     api.update_status(
         status=twitter_context.post_description,
