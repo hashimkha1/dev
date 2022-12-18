@@ -236,11 +236,11 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    media = api.media_upload(twitter_context.image)
+    # media = api.media_upload(twitter_context.image)
 
     api.update_status(
         status=twitter_context.post_description,
-        media_ids=[twitter_context.tweet_media],
+        # media_ids=[twitter_context.tweet_media],
     )
 
     """
