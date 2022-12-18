@@ -70,12 +70,14 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    advertisement()
-    posts=Post.objects.all()
-    context={
-        "posts":posts,
-        "title": "layout"
-    }
+    try:
+        advertisement()
+    except:
+        posts=Post.objects.all()
+        context={
+            "posts":posts,
+            "title": "layout"
+        }
     return render(request, "main/home_templates/newlayout.html",context)
 
 
