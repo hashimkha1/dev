@@ -41,6 +41,7 @@ Pillow==8.3.1
 numpy
 pandas
 tweepy
+bs4
 django-crontab==0.7.1
 python-dotenv==0.20.0
 google-api-python-client==2.52.0
