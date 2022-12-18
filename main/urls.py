@@ -26,10 +26,6 @@ urlpatterns = [
     path('report/', views.report, name='report'),
     path('project/', views.project, name='project'),
     path('training/', views.training, name='training'),
-    # transactions url patterns
-    #path('transact/', views.transact, name='transact'),
-    #path('transaction/', TransactionListView.as_view(), name='transaction-list'),
-    #path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(), name='transaction-updated'),
     #path('documents/', views.codadocuments, name='documents'),
     path('checkout/', views.checkout, name='checkout'),
     path('pay/', views.pay, name='pay'),

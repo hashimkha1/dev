@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from celery import shared_task
 from django.shortcuts import redirect, render
 from django.views.generic import (
     ListView,
@@ -19,8 +20,12 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from coda_project.task import advertisement
-# Create your views here.
+# from django.core.management import call_command
+import tweepy
+import requests
+
+# from management.models import TwitterAd, FacebookAd
+from management.models import Advertisement
 
 def error400(request):
     return render(request, "main/errors/400.html", {"title": "400Error"})
@@ -64,7 +69,7 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    # advertisement()
+    advertisement()
     posts=Post.objects.all()
     context={
         "posts":posts,
@@ -193,44 +198,6 @@ def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
 
-# -------------------------transactions Section-------------------------------------#
-def transact(request):
-    if request.method == "POST":
-        form = TransactionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("management: management-transaction")
-    else:
-        form = TransactionForm()
-    return render(request, "management/company_finances/transact.html", {"form": form})
-
-
-""" 
-def transaction(request):
-    transactions=Expenses.objects.all().order_by('-activity_date')
-    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
-"""
-
-
-class TransactionListView(ListView):
-    model = Expenses
-    template_name = "main/transaction.html"  # <app>/<model>_<viewtype>
-    context_object_name = "transactions"
-    ordering = ["-activity_date"]
-
-
-"""
-class TransactionUpdateView(LoginRequiredMixin,UpdateView):
-    model=Expenses
-    fields = ['sender','receiver','phone','department', 'category','payment_method','quantity','amount','description','receipt']
-     
-    def form_valid(self,form):
-        form.instance.username=self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('transaction-list') 
-"""
 # -----------------------------Documents---------------------------------
 """
 def codadocuments(request):
@@ -248,3 +215,47 @@ def doc(request):
         form=CodadocumentsForm()
     return render(request, 'main/doc.html',{'form':form})
 """
+
+@shared_task(name="advertisement")
+def advertisement():
+    """
+    This function will post the latest Facebook Ad
+    """
+    twitter_context = Advertisement.objects.all().first()
+    facebook_context = Advertisement.objects.all().first()
+    apiKey ='1zPxZNd57aXHZb8WwQFYEvNbv'  # twitter_context.twitter_api_key
+    apiSecret = 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' # twitter_context.twitter_api_secret
+    accessToken ='1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' # twitter_context.twitter_access_token
+    accessTokenSecret ='17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' # twitter_context.twitter_access_token_secret
+
+    # 3. Create Oauth client and set authentication and create API object
+    oauth = tweepy.OAuthHandler(apiKey, apiSecret)
+    oauth.set_access_token(accessToken, accessTokenSecret)
+
+    api = tweepy.API(oauth)
+
+    # 4. upload media
+    # media = api.media_upload(twitter_context.image)
+
+    api.update_status(
+        status=twitter_context.tweet_description,
+        media_ids=[twitter_context.tweet_media],
+    )
+
+    """
+        This function will post the latest Facebook Ad
+    """
+
+    # facebook_page_id = facebook_context.facebook_page_id
+    # access_token = facebook_context.facebook_access_token
+    # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
+    # msg = facebook_context.post_description
+    # image_location = facebook_context.image
+    # payload = {
+    #     "url": image_location,
+    #     "access_token": access_token,
+    #     "message": msg,
+    # }
+
+    # Send the POST request
+    # requests.post(url, data=payload)
