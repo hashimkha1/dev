@@ -45,6 +45,7 @@ def error500(request):
 
 def general_errors(request):
     # return render(request, "main/errors/noresult.html")
+    context={'message':'message'}
     return render(request,'main/errors/generalerrors.html',context)
 #  ===================================================================================   
 def hendler400(request,exception):

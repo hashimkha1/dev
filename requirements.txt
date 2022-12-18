@@ -40,9 +40,7 @@ redis==4.3.1
 Pillow==8.3.1
 numpy
 pandas
-bs4
-# pandas-1.5.1
-# pillow-9.3.0
+tweepy
 django-crontab==0.7.1
 python-dotenv==0.20.0
 google-api-python-client==2.52.0
