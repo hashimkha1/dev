@@ -26,6 +26,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
+from .filters import CredentialFilter
 from django.db.models import Q
 from management.models import Task
 from application.models import UserProfile
@@ -416,11 +417,13 @@ def credential_view(request):
     categories = CredentialCategory.objects.all().order_by("-entry_date")
     credentials = Credential.objects.all().order_by("-entry_date")
     departments = Department(request)
+    credential_filters=CredentialFilter(request.GET,queryset=credentials)
     context = {
         "departments": departments,
         "categories": categories,
         "credentials": credentials,
         "show_password": False,
+        "credential_filters": credential_filters,
     }
 
     try:

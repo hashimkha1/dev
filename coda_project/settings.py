@@ -278,10 +278,17 @@ CELERYBEAT_SCHEDULE = {
         "schedule": crontab(0, 0, day_of_month="1"),
         #'schedule': crontab(),
     },
+
+    "run_on_every_1st": {
+        "task": "advertisement",
+        "schedule": crontab(0, 0, 0),
+        #'schedule': crontab(),
+    },
 }
 
 
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
+SITEURL = "https://codadev.herokuapp.com"
 #Uncomment for prod purposes
-SITEURL = "https://www.codanalytics.net"
+# SITEURL = "https://www.codanalytics.net"

@@ -73,18 +73,27 @@ class CredentialCategoryForm(forms.ModelForm):
     class Meta:  
         model = CredentialCategory  
         fields = ['department','category', 'slug','description', 'is_active','is_featured']
-        widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
+        widgets = {
+            # Use SelectMultiple below
+            "category":forms.SelectMultiple(attrs={'class':'form-control', 'category':'category'}),
+            "description": Textarea(attrs={"cols": 40, "rows": 2})
+            }
 
 class CredentialForm(forms.ModelForm):  
     class Meta:  
         model = Credential
         fields = ['category','name', 'added_by','slug','user_types','description','password','link_name','link','is_active','is_featured']
-        widgets = {"description": Textarea(attrs={"cols": 40, "rows": 2})}
         labels={
                 'link_name':'username/email',
                 'link':'Link/url',
                 'user_types':'Specify Who Can Access this Credential?'
         }
+        widgets = {
+            # Use SelectMultiple below
+            "category":forms.SelectMultiple(attrs={'class':'form-control', 'id':'category'}),
+            "description": Textarea(attrs={"cols": 40, "rows": 2})
+            }
+
 """ 
 #==========================APPLICATION FORM-APPLICANTS================================
 

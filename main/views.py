@@ -19,6 +19,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from coda_project.task import advertisement
 # Create your views here.
 
 def error400(request):
@@ -63,6 +64,7 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
+    # advertisement()
     posts=Post.objects.all()
     context={
         "posts":posts,
