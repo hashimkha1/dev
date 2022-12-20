@@ -74,7 +74,7 @@ def layout(request):
         advertisement()
     except:
         posts=Post.objects.all()
-        context={
+    context={
             "posts":posts,
             "title": "layout"
         }
