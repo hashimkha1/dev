@@ -14,6 +14,16 @@
         </a></p>
       </div>
     </div>
+    <div class="row">
+      <div class="col">
+          <div class="card cardbody">
+            <form method="get">
+              {{requirement_filters.form}}
+              <button type="submit">Search</button>
+            </form>
+          </div>
+      </div>
+  </div>
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
@@ -32,7 +42,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for requirement in  requirements  %}
+        {% for requirement in  requirement_filters.qs  %}
          
             <tr>
               <td>CODA000{{requirement.id}}</td>
@@ -60,7 +70,3 @@
   </div>
 </section>
 {% endblock content %}
-
-
-
-

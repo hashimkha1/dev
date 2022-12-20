@@ -1,6 +1,4 @@
 import calendar,string
-from logging import exception
-
 import requests
 from django import template
 from datetime import date, datetime, timedelta
@@ -43,14 +41,13 @@ from management.models import (
 )
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
-
+from main.filters import RequirementFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
-from django.db.models import Max
 
 from accounts.models import Tracker, Department, TaskGroups
 from finance.models import  PayslipConfig
@@ -1214,11 +1211,13 @@ def active_requirements(request, Status=None, *args, **kwargs):
 
 def requirements(request):
     requirements = Requirement.objects.all().order_by("-id")
-    return render(
-        request,
-        "management/doc_templates/requirementlist.html",
-        {"requirements": requirements},
-    )
+    requirement_filters=RequirementFilter(request.GET,queryset=requirements)
+
+    context={
+        "requirements": requirements,
+        "requirement_filters": requirement_filters
+    }
+    return render(request,"management/doc_templates/requirementlist.html",context)
 
 
 def newrequirement(request):
