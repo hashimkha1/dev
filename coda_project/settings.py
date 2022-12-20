@@ -132,6 +132,7 @@ import dj_database_url
 #         'HOST': 'localhost',
 #     }
 # }
+
 # =======================HEROKU CODADEV: Need Privilege=================
 # DATABASES = {
 #     'default': {
@@ -142,7 +143,16 @@ import dj_database_url
 #         'HOST': os.environ.get('HEROKU_UAT_HOST'),
 #     }
 # }
-
+# =======================HEROKU DEV MAKUTANO: Need Privilege=================
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': os.environ.get('HEROKU_DEV_NAME'),
+#         'USER': os.environ.get('HEROKU_DEV_USER'),
+#         'PASSWORD':'72660562223f7ce8774e9f96f65f52634d2528a04efb10f8e34049f494ec1f75', #os.environ.get('HEROKU_DEV_PASS'),
+#         'HOST': "ec2-3-225-213-67.compute-1.amazonaws.com" #os.environ.get('HEROKU_DEV_HOST'),
+#     }
+# }
 
 DATABASES = {
     "default": {
@@ -289,6 +299,6 @@ CELERYBEAT_SCHEDULE = {
 
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
-SITEURL = "https://codadev.herokuapp.com"
+# SITEURL = "https://codadev.herokuapp.com"
 #Uncomment for prod purposes
-# SITEURL = "https://www.codanalytics.net"
+SITEURL = "https://www.codanalytics.net"
