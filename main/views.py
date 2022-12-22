@@ -262,8 +262,6 @@ def advertisement():
     # image.show() 
     # media=googledriveurl={{image.image_url}}
     image=link
-    image_base64 = encodestring(link)
-    # image='media/profile_pics/Chris.jpg'
     # image='media/profile_pics/Chris.jpg'
     # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
     

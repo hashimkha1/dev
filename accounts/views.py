@@ -71,7 +71,8 @@ def join(request):
                 contract_date = today.strftime("%d %B, %Y")
                 check_default_fee = Default_Payment_Fees.objects.all()
                 if check_default_fee:
-                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                    # default_fee = Default_Payment_Fees.objects.get(id=1)
+                    default_fee = Default_Payment_Fees.objects.all().first()
                 else:
                     default_payment_fees = Default_Payment_Fees(
                         job_down_payment_per_month=500,
@@ -80,7 +81,8 @@ def join(request):
                         student_bonus_payment_per_month=100,
                     )
                     default_payment_fees.save()
-                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                    # default_fee = Default_Payment_Fees.objects.get(id=1)
+                    default_fee = Default_Payment_Fees.objects.all().first()
                 if (
                     request.POST.get("category") == "3"
                     and request.POST.get("sub_category") == "1"
