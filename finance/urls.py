@@ -33,6 +33,8 @@ urlpatterns = [
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
     path('payments/', PaymentListView.as_view(template_name='finance/payments/payments.html'), name='payments'),
+    path('pay/<int:pk>/', views.PaymentInformationUpdateView.as_view(), name='updatepay'),
+    
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
     path('newpayment/', PaymentCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpayment'),
     path('payment/<int:pk>/update/', DefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),

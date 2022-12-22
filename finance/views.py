@@ -274,6 +274,31 @@ class DefaultPaymentUpdateView(UpdateView):
 		return False
 
 
+# For payment purposes
+class PaymentInformationUpdateView(UpdateView):
+	model = Payment_Information
+	success_url = "/pay/"
+	template_name="main/snippets_templates/generalform.html"
+	
+	# fields ="__all__"
+	fields=['customer_id','down_payment']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		if self.request.user.is_superuser:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		task = self.get_object()
+		# if self.request.user.is_superuser:
+		# 	return True
+		# elif self.request.user == task.employee:
+		if self.request.user:
+		    return True
+
+
 # ----------------------CASH OUTFLOW CLASS-BASED VIEWS--------------------------------
 @login_required
 def transact(request):

@@ -23,8 +23,18 @@
       <div>
         <div class="box-element hidden" id="payment-info">
               <h2 class="text-center m-4">Method 1: Paypal</h2>
-              <label for="Training">Amount to be Paid</label>
-              <input type="text" id="priceId">
+              <!-- <label for="Training">Amount to be Paid </label> -->
+              <input type="text" id="priceId" hidden> 
+              <id="priceId"> 
+                <button>
+                  $Amount to be Paid <b>$ {{payments.down_payment}}</b> 
+                </button>
+              <a class="article-title" href="{% url 'finance:updatepay' user.id %}">
+                <button>
+                  Edit
+                </button>
+              </a>
+              
 
 <div id="paypal-button-container"></div>
 </div>
@@ -37,7 +47,8 @@
 
   <script>
     
-    document.getElementById("priceId").value = "{{payments.payment_fees}}";
+    document.getElementById("priceId").value = "{{payments.down_payment}}";
+    // document.getElementById("priceId").value = "{{payments.payment_fees}}";
     var price=document.getElementById('priceId');
     var amount=price.value;
     function getCookie(name) {
@@ -66,7 +77,7 @@
               'Content-type':'application/json',
               'X-CSRFToken':csrftoken,
             },
-            body:JSON.stringify({"payment_fees":amount})
+            body:JSON.stringify({"down_payment":amount})
           })
         }
 
