@@ -132,14 +132,15 @@ def mycontract(request, *args, **kwargs):
 	client_data=CustomerUser.objects.get(username=username)
 	check_default_fee = Default_Payment_Fees.objects.all()
 	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.get(id=1)
+		# default_fee = Default_Payment_Fees.objects.get(id=1)
+		default_fee = Default_Payment_Fees.objects.all().first()
 	else:
 		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
 				student_down_payment_per_month=500,
 				student_bonus_payment_per_month=100)
 		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=1)
+		default_fee = Default_Payment_Fees.objects.all().first()
 		
 	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
 		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
