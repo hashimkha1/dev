@@ -15,14 +15,24 @@
               </a></p>
             </div>
           </div>
-
+          <div class="row">
+            
+            <div class="col">
+                <div class="card cardbody">
+                  <form method="get">
+                    {{requirement_filters.form}}
+                    <button type="submit">Search</button>
+                  </form>
+                </div>
+            </div>
+        </div>
           <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <p class="p text-center"> </p>
           <p class="gi">
             This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
         </p>
           <div class="row text-center">
-            {% for requirement in  requirements  %}
+            {% for requirement in  requirement_filters.qs  %}
               <div class="col-md-6" id="gi">
                   <div class="card">
                     <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
