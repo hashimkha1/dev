@@ -236,8 +236,12 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
+    # media=googledriveurl={{image.image_url}}
+
+    image='media/marketing/interview12172022_v1.png'
     
-    media = api.media_upload(context.image)
+    
+    media = api.media_upload(image)
 
     api.update_status(
         status=context.post_description,

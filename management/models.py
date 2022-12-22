@@ -1045,6 +1045,10 @@ class Advertisement(models.Model):
     author= models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.post_description
+
+
 class LBandLS(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     laptop_bonus =  models.FloatField(null=True)
