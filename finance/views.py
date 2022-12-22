@@ -284,7 +284,8 @@ class PaymentInformationUpdateView(UpdateView):
 	fields=['customer_id','down_payment']
 	def form_valid(self, form):
 		# form.instance.author=self.request.user
-		if self.request.user.is_superuser:
+		# if self.request.user.is_superuser or self.request.user:
+		if self.request.user is not None:
 			return super().form_valid(form)
 		else:
 			# return redirect("management:tasks")
