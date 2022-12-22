@@ -29,7 +29,7 @@
                 <button>
                   $Amount to be Paid <b>$ {{payments.down_payment}}</b> 
                 </button>
-              <a class="article-title" href="{% url 'finance:updatepay' user.id %}">
+              <a class="article-title" href="{% url 'finance:updatepay' request.user.id %}">
                 <button>
                   Edit
                 </button>
