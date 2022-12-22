@@ -238,7 +238,7 @@ def advertisement():
     # 4. upload media
     # media=googledriveurl={{image.image_url}}
 
-    image='media/marketing/interview12172022_v1.png'
+    image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
     
     
     media = api.media_upload(image)
