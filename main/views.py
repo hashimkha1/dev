@@ -70,10 +70,8 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    try:
-        advertisement()
-    except:
-        posts=Post.objects.all()
+    advertisement()
+    posts=Post.objects.all()
     context={
             "posts":posts,
             "title": "layout"
