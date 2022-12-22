@@ -10,6 +10,7 @@ from main.forms import TransactionForm,ContactForm
 from main.models import Expenses
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
+from management.models import Advertisement
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -23,9 +24,11 @@ from django.views.generic import (
 # from django.core.management import call_command
 import tweepy
 import requests
-
-# from management.models import TwitterAd, FacebookAd
-from management.models import Advertisement
+# importing modules
+import urllib.request
+from PIL import Image
+from django.contrib.auth import get_user_model
+User=get_user_model()
 
 def error400(request):
     return render(request, "main/errors/400.html", {"title": "400Error"})
@@ -70,7 +73,7 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    #advertisement()
+    # advertisement()
     posts=Post.objects.all()
     context={
             "posts":posts,
@@ -88,7 +91,16 @@ def about_us(request):
 
 
 def team(request):
-    return render(request, "main/team.html", {"title": "team"})
+    semployees=User.objects.all()
+    emps=User.objects.all().filter(is_employee=True)
+    staffs=User.objects.all().filter(is_employee=True,is_staff=True)
+    context={
+        "semployees":semployees,
+        "emps":emps,
+        "staffs":staffs,
+        "title": "team"
+    }
+    return render(request, "main/team.html",context)
 
 
 def it(request):
@@ -236,9 +248,24 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
+    # urllib.request.urlretrieve(
+    # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
+    # "advertisement.png")
+    urllib.request.urlretrieve(
+    'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
+    "advertisement.png")
+    # image = Image.open("advertisement.png")
+    image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+    link = urllib.request.urlopen(image_path).read()
+    # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
+    # This method will show image in any image viewer 
+    # image.show() 
     # media=googledriveurl={{image.image_url}}
-
-    image='media/profile_pics/Chris.jpg'
+    image=link
+    image_base64 = encodestring(link)
+    # image='media/profile_pics/Chris.jpg'
+    # image='media/profile_pics/Chris.jpg'
+    # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
     
     
     media = api.media_upload(image)
