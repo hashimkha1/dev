@@ -70,7 +70,7 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    advertisement()
+    #advertisement()
     posts=Post.objects.all()
     context={
             "posts":posts,
@@ -238,7 +238,7 @@ def advertisement():
     # 4. upload media
     # media=googledriveurl={{image.image_url}}
 
-    image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+    image='media/profile_pics/Chris.jpg'
     
     
     media = api.media_upload(image)
