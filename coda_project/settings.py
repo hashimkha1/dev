@@ -291,7 +291,7 @@ CELERYBEAT_SCHEDULE = {
 
     "run_on_every_1st": {
         "task": "advertisement",
-        "schedule": crontab(0, 0, 0),
+        "schedule": crontab(0, 0, day_of_month="1"),
         #'schedule': crontab(),
     },
 }
