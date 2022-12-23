@@ -24,6 +24,7 @@ from selenium.webdriver.common.keys import Keys
 import psycopg2
 import time
 
+from coda_project.settings import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
@@ -140,19 +141,7 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     #Database connection 
     try:
         with psycopg2.connect(
-                            host = 'ec2-52-87-81-98.compute-1.amazonaws.com',
-                            dbname = 'dlt4nrr9rn8h',
-                            user = 'ifuvayllmmmyzu',
-                            password = '802f93df2de5c75266dca4bd1bc7f13189f48f711ddf666c9c8cb951ef8ee510',
-                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            # dbname = 'das6459qgcjbmv',
-                            # user = 'xgsxxbmwywwmoj',
-                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
-                            # host = 'localhost',
-                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
-                            port = 5432
+
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -177,19 +166,9 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 def crypto_data(symbol,action,unit_price, total_price,date):
     try:
         with psycopg2.connect(
-                            host = 'ec2-52-87-81-98.compute-1.amazonaws.com',
-                            dbname = 'dlt4nrr9rn8h',
-                            user = 'ifuvayllmmmyzu',
-                            password = '802f93df2de5c75266dca4bd1bc7f13189f48f711ddf666c9c8cb951ef8ee510',
-                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            # dbname = 'das6459qgcjbmv',
-                            # user = 'xgsxxbmwywwmoj',
-                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
-                            # host = 'localhost',
-                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
-                            port = 5432
+                                dblocal
+                                # herokudev,
+                                # herokuprod    
                             ) as conn:
             with conn.cursor() as cursor:
                 #getdata_cryptomarket
@@ -357,12 +336,8 @@ def get_crypto_price(soup, header):
 def dump_data_credit(values):
     try:
         with psycopg2.connect(
-                            host = 'localhost',
-                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                            port = 5432
-                            ) as conn:
+            dblocal()
+        ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
                 creating_db = '''CREATE TABLE IF NOT EXISTS getdata_creadspread (
@@ -429,11 +404,9 @@ def main_cread_spread():
 def dump_data_covered_calls(values):
     try:
         with psycopg2.connect(
-                            host = 'localhost',
-                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                            port = 5432
+                                dblocal
+                                # herokudev,
+                                # herokuprod 
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -505,14 +478,9 @@ def main_covered_calls():
 def dump_data_short_put(values):
     try:
         with psycopg2.connect(
-                            host = 'localhost',
-                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                            # dbname = 'Coda_analytics',
-                            # user = 'postgres',
-                            # password = 'Honnappa001@500',
-                            port = 5432
+                                dblocal
+                                # herokudev,
+                                # herokuprod 
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo

@@ -171,10 +171,36 @@ DATABASES = {
 #     }
 # }
 
+
+
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
 # DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
+#  ==============DBFUNCTIONS=====================================
+def dblocal():
+    host = 'localhost',
+    dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
+    user = os.environ.get('POSTGRESDB_USER'), #'postgres',
+    password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
+    port = 5432
+
+def herokudev():
+    host = os.environ.get('HEROKU_DEV_HOST'),
+    dbname = os.environ.get('HEROKU_DEV_NAME'), #'Coda_analytics',
+    user = os.environ.get('HEROKU_DEV_USER'), #'postgres',
+    password = os.environ.get('HEROKU_DEV_PASS'), #'Honnappa001@500',
+    port = 5432
+
+def herokuprod():
+    host = os.environ.get('HEROKU_PROD_HOST'),
+    dbname = os.environ.get('HEROKU_PROD_NAME'), #'Coda_analytics',
+    user = os.environ.get('HEROKU_PROD_USER'), #'postgres',
+    password = os.environ.get('HEROKU_PROD_PASS'), #'Honnappa001@500',
+    port = 5432
+
+
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
