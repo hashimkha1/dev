@@ -358,15 +358,14 @@ def dump_data_credit(values):
     try:
         with psycopg2.connect(
                             host = 'localhost',
-                            # dbname = 'Stock Price Index',
-                            dbname = 'Coda_analytics',
-                            user = 'postgres',
-                            password = 'Honnappa001@500',
+                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
+                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
+                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
-                creating_db = '''CREATE TABLE IF NOT EXISTS cread_spread (
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_creadspread (
                     Symbol TEXT,
                     Strategy TEXT,
                     Type TEXT,
@@ -382,7 +381,7 @@ def dump_data_credit(values):
                 )'''
                 cursor.execute(creating_db)
 
-                insert_query = '''INSERT INTO cread_spread(Symbol,Strategy, Type,Price,Sell_Strike,Buy_Strike,Expiry,Premium,Width,Prem_Width,Rank,Earnings_Date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                insert_query = '''INSERT INTO getdata_creadspread(Symbol,Strategy, Type,Price,Sell_Strike,Buy_Strike,Expiry,Premium,Width,Prem_Width,Rank,Earnings_Date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
                 # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
                 cursor.execute(insert_query,vars= values)
 
@@ -431,15 +430,14 @@ def dump_data_covered_calls(values):
     try:
         with psycopg2.connect(
                             host = 'localhost',
-                            # dbname = 'Stock Price Index',
-                            dbname = 'Coda_analytics',
-                            user = 'postgres',
-                            password = 'Honnappa001@500',
+                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
+                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
+                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
-                creating_db = '''CREATE TABLE IF NOT EXISTS covered_calls (
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_coveredcalls(
                     Symbol varchar(250),
                     Action varchar(200),
                     Expiry varchar(200),
@@ -458,7 +456,7 @@ def dump_data_covered_calls(values):
                 )'''
                 cursor.execute(creating_db)
 
-                insert_query = '''INSERT INTO covered_calls(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                insert_query = '''INSERT INTO getdata_coveredcalls(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
                 # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
                 cursor.execute(insert_query,vars = values)
 
@@ -508,15 +506,17 @@ def dump_data_short_put(values):
     try:
         with psycopg2.connect(
                             host = 'localhost',
-                            # dbname = 'Stock Price Index',
-                            dbname = 'Coda_analytics',
-                            user = 'postgres',
-                            password = 'Honnappa001@500',
+                            dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
+                            user = os.environ.get('POSTGRESDB_USER'), #'postgres',
+                            password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
+                            # dbname = 'Coda_analytics',
+                            # user = 'postgres',
+                            # password = 'Honnappa001@500',
                             port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
-                creating_db = '''CREATE TABLE IF NOT EXISTS shortput (
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_shortput (
                     Symbol varchar(250),
                     Action varchar(200),
                     Expiry varchar(200),
@@ -535,7 +535,7 @@ def dump_data_short_put(values):
                 )'''
                 cursor.execute(creating_db)
 
-                insert_query = '''INSERT INTO shortput(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                insert_query = '''INSERT INTO getdata_shortput(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
                 # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
                 cursor.execute(insert_query,vars = values)
 
