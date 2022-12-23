@@ -42,6 +42,7 @@ numpy
 pandas
 tweepy
 bs4
+selenium
 django-crontab==0.7.1
 python-dotenv==0.20.0
 google-api-python-client==2.52.0
