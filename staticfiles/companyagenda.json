@@ -60,7 +60,8 @@
             "Report":"https://www.codanalytics.net/finance/finance/"
         },
         "STOCKS & OPTIONS": {
-            "Stocks and Options Trading": "https://www.codanalytics.net/finance/transaction/"
+            "Stocks and Options Trading": "https://www.codanalytics.net/investing/",
+            "Spreads": "https://public.tableau.com/app/profile/coda2331/viz/covered_calls_testing/Dashboard1"
         },
         "HOUSEHOLDS": {
             "Food & Supplies": "https://www.codanalytics.net/finance/food/"
