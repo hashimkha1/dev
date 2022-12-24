@@ -27,7 +27,7 @@
               <input type="text" id="priceId" hidden> 
               <id="priceId"> 
                 <button>
-                  $Amount to be Paid <b>$ {{payments.down_payment}}</b> 
+                  $Amount to be Paid <b>$ {{payments.down_payment|add:10}}</b> 
                 </button>
               <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
                 <button>
@@ -48,7 +48,7 @@
 
   <script>
     
-    document.getElementById("priceId").value = "{{payments.down_payment}}";
+    document.getElementById("priceId").value = "{{payments.down_payment|add:10}}";
     // document.getElementById("priceId").value = "{{payments.payment_fees}}";
     var price=document.getElementById('priceId');
     var amount=price.value;
@@ -123,6 +123,7 @@
       <p>a. Cashapp: $cmaghas</p>
       <p>b. venmo: cmaghas</p>
   </div>
+  <p><i>NB:Use of credit card shall incur a $10 fee of the total amount</i></p>
 </section>
 {% include 'main/footer_templates/footer.html' %}
 {% endblock content %}
