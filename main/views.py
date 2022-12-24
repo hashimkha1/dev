@@ -162,11 +162,23 @@ class ImageUpdateView(LoginRequiredMixin,UpdateView):
 
 @login_required
 def pay(request):
-    payment_info = Payment_Information.objects.filter(
-        customer_id=request.user.id
-    ).first()
-    return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+    try:
+        payment_info = Payment_Information.objects.filter(
+            customer_id=request.user.id
+        ).first()
+        return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+    except:
+        message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+        link=f'https/www.codanalytics.net/finance/mycontract/{request.user}/'
+        link2=f'localhost:8000/finance/mycontract/{request.user}/'
+        context={
+                  "title": "PAYMENT", 
+                  "message": message,
+                  "link": link,
+                  "link2": link2,
 
+                }
+        return render(request, "main/errors/generalerrors.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()

@@ -184,7 +184,7 @@ def login_view(request):
                     return redirect("accounts:user-list", username=request.user)
                 else:  # Student
                     login(request, account)
-                    return redirect("data:bitraining")
+                    return redirect("data:train")
 
             # If Category is applicant
             elif account is not None and account.profile.section is not None:

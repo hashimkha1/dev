@@ -29,6 +29,7 @@ from .forms import LoanForm,TransactionForm,InflowForm
 from management.utils import paymentconfigurations
 from management.views import loan_update_save
 from management.utils import loan_computation
+from .utils import check_default_fee
 
 from management.views import pay
 
@@ -125,7 +126,12 @@ def contract_form_submission(request):
 				messages.success(request, f'Account created for {username}!')
 				return redirect('data:bitraining')
 	except Exception as e:
-		print("Student Form Creation Error ==>",print(e))
+		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
+		context={
+                  "title": "CONTRACT", 
+                  "message": message,
+                }
+		return render(request, "main/errors/generalerrors.html", context)
 
 def mycontract(request, *args, **kwargs):
 	username = kwargs.get('username')
@@ -162,9 +168,21 @@ def mycontract(request, *args, **kwargs):
 def newcontract(request, *args, **kwargs):
 	username = kwargs.get('username')
 	client_data=CustomerUser.objects.get(username=username)
-	check_default_fee = Default_Payment_Fees.objects.all()
+	# check_default_fee = Default_Payment_Fees.objects.all().first()
+	# if check_default_fee:
+	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
+	# else:
+	# 	default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
+	# 			job_plan_hours_per_month=40,
+	# 			student_down_payment_per_month=500,
+	# 			student_bonus_payment_per_month=100)
+	# 	default_payment_fees.save()
+	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
+	check_default_fee = Default_Payment_Fees.objects.all().first()
 	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.get(id=1)
+		default_fee = Default_Payment_Fees.objects.filter(
+            id=request.user.id
+        ).first()
 	else:
 		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
@@ -172,6 +190,7 @@ def newcontract(request, *args, **kwargs):
 				student_bonus_payment_per_month=100)
 		default_payment_fees.save()
 		default_fee = Default_Payment_Fees.objects.get(id=1)
+	# default_fee=check_default_fee(Default_Payment_Fees,username)
 	today = date.today()
 	contract_date = today.strftime("%d %B, %Y")
 

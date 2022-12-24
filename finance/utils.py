@@ -2,7 +2,7 @@ from datetime import datetime
 import dateutil.relativedelta
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Max
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404,render
 
 from .models import TrainingLoan, Transaction
 from management.models import TaskHistory
@@ -112,3 +112,17 @@ def upload_csv(request):
 #     if(task_max_point > 0):
 #         return TaskHistory.objects.filter(point=task_max_point)
 #     return False
+
+
+def check_default_fee(Default_Payment_Fees,username):
+    try:
+        default_fee = get_object_or_404(Default_Payment_Fees, user=username)
+        # default_fee = Default_Payment_Fees.objects.get(id=1)
+    except:
+        default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
+				job_plan_hours_per_month=40,
+				student_down_payment_per_month=500,
+				student_bonus_payment_per_month=100)
+        default_payment_fees.save()
+        default_fee = Default_Payment_Fees.objects.get(id=1)
+    return default_fee
