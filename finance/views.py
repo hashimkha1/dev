@@ -50,7 +50,10 @@ def contract_form_submission(request):
 			try:
 				customer=CustomerUser.objects.get(username=username)
 				ss= customer.id
-				payment = Payment_Information.objects.get(customer_id_id=customer.id)
+				payment = Payment_Information.objects.filter(
+            			customer_id=request.user.id
+        			).first()
+				# payment = Payment_Information.objects.get(customer_id_id=customer.id)
 			except:
 				customer = None
 				payment = None
@@ -126,6 +129,7 @@ def contract_form_submission(request):
 				messages.success(request, f'Account created for {username}!')
 				return redirect('data:bitraining')
 	except Exception as e:
+		print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
 		context={
                   "title": "CONTRACT", 
@@ -139,7 +143,9 @@ def mycontract(request, *args, **kwargs):
 	check_default_fee = Default_Payment_Fees.objects.all()
 	if check_default_fee:
 		# default_fee = Default_Payment_Fees.objects.get(id=1)
-		default_fee = Default_Payment_Fees.objects.all().first()
+		default_fee = Default_Payment_Fees.objects.filter(id=1).first()
+		print(default_fee)
+		# default_fee = Default_Payment_Fees.objects.filter().first()
 	else:
 		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
@@ -147,6 +153,7 @@ def mycontract(request, *args, **kwargs):
 				student_bonus_payment_per_month=100)
 		default_payment_fees.save()
 		default_fee = Default_Payment_Fees.objects.all().first()
+		print(default_fee)
 		
 	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
 		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)

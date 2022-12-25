@@ -25,8 +25,12 @@ import psycopg2
 import time
 
 from coda_project.settings import dblocal,herokudev,herokuprod
+# from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
+
+#DB VARIABLES
+host,dbname,user,password=dblocal() #,herokudev(),herokuprod()
 
 def get_gmail_service():
     creds = None
@@ -141,7 +145,11 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     #Database connection 
     try:
         with psycopg2.connect(
-
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -166,28 +174,11 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 def crypto_data(symbol,action,unit_price, total_price,date):
     try:
         with psycopg2.connect(
-                                # dblocal()
-                                # herokudev(),
-                                # herokuprod() 
-                                # ============DEV==================
-                                # host = 'localhost',
-                                # dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                                # password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                                # port = 5432
-                                # ============UAT==================
-                                host = os.environ.get('HEROKU_DEV_HOST'),
-                                dbname = os.environ.get('HEROKU_DEV_NAME'), #'Coda_analytics',
-                                user = os.environ.get('HEROKU_DEV_USER'), #'postgres',
-                                password = os.environ.get('HEROKU_DEV_PASS'), #'Honnappa001@500',
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
                                 port = 5432
-                                # ============PROD==================
-                                # host = os.environ.get('HEROKU_PROD_HOST'),
-                                # dbname = os.environ.get('HEROKU_PROD_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('HEROKU_PROD_USER'), #'postgres',
-                                # password = os.environ.get('HEROKU_PROD_PASS'), #'Honnappa001@500',
-                                # port = 5432
-
                             ) as conn:
             with conn.cursor() as cursor:
                 #getdata_cryptomarket
@@ -355,28 +346,11 @@ def get_crypto_price(soup, header):
 def dump_data_credit(values):
     try:
         with psycopg2.connect(
-                                # dblocal()
-                                # herokudev(),
-                                # herokuprod() 
-                                # ============DEV==================
-                                # host = 'localhost',
-                                # dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                                # password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                                # port = 5432
-                                # ============UAT==================
-                                host = os.environ.get('HEROKU_DEV_HOST'),
-                                dbname = os.environ.get('HEROKU_DEV_NAME'), #'Coda_analytics',
-                                user = os.environ.get('HEROKU_DEV_USER'), #'postgres',
-                                password = os.environ.get('HEROKU_DEV_PASS'), #'Honnappa001@500',
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
                                 port = 5432
-                                # ============PROD==================
-                                # host = os.environ.get('HEROKU_PROD_HOST'),
-                                # dbname = os.environ.get('HEROKU_PROD_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('HEROKU_PROD_USER'), #'postgres',
-                                # password = os.environ.get('HEROKU_PROD_PASS'), #'Honnappa001@500',
-                                # port = 5432
-
         ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -444,27 +418,11 @@ def main_cread_spread():
 def dump_data_covered_calls(values):
     try:
         with psycopg2.connect(
-                                # dblocal()
-                                # herokudev(),
-                                # herokuprod() 
-                                # ============DEV==================
-                                # host = 'localhost',
-                                # dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                                # password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                                # port = 5432
-                                # ============UAT==================
-                                host = os.environ.get('HEROKU_DEV_HOST'),
-                                dbname = os.environ.get('HEROKU_DEV_NAME'), #'Coda_analytics',
-                                user = os.environ.get('HEROKU_DEV_USER'), #'postgres',
-                                password = os.environ.get('HEROKU_DEV_PASS'), #'Honnappa001@500',
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
                                 port = 5432
-                                # ============PROD==================
-                                # host = os.environ.get('HEROKU_PROD_HOST'),
-                                # dbname = os.environ.get('HEROKU_PROD_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('HEROKU_PROD_USER'), #'postgres',
-                                # password = os.environ.get('HEROKU_PROD_PASS'), #'Honnappa001@500',
-                                # port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -536,27 +494,11 @@ def main_covered_calls():
 def dump_data_short_put(values):
     try:
         with psycopg2.connect(
-                                # dblocal()
-                                # herokudev(),
-                                # herokuprod() 
-                                # ============DEV==================
-                                # host = 'localhost',
-                                # dbname = os.environ.get('POSTGRES_DB_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('POSTGRESDB_USER'), #'postgres',
-                                # password = os.environ.get('POSTGRESSPASS'), #'Honnappa001@500',
-                                # port = 5432
-                                # ============UAT==================
-                                host = os.environ.get('HEROKU_DEV_HOST'),
-                                dbname = os.environ.get('HEROKU_DEV_NAME'), #'Coda_analytics',
-                                user = os.environ.get('HEROKU_DEV_USER'), #'postgres',
-                                password = os.environ.get('HEROKU_DEV_PASS'), #'Honnappa001@500',
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
                                 port = 5432
-                                # ============PROD==================
-                                # host = os.environ.get('HEROKU_PROD_HOST'),
-                                # dbname = os.environ.get('HEROKU_PROD_NAME'), #'Coda_analytics',
-                                # user = os.environ.get('HEROKU_PROD_USER'), #'postgres',
-                                # password = os.environ.get('HEROKU_PROD_PASS'), #'Honnappa001@500',
-                                # port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo

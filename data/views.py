@@ -27,9 +27,11 @@ from data.models import (
     DSU,
     Job_Tracker,
     JobRole,
-    Interview_Questions
+    Interview_Questions,
+    Prep_Questions
+
 )
-from data.filters import InterviewFilter, BitrainingFilter  # ,UserFilter
+from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter
 
 # User=settings.AUTH_USER_MODEL
 from data.forms import InterviewQuestionsForm
@@ -164,9 +166,39 @@ def useruploads(request, pk=None, *args, **kwargs):
     }
     return render(request, "data/interview/useruploads.html", context)
 
+@login_required
+def prepquestions(request):
+    questions = Prep_Questions.objects.all().order_by("-date")
+    myFilter = QuestionFilter(request.GET, queryset=questions)
+    questions = myFilter.qs
+    context = {"questions": questions, "myFilter": myFilter}
+    return render(request, "data/interview/prepquestions.html", context)
+
+class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
+	model = Prep_Questions
+	success_url = "/data/prepquestions/"
+	fields = "__all__"
+
+	def form_valid(self, form):
+		# form.instance.user = self.request.user
+		return super().form_valid(form)
+
+class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Prep_Questions
+    success_url = "/data/prepquestions/"
+    fields = ["company", "question", "response"]
+    # form = Prep_QuestionsForm()
+
+    def form_valid(self, form):
+        # form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
 
 # ==================================TRAINING VIEWS====================================
-
 # class CourseView(LoginRequiredMixin, CreateView):
 #     model = Interviews
 #     form_class = InterviewForm
@@ -220,125 +252,6 @@ class RoleListView(LoginRequiredMixin, ListView):
     queryset = JobRole.objects.all()
     template_name = "data/interview/interview_progress/interview_progress.html"
     success_url = "/data/project_story"
-
-
-class ResumeView(LoginRequiredMixin, CreateView):
-    queryset = JobRole.objects.all()
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/resume.html"
-    success_url = "/data/project_story"
-    interviews = Interviews.objects.all()
-    form= InterviewForm
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "project story"
-        print("form.instance.question_type")
-        return super().form_valid(form)
-
-
-class ProjectStoryView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/project_story.html"
-    success_url = "/data/introduction"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "project story"
-        print("form.instance.question_type")
-        return super().form_valid(form)
-
-
-class IntroductionView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/introduction.html"
-    success_url = "/data/sdlc"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "introduction"
-        return super().form_valid(form)
-
-
-class SDLCView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/sdlc.html"
-    success_url = "/data/methodology"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "sdlc"
-        return super().form_valid(form)
-
-
-class MethodologyView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/methodology.html"
-    success_url = "/data/performance_tuning"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "methodology"
-        return super().form_valid(form)
-
-
-class PerformanceView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/performance_tuning.html"
-    success_url = "/data/environment"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "performance"
-        return super().form_valid(form)
-
-
-class EnvironmentView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/environment.html"
-    success_url = "/data/testing"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "environment"
-        return super().form_valid(form)
-
-
-class TestingView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_progress/testing.html"
-    success_url = "/data/interview"
-    # fields = ["category", "doc", "link", "answer_to_question"]
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        form.instance.question_type = "testing"
-        return super().form_valid(form)
-
-class InterviewCreateView(LoginRequiredMixin, CreateView):
-    model = Interviews
-    form_class = InterviewForm
-    template_name = "data/interview/interview_form.html"
-    success_url = "/data/iuploads/"
-
-    def form_valid(self, form):
-        form.instance.client = self.request.user
-        # form.instance.question_type = "testing"
-        return super().form_valid(form)
 
 
 class InterviewCreateView(LoginRequiredMixin, CreateView):

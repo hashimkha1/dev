@@ -79,6 +79,10 @@ def uploaddata(request):
     }
     return render(request,"getdata/uploaddata.html", context) 
 
+@login_required
+def bigdata(request):
+    return render(request, "getdata/bigdata.html", {"title": "data"})
+
 
 
 # ========================. DISPLAY/LIST VIEWS============================

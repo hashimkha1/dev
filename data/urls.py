@@ -15,7 +15,6 @@ from data.views import (
     FeaturedActivityLinksDeleteView,
     DSUListView,
     LinksListView,
-    ProjectStoryView,
     RoleUpdateView,
     InterviewDetailView,
     InterviewUpdateView,
@@ -25,8 +24,6 @@ from data.views import (
     JobCreateView,
     JobListView,
     InterviewQuestionListView
-    # MethodologyView,TrackDeleteView, TrackDetailView,
-    # TrackListView, InterviewUpdateView #,UserTrackListView
 )
 
 app_name = "data"
@@ -59,18 +56,6 @@ urlpatterns = [
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
     # path("testing/", views.questionview, name="testing"),
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),
-    path("resume/", views.ResumeView.as_view(), name="resume"),
-    path("project_story/", ProjectStoryView.as_view(), name="project_story"),
-    path("introduction/", views.IntroductionView.as_view(), name="introduction"),
-    path("sdlc/", views.SDLCView.as_view(), name="sdlc"),
-    path("methodology/", views.MethodologyView.as_view(), name="methodology"),
-    path(
-        "performance_tuning/",
-        views.PerformanceView.as_view(),
-        name="performance_tuning",
-    ),
-    path("testing/", views.questionview, name="testing"),
-    path("environment/", views.EnvironmentView.as_view(), name="environment"),
     # path("interview/<str:resume>", views.RoleDetailView.as_view, name="detail-resume"),
     # path("interview/<str:introduction>", views.RoleDetailView.as_view, name="detail-introduction"),
     # Interview section urls ends
@@ -84,12 +69,18 @@ urlpatterns = [
         InterviewCreateView.as_view(),
         name="uploadinterview",
     ),
+    path(
+        "addquestion/",
+        views.PrepQuestionsCreateView.as_view(template_name='main/snippets_templates/generalform.html'),
+        name="add_question",
+    ),
+
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
     path("courseuploads/", InterviewQuestionListView.as_view(), name="questionlist"),
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
-    # path('clientuploads/<str:username>', ClientInterviewListView.as_view(), name='client_uploads'),
+    path('prepquestions/', views.prepquestions, name='prepquestions'),
     path("useruploads/", views.useruploads, name="user-list"),
     # path('iuploads/', UploadListView.as_view(), name='iuploads'),
     # path('uploaded/', views.uploaded, name='uploaded'),
@@ -107,6 +98,11 @@ urlpatterns = [
         InterviewUpdateView.as_view(template_name="data/interview/interview_form.html"),
         name="interview-update",
     ),
+    # path(
+    #     "questions/<str:question>/update",
+    #     views.PrepQuestionsUpdateView.as_view(template_name="template_name='main/snippets_templates/generalform.html"),
+    #     name="question-update",
+    # ),
     # ----------------------DELETING----------------------------------------------------
     path(
         "interview/<int:pk>/delete",

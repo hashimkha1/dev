@@ -10,6 +10,7 @@ urlpatterns = [
     path('index/', views.index, name='data-index'),
     path('upload/', views.upload_csv, name='upload'),
     path('dataupload/', views.uploaddata, name='upload-data'),
+    path('bigdata/', views.bigdata, name='generate-data'),
     path('datauploadcsv/', upload_csv, name='upload-data'),
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
