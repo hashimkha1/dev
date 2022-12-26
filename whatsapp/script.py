@@ -1,4 +1,4 @@
-import pywhatkit as pwk
+# import pywhatkit as pwk
 from time import sleep
 import requests
 # def extract_image():
