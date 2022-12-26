@@ -1,4 +1,4 @@
-import pywhatkit as pwk
+# import pywhatkit as pwk
 from time import sleep
 import requests
 # def extract_image():
@@ -56,27 +56,28 @@ import requests
 
 # # download the image from the URL
 def whatsapp():
+    pass
     # url = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
-    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
-    # url = "https://drive.google.com/file/d/1YATyVows61SsGDmWF846-qApkql_323m/view?usp=share_link"
-    image_path = "images/image.jpg"
-    res = requests.get(url, stream=True)
-    if res.status_code == 200:
-        with open(image_path, "wb") as f:
-            f.write(res.content)
-        print("Image sucessfully Downloaded: ", image_path)
-    else:
-        print("Image Couldn't be retrieved")
+    # url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    # # url = "https://drive.google.com/file/d/1YATyVows61SsGDmWF846-qApkql_323m/view?usp=share_link"
+    # image_path = "images/image.jpg"
+    # res = requests.get(url, stream=True)
+    # if res.status_code == 200:
+    #     with open(image_path, "wb") as f:
+    #         f.write(res.content)
+    #     print("Image sucessfully Downloaded: ", image_path)
+    # else:
+    #     print("Image Couldn't be retrieved")
 
-    # group IDs
-    group_ids = ['Dv23sZ5Ctxm9HJf2lQeFEu','I0zuqJ91GgOFAUW1kdhOK8']
+    # # group IDs
+    # group_ids = ['Dv23sZ5Ctxm9HJf2lQeFEu','I0zuqJ91GgOFAUW1kdhOK8']
 
 
-    # title of the image
-    caption = """Discover the endless possibilities of 
-    data analysis with Coda Analytics. Our powerful analytics 
-    platform empowers you to transform raw data into actionable 
-    insights, enabling you to make informed decisions and drive your business forward. """
-    for group_id in group_ids:
-        # pwk.sendwhats_image(group_id, image_path, caption, 15, True, 6)
-        pwk.sendwhats_image(group_id, image_path, caption, 15, True)
+    # # title of the image
+    # caption = """Discover the endless possibilities of 
+    # data analysis with Coda Analytics. Our powerful analytics 
+    # platform empowers you to transform raw data into actionable 
+    # insights, enabling you to make informed decisions and drive your business forward. """
+    # for group_id in group_ids:
+    #     pwk.sendwhats_image(group_id, image_path, caption, 15, True, 6)
+    #     # pwk.sendwhats_image(group_id, image_path, caption, 15, True)
