@@ -83,10 +83,10 @@ class Default_Payment_Fees(models.Model):
     student_down_payment_per_month = models.IntegerField(default=500)
     student_bonus_payment_per_month = models.IntegerField(default=250)
 
-    loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    # loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
 
     def __str__(self):
-        return str(self.loan_amount)
+        return str(self.id)
 
 
 class PayslipConfig(models.Model):

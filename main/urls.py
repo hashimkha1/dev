@@ -17,6 +17,8 @@ urlpatterns = [
 
         #---------------MANAGEMENT--------------------#
         path('it/', views.it, name='it'),
+        #---------------MARKETING--------------------#
+        path('whatsapp/', views.runwhatsapp, name='whatsapp'),
 
         #---------------IT--------------------#
 

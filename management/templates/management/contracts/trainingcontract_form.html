@@ -19,12 +19,16 @@
         <h3>CONTRACT</h3>
     </div>
 <div>
-    <img
-    src="\media\banner\banner.jpg"
-    class="d-block img-fluid"
-    width="1500px"
-    alt="banner"
-  />
+  <img 
+  {%for image in images%}
+      {% if image.name == "layout_page_v1"%}
+          src="{{googledriveurl}}={{image.image_url}}""
+      {%endif%}
+  {% endfor %}
+  class="d-block img-fluid"
+  width="1500px"
+  alt="banner"
+  >
 </div>
 
   <form  method="POST" action="/finance/contract_form/" class="form-group">
@@ -32,45 +36,6 @@
         <input type="hidden" name="usr_data" value="first_name={{student_data.first_name}}&last_name={{student_data.last_name}}&address={{student_data.addres}}&category={{student_data.category}}&sub_category={{student_data.sub_category}}&username={{student_data.username}}&password1={{student_data.password1}}&password2={{student_data.password2}}&email={{student_data.email}}&phone={{student_data.phone}}&gender={{student_data.gender}}&city={{student_data.city}}&state={{student_data.state}}&country={{student_data.country}}&resume_file={{student_data.resume_file}}">
         <input type="hidden" name="student_contract" value="student_contract">
     <fieldset class="form-group">
-      <legend class="border-bottom  text-center">
-        <p class="lead  text-center">
-            STUDENT TRAINING CONTRACT
-        </p>
-      </legend>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-      <div class="row">
-        <div class="col-md-6">
-            CODA TRAINING <br>
-            DATA ANALYSIS TRAINING CONTRACT
-        </div>
-        <div class="col-md-6">
-            FEES: $<span class="fees">NULL</span> <br>
-            DATE: {{contract_date}}
-        </div>
-      </div>
-
-
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-          <div class="row">
-            <div class="col-md-12">
-                <h4>TRAINING INFORMATION</h4>
-                <b>Training Contract Period</b> <br>
-                  &emsp;<input type="radio" id="One_month" name="duration" value="1" required>
-                  <label for="Training">One Month</label>
-                  <input type="radio" id="two_month" name="duration" value="2">
-                  <label for="Training"> Two Month</label>
-                  <input type="radio" id="three_month" name="duration" value="3">
-                  <label for="Training"> Three Month</label>
-            </div>
-            <div class="col-md-12">
-                <b>Training Conferences</b> <br>
-                  &emsp;<b>1.Tableau &ensp;2.Zoom</b>
-            </div>
-          </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-      <h4>STUDENT INFORMATION</h4>
       <div class="row">
         <div class="col-md-6">
             Student Name: <br>
@@ -85,6 +50,37 @@
             {{student_data.email}}
         </div>
       </div>
+      <legend class="border-bottom  text-center">
+        <p class="lead  text-center">
+            STUDENT TRAINING CONTRACT
+        </p>
+      </legend>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <legend class="border-top  text-center">
+        <p class="lead  text-center">
+          TRAINING INFORMATION
+        </p>
+      </legend>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+          <div class="row">
+            <div class="col-md-6">
+                
+                <b>Training Contract Period</b> <br>
+                  &emsp;<input type="radio" id="One_month" name="duration" value="1" required>
+                  <label for="Training">One Month</label>
+                  <input type="radio" id="two_month" name="duration" value="2">
+                  <label for="Training"> Two Month</label>
+                  <input type="radio" id="three_month" name="duration" value="3">
+                  <label for="Training"> Three Month</label>
+            </div>
+            <div class="col-md-6">
+                <b>Training Conferences</b> <br>
+                  &emsp;<b>1.Tableau &ensp;2.Zoom</b>
+            </div>
+          </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
       <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row">
             <div class="col-md-6">
@@ -109,8 +105,9 @@
           <div class="row" >
             <div class="col-md-12">
                 <h4>SIGNATORY:</h4>
-                Student signature:<input type="text" name="client_sign" class="signature" required><br>
-                Company Rep:      <input type="text" name="rep_name" class="signature" required><br>
+                Student signature:<input type="text" name="client_sign" class="signature" value="{{request.user}}" required><br>
+                Company Rep:      <input type="text" name="rep_name" class="signature" value="coda" required><br>
+
 
             </div>
           </div>

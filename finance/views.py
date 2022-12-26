@@ -7,7 +7,7 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Sum
-from django.http import QueryDict, Http404, JsonResponse
+from django.http import QueryDict, Http404,JsonResponse
 from requests import request
 from datetime import datetime,date
 from django.views.generic import (
@@ -162,19 +162,34 @@ def mycontract(request, *args, **kwargs):
 			plan_dict = {"1":40,"2":80,"3":120}
 			selected_plan = plan_dict[str(payemnt_details.plan)]
 			job_support_hours = selected_plan - 30
-			return render(request, 'my_supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details,"selected_plan":selected_plan,"job_support_hours":job_support_hours})
+			context={
+					'job_support_data': client_data,
+					'contract_date':contract_date,
+					'payment_data':payemnt_details,
+					"selected_plan":selected_plan,
+					"job_support_hours":job_support_hours
+				}
+			return render(request, 'management/contracts/my_supportcontract_form.html',context)
 		if client_data.category == 3 and client_data.sub_category == 2:
-			return render(request, 'my_trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'payment_data':payemnt_details})
+			context={
+				'student_data': client_data,
+				'contract_date':contract_date,
+				'payment_data':payemnt_details
+			}
+			return render(request, 'management/contracts/my_trainingcontract_form.html',context)
 		else:
-			# return render(request, 'templates\errors\403.html')
 			raise Http404("Login/Wrong Page: Are You a Client?")
 	else:
-		return render(request, 'contract_error.html',{'username':username})
+		context={"title": "CONTRACT", 
+				'username':username}
+		return render(request, 'management/contracts/contract_error.html',context)
 		
 @login_required
 def newcontract(request, *args, **kwargs):
 	username = kwargs.get('username')
+	#Gets client/user information from the custom user table
 	client_data=CustomerUser.objects.get(username=username)
+	print('CLIENTS DATA',client_data)
 	# check_default_fee = Default_Payment_Fees.objects.all().first()
 	# if check_default_fee:
 	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
@@ -185,29 +200,39 @@ def newcontract(request, *args, **kwargs):
 	# 			student_bonus_payment_per_month=100)
 	# 	default_payment_fees.save()
 	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
-	check_default_fee = Default_Payment_Fees.objects.all().first()
+
+	#Gets any payment default values from the Default table
+	check_default_fee = Default_Payment_Fees.objects.all()
+	print(check_default_fee)
 	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.filter(
-            id=request.user.id
-        ).first()
+		default_fee = Default_Payment_Fees.objects.filter().first()
+		print(default_fee)
 	else:
 		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
 				student_down_payment_per_month=500,
 				student_bonus_payment_per_month=100)
 		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=1)
-	# default_fee=check_default_fee(Default_Payment_Fees,username)
+		default_fee = Default_Payment_Fees.objects.get(id=default_payment_fees.id)
+		print('new default:',default_fee)
+	# 	default_fee=check_default_fee(Default_Payment_Fees,username)
 	today = date.today()
 	contract_date = today.strftime("%d %B, %Y")
-
+	context={
+			'job_support_data': client_data,
+			'student_data': client_data,
+			'contract_date':contract_date,
+			'default_fee':default_fee
+			}
 	if client_data.category == 3 and client_data.sub_category == 1:
-		return render(request, 'management/doc_templates/supportcontract_form.html',{'job_support_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
+		return render(request, 'management/contracts/supportcontract_form.html',context)
 	if client_data.category == 3 and client_data.sub_category == 2:
-		return render(request, 'management/doc_templates/trainingcontract_form.html',{'student_data': client_data,'contract_date':contract_date,'default_fee':default_fee})
+		return render(request, 'management/contracts/trainingcontract_form.html',context)
 	else:
-		# return render(request, 'templates\errors\403.html')
-		raise Http404("Login/Wrong Page: Are You a Client?")
+		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
+		context={"title": "CONTRACT", 
+				"message": message}
+		return render(request, "management/contracts/contract_error.html", context)
 
 # ==================PAYMENT CONFIGURATIONS VIEWS=======================
 class PaymentConfigCreateView(LoginRequiredMixin, CreateView):
@@ -237,7 +262,7 @@ class PaymentConfigUpdateView(UpdateView):
 			return super().form_valid(form)
 		else:
 			# return redirect("management:tasks")
-			return render(request,"management/doc_templates/supportcontract_form.html")
+			return render(request,"management/contracts/supportcontract_form.html")
 
 	def test_func(self):
 		# task = self.get_object()
@@ -290,7 +315,7 @@ class DefaultPaymentUpdateView(UpdateView):
 			return super().form_valid(form)
 		else:
 			# return redirect("management:tasks")
-			return render(request,"management/doc_templates/supportcontract_form.html")
+			return render(request,"management/contracts/supportcontract_form.html")
 
 	def test_func(self):
 		task = self.get_object()
@@ -543,7 +568,7 @@ class LoanUpdateView(UpdateView):
 			return redirect("finance:trainingloans")
 		else:
 			return redirect("finance:trainingloans")
-			# return render(request,"management/doc_templates/supportcontract_form.html")
+			# return render(request,"management/contracts/supportcontract_form.html")
 
 	def test_func(self):
 		# task = self.get_object()
