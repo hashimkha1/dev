@@ -78,4 +78,4 @@ def whatsapp():
     platform empowers you to transform raw data into actionable 
     insights, enabling you to make informed decisions and drive your business forward. """
     for group_id in group_ids:
-        pywhatkit.sendwhats_image(group_id, image_path, caption, 15, True, 6)
+        pwk.sendwhats_image(group_id, image_path, caption, 15, True, 6)
