@@ -14,11 +14,11 @@
     width: 12%;
   }
 </style>
-<div class="content-section">
+<!-- <div class="content-section">
     <div>
         <h3 class="lead  text-center">CONTRACT</h3>
     </div>
-<div>
+<div> -->
   <img 
   {%for image in images%}
       {% if image.name == "banner_page_v1"%}
@@ -30,25 +30,18 @@
   alt="banner"
   >
 </div>
-
-
     <fieldset class="form-group">
-
-      <div class="row">
-        <div class="col-md-8">
-          <legend class="border-bottom  text-center">
-            <p class="lead  text-center">
-                STUDENT TRAINING CONTRACT
-            </p>
-          </legend>
-        </div>
-        <div class="col-md-2">
-          DATE SIGNED: {{contract_date}}
-        </div>
+      <div class="row text-center" >
+          <p class="col-md-12 text-center"> 
+            Date Signed: {{contract_date}}
+          </p>
       </div>
       <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-      <h4>STUDENT INFORMATIONd</h4>
+      <legend class="border-bottom  border-top text-center">
+        <p class="lead  text-center">
+            STUDENT TRAINING CONTRACT
+        </p>
+      </legend>
       <div class="row">
         <div class="col-md-6">
             Student Name: <br>
@@ -64,52 +57,31 @@
         </div>
       </div>
       <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-      <div class="row">
-        <div class="col-md-12">
-            <h4>TRAINING INFORMATION</h4>
-            <b>Training Contract Period</b> <br>
-              &emsp;<input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
-              <label for="Training">One Month</label>
-              <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
-              <label for="Training"> Two Month</label>
-              <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
-              <label for="Training"> Three Month</label>
-        </div>
-        <div class="col-md-12">
-            <b>Training Conferences</b> <br>
-              &emsp;1.Tableau &ensp;2.Zoom
-        </div>
-      </div>
-      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-          <div class="row">
-            <div class="col-md-12">
-                <h4>TRAINING INFORMATION</h4>
-                <b>Training Contract Period</b> <br>
-                  &emsp;<input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training">One Month</label>
-                  <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training"> Two Month</label>
-                  <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training"> Three Month</label>
-            </div>
-            <div class="col-md-12">
-                <b>Training Conferences</b> <br>
-                  &emsp;1.Tableau &ensp;2.Zoom
-            </div>
-          </div>
-
+      <legend class="border-bottom  border-top text-center">
+        <p class="lead  text-center">
+          PAYMENT INFORMATION
+        </p>
+      </legend>
       <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row">
-            <div class="col-md-6">
-                <h4>PAYMENT INFORMATION</h4>
+            <div class="col-md-4">
+              <b>Summary</b><br>
                 Student FEES: USD.{{payment_data.payment_fees}}  <br>
                 Student Down payment: USD.{{payment_data.down_payment}} <br>
                 Student Fee Bonus: USD.{{payment_data.student_bonus}}<br>
                 Student Fee Balance: USD.{{payment_data.student_balance}}
             </div>
-            <div class="col-md-6">
-                <h4>METHOD OF PAYMENT:</h4>
+            <div class="col-md-4">
+              <b>Training Contract Period</b><br>
+                <input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
+                <label for="Training">One Month</label><br>
+                <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
+                <label for="Training"> Two Month</label><br>
+                <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
+                <label for="Training"> Three Month</label>
+          </div>
+            <div class="col-md-4">
+              <b>Payment Method</b><br>
                 <input type="radio" name="payment_type" value="paypal" {% if payment_data.payment_method  == "paypal" %} checked {% else %}disabled{% endif %}>
                 Paypal <br>
                 <input type="radio" name="payment_type" value="cash_app" {% if payment_data.payment_method  == "cash_app" %} checked {% else %}disabled{% endif %}>
