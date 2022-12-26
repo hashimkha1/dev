@@ -16,15 +16,19 @@
 </style>
 <div class="content-section">
     <div>
-        <h3>CONTRACT</h3>
+      <h3 class="lead  text-center">CONTRACT</h3>
     </div>
 <div>
-    <img
-    src="\media\banner\banner.jpg"
-    class="d-block img-fluid"
-    width="1500px"
-    alt="banner"
-  />
+  <img 
+  {%for image in images%}
+      {% if image.name == "banner_page_v1"%}
+          src="{{googledriveurl}}={{image.image_url}}""
+      {%endif%}
+  {% endfor %}
+  class="d-block img-fluid"
+  width="1500px"
+  alt="banner"
+  >
 </div>
 
   <form method="POST" action="/finance/contract_form/">

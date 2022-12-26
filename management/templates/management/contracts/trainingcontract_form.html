@@ -16,12 +16,12 @@
 </style>
 <div class="content-section">
     <div>
-        <h3>CONTRACT</h3>
+      <h3 class="lead  text-center">CONTRACT</h3>
     </div>
 <div>
   <img 
   {%for image in images%}
-      {% if image.name == "layout_page_v1"%}
+      {% if image.name == "banner_page_v1"%}
           src="{{googledriveurl}}={{image.image_url}}""
       {%endif%}
   {% endfor %}

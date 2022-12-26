@@ -5,7 +5,7 @@ from django.views.generic import (
     ListView,
 )
 import json
-from .models import Service
+from .models import Assets
 from main.forms import TransactionForm,ContactForm
 from main.models import Expenses
 from codablog.models import Post
@@ -134,7 +134,7 @@ def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = Service
+    model = Assets
     success_url = "/images/"
     # fields = ["title", "description"]
     fields = ["name", "description","image_url"]
@@ -144,13 +144,13 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
         
 def images(request):
-    # images = Service.objects.all().first()
-    images = Service.objects.all()
+    # images = Assets.objects.all().first()
+    images = Assets.objects.all()
     print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
-    model=Service
+    model=Assets
     fields = ['name','image_url','description']
      
     def form_valid(self,form):
