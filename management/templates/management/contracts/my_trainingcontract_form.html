@@ -33,45 +33,22 @@
 
 
     <fieldset class="form-group">
-      <legend class="border-bottom  text-center">
-        <p class="lead  text-center">
-            STUDENT TRAINING CONTRACT
-        </p>
-      </legend>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
       <div class="row">
-        <div class="col-md-6">
-            CODA TRAINING <br>
-            DATA ANALYSIS TRAINING CONTRACT
+        <div class="col-md-8">
+          <legend class="border-bottom  text-center">
+            <p class="lead  text-center">
+                STUDENT TRAINING CONTRACT
+            </p>
+          </legend>
         </div>
-        <div class="col-md-6">
-            FEES: <span class="fees">USD.{{payment_data.payment_fees}}</span> <br>
-            DATE: {{contract_date}}
+        <div class="col-md-2">
+          DATE SIGNED: {{contract_date}}
         </div>
       </div>
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
 
-
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-          <div class="row">
-            <div class="col-md-12">
-                <h4>TRAINING INFORMATION</h4>
-                <b>Training Contract Period</b> <br>
-                  &emsp;<input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training">One Month</label>
-                  <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training"> Two Month</label>
-                  <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
-                  <label for="Training"> Three Month</label>
-            </div>
-            <div class="col-md-12">
-                <b>Training Conferences</b> <br>
-                  &emsp;<b>1.Tableau &ensp;2.Zoom</b>
-            </div>
-          </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-      <h4>STUDENT INFORMATION</h4>
+      <h4>STUDENT INFORMATIONd</h4>
       <div class="row">
         <div class="col-md-6">
             Student Name: <br>
@@ -86,7 +63,43 @@
             {{student_data.email}}
         </div>
       </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <div class="row">
+        <div class="col-md-12">
+            <h4>TRAINING INFORMATION</h4>
+            <b>Training Contract Period</b> <br>
+              &emsp;<input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
+              <label for="Training">One Month</label>
+              <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
+              <label for="Training"> Two Month</label>
+              <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
+              <label for="Training"> Three Month</label>
+        </div>
+        <div class="col-md-12">
+            <b>Training Conferences</b> <br>
+              &emsp;1.Tableau &ensp;2.Zoom
+        </div>
+      </div>
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+          <div class="row">
+            <div class="col-md-12">
+                <h4>TRAINING INFORMATION</h4>
+                <b>Training Contract Period</b> <br>
+                  &emsp;<input type="radio" id="One_month" name="duration" value="1" {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
+                  <label for="Training">One Month</label>
+                  <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
+                  <label for="Training"> Two Month</label>
+                  <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
+                  <label for="Training"> Three Month</label>
+            </div>
+            <div class="col-md-12">
+                <b>Training Conferences</b> <br>
+                  &emsp;1.Tableau &ensp;2.Zoom
+            </div>
+          </div>
+
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row">
             <div class="col-md-6">
                 <h4>PAYMENT INFORMATION</h4>
@@ -105,12 +118,16 @@
                 Venmo
             </div>
           </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
 
           <div class="row" >
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <h4>SIGNATORY:</h4>
                 Student signature: {{payment_data.client_signature}}<br>
+
+            </div>
+            <div class="col-md-6">
+                <h4>SIGNATORY:</h4>
                 Company Rep:       {{payment_data.company_rep }}<br>
 
             </div>

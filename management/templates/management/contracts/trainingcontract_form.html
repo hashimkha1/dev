@@ -50,18 +50,18 @@
             {{student_data.email}}
         </div>
       </div>
-      <legend class="border-bottom  text-center">
+      <legend class="border-bottom  border-top text-center">
         <p class="lead  text-center">
             STUDENT TRAINING CONTRACT
         </p>
       </legend>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
       <legend class="border-top  text-center">
         <p class="lead  text-center">
           TRAINING INFORMATION
         </p>
       </legend>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
 
           <div class="row">
             <div class="col-md-6">
@@ -79,19 +79,21 @@
                   &emsp;<b>1.Tableau &ensp;2.Zoom</b>
             </div>
           </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <p class="lead  text-center">
+        PAYMENT INFORMATION
+      </p>
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row">
             <div class="col-md-6">
-                <h4>PAYMENT INFORMATION</h4>
+                
                 Student FEES: USD.<span class="fees">NULL</span> <br>
                 Student Down payment: USD.<input type="text" name="down_payment" value="{{default_fee.student_down_payment_per_month}}" id="down_payment"> <br>
                 Student Fee Bonus: USD. <input type="text" name="bonus" value="{{default_fee.student_bonus_payment_per_month}}" id="bonus"><br>
                 Student Fee Balance: USD.  <span id="balance">NULL</span>
             </div>
             <div class="col-md-6">
-                <h4>METHOD OF PAYMENT:</h4>
+                <h8>METHOD OF PAYMENT:</h8> <br>
                 <input type="radio" name="payment_type" value="paypal" required>
                 Paypal <br>
                 <input type="radio" name="payment_type" value="cash_app">
@@ -100,20 +102,22 @@
                 Venmo
             </div>
           </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <p class="lead  text-center">
+        SIGNATORY
+      </p>
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row" >
-            <div class="col-md-12">
-                <h4>SIGNATORY:</h4>
+            <div class="col-md-6">
                 Student signature:<input type="text" name="client_sign" class="signature" value="{{request.user}}" required><br>
+            </div>
+            <div class="col-md-6">
                 Company Rep:      <input type="text" name="rep_name" class="signature" value="coda" required><br>
-
-
             </div>
           </div>
 
 
-      <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+      <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
      <input type="checkbox" name="terms" required><b> I agree to the Terms of services</b>
     </fieldset>
     <div class="form-group">
