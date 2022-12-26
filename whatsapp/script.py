@@ -1,7 +1,6 @@
-# import pywhatkit as pwk
-# from time import sleep
-# import requests
-
+import pywhatkit as pwk
+from time import sleep
+import requests
 # def extract_image():
 #     # download the image from the URL
 #     url = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
@@ -53,8 +52,7 @@
 #                 grp_id_list[i], content_of_msg, msg_hour, msg_min, send_delay
 #             )
 
-import requests
-import pywhatkit
+
 
 # download the image from the URL
 def whatsapp():

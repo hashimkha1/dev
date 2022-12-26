@@ -42,6 +42,7 @@ numpy
 pandas
 tweepy
 bs4
+pywhatkit
 selenium
 webdriver-manager
 django-crontab==0.7.1
