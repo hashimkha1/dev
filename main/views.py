@@ -1,14 +1,17 @@
 from django.http import JsonResponse
+from celery import shared_task
 from django.shortcuts import redirect, render
 from django.views.generic import (
     ListView,
 )
 import json
-from .models import Service
+from .models import Assets
 from main.forms import TransactionForm,ContactForm
 from main.models import Expenses
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
+from management.models import Advertisement
+from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -19,7 +22,14 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-# Create your views here.
+# from django.core.management import call_command
+import tweepy
+import requests
+# importing modules
+import urllib.request
+from PIL import Image
+from django.contrib.auth import get_user_model
+User=get_user_model()
 
 def error400(request):
     return render(request, "main/errors/400.html", {"title": "400Error"})
@@ -39,6 +49,7 @@ def error500(request):
 
 def general_errors(request):
     # return render(request, "main/errors/noresult.html")
+    context={'message':'message'}
     return render(request,'main/errors/generalerrors.html',context)
 #  ===================================================================================   
 def hendler400(request,exception):
@@ -63,11 +74,12 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
+    # advertisement()
     posts=Post.objects.all()
     context={
-        "posts":posts,
-        "title": "layout"
-    }
+            "posts":posts,
+            "title": "layout"
+        }
     return render(request, "main/home_templates/newlayout.html",context)
 
 
@@ -80,7 +92,16 @@ def about_us(request):
 
 
 def team(request):
-    return render(request, "main/team.html", {"title": "team"})
+    semployees=User.objects.all()
+    emps=User.objects.all().filter(is_employee=True)
+    staffs=User.objects.all().filter(is_employee=True,is_staff=True)
+    context={
+        "semployees":semployees,
+        "emps":emps,
+        "staffs":staffs,
+        "title": "team"
+    }
+    return render(request, "main/team.html",context)
 
 
 def it(request):
@@ -113,7 +134,7 @@ def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = Service
+    model = Assets
     success_url = "/images/"
     # fields = ["title", "description"]
     fields = ["name", "description","image_url"]
@@ -123,13 +144,13 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
         
 def images(request):
-    # images = Service.objects.all().first()
-    images = Service.objects.all()
+    # images = Assets.objects.all().first()
+    images = Assets.objects.all()
     print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
-    model=Service
+    model=Assets
     fields = ['name','image_url','description']
      
     def form_valid(self,form):
@@ -142,11 +163,23 @@ class ImageUpdateView(LoginRequiredMixin,UpdateView):
 
 @login_required
 def pay(request):
-    payment_info = Payment_Information.objects.filter(
-        customer_id=request.user.id
-    ).first()
-    return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+    try:
+        payment_info = Payment_Information.objects.filter(
+            customer_id=request.user.id
+        ).first()
+        return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
+    except:
+        message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+        link=f'https/www.codanalytics.net/finance/mycontract/{request.user}/'
+        link2=f'localhost:8000/finance/mycontract/{request.user}/'
+        context={
+                  "title": "PAYMENT", 
+                  "message": message,
+                  "link": link,
+                  "link2": link2,
 
+                }
+        return render(request, "main/errors/generalerrors.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
@@ -191,44 +224,6 @@ def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
 
-# -------------------------transactions Section-------------------------------------#
-def transact(request):
-    if request.method == "POST":
-        form = TransactionForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("management: management-transaction")
-    else:
-        form = TransactionForm()
-    return render(request, "management/company_finances/transact.html", {"form": form})
-
-
-""" 
-def transaction(request):
-    transactions=Expenses.objects.all().order_by('-activity_date')
-    return render(request, 'management/company_finances/transaction.html', {'transactions': transactions})
-"""
-
-
-class TransactionListView(ListView):
-    model = Expenses
-    template_name = "main/transaction.html"  # <app>/<model>_<viewtype>
-    context_object_name = "transactions"
-    ordering = ["-activity_date"]
-
-
-"""
-class TransactionUpdateView(LoginRequiredMixin,UpdateView):
-    model=Expenses
-    fields = ['sender','receiver','phone','department', 'category','payment_method','quantity','amount','description','receipt']
-     
-    def form_valid(self,form):
-        form.instance.username=self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse('transaction-list') 
-"""
 # -----------------------------Documents---------------------------------
 """
 def codadocuments(request):
@@ -246,3 +241,79 @@ def doc(request):
         form=CodadocumentsForm()
     return render(request, 'main/doc.html',{'form':form})
 """
+
+@shared_task(name="advertisement")
+def advertisement():
+    """
+    This function will post the latest Facebook Ad
+    """
+    context = Advertisement.objects.all().first()
+    # facebook_context = Advertisement.objects.all().first()
+    apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
+    apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
+    accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
+    accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
+
+    # 3. Create Oauth client and set authentication and create API object
+    oauth = tweepy.OAuthHandler(apiKey, apiSecret)
+    oauth.set_access_token(accessToken, accessTokenSecret)
+
+    api = tweepy.API(oauth)
+
+    # 4. upload media
+    # urllib.request.urlretrieve(
+    # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
+    # "advertisement.png")
+    urllib.request.urlretrieve(
+    'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
+    "advertisement.png")
+    # image = Image.open("advertisement.png")
+    image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+    link = urllib.request.urlopen(image_path).read()
+    # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
+    # This method will show image in any image viewer 
+    # image.show() 
+    # media=googledriveurl={{image.image_url}}
+    image=link
+    # image='media/profile_pics/Chris.jpg'
+    # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+    
+    
+    media = api.media_upload(image)
+
+    api.update_status(
+        status=context.post_description,
+        # media_ids=[context.tweet_media],
+        media_ids=[media.media_id]
+    )
+
+    """
+        This function will post the latest Facebook Ad
+    """
+
+    # facebook_page_id = facebook_context.facebook_page_id
+    # access_token = facebook_context.facebook_access_token
+    # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
+    # msg = facebook_context.post_description
+    # image_location = facebook_context.image
+    # payload = {
+    #     "url": image_location,
+    #     "access_token": access_token,
+    #     "message": msg,
+    # }
+
+    # Send the POST request
+    # requests.post(url, data=payload)
+
+    
+
+def runwhatsapp(request):
+    whatsapp()
+    message=f'Hi,{request.user}, your messages have been post to your groups'
+    context={
+        'title':'WHATSAPP',
+        'message':message
+    }
+    return render (request, "main/errors/generalerrors.html",context)
+
+

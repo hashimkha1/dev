@@ -15,8 +15,9 @@ class Picture(models.Model):
     backgroundImage = models.ImageField(default="default.jpg", upload_to="background")
 
 
-class Service(models.Model):
+class Assets(models.Model):
     name = models.CharField(max_length=200)
+    # category = models.CharField(default='background',max_length=200,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
@@ -25,14 +26,15 @@ class Service(models.Model):
         return self.name
 
 
-class Order(models.Model):
-    service = models.ForeignKey(
-        Service, max_length=200, null=True, blank=True, on_delete=models.SET_NULL
-    )
-    created = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.service.name
+# class Order(models.Model):
+#     service = models.ForeignKey(
+#         Service, max_length=200, null=True, blank=True, on_delete=models.SET_NULL
+#     )
+#     created = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.service.name
 
 
 class Expenses(models.Model):
@@ -141,3 +143,12 @@ class Payments(models.Model):
 
     def __str__(self):
         return self.pay_name
+
+# class Assets(models.Model):
+#     name = models.CharField(max_length=200)
+#     category = models.CharField(default='background',max_length=200,null=True, blank=True)
+#     description = models.TextField(null=True, blank=True)
+#     image_url = models.CharField(max_length=1000, null=True, blank=True)
+
+#     def __str__(self):
+#         return self.name

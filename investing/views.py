@@ -11,8 +11,8 @@ from .models import Document, Uploads
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
 
-def testing(request):
-    return render(request, 'investing/testing.html', {'title': 'testing'})
+def coveredcalls(request):
+    return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def sauti(request):
     return render(request, 'investing/sauti.html', {'title': 'sauti'})

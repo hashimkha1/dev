@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, date
 from decimal import *
 from enum import unique
+from django.shortcuts import redirect, render
 from django.db.models import Q
 from django.db.models import Sum
 from django.urls import reverse
@@ -12,7 +13,6 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
 User = get_user_model()
-
 
 # Create your models here.
 
@@ -38,21 +38,20 @@ class Payment_Information(models.Model):
 
     @property
     def student_balance(self):
-        stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
-        return stu_bal
+        try:
+            stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
+            return stu_bal
+        except:
+            return redirect('main:pay')
     @property
     def jobsupport_balance(self):
-        support_bal = self.payment_fees - int(self.down_payment) 
-        return support_bal
+        try:
+            support_bal = self.payment_fees - int(self.down_payment) 
+            return support_bal
+        except:
+            return redirect('main:pay')
 
-    @property
-    def student_balance(self):
-        stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
-        return stu_bal
-    @property
-    def jobsupport_balance(self):
-        support_bal = self.payment_fees - int(self.down_payment) 
-        return support_bal
+
 
 class Payment_History(models.Model):
     # id = models.AutoField(primary_key=True)
@@ -83,10 +82,10 @@ class Default_Payment_Fees(models.Model):
     student_down_payment_per_month = models.IntegerField(default=500)
     student_bonus_payment_per_month = models.IntegerField(default=250)
 
-    loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    # loan_amount = models.DecimalField(max_digits=10, decimal_places=2,null=True)
 
     def __str__(self):
-        return str(self.loan_amount)
+        return str(self.id)
 
 
 class PayslipConfig(models.Model):

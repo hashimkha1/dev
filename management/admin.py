@@ -78,7 +78,7 @@ class TransactionAdmin(admin.ModelAdmin):
         return render(request, "admin/csv_upload.html", data)
 
 class AdsAdmin(admin.ModelAdmin):
-    list_display = ("facebook_page_id", "page_name", "created_at")
+    list_display = ("post_description","created_at")
 
 class TaskAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
@@ -98,6 +98,7 @@ admin.site.register(TaskHistory)
 admin.site.register(Tag)
 admin.site.register(Requirement)
 admin.site.register(Advertisement, AdsAdmin)
+
 admin.site.register(TaskGroups)
 
 admin.site.register(Payslip)

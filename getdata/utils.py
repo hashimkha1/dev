@@ -16,8 +16,21 @@ from base64 import urlsafe_b64decode
 import logging
 logger = logging.getLogger(__name__)
 
+
+#libraries for Options_play data extraction
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+import psycopg2
+import time
+
+from coda_project.settings import dblocal,herokudev,herokuprod
+# from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
+
+#DB VARIABLES
+host,dbname,user,password=dblocal() #,herokudev(),herokuprod()
 
 def get_gmail_service():
     creds = None
@@ -132,19 +145,11 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
     #Database connection 
     try:
         with psycopg2.connect(
-                            host = 'ec2-52-87-81-98.compute-1.amazonaws.com',
-                            dbname = 'dlt4nrr9rn8h',
-                            user = 'ifuvayllmmmyzu',
-                            password = '802f93df2de5c75266dca4bd1bc7f13189f48f711ddf666c9c8cb951ef8ee510',
-                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            # dbname = 'das6459qgcjbmv',
-                            # user = 'xgsxxbmwywwmoj',
-                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
-                            # host = 'localhost',
-                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
-                            port = 5432
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #Creating database named RobinhoodEmailInfo
@@ -169,19 +174,11 @@ def stock_data(symbol,action,qty, unit_price, total_price,date):
 def crypto_data(symbol,action,unit_price, total_price,date):
     try:
         with psycopg2.connect(
-                            host = 'ec2-52-87-81-98.compute-1.amazonaws.com',
-                            dbname = 'dlt4nrr9rn8h',
-                            user = 'ifuvayllmmmyzu',
-                            password = '802f93df2de5c75266dca4bd1bc7f13189f48f711ddf666c9c8cb951ef8ee510',
-                            # host = 'ec2-3-223-169-166.compute-1.amazonaws.com',
-                            # dbname = 'das6459qgcjbmv',
-                            # user = 'xgsxxbmwywwmoj',
-                            # password = '91b741ac954fc9e9e10ad57c0916d2b57a3964ede1c97d58c83dfa7f966a82f1',
-                            # host = 'localhost',
-                            # dbname =os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-                            # user =os.environ.get('POSTGRESDB_USER'),#'postgres',
-                            # password =os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
-                            port = 5432
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
                             ) as conn:
             with conn.cursor() as cursor:
                 #getdata_cryptomarket
@@ -343,3 +340,229 @@ def get_crypto_price(soup, header):
         crypto_data(symbol=symbol,action = action,unit_price=unit_price,total_price=total_price, date= date)
     except Exception as err:
         print(f"Alert Message : {err}")
+
+#Optionsplay Data extraction funcationality
+#credit_spread functionality
+def dump_data_credit(values):
+    try:
+        with psycopg2.connect(
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
+        ) as conn:
+            with conn.cursor() as cursor:
+                #Creating database named RobinhoodEmailInfo
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_creadspread (
+                    Symbol TEXT,
+                    Strategy TEXT,
+                    Type TEXT,
+                    Price TEXT,
+                    Sell_Strike TEXT,
+                    Buy_Strike TEXT,
+                    Expiry TEXT,
+                    Premium TEXT,
+                    Width TEXT,
+                    Prem_Width TEXT,
+                    Rank TEXT,
+                    Earnings_Date TEXT
+                )'''
+                cursor.execute(creating_db)
+
+                insert_query = '''INSERT INTO getdata_creadspread(Symbol,Strategy, Type,Price,Sell_Strike,Buy_Strike,Expiry,Premium,Width,Prem_Width,Rank,Earnings_Date) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
+                cursor.execute(insert_query,vars= values)
+
+    except Exception as err:
+        print(err)
+
+def main_cread_spread():
+    path = r"Chrome_driver.exe"
+    options = webdriver.ChromeOptions()
+    options.add_argument("start-maximized")
+    options.headless = True
+    # to supress the error messages/logs
+    options.add_experimental_option('excludeSwitches',['enable-logging'])
+    driver = webdriver.Chrome(executable_path = path, options=options)
+    driver.get('https://www.optionsplay.com/hub/credit-spread-file')
+
+    driver.maximize_window()
+    time.sleep(5)
+    driver.implicitly_wait(4)
+    form = driver.find_element(By.TAG_NAME, 'form')
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+
+    btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
+    btn.send_keys(Keys.ENTER)
+    time.sleep(4)
+    table = driver.find_element(By.XPATH, '//*[@id="CreditSpreadFile"]')
+    tbody = table.find_element(By.XPATH,'//*[@id="CreditSpreadFile"]/tbody')
+    rows = tbody.find_elements(By.TAG_NAME,'tr')
+    rows = len(rows)
+    # //*[@id="CreditSpreadFile"]/tbody/tr[1]
+    # //*[@id="CreditSpreadFile"]/tbody/tr[1]/td[15]
+    time.sleep(5)
+    for row in range(1,rows+1):
+        values = []
+        for col in range(1,13):
+            path = '//*[@id="CreditSpreadFile"]/tbody/tr[{}]/td[{}]'.format(row,col)
+            value = driver.find_element(By.XPATH,path).text
+            values.append(value)
+            print(value, end =' ')
+        dump_data_credit(tuple(values))
+        print('')
+
+#covered_calls
+def dump_data_covered_calls(values):
+    try:
+        with psycopg2.connect(
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
+                            ) as conn:
+            with conn.cursor() as cursor:
+                #Creating database named RobinhoodEmailInfo
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_coveredcalls(
+                    Symbol varchar(250),
+                    Action varchar(200),
+                    Expiry varchar(200),
+                    Days_To_Expiry varchar(200),
+                    Strike_Price varchar(200),
+                    Mid_Price varchar(200),
+                    Bid_Price varchar(200),
+                    Ask_Price varchar(200),
+                    Implied_Volatility_Rank varchar(200),
+                    Earnings_Date varchar(200),
+                    Earnings_Flag BOOL,
+                    Stock_Price varchar(200),
+                    Raw_Return varchar(200),
+                    Annualized_Return varchar(200),
+                    Distance_To_Strike varchar(200)
+                )'''
+                cursor.execute(creating_db)
+
+                insert_query = '''INSERT INTO getdata_coveredcalls(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
+                cursor.execute(insert_query,vars = values)
+
+    except Exception as err:
+        print(err)
+
+def main_covered_calls():
+    path = r"Chrome_driver.exe"
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    options.add_argument("start-maximized")
+    # to supress the error messages/logs
+    options.add_experimental_option('excludeSwitches',['enable-logging'])
+    driver = webdriver.Chrome(executable_path = path, options=options)
+    driver.get('https://www.optionsplay.com/hub/covered-calls')
+
+    driver.maximize_window()
+    time.sleep(2)
+    driver.implicitly_wait(2)
+    form = driver.find_element(By.TAG_NAME, 'form')
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+
+    btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
+    btn.send_keys(Keys.ENTER)
+    time.sleep(3)
+    table = driver.find_element(By.XPATH, '//*[@id="coveredCalls"]')
+    tbody = table.find_element(By.XPATH,'//*[@id="coveredCalls"]/tbody')
+    rows = tbody.find_elements(By.TAG_NAME,'tr')
+    rows = len(rows)
+    # //*[@id="coveredCalls"]/tbody/tr[1]
+    # //*[@id="coveredCalls"]/tbody/tr[1]/td[15]
+    time.sleep(4)
+    for row in range(1,rows+1):
+        values = []
+        for col in range(1,16):
+            path = '//*[@id="coveredCalls"]/tbody/tr['+str(row)+']/td['+str(col)+']'
+            value = driver.find_element(By.XPATH,path).text.strip()
+            values.append(value)
+
+        value = float(values[14].replace('%',''))
+        if values[11] == 'N' and value < 30:
+            dump_data_covered_calls(tuple(values))
+
+#short put
+def dump_data_short_put(values):
+    try:
+        with psycopg2.connect(
+                                host = host,
+                                dbname = dbname,
+                                user = user,
+                                password = password,
+                                port = 5432
+                            ) as conn:
+            with conn.cursor() as cursor:
+                #Creating database named RobinhoodEmailInfo
+                creating_db = '''CREATE TABLE IF NOT EXISTS getdata_shortput (
+                    Symbol varchar(250),
+                    Action varchar(200),
+                    Expiry varchar(200),
+                    Days_To_Expiry varchar(200),
+                    Strike_Price varchar(200),
+                    Mid_Price varchar(200),
+                    Bid_Price varchar(200),
+                    Ask_Price varchar(200),
+                    Implied_Volatility_Rank varchar(200),
+                    Earnings_Date varchar(200),
+                    Earnings_Flag BOOL,
+                    Stock_Price varchar(200),
+                    Raw_Return varchar(200),
+                    Annualized_Return varchar(200),
+                    Distance_To_Strike varchar(200)
+                )'''
+                cursor.execute(creating_db)
+
+                insert_query = '''INSERT INTO getdata_shortput(Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,Bid_Price,Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'''
+                # values = (Symbol,Action, Expiry, Days_To_Expiry,	Strike_Price,	Mid_Price,	Bid_Price,	Ask_Price,Implied_Volatility_Rank,	Earnings_Date,	Earnings_Flag,	Stock_Price,Raw_Return,	Annualized_Return,	Distance_To_Strike)
+                cursor.execute(insert_query,vars = values)
+
+    except Exception as err:
+        print(err)
+
+def main_shortput():
+    path = r"Chrome_driver.exe"
+    options = webdriver.ChromeOptions()
+    options.headless = True
+    options.add_argument("start-maximized")
+    # to supress the error messages/logs
+    options.add_experimental_option('excludeSwitches',['enable-logging'])
+    driver = webdriver.Chrome(executable_path = path, options=options)
+    driver.get('https://www.optionsplay.com/hub/short-puts')
+
+    driver.maximize_window()
+    time.sleep(2)
+    driver.implicitly_wait(2)
+    form = driver.find_element(By.TAG_NAME, 'form')
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+
+    btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
+    btn.send_keys(Keys.ENTER)
+    time.sleep(3)
+    table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
+    tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
+    rows = tbody.find_elements(By.TAG_NAME,'tr')
+    rows = len(rows)
+    # //*[@id="shortPuts"]/tbody/tr[1]
+    # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
+    time.sleep(4)
+    for row in range(1,rows+1):
+        values = []
+        for col in range(1,16):
+            path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
+            value = driver.find_element(By.XPATH,path).text.strip()
+            values.append(value)
+        
+        value = float(values[14].replace('%',''))
+        if values[11] == 'N' and value < 30:
+            dump_data_short_put(tuple(values))
+    

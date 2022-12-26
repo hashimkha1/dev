@@ -23,8 +23,18 @@
       <div>
         <div class="box-element hidden" id="payment-info">
               <h2 class="text-center m-4">Method 1: Paypal</h2>
-              <label for="Training">Amount to be Paid</label>
-              <input type="text" id="priceId">
+              <!-- <label for="Training">Amount to be Paid </label> -->
+              <input type="text" id="priceId" hidden> 
+              <id="priceId"> 
+                <button>
+                  $Amount to be Paid <b>$ {{payments.down_payment|add:10}}</b> 
+                </button>
+              <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
+                <button>
+                  Edit
+                </button>
+              </a>
+              
 
 <div id="paypal-button-container"></div>
 </div>
@@ -33,11 +43,13 @@
 
   <!-- Include the PayPal JavaScript SDK -->
   <!-- <script src="https://www.paypal.com/sdk/js?client-id=AemSepU21NzcaMEfxSeOLtbQXldABFn6c7Oe8rPYTMROlEaPUvfFifzL3xc8SVqb_7wLF0RNQ2U8UWlW&currency=USD"></script> -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AUrSGgJoyML0tt6TDTgatgRo-TmVCgkvLbA3_WLh1KFPas5LOBk-M7NqGnFBOCzz_UToAEIZZg09dhED&currency=USD"></script>
+  <!-- <script src="https://www.paypal.com/sdk/js?client-id=AUh-FQfbK8DQGOXim6JvjWhgZqkdRTiPX6YoGEfYl7JmBE_Txy3tmlq2LBXkgGaoHz4E8Mmjc0BrD0Xg"></script> -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AYsNJlHsAzemW-IvLkkf42iMHGdTMxFfupX6CTI2-rhDDfU67zTQ2n_lszMkxcrrYq_5Qltrw99Lep4D"></script>
 
   <script>
     
-    document.getElementById("priceId").value = "{{payments.payment_fees}}";
+    document.getElementById("priceId").value = "{{payments.down_payment|add:10}}";
+    // document.getElementById("priceId").value = "{{payments.payment_fees}}";
     var price=document.getElementById('priceId');
     var amount=price.value;
     function getCookie(name) {
@@ -66,7 +78,7 @@
               'Content-type':'application/json',
               'X-CSRFToken':csrftoken,
             },
-            body:JSON.stringify({"payment_fees":amount})
+            body:JSON.stringify({"down_payment":amount})
           })
         }
 
@@ -111,6 +123,7 @@
       <p>a. Cashapp: $cmaghas</p>
       <p>b. venmo: cmaghas</p>
   </div>
+  <p><i>NB:Use of credit card shall incur a $10 fee of the total amount</i></p>
 </section>
 {% include 'main/footer_templates/footer.html' %}
 {% endblock content %}

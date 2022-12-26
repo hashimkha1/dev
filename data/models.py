@@ -201,6 +201,17 @@ class Interview_Questions(models.Model):
     def __str__(self):
         return str(self.user)
 
+class Prep_Questions(models.Model):
+    company=models.CharField(max_length=100,blank=True, null=True)
+    question=models.TextField(max_length=1000,blank=True, null=True)
+    date = models.DateTimeField(default=datetime.now,blank=True, null=True)
+    response=models.TextField(max_length=1000,blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'prep_questions'
+
+    def __str__(self):
+        return f'{self.id} prep_questions'
 
 """
 class DocUpload(models.Model):

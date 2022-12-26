@@ -43,6 +43,13 @@ from getdata.utils import (
 from finance.models import (
         Transaction
 	)
+
+#importing Options play funcationality
+from getdata.utils import(
+    main_covered_calls,
+    main_cread_spread,
+    main_shortput
+)
 from .models import CashappMail,stockmarket
 from django.contrib.auth import get_user_model
 
@@ -71,6 +78,10 @@ def uploaddata(request):
         "Management": Management,
     }
     return render(request,"getdata/uploaddata.html", context) 
+
+@login_required
+def bigdata(request):
+    return render(request, "getdata/bigdata.html", {"title": "data"})
 
 
 
@@ -337,8 +348,40 @@ def options(request):
         # return render(request, "getdata/options.html")
         return redirect("getdata:stockmarket")
 
+
+def options_play_covered_calls(request):
+    main_covered_calls()
+    message=f'Hi,{request.user} we are done processing your request'
+    context={
+         "message":message
+    }
+    return render (request, "main/messages/general.html",context)
+
+def options_play_cread_spread(request):
+    main_cread_spread()
+    message=f'Hi,{request.user} we are done processing your request'
+    context={
+         "message":message
+    }
+    return render (request, "main/messages/general.html",context)
+    
+
+def options_play_shortput(request):
+    main_shortput()
+    message=f'Hi,{request.user} we are done processing your request'
+    context={
+         "message":message
+    }
+    return render (request, "main/messages/general.html",context)
+
 class OptionList(ListView):
     model=stockmarket
     template_name="getdata/options.html"
     context_object_name = "stocks"
+
+class OptionList(ListView):
+    model=stockmarket
+    template_name="getdata/options.html"
+    context_object_name = "stocks"
+
 

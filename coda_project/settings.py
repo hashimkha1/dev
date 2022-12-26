@@ -118,39 +118,43 @@ TEMPLATES = [
     },
 ]
 
+#  ==============DBFUNCTIONS=====================================
+def dblocal():
+    host = 'localhost'
+    dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
+    user = os.environ.get('POSTGRESDB_USER') #'postgres',
+    password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
+    return host,dbname,user,password
+
+def herokudev():
+    host = os.environ.get('HEROKU_DEV_HOST')
+    dbname = os.environ.get('HEROKU_DEV_NAME') 
+    user = os.environ.get('HEROKU_DEV_USER') 
+    password = os.environ.get('HEROKU_DEV_PASS') 
+    # print(f'HOST:{host},HOST2:{host2},DB:{dbname}USER:{user}PASS:{password}')
+    return host,dbname,user,password
+
+def herokuprod():
+    host = os.environ.get('HEROKU_PROD_HOST')
+    dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
+    user = os.environ.get('HEROKU_PROD_USER') #'postgres',
+    password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
+    # print(f'HOST:{host},HOST2:{host2},DB:{dbname}USER:{user}PASS:{password}')
+    return host,dbname,user,password
+
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
+host,dbname,user,password=dblocal() #,herokudev(),herokuprod()
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'CODA_UAT',
-#         'USER': os.environ.get('POSTGRESDB_USER'),
-#         'PASSWORD': os.environ.get('POSTGRESSPASS'),
-#         'HOST': 'localhost',
-#     }
-# }
-# =======================HEROKU CODADEV: Need Privilege=================
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('HEROKU_UAT_NAME'),
-#         'USER': os.environ.get('HEROKU_UAT_USER'),
-#         'PASSWORD': os.environ.get('HEROKU_UAT_PASS'),
-#         'HOST': os.environ.get('HEROKU_UAT_HOST'),
-#     }
-# }
-
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME":os.environ.get('POSTGRES_DB_NAME'),#'testing', #
-        "USER":os.environ.get('POSTGRESDB_USER'),#'postgres',
-        "PASSWORD":os.environ.get('POSTGRESSPASS'),#'Honnappa001@500',#
-        "HOST": "localhost",
+        "NAME": dbname,
+        "USER":user,
+        "PASSWORD":password,
+        "HOST": host
     }
 }
 
@@ -165,6 +169,7 @@ db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
 # DATABASES ={'default': dj_database_url.config(conn_max_age=600)}
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600)   # to update if default db already exists.
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -278,10 +283,17 @@ CELERYBEAT_SCHEDULE = {
         "schedule": crontab(0, 0, day_of_month="1"),
         #'schedule': crontab(),
     },
+
+    "run_on_every_1st": {
+        "task": "advertisement",
+        "schedule": crontab(0, 0, day_of_month="1"),
+        #'schedule': crontab(),
+    },
 }
 
 
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
+# SITEURL = "https://codamakutano.herokuapp.com/"
 #Uncomment for prod purposes
 SITEURL = "https://www.codanalytics.net"

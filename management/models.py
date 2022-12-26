@@ -1028,7 +1028,7 @@ def task_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(task_pre_save_receiver, sender=Task)
 
 class Advertisement(models.Model):
-    # Twitter
+    # Twitter   
     twitter_api_key = models.CharField(max_length=500, null=True, blank=True)
     twitter_api_key_secret = models.CharField(max_length=500, null=True, blank=True)
     twitter_bearer_token = models.CharField(max_length=500, null=True, blank=True)
@@ -1044,6 +1044,10 @@ class Advertisement(models.Model):
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
     author= models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.post_description
+
 
 class LBandLS(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

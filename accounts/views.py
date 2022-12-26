@@ -1,22 +1,16 @@
-import datetime
-import json
-import ast
 from datetime import date, timedelta
-import re
+from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-from django.http import Http404
-from django.urls import reverse, reverse_lazy
-
 # from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
 # from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
-from .decorators import unauthenticated_user
 from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
 from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (
     CreateView,
@@ -26,12 +20,11 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
-from django.db.models import Q
+from main.filters import CredentialFilter
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
 from mail.custom_email import send_email
-from django.http import QueryDict
 import string, random
 
 # Create your views here..
@@ -78,7 +71,8 @@ def join(request):
                 contract_date = today.strftime("%d %B, %Y")
                 check_default_fee = Default_Payment_Fees.objects.all()
                 if check_default_fee:
-                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                    # default_fee = Default_Payment_Fees.objects.get(id=1)
+                    default_fee = Default_Payment_Fees.objects.all().first()
                 else:
                     default_payment_fees = Default_Payment_Fees(
                         job_down_payment_per_month=500,
@@ -87,7 +81,8 @@ def join(request):
                         student_bonus_payment_per_month=100,
                     )
                     default_payment_fees.save()
-                    default_fee = Default_Payment_Fees.objects.get(id=1)
+                    # default_fee = Default_Payment_Fees.objects.get(id=1)
+                    default_fee = Default_Payment_Fees.objects.all().first()
                 if (
                     request.POST.get("category") == "3"
                     and request.POST.get("sub_category") == "1"
@@ -189,7 +184,7 @@ def login_view(request):
                     return redirect("accounts:user-list", username=request.user)
                 else:  # Student
                     login(request, account)
-                    return redirect("data:bitraining")
+                    return redirect("data:train")
 
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
@@ -416,11 +411,13 @@ def credential_view(request):
     categories = CredentialCategory.objects.all().order_by("-entry_date")
     credentials = Credential.objects.all().order_by("-entry_date")
     departments = Department(request)
+    credential_filters=CredentialFilter(request.GET,queryset=credentials)
     context = {
         "departments": departments,
         "categories": categories,
         "credentials": credentials,
         "show_password": False,
+        "credential_filters": credential_filters,
     }
 
     try:
