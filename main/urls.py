@@ -13,14 +13,14 @@ urlpatterns = [
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
 
-        #---------------FINANCE--------------------#
+     #-----------------------------FINANCE--------------------#
 
-        #---------------MANAGEMENT--------------------#
+    #--------------------------MANAGEMENT--------------------#
         path('it/', views.it, name='it'),
         #---------------MARKETING--------------------#
         path('whatsapp/', views.runwhatsapp, name='whatsapp'),
 
-        #---------------IT--------------------#
+    #----------------------------IT-------------------------#
 
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),

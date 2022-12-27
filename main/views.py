@@ -6,8 +6,7 @@ from django.views.generic import (
 )
 import json
 from .models import Assets
-from main.forms import TransactionForm,ContactForm
-from main.models import Expenses
+from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
