@@ -98,11 +98,11 @@ urlpatterns = [
         InterviewUpdateView.as_view(template_name="data/interview/interview_form.html"),
         name="interview-update",
     ),
-    # path(
-    #     "questions/<str:question>/update",
-    #     views.PrepQuestionsUpdateView.as_view(template_name="template_name='main/snippets_templates/generalform.html"),
-    #     name="question-update",
-    # ),
+    path(
+        "questions/<int:pk>/update",
+        views.PrepQuestionsUpdateView.as_view(template_name="main/snippets_templates/generalform.html"),
+        name="question-update",
+    ),
     # ----------------------DELETING----------------------------------------------------
     path(
         "interview/<int:pk>/delete",

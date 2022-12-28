@@ -5,7 +5,7 @@ from django.views.generic import (
     ListView,
 )
 import json
-from .models import Assets
+from .models import Assets,Service,Order
 from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
@@ -75,19 +75,17 @@ def checkout(request):
 def layout(request):
     # advertisement()
     posts=Post.objects.all()
+    services=Service.objects.all()
+
     context={
+            "services":services,
             "posts":posts,
             "title": "layout"
         }
     return render(request, "main/home_templates/newlayout.html",context)
 
-
 def about(request):
     return render(request, "main/about.html", {"title": "about"})
-
-
-def about_us(request):
-    return render(request, "main/home_templates/layout.html", {"title": "about_us"})
 
 
 def team(request):
@@ -136,7 +134,7 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
     model = Assets
     success_url = "/images/"
     # fields = ["title", "description"]
-    fields = ["name", "description","image_url"]
+    fields = ["name",'category', "description","image_url"]
 
     def form_valid(self, form):
         form.instance.user = self.request.user

@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{%extends "main/base_templates/analysis_index.html"%} {% block content %}
 {% load static %}
 {% block title %}
 <!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
@@ -13,10 +13,10 @@
 <div class="row text-center">
     <div class="col-md-12">
       <p><a href="{% url 'data:add_question'%}" class="btn btn-primary btn-sm"
-        >ADD REQRUIREMENTS
+        >Add Questions
       </a></p>
     </div>
-    <!-- <div class="col-md-6">
+    <!-- <div class="col-md-6"> 
       <p><a href="#" class="btn btn-primary btn-sm"
         >DETAIL
       </a></p>
@@ -55,7 +55,7 @@
           <td>{{question.company}}</td>
           <td>{{question.question}}</td>
           <!-- <td>{{question.response}}</td> -->
-          <td> <a class="article-title" href="#">Edit</a></td>
+          <td> <a class="article-title" href="{% url 'data:question-update' question.id%}">Edit</a></td>
         </tr>
         {% endfor %}
       </tbody>

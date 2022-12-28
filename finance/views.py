@@ -156,7 +156,7 @@ def mycontract(request, *args, **kwargs):
 		print(default_fee)
 		
 	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
-		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
 		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
 		if client_data.category == 3 and client_data.sub_category == 1:
 			plan_dict = {"1":40,"2":80,"3":120}
