@@ -576,7 +576,8 @@ def activitydetail(request, slug=None, *args, **kwargs):
 class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     model = ActivityLinks
     success_url = "/data/bitraining2"
-    fields = ["Activity", "link_name", "doc", "link", "is_active"]
+    # fields = ["Activity", "link_name", "doc", "link", "is_active"]
+    fields = ["Activity", "link_name", "doc", "link"]
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -664,7 +665,7 @@ class FeaturedActivityLinksUpdateView(
     model = ActivityLinks
     success_url = "/data/updatelist"
     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    fields = ["activity", "link_name", "doc", "link"]
+    fields = ["Activity", "link_name", "doc", "link"]
 
     def form_valid(self, form):
         # form.instance.author=self.request.user

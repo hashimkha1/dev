@@ -29,6 +29,7 @@ from .forms import LoanForm,TransactionForm,InflowForm
 from management.utils import paymentconfigurations
 from management.views import loan_update_save
 from management.utils import loan_computation
+from main.filters import FoodFilter
 from .utils import check_default_fee
 
 from management.views import pay
@@ -661,7 +662,16 @@ class SupplierListView(ListView):
 
 class FoodListView(ListView):
     model = Food
+    # foodfilter=FoodFilter
     template_name = "finance/payments/food.html"
-    context_object_name = "supplies"
+    context_object_name = "supplies,foodfilter"
     ordering = ["-created_at"]
+
+    # def get_context_data(self,*args, **kwargs):
+    #     context = super(FoodListView, self).get_context_data(*args,**kwargs)
+    #     context['foodfilter'] = Food.objects.all()
+    #     return context
+
+def foodlist():
+	supplies=Food.objects.all()
     

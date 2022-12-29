@@ -204,7 +204,7 @@ class Interview_Questions(models.Model):
 class Prep_Questions(models.Model):
     company=models.CharField(max_length=100,blank=True, null=True)
     category=models.CharField(max_length=255,blank=True, null=True)
-    question=models.TextField(max_length=1000,blank=True, null=True)
+    question=models.CharField(max_length=500,blank=True, null=True)
     date = models.DateTimeField(default=datetime.now,blank=True, null=True)
     response=models.TextField(max_length=1000,blank=True, null=True)
 
