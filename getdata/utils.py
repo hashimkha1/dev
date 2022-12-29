@@ -378,13 +378,13 @@ def dump_data_credit(values):
         print(err)
 
 def main_cread_spread():
-    path = 'coda/Chrome_driver/chromedriver.exe' #r"Chrome_driver.exe"
+    path = r"coda/Chrome_driver/chromedriver.exe"#r"Chrome_driver.exe"
     options = webdriver.ChromeOptions()
     options.add_argument("start-maximized")
     options.headless = True
     # to supress the error messages/logs
     options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = 'coda/Chrome_driver/chromedriver.exe', options=options)
+    driver = webdriver.Chrome(executable_path = path, options=options)
     driver.get('https://www.optionsplay.com/hub/credit-spread-file')
 
     driver.maximize_window()
