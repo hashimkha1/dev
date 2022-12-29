@@ -384,7 +384,7 @@ def main_cread_spread():
     options.headless = True
     # to supress the error messages/logs
     options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    driver = webdriver.Chrome(executable_path = 'coda/Chrome_driver/chromedriver.exe', options=options)
     driver.get('https://www.optionsplay.com/hub/credit-spread-file')
 
     driver.maximize_window()
