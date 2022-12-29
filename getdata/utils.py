@@ -30,7 +30,7 @@ from coda_project.settings import dblocal,herokudev,herokuprod
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=dblocal() #,herokudev(),herokuprod()
+host,dbname,user,password=herokuprod() #dblocal() #,herokudev()
 
 def get_gmail_service():
     creds = None
@@ -378,7 +378,7 @@ def dump_data_credit(values):
         print(err)
 
 def main_cread_spread():
-    path = r"Chrome_driver.exe"
+    path = 'coda/Chrome_driver/chromedriver.exe' #r"Chrome_driver.exe"
     options = webdriver.ChromeOptions()
     options.add_argument("start-maximized")
     options.headless = True
