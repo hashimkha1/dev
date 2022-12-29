@@ -37,13 +37,10 @@ class RequirementFilter(django_filters.FilterSet):
 
 
 class FoodFilter(django_filters.FilterSet):
-    pass
-    # class Meta:
-    #     model=Food
-    #     fields ={
-    #     'supplier':['icontains'],
-    #     'item':['icontains']
-    #     }
+    class Meta:
+        model=Food
+        # fields='__all__'
+        fields ={'supplier','item'}
     
 
 

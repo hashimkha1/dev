@@ -89,7 +89,7 @@ def join(request):
                 ):
                     return render(
                         request,
-                        "management/doc_templates/supportcontract_form.html",
+                        "management/contracts/supportcontract_form.html",
                         {
                             "job_support_data": student_data,
                             "contract_date": contract_date,

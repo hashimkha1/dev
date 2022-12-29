@@ -660,18 +660,36 @@ class SupplierListView(ListView):
     ordering = ["-created_at"]
     
 
-class FoodListView(ListView):
-    model = Food
-    # foodfilter=FoodFilter
-    template_name = "finance/payments/food.html"
-    context_object_name = "supplies,foodfilter"
-    ordering = ["-created_at"]
+# class FoodListView(ListView):
+#     model = Food
+#     foodfilter=FoodFilter
+#     template_name = "finance/payments/food.html"
+#     context_object_name = "supplies,foodfilter"
+#     ordering = ["-created_at"]
 
     # def get_context_data(self,*args, **kwargs):
     #     context = super(FoodListView, self).get_context_data(*args,**kwargs)
     #     context['foodfilter'] = Food.objects.all()
     #     return context
 
-def foodlist():
-	supplies=Food.objects.all()
-    
+
+def foodlist(request):
+    supplies = Food.objects.all().order_by("-id")
+    food_filters=FoodFilter(request.GET,queryset=supplies)
+
+    total_amt = 0
+    for supply in supplies:
+        total_amt = total_amt + supply.total_amount
+
+    total_add_amount = 0
+    for supply in supplies:
+        total_add_amount = total_add_amount + supply.additional_amount
+
+    context={
+        "total_add_amount": total_add_amount,
+        "total_amt": total_amt,
+        "supplies": supplies,
+        "food_filters": food_filters
+    }
+    return render(request,"finance/payments/food.html",context)
+
