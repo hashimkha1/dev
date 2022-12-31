@@ -104,3 +104,6 @@ def search_job_mail(request):
     #         return render(request, "getdata/Repliedmail.html", {'mails': mails})
     # mails = ReplyMail.objects.all()
     # return render(request, "getdata/Repliedmail.html", {'mails': mails})
+
+
+ 
