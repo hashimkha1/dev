@@ -1,4 +1,4 @@
-{%extends "main/base_templates/new_base.html"%}
+{%extends "main/base_templates/analysis_index.html"%}
 {% load crispy_forms_tags %}
 {% load static %}
 
@@ -50,6 +50,7 @@
                     <th scope="col">Description</th>
                     <th scope="col">Duration</th>
                     <th scope="col">lead</th>
+                    <th scope="col">Link</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -60,6 +61,9 @@
                         <td>{{question.Description}}</td>
                         <td>{{question.Duration}}</td>
                         <td>{{question.Lead}}</td>
+                        <td>
+                            <a href="{{question.Link}}" class="btn btn-primary btn-sm">access</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

@@ -1,5 +1,29 @@
 {%extends "main/base_templates/application_base.html"%} {% block content %}
-<h4><b>REQUIRED INFORMATION</b></h4> 
+<div class="career text-center">
+    <h3 class="title">REQUIRED INFORMATION</h3>
+    <div class="row">
+      <div class="col-md-3">
+        <p><a href="{% url 'data:featuredcategory'%}" class="btn btn-primary btn-sm"
+          >ADD CATEGORY
+        </a></p>
+      </div>
+      <div class="col-md-3">
+        <p><a href="{% url 'data:featuredsubcategory'%}" class="btn btn-primary btn-sm"
+          >ADD SUBCATEGORY
+        </a></p>
+      </div>
+      <div class="col-md-3">
+        <p><a href="{% url 'data:featuredactivity'%}" class="btn btn-primary btn-sm"
+          >ADD ACTIVITY
+        </a></p>
+      </div>
+      <div class="col-md-3">
+        <p><a href="{% url 'data:featuredlink'%}" class="btn btn-primary btn-sm"
+          >ADD LINK
+        </a></p>
+      </div>
+    </div>
+  </div>
 {% for category in categories %}
 <section id="rating">
     <div class="rating text-center">
@@ -29,15 +53,14 @@
                       </span>
                 <div>
                     {{subcategory.description}}
-                </div>subcategory
-                
+                </div>
                 <tr>
                 <!--<th>Edit</th>-->
-                    <th>Update Date</th>
+                    <th>Date</th>
                     <th>Category</th>
                     <th>Sub Category</th>
                     <th>Description</th>
-                    <th>Link Name</th>
+                    <th>Link</th>
                     <th>Edit</th>
                      <th>Delete</th>
                 </tr>
@@ -63,13 +86,19 @@
                                     <button type="btn" class="btn-primary">Select</button>
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                                        {% for link in subcategory.subcats.all %}
-                                        <a class="dropdown-item" target="_blank" href=" {{link.link}}"> {{link.link_name}}</a>
-                                        <div class="dropdown-divider"></div>
-                                        {% endfor %}
+                                        <div class="row text-center">
+                                            {% for link in activity.activity_featured.all %}
+                                            <div class="col-md-6" id="gi">
+                                                <a class="dropdown-item" target="_blank" href=" {{link.link}}"> {{link.link_name}}</a>
+                                                <span align="right">
+                                                    <a href="{% url 'data:update-links' link.id %}">✅</a>
+                                                  </span>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
                                 </li>
-                    </td>update-activity
+                    </td>
                     <td><h4 ><a href="{% url 'data:update-activity' activity.id %}">✅</H4></a></p></td> 
                         <td><h4 ><a href="{% url 'data:delete-activity' activity.id %}">❎</H4></a></p></td>  
                 </tr>

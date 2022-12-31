@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{%extends "main/base_templates/analysis_index.html"%} {% block content %}
 {% load static %}
 {% block title %}
 <!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
@@ -9,10 +9,8 @@
 
 <section id="data_training">
 <div class="data_training text-center">
-  <h3 class="title">{{time_remaining}}</h3>
-  <!-- <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p> -->
-<input type="hidden" name="amounts" value="{{GoalAmount}} {{total_pay}}" id="total_amount">
 <div class="container-fluid mr-auto">
+  <hr style="height:4px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
       <div class="row text-center">
                   <div class="col-md-3 amount_msg" id="bada">
                       <div class="card">
@@ -55,9 +53,11 @@
                       <div class="card">
                       <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
                         <div class="card-body">
-                          <h5><b>PAST REPORT</b></h5>
+                          <h5><b>SAMPLE PRACTICE</b></h5>
                           <hr/>
-                          <i><h6>Access Past Report</h6></i>
+                          <p>
+                            <a href="https://drive.google.com/drive/u/3/folders/1MerXXMFym5OfBVLA7ze1tKQEC6MHhl0y">Sample</a>
+                          </p>
                           <hr/>
                           <p>
                             <a href="{% url 'management:session' %}">Add Session</a>

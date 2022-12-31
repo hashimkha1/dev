@@ -29,6 +29,7 @@ from .forms import LoanForm,TransactionForm,InflowForm
 from management.utils import paymentconfigurations
 from management.views import loan_update_save
 from management.utils import loan_computation
+from main.filters import FoodFilter
 from .utils import check_default_fee
 
 from management.views import pay
@@ -156,7 +157,7 @@ def mycontract(request, *args, **kwargs):
 		print(default_fee)
 		
 	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
-		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
 		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
 		if client_data.category == 3 and client_data.sub_category == 1:
 			plan_dict = {"1":40,"2":80,"3":120}
@@ -659,9 +660,36 @@ class SupplierListView(ListView):
     ordering = ["-created_at"]
     
 
-class FoodListView(ListView):
-    model = Food
-    template_name = "finance/payments/food.html"
-    context_object_name = "supplies"
-    ordering = ["-created_at"]
-    
+# class FoodListView(ListView):
+#     model = Food
+#     foodfilter=FoodFilter
+#     template_name = "finance/payments/food.html"
+#     context_object_name = "supplies,foodfilter"
+#     ordering = ["-created_at"]
+
+    # def get_context_data(self,*args, **kwargs):
+    #     context = super(FoodListView, self).get_context_data(*args,**kwargs)
+    #     context['foodfilter'] = Food.objects.all()
+    #     return context
+
+
+def foodlist(request):
+    supplies = Food.objects.all().order_by("-id")
+    food_filters=FoodFilter(request.GET,queryset=supplies)
+
+    total_amt = 0
+    for supply in supplies:
+        total_amt = total_amt + supply.total_amount
+
+    total_add_amount = 0
+    for supply in supplies:
+        total_add_amount = total_add_amount + supply.additional_amount
+
+    context={
+        "total_add_amount": total_add_amount,
+        "total_amt": total_amt,
+        "supplies": supplies,
+        "food_filters": food_filters
+    }
+    return render(request,"finance/payments/food.html",context)
+

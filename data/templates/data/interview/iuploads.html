@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}
+{%extends "main/base_templates/analysis_index.html"%} {%load crispy_forms_tags%}
 {%block content %}
 <section id="career">
   <div class="career text-center">
@@ -6,25 +6,12 @@
     <a href="{% url 'data:uploadinterview' %}" class="btn btn-primary btn-sm"
     >Upload Assignment
   </a>
-  <hr>
-
-<div  class="row">
-  <div class="col">
-    <div class="card card-body">
-      <form method="get">
-        {% csrf_token %}
-        {{myFilter.form}}
-        <button class="btn btn-primary" type="submit">Search</button>
-      </form>
-    </div>
-  </div>
-</div>
-
+  <hr style="height:4px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table style="width: 100%">
       <thead>
         <tr>
           <th>username</th>
-          <th>Name</th>
+          <!-- <th>Name</th> -->
           <th>Date Uploaded</th>
           <th>Category</th>
           <th>Question</th>
@@ -39,9 +26,9 @@
         {% if upload.client.first_name == "" or  upload.client.last_name == "" %}
              <td>{{upload.client}}</td>
         {% else %}
-             <td>{{upload.client.first_name}},{{upload.client.last_name}}</td>
+             <!-- <td>{{upload.client.first_name}},{{upload.client.last_name}}</td> -->
         {% endif %}
-        <td>{{upload.upload_date|date:"F d, Y"}}</td>
+        <td>{{upload.upload_date|date:"n-d-Y"}}</td>
         <td>{{upload.category}}</td>
         <td>{{upload.question_type}}</td>
         <td>

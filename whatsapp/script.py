@@ -53,11 +53,10 @@ import requests
 #             )
 
 
-
 # # download the image from the URL
 def whatsapp():
     pass
-    # url = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
+    # # url = "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_960_720.jpg"
     # url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
     # # url = "https://drive.google.com/file/d/1YATyVows61SsGDmWF846-qApkql_323m/view?usp=share_link"
     # image_path = "images/image.jpg"

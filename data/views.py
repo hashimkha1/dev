@@ -177,7 +177,8 @@ def prepquestions(request):
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
 	model = Prep_Questions
 	success_url = "/data/prepquestions/"
-	fields = "__all__"
+	fields = ["company", 'category',"question", "response"]
+	# fields = "__all__"
 
 	def form_valid(self, form):
 		# form.instance.user = self.request.user
@@ -186,7 +187,7 @@ class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
 class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    fields = ["company", "question", "response"]
+    fields = ["company", 'category',"question", "response"]
     # form = Prep_QuestionsForm()
 
     def form_valid(self, form):
@@ -575,7 +576,8 @@ def activitydetail(request, slug=None, *args, **kwargs):
 class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     model = ActivityLinks
     success_url = "/data/bitraining2"
-    fields = ["Activity", "link_name", "doc", "link", "is_active"]
+    # fields = ["Activity", "link_name", "doc", "link", "is_active"]
+    fields = ["Activity", "link_name", "doc", "link"]
 
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -663,7 +665,7 @@ class FeaturedActivityLinksUpdateView(
     model = ActivityLinks
     success_url = "/data/updatelist"
     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    fields = ["activity", "link_name", "doc", "link"]
+    fields = ["Activity", "link_name", "doc", "link"]
 
     def form_valid(self, form):
         # form.instance.author=self.request.user

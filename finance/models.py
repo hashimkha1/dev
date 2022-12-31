@@ -410,7 +410,12 @@ class Food(models.Model):
         return budgeted_qty
 
     @property
-    def total_amt(self):
-        total_amt=Decimal(self.qty-self.bal_qty)*self.unit_amt
-        return total_amt
+    def total_amount(self):
+        total_amount=Decimal(self.qty)*self.unit_amt
+        return total_amount
+
+    @property
+    def additional_amount(self):
+        additional_amount=Decimal(self.qty-self.bal_qty)*self.unit_amt
+        return additional_amount
 

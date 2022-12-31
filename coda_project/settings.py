@@ -127,11 +127,12 @@ def dblocal():
     return host,dbname,user,password
 
 def herokudev():
+    # In Heroku/Postgres it is Heroku_UAT
     host = os.environ.get('HEROKU_DEV_HOST')
     dbname = os.environ.get('HEROKU_DEV_NAME') 
     user = os.environ.get('HEROKU_DEV_USER') 
-    password = os.environ.get('HEROKU_DEV_PASS') 
-    # print(f'HOST:{host},HOST2:{host2},DB:{dbname}USER:{user}PASS:{password}')
+    password =os.environ.get('HEROKU_DEV_PASS') 
+    # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
     return host,dbname,user,password
 
 def herokuprod():
@@ -144,7 +145,7 @@ def herokuprod():
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=dblocal() #,herokudev(),herokuprod()
+host,dbname,user,password=herokudev() #dblocal()  #herokudev(),
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

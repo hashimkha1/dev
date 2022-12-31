@@ -7,20 +7,19 @@ urlpatterns = [
     path('', views.layout, name='layout'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    path('about_us/', views.about_us, name='about_us'),
     path('team/', views.team, name='team'),
 
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
 
-        #---------------FINANCE--------------------#
+     #-----------------------------FINANCE--------------------#
 
-        #---------------MANAGEMENT--------------------#
+    #--------------------------MANAGEMENT--------------------#
         path('it/', views.it, name='it'),
         #---------------MARKETING--------------------#
         path('whatsapp/', views.runwhatsapp, name='whatsapp'),
 
-        #---------------IT--------------------#
+    #----------------------------IT-------------------------#
 
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
