@@ -149,7 +149,7 @@ data_interview = [
         "Description": "Real Life simulation of mock interview with coach of analytics",
         "Duration": "2 Mock/4 Past Interviews",
         "Lead": "Coach",
-        "Link": "#",
+        "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
     },
 ]
 
