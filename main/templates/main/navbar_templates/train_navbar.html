@@ -24,11 +24,9 @@
                       aria-haspopup="true"
                       aria-expanded="false"
                     >
-                    Training
+                      Training
                     </a>
-                   
                     <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                      {% if user.is_admin or  user.is_employee or  user.is_superuser %}
                         {% for category in categories %}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{category.get_url}}"
@@ -37,13 +35,7 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="https://www.codanalytics.net/data/updatelist/"
                         >Add/Edit</a>
-                        {% else%}
-                        <a class="dropdown-item" href="{% url 'data:train'%}"
-                        >training</a>
-                        {% endif %}
                     </div>
-                    
-                   
                   </li>
                 <li class="nav-item dropdown">
                     <a
@@ -57,12 +49,7 @@
                     >
                       Interview
                     </a>
-                    
                     <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                      {% if user.is_admin or  user.is_employee or  user.is_superuser %}
-                      <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="https://www.codanalytics.net/data/interview/"
-                      >Interview</a>
                         {% for role in roles %}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{role.get_url}}"
@@ -71,20 +58,6 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="https://www.codanalytics.net/data/roles/"
                         >Add/Edit</a>
-                        {% else%}
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'data:interview'%}"
-                        >interview</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'data:interviewlist'%}"
-                        >Transcripts</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'management:user_session' request.user%}"
-                        >Practice Session</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'data:prepquestions'%}"
-                        >Prep Questions</a>
-                        {% endif %}
                     </div>
                   </li>
 
