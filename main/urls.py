@@ -15,10 +15,16 @@ urlpatterns = [
 
         #---------------FINANCE--------------------#
 
-        #---------------MANAGEMENT--------------------#
-        path('it/', views.it, name='it'),
+        #--------------------------MANAGEMENT--------------------#
+        path('meetings/', views.meetings, name='meetings'),
+        # path('meetings/<int:pk>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),
+        path('meetings/<str:title>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),
+        
+        #---------------MARKETING--------------------#
+        path('whatsapp/', views.runwhatsapp, name='whatsapp'),
 
-        #---------------IT--------------------#
+    #----------------------------IT-------------------------#
+        path('it/', views.it, name='it'),
 
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
