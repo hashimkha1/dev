@@ -295,6 +295,6 @@ CELERYBEAT_SCHEDULE = {
 
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
-SITEURL = "https://codamakutano.herokuapp.com/"
+# SITEURL = "https://codamakutano.herokuapp.com/"
 #Uncomment for prod purposes
-# SITEURL = "https://www.codanalytics.net"
+SITEURL = "https://www.codanalytics.net"
