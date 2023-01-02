@@ -1,8 +1,8 @@
-from .models import Assets
+from .models import Service,Assets
 from data.models import FeaturedCategory,FeaturedSubCategory
 #availabity of images in this app
 
-def categories (request):   
+def categories (request):
     return {
         'categories': FeaturedCategory.objects.all()
     }
@@ -14,8 +14,12 @@ def subcategories (request):
 
 def images(request):
     return {
-        # 'images': Service.objects.all()
         'images': Assets.objects.all()
+    }
+
+def Services(request):
+    return {
+        'images': Service.objects.all()
     }
 
 def googledriveurl(request):
