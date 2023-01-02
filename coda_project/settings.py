@@ -145,7 +145,7 @@ def herokuprod():
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=herokudev() #dblocal()  #herokudev(),
+host,dbname,user,password=herokuprod() #herokudev() #dblocal()  #herokudev(),
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -295,6 +295,6 @@ CELERYBEAT_SCHEDULE = {
 
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
-# SITEURL = "https://codamakutano.herokuapp.com/"
+SITEURL = "https://codamakutano.herokuapp.com/"
 #Uncomment for prod purposes
-SITEURL = "https://www.codanalytics.net"
+# SITEURL = "https://www.codanalytics.net"

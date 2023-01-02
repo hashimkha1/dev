@@ -1,35 +1,21 @@
 # imports added below
-import json
 import os
-import requests
-from requests import request 
-import threading
-import time
 
-from re import M
-from django import forms
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime,date
-from http.client import HTTPResponse
 from django.http import HttpResponseRedirect, Http404, JsonResponse
 from django.views import View
 from django.utils.dateformat import format
 from django.contrib import admin, messages
-from . import forms
 from django.urls import path, reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
 from django.views.generic import (
-	CreateView,
 	ListView,
-	UpdateView,
-	DetailView,
-	DeleteView, 
     FormView
 )
-from main.utils import Finance,Data,Management
+from main.utils import Finance,Data,Management,Automation,Stocks,General
 from getdata.utils import (
                     get_gmail_service,
                     search_messages,
@@ -81,7 +67,13 @@ def uploaddata(request):
 
 @login_required
 def bigdata(request):
-    return render(request, "getdata/bigdata.html", {"title": "data"})
+    context={
+        "title": "data",
+        "Automation":Automation,
+        "Stocks":Stocks,
+        "General":General,
+    }
+    return render(request, "getdata/bigdata.html",context)
 
 
 

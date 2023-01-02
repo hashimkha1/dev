@@ -1,5 +1,7 @@
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
+from coda_project.settings import SITEURL
+
 
 
 # Interview description data
@@ -153,7 +155,137 @@ data_interview = [
     },
 ]
 
+Automation = [
+    {
+        "title": "Whatsapp",
+        "link":SITEURL+"/whatsapp/",
+        "linkname":"Pics&Messages-Whatsapp",
+    },
+    {
+        "title": "Cash App",
+        "link":SITEURL+"/getdata/cashappdata/",
+        "linkname":"Cash app",
+    },
+    {
+        "title": "Job Application",
+        "link":SITEURL+"/getdata/replies/",
+        "linkname":"Reply",
+    },
+    {
+        "title": "To Come..",
+        "link":"",
+        "linkname":"To Come..",
+    },
+]
+Stocks = [
+    {
+        "title": "Cryptomarket",
+        "link":SITEURL+"/getdata/options/",
+        "linkname":"Cryptomarket Data",
+    },
+    {
+        "title": "Credit Spreads",
+        "link":SITEURL+"/getdata/credit_spread/",
+        "linkname":"Credit Spreads Data",
+    },
+    {
+        "title": "Get short Put Data",
+        "link":SITEURL+"/getdata/shortput/",
+        "linkname":"Get short Put Data",
+    },
+    {
+        "title": "Get covered Calls Data",
+        "link":SITEURL+"/getdata/covered_calls/",
+        "linkname":"Get covered Calls Data",
+    },
+]
+General = [
+    {
+        "title": "Images/Assets",
+        "link":SITEURL+"/images/",
+        "linkname":"Add Images/Assets",
+    },
+    {
+        "title": "Credit Spreads",
+        "link":SITEURL+"/getdata/credit_spread/",
+        "linkname":"Credit Spreads Data",
+    },
+    {
+        "title": "Get short Put Data",
+        "link":SITEURL+"/getdata/shortput/",
+        "linkname":"Get short Put Data",
+    },
+    {
+        "title": "Get covered Calls Data",
+        "link":SITEURL+"/getdata/covered_calls/",
+        "linkname":"Get covered Calls Data",
+    },
+]
+Meetings = [
+    {
+        "title": "1-1 Session",
+        "link":SITEURL+"/data/employetraining/",
+        "linkname":"1-1 Session",
+        "video":"#",
+    },
 
+    {
+        "title": "General Meeting",
+        "link":SITEURL+"/management/companyagenda/",
+        "linkname":"General Meeting",
+        "video":"#",
+
+    },
+    {
+        "title": "BI Session",
+        "link":SITEURL+"/management/companyagenda/",
+        "linkname":"BI Session",
+        "video":"#",
+    },
+    {
+        "title": "SPRINT",
+        "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
+        "linkname":"SPRINT",
+        "video":"#",
+    },
+    {
+        "title": "DAF SESSIONS",
+        "link":"https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
+        "linkname":"DAF",
+        "video":"#",
+    },
+    {
+        "title": "DEPARTMENT",
+        "link":SITEURL+"/management/companyagenda/",
+        "linkname":"departmental",
+        "video":"#",
+    },
+    {
+        "title": "BOG",
+        "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
+        "linkname":"BOG",
+        "video":"#",
+    },
+    {
+        "title": "PBR",
+        "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
+        "linkname":"PBR",
+        "video":"#",
+    },
+]
+
+# Big_data = [
+#     {
+#      "Automation":{
+#         "title": "1. Transcripts",
+#         "link": "https://www.codanalytics.net/data/iuploads/",
+#     },
+#     "Stocks&Options":{
+#         "title": "1. Transcripts",
+#         "link": "https://www.codanalytics.net/data/iuploads/",
+#     },
+#     }
+# ]
 # ==============================Apps and Models===============================
 Finance = [
     {

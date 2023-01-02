@@ -6,6 +6,7 @@ from django.views.generic import (
 )
 import json
 from .models import Assets,Service,Order
+from .utils import Meetings
 from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
@@ -104,6 +105,24 @@ def team(request):
 def it(request):
     return render(request, "main/departments/it.html", {"title": "IT"})
 
+@login_required
+def meetings(request):
+    context={
+        "title": "Meetings",
+        "meetings":Meetings,
+    }
+    return render(request, "main/departments/meetings.html",context)
+
+class MeetingsUpdateView(LoginRequiredMixin,UpdateView):
+    model=Meetings
+    fields = "__all__"
+     
+    def form_valid(self,form):
+        form.instance.username=self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse('main:meetings') 
 
 def testing(request):
     return render(request, "main/testing.html", {"title": "testing"})
