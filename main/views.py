@@ -209,7 +209,7 @@ def images(request):
     # images = Assets.objects.all().first()
     images = Assets.objects.all()
     print(images)
-    return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
+    return render(request, "main/snippets_templates/static/images.html", {"title": "image", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
     model=Assets
