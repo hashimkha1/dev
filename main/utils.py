@@ -122,11 +122,12 @@ TaskInfos = [
 
 data_interview = [
     {
-        "Inteview": "1. Transcripts/Speeches",
+        "Inteview": "1. Transcripts",
         # "Concentration": "Data Analysis",
         "Description": "Write Your Responses to all 7 questions",
         "Duration": "5 Days/3 Runs",
         "Lead": "Self/Coach",
+        "Link": "https://www.codanalytics.net/data/iuploads/",
     },
     
     {
@@ -135,12 +136,14 @@ data_interview = [
         "Description": "Self recorded practice sessions for all 8 questions",
         "Duration": "5 Days/24 sessions",
         "Lead": "Self/Coach",
+        "Link": "https://www.codanalytics.net/management/sessions",
     },
     {
         "Inteview": "3. Role-Concentration",
         "Description": "Interact with a database of 80 Technical Interview Questions",
         "Duration": "5 Days	",
         "Lead": "Self/Coach",
+        "Link": "https://www.codanalytics.net/data/prepquestions/",
     },
     {
         "Inteview": "4. Mock Interviews",
@@ -148,6 +151,7 @@ data_interview = [
         "Description": "Real Life simulation of mock interview with coach of analytics",
         "Duration": "2 Mock/4 Past Interviews",
         "Lead": "Coach",
+        "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
     },
 ]
 
@@ -220,35 +224,35 @@ General = [
 Meetings = [
     {
         "title": "1-1 Session",
-        "link":SITEURL+"/data/employetraining/",
+        "link":"https://docs.google.com/presentation/d/1NkgvW-ruCwCQTlkO9af75kUdKBGF9Vem/edit#slide=id.p1",
         "linkname":"1-1 Session",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1g0Esp33N6xR3pn7Z9-76yYxS3m_81HWH/view?usp=share_link",
     },
 
     {
         "title": "General Meeting",
         "link":SITEURL+"/management/companyagenda/",
         "linkname":"General Meeting",
-        "video":"#",
+        "video":"https://transcripts.gotomeeting.com/#/s/085feaf847fb42db28a68d5d507b871d4bed978d767e837ad3dfb2e473a57e41",
 
     },
     {
         "title": "BI Session",
         "link":SITEURL+"/management/companyagenda/",
         "linkname":"BI Session",
-        "video":"#",
+        "video":"https://transcripts.gotomeeting.com/#/s/47f94d4d116bd8d2214eea00edc483d9289915496671f9b7c82eda5512634846",
     },
     {
         "title": "SPRINT",
         "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
         "linkname":"SPRINT",
-        "video":"#",
+        "video":"https://transcripts.gotomeeting.com/#/s/1ffa25cf84e5fc1b531df945fa358990166ef871f7c7854402876d22d619bf59",
     },
     {
         "title": "DAF SESSIONS",
         "link":"https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
         "linkname":"DAF",
-        "video":"#",
+        "video":"https://transcripts.gotomeeting.com/#/s/d88210a7703467f606586da252e8cb8349de7dc74e1e4cdec2a74307131985d5",
     },
     {
         "title": "DEPARTMENT",
@@ -258,15 +262,15 @@ Meetings = [
     },
     {
         "title": "BOG",
-        "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
+        "link":"https://docs.google.com/spreadsheets/d/1wTiUJnhzfJWCw_i5XgH531LvzDhytoLRrU0fwSij88w/edit#gid=1239081146",
         "linkname":"BOG",
         "video":"#",
     },
     {
         "title": "PBR",
-        "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
+        "link":"https://docs.google.com/spreadsheets/d/18D2D0jr5MRGovoDJpfTkks4JxgU32w5x/edit#gid=1089504823",
         "linkname":"PBR",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1hDMaa9b-sjbsHGy7n4upseNdiKnSvAL-/view?usp=sharing",
     },
 ]
 

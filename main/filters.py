@@ -1,7 +1,7 @@
 import django_filters 
 from accounts.models import Credential
 from management.models import Requirement
-
+from finance.models import Food
 class CredentialFilter(django_filters.FilterSet):
     class Meta:
         model=Credential
@@ -33,3 +33,10 @@ class RequirementFilter(django_filters.FilterSet):
         #         'name':'credential',
         #         'link_name':'username/email',
         # }
+    
+class FoodFilter(django_filters.FilterSet):
+    class Meta:
+        model=Food
+        # fields='__all__'
+        fields ={'supplier','item'}
+    
