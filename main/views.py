@@ -107,7 +107,7 @@ def plans(request):
         "delivery_date": delivery_date,
         "day_name": day_name,
     }
-    if request.user.is_superuser:
+    if request.user:
         return render(request, "main/plans.html", context)
     else:
         return render(request, "main/errors/404.html", context)

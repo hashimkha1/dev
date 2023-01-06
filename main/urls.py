@@ -7,17 +7,18 @@ urlpatterns = [
     path('', views.layout, name='layout'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    # path('about_us/', views.about_us, name='about_us'),
     path('team/', views.team, name='team'),
 
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
 
-        #---------------FINANCE--------------------#
+     #-----------------------------FINANCE--------------------#
 
         #--------------------------MANAGEMENT--------------------#
+        path('newplan/', views.PlanCreateView.as_view(template_name='main/form.html'), name='newplan'),
+        path('plans/', views.plans, name='plans'),
+        path('update/<int:pk>/', views.PlanUpdateView.as_view(template_name='main/form.html'), name='update_plan'),
         path('meetings/', views.meetings, name='meetings'),
-        # path('meetings/<int:pk>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),
         path('meetings/<str:title>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),
         
         #---------------MARKETING--------------------#

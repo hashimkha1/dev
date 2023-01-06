@@ -1,0 +1,48 @@
+
+{%extends "main/base_templates/analysis_index.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>MY PLAN</h2>
+    <a href="{% url 'main:newplan' %}" class="btn btn-secondary btn-sm" target="_blank"
+    >ADD AN ITEM
+  </a>
+  <hr>
+  <h2 class="title">Family</h2>
+    <table class="table table-borderless" style="width: 100%">
+        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
+        {% for plan in  plans  %}
+            {% if plan.category == 'Family'%}
+                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
+            {% endif %}
+        {% endfor %}
+      </table>
+  <h2 class="title">Financial</h2>
+    <table class="table table-borderless" style="width: 100%">
+        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
+        {% for plan in  plans  %}
+            {% if plan.category == 'Financial'%}
+                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
+            {% endif %}
+        {% endfor %}
+      </table>
+      <h2 class="title">Health</h2>
+    <table class="table table-borderless" style="width: 100%">
+        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
+        {% for plan in  plans  %}
+             {% if plan.category == 'Health'%}
+                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
+              {% endif %}
+        {% endfor %}
+      </table>
+      <h2 class="title">Other</h2>
+    <table class="table table-borderless" style="width: 100%">
+        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
+        {% for plan in  plans  %}
+             {% if plan.category == 'Other'%}
+                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
+              {% endif %}
+        {% endfor %}
+      </table>
+  </div>
+</section>
+{% endblock content %}
