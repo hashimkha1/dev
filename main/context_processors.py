@@ -20,7 +20,7 @@ def images(request):
 def services(request):
     return {
         'services': Service.objects.all()
-    }
+         }
 
 def googledriveurl(request):
     return {

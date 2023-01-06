@@ -16,3 +16,4 @@ admin.site.register(Assets)
 # admin.site.register(Codadocs)
 # admin.site.register(Codadoc)
 admin.site.register(Payments)
+
