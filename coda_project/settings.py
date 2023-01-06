@@ -145,7 +145,7 @@ def herokuprod():
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=herokuprod() #herokudev() #dblocal()  #herokudev(),
+host,dbname,user,password=herokudev() #herokudev() #dblocal()  #herokudev(),
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
