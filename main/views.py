@@ -371,3 +371,12 @@ def advertisement():
 
     # Send the POST request
     # requests.post(url, data=payload)
+
+    def runwhatsapp(request):
+        whatsapp()
+        message=f'Hi,{request.user}, your messages have been post to your groups'
+        context={
+            'title':'WHATSAPP',
+            'message':message
+        }
+    return render (request, "main/errors/generalerrors.html",context)
