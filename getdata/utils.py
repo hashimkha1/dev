@@ -30,7 +30,7 @@ from coda_project.settings import dblocal,herokudev,herokuprod
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=herokuprod() #herokudev() #dblocal() #,herokuprod()
 
 def get_gmail_service():
     creds = None
