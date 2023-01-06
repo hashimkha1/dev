@@ -107,7 +107,7 @@ def plans(request):
         "delivery_date": delivery_date,
         "day_name": day_name,
     }
-    if request.user:
+    if request.user.is_superuser:
         return render(request, "main/plans.html", context)
     else:
         return render(request, "main/errors/404.html", context)
@@ -209,7 +209,7 @@ def images(request):
     # images = Assets.objects.all().first()
     images = Assets.objects.all()
     print(images)
-    return render(request, "main/snippets_templates/static/images.html", {"title": "image", "images": images})
+    return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
     model=Assets
