@@ -1274,7 +1274,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     fields = [
                 "status","assigned_to","requestor","company",
                 "category","app","delivery_date","duration","what",
-                "why","how","comments","doc","is_active",
+                "why","how","comments","doc","pptlink","videolink","is_active","is_tested"
              ]
     form = RequirementForm
     def form_valid(self, form):

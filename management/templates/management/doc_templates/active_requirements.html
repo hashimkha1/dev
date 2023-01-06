@@ -35,18 +35,15 @@
                         </p>
                         <hr/>
                         <div class="row">
-                          {% if active_requirement.doc_url is none %}
-                          <div class="col-md-12">
+                          <div class="col-md-4">
                             <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' active_requirement.id %}">EXAMINE</a></p>
                           </div>
-                          {% else %}
-                          <div class="col-md-6">
-                            <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' active_requirement.id %}">EXAMINE</a></p>
+                          <div class="col-md-4">
+                            <p> <a class="article-title target="_blank" href="{{active_requirement.pptlink|default_if_none:'#'}}">Wireframe</a></p>
                           </div>
-                          <div class="col-md-6">
-                            <p> <a class="article-title target="_blank" href="{{active_requirement.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
+                          <div class="col-md-4">
+                            <p> <a class="article-title target="_blank" href="{{active_requirement.videolink|default_if_none:'#'}}">videolink</a></p>
                           </div>
-                          {% endif %}
                         </div>
                     </div>
                   </div>

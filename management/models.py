@@ -959,7 +959,10 @@ class Requirement(models.Model):
     )  # how should it be delivered/Which platform or mode of delivery?
     comments = models.TextField(default='No Comment',null=True, blank=True)  # What is needed?
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
+    pptlink = models.CharField(max_length=1000,null=True, blank=True)
+    videolink = models.CharField(max_length=1000,null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_tested = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Requirements"

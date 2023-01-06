@@ -181,7 +181,10 @@ class RequirementForm(forms.ModelForm):
             "how",
             "comments",
             "doc",
+            "pptlink",
+            "videolink",
             "is_active",
+            "is_tested",
         ]
 
         labels = {
@@ -198,6 +201,8 @@ class RequirementForm(forms.ModelForm):
             "how": "Mode of delivery(website/Report/database?",
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
+            "pptlink": "Add link",
+            "pptlink": "Add Video link",
         }
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
