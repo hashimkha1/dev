@@ -12,7 +12,6 @@ from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
-from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -191,12 +190,11 @@ def contact(request):
         form = ContactForm()
     return render(request, "main/contact.html", {"form": form})
 
-
 def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = Assets
+    model = Service
     success_url = "/images/"
     # fields = ["title", "description"]
     fields = ["name",'category', "description","image_url"]
@@ -206,13 +204,13 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
         
 def images(request):
-    # images = Assets.objects.all().first()
-    images = Assets.objects.all()
+    # images = Service.objects.all().first()
+    images = Service.objects.all()
     print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "image", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
-    model=Assets
+    model=Service
     fields = ['name','image_url','description']
      
     def form_valid(self,form):
@@ -366,16 +364,3 @@ def advertisement():
 
     # Send the POST request
     # requests.post(url, data=payload)
-
-    
-
-def runwhatsapp(request):
-    whatsapp()
-    message=f'Hi,{request.user}, your messages have been post to your groups'
-    context={
-        'title':'WHATSAPP',
-        'message':message
-    }
-    return render (request, "main/errors/generalerrors.html",context)
-
-
