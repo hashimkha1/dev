@@ -9,6 +9,6 @@
         <td>{{instance.is_active}}</td>
         <td>{{instance.status}}</td>
         <td> <a class="article-title" href="{% url 'main:update_plan' instance.id %}">Edit</a></td>
-        <td> <a class="article-title" href="#">Delete</a></td>
+        <td> <a class="article-title" href="{% url 'main:delete_plan' instance.id %}"">Delete</a></td>
         </tr>
 </tbody>

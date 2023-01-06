@@ -131,6 +131,13 @@ class PlanUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+def delete_plan(request,id):
+    plan = Plan.objects.get(pk=id)
+    if request.user.is_superuser:
+        plan.delete()
+    return redirect('main:plans')
+
+
 def about(request):
     return render(request, "main/about.html", {"title": "about"})
 
