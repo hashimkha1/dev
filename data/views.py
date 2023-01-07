@@ -31,7 +31,7 @@ from data.models import (
     Prep_Questions
 
 )
-from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter
+from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
 
 # User=settings.AUTH_USER_MODEL
 from data.forms import InterviewQuestionsForm
@@ -168,11 +168,50 @@ def useruploads(request, pk=None, *args, **kwargs):
 
 @login_required
 def prepquestions(request):
-    questions = Prep_Questions.objects.all().order_by("-date")
-    myFilter = QuestionFilter(request.GET, queryset=questions)
-    questions = myFilter.qs
-    context = {"questions": questions, "myFilter": myFilter}
-    return render(request, "data/interview/prepquestions.html", context)
+    questions = Prep_Questions.objects.filter(is_answered=None).order_by("-date")
+    QuestionsFilter = QuestionFilter(request.GET, queryset=questions)
+    questions = QuestionFilter.qs
+    context = {"questions": questions, "myFilter": QuestionsFilter}
+    return render(request, "data/interview/interview_progress/prepquestions.html", context)
+
+def prep_responses(request):
+    # company2=Prep_Questions.objects.values('company').distinct()
+    companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
+    responses = Prep_Questions.objects.filter(is_answered=True).order_by("-date")
+    print(responses)
+    ResFilter = ResponseFilter(request.GET, queryset=responses)
+    # responses = myFilter.qs
+    # for company in companies:
+    #     for response in responses:
+    #         print("response:",response)
+    # for response in responses:
+    #     company=response.company
+    #     response=response.response
+    #     # question=response.question
+    #     # category=response.category
+    #     print("Company:",company)
+    #     # print("category:",category)
+    #     print("Reponse:",response)
+    #     # print("question:",question)
+
+    context = {
+            
+            "companies": companies, 
+            "responses": responses, 
+            "ResFilter": ResFilter,
+            # "response": response,
+    }
+    # return render(request, "data/interview/interview_progress/test.html", context)
+    if request.user.is_superuser or request.user.is_employee or request.user.is_client:
+        return render(request, "data/interview/interview_progress/prepresponses.html", context)
+    else:
+        context={
+            "title":"ARE YOU A CLIENT/STUDENT?",
+            "contact":f'Kindly,contact admin at info@codanalytics.net!',
+            "message":f'Hi,{request.user}, you are currently not authorized to access this page.'
+        }
+        return render(request, "main/errors/generalerrors.html", context)
+
 
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
 	model = Prep_Questions
@@ -187,7 +226,7 @@ class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
 class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    fields = ["company", 'category',"question", "response"]
+    fields = ["company", 'category',"question", "response","is_answered"]
     # form = Prep_QuestionsForm()
 
     def form_valid(self, form):

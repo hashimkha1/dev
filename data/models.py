@@ -207,12 +207,24 @@ class Prep_Questions(models.Model):
     question=models.CharField(max_length=500,blank=True, null=True)
     date = models.DateTimeField(default=datetime.now,blank=True, null=True)
     response=models.TextField(max_length=1000,blank=True, null=True)
+    is_answered=models.BooleanField(default=False,blank=True, null=True)
+    is_active=models.BooleanField(default=False,blank=True, null=True)
+    is_featured=models.BooleanField(default=False,blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'prep_questions'
-
+    
     def __str__(self):
         return f'{self.id} prep_questions'
+
+
+    # @property
+    # def unanswered_questions(self):
+    #     if self.is_answered is None or self.is_answered==False or self.is_answered is Null:
+    #         unanswered_questions = "Not Answered"
+    #         return unanswered_questions
+
+    
 
 """
 class DocUpload(models.Model):

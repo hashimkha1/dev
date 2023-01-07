@@ -30,6 +30,20 @@ class QuestionFilter(django_filters.FilterSet):
         'response':['icontains'],
         }
         # exclude=['upload_date','doc','link','is_active','featured']
+        
+
+
+class ResponseFilter(django_filters.FilterSet):
+    #start_date=DateFilter(field_name="upload_date",lookup_expr='gte')
+    #end_date=DateFilter(field_name="upload_date",lookup_expr='lte')
+    class Meta:
+        model=Prep_Questions
+        # fields='__all__'
+        fields ={
+        'company':['icontains'],
+        'category':['icontains'],
+        }
+        # exclude=['upload_date','doc','link','is_active','featured']
 
 
 

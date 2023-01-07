@@ -175,16 +175,18 @@ def login_view(request):
                     return redirect("management:requirements-active")
                 else:  # parttime (agents) & Fulltime
                     login(request, account)
-                    return redirect("management:user_task", username=request.user)
+                    # return redirect("management:user_task", username=request.user)
+                    return redirect("management:companyagenda")
 
             # If Category is client/customer
             elif account is not None and account.category == 3:
                 if account.sub_category == 1:  # Job Support
                     login(request, account)
-                    return redirect("accounts:user-list", username=request.user)
+                    # return redirect("accounts:user-list", username=request.user)
+                    return redirect('management:companyagenda')
                 else:  # Student
                     login(request, account)
-                    return redirect("data:train")
+                    return redirect('management:companyagenda')
 
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
@@ -224,21 +226,10 @@ def login_view(request):
 
             elif account is not None and account.is_admin:
                 login(request, account)
-                return redirect("main:layout")
+                # return redirect("main:layout")
+                return redirect("management:agenda")
             else:
                 messages.success(request, f"Invalid credentials.Kindly Try again!!")
-
-            # elif section is not None:
-            #         if section == "B":
-            #         login(request, account)
-            #         return redirect("application:sectionA")
-            #     elif section == "C":
-            #         login(request, account)
-            #         return redirect("application:sectionB")
-            #     else:
-            #         login(request, account)
-            #         return redirect("application:sectionC")
-
     return render(
         request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
     )

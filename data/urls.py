@@ -82,8 +82,7 @@ urlpatterns = [
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     path('prepquestions/', views.prepquestions, name='prepquestions'),
     path("useruploads/", views.useruploads, name="user-list"),
-    # path('iuploads/', UploadListView.as_view(), name='iuploads'),
-    # path('uploaded/', views.uploaded, name='uploaded'),
+    path('prepresponses/', views.prep_responses, name='prep_reponses'),
     # ----------------------DETAIL----------------------------------------------------
     path(
         "upload/<int:pk>/",
