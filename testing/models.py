@@ -15,7 +15,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 import requests
 from django.http import request
-
+from management.models import Requirement
 from datetime import datetime
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -122,3 +122,22 @@ class Logs(models.Model):
     exception = models.CharField(max_length=255, null=True, blank=True)
     api = models.URLField(max_length=255, null=True, blank=True)
     crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+
+class ProcessJustification(models.Model):
+    requirements = models.ForeignKey(Requirement, on_delete=models.CASCADE, related_name="Requirement_in_Process",
+                                     null=True, blank=True)
+    justification = models.CharField(max_length=255, null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+
+class ProcessBreakdown(models.Model):
+    process = models.ForeignKey(ProcessJustification, on_delete=models.CASCADE, related_name="Process_in_breakdown",
+                                null=True, blank=True)
+    breakdown = models.CharField(max_length=255, null=True, blank=True)
+    time = models.PositiveIntegerField(null=True, blank=True)
+    Quantity = models.PositiveIntegerField(null=True, blank=True)
+    total = models.PositiveIntegerField(null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
