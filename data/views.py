@@ -26,7 +26,7 @@ from data.models import (
     DSU,
     Job_Tracker,
     JobRole,
-    TrainingClientResponses,
+    Training_Responses,
     Prep_Questions
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
@@ -265,7 +265,7 @@ class InterviewListView(ListView):
 
 @method_decorator(login_required, name="dispatch")
 class TrainingResponseListView(ListView):
-    queryset =TrainingClientResponses.objects.all()
+    queryset =Training_Responses.objects.all()
     template_name = "data/interview/interviewquestion_upload.html"
     ordering = ["-upload_date"]
 

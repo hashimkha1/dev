@@ -188,12 +188,12 @@ class Interviews(models.Model):
         return f"{self.client} upload"
 
 
-class TrainingClientResponses(models.Model):
+class Training_Responses(models.Model):
     user = models.ForeignKey(
         CustomerUser, on_delete=models.CASCADE, related_name="user_assigned", null=True, blank=True
     )
     question = models.CharField(max_length=200)
-    response = models.TextField(default='Write Your Reponse')
+    question1 = models.TextField(default='Write Your Reponse')
     is_active = models.BooleanField(default=True)
     doc = models.FileField(default="None", upload_to="Uploads/doc/")
     link = models.CharField(max_length=500,null=True, blank=True)
