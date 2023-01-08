@@ -187,15 +187,18 @@ class Interviews(models.Model):
     def __str__(self):
         return f"{self.client} upload"
 
-class Interview_Questions(models.Model):
+
+class TrainingClientResponses(models.Model):
     user = models.ForeignKey(
         CustomerUser, on_delete=models.CASCADE, related_name="user_assigned", null=True, blank=True
     )
     question = models.CharField(max_length=200)
+    response = models.TextField(default='Write Your Reponse')
     is_active = models.BooleanField(default=True)
     doc = models.FileField(default="None", upload_to="Uploads/doc/")
+    link = models.CharField(max_length=500,null=True, blank=True)
     comment = models.TextField()
-    score = models.DecimalField(max_digits=5, decimal_places=2)
+    score = models.PositiveIntegerField(null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
 
     def __str__(self):
@@ -217,29 +220,6 @@ class Prep_Questions(models.Model):
     def __str__(self):
         return f'{self.id} prep_questions'
 
-
-    # @property
-    # def unanswered_questions(self):
-    #     if self.is_answered is None or self.is_answered==False or self.is_answered is Null:
-    #         unanswered_questions = "Not Answered"
-    #         return unanswered_questions
-
-    
-
-"""
-class DocUpload(models.Model):
-    #id = models.AutoField(primary_key=True)
-    doc_type=models.CharField(max_length=100,blank=True, null=True)
-    doc_name=models.CharField(max_length=100,blank=True, null=True)
-    doc=models.FileField(upload_to='Uploads/doc/')
-    link=models.CharField(max_length=100,blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = 'Uploads'
-
-    def __str__(self):
-        return f'{self.id} Uploads'
-"""
 # ==================================TRAINING====================================
 class FeaturedCategory(models.Model):
     # Job Category.
@@ -335,6 +315,7 @@ class FeaturedActivity(models.Model):
     activity_name = models.CharField(max_length=255)
     # slug = models.SlugField(max_length=255, blank=True, default="slug")
     description = models.TextField()
+    guiding_question = models.TextField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

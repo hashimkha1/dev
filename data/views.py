@@ -15,7 +15,7 @@ from django.views.generic import (
         DetailView,
         UpdateView,
     )
-from data.forms import InterviewForm, DSUForm ,RoleForm
+from data.forms import InterviewForm, DSUForm ,RoleForm,TrainingResponseForm
 from main.utils import data_interview
 from data.models import (
     Interviews,
@@ -26,12 +26,11 @@ from data.models import (
     DSU,
     Job_Tracker,
     JobRole,
-    Interview_Questions,
+    TrainingClientResponses,
     Prep_Questions
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
 # User=settings.AUTH_USER_MODEL
-from data.forms import InterviewQuestionsForm
 import json
 from coda_project import settings
 User = get_user_model()
@@ -263,11 +262,13 @@ class InterviewListView(ListView):
     queryset = Interviews.objects.all()
     template_name = "data/interview/iuploads.html"
     ordering = ["-upload_date"]
+
 @method_decorator(login_required, name="dispatch")
-class InterviewQuestionListView(ListView):
-    queryset =Interview_Questions.objects.all()
+class TrainingResponseListView(ListView):
+    queryset =TrainingClientResponses.objects.all()
     template_name = "data/interview/interviewquestion_upload.html"
     ordering = ["-upload_date"]
+
 class ClientInterviewListView(ListView):
     model = Interviews
     context_object_name = "client_interviews"
@@ -279,6 +280,7 @@ class ClientInterviewListView(ListView):
         user = get_object_or_404(User, username=self.kwargs.get("username"))
         # tasks=Task.objects.all().filter(client=client)
         return Interviews.objects.all().filter(user=user)
+
 @method_decorator(login_required, name="dispatch")
 class InterviewDetailView(DetailView):
     model = Interviews
@@ -443,6 +445,7 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
 def categorydetail(request, title=None, *args, **kwargs):
     instance = FeaturedCategory.objects.get_by_category(title)
     form= InterviewForm
@@ -455,6 +458,7 @@ def categorydetail(request, title=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
 @method_decorator(login_required, name="dispatch")
 class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedSubCategory
@@ -463,11 +467,12 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
 def subcategorydetail(request, title=None, *args, **kwargs):
     if request.method == "GET":
         instance = FeaturedSubCategory.objects.get_by_subcategory(title)
         # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id').first()
-        form= InterviewQuestionsForm
+        form= TrainingResponseForm
         url=f'data/training/training_progress/course.html'
         context = {
             "form":form,
@@ -480,7 +485,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
         return render(request, url, context)
     if request.method == 'POST':
         try:
-            form=InterviewQuestionsForm(request.POST, request.FILES)
+            form=TrainingResponseForm(request.POST, request.FILES)
             if form.is_valid():
                 instance = form.save(commit=False)
                 instance.user = request.user
@@ -498,6 +503,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
             return redirect('data:category-detail', title=next_category.title)
         next_title = next_title.first()
         return redirect('data:subcategory-detail', title=next_title.title)
+
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedActivity
@@ -506,6 +512,7 @@ class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+
 def activitydetail(request, slug=None, *args, **kwargs):
     # instance = FeaturedActivity.objects.get_by_slug(slug)
     activities = FeaturedActivity.objects.all()
@@ -529,6 +536,7 @@ class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
+        
 @method_decorator(login_required, name="dispatch")
 class DSUCreateView(LoginRequiredMixin, CreateView):
     model = DSU

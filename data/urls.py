@@ -22,8 +22,7 @@ from data.views import (
     InterviewListView,
     InterviewCreateView,
     JobCreateView,
-    JobListView,
-    InterviewQuestionListView
+    JobListView
 )
 
 app_name = "data"
@@ -78,7 +77,8 @@ urlpatterns = [
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
-    path("courseuploads/", InterviewQuestionListView.as_view(), name="questionlist"),
+    path("responses/", views.TrainingResponseListView.as_view(), name="responses"),
+    # path("courseuploads/", InterviewQuestionListView.as_view(), name="questionlist"),
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     path('prepquestions/', views.prepquestions, name='prepquestions'),
     path("useruploads/", views.useruploads, name="user-list"),

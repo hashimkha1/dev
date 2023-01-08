@@ -40,7 +40,7 @@
                 <li class="nav-item dropdown">
                     <a
                       class="nav-link dropdown-toggle"
-                      href="#"
+                      href="{% url 'data:interview' %}"
                       id="navbarDropdown"
                       role="button"
                       data-toggle="dropdown"
@@ -50,6 +50,8 @@
                       Interview
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                      <a class="dropdown-item" href="{% url 'data:interview' %}"
+                        >Home</a>
                         {% for role in roles %}
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{role.get_url}}"

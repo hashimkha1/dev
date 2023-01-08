@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from django.db.models import Q
-from .models import Interviews, DSU, JobRole, Interview_Questions
+from .models import Interviews, DSU, JobRole, TrainingClientResponses
 from accounts.models import CustomerUser
 class InterviewForm(forms.ModelForm):
     class Meta:
@@ -23,9 +23,9 @@ class InterviewForm(forms.ModelForm):
         super(InterviewForm, self).__init__(*args, **kwargs)
         self.fields['question_type'].required = False
 
-class InterviewQuestionsForm(forms.ModelForm):
+class TrainingResponseForm(forms.ModelForm):
     class Meta:
-        model = Interview_Questions
+        model = TrainingClientResponses
         fields =['question', 'score','doc','comment','is_active']
         # fields =['category','question_type','client','doc','link']
         labels={
