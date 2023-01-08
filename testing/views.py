@@ -252,12 +252,6 @@ def LogsViewSet(request):
     else:
         return redirect("main:layout")
 
-
-
-
-
-
-
 def justification(request, *args, **kwargs):
     justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
         .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),

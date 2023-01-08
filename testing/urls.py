@@ -33,5 +33,7 @@ urlpatterns = [
     # path('/services/analysis', ServicesDetailView.as_view(template_name="testing/resume.html"), name='analysis'),
     # path('/services/pmanagement', ServicesDetailView.as_view(template_name="testing/resume.html"), name='pmanagement'),
     path('all_logs/', views.LogsViewSet, name='all_logs'),
+    path('justification/<int:pk>/', views.justification, name='justification'),
+    path('add_justification/', views.add_requirement_justification, name='join'),
 
 ]  
