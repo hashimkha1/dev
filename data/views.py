@@ -561,7 +561,7 @@ class FeaturedCategoryUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
             return True
         elif self.request.user == FeaturedCategory.created_by:
             return True
-        return redirect("data:activity-list")
+        return redirect("data:training-list")
 @method_decorator(login_required, name="dispatch")
 class FeaturedSubCategoryUpdateView(
     LoginRequiredMixin, UserPassesTestMixin, UpdateView
@@ -579,7 +579,7 @@ class FeaturedSubCategoryUpdateView(
             return True
         elif self.request.user == FeaturedSubCategory.created_by:
             return True
-        return redirect("data:activity-list")
+        return redirect("data:training-list")
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = FeaturedActivity
@@ -595,7 +595,7 @@ class FeaturedActivityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
             return True
         elif self.request.user == FeaturedActivity.created_by:
             return True
-        return redirect("data:activity-list")
+        return redirect("data:training-list")
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityLinksUpdateView(
     LoginRequiredMixin, UserPassesTestMixin, UpdateView
@@ -613,7 +613,7 @@ class FeaturedActivityLinksUpdateView(
             return True
         elif self.request.user == ActivityLinks.created_by:
             return True
-        return redirect("data:activity-list")
+        return redirect("data:training-list")
 # ========================3. DELETE VIEWS============================
 @method_decorator(login_required, name="dispatch")
 class FeaturedCategoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
