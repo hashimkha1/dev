@@ -585,7 +585,7 @@ class FeaturedActivityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
     model = FeaturedActivity
     success_url = "/data/updatelist"
     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    fields = ["featuredsubcategory", "activity_name", "description"]
+    fields = ["featuredsubcategory", "activity_name","guiding_question", "description"]
     def form_valid(self, form):
         # form.instance.author=self.request.user
         return super().form_valid(form)
