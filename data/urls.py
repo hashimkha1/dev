@@ -13,9 +13,6 @@ from data.views import (
     FeaturedSubCategoryDeleteView,
     FeaturedActivityDeleteView,
     FeaturedActivityLinksDeleteView,
-    DSUListView,
-    LinksListView,
-    RoleUpdateView,
     InterviewDetailView,
     InterviewUpdateView,
     InterviewDeleteView,
@@ -27,9 +24,8 @@ from data.views import (
 
 app_name = "data"
 urlpatterns = [
-    path("", views.analysis, name="home"),
+    path("", views.feedback, name="home"),
     path("report/", views.report, name="report"),
-    path("etl/", views.etl, name="etl"),
     path("database/", views.database, name="database"),
     path("financialsystem/", views.financialsystem, name="finance"),
     path("payroll/", views.payroll, name="payroll"),
@@ -50,6 +46,7 @@ urlpatterns = [
     path("roles/", views.RolesView.as_view(), name="jobroles"),
     path("roles/edit/<int:pk>/", views.RoleUpdateView.as_view(), name="role-update"),
     path("roles/delete/<int:pk>/", views.RoleDeleteView.as_view(), name="role-delete"),
+    path("student_feedback/", views.feedback, name="student_feedback"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
@@ -154,7 +151,7 @@ urlpatterns = [
     path('<str:title>/', views.categorydetail, name='category-detail'),
     path('subcategory/<str:title>/', views.subcategorydetail, name='subcategory-detail'),
     path('activity/<str:title>/', views.activitydetail, name='activity-detail'),
-    path("dsu/", DSUListView.as_view(), name="dsu"),
+    path("dsu/", views.feedback, name="dsu"),
     
     # ----------------------Update----------------------------------------------------
     path(

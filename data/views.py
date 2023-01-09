@@ -30,6 +30,7 @@ from data.models import (
     Prep_Questions
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
+from .utils import training_responses
 # User=settings.AUTH_USER_MODEL
 import json
 from coda_project import settings
@@ -448,7 +449,10 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
 
 def categorydetail(request, title=None, *args, **kwargs):
     instance = FeaturedCategory.objects.get_by_category(title)
+    tasks=FeaturedActivity.objects.all()
+
     form= InterviewForm
+
     url=f'data/training/training_progress/training.html'
     context = {
         "form":form,
@@ -471,14 +475,26 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
 def subcategorydetail(request, title=None, *args, **kwargs):
     if request.method == "GET":
         instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+        tasks=FeaturedActivity.objects.filter(featuredsubcategory=instance.id)
+        # Introduction=FeaturedActivity.objects.filter(featuredsubcategory=2)
+        print(tasks)
+        # tasks=FeaturedActivity.objects.all()
+        # sub_title=training_responses(request)
+        # for activity in tasks:
+        #     if activity.activity_name in ['Laptop','Schedules']:
+        #         task_name=activity.activity_name
+        #         task_question=activity.guiding_question
+        #         print(task_name,task_question)
         # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id').first()
         form= TrainingResponseForm
+        print(form)
         url=f'data/training/training_progress/course.html'
         context = {
+            # "sub_title":sub_title,
+            "tasks":tasks,
             "form":form,
             "object": instance,
             "title_":title
-            # "categories": FeaturedSubCategory.objects.all(),
         }
         if instance is None:
             return render(request, "main/errors/404.html")
@@ -508,7 +524,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedActivity
     success_url = "/data/bitraining2"
-    fields = ["featuredsubcategory", "activity_name", "description"]
+    fields = ["featuredsubcategory", "activity_name", "description","guiding_question"]
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
@@ -667,6 +683,7 @@ class FeaturedActivityLinksDeleteView(
 class FeaturedCategoryListView(ListView):
     queryset = FeaturedCategory.objects.all()
     template_name = "data/training/updatelist.html"
+
 def activity_view(request):
     categories = (
         FeaturedCategory.objects.prefetch_related("featuredsubcategory_set").all(),
@@ -693,9 +710,25 @@ class LinksListView(ListView):
     model= ActivityLinks
     template_name = "data/training/links.html"
     context_object_name='links'
-class DSUListView(ListView):
+
+def feedback(request):
+    value=request.path.split("/")
+    instance = [i for i in value if i.strip()]
+    title=instance[-1]
     queryset = DSU.objects.all().order_by("-created_at")
-    template_name = "data/training/dsu.html"
+    responses = Training_Responses.objects.all().order_by("-upload_date")
+    print(responses)
+    context={
+                "title":title,
+                "queryset":queryset,
+                "responses":responses
+    }
+    return render(request, "data/training/feedback.html" ,context)
+
+# class (ListView):
+#     # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+#     queryset=DSU.objects.all().order_by("-created_at")
+#     template_name = "management/departments/hr/assessment.html"
 # =============================Job===================
 @method_decorator(login_required, name="dispatch")
 class JobCreateView(LoginRequiredMixin, CreateView):

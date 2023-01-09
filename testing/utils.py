@@ -4,6 +4,32 @@ from datetime import date, datetime, timedelta
 import calendar,string
 
 
+# import random
+# from .models import FeaturedActivity,FeaturedSubCategory
+
+
+# def training_response():
+#     # Article.objects.filter(publications=1)
+#     acts=FeaturedActivity.objects.filter(featuredsubcategory=1)
+#     subs=FeaturedSubCategory.objects.filter(featuredcategory_id=1)
+#     for sub in subs :
+#         if sub in ["Introduction","Organization"]:
+#             print(sub)
+
+    # Publication.objects.filter(article__id=1)
+
+    # value=request.path.split("/")
+    # # newvalue=random.sample(value, 1)
+    # # print(newvalue)
+    # path_values = [i for i in value if i.strip()]
+    # sub_title=path_values[-1]
+    # # print(sub_title)
+    # for activity in tasks:
+    #     task_name=activity.activity_name
+    #     task_question=activity.guiding_question
+    #     # print(task_name,task_question)
+    # return sub
+
 # def send_msg_for_group(group_id, group_msg, gh, gm, gd):
 #     sleep(10)
 #     pwk.sendwhatmsg_to_group(group_id, group_msg, gh, gm, gd)

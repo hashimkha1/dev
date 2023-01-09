@@ -30,13 +30,13 @@ class TrainingResponseForm(forms.ModelForm):
         # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',
-                'question':'Question',
-                'score':'Score',
+                'question':'',
+                'question1':'Your response',
                 'doc':'Assignment',
-                'comment':'Comment',
+                'comment':'Your comments/Questions',
                 'is_active':'Is_active',
                 }
-
+        widgets = {"comment": Textarea(attrs={"cols": 100, "rows": 3})}
 
 class RoleForm(forms.ModelForm):
     class Meta:
