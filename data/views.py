@@ -478,19 +478,18 @@ def subcategorydetail(request, title=None, *args, **kwargs):
         tasks=FeaturedActivity.objects.filter(featuredsubcategory=instance.id)
         # Introduction=FeaturedActivity.objects.filter(featuredsubcategory=2)
         print(tasks)
-        # tasks=FeaturedActivity.objects.all()
         # sub_title=training_responses(request)
         # for activity in tasks:
-        #     if activity.activity_name in ['Laptop','Schedules']:
+        #     if activity.question != None:
         #         task_name=activity.activity_name
-        #         task_question=activity.guiding_question
-        #         print(task_name,task_question)
+        #         task_question=activity.question
         # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id').first()
         form= TrainingResponseForm
         print(form)
         url=f'data/training/training_progress/course.html'
         context = {
-            # "sub_title":sub_title,
+            # "task_name":task_name,
+            # "task_question":task_question,
             "tasks":tasks,
             "form":form,
             "object": instance,

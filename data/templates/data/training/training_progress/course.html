@@ -58,18 +58,23 @@
               <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                     
               <div class="row">
-           
                         <div class="col-md-6">
                           {% for task in  tasks  %}
-                              <p class="gi">
-                                <font size="-1"><i> <b>{{task.activity_name}}</b> :{{task.guiding_question}}</i></font>
-                              </p>
+                          {% if task.question %}
+                            <font size="1"><i> <b>{{task.activity_name}}</b> :{{task.guiding_question}}</i></font>
+                            <hr>
+                          {% endif %}
                           {% endfor %}
+                            <!-- <font size="1"><i> <b>{{task_name}}</b> :{{task_question}}</i></font>
+                            <hr> -->
                         </div>
                         <div class="col-md-6 ">
+                        {% for task in  tasks  %}
+                        {% if task.question  %}
                           <div>{{ form.question|as_crispy_field }}</div>
-                          <div>{{ form.question |as_crispy_field }}</div>
-                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
                         <div class="text text-center">
                           {{ form.comment |as_crispy_field }}
                         </div>

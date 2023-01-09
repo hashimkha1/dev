@@ -329,6 +329,12 @@ class FeaturedActivity(models.Model):
     def activity_url(self):
         return reverse("data:activity-detail", args=[self.slug])
 
+    @property
+    def question(self):
+        if self.guiding_question != None:
+            available_question=self.guiding_question
+            return available_question
+
     def __str__(self):
         return self.activity_name
 
