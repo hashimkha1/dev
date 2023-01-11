@@ -7,42 +7,17 @@
     >ADD AN ITEM
   </a>
   <hr>
-  <h2 class="title">Family</h2>
+  {% for category in  plan_categories  %}
+  <h2 class="title">{{category}}</h2>
     <table class="table table-borderless" style="width: 100%">
-        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
+        {% include 'main/snippets_templates/table/plantableheaders.html' with instance=plan %}
         {% for plan in  plans  %}
-            {% if plan.category == 'Family'%}
-                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
+            {% if plan.category == category %}
+                {% include 'main/snippets_templates/table/plantable.html' with instance=plan %}
             {% endif %}
         {% endfor %}
       </table>
-  <h2 class="title">Financial</h2>
-    <table class="table table-borderless" style="width: 100%">
-        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
-        {% for plan in  plans  %}
-            {% if plan.category == 'Financial'%}
-                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
-            {% endif %}
-        {% endfor %}
-      </table>
-      <h2 class="title">Health</h2>
-    <table class="table table-borderless" style="width: 100%">
-        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
-        {% for plan in  plans  %}
-             {% if plan.category == 'Health'%}
-                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
-              {% endif %}
-        {% endfor %}
-      </table>
-      <h2 class="title">Other</h2>
-    <table class="table table-borderless" style="width: 100%">
-        {% include 'main/snippets_templates/plantableheaders.html' with instance=plan %}
-        {% for plan in  plans  %}
-             {% if plan.category == 'Other'%}
-                {% include 'main/snippets_templates/plantable.html' with instance=plan %}
-              {% endif %}
-        {% endfor %}
-      </table>
+    {% endfor %}
   </div>
 </section>
 {% endblock content %}

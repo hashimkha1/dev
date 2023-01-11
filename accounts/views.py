@@ -484,27 +484,20 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 #     return render(request, 'accounts/employees/employees.html', {'employees': employees})
 
 def Employeelist(request):
-    full_time = CustomerUser.objects.filter(
-                                             Q(category=2), Q(sub_category=3),
+    active_employees = CustomerUser.objects.filter(
                                              Q(is_employee=True),Q(is_active=True)
                                           ).order_by("-date_joined")
-
-    contractual_agent = CustomerUser.objects.filter(
-                                             Q(category=2), Q(sub_category=4),
-                                             Q(is_employee=True),Q(is_active=True)
-                                          ).order_by("-date_joined")
-
-    past = CustomerUser.objects.filter(
-                                             Q(category=2)|Q(is_employee=True),
-                                             Q(is_active=False)
-                                          ).order_by("-date_joined")
+    employees_categories_list = CustomerUser.objects.values_list(
+                    'sub_category', flat=True).distinct()
+    employees_categories = [subcat for subcat in employees_categories_list if subcat in (3,4)]
+    employee_subcategories=list(set(employees_categories))
     context={
-        "full_time": full_time,
-        "contractual_agent": contractual_agent,
-        "past": past
+        "employee_subcategories":employee_subcategories,
+        "active_employees":active_employees,
     }
     return render(request, 'accounts/employees/employeelist.html', context)
 # ================================CLIENT SECTION================================
+
 def clientlist(request):
     students = CustomerUser.objects.filter(
                                              Q(category=3), Q(sub_category=2),

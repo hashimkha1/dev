@@ -62,7 +62,11 @@ class CustomerUser(AbstractUser):
         # ordering = ["-date_joined"]
         ordering = ["username"]
 
-
+    @property
+    def full_name(self):
+        fullname = f'{self.first_name},{self.last_name}'
+        return fullname
+        
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
 

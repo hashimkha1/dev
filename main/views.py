@@ -99,11 +99,16 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
 def plans(request):
     day_name = date.today().strftime("%A")
     plans = Plan.objects.filter(is_active=True)
+    plan_categories_list = Plan.objects.values_list(
+                    'category', flat=True).distinct()
+    plan_categories=sorted(plan_categories_list)
+    # print(plan_categories)
     for plan in plans:
         delivery_date=plan.created_at +  timedelta(days=plan.duration*30)
     print(delivery_date)
     context = {
         "plans": plans,
+        "plan_categories": plan_categories,
         "delivery_date": delivery_date,
         "day_name": day_name,
     }

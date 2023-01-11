@@ -41,7 +41,7 @@ from management.models import (
 )
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
-from main.filters import RequirementFilter
+from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
@@ -401,6 +401,15 @@ class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
+# def task_list(request):
+#     tasks=Task.objects.filter(employee__is_employee=True,employee__is_active=True)
+#     print(tasks)
+#     # myfilter=TaskFilter(request.GET,queryset=tasks)
+#     context={
+#         "tasks":tasks,
+#         # "TaskFilter":myfilter
+#     }
+#     return render(request,"management/daf/taskhistory.html", context)
 
 def FilterUsersByLoan(request):
     user_loan_filter = request.POST["user_loan_filter"]
@@ -469,9 +478,25 @@ def filterbycategory(request):
 
 
 class TaskHistoryView(ListView):
-    queryset = TaskHistory.objects.all()
-    template_name = "management/daf/taskhistory.html"
+    pass
+#     queryset = TaskHistory.objects.all()
+#     myfilter=TaskHistoryFilter(request.GET,queryset=queryset)
+#     template_name = "management/daf/taskhistory.html"
 
+def historytasks(request):
+    # print('======================================')
+    # print('Employees',employees)
+    # print('Active_Employees',activeemployees)
+    # print('======================================')
+    historytasks=TaskHistory.objects.filter(employee__is_employee=True,employee__is_active=True)
+    print('obj',historytasks)
+    # historytasks=TaskHistory.objects.all().order_by('-submission')
+    myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
+    context={
+        "historytasks":historytasks,
+        "TaskHistoryFilter":myfilter
+    }
+    return render(request,"management/daf/taskhistory.html", context)
 
 def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
@@ -497,7 +522,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
     # ).date()
     
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
+    tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
+    # tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
     # tasks = TaskHistory.objects.all().filter(
     #     employee=employee, submission__month=task_history.submission.strftime("%m")
     # )
@@ -643,27 +669,16 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, user=None, *args, **kwargs):
-    # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    # employee = get_object_or_404(User, username=kwargs.get("username"))
-    # task_history = TaskHistory.objects.get_by_employee(employee)
+def usertaskhistory(request, user=None,  *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
-    # ------------TIME----------------------------------
-    # today, *__ = paytime()
-    last_month=paytime()[4]
-    print(f'LAST MONTH:{last_month}')
-    task_history = TaskHistory.objects.all().filter(employee=employee)
-    if task_history is None:
-        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
+    tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
+    if tasks is None:
+        message=f'Hi {request.user}, you do not have history information for last month,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = task_history.filter(employee=employee,submission__month=last_month)
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
-    # tasks = TaskHistory.objects.all().filter(
-    #         employee=employee, submission__month=task_history.submission.strftime("%m")
-    #     )
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
@@ -675,7 +690,6 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
-    # loan = Decimal(total_pay) * Decimal("0.2")
     loan=loan_payment
     point_percentage=point_percentage*100
     try:
@@ -683,8 +697,6 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     except (TypeError, AttributeError):
         net = 0.00
     # ==================PRINT=================
-    print(f'Object={task_history}')
-    print(f'Tasks={num_tasks}')
     context = {
         'employee':employee,
         "tasksummary": tasksummary,
@@ -711,6 +723,7 @@ def usertaskhistory(request, user=None, *args, **kwargs):
     else:
         message=f'Hi {request.user}, You are Prohibited from accessing this Page!'
         return render(request, "main/errors/403.html",{"message":message})
+
 
 def prefix_zero(month:int) -> str:
     return str(month) if month > 9 else '0' + str(month)
@@ -1126,9 +1139,32 @@ class SessionCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 class SessionListView(ListView):
-    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-    queryset=Training.objects.all().order_by("-created_date")
-    template_name = "management/departments/hr/sessions.html"
+    pass
+    # # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+    # queryset=Training.objects.all().order_by("-created_date")
+    # template_name = "management/departments/hr/sessions.html"
+
+def sessions(request):
+    # total_sessions=Training.objects.all().count()
+    sessions=Training.objects.all()
+    client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True).order_by("-created_date")
+    employee_sessions=Training.objects.filter(presenter__is_employee=True).order_by("-created_date")
+    # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
+    context_a={
+       "object_list":client_sessions,
+        "title":"Client_Sessions"
+    }
+    context_b={
+        "object_list":employee_sessions,
+        "title":"Employee_Sessions"
+    }
+    if request.user.is_client :
+        return render(request,"management/departments/hr/sessions.html", context_a)
+    elif request.user.is_employee :
+        return render(request,"management/departments/hr/sessions.html", context_b)
+    else:
+        return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
+
 
 class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Training

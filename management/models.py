@@ -830,6 +830,10 @@ class TaskHistory(models.Model):
     )
     objects = TaskManager()
 
+    class Meta:
+        verbose_name_plural = "TaskHistory"
+        ordering = ["-submission"]
+
     @property
     def submitted(self):
         submitted = datetime.date(self.submission)

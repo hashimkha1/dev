@@ -6,6 +6,8 @@
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
+          <th>Employee_ID</th>
+          <th>Username</th>
           <th>First</th>
           <th>Last</th>
           <th>Phone Number</th>
@@ -25,6 +27,8 @@
         {% for employee in employees %}
             <tr>
               <td>{{employee.date_joined|date:"F d, Y"}}</td>
+              <td>{{employee.id}}</td>
+              <td>{{employee.username}}</td>
               <td>{{employee.first_name}}</td>
               <td>{{employee.last_name}}</td>
               <td>{{employee.phone}}</td>
