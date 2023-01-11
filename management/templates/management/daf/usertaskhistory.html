@@ -118,10 +118,11 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>
-          <th>Check</th>
+          <!-- <th>Check</th> -->
           <th>Task</th>
-          <th>Deadline</th>
+          <!-- <th>Deadline</th> -->
           <th>Submission</th>
+          <!-- <th>Submitted</th> -->
           <th>Points</th>
           <th>Target Points</th>
           <th>Target Amount</th>
@@ -133,7 +134,7 @@
       <tbody>
         {% for task in  tasks  %}
             <tr>
-                <td><input type="checkbox" class="checkthis" /></td>
+                <!-- <td><input type="checkbox" class="checkthis" /></td> -->
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
@@ -143,8 +144,9 @@
                 </td>
                 <!--  <td>{{task.employee}}</td>
                 <!--<td>{{task.group}}</td>-->
-                <td>{{task.deadline|date:"F d, Y"}}</td>
-                <td>{{task.submission|date:"F d, Y"}}</td>
+                <!-- <td>{{task.deadline|date:"F d, Y"}}</td> -->
+                <!-- <td>{{task.submission|date:"F d, Y"}}</td> -->
+                <td>{{task.submitted|date:"F d, Y"}}</td>
                 <td>{{task.point}}</td>
                 <td>{{task.mxpoint}}</td>
                 <td>{{task.mxearning}}</td>

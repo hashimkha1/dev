@@ -1,5 +1,6 @@
 import calendar,string
 import itertools
+from dateutil.relativedelta import relativedelta
 from datetime import datetime, date
 from decimal import *
 from django.db import models
@@ -837,7 +838,8 @@ class TaskHistory(models.Model):
     @property
     def submitted(self):
         submitted = datetime.date(self.submission)
-        return submitted
+        submitted_date=submitted-relativedelta(days=1)
+        return submitted_date
 
     @property
     def deadline(self):
@@ -846,7 +848,8 @@ class TaskHistory(models.Model):
             today.year, today.month, calendar.monthrange(today.year, today.month)[-1]
         )
         deadline = datetime.date(deadline_date)
-        return deadline
+        end_date=deadline-relativedelta(months=1)
+        return end_date
 
     @property
     def time_remaining(self):
