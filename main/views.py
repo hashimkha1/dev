@@ -2,7 +2,9 @@ from django.http import JsonResponse
 from celery import shared_task
 from django.shortcuts import redirect, render
 import json
-from datetime import date,timedelta
+import calendar,string
+from datetime import datetime,date,timedelta
+from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings
 from main.forms import ContactForm
@@ -140,9 +142,28 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
-
 def about(request):
-    return render(request, "main/about.html", {"title": "about"})
+    value=request.path.split("/")
+    path_values = [i for i in value if i.strip()]
+    sub_title=path_values[-1]
+    print(sub_title)
+    date_object="01/20/2023"
+    start_date = datetime.strptime(date_object, '%m/%d/%Y')
+    end_date=start_date + relativedelta(months=3)
+    context={
+        "start_date": start_date,
+        "end_date": end_date,
+        "title_team": "team",
+        "title_about": "about",
+        "title_letter": "letter",
+    }
+    if sub_title == 'team':
+        return render(request, "main/team.html",context)
+    elif sub_title == 'letter':
+        return render(request, "main/doc_templates/letter.html",context)
+    elif sub_title == 'about':
+        return render(request, "main/about.html",context)
+    
 
 class UserCreateView(LoginRequiredMixin, CreateView):
     model = UserProfile

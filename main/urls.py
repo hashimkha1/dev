@@ -9,7 +9,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('team/', views.profiles, name='team'),
     path('profiles/', views.profiles, name='profiles'),
-
+    path('letter/', views.about, name='letter'),
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
 
@@ -24,6 +24,7 @@ urlpatterns = [
         path('delete/<int:id>/', views.delete_plan, name='delete_plan'),
         path('meetings/', views.meetings, name='meetings'),
         path('meetings/<str:title>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),
+        
         
         #---------------MARKETING--------------------#
         path('whatsapp/', views.runwhatsapp, name='whatsapp'),
