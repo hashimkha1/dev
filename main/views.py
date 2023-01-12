@@ -1,17 +1,15 @@
 from django.http import JsonResponse
 from celery import shared_task
 from django.shortcuts import redirect, render
-from django.views.generic import (
-    ListView,
-)
 import json
 from datetime import date,timedelta
-from .models import Assets,Service,Order,Plan
+from .models import Service,Plan,Assets
 from .utils import Meetings
 from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
+from application.models import UserProfile
 from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
@@ -146,19 +144,63 @@ def delete_plan(request,id):
 def about(request):
     return render(request, "main/about.html", {"title": "about"})
 
+class UserCreateView(LoginRequiredMixin, CreateView):
+    model = UserProfile
+    success_url = "/team/"
+    fields = "__all__"
 
-def team(request):
-    semployees=User.objects.all()
-    emps=User.objects.all().filter(is_employee=True)
-    staffs=User.objects.all().filter(is_employee=True,is_staff=True)
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+def profiles(request):
+    value=request.path.split("/")
+    path_values = [i for i in value if i.strip()]
+    sub_title=path_values[-1]
+    print(sub_title)
+    images = Assets.objects.values_list('name', flat=True)
+    print(images)
+    coda_team = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    for team in coda_team:
+        profile_image=team.image2
+    for image in images:
+        image_name=image
+    
+    if profile_image=="banner_page_v1":
+        print("YES")
+    else:
+        print("NO")
+        print(image_name,"==",profile_image)
+
     context={
-        "semployees":semployees,
-        "emps":emps,
-        "staffs":staffs,
-        "title": "team"
+        "coda_team":coda_team,
+        "title": "team",
+        "profile_image": profile_image
+        # "image_name": image_name
     }
-    return render(request, "main/team.html",context)
+    if sub_title == 'team':
+        return render(request, "main/team.html",context)
+    else:
+        return render(request, "main/profiles.html",context)
 
+class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = UserProfile
+    fields ="__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:team")
+
+    def test_func(self):
+        profile = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == profile.user:
+            return True
+        return False
 
 def it(request):
     return render(request, "main/departments/it.html", {"title": "IT"})
@@ -207,7 +249,7 @@ def report(request):
     return render(request, "main/report.html", {"title": "report"})
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
-    model = Service
+    model = Assets
     success_url = "/images/"
     # fields = ["title", "description"]
     fields = ["name",'category', "description","image_url"]
@@ -217,13 +259,13 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
         
 def images(request):
-    # images = Service.objects.all().first()
-    images = Service.objects.all()
+    # images = Assets.objects.all().first()
+    images = Assets.objects.all()
     print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
-    model=Service
+    model=Assets
     fields = ['name','image_url','description']
      
     def form_valid(self,form):

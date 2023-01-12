@@ -7,7 +7,8 @@ urlpatterns = [
     path('', views.layout, name='layout'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    path('team/', views.team, name='team'),
+    path('team/', views.profiles, name='team'),
+    path('profiles/', views.profiles, name='profiles'),
 
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
@@ -15,6 +16,8 @@ urlpatterns = [
      #-----------------------------FINANCE--------------------#
 
         #--------------------------MANAGEMENT--------------------#
+        path('newprofile/', views.UserCreateView.as_view(template_name='main/form.html'), name='newprofile'),
+        path('update/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
         path('newplan/', views.PlanCreateView.as_view(template_name='main/form.html'), name='newplan'),
         path('plans/', views.plans, name='plans'),
         path('update/<int:pk>/', views.PlanUpdateView.as_view(template_name='main/form.html'), name='update_plan'),

@@ -5,6 +5,7 @@ from distutils.command.upload import upload
 from django.db import models
 from django.utils import timezone
 from accounts.models import CustomerUser
+from main.models import Assets
 from django.db.models import Q
 
 
@@ -14,13 +15,18 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         "accounts.CustomerUser", related_name="profile", on_delete=models.CASCADE
     )
+    position = models.CharField(max_length=255,blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
     section = models.CharField(max_length=2, default="A", blank=True)
     image = models.ImageField(
         default="default.jpg", upload_to="Application_Profile_pics", blank=True
     )
-    upload_a = models.FileField(upload_to="Application_Profile/uploads")
-    upload_b = models.FileField(upload_to="Application_Profile/uploads")
-    upload_c = models.FileField(upload_to="Application_Profile/uploads")
+    image2 = models.ForeignKey(
+        Assets, related_name="profile_image", on_delete=models.CASCADE,default=8
+    )
+    # upload_a = models.FileField(upload_to="Application_Profile/uploads")
+    # upload_b = models.FileField(upload_to="Application_Profile/uploads")
+    # upload_c = models.FileField(upload_to="Application_Profile/uploads")
     is_active = models.BooleanField("Is featured", default=True)
     laptop_status= models.BooleanField("Is lap_status", default=True)
 
