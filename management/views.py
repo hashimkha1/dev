@@ -1372,17 +1372,14 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def videolink(request,detail_id):
-    # links=TaskLinks.objects.values_list('link_name', flat=True)
     task_links=TaskLinks.objects.all()
-    mylist=[link.video_linkname for link in task_links]
+    mylist=[link.lowerlinkname for link in task_links]
     new_list=[val for val in mylist if val !=None]
-    print(new_list)
-
-    if detail_id in new_list:
-        obj=TaskLinks.objects.filter(id=int(detail_id))
+    mylinkname="requirement"+str(detail_id)
+    if mylinkname in new_list:
+        obj=TaskLinks.objects.filter(link_name__icontains=str(detail_id))
         print("obj",obj)
         for link in obj:
-            # site=webbrowser.open_new_tab(link.link)
             site=link.link
             print(site)
     else:
@@ -1396,7 +1393,6 @@ def videolink(request,detail_id):
       "site":site,
       "message":f'Access the explanation for this requirement'
     } 
-    # return render (request, "management/doc_templates/video.html",context)
     return render(request, "main/messages/general.html",context)
 
 # ====================ESTIMATEVIEWS===============================

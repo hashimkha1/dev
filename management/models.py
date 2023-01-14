@@ -764,6 +764,12 @@ class TaskLinks(models.Model):
             number_str=int(split_num_str(new_link))
             return number_str
 
+    @property
+    def lowerlinkname(self):
+        if self.link_name.startswith("Req"):
+            new_link = self.link_name.lower().replace(" ", "")
+            return new_link
+
 
 class TaskHistory(models.Model):
     group = models.CharField(
