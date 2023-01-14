@@ -316,6 +316,7 @@ class FeaturedActivity(models.Model):
     # slug = models.SlugField(max_length=255, blank=True, default="slug")
     description = models.TextField()
     guiding_question = models.TextField(blank=True,null=True)
+    interview_question = models.TextField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

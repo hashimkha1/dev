@@ -75,7 +75,13 @@
                         {% endif %}
                         {% endfor %}
                       </div>
-                        <div class="text text-center">
+                      <div class="text text-center">
+                        {% for task in  tasks  %}
+                         {% if task.interview_question %}
+                           <font size="2"><i> <b>Sample Interview Question:</b> :{{task.interview_question}}</i></font>
+                            <hr>
+                          {% endif %}
+                          {% endfor %}
                           {{ form.comment |as_crispy_field }}
                         </div>
                     </div>

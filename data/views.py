@@ -523,7 +523,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedActivity
     success_url = "/data/bitraining2"
-    fields = ["featuredsubcategory", "activity_name", "description","guiding_question"]
+    fields = ["featuredsubcategory", "activity_name", "description","guiding_question","interview_question"]
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
@@ -600,7 +600,7 @@ class FeaturedActivityUpdateView(LoginRequiredMixin, UserPassesTestMixin, Update
     model = FeaturedActivity
     success_url = "/data/updatelist"
     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    fields = ["featuredsubcategory", "activity_name","guiding_question", "description"]
+    fields = ["featuredsubcategory", "activity_name","guiding_question","interview_question", "description"]
     def form_valid(self, form):
         # form.instance.author=self.request.user
         return super().form_valid(form)

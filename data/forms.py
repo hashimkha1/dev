@@ -33,10 +33,10 @@ class TrainingResponseForm(forms.ModelForm):
                 'question':'',
                 'question1':'Your response',
                 'doc':'Assignment',
-                'comment':'Your comments/Questions',
+                'comment':'',
                 'is_active':'Is_active',
                 }
-        widgets = {"comment": Textarea(attrs={"cols": 100, "rows": 3})}
+        widgets = {"comment": Textarea(attrs={"cols": 175, "rows": 3})}
 
 class RoleForm(forms.ModelForm):
     class Meta:
