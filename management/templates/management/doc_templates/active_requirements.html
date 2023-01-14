@@ -41,8 +41,11 @@
                           <div class="col-md-4">
                             <p> <a class="article-title target="_blank" href="{{active_requirement.pptlink|default_if_none:'#'}}">Wireframe</a></p>
                           </div>
-                          <div class="col-md-4">
+                          <!-- <div class="col-md-4">
                             <p> <a class="article-title target="_blank" href="{{active_requirement.videolink|default_if_none:'#'}}">videolink</a></p>
+                          </div> -->
+                          <div class="col-md-4">
+                            <p> <a class="article-title target="_blank" href="{% url 'management:video_req_code' active_requirement.id %}">video</a></p>
                           </div>
                         </div>
                     </div>

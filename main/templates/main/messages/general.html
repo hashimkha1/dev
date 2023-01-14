@@ -3,13 +3,16 @@
 <div class="container-fluid padding">
     <div class="row welcome text-center">
       <div class="col-12">
-        <h1 class="display-4">PROCESS DONE</h1>
+        <h1 class="display-4">{{title}}</h1>
       </div>
       <hr/>
       <div class="col-12">
         <p class="lead">
-          {{message}}
+         Hi,{{request.user}}, {{message}},
         </p>
+        {% if site %}
+        <a href="{{site}}" class="btn btn-secondary">WATCH </a>
+        {% endif %}
         <p class="lead">
           Please Contact admin directly at info@codanalytics.net, if you need more information.
         </p>

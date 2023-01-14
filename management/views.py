@@ -12,7 +12,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from mail.custom_email import send_email
 from application.models import UserProfile
-from management.utils import email_template
 from management.forms import (
     DepartmentForm,
     PolicyForm,
@@ -51,11 +50,11 @@ from django.db.models import Q
 
 from accounts.models import Tracker, Department, TaskGroups
 from finance.models import  PayslipConfig
-from management.utils import (
+from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward
+                               addloantable,employee_reward,split_num_str
                         )
 
 from django.contrib import messages
@@ -1257,6 +1256,7 @@ def requirements(request):
 
 
 def newrequirement(request):
+    request.session["siteurl"] = settings.SITEURL
     if request.method == "POST":
         form = RequirementForm(request.POST, request.FILES)
         if form.is_valid():
@@ -1290,8 +1290,11 @@ def newrequirement(request):
                     'delivery_date': request.POST['delivery_date'],
                     'user': request.user,
                 }
-                # send_email(category=request.user.category, to_email=[to, ], subject=subject,
-                #            html_template='email/newrequirement.html', context=context)
+                # send_email(category=request.user.category,
+                # to_email=[request.user.email,],
+                # subject=subject,
+                # html_template='email/newrequirement.html', 
+                # context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1366,6 +1369,36 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+
+def videolink(request,detail_id):
+    # links=TaskLinks.objects.values_list('link_name', flat=True)
+    task_links=TaskLinks.objects.all()
+    mylist=[link.video_linkname for link in task_links]
+    new_list=[val for val in mylist if val !=None]
+    print(new_list)
+
+    if detail_id in new_list:
+        obj=TaskLinks.objects.filter(id=int(detail_id))
+        print("obj",obj)
+        for link in obj:
+            # site=webbrowser.open_new_tab(link.link)
+            site=link.link
+            print(site)
+    else:
+        context = {
+             "title":'Requirement Elaboration',
+             "message":f'There is no video for this requirement'
+            } 
+        return render(request, "main/messages/general.html",context)
+    context = {
+      "title":'Requirement Elaboration',
+      "site":site,
+      "message":f'Access the explanation for this requirement'
+    } 
+    # return render (request, "management/doc_templates/video.html",context)
+    return render(request, "main/messages/general.html",context)
+
 # ====================ESTIMATEVIEWS===============================
 class EstimateCreateView(LoginRequiredMixin, CreateView):
     model=Estimate

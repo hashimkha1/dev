@@ -380,3 +380,14 @@ def email_template(subject, to, html_content):
     msg.send()
 
 
+def split_num_str(my_str):
+    num = [x for x in my_str if x.isdigit()]
+    num = "".join(num)
+    if not num:
+        num = None
+    return num
+
+def text_num_split(item):
+    for index, letter in enumerate(item, 0):
+        if letter.isdigit():
+            return [item[:index],item[index:]]

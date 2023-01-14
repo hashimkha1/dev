@@ -343,26 +343,29 @@ def options(request):
 
 def options_play_covered_calls(request):
     main_covered_calls()
-    message=f'Hi,{request.user} we are done processing your request'
+    message=f'we are done processing your request'
     context={
-         "message":message
+         "message":message,
+         "title":"Process Done"
     }
     return render (request, "main/messages/general.html",context)
 
 def options_play_cread_spread(request):
     main_cread_spread()
-    message=f'Hi,{request.user} we are done processing your request'
+    message=f'we are done processing your request'
     context={
-         "message":message
+         "message":message,
+         "title":"Process Done"
     }
     return render (request, "main/messages/general.html",context)
     
 
 def options_play_shortput(request):
     main_shortput()
-    message=f'Hi,{request.user} we are done processing your request'
+    message=f'we are done processing your request'
     context={
-         "message":message
+         "message":message,
+         "title":"Process Done"
     }
     return render (request, "main/messages/general.html",context)
 

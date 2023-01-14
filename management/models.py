@@ -10,10 +10,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save
-from management.utils import unique_slug_generator
+from management.utils import unique_slug_generator,split_num_str
 from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups,Department
 from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
+
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -756,8 +757,12 @@ class TaskLinks(models.Model):
     def get_absolute_url(self):
         return reverse("tasks")
 
-    def __str__(self):
-        return self.link_name
+    @property
+    def video_linkname(self):
+        if self.link_name.startswith("Req"):
+            new_link = self.link_name
+            number_str=int(split_num_str(new_link))
+            return number_str
 
 
 class TaskHistory(models.Model):
