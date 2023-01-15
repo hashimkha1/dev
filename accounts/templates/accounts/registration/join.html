@@ -1,123 +1,206 @@
-{% extends "main/base_templates/base.html"%} {%load crispy_forms_tags%}
-{% block content %}
+{%extends "main/base_templates/new_base.html"%}
+{%load crispy_forms_tags%}{% block content %}
 
-<div class="content-section">
+<div class="sign-up-div">
   <form method="POST" enctype="multipart/form-data" autocomplete="off">
     {% csrf_token %}
     <fieldset class="form-group">
-      <legend class="border-bottom mb-4 text-center">
-        REGISTRATION
-        <p class="text-center">
-          Please Complete the form below.Thanks in advance
-        </p>
-        <h3>{{form.msg}}</h3>
-        <h3>{{msg}}</h3>
-      </legend>
       <div class="row">
-        <!-- <div class="col-md-4">{{ form.category|as_crispy_field }}</div> -->
-        <div class="col-md-4">
-          <div id="div_id_category" class="form-group">
-            <label for="id_category" class="requiredField">
-              Registering as:<span class="asteriskField">*</span>
-            </label>
-            <div class="">
-              <select
-                name="category"
-                class="select form-control"
-                id="id_category"
-                onchange="toggle_sub_selection(this.value)"
-              >
-                <option
-                  id="category_disabled"
-                  value="0"
-                  style="display: none"
-                  selected
+          <div class="col-lg-6 introduction-div ">
+            <div class="row">
+            <div class="select-div">
+              <h1 class="position-relative">SIGN-UP</h1>
+              <div class="content">
+                <p class="mb-2">Welcome to CODA, Are you NEW here?</p>
+                <p>
+                  Sign-up to enjoy all the benefits and trainings CODA
+                  provides.
+                </p>
+              </div>
+              <h2>Pick your Category | Register As:</h2>
+              <div class="d-flex">
+            <div class="second-select-div">
+              <div class="form-group">
+              <div class="">
+                <select
+                  name="category"
+                  class="select form-control"
+                  id="id_category"
+                  onchange="toggle_sub_selection(this.value)"
                 >
-                  Select Category
-                </option>
-                <option value="1">Applicant Or Job Applicant</option>
-                <option value="2">Coda Staff Member</option>
-                <option value="3">Client Or Customer Or Student</option>
-              </select>
+                  <option
+                    id="category_disabled"
+                    value="0"
+                    style="display: none"
+                    selected
+                  >
+                    Select Category
+                  </option>
+                  <option value="1">Applicant Or Job Applicant</option>
+                  <option value="2">Coda Staff Member</option>
+                  <option value="3">Client Or Customer Or Student</option>
+                </select>
+              </div>
+            </div>
+            </div>
+            </div>
+            </div>
+          <!-- <div class="col-md-2" id="sub_selection" style="display: none;">{{form.sub_category|as_crispy_field}}</div> -->
+          <div class="col-md-6" id="sub_selection" style="display: none">
+            <div id="div_id_sub_category" class="form-group">
+              <label for="id_sub_category" class="requiredField">
+                Sub Category:<span class="asteriskField">*</span>
+              </label>
+              <div class="">
+                <select
+                  name="sub_category"
+                  class="select form-control"
+                  id="id_sub_category"
+                  onchange="checkSubCategoryValidity()"
+                >
+                  <option
+                    id="subcategoryoption0"
+                    value="0"
+                    style="display: none"
+                    selected
+                  >
+                    Select Sub Category
+                  </option>
+                  <!--Values for Clients -->
+                  <option id="subcategoryoption1" value="1" selected="">
+                    Job Support
+                  </option>
+                  <option id="subcategoryoption2" value="2">Students</option>
+                  <!--Values for Employees/Staff -->
+                  <option id="subcategoryoption3" value="3" selected="">
+                    Full Time
+                  </option>
+                  <option id="subcategoryoption4" value="4">Contractual</option>
+                  <option id="subcategoryoption5" value="5">Agent</option>
+                  <option id="subcategoryoption6" value="6">Other</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
-        <!-- <div class="col-md-2" id="sub_selection" style="display: none;">{{form.sub_category|as_crispy_field}}</div> -->
-        <div class="col-md-2" id="sub_selection" style="display: none">
-          <div id="div_id_sub_category" class="form-group">
-            <label for="id_sub_category" class="requiredField">
-              Sub Category:<span class="asteriskField">*</span>
-            </label>
-            <div class="">
-              <select
-                name="sub_category"
-                class="select form-control"
-                id="id_sub_category"
-                onchange="checkSubCategoryValidity()"
-              >
-                <option
-                  id="subcategoryoption0"
-                  value="0"
-                  style="display: none"
-                  selected
-                >
-                  Select Sub Category
-                </option>
-                <!--Values for Clients -->
-                <option id="subcategoryoption1" value="1" selected="">
-                  Job Support
-                </option>
-                <option id="subcategoryoption2" value="2">Students</option>
-                <!--Values for Employees/Staff -->
-                <option id="subcategoryoption3" value="3" selected="">
-                  Full Time
-                </option>
-                <option id="subcategoryoption4" value="4">Contractual</option>
-                <option id="subcategoryoption5" value="5">Agent</option>
-                <option id="subcategoryoption6" value="6">Other</option>
-              </select>
+          </div>
+          <!-- Dont touch below this -->
+          <div class="col-lg-6 form-div">
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">First Name</p>
+              </div>
+              <div class="col-md-10">
+                {{form.first_name|as_crispy_field}}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Last Name</p>
+              </div>
+              <div class="col-md-10">
+                {{form.last_name|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">User Name</p>
+              </div>
+              <div class="col-md-10">
+                {{form.username|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Password</p>
+              </div>
+              <div class="col-md-10">
+                {{form.password1|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Confirm Password</p>
+              </div>
+              <div class="col-md-10">
+                {{form.password2|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Email</p>
+              </div>
+              <div class="col-md-10">
+                {{form.email|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Gender</p>
+              </div>
+              <div class="col-md-10">
+                {{form.gender|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Phone</p>
+              </div>
+              <div class="col-md-10">
+                {{form.phone|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Address</p>
+              </div>
+              <div class="col-md-10">
+                {{form.address|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">City</p>
+              </div>
+              <div class="col-md-10">
+                {{form.city|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">State</p>
+              </div>
+              <div class="col-md-10">
+                {{form.state|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 align-self-center">
+                <p class="mb-0">Country</p>
+              </div>
+              <div class="col-md-10">
+                {{form.country|as_crispy_field }}
+              </div>
+            </div>
+            
+          <div class="row" id="resume-field" style="display: none">
+            <div class="col-md-4">{{form.resume_file|as_crispy_field }}</div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-6">
+              <button class="btn btn-outline-info" type="submit">Sign Up</button>
+            </div>
+            <div class="col-md-6">
+              <small class="text-muted text-center">
+                Already Have An Account?
+                <a class="ml-2" href="{% url 'accounts:account-login' %}">Sign In</a>
+              </small>
             </div>
           </div>
-        </div>
-        <!-- Dont touch below this -->
-        <div class="col-md-3">{{form.first_name|as_crispy_field}}</div>
-        <div class="col-md-3">{{form.last_name|as_crispy_field }}</div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">{{ form.username|as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.password1|as_crispy_field }}</div>
-        <div class="col-md-4">{{form.password2|as_crispy_field }}</div>
-      </div>
-      <div class="row">
-        <div class="col-md-4">{{form.email|as_crispy_field }}</div>
-        <div class="col-md-4">{{form.phone|as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.gender|as_crispy_field }}</div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-12">{{ form.address|as_crispy_field }}</div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-4">{{form.city|as_crispy_field }}</div>
-        <div class="col-md-4">{{ form.state|as_crispy_field }}</div>
-        <div class="col-md-4">{{form.country|as_crispy_field }}</div>
-      </div>
-      <div class="row" id="resume-field" style="display: none">
-        <div class="col-md-4">{{form.resume_file|as_crispy_field }}</div>
-      </div>
+          </div>
     </fieldset>
-    <div class="form-group">
-      <button class="btn btn-outline-info" type="submit">Sign Up</button>
-    </div>
-  </form>
-  <div class="border-top pt-3 text-center">
-    <small class="text-muted text-center">
-      Already Have An Account?
-      <a class="ml-2" href="{% url 'accounts:account-login' %}">Sign In</a>
-    </small>
   </div>
+  </form>
 </div>
 <script>
   function checkCategoryValidity() {

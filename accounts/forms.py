@@ -9,7 +9,6 @@ from django.utils.translation import gettext_lazy as _
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Repeat Password", widget=forms.PasswordInput)
-
     class Meta:
         model = CustomerUser
         fields = [
@@ -32,16 +31,17 @@ class UserForm(forms.ModelForm):
             "is_applicant",
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "username": "User Name",
-            "email": "Email",
-            "gender": "Gender",
-            "phone": "Phone",
-            "address": "Address",
-            "city": "City",
-            "state": "State",
-            "country": "Country",
+            "sub_category": "",
+            "first_name": "",
+            "last_name": "",
+            "username": "",
+            "email": "",
+            "gender": "",
+            "phone": "",
+            "address": "",
+            "city": "",
+            "state": "",
+            "country": "",
         }
 
     def __init__(self, *args, **kwargs):
