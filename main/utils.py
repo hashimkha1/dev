@@ -233,26 +233,26 @@ Meetings = [
         "title": "General Meeting",
         "link":SITEURL+"/management/companyagenda/",
         "linkname":"General Meeting",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1y7dRZCWV4fFS2dxH6sY2OVkefGKugbwE/view?usp=share_link",
 
     },
     {
         "title": "BI Session",
         "link":SITEURL+"/management/companyagenda/",
         "linkname":"BI Session",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/193l373mbZj7RLmpwROfox1YN3tdsmblm/view?usp=share_link",
     },
     {
         "title": "SPRINT",
         "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
         "linkname":"SPRINT",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1GFIdZ4wHmPqbRdcCvWoTuxtXcSSwWTl4/view?usp=share_link",
     },
     {
         "title": "DAF SESSIONS",
         "link":"https://drive.google.com/file/d/1UsSmmJv5_83ZRegObGhgGE3C5eIJ-4E1/view",
         "linkname":"DAF",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1lQzNp2x4UIL5oJtbvczna7X7okn9Gy4i/view?usp=share_link",
     },
     {
         "title": "DEPARTMENT",
@@ -270,7 +270,7 @@ Meetings = [
         "title": "PBR",
         "link":"https://docs.google.com/spreadsheets/u/5/d/1ILex8zOkh4Vee1dDabIadQTmmoyScaybucUiQirDfFI/edit#gid=1358242624",
         "linkname":"PBR",
-        "video":"#",
+        "video":"https://drive.google.com/file/d/1unIQ2z6P7FWvMwkJ23XYc4xGPYJvW7YI/view?usp=share_link",
     },
 ]
 
