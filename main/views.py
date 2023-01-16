@@ -1,4 +1,5 @@
 from django.http import JsonResponse
+from django.db.models import Q
 from celery import shared_task
 from django.shortcuts import redirect, render
 import json
@@ -12,20 +13,17 @@ from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from application.models import UserProfile
+from management.utils import task_assignment_random
 from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
     CreateView,
-    DeleteView,
-    DetailView,
-    ListView,
     UpdateView,
 )
 # from django.core.management import call_command
 import tweepy
-import requests
 # importing modules
 import urllib.request
 from PIL import Image
@@ -228,7 +226,21 @@ def it(request):
 
 @login_required
 def meetings(request):
+    emp_obj = User.objects.filter(
+                                            Q(sub_category=3),
+                                            Q(is_admin=True),
+                                            Q(is_employee=True),
+                                            Q(is_active=True),
+                                            Q(is_staff=True),
+                        ).order_by("-date_joined")
+    # dept_obj = Department.objects.all().distinct()
+    # departments=[dept.name for dept in dept_obj ]
+    employees=[employee.first_name for employee in emp_obj ]
+    print(employees)
+    _,rand_departments=task_assignment_random(employees)
     context={
+        "departments": rand_departments,
+        "employees": employees,
         "title": "Meetings",
         "meetings":Meetings,
     }

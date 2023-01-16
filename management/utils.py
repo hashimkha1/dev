@@ -379,7 +379,6 @@ def email_template(subject, to, html_content):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
-
 def split_num_str(my_str):
     num = [x for x in my_str if x.isdigit()]
     num = "".join(num)
@@ -391,3 +390,11 @@ def text_num_split(item):
     for index, letter in enumerate(item, 0):
         if letter.isdigit():
             return [item[:index],item[index:]]
+
+def task_assignment_random(employees):
+    # departments=[department.name for department in dept_obj ]
+    departments=['HR','IT','Finance','Health','Marketing','Basics','Projects']
+    departments_per_worker = len(departments) / len(employees)
+    random.shuffle(departments)
+    rand_departments = zip(*[iter(departments)] * int(departments_per_worker))
+    return employees,rand_departments
