@@ -131,11 +131,11 @@ def FI_sectionA(request):
                 data.profile.section = "B"
                 data.profile.save()
             form.save()
-            subject = "New Contract Alert"
+            subject = "Interview Message"
             # to = request.user.email
             # html_content = f"""<span><h3>Hi {request.user},</h3>kindly prepare to present your Section A within 48 hours </span>"""
             # SectionCompleteMail(subject,to,html_content)
-            # send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionA.html', context={'user': request.user})
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionA.html', context={'user': request.user})
         # return redirect("application:section_b")
         return redirect("application:ratewid", pk="Alteryx")
 
@@ -162,12 +162,12 @@ def FI_sectionB(request):
                 data.profile.section = "C"
                 data.profile.save()
             form.save()
-            subject = "New Contract Alert"
+            subject = "Interview Message"
             # to = request.user.email
             # html_content = f"""
             #     <span><h3>Hi {request.user},</h3>kindly prepare to present your Section B within 48 hours </span>"""
             # SectionCompleteMail(subject,to,html_content)
-            # send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionB.html', context={'user': request.user})
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionB.html', context={'user': request.user})
         # return redirect("application:section_c")
         return redirect("application:ratewid", pk="Tableau")
 
@@ -194,12 +194,12 @@ def FI_sectionC(request):
                 data.profile.section = "D"
                 data.profile.save()
             form.save()
-            subject = "New Contract Alert"
+            subject = "Interview Message"
             # to = request.user.email
             # html_content = f"""
             #     <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
             # SectionCompleteMail(subject,to,html_content)
-            # send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionC.html', context={'user': request.user})
+            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionC.html', context={'user': request.user})
             # return redirect("management:policies")
             return redirect("application:ratewid", pk="Database")
 

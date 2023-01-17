@@ -1291,11 +1291,11 @@ def newrequirement(request):
                     'delivery_date': request.POST['delivery_date'],
                     'user': request.user,
                 }
-                # send_email(category=request.user.category,
-                # to_email=[request.user.email,],
-                # subject=subject,
-                # html_template='email/newrequirement.html', 
-                # context=context)
+                send_email(category=request.user.category,
+                to_email=[request.user.email,],
+                subject=subject,
+                html_template='email/newrequirement.html', 
+                context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()

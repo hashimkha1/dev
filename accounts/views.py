@@ -641,7 +641,12 @@ def usertracker(request, user=None, *args, **kwargs):
             id=em.get("author_id")
         )
         if delta < 30:
-            subject = "New Contract Alert"
+            subject = "New Contract Alert!"
+            send_email( category=request.user.category,
+            to_email=customer_get[1], #[request.user.email,],
+            subject=subject, 
+            html_template='email/usertracker.html',
+            context={'user': request.user})
             # to = customer_get[1]
             # html_content = f"""
             #     <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
