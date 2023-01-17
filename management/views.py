@@ -318,6 +318,52 @@ def newtaskcreation(request):
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
+            historytasks = TaskHistory.objects.filter(employee__is_employee=True, employee__is_active=True,
+                                                      employee_id=emp)
+            if historytasks.exists():
+                count = historytasks.aggregate(total_point=Sum('point'))
+                if count.get('total_point') < 100:
+                    group_obj = TaskGroups.objects.filter(title='Group A')
+                    if group_obj.exists():
+                        group = group_obj.first().id
+                    else:
+                        group_obj = TaskGroups.objects.create(title='Group A')
+                        group = group_obj.id
+                if 100 <= count.get('total_point') and count.get('total_point') < 150:
+                    group_obj = TaskGroups.objects.filter(title='Group B')
+                    if group_obj.exists():
+                        group = group_obj.first().id
+                    else:
+                        group_obj = TaskGroups.objects.create(title='Group B')
+                        group = group_obj.id
+                if 150 <= count.get('total_point') and count.get('total_point') < 200:
+                    group_obj = TaskGroups.objects.filter(title='Group C')
+                    if group_obj.exists():
+                        group = group_obj.first().id
+                    else:
+                        group_obj = TaskGroups.objects.create(title='Group C')
+                        group = group_obj.id
+                if 200 <= count.get('total_point') and count.get('total_point') < 250:
+                    group_obj = TaskGroups.objects.filter(title='Group D')
+                    if group_obj.exists():
+                        group = group_obj.first().id
+                    else:
+                        group_obj = TaskGroups.objects.create(title='Group D')
+                        group = group_obj.id
+                if 250 <= count.get('total_point'):
+                    group_obj = TaskGroups.objects.filter(title='Group E')
+                    if group_obj.exists():
+                        group = group_obj.first().id
+                    else:
+                        group_obj = TaskGroups.objects.create(title='Group E')
+                        group = group_obj.id
+            else:
+                group_obj = TaskGroups.objects.filter(title='Group A')
+                if group_obj.exists():
+                    group = group_obj.first().id
+                else:
+                    group_obj = TaskGroups.objects.create(title='Group A')
+                    group = group_obj.id
             for act in activitys:
                 if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
                     des, po, maxpo, maxear = \
@@ -502,6 +548,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
     today,year,deadline_date,month,last_month,*_=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
+    sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
+    num_sessions = sessions.count()
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # task_history = TaskHistory.objects.get_by_employee(employee)
     task_history = TaskHistory.objects.all().filter(employee=employee)
@@ -553,7 +601,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "total_deduction": total_deduction,
         # bonus
         "latenight_Bonus": latenight_Bonus,
-        "pointsearning": bonus_points_ammount,
+        # "pointsearning": bonus_points_ammount,
+        "pointsearning": bonus_points_ammount + num_sessions,
         "holidaypay": offpay,
         "yearly": yearly,
         # General
@@ -855,6 +904,7 @@ def pay(request, user=None, *args, **kwargs):
     print(f'net_pay: {net_pay}')
     context = {
         # bonus
+        # "pointsearning": bonus_points_ammount,
         "pointsearning": bonus_points_ammount,
         "EOM": EOM,
         "EOQ": EOQ,
