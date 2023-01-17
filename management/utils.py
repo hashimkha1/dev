@@ -40,7 +40,7 @@ def employee_reward(tasks):
     except (TypeError, AttributeError):
         MaxPoints = 0
     try:
-        point_percentage=round((Points/MaxPoints),2)
+        point_percentage=round((Points/MaxPoints),2)*100
     except (TypeError, AttributeError):
         point_percentage = 0
 

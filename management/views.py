@@ -596,6 +596,7 @@ def usertask(request, user=None, *args, **kwargs):
     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
     point_percentage=employee_reward(tasks)
+    print("MY % IS :", point_percentage)
     pay = earning.get("Your_Total_Pay")
     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
     pay = earning.get("Your_Total_Pay")
@@ -690,7 +691,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
     total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan=loan_payment
-    point_percentage=point_percentage*100
+    point_percentage=point_percentage
     try:
         net = total_pay - total_deduction+total_bonus
     except (TypeError, AttributeError):
