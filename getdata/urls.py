@@ -3,6 +3,7 @@ from . import views
 from mail.search_mail import parse_mail, search_job_mail
 from finance.utils import upload_csv
 from django.urls import re_path
+from gapi.gservices import cashapp_main
 
 app_name = 'getdata'
 urlpatterns = [
