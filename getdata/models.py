@@ -83,7 +83,8 @@ class CashappMail(models.Model):
 	text_mail = models.TextField()
 	received_date = models.CharField(max_length=255)
 	parsed_date = models.DateTimeField(auto_now_add=True)
-
+	amount = models.TextField()
+	destination = models.TextField()
 
 class ReplyMail(models.Model):
 	id = models.CharField(max_length=30, unique=True, primary_key=True)
