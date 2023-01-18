@@ -22,7 +22,8 @@ from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction,PayslipConfig,Supplier,Food
+		Inflow,Transaction,PayslipConfig,Supplier,Food,
+		DC48_Inflow
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
 # User=settings.AUTH_USER_MODEL
@@ -693,3 +694,59 @@ def foodlist(request):
     }
     return render(request,"finance/payments/food.html",context)
 
+# =========================DC 48 KENYA===================================
+
+
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowCreateView(LoginRequiredMixin, CreateView):
+    model = DC48_Inflow
+    success_url = "/"
+    template_name="finance/payments/inflow_form.html"
+    fields ="__all__"
+    exclude='transaction_date'
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowListview(LoginRequiredMixin,ListView):
+    queryset = DC48_Inflow.objects.all()
+    print(queryset)
+    transactions=queryset
+    success_url = "/finance/transactions"
+    template_name="finance/payments/dcinflows.html"
+    context_object_name = "transactions"
+    # fields ="__all__"
+    fields=['category','method','period','sender','receiver'
+			'description','phone','qty','amount']
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = DC48_Inflow
+    template_name="finance/payments/inflow_form.html"
+    success_url = "/finance/listinflow"
+    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    fields ="__all__"
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
+        # DC48_Inflow = self.get_object()
+        if self.request.user.is_superuser or self.request.user:
+            return True
+        return redirect("data:training-list")
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = DC48_Inflow
+    success_url = "/finance/listinflow/"
+    template_name="finance/payments/inflow_confirm_delete.html"
+    def test_func(self):
+        # timer = self.get_object()
+        # if self.request.user == timer.author:
+        # if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False

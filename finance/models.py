@@ -323,6 +323,128 @@ class Inflow(models.Model):
         return total
 
 
+class DC48_Inflow(models.Model):
+    # Period of Payment
+    Weekly = "Weekly"
+    Bi_Weekly = "Bi_Weekly"
+    Monthly = "Monthly"
+    Yearly = "Yearly"
+
+    # Method of Payment
+    Cash = "Cash"
+    Mpesa = "Mpesa"
+    Check = "Check"
+    Cashapp = "Cashapp"
+    Zelle = "Zelle"
+    Venmo = "Venmo"
+    Paypal = "Paypal"
+
+    # Category.
+    Contributions = "Contributions"
+    Donations = "Donations"
+    Business = "Business"
+    Stocks = "Stocks"
+    Other = "Other"
+    # # Task/Activities
+    # Reporting = "reporting"
+    # Database = "database"
+    # Business_Analysis = "Business Analysis"
+    # ETL = "Data Cleaning"
+    # Options = "Options"
+    # Other = "Any Other"
+
+    PERIOD_CHOICES = [
+        (Weekly, "Weekly"),
+        (Bi_Weekly, "Bi_Weekly"),
+        (Monthly, "Monthly"),
+        (Yearly, "Yearly"),
+    ]
+    CAT_CHOICES = [
+        (Contributions, "Contributions"),
+        (Donations, "Donations"),
+        (Business, "Business"),
+        (Stocks, "Stocks"),
+        (Other, "Other"),
+    ]
+
+    # TASK_CHOICES = [
+    #     (Reporting, "reporting"),
+    #     (Database, "database"),
+    #     (Business_Analysis, "Business Analysis"),
+    #     (ETL, "Data Cleaning"),
+    #     (Options, "Options"),
+    #     (Other, "Other"),
+    # ]
+
+    PAY_CHOICES = [
+        (Cash, "Cash"),
+        (Mpesa, "Mpesa"),
+        (Check, "Check"),
+        (Cashapp, "Cashapp"),
+        (Zelle, "Zelle"),
+        (Venmo, "Venmo"),
+        (Paypal, "Paypal"),
+        (Other, "Other"),
+    ]
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+    )
+    # task = models.CharField(
+    #     max_length=25,
+    #     choices=TASK_CHOICES,
+    # )
+    method = models.CharField(
+        max_length=25,
+        choices=PAY_CHOICES,
+        default=Other,
+    )
+
+    period = models.CharField(
+        max_length=25,
+        choices=PERIOD_CHOICES,
+        default=Other,
+    )
+
+    sender = models.ForeignKey(
+        "accounts.CustomerUser", 
+        on_delete=models.CASCADE, 
+        # limit_choices_to=Q(category=4) and Q(is_active=True),
+        limit_choices_to={"category": 4, "is_active": True},
+        related_name="dc_inflows")
+    receiver = models.CharField(max_length=100, null=True, default=None)
+    phone = models.CharField(max_length=50, null=True, default=None)
+    transaction_date = models.DateTimeField(default=timezone.now)
+    receipt_link = models.CharField(max_length=100, blank=True, null=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=None
+    )
+    transaction_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=0
+    )
+    description = models.TextField(max_length=1000, default=None)
+
+    class Meta:
+        ordering = ["transaction_date"]
+
+    def get_absolute_url(self):
+        return reverse("management:inflow-detail", kwargs={"pk": self.pk})
+
+    @property
+    def end(self):
+        # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
+        date_time = self.login_date + datetime.timedelta(hours=0)
+        endtime = date_time.strftime("%H:%M")
+        return endtime
+    # Computing total payment
+    @property
+    def total_payment(self):
+        total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
+        return total
+
+
 class TrainingLoan(models.Model):
     LOAN_CHOICES = [
         ("Debit", "Debit"),

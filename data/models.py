@@ -205,10 +205,17 @@ class Training_Responses(models.Model):
         return str(self.user)
 
 class Prep_Questions(models.Model):
+    position= models.ForeignKey(JobRole, verbose_name=_("Positions"),
+                        related_name="position_applied",                            
+                        null=True,                            
+                        blank=True,                            
+                        on_delete=models.SET_NULL,                            
+                    )
     company=models.CharField(max_length=100,blank=True, null=True)
     category=models.CharField(max_length=255,blank=True, null=True)
     question=models.CharField(max_length=500,blank=True, null=True)
     date = models.DateTimeField(default=datetime.now,blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
     response=models.TextField(max_length=1000,blank=True, null=True)
     is_answered=models.BooleanField(default=False,blank=True, null=True)
     is_active=models.BooleanField(default=False,blank=True, null=True)
@@ -216,7 +223,8 @@ class Prep_Questions(models.Model):
 
     class Meta:
         verbose_name_plural = 'prep_questions'
-    
+        ordering = ["date"]
+
     def __str__(self):
         return f'{self.id} prep_questions'
 

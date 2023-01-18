@@ -86,6 +86,9 @@ class CashappListView(ListView):
 	model = CashappMail
 	template_name = "main/snippets_templates/interview_snippets/result.html"
 	context_object_name = "cashappdata"
+
+
+    
 # # ==================GOTOMEETING===========================
 # dir_path = os.path.dirname(os.path.realpath(__file__))
 # print('---dir_path-- : ',dir_path)

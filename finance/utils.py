@@ -3,7 +3,7 @@ import dateutil.relativedelta
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Max
 from django.shortcuts import get_object_or_404,render
-
+from django.contrib import messages
 from .models import TrainingLoan, Transaction
 from management.models import TaskHistory
 
@@ -45,7 +45,7 @@ def balance_loan(user):
     balloan = debit['value__sum'] - credit['value__sum']
     return balloan
 
-from django.contrib import messages
+
 def upload_csv(request):
     context = {
         "Finance": Finance,

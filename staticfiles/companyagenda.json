@@ -87,13 +87,14 @@
         }
     },
     "MARKETING": {
+            "REPORT": {
+                "MKT Report": "https://www.codanalytics.net/#/"
+            },
             "SOCIAL MEDIA": {
                 "Facebook": "https://www.codanalytics.net/#/",
                 "Twitter": "https://www.codanalytics.net/#/",
-                "Instagram": "https://www.codanalytics.net/#/"
-            },
-            "REPORT": {
-                "MKT Report": "https://www.codanalytics.net/#/"
+                "Instagram": "https://www.codanalytics.net/#/",
+                "advertisement": "https://www.codanalytics.net/management/create_advertisement"
             }
         },
     "PROJECTS": {
