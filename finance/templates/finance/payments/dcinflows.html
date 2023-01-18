@@ -26,10 +26,10 @@
           <th>Sender</th>
           <th>Receiver</th>
           <th>Phone</th>
-          <th>Department</th>
           <th>Category</th>
-          <th>Type</th>
+          <!-- <th>Department</th> -->
           <th>Method</th>
+          <th>prriod</th>
           <th>Quantity</th>
           <th>Amount</th>
           <th>Total</th>
@@ -39,11 +39,11 @@
       <tbody>
         {% for transanction in transactions %}
         <tr>
-          <td>{{transanction.activity_date|date:"n/d/Y"}}</td>
+          <td>{{transanction.transaction_date|date:"n/d/Y"}}</td>
           <td>{{transanction.sender}}</td>
           <td>{{transanction.receiver}}</td>
           <td>{{transanction.phone}}</td>
-          <td>{{transanction.department}}</td>
+          <!-- <td>{{transanction.department}}</td> -->
           <td>
             <a class="text-dark  text-decoration-none" 
             data-toggle="tooltip" title="{{  transanction.description  }}"
@@ -51,7 +51,8 @@
             {{transanction.category}}
             </a>
         </td>
-          <td>{{transanction.type}}</td>
+          <td>{{transanction.method}}</td>
+          <td>{{transanction.period}}</td>
           <td>{{transanction.payment_method}}</td>
           <td>{{transanction.qty}}</td>
           <td>{{transanction.amount}}</td>
