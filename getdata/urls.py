@@ -16,9 +16,11 @@ urlpatterns = [
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('options/', views.options, name='option-data'),
-    path('covered_calls/', views.options_play_covered_calls, name='covered_calls'),
-    path('shortput/', views.options_play_shortput, name='shortput'),
-    path('credit_spread/', views.options_play_cread_spread, name='credit_spread'),
+
+    path('covered_calls/', views.meetingView6, name='covered_calls'),
+    path('shortput/', views.meetingFormView, name='shortput'),
+    path('credit_spread/', views.gotomeetingresult, name='credit_spread'),
+
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('replies/',search_job_mail, name='replies-email'),
     

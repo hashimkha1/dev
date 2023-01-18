@@ -376,3 +376,4 @@ class OptionList(ListView):
     context_object_name = "stocks"
 
 
+
