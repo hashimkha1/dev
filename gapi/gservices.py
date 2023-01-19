@@ -3,6 +3,9 @@ import pickle
 from base64 import urlsafe_b64decode
 from django.shortcuts import get_object_or_404, redirect, render
 
+import os
+import pandas as pd
+from bs4 import BeautifulSoup
 # Gmail API utils
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -122,9 +125,7 @@ def get_message(service, msg_id):
     }
 
     '''Importing the required libraries'''
-import os
-import pandas as pd
-from bs4 import BeautifulSoup
+
 
 def getdata(file):
     '''Get the html content'''
