@@ -55,7 +55,7 @@ from management.utils import (
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward
+                               addloantable,employee_reward,employee_group_level
                         )
 
 from django.contrib import messages
@@ -320,52 +320,18 @@ def newtaskcreation(request):
         for emp in employee:
             historytasks = TaskHistory.objects.filter(employee__is_employee=True, employee__is_active=True,
                                                       employee_id=emp)
-            if historytasks.exists():
-                count = historytasks.aggregate(total_point=Sum('point'))
-                if count.get('total_point') < 100:
-                    group_obj = TaskGroups.objects.filter(title='Group A')
-                    if group_obj.exists():
-                        group = group_obj.first().id
-                    else:
-                        group_obj = TaskGroups.objects.create(title='Group A')
-                        group = group_obj.id
-                if 100 <= count.get('total_point') and count.get('total_point') < 150:
-                    group_obj = TaskGroups.objects.filter(title='Group B')
-                    if group_obj.exists():
-                        group = group_obj.first().id
-                    else:
-                        group_obj = TaskGroups.objects.create(title='Group B')
-                        group = group_obj.id
-                if 150 <= count.get('total_point') and count.get('total_point') < 200:
-                    group_obj = TaskGroups.objects.filter(title='Group C')
-                    if group_obj.exists():
-                        group = group_obj.first().id
-                    else:
-                        group_obj = TaskGroups.objects.create(title='Group C')
-                        group = group_obj.id
-                if 200 <= count.get('total_point') and count.get('total_point') < 250:
-                    group_obj = TaskGroups.objects.filter(title='Group D')
-                    if group_obj.exists():
-                        group = group_obj.first().id
-                    else:
-                        group_obj = TaskGroups.objects.create(title='Group D')
-                        group = group_obj.id
-                if 250 <= count.get('total_point'):
-                    group_obj = TaskGroups.objects.filter(title='Group E')
-                    if group_obj.exists():
-                        group = group_obj.first().id
-                    else:
-                        group_obj = TaskGroups.objects.create(title='Group E')
-                        group = group_obj.id
-            else:
-                group_obj = TaskGroups.objects.filter(title='Group A')
-                if group_obj.exists():
-                    group = group_obj.first().id
-                else:
-                    group_obj = TaskGroups.objects.create(title='Group A')
-                    group = group_obj.id
+            group=employee_group_level(historytasks,TaskGroups)                                        
+         
+            #     group_obj = TaskGroups.objects.filter(title='Group A')
+            #     if group_obj.exists():
+            #         group = group_obj.first().id
+            #     else:
+            #         group_obj = TaskGroups.objects.create(title='Group A')
+            #         group = group_obj.id
             for act in activitys:
-                if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
+                #check if activity exist
+                count=Task.objects.filter(category_id=category, activity_name=act).count()
+                if count > 0:
                     des, po, maxpo, maxear = \
                     Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
                         category_id=category, activity_name=act)[0]
@@ -382,10 +348,8 @@ def newtaskcreation(request):
                 else:
                     Task.objects.create(groupname_id=group, category_id=category, employee_id=emp, activity_name=act,
                                         description=description, point=point, mxpoint=mxpoint, mxearning=mxearning)
-
         # return redirect("management:tasks")
         return JsonResponse({"success": True})
-
     else:
         tag = Tag.objects.all()
         group = TaskGroups.objects.all()
@@ -553,7 +517,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # task_history = TaskHistory.objects.get_by_employee(employee)
     task_history = TaskHistory.objects.all().filter(employee=employee)
-    print(f'OBJECT:{task_history}')
+    # print(f'OBJECT:{task_history}')
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
