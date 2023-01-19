@@ -54,7 +54,7 @@ from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward,split_num_str
+                               addloantable,employee_reward,split_num_str,employee_group_level
                         )
 
 from django.contrib import messages
@@ -317,8 +317,20 @@ def newtaskcreation(request):
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
+            historytasks = TaskHistory.objects.filter(employee__is_employee=True, employee__is_active=True,
+                                                      employee_id=emp)
+            group=employee_group_level(historytasks,TaskGroups)                                        
+         
+            #     group_obj = TaskGroups.objects.filter(title='Group A')
+            #     if group_obj.exists():
+            #         group = group_obj.first().id
+            #     else:
+            #         group_obj = TaskGroups.objects.create(title='Group A')
+            #         group = group_obj.id
             for act in activitys:
-                if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
+                #check if activity exist
+                count=Task.objects.filter(category_id=category, activity_name=act).count()
+                if count > 0:
                     des, po, maxpo, maxear = \
                     Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
                         category_id=category, activity_name=act)[0]
@@ -335,10 +347,8 @@ def newtaskcreation(request):
                 else:
                     Task.objects.create(groupname_id=group, category_id=category, employee_id=emp, activity_name=act,
                                         description=description, point=point, mxpoint=mxpoint, mxearning=mxearning)
-
         # return redirect("management:tasks")
         return JsonResponse({"success": True})
-
     else:
         tag = Tag.objects.all()
         group = TaskGroups.objects.all()
@@ -501,10 +511,12 @@ def task_payslip(request, employee=None, *args, **kwargs):
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
     today,year,deadline_date,month,last_month,*_=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
+    sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
+    num_sessions = sessions.count()
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # task_history = TaskHistory.objects.get_by_employee(employee)
     task_history = TaskHistory.objects.all().filter(employee=employee)
-    print(f'OBJECT:{task_history}')
+    # print(f'OBJECT:{task_history}')
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
@@ -552,7 +564,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "total_deduction": total_deduction,
         # bonus
         "latenight_Bonus": latenight_Bonus,
-        "pointsearning": bonus_points_ammount,
+        # "pointsearning": bonus_points_ammount,
+        "pointsearning": bonus_points_ammount + num_sessions,
         "holidaypay": offpay,
         "yearly": yearly,
         # General
@@ -855,6 +868,7 @@ def pay(request, user=None, *args, **kwargs):
     print(f'net_pay: {net_pay}')
     context = {
         # bonus
+        # "pointsearning": bonus_points_ammount,
         "pointsearning": bonus_points_ammount,
         "EOM": EOM,
         "EOQ": EOQ,
