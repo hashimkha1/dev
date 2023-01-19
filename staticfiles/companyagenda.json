@@ -107,7 +107,7 @@
             "D2A-SITE": "#",
             "GADC-PPT": "#",
             "GADC-SITE": "https://gadcafrica.org/",
-            "DC48KENYA-PPT": "#",
+            "DC48ENTRYFORM": "https://www.codanalytics.net/finance/listinflow/",
             "DC48KENYA-SITE": "#"
         },
             "FIELD_PROJECTS": {
@@ -117,5 +117,3 @@
                 }
         }
 }
-
-
