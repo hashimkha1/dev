@@ -6,11 +6,12 @@
             <thead class="border-bottom font-weight-bold">
                 <tr>
                     <th>Reporting Date</th>
+                    <th>Username</th>
                     <th>First</th>
                     <th>Last</th>
-                    <th>Gender</th>
                     <th>Method</th>
                     <th>Interview Type</th>
+                    <th>Rate</th>
                     <th>Edit</th>
                     <th>Delete</th>
                     <!-- <th>total_score</th>-->
@@ -19,30 +20,9 @@
             <tbody>
                 <tr>
                     {% for trainee in trainees %}
-                    <td>{{trainee.reporting_date|date:"F d, Y"}}</td>
-                    <td>{{trainee.first_name}}</td>
-                    <td>{{trainee.last_name}}</td>
-                    <td>{{trainee.gender}}</td>
-                    <td>{{trainee.method}}</td>
-                    <td>{{trainee.interview_type}}</td>
-                    <td>
-                        <a
-                        href="{%url 'application:trainee-update' trainee.id %}" 
-                          class="btn text-secondary px-0"
-                        > 
-                        <h4><b>☑</b></h4> 
-                    </a>
-                      </td>
-                    <td>
-                        <a
-                        href="{%url 'application:trainee-delete' trainee.id %}" 
-                          class="btn text-secondary px-0"
-                        >
-                         <h4><b>x</b></h4> 
-                        </a>
-                      </td>
+                    {% include 'main/snippets_templates/table/applicant.html' with instance=trainee%}
+                    {% endfor %}
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
     </div>

@@ -169,18 +169,18 @@ class ReportingForm(forms.ModelForm):
     class Meta:
         model = Reporting
         fields = [
-            "first_name",
-            "last_name",
-            "gender",
+            "reporter",
+            "rate",
+            # "gender",
             "reporting_date",
             "method",
             "interview_type",
             "comment",
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "gender": "Gender",
+            "reporter": "User Name",
+            "rate": "Rate Per Hour",
+            # "gender": "Gender",
             "method": "Method",
             "interview_type": "Interview Type",
             "reporting_date": "Reporting Date(mm/dd/yy)",

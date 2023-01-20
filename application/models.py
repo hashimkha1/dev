@@ -180,14 +180,14 @@ class FirstUpload(models.Model):
         return f'{self.username} upload'
 """
 
-
 class Reporting(models.Model):
     internal = "Internal Interview"
     first_interview = "First Interview"
     second_interview = "Second Interview"
     third_interview = "Third Interview"
-    male = "Male"
-    female = "Female"
+    Other = "Other"
+    # male = "Male"
+    # female = "Female"
     direct = "Direct"
     indirect = "Indirect"
     INTERVIEW_CHOICES = [
@@ -195,30 +195,41 @@ class Reporting(models.Model):
         (first_interview, "First Interview"),
         (second_interview, "Second Interview"),
         (third_interview, "Third Interview"),
+        (Other, "Other"),
     ]
-    GENDER_CHOICES = [
-        (male, "Male"),
-        (female, "Female"),
-    ]
+    # GENDER_CHOICES = [
+    #     (male, "Male"),
+    #     (female, "Female"),
+    # ]
     METHOD_CHOICES = [
         (direct, "Direct"),
         (indirect, "Indirect"),
     ]
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
+    reporter = models.ForeignKey(
+        "accounts.CustomerUser",
+        related_name="reporting_user",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        # limit_choices_to={"is_employee": True, "is_active": True},
+    )
+    # first_name = models.CharField(max_length=100, null=True, blank=True)
+    # last_name = models.CharField(max_length=100, null=True, blank=True)
     # gender=models.CharField(max_length=50,null=True,blank=True)
-    # method=models.CharField(max_length=50,null=True,blank=True)
+    rate=models.CharField(max_length=50,null=True,blank=True)
     interview_type = models.CharField(
         max_length=25,
         choices=INTERVIEW_CHOICES,
+        default="other"
     )
-    gender = models.CharField(
-        max_length=25,
-        null=True,
-        blank=True,
-        choices=GENDER_CHOICES,
-    )
+    # gender = models.CharField(
+    #     max_length=25,
+    #     null=True,
+    #     blank=True,
+    #     choices=GENDER_CHOICES,
+    # )
     method = models.CharField(
         max_length=25,
         null=True,
@@ -237,3 +248,60 @@ class Reporting(models.Model):
 
     def __str__(self):
         return f"{self.id} Reporting"
+
+# class Reporting(models.Model):
+#     internal = "Internal Interview"
+#     first_interview = "First Interview"
+#     second_interview = "Second Interview"
+#     third_interview = "Third Interview"
+#     male = "Male"
+#     female = "Female"
+#     direct = "Direct"
+#     indirect = "Indirect"
+#     INTERVIEW_CHOICES = [
+#         (internal, "Internal Interview"),
+#         (first_interview, "First Interview"),
+#         (second_interview, "Second Interview"),
+#         (third_interview, "Third Interview"),
+#     ]
+#     GENDER_CHOICES = [
+#         (male, "Male"),
+#         (female, "Female"),
+#     ]
+#     METHOD_CHOICES = [
+#         (direct, "Direct"),
+#         (indirect, "Indirect"),
+#     ]
+#     id = models.AutoField(primary_key=True)
+#     first_name = models.CharField(max_length=100, null=True, blank=True)
+#     last_name = models.CharField(max_length=100, null=True, blank=True)
+#     # gender=models.CharField(max_length=50,null=True,blank=True)
+#     # method=models.CharField(max_length=50,null=True,blank=True)
+#     interview_type = models.CharField(
+#         max_length=25,
+#         choices=INTERVIEW_CHOICES,
+#     )
+#     gender = models.CharField(
+#         max_length=25,
+#         null=True,
+#         blank=True,
+#         choices=GENDER_CHOICES,
+#     )
+#     method = models.CharField(
+#         max_length=25,
+#         null=True,
+#         blank=True,
+#         choices=METHOD_CHOICES,
+#     )
+#     reporting_date = models.DateTimeField(
+#         "Reporting Date(mm/dd/yyyy)",
+#         auto_now_add=False,
+#         auto_now=False,
+#         blank=True,
+#         null=True,
+#     )
+#     update_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
+#     comment = models.TextField()
+
+#     def __str__(self):
+#         return f"{self.id} Reporting"
