@@ -53,35 +53,35 @@ def employee_reward(tasks):
 def employee_group_level(historytasks,TaskGroups):                                          
     if historytasks.exists():
         count = historytasks.aggregate(total_point=Sum('point'))
-        if count.get('total_point') < 100:
+        if count.get('total_point') < 350:
             group_obj = TaskGroups.objects.filter(title='Group A')
             if group_obj.exists():
                 group = group_obj.first().id
             else:
                 group_obj = TaskGroups.objects.create(title='Group A')
                 group = group_obj.id
-        if 100 <= count.get('total_point') and count.get('total_point') < 150:
+        if 350 <= count.get('total_point') and count.get('total_point') < 600:
             group_obj = TaskGroups.objects.filter(title='Group B')
             if group_obj.exists():
                 group = group_obj.first().id
             else:
                 group_obj = TaskGroups.objects.create(title='Group B')
                 group = group_obj.id
-        if 150 <= count.get('total_point') and count.get('total_point') < 200:
+        if 600 <= count.get('total_point') and count.get('total_point') < 800:
             group_obj = TaskGroups.objects.filter(title='Group C')
             if group_obj.exists():
                 group = group_obj.first().id
             else:
                 group_obj = TaskGroups.objects.create(title='Group C')
                 group = group_obj.id
-        if 200 <= count.get('total_point') and count.get('total_point') < 250:
+        if 800 <= count.get('total_point') and count.get('total_point') < 1000:
             group_obj = TaskGroups.objects.filter(title='Group D')
             if group_obj.exists():
                 group = group_obj.first().id
             else:
                 group_obj = TaskGroups.objects.create(title='Group D')
                 group = group_obj.id
-        if 250 <= count.get('total_point'):
+        if 1000 <= count.get('total_point'):
             group_obj = TaskGroups.objects.filter(title='Group E')
             if group_obj.exists():
                 group = group_obj.first().id
