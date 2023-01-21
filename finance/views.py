@@ -701,7 +701,7 @@ def foodlist(request):
 @method_decorator(login_required, name="dispatch")
 class DC48InflowCreateView(LoginRequiredMixin, CreateView):
     model = DC48_Inflow
-    success_url = "/finance/transactions"
+    success_url = "/finance/listinflow"
     template_name="finance/payments/inflow_form.html"
     fields ="__all__"
     exclude='transaction_date'
