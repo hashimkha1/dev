@@ -40,6 +40,7 @@
         },
         "RECRUITMENT": {
             "Applicants": "https://www.codanalytics.net/application/applicants/",
+            "reporting": "https://www.codanalytics.net/application/reporting/",
             "Interview": "https://www.codanalytics.net/application/first_interview/section_a/",
             "Developers_list": "https://www.upwork.com/nx/wm/client/dashboard",
             "Dev_Interview_ppt": "https://docs.google.com/presentation/d/1z6wCxDHYtH24ac_10fzhY2dI4l82vwqjsWI4JAVe-Bw/edit#slide=id.g167f8d0d9ad_0_133",
@@ -87,13 +88,14 @@
         }
     },
     "MARKETING": {
+            "REPORT": {
+                "MKT Report": "https://www.codanalytics.net/#/"
+            },
             "SOCIAL MEDIA": {
                 "Facebook": "https://www.codanalytics.net/#/",
                 "Twitter": "https://www.codanalytics.net/#/",
-                "Instagram": "https://www.codanalytics.net/#/"
-            },
-            "REPORT": {
-                "MKT Report": "https://www.codanalytics.net/#/"
+                "Instagram": "https://www.codanalytics.net/#/",
+                "advertisement": "https://www.codanalytics.net/management/create_advertisement"
             }
         },
     "PROJECTS": {
@@ -106,7 +108,7 @@
             "D2A-SITE": "#",
             "GADC-PPT": "#",
             "GADC-SITE": "https://gadcafrica.org/",
-            "DC48KENYA-PPT": "#",
+            "DC48ENTRYFORM": "https://www.codanalytics.net/finance/listinflow/",
             "DC48KENYA-SITE": "#"
         },
             "FIELD_PROJECTS": {
@@ -116,5 +118,3 @@
                 }
         }
 }
-
-

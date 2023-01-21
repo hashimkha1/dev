@@ -1065,6 +1065,12 @@ class Advertisement(models.Model):
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
     author= models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # whatsapp
+    whatapp_group_name = models.CharField(max_length=100, null=True, blank=True)
+    whatapp_group_id = models.CharField(max_length=100, null=True, blank=True)
+    whatapp_image_url = models.CharField(max_length=500, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.post_description

@@ -14,9 +14,10 @@ from django_countries.fields import CountryField
 # Create your models here.
 class CustomerUser(AbstractUser):
     class Category(models.IntegerChoices):
-        Applicant_or_Job_Applicant = 1
+        Job_Applicant = 1
         Coda_Staff_Member = 2
         Client_OR_Customer_or_Student = 3
+        General_User = 4
 
     # added this column here
     class SubCategory(models.IntegerChoices):

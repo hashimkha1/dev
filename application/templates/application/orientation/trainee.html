@@ -9,18 +9,15 @@
     <form method="POST" enctype="multipart/form-data" autocomplete="off">
         {% csrf_token%}
         <div class="row">
-            <div class="col-md-6">{{ form.first_name|as_crispy_field }}</div>
-            <div class="col-md-6">{{form.last_name|as_crispy_field }}</div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">{{ form.gender|as_crispy_field }}</div>
+            <div class="col-md-6">{{ form.reporter|as_crispy_field }}</div>
             <div class="col-md-6">{{ form.interview_type|as_crispy_field }}</div>
         </div>
         <div class="row">
+            <div class="col-md-6">{{form.rate|as_crispy_field }}</div>
             <div class="col-md-6">{{ form.method|as_crispy_field }}</div>
-            <div class="col-md-6">{{ form.reporting_date|as_crispy_field }}</div>
         </div>
         <div class="row">
+            <div class="col-md-6">{{ form.reporting_date|as_crispy_field }}</div>
             <div class="col-md-6">{{ form.comment|as_crispy_field }}</div>
         </div>
         <div class="row text-center">

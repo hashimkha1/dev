@@ -26,8 +26,13 @@ urlpatterns = [
     path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),
     path('inflow/<int:pk>/delete/', InflowDeleteView.as_view(), name='inflow-delete'),
     path('inflow/<int:pk>/update/', InflowUpdateView.as_view(), name='inflow-update'),
-    
+    #=============================DC 48 CASHFLOW=====================================
+    path('newinflow/', views.DC48InflowCreateView.as_view(), name='dcinflow'),
+    path('updateinflow/<int:pk>/update/', views.DC48InflowUpdateView.as_view(), name='dcinflow-update'),
+    path('deleteinflow/<int:pk>/delete/', views.DC48InflowDeleteView.as_view(), name='dcinflow-delete'),
+    path('listinflow/', views.DC48InflowListview.as_view(), name='list-inflow'),
     #=============================CLIENT CONTRACT FORM SUBMISSIONS=====================================
+    
     path('contract_form/', views.contract_form_submission, name='finance-contract_form_submission'),
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),

@@ -484,7 +484,6 @@ def trainee(request):
     if request.method == "POST":
         form = ReportingForm(request.POST, request.FILES)
         if form.is_valid():
-            
             form.save()
             return redirect("application:trainees")
     else:
@@ -494,20 +493,25 @@ def trainee(request):
 
 def trainees(request):
     trainees = Reporting.objects.all().order_by("-update_date")
-    return render(
-        request, "application/orientation/trainees.html", {"trainees": trainees}
-    )
+    # is_applicant=trainee.reporter.is_applicant
+    # is_developer=trainee.reporter.is_employee
+    context={
+        "trainees": trainees,
+        # "is_applicant": is_applicant,
+        # "is_developer": is_developer,
+    }
+    return render(request, "application/orientation/trainees.html",context)
 
 class TraineeUpdateView(LoginRequiredMixin, UpdateView):
     model = Reporting
     fields = [
-        "first_name",
-        "last_name",
-        "gender",
-        "reporting_date",
-        "method",
-        "interview_type",
-        "comment",
+            "reporter",
+            "rate",
+            # "gender",
+            "reporting_date",
+            "method",
+            "interview_type",
+            "comment",
     ]
     form = ReportingForm()
 

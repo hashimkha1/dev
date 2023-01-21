@@ -142,18 +142,20 @@ def useruploads(request, pk=None, *args, **kwargs):
         "useruploads": useruploads,
     }
     return render(request, "data/interview/useruploads.html", context)
+    
 @login_required
 def prepquestions(request):
-    questions= Prep_Questions.objects.filter(Q(is_answered=None) | Q(is_answered=False)).order_by("-date")
+    questions= Prep_Questions.objects.filter(Q(is_answered=None) | Q(is_answered=False)).order_by("date")
     print(questions)    
     QuestionsFilter = QuestionFilter(request.GET, queryset=questions)
     questions = QuestionFilter.qs
     context = {"questions": questions, "myFilter": QuestionsFilter}
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
+
 def prep_responses(request):
     # company2=Prep_Questions.objects.values('company').distinct()
     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
-    responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-date")
+    responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-updated_at")
     print(responses)
     ResFilter = ResponseFilter(request.GET, queryset=responses)
     # responses = myFilter.qs
