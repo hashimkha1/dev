@@ -18,5 +18,5 @@ user.click()
 msg_box=driver.find_element_by_class_name('input.container')
 for i in range(count):
     msg_box.send_keys(msg)
-    button=dirver.find_element_by_class_name('compose-btn-send')
+    button=driver.find_element_by_class_name('compose-btn-send')
     button.click()

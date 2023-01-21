@@ -102,28 +102,31 @@ grant_type = 'refresh_token'
 refresh_token = None
 client_code = None
 
-# -----
 
 def refresh_token_function():
     global refresh_token , client_code
 
     # myRefreshJSON =None
+    # print('1. reading client code and refresh token')
 
-    with open(dir_path+'/gotomeeting/credentialsForRefresh.json', encoding='utf-8') as f:
+    with open(dir_path+'/gotomeeting/credentialsForRefresh.json','r') as f:
         myJson = json.load(f)
         refresh_token = myJson['refresh_token']
         client_code = myJson['client_code']
+        print(refresh_token, 'client : code',client_code)
     response = None
+
     headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'Authorization': 'Basic '+client_code
     }
+
     myPayload = "grant_type={}&refresh_token={}".format(grant_type , refresh_token)
 
-    print('2. making refresh token request to',urlToRefresh)
+    # print('2. making refresh token request to',urlToRefresh)
 
     response = requests.post(url=urlToRefresh , data=myPayload , headers=headers)
-    # print('3. response-code: ',response.status_code)
+    print('3. response-code: ',response.status_code)
     # print("4. saving new tokens in file")
     with open(dir_path+'/gotomeeting/refresh_tokens.json',"w") as f:
         f.write(response.text)
@@ -139,10 +142,10 @@ refresh_token_function()
 
 # method to get meeting response from gotomeeting api
 
+
 def getmeetingresponse(startDate , endDate):
     access_token = None
-    print('-'*50)
-    print("1. getting access tokens")
+    # print("1. getting access tokens")
     with open(dir_path+'/gotomeeting/refresh_tokens.json','r') as f:
         myJson = json.load(f)
         access_token = myJson['access_token']
@@ -150,13 +153,12 @@ def getmeetingresponse(startDate , endDate):
     headers = {
     'Authorization': 'Bearer '+access_token
     }
-    print("2. getting meetings from {} to {}\n".format(startDate , endDate))
+    # print("2. getting meetings from {} to {}\n".format(startDate , endDate))
     urlMeeting = urlGotoMeeting.format(''.join([str(startDate),'T12:00:00Z']) ,''.join([str(endDate),'T12:00:00Z']))
-    print("3. request made : ",urlMeeting)
+    # print("3. request made : ",urlMeeting)
     response = requests.request("GET" , url=urlMeeting , headers=headers)
-    print('4.  response-code: ',response.status_code)
+    # print('4.  response-code: ',response.status_code)
     # print('5.  rendering with variable data')
-    print('-'*50)
     # return [response.text]
     jsonResponse = json.loads(response.text)
     myCleanResponse = []
@@ -180,8 +182,15 @@ def getmeetingresponse(startDate , endDate):
     return myCleanResponse
 
 
+
+
+
+
+
+
 ''' for gotomeeting data '''
 # starts here ----------
+
 def meetingFormView(request):
     # testing purpose hardcoding allDataJsons
     allDataJsons = []
@@ -256,6 +265,7 @@ def meetingView6(request,meeting_id):
 # ========================================UPLOADING DATA SECTION========================
 
 
+	
 def get_urls(self):
     urls = super().get_urls()
     new_urls = [

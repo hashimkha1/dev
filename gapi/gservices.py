@@ -224,18 +224,26 @@ def cashapp_main(path):
     #     except:
     #         return redirect('main:layout')
     if path.endswith('html'):
+        dict_ = {
+                'From' : "None",
+                'Amount' : 0
+                }
         try:
             soup = getdata(path)
             name = GetProfileName(soup)
-            amount = gettable_data(soup)
+            print(name)
+            table_data = gettable_data(soup)
             # table_data['name'] = name
             # table_data['path'] = path
             # if table_data['name'] == 'Uber':
             #     table_data['To'] = 'Uber'
             #     table_data['From'] = 'CHRISTOPHER C MAGHAS'
-            return amount['Amount']
+            dict_['From'] = table_data['From']
+            dict_['Amount'] = table_data['Amount']
+            print(dict_)
+            return dict_
         except:
-            return '0'
+            return dict_
     else:
         pass
 

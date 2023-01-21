@@ -4,7 +4,7 @@ from mail.search_mail import parse_mail, search_job_mail
 from finance.utils import upload_csv
 from django.urls import re_path
 from gapi.gservices import cashapp_main
-
+from getdata.utils import main_cread_spread
 app_name = 'getdata'
 urlpatterns = [
     path('getrating/', views.getrating, name='data-getrating'),
@@ -17,17 +17,17 @@ urlpatterns = [
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('options/', views.options, name='option-data'),
 
-    path('covered_calls/', views.meetingView6, name='covered_calls'),
+    path('covered_calls/', views.refresh_token_function, name='covered_calls'),
     path('shortput/', views.meetingFormView, name='shortput'),
-    path('credit_spread/', views.gotomeetingresult, name='credit_spread'),
+    path('credit_spread/', main_cread_spread, name='credit_spread'),
 
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('replies/',search_job_mail, name='replies-email'),
     
-    path('gotomeeting/',views.meetingFormView,name='gotomeeting'),
+    path('gotomeeting/',views.refresh_token_function,name='gotomeeting'),
     # trying a url pattern for dates
     # gotomeetingresult
-    path('gotomeetingresult/',views.gotomeetingresult,name='gotomeetingresult'),
+    path('gotomeetingresult/',views.meetingView6,name='gotomeetingresult'),
     #meeting detail
     re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
 
