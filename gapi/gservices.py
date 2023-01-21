@@ -241,7 +241,6 @@ def cashapp_main(path):
             #     table_data['From'] = 'CHRISTOPHER C MAGHAS'
             dict_['From'] = table_data['From']
             dict_['Amount'] = table_data['Amount']
-            print(dict_)
             return dict_
         except:
             return dict_

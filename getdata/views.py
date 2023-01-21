@@ -92,7 +92,6 @@ class CashappListView(ListView):
 	context_object_name = "cashappdata"
 
 
-<<<<<<< HEAD
 # # ==================GOTOMEETING===========================
 dir_path = os.path.dirname(os.path.realpath(__file__))
 print('---dir_path-- : ',dir_path)
@@ -132,8 +131,6 @@ def refresh_token_function():
     with open(dir_path+'/gotomeeting/refresh_tokens.json',"w") as f:
         f.write(response.text)
         # print("written to ",'refresh_tokens.json')
-=======
->>>>>>> 31365c0d9f2af0fa003591ec7d81df97e7317403
     
 # # ==================GOTOMEETING===========================
 # dir_path = os.path.dirname(os.path.realpath(__file__))
@@ -152,7 +149,6 @@ def refresh_token_function():
 
 #     # myRefreshJSON =None
 
-<<<<<<< HEAD
 
 def getmeetingresponse(startDate , endDate):
     access_token = None
@@ -182,18 +178,6 @@ def getmeetingresponse(startDate , endDate):
             # print('added rec link')
         else:
             temp['recording'] = "No recording"
-=======
-#     with open(dir_path+'/gotomeeting/credentialsForRefresh.json', encoding='utf-8') as f:
-#         myJson = json.load(f)
-#         refresh_token = myJson['refresh_token']
-#         client_code = myJson['client_code']
-#     response = None
-#     headers = {
-#     'Content-Type': 'application/x-www-form-urlencoded',
-#     'Authorization': 'Basic '+client_code
-#     }
-#     myPayload = "grant_type={}&refresh_token={}".format(grant_type , refresh_token)
->>>>>>> 31365c0d9f2af0fa003591ec7d81df97e7317403
 
 #     print('2. making refresh token request to',urlToRefresh)
 
@@ -255,7 +239,6 @@ def getmeetingresponse(startDate , endDate):
 #     return myCleanResponse
 
 
-<<<<<<< HEAD
 
 
 
@@ -285,30 +268,6 @@ def meetingFormView(request):
             'message' : "meetings between {} and {}".format( startDate , endDate)
         }
         # print('5-> result : ',result)
-=======
-# ''' for gotomeeting data '''
-# # starts here ----------
-# def meetingFormView(request):
-#     # testing purpose hardcoding allDataJsons
-#     allDataJsons = []
-#     # print('1->',request.POST)
-#     # print('2->',request.POST.mycity)
-#     if request.method=='POST':
-#         print('here')
-#         print('1->',request.POST)
-#         startDate = request.POST['startDate']
-#         endDate = request.POST['endDate']
-#         # print('2->',request.POST['startDate'])
-#         # print('3->',request.POST['endDate'])
-#         allDataJsons = []
-#         # filePath = dir_path+"/gotomeeting/meetings_2.json"
-#         allDataJsons = getmeetingresponse(startDate , endDate)
-#         result = {
-#             'data' : allDataJsons,
-#             'message' : "meetings between {} and {}".format( startDate , endDate)
-#         }
-#         # print('5-> result : ',result)
->>>>>>> 31365c0d9f2af0fa003591ec7d81df97e7317403
 
 #         return render(request, 'getdata/meetingList.html',result) #returns the index.html template
 
