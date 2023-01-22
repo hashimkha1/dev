@@ -378,7 +378,7 @@ def dump_data_credit(values):
     except Exception as err:
         print(err)
 
-def main_cread_spread():
+def main_cread_spread(request):
     # path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
 
     # to supress the error messages/logs
@@ -419,9 +419,8 @@ def main_cread_spread():
             path = '//*[@id="CreditSpreadFile"]/tbody/tr[{}]/td[{}]'.format(row,col)
             value = driver.find_element(By.XPATH,path).text
             values.append(value)
-            print(value, end =' ')
+            # print(value, end =' ')
         dump_data_credit(tuple(values))
-        print('')
 
 #covered_calls
 def dump_data_covered_calls(values):
