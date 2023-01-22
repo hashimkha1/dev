@@ -39,6 +39,7 @@
                   <option value="1">Applicant Or Job Applicant</option>
                   <option value="2">Coda Staff Member</option>
                   <option value="3">Client Or Customer Or Student</option>
+                  <option value="4">General User</option>
                 </select>
               </div>
             </div>
@@ -224,9 +225,12 @@
   }
 
   checkCategoryValidity();
-
+  // <option value="1">Applicant Or Job Applicant</option>
+  //                 <option value="2">Coda Staff Member</option>
+  //                 <option value="3">Client Or Customer Or Student</option>
+  //                 <option value="4">General User</option>
   function toggle_sub_selection(selected_value) {
-    if (selected_value == 3) {
+    if (selected_value == 3| selected_value == 4) {
       //If the Value seclected is Client
       document.getElementById("id_sub_category").style.display = "block";
       document.getElementById("id_sub_category").disabled = false;
@@ -235,11 +239,13 @@
       hideSubCategoryOption(3);
       hideSubCategoryOption(4);
       hideSubCategoryOption(5);
-      hideSubCategoryOption(6);
+      // hideSubCategoryOption(6);
       showSubCategoryOption(1);
       showSubCategoryOption(2);
+      showSubCategoryOption(6);
       selectSubCategoryOption(0);
-    } else if (selected_value == 2) {
+    } 
+    else if (selected_value == 2 )  {
       //If the Value seclected is staff
       document.getElementById("id_sub_category").style.display = "block";
       document.getElementById("id_sub_category").disabled = false;
@@ -252,7 +258,8 @@
       showSubCategoryOption(5);
       showSubCategoryOption(6);
       selectSubCategoryOption(0);
-    } else {
+    } 
+    else {
       document.getElementById("resume-field").style.display = "block";
       document.getElementById("sub_selection").style.display = "none";
       document.getElementById("id_sub_category").disabled = true;

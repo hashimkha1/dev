@@ -16,19 +16,17 @@ urlpatterns = [
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('options/', views.options, name='option-data'),
-
     path('covered_calls/', views.options_play_covered_calls, name='covered_calls'),
     path('shortput/', views.options_play_shortput, name='shortput'),
-    path('credit_spread/',views.main_cread_spread, name='credit_spread'),
-
+    path('credit_spread/', views.options_play_cread_spread, name='credit_spread'),
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('replies/',search_job_mail, name='replies-email'),
     
-    path('gotomeeting/',views.refresh_token_function,name='gotomeeting'),
-    # trying a url pattern for dates
-    # gotomeetingresult
-    # path('gotomeetingresult/',views.meetingView6,name='gotomeetingresult'),
-    #meeting detail
+    # path('gotomeeting/',views.meetingFormView,name='meetingform1'),
+    # # trying a url pattern for dates
+    # # gotomeetingresult
+    # path('gotomeetingresult/',views.gotomeetingresult,name='gotomeetingresult'),
+    # #meeting detail
     # re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
 
 ]
