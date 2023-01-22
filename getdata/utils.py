@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
@@ -378,16 +379,18 @@ def dump_data_credit(values):
         print(err)
 
 def main_cread_spread():
-    path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
     options = webdriver.ChromeOptions()
-    options.add_argument("start-maximized")
-    options.headless = True
-    # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    ## might not be needed
+    options.add_argument("window-size=1920x1480")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    
     driver.get('https://www.optionsplay.com/hub/credit-spread-file')
 
-    driver.maximize_window()
     time.sleep(5)
     driver.implicitly_wait(4)
     form = driver.find_element(By.TAG_NAME, 'form')
@@ -455,18 +458,20 @@ def dump_data_covered_calls(values):
         print(err)
 
 def main_covered_calls():
-    path = r"Chrome_driver.exe"
     options = webdriver.ChromeOptions()
-    options.headless = True
-    options.add_argument("start-maximized")
-    # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    ## might not be needed
+    options.add_argument("window-size=1920x1480")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    
     driver.get('https://www.optionsplay.com/hub/covered-calls')
 
-    driver.maximize_window()
-    time.sleep(2)
-    driver.implicitly_wait(2)
+    time.sleep(4)
+    driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
@@ -531,18 +536,20 @@ def dump_data_short_put(values):
         print(err)
 
 def main_shortput():
-    path = r"Chrome_driver.exe"
     options = webdriver.ChromeOptions()
-    options.headless = True
-    options.add_argument("start-maximized")
-    # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    ## might not be needed
+    options.add_argument("window-size=1920x1480")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
-    driver.maximize_window()
-    time.sleep(2)
-    driver.implicitly_wait(2)
+    time.sleep(4)
+    driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
