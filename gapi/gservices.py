@@ -227,7 +227,8 @@ def cashapp_main(path):
     if path.endswith('html'):
         dict_ = {
                 'From' : "None",
-                'Amount' : 0
+                'Amount' : 0,
+                'To' : "None"
                 }
         try:
             soup = getdata(path)
@@ -239,6 +240,7 @@ def cashapp_main(path):
             # if table_data['name'] == 'Uber':
             #     table_data['To'] = 'Uber'
             #     table_data['From'] = 'CHRISTOPHER C MAGHAS'
+            dict_['To'] = table_data['To']
             dict_['From'] = table_data['From']
             dict_['Amount'] = table_data['Amount']
             return dict_
