@@ -74,7 +74,7 @@ def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
 def layout(request):
-    advertisement()
+    # advertisement()
     posts=Post.objects.all()
     services=Service.objects.all()
 
