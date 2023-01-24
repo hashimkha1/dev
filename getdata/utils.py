@@ -379,26 +379,29 @@ def dump_data_credit(values):
         print(err)
 
 def main_cread_spread():
+    # path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
+
+    # to supress the error messages/logs
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-    options.add_argument("window-size=1920x1480")
+    options.add_argument("window-size=800x600")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    
+
     driver.get('https://www.optionsplay.com/hub/credit-spread-file')
 
     time.sleep(5)
-    driver.implicitly_wait(4)
+    driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
-    # form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
-    # form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
-    form.find_element(By.ID, 'Login').send_keys(os.environ.get('EMAIL_USER'))
-    form.find_element(By.ID, 'Password').send_keys(os.environ.get('EMAIL_PASS'))
-
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+    # form.find_element(By.ID, 'Login').send_keys(os.environ.get('EMAIL_USER'))
+    # form.find_element(By.ID, 'Password').send_keys(os.environ.get('EMAIL_PASS'))
+    print("Loginned successfully")
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
     time.sleep(4)
@@ -406,6 +409,7 @@ def main_cread_spread():
     tbody = table.find_element(By.XPATH,'//*[@id="CreditSpreadFile"]/tbody')
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
+    print(rows)
     # //*[@id="CreditSpreadFile"]/tbody/tr[1]
     # //*[@id="CreditSpreadFile"]/tbody/tr[1]/td[15]
     time.sleep(5)
@@ -415,9 +419,8 @@ def main_cread_spread():
             path = '//*[@id="CreditSpreadFile"]/tbody/tr[{}]/td[{}]'.format(row,col)
             value = driver.find_element(By.XPATH,path).text
             values.append(value)
-            print(value, end =' ')
+            # print(value, end =' ')
         dump_data_credit(tuple(values))
-        print('')
 
 #covered_calls
 def dump_data_covered_calls(values):
@@ -458,20 +461,20 @@ def dump_data_covered_calls(values):
         print(err)
 
 def main_covered_calls():
+        # to supress the error messages/logs
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-    options.add_argument("window-size=1920x1480")
+    options.add_argument("window-size=800x600")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    
     driver.get('https://www.optionsplay.com/hub/covered-calls')
 
-    time.sleep(4)
-    driver.implicitly_wait(5)
+    time.sleep(5)
+    driver.implicitly_wait(4)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
@@ -536,19 +539,20 @@ def dump_data_short_put(values):
         print(err)
 
 def main_shortput():
+        # to supress the error messages/logs
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-    options.add_argument("window-size=1920x1480")
+    options.add_argument("window-size=800x600")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-    
+
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
-    time.sleep(4)
+    time.sleep(5)
     driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')

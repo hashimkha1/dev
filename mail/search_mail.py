@@ -39,16 +39,23 @@ def parse_mail(request):
         print("MY CASHAPP FUNCTION",filepaths)
         for path in filepaths:
             print("PATH=====>",path)
-            cashapp_amount = cashapp_main(path=path)
+            cashapp_data = cashapp_main(path=path)
             os.remove(path)
-            print(f'Amount : {cashapp_amount}')
+            print(f"Amount : {cashapp_data['Amount']}")
+            print(f"From : {cashapp_data['From']}")
+            from_mail = cashapp_data['From']
+            to_mail = cashapp_data['To']
+            if from_mail == 'None':
+                continue
+
             try:
                 CashappMail.objects.create(
                     id=msg_dict.get('id'),
-                    from_mail=msg_dict.get('from_mail'),
-                    to_mail=msg_dict.get('to_mail'),
+                    # from_mail=msg_dict.get('from_mail'),
+                    from_mail = cashapp_data['From'],
+                    to_mail = to_mail,
                     subject=msg_dict.get('subject'),
-                    amount = cashapp_amount,
+                    amount = cashapp_data['Amount'],
                     destination = 'cashapp',
                     file_name=msg_dict.get('file_name'),
                     full_path=msg_dict.get('full_path'),
