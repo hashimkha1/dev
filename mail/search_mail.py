@@ -34,7 +34,9 @@ def parse_mail(request):
         # print(f'msg_dict: {msg_dict}')
         # logger.debug(f'msg_dict: {msg_dict}')
         '''Reading and writing the files'''
-        folderpath = r"gapi\stored_mails"
+        # folderpath = r"gapi\stored_mails"
+        # coda\gapi\stored_mails
+        folderpath ='gapi/stored_mails'
         filepaths  = [os.path.join(folderpath, name) for name in os.listdir(folderpath)]
         print("MY CASHAPP FUNCTION",filepaths)
         for path in filepaths:
