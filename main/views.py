@@ -390,68 +390,67 @@ def doc(request):
     return render(request, 'main/doc.html',{'form':form})
 """
 
-@shared_task(name="advertisement")
-def advertisement():
-    """
-    This function will post the latest Facebook Ad
-    """
-    context = Advertisement.objects.all().first()
-    # facebook_context = Advertisement.objects.all().first()
-    apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
-    apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
-    accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
-    accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
+# @shared_task(name="advertisement")
+# def advertisement():
+#     """
+#     This function will post the latest Facebook Ad
+#     """
+#     print("TWIITER API FUNCATANALITY")
+#     context = Advertisement.objects.all().first()
+#     # facebook_context = Advertisement.objects.all().first()
+#     apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
+#     apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
+#     accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
+#     accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
 
-    # 3. Create Oauth client and set authentication and create API object
-    oauth = tweepy.OAuthHandler(apiKey, apiSecret)
-    oauth.set_access_token(accessToken, accessTokenSecret)
+#     # 3. Create Oauth client and set authentication and create API object
+#     oauth = tweepy.OAuthHandler(apiKey, apiSecret)
+#     oauth.set_access_token(accessToken, accessTokenSecret)
 
-    api = tweepy.API(oauth)
+#     api = tweepy.API(oauth)
 
-    # 4. upload media
-    # urllib.request.urlretrieve(
-    # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
-    # "advertisement.png")
-    urllib.request.urlretrieve(
-    'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
-    "advertisement.png")
-    # image = Image.open("advertisement.png")
-    image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    link = urllib.request.urlopen(image_path).read()
-    # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
-    # This method will show image in any image viewer 
-    # image.show() 
-    # media=googledriveurl={{image.image_url}}
-    image=link
-    # image='media/profile_pics/Chris.jpg'
-    # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+#     # 4. upload media
+#     # urllib.request.urlretrieve(
+#     # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
+#     # "advertisement.png")
+#     urllib.request.urlretrieve(
+#     'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
+#     "advertisement.png")
+#     # image = Image.open("advertisement.png")
+#     image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+#     link = urllib.request.urlopen(image_path).read()
+#     print(link)
+#     # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
+#     # This method will show image in any image viewer 
+#     # image.show() 
+#     # media=googledriveurl={{image.image_url}}
+#     image=link
+#     # image='media/profile_pics/Chris.jpg'
+#     # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
     
-    
-    media = api.media_upload(image)
+#     # Post a tweet with an image and a description
+#     image_path = image #path of the image you want to upload
+#     description = 'This is my tweet with an image'
+#     api.update_with_media(image_path, status=description)
 
-    api.update_status(
-        status=context.post_description,
-        # media_ids=[context.tweet_media],
-        media_ids=[media.media_id]
-    )
 
-    """
-        This function will post the latest Facebook Ad
-    """
+#     """
+#         This function will post the latest Facebook Ad
+#     """
 
-    # facebook_page_id = facebook_context.facebook_page_id
-    # access_token = facebook_context.facebook_access_token
-    # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
-    # msg = facebook_context.post_description
-    # image_location = facebook_context.image
-    # payload = {
-    #     "url": image_location,
-    #     "access_token": access_token,
-    #     "message": msg,
-    # }
+#     # facebook_page_id = facebook_context.facebook_page_id
+#     # access_token = facebook_context.facebook_access_token
+#     # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
+#     # msg = facebook_context.post_description
+#     # image_location = facebook_context.image
+#     # payload = {
+#     #     "url": image_location,
+#     #     "access_token": access_token,
+#     #     "message": msg,
+#     # }
 
-    # Send the POST request
-    # requests.post(url, data=payload)
+#     # Send the POST request
+#     # requests.post(url, data=payload)
 
 def runwhatsapp(request):
     whatsapp()
