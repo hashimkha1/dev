@@ -298,11 +298,17 @@ def add_requirement_justification(request):
     requirement_id = request.POST.get('requirement_id')
 
     requirement_obj = Requirement.objects.filter(id=requirement_id).first()
+    print("requirement_obj:==>",requirement_obj)
     if not requirement_obj:
         messages.warning(
             request, "requirement id is wrong"
         )
-        return HttpResponseRedirect(request.path_info)
+        context={
+            "message":request.path_info
+        }
+        # return  HttpResponseRedirect(request.path_info)
+        return render (request, "main/messages/general.html",context) 
+        
     with transaction.atomic():
         table = request.POST.get('Table')
         if table:

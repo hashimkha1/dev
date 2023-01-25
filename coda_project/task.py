@@ -29,6 +29,11 @@ from management.utils import deductions
 from gapi.gservices import get_service, search_messages
 from getdata.models import ReplyMail
 from mail.custom_email import send_reply
+# from django.core.management import call_command
+import tweepy
+# importing modules
+import urllib.request
+from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -343,18 +348,31 @@ def search_job_mail():
             except Exception as e:
                 logger.error('error msg is ' + str(e))
 
+                # from django.core.management import call_command
+import tweepy
+import requests
+from management.models import Advertisement
+
+"""
+
+Twitter and Facebook AD management Scripts below
+
+"""
+
 @shared_task(name="advertisement")
 def advertisement():
     """
     This function will post the latest Facebook Ad
     """
-    print("TWIITER API FUNCATANALITY")
     context = Advertisement.objects.all().first()
-    # facebook_context = Advertisement.objects.all().first()
-    apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
-    apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
-    accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
-    accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
+    apiKey = '1zPxZNd57aXHZb8WwQFYEvNbv'  
+    apiSecret =  'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
+    accessToken = '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
+    accessTokenSecret ='17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
+    # apiKey = context.twitter_api_key 
+    # apiSecret = context.twitter_api_key_secret
+    # accessToken = context.twitter_access_token
+    # accessTokenSecret = context.twitter_access_token_secret
 
     # 3. Create Oauth client and set authentication and create API object
     oauth = tweepy.OAuthHandler(apiKey, apiSecret)
@@ -363,46 +381,38 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    # urllib.request.urlretrieve(
-    # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
-    # "advertisement.png")
-    urllib.request.urlretrieve(
-    'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
-    "advertisement.png")
-    # image = Image.open("advertisement.png")
-    image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    link = urllib.request.urlopen(image_path).read()
-    print(link)
-    # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
-    # This method will show image in any image viewer 
-    # image.show() 
-    # media=googledriveurl={{image.image_url}}
-    image=link
-    # image='media/profile_pics/Chris.jpg'
-    # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    
-    # Post a tweet with an image and a description
-    image_path = image #path of the image you want to upload
-    description = 'This is my tweet with an image'
-    api.update_with_media(image_path, status=description)
+    image_path='media/data/data-home_v5.jpg'
+    # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
+    print("IMAGE IS :==========>",image_path)
+    # image = urllib.request.urlopen(image_path).read()
+    media = api.media_upload(image_path)
+    # media = api.media_upload(context.image)
+
+
+    api.update_status(
+        status=context.post_description,
+        # media_ids=[media.tweet_media],
+    )
+
 
 
     """
         This function will post the latest Facebook Ad
     """
 
-    # facebook_page_id = facebook_context.facebook_page_id
-    # access_token = facebook_context.facebook_access_token
+@shared_task(name="advertisement_facebook")
+def advertisement_facebook():
+    pass
+    # facebook_page_id = context.facebook_page_id
+    # access_token = context.facebook_access_token
     # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
-    # msg = facebook_context.post_description
-    # image_location = facebook_context.image
+    # msg = context.post_description
+    # image_location = context.image
     # payload = {
     #     "url": image_location,
     #     "access_token": access_token,
     #     "message": msg,
     # }
 
-    # Send the POST request
+    # # Send the POST request
     # requests.post(url, data=payload)
-
-    

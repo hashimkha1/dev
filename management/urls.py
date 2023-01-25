@@ -9,6 +9,7 @@ from management.views import (
                         DepartmentUpdateView,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
+from testing.views import add_requirement_justification
 
 app_name = 'management'
 urlpatterns = [
@@ -83,6 +84,7 @@ urlpatterns = [
     path('requirement/<int:pk>/delete/', RequirementDeleteView.as_view(), name='requirement-delete'),
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),
     path('requirementvideo/<int:detail_id>/', views.videolink, name='video_req_code'),
+    # path('addjustification/<int:detail_id>/', views.add_requirement_justification, name='addjustification'),
     path('estimate/', views.EstimateCreateView.as_view(template_name='management/activity_form.html'), name='RequirementDetail'),
     path('estimates/', views.EstimateListView.as_view(), name='estimates'),
 
