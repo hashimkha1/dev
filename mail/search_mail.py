@@ -38,13 +38,13 @@ def parse_mail(request):
         # coda\gapi\stored_mails
         folderpath ='gapi/stored_mails'
         filepaths  = [os.path.join(folderpath, name) for name in os.listdir(folderpath)]
-        print("MY CASHAPP FUNCTION",filepaths)
+        # print("MY CASHAPP FUNCTION",filepaths)
         for path in filepaths:
-            print("PATH=====>",path)
+            # print("PATH=====>",path)
             cashapp_data = cashapp_main(path=path)
             os.remove(path)
-            print(f"Amount : {cashapp_data['Amount']}")
-            print(f"From : {cashapp_data['From']}")
+            # print(f"Amount : {cashapp_data['Amount']}")
+            # print(f"From : {cashapp_data['From']}")
             from_mail = cashapp_data['From']
             to_mail = cashapp_data['To']
             if from_mail == 'None':
