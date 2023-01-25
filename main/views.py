@@ -2,27 +2,33 @@ from django.http import JsonResponse
 from django.db.models import Q
 from celery import shared_task
 from django.shortcuts import redirect, render
+from django.contrib import messages
 import json
 import calendar,string
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings
-from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from coda_project.task import advertisement
+from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
     CreateView,
     UpdateView,
 )
+from accounts.forms import LoginForm
+from .forms import RegistrationForm,ContactForm
+from accounts.views import CreateProfile
+
 # from django.core.management import call_command
 # importing modules
 import urllib.request
@@ -83,6 +89,63 @@ def layout(request):
             "title": "layout"
         }
     return render(request, "main/home_templates/newlayout.html",context)
+
+# =====================DC_KENYA VIEWS=======================================
+def dclayout(request):
+    # advertisement()
+    posts=Post.objects.all()
+    services=Service.objects.all()
+
+    context={
+            "services":services,
+            "posts":posts,
+            "title": "DCKENYA"
+        }
+    return render(request, "main/dc48kenya/dc_layout.html",context)
+
+def register(request):
+    if request.method == "POST":
+        previous_user = User.objects.filter(email = request.POST.get("email"))
+        if len(previous_user) > 0:
+            messages.success(request, f'User already exist with this email')
+            form = RegistrationForm()
+            return redirect("/password-reset")
+        else:
+            if form.is_valid():
+                if form.cleaned_data.get("category") == 4:
+                    form.instance.is_applicant = True
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'Account created for {username}!')
+                return redirect('main:dc_login')
+    else:
+        msg = "error validating form"
+        form = RegistrationForm()
+    return render(request, "main/dc48kenya/dc_register.html", {"form": form,"msg":msg})
+
+
+def dc48login(request):
+    form = LoginForm(request.POST or None)
+    msg = f'account with that username and password does not exist!'
+    if request.method == "POST":
+        if form.is_valid():
+            request.session["siteurl"] = settings.SITEURL
+            username = form.cleaned_data.get("username")
+            password = form.cleaned_data.get("password")
+            account = authenticate(username=username, password=password)
+            CreateProfile()
+            # If Category is DC48KENYA User
+            if account is not None and account.category == 4:
+                if account.sub_category == 6:  # contractual
+                    login(request, account)
+                    return redirect("finance:list-inflow")
+                else:  # parttime (agents) & Fulltime
+                    login(request, account)
+                    # return redirect("management:user_task", username=request.user)
+                    return redirect("main:dc_home")
+    return render(
+       request, "main/dc48kenya/dc_login.html", {"form": form, "msg": msg})
+    
 
 # =====================PLAN=======================================
 class PlanCreateView(LoginRequiredMixin, CreateView):

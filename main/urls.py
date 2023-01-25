@@ -10,6 +10,11 @@ urlpatterns = [
     path('team/', views.profiles, name='team'),
     path('profiles/', views.profiles, name='profiles'),
     path('letter/', views.about, name='letter'),
+    #==============DC48KENYA==============================================
+    path('dchome', views.dclayout, name='dc_layout'),
+    path('dclogin', views.dc48login, name='dc_login'),
+    path('dcregister', views.register, name='dc_register'),
+
     #==============DEPARTMENTS==============================================
         #---------------HUMAN RESOURCE--------------------#
 
