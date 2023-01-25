@@ -15,6 +15,10 @@ from finance.models import PayslipConfig
 
 from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
 
+from management.models import Advertisement
+import tweepy
+# importing modules
+import urllib.request
 
 import logging
 
@@ -360,16 +364,12 @@ def advertisement():
     """
     This function will post the latest Facebook Ad
     """
+    print("TWIITER TWESTING FUNCT")
     context = Advertisement.objects.all().first()
-    apiKey = '1zPxZNd57aXHZb8WwQFYEvNbv'  
-    apiSecret =  'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
-    accessToken = '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
-    accessTokenSecret ='17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
-    # apiKey = context.twitter_api_key 
-    # apiSecret = context.twitter_api_key_secret
-    # accessToken = context.twitter_access_token
-    # accessTokenSecret = context.twitter_access_token_secret
-
+    apiKey = context.twitter_api_key 
+    apiSecret = context.twitter_api_key_secret
+    accessToken = context.twitter_access_token
+    accessTokenSecret = context.twitter_access_token_secret
     # 3. Create Oauth client and set authentication and create API object
     oauth = tweepy.OAuthHandler(apiKey, apiSecret)
     oauth.set_access_token(accessToken, accessTokenSecret)
@@ -377,20 +377,31 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    image_path='media/data/data-home_v5.jpg'
+    
     # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    print("IMAGE IS :==========>",image_path)
-    # image = urllib.request.urlopen(image_path).read()
+    # Post a tweet with an image and a description
+
+    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    # url = "https://drive.google.com/file/d/1YATyVows61SsGDmWF846-qApkql_323m/view?usp=share_link"
+    image_path = "media/data/image.jpg"
+    res = requests.get(url, stream=True)
+    if res.status_code == 200:
+        with open(image_path, "wb") as f:
+            f.write(res.content)
+        print("Image sucessfully Downloaded: ", image_path)
+    else:
+        print("Image Couldn't be retrieved")
+
+    # image_path='media/data/data-home_v5.jpg'
+    # description = context.post_description
+    # upload media
     media = api.media_upload(image_path)
-    # media = api.media_upload(context.image)
 
+    # post tweet with media_id
+    description = context.post_description #'This is my tweet with an image'
+    api.update_status(status=description, media_ids=[media.media_id])
 
-    api.update_status(
-        status=context.post_description,
-        # media_ids=[media.tweet_media],
-    )
-
-
+    print("TWITTED")
 
     """
         This function will post the latest Facebook Ad

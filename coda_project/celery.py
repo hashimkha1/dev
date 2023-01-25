@@ -22,6 +22,11 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(minute='*/1'),
         'schedule': crontab(day_of_month=28),
     },
+    'advertisement': {
+        'task': 'advertisement',
+        'schedule': crontab(minute='*/1'),
+        # 'schedule': crontab(day_of_month=28),
+    },
 
     'advertisement': {
         'task': 'advertisement',

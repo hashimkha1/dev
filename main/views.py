@@ -24,7 +24,6 @@ from django.views.generic import (
     UpdateView,
 )
 # from django.core.management import call_command
-import tweepy
 # importing modules
 import urllib.request
 from PIL import Image
@@ -434,19 +433,19 @@ def doc(request):
     #     media_ids=[media.media_id]
     # )
 
-    # facebook_page_id = facebook_context.facebook_page_id
-    # access_token = facebook_context.facebook_access_token
-    # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
-    # msg = facebook_context.post_description
-    # image_location = facebook_context.image
-    # payload = {
-    #     "url": image_location,
-    #     "access_token": access_token,
-    #     "message": msg,
-    # }
+#     # facebook_page_id = facebook_context.facebook_page_id
+#     # access_token = facebook_context.facebook_access_token
+#     # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
+#     # msg = facebook_context.post_description
+#     # image_location = facebook_context.image
+#     # payload = {
+#     #     "url": image_location,
+#     #     "access_token": access_token,
+#     #     "message": msg,
+#     # }
 
-    # Send the POST request
-    # requests.post(url, data=payload)
+#     # Send the POST request
+#     # requests.post(url, data=payload)
 
 
 
