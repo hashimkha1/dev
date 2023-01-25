@@ -104,8 +104,8 @@ def payinitial(tasks):
     Earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     Maxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
     # current Pay Values
-    points = Points.get("Your_Total_Points")
-    mxpoints = Maxpoints.get("Your_Total_MaxPoints")
+    points = round(Points.get("Your_Total_Points"))
+    mxpoints = round(Maxpoints.get("Your_Total_MaxPoints"))
     pay = Earning.get("Your_Total_Pay")
     GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
     try:
@@ -174,7 +174,7 @@ def paytime():
     last_month=last_day_of_prev_month1.strftime("%m")
     return (today,year,deadline_date,month,last_month,day,target_date,
             time_remaining_days,time_remaining_hours,time_remaining_minutes,
-            payday,last_day_of_prev_month1,last_day_of_prev_month2,
+            payday,start_day_of_prev_month2,last_day_of_prev_month1,last_day_of_prev_month2,
             start_day_of_prev_month3,last_day_of_prev_month3)
 
 
@@ -396,6 +396,54 @@ def additional_earnings(user_data,tasks,total_pay,payslip_config):
     total_deduction=deductions(user_data,payslip_config,total_pay)[-1]
     print(f'LOAN AMOUNT={total_deduction}')
     return total_deduction,sub_bonus
+
+def emp_average_earnings(request,TaskHistory,GoalAmount,employee):
+    start_day_of_prev_month2=paytime()[-5]
+    last_day_of_prev_month1=paytime()[-4]
+    last_day_of_prev_month2=paytime()[-3]
+    start_day_of_prev_month3=paytime()[-2]
+    print("last_day_of_prev_month1======>",last_day_of_prev_month1)
+    print("last_day_of_prev_month2======>",last_day_of_prev_month2)
+    print("start_day_of_prev_month3======>",start_day_of_prev_month3)
+    last_day_of_prev_month1=paytime()[-3]
+    start_day_of_prev_month3=paytime()[-2]
+        # print("average_earnings======>",average_earnings)
+    history = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month3),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    last3month_history = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month3),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    last2monthhistory = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month2),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    lastmonthhistory = TaskHistory.objects.filter(
+        Q(submission__gte=last_day_of_prev_month1),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    # print("last3month_history=============>",last3month_history)
+    # print("last2monthhistory=============>",last2monthhistory)
+    # print("lastmonthhistory=============>",lastmonthhistory)
+    average_earnings = 0
+    counter = 3
+    for data in history.all():
+        average_earnings += data.get_pay
+        # counter = counter+1 
+        counter = 3
+    average_earnings = round((average_earnings / counter),2)
+    if average_earnings == 0:
+        average_earnings = GoalAmount
+    return average_earnings
 
 # ================================apis for slug==========================
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):

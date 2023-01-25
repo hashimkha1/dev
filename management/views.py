@@ -52,7 +52,7 @@ from accounts.models import Tracker, Department, TaskGroups
 from finance.models import  PayslipConfig
 from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
-                               deductions,loan_computation,
+                               deductions,loan_computation,emp_average_earnings,
                                bonus,additional_earnings,best_employee,updateloantable,
                                addloantable,employee_reward,split_num_str,employee_group_level
                         )
@@ -597,8 +597,7 @@ def usertask(request, user=None, *args, **kwargs):
     # -----------Time from utils------------------
     deadline_date=paytime()[2]
     payday=paytime()[10]
-    last_day_of_prev_month1=paytime()[-3]
-    start_day_of_prev_month3=paytime()[-2]
+
      # -----------Points/Earnings from utils------------------
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     points_count = Task.objects.filter(
@@ -630,21 +629,8 @@ def usertask(request, user=None, *args, **kwargs):
         net = total_pay - total_deduction
     except (TypeError, AttributeError):
         net = 0.00
-
-    history = TaskHistory.objects.filter(
-        Q(submission__gte=start_day_of_prev_month3),
-        Q(submission__lte=last_day_of_prev_month1),
-        Q(employee__username=request.user)
-    )
-    average_earnings = 0
-    counter = 3
-    for data in history.all():
-        average_earnings += data.get_pay
-        # counter = counter+1 
-        counter = 3
-    average_earnings = average_earnings / counter
-    if average_earnings == 0:
-        average_earnings = GoalAmount
+    # average_earnings=emp_average_earnings(request,TaskHistory,GoalAmount)
+    average_earnings=GoalAmount
 
     activities = ["one one one", "one one one session", "one one one sessions"]
     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
