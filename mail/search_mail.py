@@ -40,19 +40,11 @@ def parse_mail(request):
         filepaths  = [os.path.join(folderpath, name) for name in os.listdir(folderpath)]
         # print("MY CASHAPP FUNCTION",filepaths)
         for path in filepaths:
-<<<<<<< HEAD
-            print("PATH=====>",path)
-            cashapp_data = cashapp_main(path=path)
-            os.remove(path)
-            print(f"Amount : {cashapp_data['Amount']}")
-            print(f"From : {cashapp_data['From']}")
-=======
             # print("PATH=====>",path)
             cashapp_data = cashapp_main(path=path)
             os.remove(path)
             # print(f"Amount : {cashapp_data['Amount']}")
             # print(f"From : {cashapp_data['From']}")
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
             from_mail = cashapp_data['From']
             to_mail = cashapp_data['To']
             if from_mail == 'None':

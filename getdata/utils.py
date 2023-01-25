@@ -378,11 +378,7 @@ def dump_data_credit(values):
     except Exception as err:
         print(err)
 
-<<<<<<< HEAD
-def main_cread_spread(request):
-=======
 def main_cread_spread():
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
     # path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
 
     # to supress the error messages/logs
@@ -392,11 +388,7 @@ def main_cread_spread():
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-<<<<<<< HEAD
-    options.add_argument("window-size=1920x1480")
-=======
     options.add_argument("window-size=800x600")
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
@@ -476,11 +468,7 @@ def main_covered_calls():
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-<<<<<<< HEAD
-    options.add_argument("window-size=1920x1480")
-=======
     options.add_argument("window-size=800x600")
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
     driver.get('https://www.optionsplay.com/hub/covered-calls')
@@ -558,22 +546,14 @@ def main_shortput():
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
     ## might not be needed
-<<<<<<< HEAD
-    options.add_argument("window-size=1920x1480")
-=======
     options.add_argument("window-size=800x600")
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
     time.sleep(5)
-<<<<<<< HEAD
-    driver.implicitly_wait(4)
-=======
     driver.implicitly_wait(5)
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')

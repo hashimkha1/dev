@@ -364,6 +364,7 @@ def advertisement():
     """
     This function will post the latest Facebook Ad
     """
+    print("TWIITER TWESTING FUNCT")
     context = Advertisement.objects.all().first()
     apiKey = '1zPxZNd57aXHZb8WwQFYEvNbv'  
     apiSecret =  'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
@@ -381,18 +382,12 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    image_path='media/data/data-home_v5.jpg'
+    
     # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    print("IMAGE IS :==========>",image_path)
-    # image = urllib.request.urlopen(image_path).read()
-    media = api.media_upload(image_path)
-    # media = api.media_upload(context.image)
-
-
-    api.update_status(
-        status=context.post_description,
-        # media_ids=[media.tweet_media],
-    )
+    # Post a tweet with an image and a description
+    image_path='media/data/data-home_v5.jpg'
+    description = 'This is my tweet with an image'
+    api.update_with_media(image_path, status=description)
 
 
 

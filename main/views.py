@@ -24,7 +24,6 @@ from django.views.generic import (
     UpdateView,
 )
 # from django.core.management import call_command
-import tweepy
 # importing modules
 import urllib.request
 from PIL import Image
@@ -393,53 +392,6 @@ def doc(request):
 
 # @shared_task(name="advertisement")
 # def advertisement():
-<<<<<<< HEAD
-#     """
-#     This function will post the latest Facebook Ad
-#     """
-#     print("TWIITER API FUNCATANALITY")
-#     context = Advertisement.objects.all().first()
-#     # facebook_context = Advertisement.objects.all().first()
-#     apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
-#     apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
-#     accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
-#     accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
-
-#     # 3. Create Oauth client and set authentication and create API object
-#     oauth = tweepy.OAuthHandler(apiKey, apiSecret)
-#     oauth.set_access_token(accessToken, accessTokenSecret)
-
-#     api = tweepy.API(oauth)
-
-#     # 4. upload media
-#     # urllib.request.urlretrieve(
-#     # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
-#     # "advertisement.png")
-#     urllib.request.urlretrieve(
-#     'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
-#     "advertisement.png")
-#     # image = Image.open("advertisement.png")
-#     image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-#     link = urllib.request.urlopen(image_path).read()
-#     print(link)
-#     # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
-#     # This method will show image in any image viewer 
-#     # image.show() 
-#     # media=googledriveurl={{image.image_url}}
-#     image=link
-#     # image='media/profile_pics/Chris.jpg'
-#     # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    
-#     # Post a tweet with an image and a description
-#     image_path = image #path of the image you want to upload
-#     description = 'This is my tweet with an image'
-#     api.update_with_media(image_path, status=description)
-
-
-#     """
-#         This function will post the latest Facebook Ad
-#     """
-=======
     # This function will post the latest Facebook Ad
     # context = Advertisement.objects.all().first()
     # # facebook_context = Advertisement.objects.all().first()
@@ -480,7 +432,6 @@ def doc(request):
     #     # media_ids=[context.tweet_media],
     #     media_ids=[media.media_id]
     # )
->>>>>>> cec3cd91aabf5c19881562f9afe2c17afd183bcf
 
 #     # facebook_page_id = facebook_context.facebook_page_id
 #     # access_token = facebook_context.facebook_access_token
