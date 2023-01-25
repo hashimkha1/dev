@@ -385,11 +385,17 @@ def advertisement():
     
     # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
     # Post a tweet with an image and a description
+
     image_path='media/data/data-home_v5.jpg'
     description = 'This is my tweet with an image'
-    api.update_with_media(image_path, status=description)
+    # upload media
+    media = api.media_upload(image_path)
 
+    # post tweet with media_id
+    description = 'This is my tweet with an image'
+    api.update_status(status=description, media_ids=[media.media_id])
 
+    print("TWITTED")
 
     """
         This function will post the latest Facebook Ad
