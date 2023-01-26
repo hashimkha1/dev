@@ -43,7 +43,6 @@ def thank(request):
 def join(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
-
         if len(previous_user) > 0:
             messages.success(request, f'User already exist with this email')
             form = UserForm()
@@ -75,7 +74,7 @@ def join(request):
                     default_fee = Default_Payment_Fees.objects.all().first()
                 else:
                     default_payment_fees = Default_Payment_Fees(
-                        job_down_payment_per_month=500,
+                        job_down_payment_per_month=1000,
                         job_plan_hours_per_month=40,
                         student_down_payment_per_month=500,
                         student_bonus_payment_per_month=100,
@@ -202,7 +201,6 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect("application:interview")
-
             elif account is not None and account.category == 1:
                 if account.country in ("KE", "UG", "RW", "TZ"):  # Male
                     if account.gender == 1:

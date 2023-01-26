@@ -124,10 +124,10 @@ data_interview = [
     {
         "Inteview": "1. Transcripts",
         # "Concentration": "Data Analysis",
-        "Description": "Write Your Responses to all 7 questions",
+        "Description": "Write Your Responses to 8 Topics",
         "Duration": "5 Days/3 Runs",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/data/iuploads/",
+        "Link": SITEURL+"/data/iuploads/",
     },
     
     {
@@ -136,14 +136,14 @@ data_interview = [
         "Description": "Self recorded practice sessions for all 8 questions",
         "Duration": "5 Days/24 sessions",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/management/sessions",
+        "Link": SITEURL+"/management/sessions",
     },
     {
         "Inteview": "3. Role-Concentration",
         "Description": "Interact with a database of 80 Technical Interview Questions",
         "Duration": "5 Days	",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/data/prepquestions/",
+        "Link": SITEURL+"/data/prepquestions/",
     },
     {
         "Inteview": "4. Mock Interviews",
@@ -278,11 +278,11 @@ Meetings = [
 #     {
 #      "Automation":{
 #         "title": "1. Transcripts",
-#         "link": "https://www.codanalytics.net/data/iuploads/",
+#        "link": "SITEURL+"/data/iuploads/",
 #     },
 #     "Stocks&Options":{
 #         "title": "1. Transcripts",
-#         "link": "https://www.codanalytics.net/data/iuploads/",
+#        "link": "SITEURL+"/data/iuploads/",
 #     },
 #     }
 # ]

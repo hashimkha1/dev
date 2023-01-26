@@ -1,3 +1,4 @@
+
 {
     "BASICS": {
         "MEETINGS": {
@@ -52,8 +53,9 @@
     },
     "FINANCE": {
         "REPORTS": {
-            "Cashflow": "https://www.codanalytics.net/finance/transaction/",
-            "Report":"https://www.codanalytics.net/finance/finance/"
+            "Report":"https://www.codanalytics.net/finance/finance/",
+            "Overall Budget":"https://www.codanalytics.net/finance/transaction/",
+            "Website Budget":"https://docs.google.com/spreadsheets/d/1SGFWodd1CjUiNdV_EqcQfSDXLIuuNx8I/edit#gid=510368901"
         },
         "STOCKS & OPTIONS": {
             "Stocks and Options Trading": "https://www.codanalytics.net/investing/",

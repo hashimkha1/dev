@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from django.db.models import Q
-from .models import Interviews, DSU, JobRole, Training_Responses
+from .models import Interviews, DSU, JobRole, Training_Responses,Prep_Questions
 from accounts.models import CustomerUser
 class InterviewForm(forms.ModelForm):
     class Meta:
@@ -22,6 +22,23 @@ class InterviewForm(forms.ModelForm):
         # first call parent's constructor
         super(InterviewForm, self).__init__(*args, **kwargs)
         self.fields['question_type'].required = False
+
+class PrepQuestionsForm(forms.ModelForm):
+    class Meta:
+        model = Prep_Questions
+        fields = ["company",'position', 'category',"question", "response"]
+        labels={
+                'company':'company/Client', 
+                'position':'Position/Role',
+                'category':'Topic i.e Methodology,Intro..',
+                'question':'question',
+                'response':'response',
+                }
+
+    def __init__(self, *args, **kwargs):
+        # first call parent's constructor
+        super(PrepQuestionsForm, self).__init__(*args, **kwargs)
+        self.fields['question'].required = False
 
 class TrainingResponseForm(forms.ModelForm):
     class Meta:
