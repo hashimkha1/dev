@@ -31,6 +31,8 @@ urlpatterns = [
 
     #----------------------------IT-------------------------#
         path('it/', views.it, name='it'),
+    #-----------------------finance-------------------------#
+        path('finance/', views.finance, name='finance'),
 
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
@@ -40,6 +42,7 @@ urlpatterns = [
     #path('documents/', views.codadocuments, name='documents'),
     path('checkout/', views.checkout, name='checkout'),
     path('pay/', views.pay, name='pay'),
+    path('payment_method/<str:method>/', views.payment, name='payment_method'),
     path("payment_complete/", views.paymentComplete, name="payment_complete"),
     path('image/', views.ImageCreateView.as_view(template_name='main/form.html'), name='image'),
     path('image/<int:pk>/', views.ImageUpdateView.as_view(template_name='main/form.html'), name='updateimage'),

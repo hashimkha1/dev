@@ -509,6 +509,10 @@ def clientlist(request):
                                              Q(category=3), Q(sub_category=2),
                                              Q(is_client=True),Q(is_active=True)
                                           ).order_by("-date_joined")
+    dck_users = CustomerUser.objects.filter(
+                                             Q(category=4), Q(sub_category=6),
+                                             Q(is_applicant=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
     past = CustomerUser.objects.filter(
                                              Q(category=3)|Q(is_client=True),
                                              Q(is_active=False)
@@ -517,9 +521,13 @@ def clientlist(request):
         "students": students,
         "jobsupport": jobsupport,
         "interview": interview,
+        "dck_users": dck_users,
         "past": past
     }
-    return render(request, "accounts/clients/clientlist.html", context)
+    if request.user.category == 4 and request.user.sub_category == 6:
+        return render(request, "accounts/clients/dcklist.html", context)
+    else:
+        return render(request, "accounts/clients/clientlist.html", context)
 
 
 @method_decorator(login_required, name="dispatch")

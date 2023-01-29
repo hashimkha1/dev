@@ -14,6 +14,7 @@ from application.models import UserProfile
 from finance.models import PayslipConfig
 
 from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
+from main.utils import image_view,download_image
 
 from management.models import Advertisement
 import tweepy
@@ -361,9 +362,7 @@ Twitter and Facebook AD management Scripts below
 
 @shared_task(name="advertisement")
 def advertisement():
-    """
-    This function will post the latest Facebook Ad
-    """
+    #This function will post the latest tweet
     print("TWIITER TWESTING FUNCT")
     context = Advertisement.objects.all().first()
     apiKey = context.twitter_api_key 
@@ -377,23 +376,11 @@ def advertisement():
     api = tweepy.API(oauth)
 
     # 4. upload media
-    
-    # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    # Post a tweet with an image and a description
-
+    value=None
     url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
-    # url = "https://drive.google.com/file/d/1YATyVows61SsGDmWF846-qApkql_323m/view?usp=share_link"
-    image_path = "media/data/image.jpg"
-    res = requests.get(url, stream=True)
-    if res.status_code == 200:
-        with open(image_path, "wb") as f:
-            f.write(res.content)
-        print("Image sucessfully Downloaded: ", image_path)
-    else:
-        print("Image Couldn't be retrieved")
+    image_path=download_image(url)
+    print(image_path)
 
-    # image_path='media/data/data-home_v5.jpg'
-    # description = context.post_description
     # upload media
     media = api.media_upload(image_path)
 
@@ -401,12 +388,7 @@ def advertisement():
     description = context.post_description #'This is my tweet with an image'
     api.update_status(status=description, media_ids=[media.media_id])
 
-    print("TWITTED")
-
-    """
-        This function will post the latest Facebook Ad
-    """
-
+# This function will post the latest Facebook Ad
 @shared_task(name="advertisement_facebook")
 def advertisement_facebook():
     pass

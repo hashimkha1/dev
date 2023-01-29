@@ -1,7 +1,44 @@
+import requests
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
-from coda_project.settings import SITEURL
 
+from accounts.models import CustomerUser
+from coda_project.settings import SITEURL
+from .models import Service,Assets
+
+
+def path_values(request):
+    value=request.path.split("/")
+    path_values = [i for i in value if i.strip()]
+    sub_title=path_values[-1]
+    return path_values,sub_title
+
+#===============Downloading Image==================
+def download_image(url):
+    # Path definition
+    image_path = "media/data/image.jpg"
+    res = requests.get(url, stream=True)
+    if res.status_code == 200:
+        with open(image_path, "wb") as f:
+            f.write(res.content)
+        # print("Image sucessfully Downloaded: ", image_path)
+    else:
+        print("Image Couldn't be retrieved")
+    return image_path
+
+#===============Processing Images from Database==================
+def image_view(request):
+    sub_title=path_values(request)[-1]
+    images= Assets.objects.all()
+    image_list=[image for image in images ]
+    # team_images=[image for image in images ]
+    for image in image_list:
+        # print(image)
+        if sub_title in image.split_name:
+            image_name=image.name
+            image_url=image.image_url
+            # print("sub_title============>" ,sub_title,image_name,image_url)
+    return images,image_name,image_url
 
 
 # Interview description data
@@ -329,3 +366,5 @@ Management = [
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]
+
+

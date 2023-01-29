@@ -1,0 +1,19 @@
+<h3>Hi {{ user }},</h3>
+<span>
+    Please use this number to make your payment through {{subtitle}} account<br>
+    {% if subtitle == 'mpesa' %} 
+        mpesa:{{mpesa_number}},<br>
+        paybill No: 600100, account No.:{{account_no}}<br>
+    {% elif subtitle == 'cashapp' %}
+        cashapp:{{cashapp}},<br>
+        venmo:{{venmo}},<br>
+    {% elif subtitle == 'zelle' %}
+        Email:{{email_info}},<br>
+        Account No:{{coda_account_no}}<br>
+    {% else %}
+        Email:{{email_dck}},<br>
+        Account No:{{dck_account_no}}<br>
+    {% endif %}
+    Thank You.<br>
+    Finance Department
+</span>

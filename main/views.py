@@ -7,12 +7,14 @@ import calendar,string
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import Meetings
+from .utils import Meetings,image_view,path_values
 from main.forms import ContactForm
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from coda_project.task import advertisement
+from mail.custom_email import send_email
+from coda_project.settings import SITEURL,payment_details
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from whatsapp.script import whatsapp
@@ -23,6 +25,7 @@ from django.views.generic import (
     CreateView,
     UpdateView,
 )
+# from finance.utils import pay_info
 # from django.core.management import call_command
 # importing modules
 import urllib.request
@@ -50,6 +53,7 @@ def general_errors(request):
     # return render(request, "main/errors/noresult.html")
     context={'message':'message'}
     return render(request,'main/errors/generalerrors.html',context)
+
 #  ===================================================================================   
 def hendler400(request,exception):
     return render(request, "errors/400.html")
@@ -103,7 +107,6 @@ def plans(request):
     # print(plan_categories)
     for plan in plans:
         delivery_date=plan.created_at +  timedelta(days=plan.duration*30)
-    print(delivery_date)
     context = {
         "plans": plans,
         "plan_categories": plan_categories,
@@ -141,10 +144,7 @@ def delete_plan(request,id):
     return redirect('main:plans')
 
 def about(request):
-    value=request.path.split("/")
-    path_values = [i for i in value if i.strip()]
-    sub_title=path_values[-1]
-    print(sub_title)
+    sub_title=path_values(request)[-1]
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
     end_date=start_date + relativedelta(months=3)
@@ -173,12 +173,8 @@ class UserCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 def profiles(request):
-    value=request.path.split("/")
-    path_values = [i for i in value if i.strip()]
-    sub_title=path_values[-1]
-    print(sub_title)
+    sub_title=path_values(request)[-1]
     images = Assets.objects.values_list('name', flat=True)
-    print(images)
     coda_team = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
     for team in coda_team:
         profile_image=team.image2
@@ -189,7 +185,7 @@ def profiles(request):
         print("YES")
     else:
         print("NO")
-        print(image_name,"==",profile_image)
+        # print(image_name,"==",profile_image)
 
     context={
         "coda_team":coda_team,
@@ -224,6 +220,9 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
 def it(request):
     return render(request, "main/departments/it.html", {"title": "IT"})
 
+def finance(request):
+    return render(request, "main/departments/finance_landing_page.html", {"title": "Finance"})
+
 @login_required
 def meetings(request):
     emp_obj = User.objects.filter(
@@ -236,7 +235,7 @@ def meetings(request):
     # dept_obj = Department.objects.all().distinct()
     # departments=[dept.name for dept in dept_obj ]
     employees=[employee.first_name for employee in emp_obj ]
-    print(employees)
+    # print(employees)
     _,rand_departments=task_assignment_random(employees)
     context={
         "departments": rand_departments,
@@ -294,7 +293,7 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
 def images(request):
     # images = Assets.objects.all().first()
     images = Assets.objects.all()
-    print(images)
+    # print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
@@ -309,32 +308,102 @@ class ImageUpdateView(LoginRequiredMixin,UpdateView):
         return reverse('main:images') 
 
 
+def payment(request,method):
+    (phone_number,email_info,
+    email_dck,cashapp,
+    venmo,stan_account_no,
+    coda_account_no,dck_account_no)=payment_details()
+    # print(phone_number,email_info,email_dck,
+    # cashapp,venmo,stan_account_no,
+    # coda_account_no)
+    path_value,sub_title=path_values(request)
+    print(path_value,sub_title)
+    subject='PAYMENT'
+    url='email/payment/payment_method.html'
+    message=f'Hi,{request.user.first_name}, an email has been sent \
+            with {sub_title} details for your payment.In the unlikely event\
+            that you have not received it, kindly \
+            check your spam folder.'
+    context={
+                "title": "PAYMENT DETAILS",
+                'user': request.user.first_name,
+                "images":images, 
+                "message": message,
+        }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[request.user.email,], 
+                    subject=subject, html_template=url, 
+                    context={
+                            'subtitle': sub_title,
+                            'user': request.user.first_name,
+                            'mpesa_number':phone_number,
+                            'cashapp':cashapp,
+                            'venmo':venmo,
+                            'stan_account_no':stan_account_no,
+                            'coda_account_no':coda_account_no,
+                            'dck_account_no':dck_account_no,
+                            'email':email_info,
+                            'email':email_dck,
+                            }
+                    )
+        return render(request, "main/errors/generalerrors.html",context)
+    except:
+        return render(request, "main/errors/500.html", context)
+
+
 @login_required
 def pay(request):
+    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
+    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+    link=f'{SITEURL}/finance/new_contract/{request.user}/'
+    # print(link)
+    path_value=path_values(request)[0]
+    images,image_name,image_url=image_view(request)
     try:
         payment_info = Payment_Information.objects.filter(
             customer_id=request.user.id
         ).first()
-        return render(request, "main/pay.html", {"title": "pay", "payments": payment_info})
-    except:
-        message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-        link=f'https/www.codanalytics.net/finance/mycontract/{request.user}/'
-        link2=f'localhost:8000/finance/mycontract/{request.user}/'
         context={
-                  "title": "PAYMENT", 
-                  "message": message,
-                  "link": link,
-                  "link2": link2,
+            "title": "PAYMENT", 
+            "images":images, 
+            "image_name": image_name, 
+            "image_url": image_url, 
+            # "image_path": image_path, 
+            "payments": payment_info,
+            "message": message,
+            "link": link,
+        }
+        return render(request, "main/pay.html",context)
+    except:
+        payment_history=Payment_History.objects.filter(
+                Q(customer__username="admin")| 
+                Q(customer__username="coda_info") 
+                ).latest('id')
+        context={
+            "title": "PAYMENT", 
+            "images":images, 
+            "image_name": image_name, 
+            "image_url": image_url, 
+            # "category": request.user.category, 
+            # "subcategory": request.user.sub_category, 
+            "payments": payment_history,
+            "message": message,
+            "link": link,
+        }
+        if request.user.category == 4 and request.user.sub_category == 6:
+            return render(request, "main/dck_pay.html",context)
+        else:
+            return render(request, "main/pay.html",context)
 
-                }
-        return render(request, "main/errors/generalerrors.html", context)
+        # return render(request, "main/errors/generalerrors.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-    print(payments)
+    # print(payments)
     customer = request.user
     body = json.loads(request.body)
-    print("payment_complete:", body)
+    # print("payment_complete:", body)
     payment_fees = body["payment_fees"]
     down_payment = payments.down_payment
     studend_bonus = payments.student_bonus

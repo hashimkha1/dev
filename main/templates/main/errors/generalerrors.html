@@ -13,8 +13,14 @@
         </p>
         <p class="lead">
           <font size="2"><i>{{message}}</i></font>
-          <!-- <a href="{{link}}" target=”_blank”>click -->
+          {% if link %}
+          <p>Or click
+            <a href="{{link}}" target=”_blank”>
+              HERE
           </a> 
+          to sign a new contract
+        </p>
+          {% endif %}
           {% if title == 'CONFIGURATIONS'%}
           <a href="{% url 'finance:paymentconfigs' %}" >click
           </a>

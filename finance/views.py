@@ -39,7 +39,8 @@ User = get_user_model()
 
 # Create your views here.
 
-def finance(request):
+
+def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
@@ -226,9 +227,9 @@ def newcontract(request, *args, **kwargs):
 			'contract_date':contract_date,
 			'default_fee':default_fee
 			}
-	if client_data.category == 3 and client_data.sub_category == 1:
+	if client_data.category == 3 and client_data.sub_category == 1 or request.user.is_superuser:
 		return render(request, 'management/contracts/supportcontract_form.html',context)
-	if client_data.category == 3 and client_data.sub_category == 2:
+	if client_data.category == 3 and client_data.sub_category == 2 or request.user.is_superuser:
 		return render(request, 'management/contracts/trainingcontract_form.html',context)
 	else:
 		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
@@ -289,10 +290,26 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
-class PaymentListView(ListView):
-	model = Payment_History
-	template_name = "finance/payments/payments.html"
-	context_object_name = "payments"
+def payments(request):
+	payment_history=Payment_History.objects.all()
+	Payment_Info=Payment_Information.objects.all()
+	context={
+		"title":"Payments",
+		"payment_history":payment_history,
+		"Payment_Info":Payment_Info
+	}
+	return render(request,"finance/payments/payments.html",context)
+
+# class PaymentListView(ListView):
+# 	model = Payment_History
+# 	template_name = "finance/payments/payments.html"
+# 	context_object_name = "payments"
+
+
+# class PaymentInformationListView(UpdateView):
+# 	model = Payment_Information
+# 	success_url = "/pay/"
+# 	template_name="main/snippets_templates/generalform.html"
 
 class DefaultPaymentListView(ListView):
 	model = Default_Payment_Fees
@@ -326,6 +343,7 @@ class DefaultPaymentUpdateView(UpdateView):
 		# elif self.request.user == task.employee:
 		#     return True
 		return False
+
 
 
 # For payment purposes

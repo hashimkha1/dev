@@ -129,8 +129,18 @@ class Assets(models.Model):
     image_url = models.CharField(max_length=1000, null=True, blank=True)
     # price = models.FloatField(null=True, blank=True)
 
+    @property
+    def split_name(self):
+        image_1=self.name.split("_")[0]
+        image_2=self.name.split("_")[1]
+        image_name=image_1,image_2
+
+        return image_name
+
     def __str__(self):
         return self.name
+    
+    
 
 class Order(models.Model):
     service = models.ForeignKey(

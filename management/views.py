@@ -1276,7 +1276,7 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                # html_content = f"""
+                # html_content = f"""""
                 #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
                 #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
                 #     kwargs={'pk':form.instance.id})}'>click here</a><br>
