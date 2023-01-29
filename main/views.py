@@ -359,7 +359,7 @@ def pay(request):
     link=f'{SITEURL}/finance/new_contract/{request.user}/'
     # print(link)
     path_value=path_values(request)[0]
-    images,image_name,image_url=image_view(request)
+    images,image_names=image_view(request)
     try:
         payment_info = Payment_Information.objects.filter(
             customer_id=request.user.id
@@ -367,8 +367,8 @@ def pay(request):
         context={
             "title": "PAYMENT", 
             "images":images, 
-            "image_name": image_name, 
-            "image_url": image_url, 
+            "image_name": image_names, 
+            # "image_url": image_url, 
             # "image_path": image_path, 
             "payments": payment_info,
             "message": message,

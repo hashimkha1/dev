@@ -1,4 +1,5 @@
 import requests
+import string
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
 
@@ -30,15 +31,16 @@ def download_image(url):
 def image_view(request):
     sub_title=path_values(request)[-1]
     images= Assets.objects.all()
-    image_list=[image for image in images ]
+    image_names=Assets.objects.values_list('name',flat=True)
+    # image_list=[image for image in images ]
     # team_images=[image for image in images ]
-    for image in image_list:
-        # print(image)
-        if sub_title in image.split_name:
-            image_name=image.name
-            image_url=image.image_url
-            # print("sub_title============>" ,sub_title,image_name,image_url)
-    return images,image_name,image_url
+    # picture2=[pic for pic in image_names]
+    # picture3=[s.translate(string.punctuation) for s in picture]
+    # if sub_title in picture2:
+    #     image_name=pic.name
+    #     image_url=image.image_url
+    return images,image_names
+
 
 
 # Interview description data
