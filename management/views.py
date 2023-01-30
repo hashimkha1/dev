@@ -73,6 +73,10 @@ def home(request):
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
 
+def dckdashboard(request):
+    # departments = Department.objects.filter(is_active=True)
+    return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
+
 
 # ================================DEPARTMENT SECTION================================
 def department(request):

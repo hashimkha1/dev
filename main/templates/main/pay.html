@@ -5,24 +5,23 @@
     {% csrf_token %}
       <div class="row">
           <div class="col-lg-6 introduction-div ">
-            <div class="row">
-            <div class="select-div">
-                <h2  class="position-relative">Pick your preferred method of payment:</h2>
-              <div class="content">
-                <p class="mb-2">Welcome to CODA, Are you NEW here?</p>
-                <p>
-                  We accept all forms of payments,credit,debit cards and all other forms of payments.
-                </p>
-              </div>
-              <h2>Need Help?:</h2>
-                <div class="d-flex">
+                <div class="row">
+                <div class="select-div">
+                    <h2  class="position-relative">Pick your preferred method of payment:</h2>
+                  <div class="content">
+                    <p class="mb-2">Welcome to CODA, Are you NEW here?</p>
                     <p>
-                        Kindly, contact us at info@codanalytics.net
-                      </p>
+                      We accept all forms of payments,credit,debit cards and all other forms of payments.
+                    </p>
+                  </div>
+                  <h2>Need Help?:</h2>
+                    <div class="d-flex">
+                        <p>
+                            Kindly, contact us at info@codanalytics.net
+                          </p>
+                    </div>
                 </div>
             </div>
-
-        </div>
           </div>
             <div class="col-md-6  text-center">
                 <h4><b>Modes of Payments</b></h4>
@@ -130,28 +129,28 @@
                           <div class="col-md-3" id="gi">
                             {% with 'cashapp' as cashapp %}
                             <a href="{% url 'main:payment_method' cashapp %}" target="_blank">
-                              <button type="button" class="btn btn-secondary btn-lg">cashapp</button>
+                              <button type="button" class="btn btn-primary btn-lg">cashapp</button>
                             </a>
                             {% endwith %}
                           </div>
                           <div class="col-md-3" id="gi">
                             {% with 'zelle' as zelle %}
                             <a href="{% url 'main:payment_method' zelle %}" target="_blank">
-                              <button type="button" class="btn btn-primary btn-lg">CODA Zelle</button>
+                              <button type="button" class="btn btn-outline-info btn-lg">CODA Zelle</button>
                             </a>
                             {% endwith %}
                           </div>
                           <div class="col-md-3" id="gi">
                             {% with 'dck' as dck %}
                             <a href="{% url 'main:payment_method' dck %}" target="_blank">
-                              <button type="button" class="btn btn-primary btn-lg">DCK48 Zelle</button>
+                              <button type="button" class="btn btn-outline-info btn-lg">DCK48 Zelle</button>
                             </a>
                             {% endwith %}
                           </div>
                           <div class="col-md-3" id="gi">
                             {% with 'mpesa' as mpesa %}
                             <a href="{% url 'main:payment_method' mpesa %}" target="_blank">
-                              <button type="button" class="btn btn-danger btn-lg">Mpesa</button>
+                              <button type="button" class="btn btn-secondary btn-lg">Mpesa</button>
                             </a>
                             {% endwith %}
                           </div>

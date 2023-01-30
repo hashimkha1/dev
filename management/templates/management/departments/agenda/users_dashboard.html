@@ -13,7 +13,6 @@
         <h4 class="text-center text-dark">WELCOME TO HR DEPARTMENT</h4>
         <div class="container">
             <div class="row">
-                
                 <div class="col-md-3 hover">
                     <h5 class="text-center text-dark">My Dashboard</h5>
                     <div style="border: 1px solid black;padding:20px;">
@@ -39,12 +38,27 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'main:pay'%}" target="__blank" >Make Payment</a>
                     {%endif%}
-                       {% if user.is_applicant%}
-                       <a class="dropdown-item" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
+                       {% if user.category == 4 %}
+                    
+                       <a class="dropdown-item" href="{% url 'main:layout' %}" target="__blank" >DC48 KENYA Services/Benefits</a>
                        <div class="dropdown-divider"></div>
+                       <a class="dropdown-item" href="{% url 'main:layout' %}" target="__blank" >CODA Services/Benefits</a>
+                       <div class="dropdown-divider"></div>
+                       
+                       
+                       {% else%}
                        <a class="dropdown-item" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
                        <div class="dropdown-divider"></div>
+                       <a class="dropdown-item" href="{% url 'main:contact'%}" target="__blank" >Apply for Internship</a>
+                       <div class="dropdown-divider"></div>
+                       <a class="dropdown-item" href="{% url 'main:contact'%}" target="__blank" >Apply for Training</a>
+                       <div class="dropdown-divider"></div>
+                       <a class="dropdown-item" href="{% url 'application:policies' %}" target="__blank" >Company Policies</a>
+                       <div class="dropdown-divider"></div>
                        {% endif %}
+                       <a class="dropdown-item" href="{% url 'main:pay'%}" target="__blank" >Make Payment</a>
+                       <div class="dropdown-divider"></div>
+                       <a class="dropdown-item" href="{% url 'main:contact'%}" target="__blank" >Help?</a>
                        <div class="dropdown-divider"></div>
                        <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     </div>
@@ -59,7 +73,6 @@
                                 {%endif%}
                             {% endfor %}
                             >
-                            
                 </div>
             </div>
         </div>

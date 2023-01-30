@@ -157,7 +157,6 @@ def CreateProfile():
 
 
 def login_view(request):
-
     form = LoginForm(request.POST or None)
     msg = None
     if request.method == "POST":
@@ -187,6 +186,9 @@ def login_view(request):
                     login(request, account)
                     return redirect('management:companyagenda')
 
+            elif account is not None and account.category == 4:
+                    login(request, account)
+                    return redirect("management:dckdashboard")
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
                 if account.profile.section == "A":
@@ -613,9 +615,7 @@ class TrackListView(ListView):
     #             <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
     #             </span>"""
     #         email_template(subject, to, html_content)
-
     #     return qs
-
 
 def usertracker(request, user=None, *args, **kwargs):
     # try:
@@ -712,9 +712,13 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 )[
                     0
                 ]
+                # if Development, Testing : 
+                # upto maximum 8 hours
+                # 0------8 max 
+                #
                 self.idval = idval
                 if (
-                    form.instance.sub_category == "Development"
+                    form.instance.sub_category == "Development"  
                     or form.instance.sub_category == "Testing"
                 ):
                     points = float(points) + (0.5 * form.instance.duration)

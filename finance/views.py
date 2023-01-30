@@ -130,7 +130,7 @@ def contract_form_submission(request):
 				return redirect('accounts:user-list', username=request.user)
 			else:
 				messages.success(request, f'Account created for {username}!')
-				return redirect('data:bitraining')
+				return redirect('management:companyagenda')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'

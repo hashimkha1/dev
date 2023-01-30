@@ -270,12 +270,24 @@ def coach_profile(request):
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST, request.FILES)
+        message=f'Thank You, we will get back to you within 48 hours.'
+        context={
+            "message":message,
+            # "link":SITEURL+'/management/companyagenda'
+        }
         if form.is_valid():
-            form.save()
-            return redirect("management:assessment")
+            # form.save()
+            instance=form.save(commit=False)
+            # instance.client_name='admin',
+            instance.task='NA',
+            instance.plan='NA',
+            instance.trained_by=request.user
+            instance.save()
+            # return redirect("management:assessment")
+            return render(request, "main/errors/generalerrors.html",context)
     else:
         form = ContactForm()
-    return render(request, "main/contact.html", {"form": form})
+    return render(request, "main/contact/contact_message.html", {"form": form})
 
 def report(request):
     return render(request, "main/report.html", {"title": "report"})
@@ -313,11 +325,7 @@ def payment(request,method):
     email_dck,cashapp,
     venmo,stan_account_no,
     coda_account_no,dck_account_no)=payment_details()
-    # print(phone_number,email_info,email_dck,
-    # cashapp,venmo,stan_account_no,
-    # coda_account_no)
     path_value,sub_title=path_values(request)
-    print(path_value,sub_title)
     subject='PAYMENT'
     url='email/payment/payment_method.html'
     message=f'Hi,{request.user.first_name}, an email has been sent \
@@ -349,7 +357,7 @@ def payment(request,method):
                     )
         return render(request, "main/errors/generalerrors.html",context)
     except:
-        return render(request, "main/errors/500.html", context)
+        return render(request, "main/errors/500.html")
 
 
 @login_required
@@ -357,8 +365,6 @@ def pay(request):
     url="https://www.codanalytics.net/static/main/img/service-3.jpg"
     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
     link=f'{SITEURL}/finance/new_contract/{request.user}/'
-    # print(link)
-    path_value=path_values(request)[0]
     images,image_names=image_view(request)
     try:
         payment_info = Payment_Information.objects.filter(
@@ -368,35 +374,32 @@ def pay(request):
             "title": "PAYMENT", 
             "images":images, 
             "image_name": image_names, 
-            # "image_url": image_url, 
-            # "image_path": image_path, 
             "payments": payment_info,
             "message": message,
             "link": link,
         }
         return render(request, "main/pay.html",context)
     except:
-        payment_history=Payment_History.objects.filter(
-                Q(customer__username="admin")| 
-                Q(customer__username="coda_info") 
-                ).latest('id')
-        context={
-            "title": "PAYMENT", 
-            "images":images, 
-            "image_name": image_name, 
-            "image_url": image_url, 
-            # "category": request.user.category, 
-            # "subcategory": request.user.sub_category, 
-            "payments": payment_history,
-            "message": message,
-            "link": link,
-        }
-        if request.user.category == 4 and request.user.sub_category == 6:
-            return render(request, "main/dck_pay.html",context)
-        else:
-            return render(request, "main/pay.html",context)
-
-        # return render(request, "main/errors/generalerrors.html", context)
+        try:
+            payment_history=Payment_History.objects.filter(
+                    Q(customer__username="admin")| 
+                    Q(customer__username="coda_info") 
+                    ).latest('id')
+            context={
+                "title": "PAYMENT", 
+                "images":images, 
+                "image_name": image_names, 
+                "payments": payment_history,
+                "message": message,
+                "link": link,
+            }
+            if request.user.category == 4 and request.user.sub_category == 6:
+                return render(request, "main/dck_pay.html",context)
+            else:
+                return render(request, "main/pay.html",context)
+        except :#payment_history.DoesNotExist as den:
+            return render(request, "management/contracts/contract_error.html", context)
+        
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
