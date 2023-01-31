@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
+DEBUG = False
 # DEBUG = os.environ.get("DEBUG_VALUE") == "True"
 
 ALLOWED_HOSTS = ["*"]
@@ -310,9 +310,9 @@ def payment_details():
 
 # from .utils import url
 # protocol,SITE_URL=url(request)
-SITEURL="http://localhost:8000"
+# SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
 # SITEURL = "https://codamakutano.herokuapp.com"
 #Uncomment for prod purposes
-# SITEURL = "https://www.codanalytics.net"
+SITEURL = "https://www.codanalytics.net"
 # SITEURL=SITE_URL
