@@ -518,15 +518,50 @@ def doc(request):
 #     # requests.post(url, data=payload)
 
 
-
-
-
+# def runwhatsapp(request):
+#     whatsapp()
+    # message=f'Hi,{request.user}, your messages have been post to your groups'
+    # context={
+    #     'title':'WHATSAPP',
+    #     'message':message
+    # }
+#     return render (request, "main/errors/generalerrors.html",context)
 
 def runwhatsapp(request):
-    whatsapp()
+    import requests
+    import json
+    group_id = "120363047226624982@g.us"
+    image_name = "image.jpg"
+    screen_id=26504
+    product_id='333b59c1-c310-43c0-abb5-e5c4f0379e61' #"6985f35e-b282-4316-91ef-83019d3e31c5"
+    image = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
+    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
+    url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+
+    payload = json.dumps({
+      "to_number": 'Dv23sZ5Ctxm9HJf2lQeFEu@c.us', # "120363047226624982@g.us",
+      "type": "text",
+      "message": "this text message send"
+    })
+
+    # payload = json.dumps({
+    #     "to_number": group_id,
+    #     "type": "media",
+    #     "message": image,
+    #     "filename": image_name
+    # })
+    headers = {
+        'accept': 'application/json',
+        'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686', # 'b914dbd3-e225-48c0-bdbf-cbffa39ce44c',
+        'Content-Type': 'application/json'
+    }
+    response = requests.request("POST", url, headers=headers, data=payload)
+    print(response.text)
     message=f'Hi,{request.user}, your messages have been post to your groups'
     context={
         'title':'WHATSAPP',
         'message':message
     }
+    # return HttpResponse(({"status": True, }))
     return render (request, "main/errors/generalerrors.html",context)

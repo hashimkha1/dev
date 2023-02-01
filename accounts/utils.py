@@ -1,6 +1,7 @@
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from datetime import date
 
 def agreement_data(request):
     contract_data = {}
