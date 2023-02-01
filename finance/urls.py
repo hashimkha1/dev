@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-                    PaymentCreateView,PaymentListView,
+                    PaymentCreateView,#PaymentListView,
                     TransanctionDetailView,TransactionListView,
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
@@ -11,8 +11,9 @@ from .views import (
 app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
+    
+    path('finance_report/', views.finance_report, name='finance_report'),
     path('transact/', views.transact, name='finance-transact'),
-    path('finance/', views.finance, name='finance'),
     path('transaction/', TransactionListView.as_view(), name='transaction-list'),
     path('transaction/<int:pk>/', TransanctionDetailView.as_view(), name='transaction-detail'),
     path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(template_name="finance/payments/transaction_form.html"), name='transaction-update'),
@@ -37,7 +38,10 @@ urlpatterns = [
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
-    path('payments/', PaymentListView.as_view(template_name='finance/payments/payments.html'), name='payments'),
+    path('pay/', views.pay, name='pay'),
+    path('payment_method/<str:method>/', views.payment, name='payment_method'),
+    path("payment_complete/", views.paymentComplete, name="payment_complete"),
+    path('payments/', views.payments, name='payments'),
     path('pay/<int:pk>/', views.PaymentInformationUpdateView.as_view(), name='updatepay'),
     
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
@@ -71,6 +75,5 @@ urlpatterns = [
     path("supplier/update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
-    # path("food/",views.FoodListView.as_view(),name="supplies"),
     path("food/",views.foodlist,name="supplies"),
 ]

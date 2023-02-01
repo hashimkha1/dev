@@ -124,6 +124,7 @@ def paymentconfigurations(PayslipConfig,employee):
              ).latest('id')
     return payslip_config
 
+
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
     start_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=last_day_of_prev_month1.day)

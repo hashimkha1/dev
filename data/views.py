@@ -15,7 +15,10 @@ from django.views.generic import (
         DetailView,
         UpdateView,
     )
-from data.forms import InterviewForm, DSUForm ,RoleForm,TrainingResponseForm
+from data.forms import (
+    PrepQuestionsForm,TrainingResponseForm,
+    InterviewForm, DSUForm ,RoleForm,
+)
 from main.utils import data_interview
 from data.models import (
     Interviews,
@@ -190,7 +193,9 @@ def prep_responses(request):
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    fields = ["company", 'category',"question", "response"]
+    template_name="data/interview/interview_progress/addquestions.html"
+    form_class=PrepQuestionsForm
+    # fields = ["company",'position', 'category',"question", "response"]
     # fields = "__all__"
     def form_valid(self, form):
         # form.instance.user = self.request.user
@@ -198,7 +203,8 @@ class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
 class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    fields = ["company", 'category',"question", "response","is_answered"]
+    template_name=''
+    # fields = ["company", 'position','category',"question", "response","is_answered"]
     # form = Prep_QuestionsForm()
     def form_valid(self, form):
         # form.instance.username = self.request.user

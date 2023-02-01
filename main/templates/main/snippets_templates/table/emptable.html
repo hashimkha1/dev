@@ -1,15 +1,16 @@
 <tbody>
     <tr>
         <!-- <td>{{employee.date_joined|date:"F d, Y"}}</td> -->
-        <td>{{employee.id}}</td>
-        <td>{{employee.username}}</td>
-        <td>{{employee.full_name}}</td>
-        <!-- <td>{{employee.first_name|slice:":15"}},{{employee.last_name|slice:":15" }}</td> -->
-        <td>{{employee.phone}}</td>
-        <td>{{employee.email}}</td>
-        <td>{{employee.city}}</td>
-        <!-- <td>{{employee.state}}</td> -->
-        <!-- <td>{{employee.country}}</td> -->
-        <td> <a class="article-title" href="{% url 'accounts:superuser-update' employee.id %}">Edit</a></td>
+        <td>{{instance.id}}</td>
+        <td>{{instance.date_joined|date:"F d, Y"}}</td>
+        <td>{{instance.username}}</td>
+        <td>{{instance.full_name}}</td>
+        <!-- <td>{{instance.first_name|slice:":15"}},{{instance.last_name|slice:":15" }}</td> -->
+        <td>{{instance.phone}}</td>
+        <td>{{instance.email}}</td>
+        <td>{{instance.city}}</td>
+        <!-- <td>{{instance.state}}</td> -->
+        <!-- <td>{{instance.country}}</td> -->
+        <td> <a class="article-title" href="{% url 'accounts:superuser-update' instance.id %}">Edit</a></td>
       </tr>
 </tbody>

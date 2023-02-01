@@ -292,9 +292,27 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
+#==================PAYMENT SETTINGS=================
+def payment_details():
+    # ================MPESA/CASHAPP/VENMO========================
+    phone_number = os.environ.get('PHONE_NUMBER')
+    email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
+    email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
+    cashapp = os.environ.get('CASHAPP') #'postgres',
+    venmo= os.environ.get('VENMO') #'postgres',
+    stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+    coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
+    dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
+    return (phone_number,email_info,
+            email_dck,cashapp,venmo,
+            stan_account_no,coda_account_no,
+            dck_account_no)
 
+# from .utils import url
+# protocol,SITE_URL=url(request)
 # SITEURL="http://localhost:8000"
 # SITEURL = "https://codadev.herokuapp.com"
 # SITEURL = "https://codamakutano.herokuapp.com"
 #Uncomment for prod purposes
 SITEURL = "https://www.codanalytics.net"
+# SITEURL=SITE_URL

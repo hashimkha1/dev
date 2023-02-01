@@ -27,7 +27,8 @@ class CustomerUser(AbstractUser):
         Full_time = 3
         Contractual = 4
         Agent = 5
-        Other = 6
+        DC48Kenya = 6
+        Other = 7
 
     class Score(models.IntegerChoices):
         Male = 1

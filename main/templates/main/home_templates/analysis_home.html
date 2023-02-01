@@ -1,4 +1,4 @@
-{%extends "main/base_templates/analysis_index.html"%} {% block content %}
+{%extends "main/base_templates/new_base.html"%} {% block content %}
 <!--------------------------Slider Section--------------------------------->
 <div id="slider">
     <div id="headerSlider" class="carousel slide" data-ride="carousel">
@@ -170,7 +170,7 @@
           <p class="gi">
             Gather, refine & document.
             <p class="bd">
-              <a href="{% url 'main:pay' %}" target="_blank">
+              <a href="{% url 'finance:pay' %}" target="_blank">
                 <button type="button" class="btn btn-primary">Here</button>
             </a>
             </p>
@@ -187,7 +187,7 @@
               <p>
               Become an ETL Developer.
               </p>
-              <a href="{% url 'main:pay' %}" target="_blank">
+              <a href="{% url 'finance:pay' %}" target="_blank">
                 <button type="button" class="btn btn-primary">More</button>
             </a>
           </p>
@@ -203,7 +203,7 @@
        <p>
            Click below to register for this course.
        </p>
-       <a href="{% url 'main:pay' %}" target="_blank">
+       <a href="{% url 'finance:pay' %}" target="_blank">
          <button type="button" class="btn btn-primary">Here</button>
      </a>
       </div>
@@ -219,7 +219,7 @@
       <p>
        Data Management & storage is at the heart of data analysis.  
       </p>
-      <a href="{% url 'main:pay' %}" target="_blank">
+      <a href="{% url 'finance:pay' %}" target="_blank">
         <button type="button" class="btn btn-primary">Here</button>
     </a>
     </div>
@@ -243,7 +243,7 @@
       </p>
     </div> 
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
-    <a href="{% url 'main:pay' %}" target="_blank">
+    <a href="{% url 'finance:pay' %}" target="_blank">
       <button type="button" class="btn btn-primary btn-lg">Get Started</button>
     </a>
   </div>

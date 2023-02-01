@@ -9,16 +9,16 @@
     <br>
     <h2 id="demo"></h2>
     <div class="album py-5 bg-light">
-        <h4 class="text-center text-dark">WELCOME TO HR DEPARTMENT</h4>
+        <h4 class="text-center text-dark">USER DASHBOARD</h4>
         <div class="container">
+            {% if user.is_client %}
             <div class="row">
-                
                 <div class="col-md-3 hover">
                     <h5 class="text-center text-dark">My Dashboard</h5>
                     <div style="border: 1px solid black;padding:20px;">
                             <p>Kindly,select an item to proceed</p>
                     </div>
-                    {% if user.is_client %}
+                    
                     <div style="border: 1px solid black;padding:20px;">
                         <a class="dropdown-item" href="{% url 'data:train'%}" target="__blank" >My Training</a>
                         <div class="dropdown-divider"></div>
@@ -36,20 +36,9 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'finance:newcontract' request.user %}" target="__blank" >New Contract</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'main:pay'%}" target="__blank" >Make Payment</a>
-                    {%endif%}
-                       {% if user.is_applicant%}
-                       <a class="dropdown-item" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
-                       <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
-                       <div class="dropdown-divider"></div>
-                       {% endif %}
-                       <div class="dropdown-divider"></div>
-                       <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                        <a class="dropdown-item" href="{% url 'finance:pay'%}" target="__blank" >Make Payment</a>
                     </div>
-                </div>
-
-                <div class="col-md-6 hover">
+                    <div class="col-md-6 hover">
                             <img 
                             {%for image in images%}
                                 {% if image.name == "bg_ceo_10222022_v1"%}
@@ -58,9 +47,45 @@
                                 {%endif%}
                             {% endfor %}
                             >
-                            
+                    </div>
+                    </div>
                 </div>
-            </div>
+                    {%endif%}
+                       {% if user.category == 1 or user.is_applicant%}
+                       <div class="row">
+                            <div class="col-md-2">
+                                <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <a  class="btn btn-secondary" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                            <div class="col-md-2">
+                                <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Internship</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                            <div class="col-md-3">
+                                <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Training</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                            <div class="col-md-2">
+                                <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >Company Policies</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                        </div>
+                            <div class="col-md-12 hover">
+                                <img 
+                                {%for image in images%}
+                                    {% if image.name == "bg_ceo_10222022_v1"%}
+                                        src="{{googledriveurl}}={{image.image_url}}"
+                                        style="width: 100%;height:100%;"
+                                    {%endif%}
+                                {% endfor %}
+                                >
+                        
+                            {% endif %}
+                    </div>
         </div>
     </div>
 </main>

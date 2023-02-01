@@ -26,9 +26,12 @@ from .models import (
 		DC48_Inflow
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
-# User=settings.AUTH_USER_MODEL
+from mail.custom_email import send_email
+from coda_project.settings import SITEURL,payment_details
 from management.utils import paymentconfigurations
 from management.views import loan_update_save
+from main.views import images
+from main.utils import image_view,download_image,Meetings,path_values
 from management.utils import loan_computation
 from main.filters import FoodFilter
 from .utils import check_default_fee
@@ -39,7 +42,8 @@ User = get_user_model()
 
 # Create your views here.
 
-def finance(request):
+
+def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
@@ -126,10 +130,17 @@ def contract_form_submission(request):
 			payment_history_data.save()
 			if payment:
 				messages.success(request, f'Added New Contract For the {username}!')
-				return redirect('accounts:user-list', username=request.user)
+				if request.user.category == 4 or request.user.is_superuser:
+					return redirect('management:dckdashboard')
+				if request.user.category == 3 and request.user.sub_category == 1 or request.user.is_superuser: 
+					return redirect('accounts:user-list', username=request.user)
+				if request.user.category == 3 and request.user.sub_category == 2 or request.user.is_superuser: 
+					return redirect('data:train')
+				else:
+					return redirect('management:companyagenda')
 			else:
 				messages.success(request, f'Account created for {username}!')
-				return redirect('data:bitraining')
+				return redirect('management:companyagenda')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
@@ -226,10 +237,12 @@ def newcontract(request, *args, **kwargs):
 			'contract_date':contract_date,
 			'default_fee':default_fee
 			}
-	if client_data.category == 3 and client_data.sub_category == 1:
+	if client_data.category == 3 and client_data.sub_category == 1 or request.user.is_superuser:
 		return render(request, 'management/contracts/supportcontract_form.html',context)
-	if client_data.category == 3 and client_data.sub_category == 2:
+	if client_data.category == 3 and client_data.sub_category == 2 or request.user.is_superuser:
 		return render(request, 'management/contracts/trainingcontract_form.html',context)
+	if client_data.category == 4 or request.user.is_superuser:
+		return render(request, 'management/contracts/generalcontract_form.html',context)
 	else:
 		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
 		context={"title": "CONTRACT", 
@@ -289,10 +302,112 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
-class PaymentListView(ListView):
-	model = Payment_History
-	template_name = "finance/payments/payments.html"
-	context_object_name = "payments"
+def payments(request):
+	payment_history=Payment_History.objects.all()
+	Payment_Info=Payment_Information.objects.all()
+	context={
+		"title":"Payments",
+		"payment_history":payment_history,
+		"Payment_Info":Payment_Info
+	}
+	return render(request,"finance/payments/payments.html",context)
+
+
+def payment(request,method):
+    (phone_number,email_info,
+    email_dck,cashapp,
+    venmo,stan_account_no,
+    coda_account_no,dck_account_no)=payment_details()
+    path_value,sub_title=path_values(request)
+    subject='PAYMENT'
+    url='email/payment/payment_method.html'
+    message=f'Hi,{request.user.first_name}, an email has been sent \
+            with {sub_title} details for your payment.In the unlikely event\
+            that you have not received it, kindly \
+            check your spam folder.'
+    context={
+                "title": "PAYMENT DETAILS",
+                'user': request.user.first_name,
+                "images":images, 
+                "message": message,
+        }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[request.user.email,], 
+                    subject=subject, html_template=url, 
+                    context={
+                            'subtitle': sub_title,
+                            'user': request.user.first_name,
+                            'mpesa_number':phone_number,
+                            'cashapp':cashapp,
+                            'venmo':venmo,
+                            'stan_account_no':stan_account_no,
+                            'coda_account_no':coda_account_no,
+                            'dck_account_no':dck_account_no,
+                            'email':email_info,
+                            'email':email_dck,
+                            }
+                    )
+        return render(request, "main/errors/generalerrors.html",context)
+    except:
+        return render(request, "main/errors/500.html")
+
+
+@login_required
+def pay(request):
+    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
+    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+    link=f'{SITEURL}/finance/new_contract/{request.user}/'
+    images,image_names=image_view(request)
+    try:
+        payment_info = Payment_Information.objects.filter(
+            customer_id=request.user.id
+        ).first()
+        context={
+            "title": "PAYMENT", 
+            "images":images, 
+            "image_name": image_names, 
+            "payments": payment_info,
+            "message": message,
+            "link": link,
+        }
+        return render(request, "finance/payments/pay.html",context)
+    except:
+        return render(request, "management/contracts/contract_error.html", context)
+        
+
+def paymentComplete(request):
+    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+    # print(payments)
+    customer = request.user
+    body = json.loads(request.body)
+    # print("payment_complete:", body)
+    payment_fees = body["payment_fees"]
+    down_payment = payments.down_payment
+    studend_bonus = payments.student_bonus
+    plan = payments.plan
+    fee_balance = payments.fee_balance
+    payment_mothod = payments.payment_method
+    contract_submitted_date = payments.contract_submitted_date
+    client_signature = payments.client_signature
+    company_rep = payments.company_rep
+    client_date = payments.client_date
+    rep_date = payments.rep_date
+    Payment_History.objects.create(
+        customer=customer,
+        payment_fees=payment_fees,
+        down_payment=down_payment,
+        student_bonus=studend_bonus,
+        plan=plan,
+        fee_balance=fee_balance,
+        payment_method=payment_mothod,
+        contract_submitted_date=contract_submitted_date,
+        client_signature=client_signature,
+        company_rep=company_rep,
+        client_date=client_date,
+        rep_date=rep_date,
+    )
+    return JsonResponse("Payment completed!", safe=False)
 
 class DefaultPaymentListView(ListView):
 	model = Default_Payment_Fees
@@ -328,10 +443,11 @@ class DefaultPaymentUpdateView(UpdateView):
 		return False
 
 
+
 # For payment purposes
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
-	success_url = "/pay/"
+	success_url = "/finance/pay/"
 	template_name="main/snippets_templates/generalform.html"
 	
 	# fields ="__all__"

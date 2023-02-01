@@ -1,6 +1,45 @@
+import requests
+import string
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
+
+from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
+from .models import Service,Assets
+
+
+def path_values(request):
+    value=request.path.split("/")
+    path_values = [i for i in value if i.strip()]
+    sub_title=path_values[-1]
+    return path_values,sub_title
+
+#===============Downloading Image==================
+def download_image(url):
+    # Path definition
+    image_path = "media/data/image.jpg"
+    res = requests.get(url, stream=True)
+    if res.status_code == 200:
+        with open(image_path, "wb") as f:
+            f.write(res.content)
+        # print("Image sucessfully Downloaded: ", image_path)
+    else:
+        print("Image Couldn't be retrieved")
+    return image_path
+
+#===============Processing Images from Database==================
+def image_view(request):
+    sub_title=path_values(request)[-1]
+    images= Assets.objects.all()
+    image_names=Assets.objects.values_list('name',flat=True)
+    # image_list=[image for image in images ]
+    # team_images=[image for image in images ]
+    # picture2=[pic for pic in image_names]
+    # picture3=[s.translate(string.punctuation) for s in picture]
+    # if sub_title in picture2:
+    #     image_name=pic.name
+    #     image_url=image.image_url
+    return images,image_names
 
 
 
@@ -124,10 +163,10 @@ data_interview = [
     {
         "Inteview": "1. Transcripts",
         # "Concentration": "Data Analysis",
-        "Description": "Write Your Responses to all 7 questions",
+        "Description": "Write Your Responses to 8 Topics",
         "Duration": "5 Days/3 Runs",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/data/iuploads/",
+        "Link": SITEURL+"/data/iuploads/",
     },
     
     {
@@ -136,14 +175,14 @@ data_interview = [
         "Description": "Self recorded practice sessions for all 8 questions",
         "Duration": "5 Days/24 sessions",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/management/sessions",
+        "Link": SITEURL+"/management/sessions",
     },
     {
         "Inteview": "3. Role-Concentration",
         "Description": "Interact with a database of 80 Technical Interview Questions",
         "Duration": "5 Days	",
         "Lead": "Self/Coach",
-        "Link": "https://www.codanalytics.net/data/prepquestions/",
+        "Link": SITEURL+"/data/prepquestions/",
     },
     {
         "Inteview": "4. Mock Interviews",
@@ -278,11 +317,11 @@ Meetings = [
 #     {
 #      "Automation":{
 #         "title": "1. Transcripts",
-#         "link": "https://www.codanalytics.net/data/iuploads/",
+#        "link": "SITEURL+"/data/iuploads/",
 #     },
 #     "Stocks&Options":{
 #         "title": "1. Transcripts",
-#         "link": "https://www.codanalytics.net/data/iuploads/",
+#        "link": "SITEURL+"/data/iuploads/",
 #     },
 #     }
 # ]
@@ -329,3 +368,5 @@ Management = [
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]
+
+

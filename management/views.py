@@ -73,6 +73,10 @@ def home(request):
         request, "main/home_templates/management_home.html", {"title": "home"}
     )
 
+def dckdashboard(request):
+    # departments = Department.objects.filter(is_active=True)
+    return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
+
 
 # ================================DEPARTMENT SECTION================================
 def department(request):
@@ -149,8 +153,10 @@ def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
-
-    return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+    if request.user.category == 4:
+        return render(request, "management/departments/agenda/dck_dashboard.html", {"title": "dck dashboard"})
+    else:
+        return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
 
 
 def updatelinks_companyagenda(request):
@@ -1276,7 +1282,7 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                # html_content = f"""
+                # html_content = f"""""
                 #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
                 #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
                 #     kwargs={'pk':form.instance.id})}'>click here</a><br>

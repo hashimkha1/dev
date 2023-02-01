@@ -20,6 +20,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
+from .utils import agreement_data
 from main.filters import CredentialFilter
 from management.models import Task
 from application.models import UserProfile
@@ -43,7 +44,6 @@ def thank(request):
 def join(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
-
         if len(previous_user) > 0:
             messages.success(request, f'User already exist with this email')
             form = UserForm()
@@ -67,7 +67,6 @@ def join(request):
                 student_data["country"] = request.POST.get("country")
                 student_data["resume_file"] = request.POST.get("resume_file")
                 today = date.today()
-
                 contract_date = today.strftime("%d %B, %Y")
                 check_default_fee = Default_Payment_Fees.objects.all()
                 if check_default_fee:
@@ -75,7 +74,7 @@ def join(request):
                     default_fee = Default_Payment_Fees.objects.all().first()
                 else:
                     default_payment_fees = Default_Payment_Fees(
-                        job_down_payment_per_month=500,
+                        job_down_payment_per_month=1000,
                         job_plan_hours_per_month=40,
                         student_down_payment_per_month=500,
                         student_bonus_payment_per_month=100,
@@ -102,7 +101,19 @@ def join(request):
                 ):
                     return render(
                         request,
-                        "management/doc_templates/trainingcontract_form.html",
+                        "management/contracts/trainingcontract_form.html",
+                        {
+                            "student_data": student_data,
+                            "contract_date": contract_date,
+                            "default_fee": default_fee,
+                        },
+                    )
+                if (
+                    request.POST.get("category") == "4"
+                ):
+                    return render(
+                        request,
+                        "management/contracts/trainingcontract_form.html",
                         {
                             "student_data": student_data,
                             "contract_date": contract_date,
@@ -142,7 +153,7 @@ def join(request):
                 category = form.cleaned_data.get('category')
                 gender = form.cleaned_data.get('gender')
                 country = form.cleaned_data.get('country')
-                messages.success(request, f'Account created for {username}!')
+                # messages.success(request, f'Account created for {username}!')
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"
@@ -158,7 +169,6 @@ def CreateProfile():
 
 
 def login_view(request):
-
     form = LoginForm(request.POST or None)
     msg = None
     if request.method == "POST":
@@ -188,6 +198,9 @@ def login_view(request):
                     login(request, account)
                     return redirect('management:companyagenda')
 
+            elif account is not None and account.category == 4:
+                    login(request, account)
+                    return redirect("management:dckdashboard")
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
                 if account.profile.section == "A":
@@ -202,7 +215,6 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect("application:interview")
-
             elif account is not None and account.category == 1:
                 if account.country in ("KE", "UG", "RW", "TZ"):  # Male
                     if account.gender == 1:
@@ -511,6 +523,10 @@ def clientlist(request):
                                              Q(category=3), Q(sub_category=2),
                                              Q(is_client=True),Q(is_active=True)
                                           ).order_by("-date_joined")
+    dck_users = CustomerUser.objects.filter(
+                                             Q(category=4), Q(sub_category=6),
+                                             Q(is_applicant=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
     past = CustomerUser.objects.filter(
                                              Q(category=3)|Q(is_client=True),
                                              Q(is_active=False)
@@ -519,9 +535,13 @@ def clientlist(request):
         "students": students,
         "jobsupport": jobsupport,
         "interview": interview,
+        "dck_users": dck_users,
         "past": past
     }
-    return render(request, "accounts/clients/clientlist.html", context)
+    if request.user.category == 4 and request.user.sub_category == 6:
+        return render(request, "accounts/clients/dcklist.html", context)
+    else:
+        return render(request, "accounts/clients/clientlist.html", context)
 
 
 @method_decorator(login_required, name="dispatch")
@@ -607,9 +627,7 @@ class TrackListView(ListView):
     #             <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
     #             </span>"""
     #         email_template(subject, to, html_content)
-
     #     return qs
-
 
 def usertracker(request, user=None, *args, **kwargs):
     # try:
@@ -706,9 +724,13 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 )[
                     0
                 ]
+                # if Development, Testing : 
+                # upto maximum 8 hours
+                # 0------8 max 
+                #
                 self.idval = idval
                 if (
-                    form.instance.sub_category == "Development"
+                    form.instance.sub_category == "Development"  
                     or form.instance.sub_category == "Testing"
                 ):
                     points = float(points) + (0.5 * form.instance.duration)

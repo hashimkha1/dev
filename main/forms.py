@@ -86,15 +86,27 @@ class ContactForm(forms.ModelForm):
             "uploaded",
         ]
         labels = {
-            "type": "Client/Staff?",
+            "type": "Are You a Client/Staff?(Select Other if None of the above)",
             "client_name": "Manager",
             "trained_by": "Staff/Employee",
-            "category": "Category",
+            "category": "Pick your Category</h2>",
             "task": "What Did You Work On?",
             "plan": "What is your next plan of action on areas that you have not touched on?",
-            "challenge": "What specific questions/Challenges are you facing?",
+            "challenge": "How Can We Help You?",
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
+
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields['trained_by'].required=False
+        self.fields['client_name'].required=False
+        self.fields['type'].required=False
+        self.fields['category'].required=False
+        self.fields['task'].required=False
+        self.fields['plan'].required=False
+        self.fields['challenge'].required=False
+        # self.fields['uploaded'].required=False
+
 '''
 from .models import Codadoc
 
