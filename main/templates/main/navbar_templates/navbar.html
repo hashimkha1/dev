@@ -147,7 +147,7 @@
         >
         {% endif %}
         {% if request.user.is_client or request.user.is_employee or request.user.is_applicant and request.user.is_authenticated  and request.user.customer_payment_history.payment_fees < 3000 %}
-          <a class="nav-item nav-link" href="{% url 'main:pay' %}"
+          <a class="nav-item nav-link" href="{% url 'finance:pay' %}"
           >Make Payment {{request.user.customer_payment_history.payment_fees}}</a>
         >
         {% else %}

@@ -20,6 +20,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
+from .utils import agreement_data
 from main.filters import CredentialFilter
 from management.models import Task
 from application.models import UserProfile
@@ -66,7 +67,6 @@ def join(request):
                 student_data["country"] = request.POST.get("country")
                 student_data["resume_file"] = request.POST.get("resume_file")
                 today = date.today()
-
                 contract_date = today.strftime("%d %B, %Y")
                 check_default_fee = Default_Payment_Fees.objects.all()
                 if check_default_fee:
@@ -98,6 +98,18 @@ def join(request):
                 if (
                     request.POST.get("category") == "3"
                     and request.POST.get("sub_category") == "2"
+                ):
+                    return render(
+                        request,
+                        "management/contracts/trainingcontract_form.html",
+                        {
+                            "student_data": student_data,
+                            "contract_date": contract_date,
+                            "default_fee": default_fee,
+                        },
+                    )
+                if (
+                    request.POST.get("category") == "4"
                 ):
                     return render(
                         request,
@@ -141,7 +153,7 @@ def join(request):
                 category = form.cleaned_data.get('category')
                 gender = form.cleaned_data.get('gender')
                 country = form.cleaned_data.get('country')
-                messages.success(request, f'Account created for {username}!')
+                # messages.success(request, f'Account created for {username}!')
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"

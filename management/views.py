@@ -153,8 +153,10 @@ def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
-
-    return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+    if request.user.category == 4:
+        return render(request, "management/departments/agenda/dck_dashboard.html", {"title": "dck dashboard"})
+    else:
+        return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
 
 
 def updatelinks_companyagenda(request):

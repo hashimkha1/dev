@@ -43,7 +43,7 @@
                                 </div>
                             </div>
                         </div>
-          
+                
                   <!-- Set up a container element for the button -->
                   <!-- Include the PayPal JavaScript SDK -->
                   <!-- <script src="https://www.paypal.com/sdk/js?client-id=AemSepU21NzcaMEfxSeOLtbQXldABFn6c7Oe8rPYTMROlEaPUvfFifzL3xc8SVqb_7wLF0RNQ2U8UWlW&currency=USD"></script> -->
@@ -73,7 +73,7 @@
                     }
                     var csrftoken = getCookie('csrftoken');
                       function completeOrder(){
-                        var url = "{% url 'main:payment_complete' %}"
+                        var url = "{% url 'finance:payment_complete' %}"
           
                         fetch(url, {
                           method:'POST',
@@ -128,28 +128,28 @@
                             <div class="row text-center">
                               <div class="col-md-3" id="gi">
                                 {% with 'cashapp' as cashapp %}
-                                <a href="{% url 'main:payment_method' cashapp %}" target="_blank">
+                                <a href="{% url 'finance:payment_method' cashapp %}" target="_blank">
                                   <button type="button" class="btn btn-secondary btn-lg">cashapp</button>
                                 </a>
                                 {% endwith %}
                               </div>
                               <div class="col-md-3" id="gi">
                                 {% with 'zelle' as zelle %}
-                                <a href="{% url 'main:payment_method' zelle %}" target="_blank">
+                                <a href="{% url 'finance:payment_method' zelle %}" target="_blank">
                                   <button type="button" class="btn btn-primary btn-lg">CODA Zelle</button>
                                 </a>
                                 {% endwith %}
                               </div>
                               <div class="col-md-3" id="gi">
                                 {% with 'dck' as dck %}
-                                <a href="{% url 'main:payment_method' dck %}" target="_blank">
+                                <a href="{% url 'finance:payment_method' dck %}" target="_blank">
                                   <button type="button" class="btn btn-primary btn-lg">DCK48 Zelle</button>
                                 </a>
                                 {% endwith %}
                               </div>
                               <div class="col-md-3" id="gi">
                                 {% with 'mpesa' as mpesa %}
-                                <a href="{% url 'main:payment_method' mpesa %}" target="_blank">
+                                <a href="{% url 'finance:payment_method' mpesa %}" target="_blank">
                                   <button type="button" class="btn btn-danger btn-lg">Mpesa</button>
                                 </a>
                                 {% endwith %}

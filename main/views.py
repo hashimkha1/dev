@@ -13,8 +13,6 @@ from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from coda_project.task import advertisement
-from mail.custom_email import send_email
-from coda_project.settings import SITEURL,payment_details
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from whatsapp.script import whatsapp
@@ -320,120 +318,120 @@ class ImageUpdateView(LoginRequiredMixin,UpdateView):
         return reverse('main:images') 
 
 
-def payment(request,method):
-    (phone_number,email_info,
-    email_dck,cashapp,
-    venmo,stan_account_no,
-    coda_account_no,dck_account_no)=payment_details()
-    path_value,sub_title=path_values(request)
-    subject='PAYMENT'
-    url='email/payment/payment_method.html'
-    message=f'Hi,{request.user.first_name}, an email has been sent \
-            with {sub_title} details for your payment.In the unlikely event\
-            that you have not received it, kindly \
-            check your spam folder.'
-    context={
-                "title": "PAYMENT DETAILS",
-                'user': request.user.first_name,
-                "images":images, 
-                "message": message,
-        }
-    try:
-        send_email( category=request.user.category, 
-                    to_email=[request.user.email,], 
-                    subject=subject, html_template=url, 
-                    context={
-                            'subtitle': sub_title,
-                            'user': request.user.first_name,
-                            'mpesa_number':phone_number,
-                            'cashapp':cashapp,
-                            'venmo':venmo,
-                            'stan_account_no':stan_account_no,
-                            'coda_account_no':coda_account_no,
-                            'dck_account_no':dck_account_no,
-                            'email':email_info,
-                            'email':email_dck,
-                            }
-                    )
-        return render(request, "main/errors/generalerrors.html",context)
-    except:
-        return render(request, "main/errors/500.html")
+# def payment(request,method):
+#     (phone_number,email_info,
+#     email_dck,cashapp,
+#     venmo,stan_account_no,
+#     coda_account_no,dck_account_no)=payment_details()
+#     path_value,sub_title=path_values(request)
+#     subject='PAYMENT'
+#     url='email/payment/payment_method.html'
+#     message=f'Hi,{request.user.first_name}, an email has been sent \
+#             with {sub_title} details for your payment.In the unlikely event\
+#             that you have not received it, kindly \
+#             check your spam folder.'
+#     context={
+#                 "title": "PAYMENT DETAILS",
+#                 'user': request.user.first_name,
+#                 "images":images, 
+#                 "message": message,
+#         }
+#     try:
+#         send_email( category=request.user.category, 
+#                     to_email=[request.user.email,], 
+#                     subject=subject, html_template=url, 
+#                     context={
+#                             'subtitle': sub_title,
+#                             'user': request.user.first_name,
+#                             'mpesa_number':phone_number,
+#                             'cashapp':cashapp,
+#                             'venmo':venmo,
+#                             'stan_account_no':stan_account_no,
+#                             'coda_account_no':coda_account_no,
+#                             'dck_account_no':dck_account_no,
+#                             'email':email_info,
+#                             'email':email_dck,
+#                             }
+#                     )
+#         return render(request, "main/errors/generalerrors.html",context)
+#     except:
+#         return render(request, "main/errors/500.html")
 
 
-@login_required
-def pay(request):
-    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
-    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-    link=f'{SITEURL}/finance/new_contract/{request.user}/'
-    images,image_names=image_view(request)
-    try:
-        payment_info = Payment_Information.objects.filter(
-            customer_id=request.user.id
-        ).first()
-        context={
-            "title": "PAYMENT", 
-            "images":images, 
-            "image_name": image_names, 
-            "payments": payment_info,
-            "message": message,
-            "link": link,
-        }
-        return render(request, "main/pay.html",context)
-    except:
-        try:
-            payment_history=Payment_History.objects.filter(
-                    Q(customer__username="admin")| 
-                    Q(customer__username="coda_info") 
-                    ).latest('id')
-            context={
-                "title": "PAYMENT", 
-                "images":images, 
-                "image_name": image_names, 
-                "payments": payment_history,
-                "message": message,
-                "link": link,
-            }
-            if request.user.category == 4 and request.user.sub_category == 6:
-                return render(request, "main/dck_pay.html",context)
-            else:
-                return render(request, "main/pay.html",context)
-        except :#payment_history.DoesNotExist as den:
-            return render(request, "management/contracts/contract_error.html", context)
+# @login_required
+# def pay(request):
+#     url="https://www.codanalytics.net/static/main/img/service-3.jpg"
+#     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+#     link=f'{SITEURL}/finance/new_contract/{request.user}/'
+#     images,image_names=image_view(request)
+#     try:
+#         payment_info = Payment_Information.objects.filter(
+#             customer_id=request.user.id
+#         ).first()
+#         context={
+#             "title": "PAYMENT", 
+#             "images":images, 
+#             "image_name": image_names, 
+#             "payments": payment_info,
+#             "message": message,
+#             "link": link,
+#         }
+#         return render(request, "finance/payments/pay.html",context)
+#     except:
+#         # try:
+#         #     payment_history=Payment_History.objects.filter(
+#         #             Q(customer__username="admin")| 
+#         #             Q(customer__username="coda_info") 
+#         #             ).latest('id')
+#         #     context={
+#         #         "title": "PAYMENT", 
+#         #         "images":images, 
+#         #         "image_name": image_names, 
+#         #         "payments": payment_history,
+#         #         "message": message,
+#         #         "link": link,
+#         #     }
+#         #     if request.user.category == 4 and request.user.sub_category == 6:
+#         #         return render(request, "finance/payments/pay.html",context)
+#         #     else:
+#         #         return render(request, "finance/payments/pay.html",context)
+#         # except :#payment_history.DoesNotExist as den:
+#         return render(request, "management/contracts/contract_error.html", context)
         
 
-def paymentComplete(request):
-    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-    # print(payments)
-    customer = request.user
-    body = json.loads(request.body)
-    # print("payment_complete:", body)
-    payment_fees = body["payment_fees"]
-    down_payment = payments.down_payment
-    studend_bonus = payments.student_bonus
-    plan = payments.plan
-    fee_balance = payments.fee_balance
-    payment_mothod = payments.payment_method
-    contract_submitted_date = payments.contract_submitted_date
-    client_signature = payments.client_signature
-    company_rep = payments.company_rep
-    client_date = payments.client_date
-    rep_date = payments.rep_date
-    Payment_History.objects.create(
-        customer=customer,
-        payment_fees=payment_fees,
-        down_payment=down_payment,
-        student_bonus=studend_bonus,
-        plan=plan,
-        fee_balance=fee_balance,
-        payment_method=payment_mothod,
-        contract_submitted_date=contract_submitted_date,
-        client_signature=client_signature,
-        company_rep=company_rep,
-        client_date=client_date,
-        rep_date=rep_date,
-    )
+# def paymentComplete(request):
+#     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+#     # print(payments)
+#     customer = request.user
+#     body = json.loads(request.body)
+#     # print("payment_complete:", body)
+#     payment_fees = body["payment_fees"]
+#     down_payment = payments.down_payment
+#     studend_bonus = payments.student_bonus
+#     plan = payments.plan
+#     fee_balance = payments.fee_balance
+#     payment_mothod = payments.payment_method
+#     contract_submitted_date = payments.contract_submitted_date
+#     client_signature = payments.client_signature
+#     company_rep = payments.company_rep
+#     client_date = payments.client_date
+#     rep_date = payments.rep_date
+#     Payment_History.objects.create(
+#         customer=customer,
+#         payment_fees=payment_fees,
+#         down_payment=down_payment,
+#         student_bonus=studend_bonus,
+#         plan=plan,
+#         fee_balance=fee_balance,
+#         payment_method=payment_mothod,
+#         contract_submitted_date=contract_submitted_date,
+#         client_signature=client_signature,
+#         company_rep=company_rep,
+#         client_date=client_date,
+#         rep_date=rep_date,
+#     )
 
-    return JsonResponse("Payment completed!", safe=False)
+#     return JsonResponse("Payment completed!", safe=False)
 
 
 def training(request):

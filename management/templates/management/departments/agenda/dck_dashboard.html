@@ -9,14 +9,17 @@
 <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
 <main>
     <div class="row text-center">
-        <div class="col-md-3">
+        <div class="col-md-2">
           <a href="{% url 'main:layout' %}" class="btn btn-secondary">DC48 KENYA Services</a>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
           <a href="{% url 'main:layout' %}" class="btn btn-secondary">CODA Services</a>
       </div>
+      <div class="col-md-2">
+        <a href="{% url 'finance:pay'%}" class="btn btn-secondary">Make Payment</a>
+      </div>
       <div class="col-md-3">
-        <a href="{% url 'main:pay'%}" class="btn btn-secondary">Make Payment</a>
+        <a href="{% url 'finance:newcontract' request.user%}" class="btn btn-secondary">New Contract</a>
       </div>
       <div class="col-md-3">
           <a href="{% url 'main:contact'%}" class="btn btn-secondary">Help?</a>

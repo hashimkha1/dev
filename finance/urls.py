@@ -38,8 +38,10 @@ urlpatterns = [
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
+    path('pay/', views.pay, name='pay'),
+    path('payment_method/<str:method>/', views.payment, name='payment_method'),
+    path("payment_complete/", views.paymentComplete, name="payment_complete"),
     path('payments/', views.payments, name='payments'),
-    # path('payments/', PaymentListView.as_view(template_name='finance/payments/payments.html'), name='payments'),
     path('pay/<int:pk>/', views.PaymentInformationUpdateView.as_view(), name='updatepay'),
     
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
@@ -73,6 +75,5 @@ urlpatterns = [
     path("supplier/update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
-    # path("food/",views.FoodListView.as_view(),name="supplies"),
     path("food/",views.foodlist,name="supplies"),
 ]
