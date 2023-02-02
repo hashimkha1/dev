@@ -125,7 +125,7 @@
               >Support</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropDown">
                       {% if user.is_admin or  user.is_employee or  user.is_superuser %}
-                            <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
+                            <a class="dropdown-item"href="{% url 'main:contact' %}" target="" >Help?</a >
                               <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{% url 'management:requirements-active' %}" target="" >Active Requirements</a>
                               <div class="dropdown-divider"></div>
@@ -140,7 +140,7 @@
                               <a class="dropdown-item" href="{% url 'testing:all_logs'%}" target="" >Logs</a>
                                 <div class="dropdown-divider"></div>
                       {% else %}
-                      <a class="dropdown-item" href="{% url 'main:layout' %}" target="" >Help?</a>
+                      <a class="dropdown-item" href="{% url 'main:contact' %}" target="" >Help?</a>
                       {% endif %}
                 </div>
           </li>
