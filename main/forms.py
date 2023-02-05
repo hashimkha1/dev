@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm, Textarea
 from django.contrib.auth.forms import UserCreationForm
 from accounts.models import CustomerUser, Tracker,CredentialCategory,Credential
+from management.models import Whatsapp
 from django.utils.translation import gettext_lazy as _
 
 # from .models import Expenses
@@ -107,12 +108,20 @@ class ContactForm(forms.ModelForm):
         self.fields['challenge'].required=False
         # self.fields['uploaded'].required=False
 
-'''
-from .models import Codadoc
-
-class CodadocumentsForm(forms.ModelForm):
+class WhatsappForm(forms.ModelForm):
     class Meta:
-        model = Codadoc
-        fields = ['id','document_name','description','codadoc']
-
-'''
+        model = Whatsapp
+        fields = [
+                    "group_name",
+                    "group_id",
+                    "image_url",
+                    "message",
+                    # "created_at",
+                    # "updated_at",
+        ]
+        labels = {
+                    "group_name":"Enter Whatsapp Group",
+                    "group_id ":"Enter Whatsapp Group id",
+                    "image_url":"Enter url Image",
+                    "message":"Describe the message to be posted",
+        }

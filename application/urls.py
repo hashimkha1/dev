@@ -18,6 +18,7 @@ urlpatterns = [
         name="applicant-delete",
     ),
     path("applicants/", views.applicantlist, name="applicants"),
+    path("dckmembers/", views.applicantlist, name="dckmembers"),
     path("interview/", views.interview, name="interview"),
     path("first_interview/", views.first_interview, name="first_interview"),
     path("firstinterview/", views.firstinterview, name="firstinterview"),

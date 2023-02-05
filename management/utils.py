@@ -103,15 +103,20 @@ def payinitial(tasks):
     Maxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
     Earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     Maxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    # current Pay Values
-    points = round(Points.get("Your_Total_Points"))
-    mxpoints = round(Maxpoints.get("Your_Total_MaxPoints"))
-    pay = Earning.get("Your_Total_Pay")
-    GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
     try:
+    # current Pay Values
+        points = round(Points.get("Your_Total_Points"))
+        mxpoints = round(Maxpoints.get("Your_Total_MaxPoints"))
+        pay = Earning.get("Your_Total_Pay")
+        GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
         pointsbalance = Decimal(mxpoints) - Decimal(points)
     except (TypeError, AttributeError):
-        pointsbalance = 0
+        points=0.00
+        mxpoints=0.00
+        pay=0.00
+        GoalAmount=0.00
+        pointsbalance=0.00
+        pointsbalance=0.00
     return (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)
 
 def paymentconfigurations(PayslipConfig,employee):
@@ -273,45 +278,6 @@ def addloantable(loantable,employee,total_pay,payslip_config,user_data):
 
     return None
 
-# def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
-#     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-#     # training_loan = user_data.order_by('-id')[0]
-#     try:
-#         training_loan = user_data.order_by('-id')[0]
-#     except:
-#         training_loan=None
-#     if training_loan:
-#         loan_data=user_data.update(
-#         user=employee,
-#         category="Debit",
-#         amount=loan_amount,
-#         # created_at,
-#         # updated_at=2022-10-10,
-#         # is_active,
-#         training_loan_amount=loan_amount,
-#         total_earnings_amount=total_pay,
-#         # deduction_date,
-#         deduction_amount=loan_payment,
-#         balance_amount=balance_amount,
-#         )
-#     else:
-#         loan_data=loantable(
-#                 user=employee,
-#                 category="Debit",
-#                 amount=loan_amount,
-#                 # created_at,
-#                 # updated_at=today,
-#                 # is_active,
-#                 training_loan_amount=loan_amount,
-#                 total_earnings_amount=total_pay,
-#                 # deduction_date,
-#                 deduction_amount=loan_payment,
-#                 balance_amount=balance_amount,
-#                 )
-#         loan_data.save()
-#     return 
-
-
 
 def lap_save_bonus(userprofile,lbandls,LBLS):
     """Computes the laptop savings, Laptop Bonusloan payment and loan balance for an employee"""
@@ -351,10 +317,9 @@ def deductions(user_data,payslip_config,total_pay):
 
 def bonus(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,lbandls,LBLS)
     month=paytime()[3]
     day=paytime()[5]
-    print(month)
-    print(day)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     if payslip_config:
         # -------------points earning-----------
@@ -363,7 +328,7 @@ def bonus(tasks,total_pay,payslip_config):
                 bonus_points_ammount = Decimal(0)
                 # EOM =payslip_config.eom_bonus   # employee of month
         # -------------Laptop Bonus-----------
-        Lap_Bonus = payslip_config.lb_amount
+        Lap_Bonus = laptop_bonus #payslip_config.lb_amount
         # -------------holiday earning-----------
         offpay = payslip_config.holiday_pay if month in (12, 1) and day in (24, 25, 26, 31, 1, 2) else Decimal(0.00)
         # -------------late Night earning-----------
@@ -391,9 +356,8 @@ def additional_earnings(user_data,tasks,total_pay,payslip_config):
     sub_bonus=(Decimal(bonus_points_ammount)+Decimal(latenight_Bonus)+
               +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+
               Decimal(Lap_Bonus))
+    print("Test bonus",Lap_Bonus)
     # ===============DEDUCTIONS=======================
-    # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    # *_,total_deductions=deductions(payslip_config,total_pay)
     total_deduction=deductions(user_data,payslip_config,total_pay)[-1]
     print(f'LOAN AMOUNT={total_deduction}')
     return total_deduction,sub_bonus

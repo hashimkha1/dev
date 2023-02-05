@@ -32,7 +32,7 @@ from management.models import Policy,Task
 from .utils import alteryx_list, dba_list, posts, tableau_list
 from datetime import datetime, timedelta
 from mail.custom_email import send_email
-
+from main.utils import path_values
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -70,13 +70,35 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 def applicantlist(request):
     # applications = Application.objects.filter().order_by("-application_date")
-    applicants = CustomerUser.objects.filter(is_applicant=True,is_active=True).order_by("-date_joined")
-    print(applicants)
-    context = {
-            # "applications": applications, 
-             "applicants": applicants
+    path_list,sub_title=path_values(request)
+    print(path_list,sub_title)
+    subcategory = CustomerUser.objects.values_list("sub_category",flat=True).filter(sub_category=None)
+    print(subcategory)
+    coda_applicants = CustomerUser.objects.filter(
+        category=1,
+        sub_category=None,
+        is_applicant=True,
+        is_active=True
+        ).order_by("-date_joined")
+    dck_applicants = CustomerUser.objects.filter(
+        category=4,
+        sub_category=6,
+        is_applicant=True,
+        is_active=True
+        ).order_by("-date_joined")
+    applicants_context = {
+             "sub_title": sub_title,
+             "applicants": coda_applicants
          }
-    return render(request, "application/applications/applicants.html", context)
+    dck_context = {
+             "sub_title": sub_title,
+             "applicants": dck_applicants
+         }
+    
+    if sub_title=='applicants':
+        return render(request, "application/applications/applicants.html", applicants_context)
+    if sub_title=='dckmembers':
+        return render(request, "application/applications/applicants.html",  dck_context)
 
 """
 class ApplicantDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):

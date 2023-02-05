@@ -1,9 +1,10 @@
+import requests
+import json
 from django.http import JsonResponse
 from django.db.models import Q
 from celery import shared_task
 from django.shortcuts import redirect, render
 from django.contrib import messages
-import json
 import calendar,string
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
@@ -16,6 +17,8 @@ from coda_project.task import advertisement
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
+from management.models import Whatsapp
+from main.forms import WhatsappForm
 from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
@@ -283,6 +286,12 @@ def it(request):
 
 def finance(request):
     return render(request, "main/departments/finance_landing_page.html", {"title": "Finance"})
+
+# def finance(request):
+#     return render(request, "finance\reports\finance.html", {"title": "Finance"})
+
+def hr(request):
+    return render(request, "management/companyagenda.html", {"title": "HR"})
 
 @login_required
 def meetings(request):
@@ -581,39 +590,79 @@ def doc(request):
 #     # requests.post(url, data=payload)
 
 
-# def runwhatsapp(request):
-#     whatsapp()
-    # message=f'Hi,{request.user}, your messages have been post to your groups'
-    # context={
-    #     'title':'WHATSAPP',
-    #     'message':message
-    # }
-#     return render (request, "main/errors/generalerrors.html",context)
+class whatsappCreateView(LoginRequiredMixin, CreateView):
+    model = Whatsapp
+    success_url = "/whatsapplist/"  
+    form_class=WhatsappForm
+    # fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Whatsapp
+    form_class=WhatsappForm
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:whatsapp_list")
+
+    def test_func(self):
+        # plan = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user:
+            return True
+        return False
+
+def delete_whatsapp(request,id):
+    whatsapp_record = Whatsapp.objects.get(pk=id)
+    if request.user.is_superuser:
+        whatsapp_record.delete()
+    return redirect('main:whatsapp_list')
+
+
+def whatsapp_apis(request):
+    whatsaapitems=Whatsapp.objects.all()
+    context={
+            "whatsaapitems":whatsaapitems
+    }
+    return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
 
 def runwhatsapp(request):
-    import requests
-    import json
-    group_id = "120363047226624982@g.us"
+    whatsaapitems=Whatsapp.objects.all()
+    group_id=Whatsapp.objects.values_list('group_id',flat=True).first()
+    # image_url=Whatsapp.objects.values_list('image_url',flat=True).first()
+    message=Whatsapp.objects.values_list('message',flat=True).first()
+
+    print("Groups====>",group_id)
+    # group_id = "120363047226624982@g.us" #group_id #"14174137966-1445706887@g.us" #
     image_name = "image.jpg"
     screen_id=26504
     product_id='333b59c1-c310-43c0-abb5-e5c4f0379e61' #"6985f35e-b282-4316-91ef-83019d3e31c5"
-    image = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    image ="https://www.codanalytics.net/static/main/img/service-3.jpg"
     # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
     # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
 
+    # payload = json.dumps({
+    #   "to_number": group_id, #"120363047226624982@g.us", #'14174137966-1445706887@g.us', # 
+    #   "type": "text",
+    #   "message":  message # "this text message send"
+    # })
+
     payload = json.dumps({
-      "to_number": 'Dv23sZ5Ctxm9HJf2lQeFEu@c.us', # "120363047226624982@g.us",
-      "type": "text",
-      "message": "this text message send"
+        "to_number": group_id,
+        "type": "media",
+        "message": image, #"this text message send", #image,
+        "filename": image_name
     })
 
-    # payload = json.dumps({
-    #     "to_number": group_id,
-    #     "type": "media",
-    #     "message": image,
-    #     "filename": image_name
-    # })
     headers = {
         'accept': 'application/json',
         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686', # 'b914dbd3-e225-48c0-bdbf-cbffa39ce44c',
@@ -626,5 +675,4 @@ def runwhatsapp(request):
         'title':'WHATSAPP',
         'message':message
     }
-    # return HttpResponse(({"status": True, }))
     return render (request, "main/errors/generalerrors.html",context)

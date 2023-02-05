@@ -18,8 +18,8 @@ urlpatterns = [
     path('companyagenda/', views.companyagenda, name='companyagenda'),
     path('dckdashboard/', views.dckdashboard, name='dckdashboard'),
     path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
-    path('finance/', views.finance, name='finance'),
-    path('hr/', views.hr, name='hr'),
+    # path('finance/', views.finance, name='finance'),
+    # path('hr/', views.hr, name='hr'),
     #path('other/', views.transact, name='management-transact'),
 
     #-----------COMPANY POLICIES---------------------------------------

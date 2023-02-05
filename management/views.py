@@ -179,17 +179,6 @@ def updatelinks_companyagenda(request):
     return JsonResponse({"success": True})
 
 
-def finance(request):
-    return render(
-        request, "finance\reports\finance.html", {"title": "Finance"}
-
-    )
-
-
-def hr(request):
-    return render(request, "management/companyagenda.html", {"title": "HR"})
-
-
 # ----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
 def policy(request):
     if request.method == "POST":
@@ -847,7 +836,12 @@ def pay(request, user=None, *args, **kwargs):
     # total_bonus = total_bonus + EOM + EOQ + EOY
     # Net Pay
     total_value=total_pay + total_bonus
+    print('======================================')
+    print('total_bonus=======>',total_bonus)
+    print('total_pay=======>',total_pay)
+    print('total_value=====>',total_value)
     net = total_value - total_deduction
+    print('======================================')
     round_off = round(net) - net
     net_pay = net + round_off
     logger.debug(f'total deductions: {total_deduction}')
