@@ -279,19 +279,19 @@ def addloantable(loantable,employee,total_pay,payslip_config,user_data):
     return None
 
 
-def lap_save_bonus(userprofile,lbandls,LBLS):
+def lap_save_bonus(userprofile,LBLS):
     """Computes the laptop savings, Laptop Bonusloan payment and loan balance for an employee"""
     if userprofile.laptop_status == True:
         laptop_saving = Decimal(0)
         if LBLS.exists():
             # lbandls =LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
+            laptop_bonus = LBLS.laptop_bonus
         else:
             laptop_bonus = Decimal(0)
     else:
         laptop_bonus = Decimal(0)
         if LBLS.exists():
-            laptop_saving = lbandls.laptop_service
+            laptop_saving = LBLS.laptop_service
         else:
             laptop_saving = Decimal(0)
     return laptop_bonus,laptop_saving
@@ -315,9 +315,9 @@ def deductions(user_data,payslip_config,total_pay):
     total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving
     return food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions
 
-def bonus(tasks,total_pay,payslip_config):
+def bonus(tasks,total_pay,payslip_config,userprofile,LBLS):
     """Computes the loan amount, loan payment and loan balance for an employee"""
-    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,lbandls,LBLS)
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS)
     month=paytime()[3]
     day=paytime()[5]
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
@@ -349,10 +349,10 @@ def bonus(tasks,total_pay,payslip_config):
         Lap_Bonus =  Decimal(0.00)
     return bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus
 
-def additional_earnings(user_data,tasks,total_pay,payslip_config):
+def additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     # ================BONUS============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config,userprofile,LBLS)
     sub_bonus=(Decimal(bonus_points_ammount)+Decimal(latenight_Bonus)+
               +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+
               Decimal(Lap_Bonus))
@@ -396,9 +396,7 @@ def emp_average_earnings(request,TaskHistory,GoalAmount,employee):
         Q(employee=employee)
         # Q(employee__username=request.user)
     )
-    # print("last3month_history=============>",last3month_history)
-    # print("last2monthhistory=============>",last2monthhistory)
-    # print("lastmonthhistory=============>",lastmonthhistory)
+
     average_earnings = 0
     counter = 3
     for data in history.all():

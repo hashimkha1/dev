@@ -508,6 +508,9 @@ def task_payslip(request, employee=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     num_sessions = sessions.count()
+    userprofile = UserProfile.objects.get(user_id=employee)
+    tasks = Task.objects.all().filter(employee=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # task_history = TaskHistory.objects.get_by_employee(employee)
     task_history = TaskHistory.objects.all().filter(employee=employee)
@@ -539,7 +542,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
 
     # Deductions & Bonus
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
     # Net Pay
@@ -548,7 +551,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         net = total_value - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config,userprofile,LBLS)
     context = {
         # deductions
         "laptop_saving": lap_saving,
@@ -585,8 +588,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    print('================USERTASK===================')
-    print(employee)
+    userprofile = UserProfile.objects.get(user_id=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     tasks = Task.objects.all().filter(employee=employee)
     # -----------Time from utils------------------
@@ -616,10 +619,9 @@ def usertask(request, user=None, *args, **kwargs):
         paybalance = 0
     loan = Decimal(total_pay) * Decimal("0.2")
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     message=f'VALES ARE :{total_deduction},{total_bonus}'
     print(message)
-    total_deduction,*_= additional_earnings(user_data,tasks,total_pay,payslip_config)
     try:
         net = total_pay - total_deduction
     except (TypeError, AttributeError):
@@ -666,6 +668,8 @@ def usertask(request, user=None, *args, **kwargs):
 def usertaskhistory(request, user=None,  *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
+    userprofile = UserProfile.objects.get(user_id=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
     tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
     if tasks is None:
         message=f'Hi {request.user}, you do not have history information for last month,kindly contact admin!'
@@ -682,7 +686,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         paybalance = 0
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan=loan_payment
     point_percentage=point_percentage
@@ -781,7 +785,7 @@ def pay(request, user=None, *args, **kwargs):
     print(loan_amount, loan_payment, balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
     loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
-    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     userprofile = UserProfile.objects.get(user_id=employee)
     if userprofile.laptop_status == True:
@@ -802,7 +806,7 @@ def pay(request, user=None, *args, **kwargs):
     laptop_saving = round(Decimal(laptop_saving), 2)
     # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
     # ====================Bonus Section=============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config,userprofile,LBLS)
     # if month == 12:
     #     task_obj = Task.objects.filter(submission__contains=year)
     #     logger.debug(f'task_obj: {task_obj}')
@@ -832,7 +836,7 @@ def pay(request, user=None, *args, **kwargs):
     #         logger.info('this employee is EOM!')
     #         EOM = payslip_config.eom_bonus
     # ====================Summary Section=============================
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     # total_bonus = total_bonus + EOM + EOQ + EOY
     # Net Pay
     total_value=total_pay + total_bonus
