@@ -241,7 +241,11 @@ def login_view(request):
                 # return redirect("main:layout")
                 return redirect("management:agenda")
             else:
-                messages.success(request, f"Invalid credentials.Kindly Try again!!")
+                # messages.success(request, f"Invalid credentials.Kindly Try again!!")
+                msg=f"Invalid credentials.Kindly Try again!!"
+                return render(
+                        request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
+                    )
     return render(
         request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
     )

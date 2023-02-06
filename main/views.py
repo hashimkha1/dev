@@ -637,7 +637,7 @@ def whatsapp_apis(request):
 def runwhatsapp(request):
     whatsaapitems=Whatsapp.objects.all()
     group_id=Whatsapp.objects.values_list('group_id',flat=True).first()
-    # image_url=Whatsapp.objects.values_list('image_url',flat=True).first()
+    image_url=Whatsapp.objects.values_list('image_url',flat=True).first()
     message=Whatsapp.objects.values_list('message',flat=True).first()
 
     print("Groups====>",group_id)
@@ -645,7 +645,7 @@ def runwhatsapp(request):
     image_name = "image.jpg"
     screen_id=26504
     product_id='333b59c1-c310-43c0-abb5-e5c4f0379e61' #"6985f35e-b282-4316-91ef-83019d3e31c5"
-    image ="https://www.codanalytics.net/static/main/img/service-3.jpg"
+    image = image_url  #"https://www.codanalytics.net/static/main/img/service-3.jpg"
     # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
     # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
