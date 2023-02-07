@@ -180,7 +180,7 @@ def getmeetingresponse(startDate , endDate):
     jsonResponse = json.loads(response.text)
     myCleanResponse = []
     for meeting in jsonResponse:
-        print("meetings============>",meeting)
+        # print("meetings============>",meeting)
         temp = {}
         meetingItems = meeting.items()
         temp.update(meetingItems)
