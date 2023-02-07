@@ -53,7 +53,7 @@
     },
     "FINANCE": {
         "REPORTS": {
-            "Report":"https://www.codanalytics.net/finance/finance/",
+            "Report":"https://www.codanalytics.net/finance/finance_report/",
             "Overall Budget":"https://www.codanalytics.net/finance/transaction/",
             "Website Budget":"https://docs.google.com/spreadsheets/d/1BmoEyyMNoOvoMjtwgSNg7UxeapdBlGAo2PKtGbkJtII/edit#gid=1898379385"
         },
