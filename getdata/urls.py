@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import *
 from mail.search_mail import parse_mail, search_job_mail
 from finance.utils import upload_csv
 from django.urls import re_path
@@ -22,6 +23,10 @@ urlpatterns = [
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('replies/',search_job_mail, name='replies-email'),
     
+    path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),
+    path('getmeetingresponse/', getmeetingresponse, name='getmeetingresponse'),
+    path('meetingFormView/', meetingFormView, name='meetingFormView'),
+
     # path('gotomeeting/',views.meetingFormView,name='meetingform1'),
     # # trying a url pattern for dates
     # # gotomeetingresult

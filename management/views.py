@@ -493,7 +493,6 @@ def historytasks(request):
     # print('Active_Employees',activeemployees)
     # print('======================================')
     historytasks=TaskHistory.objects.filter(employee__is_employee=True,employee__is_active=True)
-    print('obj',historytasks)
     # historytasks=TaskHistory.objects.all().order_by('-submission')
     myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
     context={
