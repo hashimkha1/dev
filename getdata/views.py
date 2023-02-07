@@ -168,20 +168,19 @@ def getmeetingresponse(startDate , endDate):
     # print("2. getting meetings from {} to {}\n".format(startDate , endDate))
     from datetime import datetime
     from pytz import utc
-    print(startDate)
-    print(endDate)
+    print(startDate,endDate)
     urlMeeting = urlGotoMeeting.format(startDateTime,endDateTime)
-    print("------------------urll meeting",urlMeeting)
+    print("----->urll meeting",urlMeeting)
 
     # print("3. request made : ",urlMeeting)
     response = requests.request("GET" , url=urlMeeting , headers=headers)
     # print('4.  response-code: ',response.status_code)
     # print('5.  rendering with variable data')
     print('-'*50)
-    # return [response.text]
     jsonResponse = json.loads(response.text)
     myCleanResponse = []
     for meeting in jsonResponse:
+        print("meetings============>",meeting)
         temp = {}
         meetingItems = meeting.items()
         temp.update(meetingItems)
