@@ -17,7 +17,7 @@ from management.models import (
     # PayslipConfig,
     RetirementPackage,
     Loan,
-    LaptopSaving,
+    LBandLS,
 )
 from accounts.models import TaskGroups
 from django.contrib import messages
@@ -105,7 +105,7 @@ admin.site.register(Payslip)
 # admin.site.register(PayslipConfig)
 admin.site.register(RetirementPackage)
 admin.site.register(Loan)
-admin.site.register(LaptopSaving)
+admin.site.register(LBandLS)
 
 """
 admin.site.register(Employee)

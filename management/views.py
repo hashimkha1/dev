@@ -1036,7 +1036,7 @@ def newevidence(request, taskid):
                         users = check.values_list('added_by__username')
                         for username in users:
                             user_list.append(username[0])
-                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions']
+                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions','Project',"web sessions"]
                         if activity_name in act_list:
                             if request.user.username in user_list:
                                 messages.error(request, "you have already uploaded this link")

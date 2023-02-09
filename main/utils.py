@@ -211,9 +211,9 @@ Automation = [
         "linkname":"Reply",
     },
     {
-        "title": "To Come..",
-        "link":"",
-        "linkname":"To Come..",
+        "title": "ChatGPT",
+        "link":"https://chat.openai.com/chat",
+        "linkname":"CHATGPT",
     },
 ]
 Stocks = [

@@ -38,7 +38,7 @@ from management.models import Task, Requirement
 from coda_project import settings
 from datetime import date, timedelta
 from django.db.models import Q
-from testing.utils import target_date
+from testing.utils import target_date,live_currency
 from gapi.gservices import cashapp_main
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -46,7 +46,8 @@ register = template.Library()
 
 
 def testing(request):
-    cashapp_main()
+    # cashapp_main()
+    live_currency()
     deadline,year=target_date()
     context={
          "year":year,

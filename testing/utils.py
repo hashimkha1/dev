@@ -7,6 +7,18 @@ import calendar,string
 # import random
 # from .models import FeaturedActivity,FeaturedSubCategory
 
+import requests
+def live_currency():
+    # Where USD is the base currency you want to use
+    url = 'https://v6.exchangerate-api.com/v6/336ccxxxxxxxxx8e74eac/latest/USD'
+
+    # Making our request
+    response = requests.get(url)
+    data = response.json()
+
+    # Your JSON object
+    print(data)
+    return data
 
 # def training_response():
 #     # Article.objects.filter(publications=1)
