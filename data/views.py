@@ -106,8 +106,6 @@ def etl(request):
     return render(request, "data/etl.html", {"title": "etl"})
 def getdata(request):
     return render(request, "data/getdata.html", {"title": "getdata"})
-def pay(request):
-    return render(request, "data/pay.html", {"title": "pay"})
 # Views on interview Section
 @login_required
 def uploadinterview(request):
@@ -139,6 +137,7 @@ def iuploads(request):
     uploads = myFilter.qs
     context = {"uploads": uploads, "myFilter": myFilter}
     return render(request, "data/interview/interviewuploads.html", context)
+    
 def useruploads(request, pk=None, *args, **kwargs):
     useruploads = Interviews.objects.filter(user=request.user).order_by("-upload_date")
     context = {

@@ -10,6 +10,7 @@ from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
 from requests import request
 from datetime import datetime,date
+from decimal import *
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -34,7 +35,7 @@ from main.views import images
 from main.utils import image_view,download_image,Meetings,path_values
 from management.utils import loan_computation
 from main.filters import FoodFilter
-from .utils import check_default_fee
+from .utils import check_default_fee,get_exchange_rate
 
 from management.views import pay
 
@@ -819,6 +820,17 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
     model = DC48_Inflow
     success_url = "/finance/listinflow"
     template_name="finance/payments/inflow_form.html"
+    # fields =("receiver",
+    #         "phone",
+    #         "category",
+    #         "task",
+    #         "method",
+    #         "period",
+    #         "qty",
+    #         "amount",
+    #         "transaction_cost",
+    #         "description",
+	#    )
     fields ="__all__"
     exclude='transaction_date'
     def form_valid(self, form):
@@ -826,16 +838,48 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(login_required, name="dispatch")
-class DC48InflowListview(LoginRequiredMixin,ListView):
-    queryset = DC48_Inflow.objects.all()
-    print(queryset)
-    transactions=queryset
-    template_name="finance/payments/dcinflows.html"
-    context_object_name = "transactions"
-    # fields ="__all__"
-    fields=['category','method','period','sender','receiver'
-			'description','phone','qty','amount']
+# @method_decorator(login_required, name="dispatch")
+# class DC48InflowListview(LoginRequiredMixin,ListView):
+#     queryset = DC48_Inflow.objects.all()
+#     for item in queryset:
+#         print (item.total_payment)
+#     transactions=queryset
+#     template_name="finance/payments/dcinflows.html"
+#     context_object_name = "transactions"
+#     # fields ="__all__"
+#     # fields=['category','method','period','sender','receiver'
+# 	# 		'description','phone','qty','amount']
+
+def dcinflows(request):
+	# trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
+	usd_to_kes = get_exchange_rate('USD', 'KES')
+	rate = round(Decimal(usd_to_kes), 2)
+	# print(usd_to_kes)
+	transactions=DC48_Inflow.objects.all()
+	total_members=DC48_Inflow.objects.all().count()
+	paid_members=DC48_Inflow.objects.all().filter(has_paid=True).count()
+	total_amt = 0
+	total_paid=0
+	for transact in transactions:
+		# amount_kes=Decimal(transact.amount)*usd_to_kes
+		total_amt = total_amt + transact.total_payment
+		if transact.has_paid:
+			total_paid =total_paid + transact.total_paid
+		pledged=total_amt-total_paid
+		amount_ksh=transact.total_payment*rate
+	context={
+		"transactions":transactions,
+		"total_count":total_members,
+		"paid_count":paid_members,
+		"total_amt":total_amt,
+		"amount_ksh":amount_ksh,
+		"total_paid":total_paid,
+		"pledged":pledged,
+		"rate":rate
+	}
+	return render(request, "finance/payments/dcinflows.html", context)
+	
+
 
 @method_decorator(login_required, name="dispatch")
 class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -843,6 +887,17 @@ class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     template_name="finance/payments/inflow_form.html"
     success_url = "/finance/listinflow"
     # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    # fields =("receiver",
+    #         "phone",
+    #         "category",
+    #         "task",
+    #         "method",
+    #         "period",
+    #         "qty",
+    #         "amount",
+    #         "transaction_cost",
+    #         "description",
+	#    )
     fields ="__all__"
     def form_valid(self, form):
         # form.instance.author=self.request.user

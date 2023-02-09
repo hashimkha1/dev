@@ -1,3 +1,4 @@
+import requests
 from datetime import datetime
 import dateutil.relativedelta
 from django.contrib.auth import get_user_model
@@ -6,7 +7,7 @@ from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .models import TrainingLoan, Transaction
 from management.models import TaskHistory
-
+# from coda_project.settings import exchange_api_key
 from getdata.views import uploaddata
 from main.utils import Finance,Data,Management
 from accounts.models import Department
@@ -126,3 +127,15 @@ def check_default_fee(Default_Payment_Fees,username):
         default_payment_fees.save()
         default_fee = Default_Payment_Fees.objects.get(id=1)
     return default_fee
+
+
+#This function obtains exchange rate information
+def get_exchange_rate(base, target):
+    # api_key = 'YOUR_APP_ID'
+    exchange_api_key = '07c439585ffa45e0a254d01fef4b0c33'
+    # api_key = exchange_api_key
+    url = f'https://openexchangerates.org/api/latest.json?app_id={exchange_api_key}&base={base}'
+    response = requests.get(url)
+    data = response.json()
+    # print(data)
+    return data['rates'][target]

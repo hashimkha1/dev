@@ -12,6 +12,7 @@ from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
+# from finance.utils import get_exchange_rate
 User = get_user_model()
 
 # Create your models here.
@@ -319,9 +320,14 @@ class Inflow(models.Model):
     # Computing total payment
     @property
     def total_payment(self):
-        total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
-        return total
+        total_amount = round(Decimal(self.amount), 2)
+        return total_amount
 
+    @property
+    def total_paid(self):
+        if self.has_paid==True:
+            total_amt_paid =  round(Decimal(self.amount), 2)
+            return total_amt_paid
 
 class DC48_Inflow(models.Model):
     # Period of Payment
@@ -410,8 +416,8 @@ class DC48_Inflow(models.Model):
     sender = models.ForeignKey(
         "accounts.CustomerUser", 
         on_delete=models.CASCADE, 
-        # limit_choices_to=Q(category=4) and Q(is_active=True),
-        limit_choices_to={"category": 4, "is_active": True},
+        limit_choices_to=(Q(sub_category=6) | Q(is_superuser=True)),
+        # limit_choices_to={"category": 4, "is_active": True },
         related_name="dc_inflows")
     receiver = models.CharField(max_length=100, null=True, default=None)
     phone = models.CharField(max_length=50, null=True, default=None)
@@ -425,6 +431,8 @@ class DC48_Inflow(models.Model):
         max_digits=10, decimal_places=2, null=True, default=0
     )
     description = models.TextField(max_length=1000, default=None)
+    is_active=models.BooleanField(default=True,null=True,blank=True)
+    has_paid=models.BooleanField(default=False,null=True,blank=True)
 
     class Meta:
         ordering = ["transaction_date"]
@@ -440,10 +448,33 @@ class DC48_Inflow(models.Model):
         return endtime
     # Computing total payment
     @property
-    def total_payment(self):
-        total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
-        return total
+    def receipturl(self):
+        if self.receipt_link is not None:
+            urlreceipt = self.receipt_link
+            return urlreceipt
+        else:
+            return redirect('main:layout')
 
+    @property
+    def total_payment(self):
+        total_amount = round(Decimal(self.amount), 2)
+        return total_amount
+
+    # @property
+    # def amount_kes(self):
+    #     usd_to_kes = get_exchange_rate('USD', 'KES')
+    #     amt_kes = round(Decimal(self.amount), 2)*round(Decimal(usd_to_kes), 2)
+    #     return amt_kes
+
+    @property
+    def total_paid(self):
+        if self.has_paid:
+            try:
+                total_amt_paid =  round(Decimal(self.amount), 2)
+            except:
+                total_amt_paid=0.00
+            return total_amt_paid
+            
 
 class TrainingLoan(models.Model):
     LOAN_CHOICES = [
