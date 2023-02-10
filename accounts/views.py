@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+from django.core.paginator import Paginator
 from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -253,9 +254,20 @@ def login_view(request):
 
 # ================================USERS SECTION================================
 def users(request):
-    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    # users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    queryset = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    # Use the Paginator to paginate the queryset
+    paginator = Paginator(queryset, 10) # Show 10 objects per page
+    page = request.GET.get('page')
+    objects = paginator.get_page(page)
+
+    context={
+        "users": queryset,
+        "objects":objects
+    }
+
     if request.user.is_superuser:
-        return render(request, "accounts/admin/superpage.html", {"users": users})
+        return render(request, "accounts/admin/superpage.html", context)
 
     # if request.user.is_admin:
     #     return render(request, "accounts/admin/adminpage.html", {"users": users})

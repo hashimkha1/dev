@@ -2,6 +2,7 @@
 <section id="career">
   <div class="career text-center">
     <h2>USERS</h2>
+    {% include 'main/snippets_templates/paginator.html' %}
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
@@ -32,7 +33,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for user in users %}
+        {% for user in objects %}
         <tr>
           <td>{{user.date_joined|date:"F d, Y"}}</td>
           <td>{{user.category}}</td>
@@ -64,6 +65,9 @@
         {% endfor %}
       </tbody>
     </table>
+
+    
   </div>
+
 </section>
 {% endblock content %}

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime,timedelta
 from decimal import *
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -68,6 +68,9 @@ class CustomerUser(AbstractUser):
     def full_name(self):
         fullname = f'{self.first_name},{self.last_name}'
         return fullname
+    
+    def is_recent(self):
+        return self.date_joined >= timezone.now() - timedelta(days=365)
         
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
