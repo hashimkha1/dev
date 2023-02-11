@@ -34,6 +34,8 @@
                                 <div class="dropdown-divider"></div>
                               <a class="dropdown-item" href="{% url 'management:taskhistory'%}" target="" >History Tasks</a>
                                {% endif %}
+                               <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'main:update_profile' request.user.id %}" target="__blank" >Update My Profile</a>
                             </div>
                         {% for departments,sub_departments in  data.items  %}
                         {% if   departments == "HUMAN RESOURCE" or  departments == "FINANCE" or  departments == "MARKETING" %} 

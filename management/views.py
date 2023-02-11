@@ -56,6 +56,7 @@ from management.utils import (email_template,text_num_split,
                                bonus,additional_earnings,best_employee,updateloantable,
                                addloantable,employee_reward,split_num_str,employee_group_level
                         )
+from main.utils import countdown_in_month
 
 from django.contrib import messages
     
@@ -591,6 +592,12 @@ def usertask(request, user=None, *args, **kwargs):
     LBLS=LBandLS.objects.filter(user=employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     tasks = Task.objects.all().filter(employee=employee)
+    (
+                remaining_days,
+                remaining_seconds ,
+                remaining_minutes ,
+                remaining_hours 
+    )=countdown_in_month()
     # -----------Time from utils------------------
     deadline_date=paytime()[2]
     payday=paytime()[10]
@@ -650,7 +657,11 @@ def usertask(request, user=None, *args, **kwargs):
         "net": net,
         "point_check": point_check,
         "average_earnings": average_earnings,
-        "enddate": deadline_date_modify
+        "enddate": deadline_date_modify,
+        "remaining_days":remaining_days,
+        "remaining_seconds ":remaining_seconds ,
+        "remaining_minutes ":remaining_minutes ,
+        "remaining_hours":remaining_hours,
     }
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")

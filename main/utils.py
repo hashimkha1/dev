@@ -6,7 +6,25 @@ from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
 from .models import Service,Assets
+import datetime
 
+
+def countdown_in_month():
+    now = datetime.datetime.now()
+    next_month = now.replace(day=28) + datetime.timedelta(days=4)
+    next_month = next_month.replace(day=1)
+
+    remaining_time = next_month - now
+    remaining_days = remaining_time.days
+    remaining_seconds = remaining_time.total_seconds()
+    remaining_minutes = remaining_seconds / 60
+    remaining_hours = remaining_minutes / 60
+    return (
+                remaining_days,
+                remaining_seconds ,
+                remaining_minutes ,
+                remaining_hours 
+            )
 
 def path_values(request):
     value=request.path.split("/")
@@ -29,7 +47,7 @@ def download_image(url):
 
 #===============Processing Images from Database==================
 def image_view(request):
-    sub_title=path_values(request)[-1]
+    # sub_title=path_values(request)[-1]
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
     # image_list=[image for image in images ]

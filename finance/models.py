@@ -43,14 +43,14 @@ class Payment_Information(models.Model):
             stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
             return stu_bal
         except:
-            return redirect('main:pay')
+            return redirect('finance:pay')
     @property
     def jobsupport_balance(self):
         try:
             support_bal = self.payment_fees - int(self.down_payment) 
             return support_bal
         except:
-            return redirect('main:pay')
+            return redirect('finance:pay')
 
 
 

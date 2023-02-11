@@ -10,6 +10,7 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings,image_view,path_values
+from accounts.utils import employees
 from codablog.models import Post
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
@@ -39,6 +40,8 @@ import urllib.request
 from PIL import Image
 from django.contrib.auth import get_user_model
 User=get_user_model()
+
+
 
 def error400(request):
     return render(request, "main/errors/400.html", {"title": "400Error"})
@@ -87,8 +90,13 @@ def layout(request):
     # advertisement()
     posts=Post.objects.all()
     services=Service.objects.all()
+    images,image_names=image_view(request)
+
+    print( images,image_names)
 
     context={
+            "images":images,
+            "image_names":image_names,
             "services":services,
             "posts":posts,
             "title": "layout"
@@ -208,15 +216,42 @@ def delete_plan(request,id):
     return redirect('main:plans')
 
 def about(request):
+    # emp_obj = User.objects.filter(
+    #                                         Q(sub_category=3),
+    #                                         Q(is_admin=True),
+    #                                         Q(is_employee=True),
+    #                                         Q(is_active=True),
+    #                                         Q(is_staff=True),
+    #                     ).order_by("-date_joined")
+    # # dept_obj = Department.objects.all().distinct()
+    # # departments=[dept.name for dept in dept_obj ]
+    # employees=[employee.first_name for employee in emp_obj ]
+    # employee_subcategories,active_employees=employees()
+    team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    # print("employees",team_members)
+    
     sub_title=path_values(request)[-1]
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
     end_date=start_date + relativedelta(months=3)
+    images,image_names=image_view(request)
+    staff=[member for member in team_members if member.img_category=='employee']
+    img_urls=[member.img_url for member in team_members if member.img_category=='employee']
+    print(staff,img_urls)
+    for member in staff:
+        print(member.user.first_name)
+    #     # if member.category=='employee':
+    #     #     print(member.category,member.name,member.image_url)
+    #     # # employee_category =)
     context={
         "start_date": start_date,
         "end_date": end_date,
         "title_team": "team",
+        # "employee_subcategories": employee_subcategories,
+        "active_employees": staff,
         "title_about": "about",
+        # "images": images,
+        "img_urls": img_urls,
         "title_letter": "letter",
     }
     if sub_title == 'team':
@@ -236,42 +271,49 @@ class UserCreateView(LoginRequiredMixin, CreateView):
         form.instance.user = self.request.user
         return super().form_valid(form)
 
-def profiles(request):
-    sub_title=path_values(request)[-1]
-    images = Assets.objects.values_list('name', flat=True)
-    coda_team = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-    for team in coda_team:
-        profile_image=team.image2
-    for image in images:
-        image_name=image
-    
-    if profile_image=="banner_page_v1":
-        print("YES")
-    else:
-        print("NO")
-        # print(image_name,"==",profile_image)
 
-    context={
-        "coda_team":coda_team,
-        "title": "team",
-        "profile_image": profile_image
-        # "image_name": image_name
-    }
-    if sub_title == 'team':
-        return render(request, "main/team.html",context)
-    else:
-        return render(request, "main/profiles.html",context)
+# def profiles(request):
+#     sub_title=path_values(request)[-1]
+#     images = Assets.objects.values_list('name', flat=True)
+#     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+#     print(team_members)
+#     for team in team_members:
+#         profile_image=team.image2
+#         profile_image_category=team.img_category 
+#         profile_image_image_url=team.img_url
+
+#         print(profile_image,profile_image_category,profile_image_image_url)
+#     # for image in images:
+#     #     image_name=image
+    
+#     # if profile_image=="banner_page_v1":
+#     #     print("YES")
+#     # else:
+#     #     print("NO")
+#     #     # print(image_name,"==",profile_image)
+
+#     context={
+#         "team_members":team_members,
+#         "title": "team",
+#         "profile_image": profile_image
+#         # "image_name": image_name
+#     }
+#     if sub_title == 'team':
+#         return render(request, "main/team.html",context)
+#     else:
+#         return render(request, "main/profiles.html",context)
+
 
 class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UserProfile
-    fields ="__all__"
-
+    # fields ="__all__"
+    fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
         form.instance.username = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("main:team")
+        return reverse("management:companyagenda")
 
     def test_func(self):
         profile = self.get_object()
@@ -380,7 +422,7 @@ def images(request):
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
     model=Assets
-    fields = ['name','image_url','description']
+    fields = ['category','name','image_url','description']
      
     def form_valid(self,form):
         form.instance.username=self.request.user
@@ -388,122 +430,6 @@ class ImageUpdateView(LoginRequiredMixin,UpdateView):
 
     def get_success_url(self):
         return reverse('main:images') 
-
-
-# def payment(request,method):
-#     (phone_number,email_info,
-#     email_dck,cashapp,
-#     venmo,stan_account_no,
-#     coda_account_no,dck_account_no)=payment_details()
-#     path_value,sub_title=path_values(request)
-#     subject='PAYMENT'
-#     url='email/payment/payment_method.html'
-#     message=f'Hi,{request.user.first_name}, an email has been sent \
-#             with {sub_title} details for your payment.In the unlikely event\
-#             that you have not received it, kindly \
-#             check your spam folder.'
-#     context={
-#                 "title": "PAYMENT DETAILS",
-#                 'user': request.user.first_name,
-#                 "images":images, 
-#                 "message": message,
-#         }
-#     try:
-#         send_email( category=request.user.category, 
-#                     to_email=[request.user.email,], 
-#                     subject=subject, html_template=url, 
-#                     context={
-#                             'subtitle': sub_title,
-#                             'user': request.user.first_name,
-#                             'mpesa_number':phone_number,
-#                             'cashapp':cashapp,
-#                             'venmo':venmo,
-#                             'stan_account_no':stan_account_no,
-#                             'coda_account_no':coda_account_no,
-#                             'dck_account_no':dck_account_no,
-#                             'email':email_info,
-#                             'email':email_dck,
-#                             }
-#                     )
-#         return render(request, "main/errors/generalerrors.html",context)
-#     except:
-#         return render(request, "main/errors/500.html")
-
-
-# @login_required
-# def pay(request):
-#     url="https://www.codanalytics.net/static/main/img/service-3.jpg"
-#     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-#     link=f'{SITEURL}/finance/new_contract/{request.user}/'
-#     images,image_names=image_view(request)
-#     try:
-#         payment_info = Payment_Information.objects.filter(
-#             customer_id=request.user.id
-#         ).first()
-#         context={
-#             "title": "PAYMENT", 
-#             "images":images, 
-#             "image_name": image_names, 
-#             "payments": payment_info,
-#             "message": message,
-#             "link": link,
-#         }
-#         return render(request, "finance/payments/pay.html",context)
-#     except:
-#         # try:
-#         #     payment_history=Payment_History.objects.filter(
-#         #             Q(customer__username="admin")| 
-#         #             Q(customer__username="coda_info") 
-#         #             ).latest('id')
-#         #     context={
-#         #         "title": "PAYMENT", 
-#         #         "images":images, 
-#         #         "image_name": image_names, 
-#         #         "payments": payment_history,
-#         #         "message": message,
-#         #         "link": link,
-#         #     }
-#         #     if request.user.category == 4 and request.user.sub_category == 6:
-#         #         return render(request, "finance/payments/pay.html",context)
-#         #     else:
-#         #         return render(request, "finance/payments/pay.html",context)
-#         # except :#payment_history.DoesNotExist as den:
-#         return render(request, "management/contracts/contract_error.html", context)
-        
-
-# def paymentComplete(request):
-#     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-#     # print(payments)
-#     customer = request.user
-#     body = json.loads(request.body)
-#     # print("payment_complete:", body)
-#     payment_fees = body["payment_fees"]
-#     down_payment = payments.down_payment
-#     studend_bonus = payments.student_bonus
-#     plan = payments.plan
-#     fee_balance = payments.fee_balance
-#     payment_mothod = payments.payment_method
-#     contract_submitted_date = payments.contract_submitted_date
-#     client_signature = payments.client_signature
-#     company_rep = payments.company_rep
-#     client_date = payments.client_date
-#     rep_date = payments.rep_date
-#     Payment_History.objects.create(
-#         customer=customer,
-#         payment_fees=payment_fees,
-#         down_payment=down_payment,
-#         student_bonus=studend_bonus,
-#         plan=plan,
-#         fee_balance=fee_balance,
-#         payment_method=payment_mothod,
-#         contract_submitted_date=contract_submitted_date,
-#         client_signature=client_signature,
-#         company_rep=company_rep,
-#         client_date=client_date,
-#         rep_date=rep_date,
-#     )
-
-#     return JsonResponse("Payment completed!", safe=False)
 
 
 def training(request):

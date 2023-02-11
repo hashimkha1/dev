@@ -7,8 +7,8 @@ urlpatterns = [
     path('', views.layout, name='layout'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    path('team/', views.profiles, name='team'),
-    path('profiles/', views.profiles, name='profiles'),
+    path('team/', views.about, name='team'),
+    # path('profiles/', views.profiles, name='profiles'),
     path('letter/', views.about, name='letter'),
     #==============DC48KENYA==============================================
     path('dchome', views.dclayout, name='dc_layout'),

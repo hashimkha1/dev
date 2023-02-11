@@ -4,6 +4,8 @@
 <section id="rating">
   <div class="rating text-center">
     <h2>Cashflows</h2>
+    <!-- <hr> -->
+    <!-- <h5><b class="remaining-time">{{remaining_days}},{{remaining_hours}},{{remaining_minutes}},{{remaining_seconds}}</b></h5> -->
     <hr>
     <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
     <div class="row text-center">
@@ -137,7 +139,7 @@
           <!-- <td>{{amount_ksh}}</td>  -->
           <td>{{transanction.transaction_date|date:"n/d/Y"}}</td>
           {% if transanction.receipturl.status_code == 302 %}
-          <td> <a class="article-title" href="{% url 'main:404error'%} ">View Receipt</a></td>
+          <td> <a class="article-title" href="{% url 'main:404error'%} ">No Receipt</a></td>
           {%else%}
           <td> <a class="article-title" href="{{transanction.receipturl}}">View Receipt</a></td>
           {%endif%}

@@ -36,6 +36,7 @@ from main.utils import image_view,download_image,Meetings,path_values
 from management.utils import loan_computation
 from main.filters import FoodFilter
 from .utils import check_default_fee,get_exchange_rate
+from main.utils import countdown_in_month
 
 from management.views import pay
 
@@ -851,6 +852,14 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
 # 	# 		'description','phone','qty','amount']
 
 def dcinflows(request):
+	(
+                remaining_days,
+                remaining_seconds ,
+                remaining_minutes ,
+                remaining_hours 
+    )=countdown_in_month()
+	# remaining_days=remaining_days
+	print(f"{int(remaining_days)} days, {int(remaining_hours % 24)} hours, {int(remaining_minutes % 60)} minutes, {int(remaining_seconds % 60)} seconds remaining in the month")
 	# trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
 	usd_to_kes = get_exchange_rate('USD', 'KES')
 	rate = round(Decimal(usd_to_kes), 2)
@@ -875,7 +884,11 @@ def dcinflows(request):
 		"amount_ksh":amount_ksh,
 		"total_paid":total_paid,
 		"pledged":pledged,
-		"rate":rate
+		"rate":rate,
+		"remaining_days":remaining_days,
+        "remaining_seconds ":int(remaining_seconds % 60) ,
+        "remaining_minutes ":int(remaining_minutes % 60) ,
+        "remaining_hours":int(remaining_hours % 24),
 	}
 	return render(request, "finance/payments/dcinflows.html", context)
 	

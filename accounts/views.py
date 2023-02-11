@@ -21,7 +21,7 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
-from .utils import agreement_data
+from .utils import agreement_data,employees
 from main.filters import CredentialFilter
 from management.models import Task
 from application.models import UserProfile
@@ -507,18 +507,15 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 # ================================EMPLOYEE SECTION================================
-# def Employeelist(request):
-#     employees=CustomerUser.objects.filter(Q(category = 2)|Q(is_employee=True)).order_by('-date_joined')
-#     return render(request, 'accounts/employees/employees.html', {'employees': employees})
-
 def Employeelist(request):
-    active_employees = CustomerUser.objects.filter(
-                                             Q(is_employee=True),Q(is_active=True)
-                                          ).order_by("-date_joined")
-    employees_categories_list = CustomerUser.objects.values_list(
-                    'sub_category', flat=True).distinct()
-    employees_categories = [subcat for subcat in employees_categories_list if subcat in (3,4)]
-    employee_subcategories=list(set(employees_categories))
+    # active_employees = CustomerUser.objects.filter(
+    #                                          Q(is_employee=True),Q(is_active=True)
+    #                                       ).order_by("-date_joined")
+    # employees_categories_list = CustomerUser.objects.values_list(
+    #                 'sub_category', flat=True).distinct()
+    # employees_categories = [subcat for subcat in employees_categories_list if subcat in (3,4)]
+    # employee_subcategories=list(set(employees_categories))
+    employee_subcategories,active_employees=employees()
     context={
         "employee_subcategories":employee_subcategories,
         "active_employees":active_employees,

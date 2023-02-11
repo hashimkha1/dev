@@ -1,9 +1,11 @@
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from main.models import Assets
 
 
 class Post(models.Model):
+    asset_id = models.ForeignKey(Assets, on_delete=models.CASCADE,default=1)
     title = models.CharField(max_length=100)
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)

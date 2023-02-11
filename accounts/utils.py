@@ -1,7 +1,10 @@
 from django.urls import reverse, reverse_lazy
+from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import date
+from accounts.models import CustomerUser
+
 
 def agreement_data(request):
     contract_data = {}
@@ -23,3 +26,16 @@ def agreement_data(request):
     today = date.today()
     contract_date = today.strftime("%d %B, %Y")
     return contract_data,contract_date
+
+
+
+# ================================USERS========================================
+def employees():
+    active_employees = CustomerUser.objects.filter(
+                                             Q(is_employee=True),Q(is_active=True)
+                                          ).order_by("-date_joined")
+    employees_categories_list = CustomerUser.objects.values_list(
+                    'sub_category', flat=True).distinct()
+    employees_categories = [subcat for subcat in employees_categories_list if subcat in (3,4)]
+    employee_subcategories=list(set(employees_categories))
+    return (employee_subcategories,active_employees)

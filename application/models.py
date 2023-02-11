@@ -7,7 +7,7 @@ from django.utils import timezone
 from accounts.models import CustomerUser
 from main.models import Assets
 from django.db.models import Q
-
+# from coda_project.storage import GoogleDriveStorage
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -33,6 +33,15 @@ class UserProfile(models.Model):
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
 
+    @property
+    def img_url(self):
+        imgurl=self.image2.image_url
+        return imgurl
+
+    @property
+    def img_category(self):
+        img_cat=self.image2.category
+        return img_cat
 
 class Application(models.Model):
     class Sex(models.IntegerChoices):
