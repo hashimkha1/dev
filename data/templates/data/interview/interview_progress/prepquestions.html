@@ -66,6 +66,7 @@
         <tr>
           <td>{{question.date|date:"n/d/Y"}}</td>
           <td>{{question.company}}</td>
+          <!-- <td>{{question.position.get_category_display}}</td> -->
           <td>{{question.question}}</td>
           <!-- <td>{{question.response}}</td> -->
           <td> <a class="article-title" href="{% url 'data:question-update' question.id%}">Edit</a></td>

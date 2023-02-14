@@ -148,7 +148,6 @@ def useruploads(request, pk=None, *args, **kwargs):
 @login_required
 def prepquestions(request):
     questions= Prep_Questions.objects.filter(Q(is_answered=None) | Q(is_answered=False)).order_by("date")
-    print(questions)    
     QuestionsFilter = QuestionFilter(request.GET, queryset=questions)
     questions = QuestionFilter.qs
     context = {"questions": questions, "myFilter": QuestionsFilter}
@@ -158,7 +157,9 @@ def prep_responses(request):
     # company2=Prep_Questions.objects.values('company').distinct()
     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
     responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-updated_at")
-    print(responses)
+    client_responses = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).order_by("-updated_at")
+    responses_count = Prep_Questions.objects.filter(Q(is_answered=True)).count()
+    client_responses_count = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).count()
     ResFilter = ResponseFilter(request.GET, queryset=responses)
     # responses = myFilter.qs
     # for company in companies:
@@ -173,15 +174,21 @@ def prep_responses(request):
     #     # print("category:",category)
     #     print("Reponse:",response)
     #     # print("question:",question)
-    context = {                
+    context_a = {                
             "companies": companies, 
             "responses": responses, 
-            "ResFilter": ResFilter,
-            # "response": response,
+            "ResFilter": ResponseFilter(request.GET, queryset=responses),
+    }
+    context_b = {                
+            "companies": companies, 
+            "responses": client_responses,
+            "ResFilter": ResponseFilter(request.GET, queryset=client_responses),
     }
     # return render(request, "data/interview/interview_progress/test.html", context)
-    if request.user.is_superuser or request.user.is_employee or request.user.is_client:
-        return render(request, "data/interview/interview_progress/prepresponses.html", context)
+    if request.user.is_superuser or request.user.is_employee:
+        return render(request, "data/interview/interview_progress/prepresponses.html", context_a)
+    if request.user.is_client:
+        return render(request, "data/interview/interview_progress/prepresponses.html", context_b)
     else:
         context={
             "title":"ARE YOU A CLIENT/STUDENT?",
@@ -192,19 +199,18 @@ def prep_responses(request):
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    template_name="data/interview/interview_progress/addquestions.html"
+    template_name="data/interview/interview_progress/prep_questions_form.html"
     form_class=PrepQuestionsForm
     # fields = ["company",'position', 'category',"question", "response"]
     # fields = "__all__"
     def form_valid(self, form):
-        # form.instance.user = self.request.user
+        form.instance.questioner = self.request.user
         return super().form_valid(form)
 class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
-    template_name=''
+    form_class=PrepQuestionsForm
     # fields = ["company", 'position','category',"question", "response","is_answered"]
-    # form = Prep_QuestionsForm()
     def form_valid(self, form):
         # form.instance.username = self.request.user
         return super().form_valid(form)

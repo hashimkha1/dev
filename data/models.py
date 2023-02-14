@@ -18,6 +18,31 @@ from accounts.models import CustomerUser
 
 User = get_user_model()
 
+# class HighLevel(models.Model):
+#         CAT_CHOICES = [
+#         ("Project_Management", 'Project Management'),
+#         ("Business_Analysis", 'Business Analysis'),
+#         ("Quality_Assurance", 'Quality Assurance'),
+#         ("User_Experience", 'User Experience'),
+#         ("Reporting", 'Reporting'),
+#         ("ETL", 'ETL'),
+#         ("Database", 'Database'),
+#         ("Python", 'Python'),
+#         ("Other", 'Other'),
+#     ]
+    
+#         QUESTION_CHOICES = [
+#         ("Introduction" , 'introduction'),
+#         ("Project_Story" , 'project story'),
+#         ("Performance" , 'performance'),
+#         ("Methodology" , 'methodology'),
+#         ("SDLC" , 'sdlc'),
+#         ("Testing" , 'testing'),
+#         ("Environment" , 'environment'),
+#         ("Resume" , 'resume'),
+#         ("Other", 'Other'),
+#         ]
+
 #Interview Model
 class JobRole(models.Model):
     # Job Category.
@@ -63,6 +88,8 @@ class JobRole(models.Model):
     (Resume , 'resume'),
     (Other, 'Other'),
     ]
+    # category= models.CharField(max_length=25, choices=HighLevel.CAT_CHOICES,null=True,blank=True)
+    # question_type=models.CharField(max_length=25, choices=HighLevel.QUESTION_CHOICES,null=True,blank=True)
     user= models.ForeignKey(
                             User,
                             verbose_name=_("Client"),
@@ -75,12 +102,12 @@ class JobRole(models.Model):
                            )
     upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
     category= models.CharField(
-        max_length=25,
+        max_length=100,
         choices=CAT_CHOICES,
         default=Other,
     )
     question_type= models.CharField(
-        max_length=25,
+        max_length=100,
         choices=QUESTION_CHOICES,
         default=Other,
     )
@@ -155,6 +182,7 @@ class Interviews(models.Model):
     ]
     # id = models.AutoField(primary_key=True,default=9999999)
     # client= models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+
     client = models.ForeignKey(
         User, on_delete=models.RESTRICT, related_name="client_assiged", default=1
     )
@@ -163,14 +191,15 @@ class Interviews(models.Model):
 
     # last_name=models.CharField(max_length=100,null=True,blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
-
+    # category= models.CharField(max_length=25, choices=HighLevel.CAT_CHOICES,null=True,blank=True)
+    # question_type=models.CharField(max_length=25, choices=HighLevel.QUESTION_CHOICES,null=True,blank=True)
     category = models.CharField(
-        max_length=25,
+        max_length=100,
         choices=CAT_CHOICES,
         default=Other,
     )
     question_type = models.CharField(
-        max_length=25,
+        max_length=100,
         choices=QUESTION_CHOICES,
         default=Other,
     )
@@ -205,18 +234,32 @@ class Training_Responses(models.Model):
         return str(self.user)
 
 class Prep_Questions(models.Model):
-    position= models.ForeignKey(JobRole, verbose_name=_("Positions"),
-                        related_name="position_applied",                            
-                        null=True,                            
-                        blank=True,                            
-                        on_delete=models.SET_NULL,                            
-                    )
+    questioner= models.ForeignKey(
+                            User,
+                            verbose_name=_("questioner"),
+                            related_name="questioner",
+                            null=True,
+                            blank=True,
+                            on_delete=models.SET_NULL,
+                            limit_choices_to=Q(is_client=True) | Q(is_employee=True)| Q(is_superuser=True)
+                            # limit_choices_to=Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+                            #  limit_choices_to=Q(is_client=True|Q(is_admin=True),
+                            # limit_choices_to={"is_client": True , "is_active": True},
+                           )
+    position= models.CharField(max_length=100, choices=JobRole.CAT_CHOICES,null=True,blank=True)
+    category=models.CharField(max_length=100, choices=JobRole.QUESTION_CHOICES,null=True,blank=True)
+    # position= models.ForeignKey(JobRole, verbose_name=_("Positions"),
+    #                     related_name="position_applied",                            
+    #                     null=True,                            
+    #                     blank=True,                            
+    #                     on_delete=models.SET_NULL,                            
+    #                 )
     company=models.CharField(max_length=100,blank=True, null=True)
-    category=models.CharField(max_length=255,blank=True, null=True)
+    # category=models.CharField(max_length=255,blank=True, null=True)
     question=models.CharField(max_length=500,blank=True, null=True)
     date = models.DateTimeField(default=datetime.now,blank=True, null=True)
     updated_at = models.DateTimeField(auto_now=True)
-    response=models.TextField(max_length=1000,blank=True, null=True)
+    response=models.TextField(max_length=1000,blank=True, null=True) 
     is_answered=models.BooleanField(default=False,blank=True, null=True)
     is_active=models.BooleanField(default=False,blank=True, null=True)
     is_featured=models.BooleanField(default=False,blank=True, null=True)

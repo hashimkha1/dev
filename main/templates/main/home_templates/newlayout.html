@@ -203,14 +203,13 @@
   </div>
   </section> -->
 
-<div class="text-center">
-<button >
-    <a class="text-center" href="{% url 'codablog:post-create' %}">
-       Add Your Story 
-      </a>
-  </button>
-</div>
-<div class="back-to-top-btn d-flex justify-content-center">
-  <a href="">back to top</a>
-</div>
+<div class="row text-center">
+
+  <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
+    <a href="{% url 'codablog:post-create' %}">Share Your Experiences</a>
+  </div>
+  <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
+    <a href="">back to top</a>
+  </div>
+  </div>
 {% endblock %}

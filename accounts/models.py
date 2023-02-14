@@ -370,7 +370,7 @@ class Tracker(models.Model):
     @property
     def end(self):
         # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
-        date_time = self.login_date + datetime.timedelta(hours=0)
+        date_time = self.login_date + timedelta(hours=0)
         endtime = date_time.strftime("%H:%M")
         return endtime
 

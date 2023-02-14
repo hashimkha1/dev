@@ -67,7 +67,7 @@ urlpatterns = [
     ),
     path(
         "addquestion/",
-        views.PrepQuestionsCreateView.as_view(template_name='main/snippets_templates/generalform.html'),
+        views.PrepQuestionsCreateView.as_view(template_name="main/snippets_templates/generalform.html"),
         name="add_question",
     ),
 

@@ -23,12 +23,36 @@ class InterviewForm(forms.ModelForm):
         super(InterviewForm, self).__init__(*args, **kwargs)
         self.fields['question_type'].required = False
 
+
 class PrepQuestionsForm(forms.ModelForm):
+    # position = forms.ModelChoiceField(queryset=JobRole.objects.all())
+    # position = forms.ChoiceField(choices=[(x.id, x.category) for x in JobRole.objects.all()])
+    # position = forms.ModelChoiceField(
+    #     queryset=JobRole.objects.all(), 
+    #     to_field_name="category",
+    #     empty_label="(Select Position)",
+    # )
+    # category = forms.ModelChoiceField(
+    #     queryset=JobRole.objects.all(),
+    #     empty_label="Select a position",
+    #     required=True
+    # )
+    # position = forms.CharField(
+    #     widget=forms.Select(
+    #         choices=Prep_Questions.position.field.related_model.CAT_CHOICES
+    #     )
+    # )
+    # category = forms.CharField(
+    #     widget=forms.Select(
+    #         choices=Prep_Questions.position.field.related_model.QUESTION_CHOICES
+    #     )
+    # )
     class Meta:
         model = Prep_Questions
-        fields = ["company",'position', 'category',"question", "response"]
+        fields = ["questioner","company",'position', 'category',"question", "response","is_answered"]
         labels={
-                'company':'company/Client', 
+                'questioner':'Client/User', 
+                'company':'company', 
                 'position':'Position/Role',
                 'category':'Topic i.e Methodology,Intro..',
                 'question':'question',
