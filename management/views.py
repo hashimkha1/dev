@@ -54,7 +54,7 @@ from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,emp_average_earnings,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward,split_num_str,employee_group_level
+                               addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus
                         )
 from main.utils import countdown_in_month
 
@@ -478,7 +478,7 @@ def filterbycategory(request):
         details["get_absolute_url"] = str(data.category.get_absolute_url)
         result.append(details.copy())
 
-    print(result)
+    # print(result)
     return JsonResponse({"result": result}, safe=False)
 
 
@@ -518,40 +518,34 @@ def task_payslip(request, employee=None, *args, **kwargs):
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    # today = date(date.today().year, date.today().month, date.today().day)
-    # year = task_history.submission.strftime("%Y")
-    # month = task_history.submission.strftime("%b")
-    # day = task_history.submission.strftime("%d")
-    # last_date = calendar.monthrange(
-    #     int(year), int(task_history.submission.strftime("%m"))
-    # )[1]
-    # deadline_date = datetime.strptime(
-    #     year + "-" + task_history.submission.strftime("%m") + "-" + str(last_date),
-    #     "%Y-%m-%d",
-    # ).date()
-    
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
-    # tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
-    # tasks = TaskHistory.objects.all().filter(
-    #     employee=employee, submission__month=task_history.submission.strftime("%m")
-    # )
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
 
     # Deductions & Bonus
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
     # Net Pay
+    total_bonus = sub_bonus + laptop_bonus
     total_value=total_pay + total_bonus
     try:
         net = total_value - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config,userprofile,LBLS)
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
+    net = total_value - total_deduction
+    # print('======================================')
+    # print('total_bonus=======>',total_bonus)
+    # print('total_deduction=======>',total_deduction)
+    # print('total_pay=======>',total_pay)
+    # print('total_value=====>',total_value)
+    # print('net=====>',net)
+    # print('======================================')
     context = {
         # deductions
         "laptop_saving": lap_saving,
@@ -559,6 +553,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "food_accomodation": food_accomodation,
         "health": health,
         "loan": loan,
+        "kra": kra,
         "total_deduction": total_deduction,
         # bonus
         "latenight_Bonus": latenight_Bonus,
@@ -612,7 +607,7 @@ def usertask(request, user=None, *args, **kwargs):
     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
     point_percentage=employee_reward(tasks)
-    print("MY % IS :", point_percentage)
+    # print("MY % IS :", point_percentage)
     pay = earning.get("Your_Total_Pay")
     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
     pay = earning.get("Your_Total_Pay")
@@ -625,9 +620,9 @@ def usertask(request, user=None, *args, **kwargs):
         paybalance = 0
     loan = Decimal(total_pay) * Decimal("0.2")
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
-    message=f'VALES ARE :{total_deduction},{total_bonus}'
-    print(message)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    message=f'VALES ARE :{total_deduction},{sub_bonus}'
+    # print(message)
     try:
         net = total_pay - total_deduction
     except (TypeError, AttributeError):
@@ -638,7 +633,7 @@ def usertask(request, user=None, *args, **kwargs):
     activities = ["one one one", "one one one session", "one one one sessions"]
     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
                           activities]
-    print(activitiesmodified)
+    # print(activitiesmodified)
     deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
     context = {
         'activitiesmodified': activitiesmodified,
@@ -696,12 +691,12 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         paybalance = 0
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan=loan_payment
     point_percentage=point_percentage
     try:
-        net = total_pay - total_deduction+total_bonus
+        net = total_pay - total_deduction+sub_bonus
     except (TypeError, AttributeError):
         net = 0.00
     # ==================PRINT=================
@@ -792,80 +787,39 @@ def pay(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
     # Deductions
     loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
-    print(loan_amount, loan_payment, balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
-    loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
-    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
+    # loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
+    # total_deduction,sub_bonus,sub_total= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     userprofile = UserProfile.objects.get(user_id=employee)
-    if userprofile.laptop_status == True:
-        laptop_saving = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
-        else:
-            laptop_bonus = Decimal(0)
-    else:
-        laptop_bonus = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_saving = lbandls.laptop_service
-        else:
-            laptop_saving = Decimal(0)
-    laptop_bonus = round(Decimal(laptop_bonus), 2)
-    laptop_saving = round(Decimal(laptop_saving), 2)
-    # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
     # ====================Bonus Section=============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config,userprofile,LBLS)
-    # if month == 12:
-    #     task_obj = Task.objects.filter(submission__contains=year)
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eoy_users = best_employee(task_obj)
-    #     if (employee,) in eoy_users:
-    #         logger.info('this employee is EOY!')
-    #         EOY = payslip_config.eoy_bonus
-    # elif month % 3 == 0:
-    #     task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
-    #                             | Q(submission__contains=normalize_period(year, month-1))
-    #                             | Q(submission__contains=normalize_period(year, month)))
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eoq_users = best_employee(task_obj)
-    #     user_tuple = (employee.username,)
-    #     logger.debug(f'eoq_users: {eoq_users}')
-    #     logger.debug(f'user_tuple: {user_tuple}')
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
 
-    #     if user_tuple in eoq_users:
-    #         logger.info('this employee is EOQ!')
-    #         EOQ = payslip_config.eoq_bonus
-    #         logger.debug(f'EOQ: {EOQ}')
-    # else:
-    #     task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eom_users = best_employee(task_obj)
-    #     if (employee,) in eom_users:
-    #         logger.info('this employee is EOM!')
-    #         EOM = payslip_config.eom_bonus
     # ====================Summary Section=============================
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
-    # total_bonus = total_bonus + EOM + EOQ + EOY
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_bonus = sub_bonus + laptop_bonus
     # Net Pay
     total_value=total_pay + total_bonus
-    print('======================================')
-    print('total_bonus=======>',total_bonus)
-    print('total_pay=======>',total_pay)
-    print('total_value=====>',total_value)
+    # print(loan_amount, loan_payment, balance_amount)
+    # print("laptop_bonus===>",laptop_bonus,"laptop_saving====>",laptop_saving)
+    # print('======================================')
+    # print('total_bonus=======>',total_bonus)
+    # print('total_deduction=======>',total_deduction)
+    # print('total_pay=======>',total_pay)
+    # print('total_value=====>',total_value)
     net = total_value - total_deduction
-    print('======================================')
+    # print('======================================')
     round_off = round(net) - net
     net_pay = net + round_off
     logger.debug(f'total deductions: {total_deduction}')
     logger.debug(f'total_bonus: {total_bonus}')
     logger.debug(f'net: {net}')
     logger.debug(f'net_pay: {net_pay}')
-    print(f'total deductions: {total_deduction}')
-    print(f'total_bonus: {total_bonus}')
-    print(f'net: {net}')
-    print(f'net_pay: {net_pay}')
+    # print(f'total deductions: {total_deduction}')
+    # print(f'total_bonus: {total_bonus}')
+    # print(f'net: {net}')
+    # print(f'net_pay: {net_pay}')
     context = {
         # bonus
         # "pointsearning": bonus_points_ammount,
@@ -1199,7 +1153,7 @@ class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 def usersession(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     deadline_date=paytime()[2]
-    print(f'Write Value:{deadline_date}')
+    # print(f'Write Value:{deadline_date}')
     employee = get_object_or_404(User, username=kwargs.get("username"))
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     emp_target_sessions =75
@@ -1277,7 +1231,7 @@ def newrequirement(request):
         if form.is_valid():
             instance=form.save(commit=False)
             instance.creator=request.user
-            print(instance.creator)
+            # print(instance.creator)
             instance.save()
             # form.save()
             if (
@@ -1393,10 +1347,10 @@ def videolink(request,detail_id):
     mylinkname="requirement"+str(detail_id)
     if mylinkname in new_list:
         obj=TaskLinks.objects.filter(link_name__icontains=str(detail_id))
-        print("obj",obj)
+        # print("obj",obj)
         for link in obj:
             site=link.link
-            print(site)
+            # print(site)
     else:
         context = {
              "title":'Requirement Elaboration',
@@ -1461,7 +1415,7 @@ def getaveragetargets(request):
 
 def filterbycategory(request):
     category = request.POST["category"]
-    print("category", category)
+    # print("category", category)
 
     tasks = Task.objects.filter(category__title=category)
     result = []

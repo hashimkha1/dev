@@ -13,20 +13,27 @@ app.conf.beat_schedule = {
         'task': 'task_history',
         'schedule': crontab(0, 0, day_of_month='1'),
     },
+
     'login_no_activity_send_sms': {
         'task': 'SendMsgApplicatUser',
         'schedule': crontab(minute='*'),
     },
-    'loan_amount_detection': {
+
+    # 'TrainingLoanDeduction': {
+    #     'task': 'TrainingLoanDeduction',
+    #     # 'schedule': crontab(minute='*/1'),
+    #     # 'schedule': crontab(day_of_month=28),
+    #     'schedule': crontab(0, 0, day_of_month='1'),
+    # },
+
+    'TrainingLoanDeduction': {
         'task': 'TrainingLoanDeduction',
-        # 'schedule': crontab(minute='*/1'),
-        'schedule': crontab(day_of_month=28),
+        'schedule': crontab(minute=0, hour=23, day_of_month='1'),
     },
 
     'advertisement': {
         'task': 'advertisement',
         # 'schedule': crontab(minute='*/1'),
-        # 'schedule': crontab(day_of_month=26),
         'schedule': crontab(0, 0, day_of_month='1'),
     },
 

@@ -47,16 +47,8 @@ def download_image(url):
 
 #===============Processing Images from Database==================
 def image_view(request):
-    # sub_title=path_values(request)[-1]
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
-    # image_list=[image for image in images ]
-    # team_images=[image for image in images ]
-    # picture2=[pic for pic in image_names]
-    # picture3=[s.translate(string.punctuation) for s in picture]
-    # if sub_title in picture2:
-    #     image_name=pic.name
-    #     image_url=image.image_url
     return images,image_names
 
 

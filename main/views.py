@@ -32,7 +32,7 @@ from django.views.generic import (
 from accounts.forms import LoginForm
 from .forms import RegistrationForm,ContactForm
 from accounts.views import CreateProfile
-
+from coda_project.task import TrainingLoanDeduction
 # from finance.utils import pay_info
 # from django.core.management import call_command
 # importing modules
@@ -88,11 +88,12 @@ def checkout(request):
 
 def layout(request):
     # advertisement()
+    # TrainingLoanDeduction()
     posts=Post.objects.all()
     services=Service.objects.all()
     images,image_names=image_view(request)
 
-    print( images,image_names)
+    # print( images,image_names)
 
     context={
             "images":images,
@@ -106,6 +107,7 @@ def layout(request):
 # =====================DC_KENYA VIEWS=======================================
 def dclayout(request):
     # advertisement()
+    
     posts=Post.objects.all()
     services=Service.objects.all()
 
@@ -237,9 +239,9 @@ def about(request):
     images,image_names=image_view(request)
     staff=[member for member in team_members if member.img_category=='employee']
     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
-    print(staff,img_urls)
-    for member in staff:
-        print(member.user.first_name)
+    # print(staff,img_urls)
+    # for member in staff:
+    #     print(member.user.first_name)
     #     # if member.category=='employee':
     #     #     print(member.category,member.name,member.image_url)
     #     # # employee_category =)
