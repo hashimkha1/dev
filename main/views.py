@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 from django.http import JsonResponse
 from django.db.models import Q
 from celery import shared_task
@@ -562,45 +563,113 @@ def whatsapp_apis(request):
     }
     return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
 
+
+# def runwhatsapp(request):
+#     # whatsapp_items = Whatsapp.objects.all()
+#     group_ids = Whatsapp.objects.values_list('group_id', flat=True)
+#     image_url = Whatsapp.objects.values_list('image_url', flat=True).first()
+#     message = Whatsapp.objects.values_list('message', flat=True).first()
+
+#     print("Groups====>", group_ids, image_url, message)
+
+#     image_name = "image.jpg"
+#     screen_id = 26504
+#     product_id = '333b59c1-c310-43c0-abb5-e5c4f0379e61'
+#     image = image_url
+#     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+
+#     payload = json.dumps({
+#         "type": "media",
+#         "message": image,
+#         "filename": image_name
+#     })
+
+
+#     headers = {
+#         'accept': 'application/json',
+#         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686',
+#         'Content-Type': 'application/json'
+#     }
+
+#     for group_id in group_ids:
+#         payload_data = json.loads(payload)
+#         payload_data['to_number'] = group_id
+#         payload_data['type'] = 'media' if image else 'text'
+#         payload_data['message'] = image if image else message
+
+#         response = requests.request("POST", url, headers=headers, data=json.dumps(payload_data))
+#         print(response.text)
+
+#     message = f'Hi, {request.user}, your messages have been posted to your groups.'
+#     context = {
+#         'title': 'WHATSAPP',
+#         'message': message
+#     }
+#     return render(request, "main/errors/generalerrors.html", context)
+
+
 def runwhatsapp(request):
-    whatsaapitems=Whatsapp.objects.all()
-    group_id=Whatsapp.objects.values_list('group_id',flat=True).first()
-    image_url=Whatsapp.objects.values_list('image_url',flat=True).first()
-    message=Whatsapp.objects.values_list('message',flat=True).first()
+    whatsapp_items = Whatsapp.objects.all()
 
-    print("Groups====>",group_id)
-    # group_id = "120363047226624982@g.us" #group_id #"14174137966-1445706887@g.us" #
-    image_name = "image.jpg"
-    screen_id=26504
-    product_id='333b59c1-c310-43c0-abb5-e5c4f0379e61' #"6985f35e-b282-4316-91ef-83019d3e31c5"
-    image = image_url  #"https://www.codanalytics.net/static/main/img/service-3.jpg"
-    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
-    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
-    url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+    # Get a list of all group IDs from the Whatsapp model
+    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
 
-    # payload = json.dumps({
-    #   "to_number": group_id, #"120363047226624982@g.us", #'14174137966-1445706887@g.us', # 
-    #   "type": "text",
-    #   "message":  message # "this text message send"
-    # })
+    # Get the image URL and message from the first item in the Whatsapp model
+    image_url = whatsapp_items[0].image_url
+    message = whatsapp_items[0].message
+    product_id = whatsapp_items[0].product_id
+    screen_id = whatsapp_items[0].screen_id
+    token = whatsapp_items[0].token
 
-    payload = json.dumps({
-        "to_number": group_id,
-        "type": "media",
-        "message": image, #"this text message send", #image,
-        "filename": image_name
-    })
+    # print("Group IDs:", group_ids)
+    # print("Image URL:", image_url)
+    # print("Message:", message)
+    # print("product_id:", product_id)
+    # print("screen_id:", screen_id)
+    # print("token:", token)
 
-    headers = {
-        'accept': 'application/json',
-        'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686', # 'b914dbd3-e225-48c0-bdbf-cbffa39ce44c',
-        'Content-Type': 'application/json'
-    }
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.text)
-    message=f'Hi,{request.user}, your messages have been post to your groups'
-    context={
-        'title':'WHATSAPP',
-        'message':message
-    }
-    return render (request, "main/errors/generalerrors.html",context)
+    # Loop through all group IDs and send the message to each group
+    for group_id in group_ids:
+        print("Sending message to group", group_id)
+
+        # Set the message type to "text" or "media" depending on whether an image URL is provided
+        if image_url:
+            message_type = "media"
+            message_content = image_url
+            filename = "image.jpg"
+        else:
+            message_type = "text"
+            message_content = message
+            filename = None
+
+        # Set up the API request payload and headers
+        payload = {
+            "to_number": group_id,
+            "type": message_type,
+            "message": message_content,
+            "filename": filename,
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "x-maytapi-key": token,
+        }
+        # Send the API request and print the response
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # print(response.status_code)
+        # print(response.text)
+        # print(url)
+
+        # Check if the API request was successful
+        if response.status_code == 200:
+            print("Message sent successfully!")
+        else:
+            print("Error sending message:", response.text)
+
+        # time.sleep(5) # add a delay of 1 second
+
+    # Display a success message on the page
+    message = f"Hi, {request.user}, your messages have been sent to your groups."
+    context = {"title": "WHATSAPP", "message": message}
+    return render(request, "main/errors/generalerrors.html", context)

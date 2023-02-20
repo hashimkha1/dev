@@ -1076,6 +1076,9 @@ class Advertisement(models.Model):
         return self.post_description
 class Whatsapp(models.Model):
     # whatsapp
+    product_id = models.CharField(max_length=100, null=True, blank=True)
+    token = models.CharField(max_length=100, null=True, blank=True)
+    screen_id = models.CharField(max_length=500, null=True, blank=True)
     group_name = models.CharField(max_length=100, null=True, blank=True)
     group_id = models.CharField(max_length=100, null=True, blank=True)
     image_url = models.CharField(max_length=500, null=True, blank=True)
