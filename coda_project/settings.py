@@ -128,11 +128,16 @@ def dblocal():
 
 def herokudev():
     # In Heroku/Postgres it is Heroku_UAT
-    host = os.environ.get('HEROKU_DEV_HOST')
-    dbname = os.environ.get('HEROKU_DEV_NAME') 
-    user = os.environ.get('HEROKU_DEV_USER') 
-    password =os.environ.get('HEROKU_DEV_PASS') 
+    # host = os.environ.get('HEROKU_DEV_HOST')
+    # dbname = os.environ.get('HEROKU_DEV_NAME')
+    # user = os.environ.get('HEROKU_DEV_USER')
+    # password =os.environ.get('HEROKU_DEV_PASS')
     # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
+
+    host = 'ec2-52-86-115-245.compute-1.amazonaws.com'
+    dbname = 'd8liqmn44tm61v'
+    user = 'ylzxqlnsngttgn'
+    password = '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311'
     return host,dbname,user,password
 
 def herokuprod():
@@ -145,7 +150,9 @@ def herokuprod():
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=herokuprod() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+host,dbname,user,password=herokudev() #herokuprod() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 

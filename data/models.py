@@ -563,3 +563,11 @@ class Job_Tracker(models.Model):
 
     def __str__(self):
         return self.position
+
+
+class TrainingResponsesTracking(models.Model):
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
+    featuredsubcategory = models.ForeignKey(FeaturedSubCategory, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
