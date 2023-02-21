@@ -1,7 +1,26 @@
 import django_filters 
-from accounts.models import Credential
+from accounts.models import Credential,CustomerUser
 from management.models import Requirement,TaskHistory,Task
 from finance.models import Food
+
+class UserFilter(django_filters.FilterSet):
+    class Meta:
+        model=CustomerUser
+        fields ={
+        'category':['icontains'],
+        'country':['icontains'],
+        'username':['icontains'],
+        'first_name':['icontains'],
+        'last_name':['icontains'],
+        # 'entry_date':['icontains'],
+        }
+        # fields ={'name','link_name','entry_date'}
+        # labels={
+        #         'name':'credential',
+        #         'link_name':'username/email',
+        # }
+
+
 class CredentialFilter(django_filters.FilterSet):
     class Meta:
         model=Credential

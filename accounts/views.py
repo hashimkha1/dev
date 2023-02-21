@@ -22,7 +22,7 @@ from django.views.generic import (
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees
-from main.filters import CredentialFilter
+from main.filters import CredentialFilter,UserFilter
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
@@ -254,15 +254,18 @@ def login_view(request):
 
 # ================================USERS SECTION================================
 def users(request):
-    # users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     queryset = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    userfilters=UserFilter(request.GET,queryset=users)
+
     # Use the Paginator to paginate the queryset
-    paginator = Paginator(queryset, 10) # Show 10 objects per page
+    paginator = Paginator(userfilters.qs, 10) # Show 10 objects per page
     page = request.GET.get('page')
     objects = paginator.get_page(page)
 
     context={
-        "users": queryset,
+        # "users": queryset,
+        "userfilters": userfilters,
         "objects":objects
     }
 
