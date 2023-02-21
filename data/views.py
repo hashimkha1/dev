@@ -515,10 +515,13 @@ def subcategorydetail(request, title=None, *args, **kwargs):
         if instance is None:
             return render(request, "main/errors/404.html")
 
-        next_title = FeaturedSubCategory.objects.filter(id__gt=instance.order).order_by('order')
+        next_title = FeaturedSubCategory.objects.filter(order__gt=instance.order).order_by('order')
         print(next_title)
         if not next_title.exists():
-            next_category = FeaturedCategory.objects.get(id__gt=instance.featuredcategory.id).order_by('id').first()
+            next_category = FeaturedCategory.objects.filter(title='Course Overview').first()
+            tracking.featuredsubcategory = FeaturedSubCategory.objects.get(order='1')
+            tracking.save()
+            print(tracking.featuredsubcategory)
             return redirect('data:category-detail', title=next_category.title)
         next_title = next_title.first()
         tracking.featuredsubcategory = next_title
