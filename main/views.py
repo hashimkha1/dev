@@ -218,21 +218,10 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
+
+
 def about(request):
-    # emp_obj = User.objects.filter(
-    #                                         Q(sub_category=3),
-    #                                         Q(is_admin=True),
-    #                                         Q(is_employee=True),
-    #                                         Q(is_active=True),
-    #                                         Q(is_staff=True),
-    #                     ).order_by("-date_joined")
-    # # dept_obj = Department.objects.all().distinct()
-    # # departments=[dept.name for dept in dept_obj ]
-    # employees=[employee.first_name for employee in emp_obj ]
-    # employee_subcategories,active_employees=employees()
     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-    # print("employees",team_members)
-    
     sub_title=path_values(request)[-1]
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
@@ -240,12 +229,6 @@ def about(request):
     images,image_names=image_view(request)
     staff=[member for member in team_members if member.img_category=='employee']
     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
-    # print(staff,img_urls)
-    # for member in staff:
-    #     print(member.user.first_name)
-    #     # if member.category=='employee':
-    #     #     print(member.category,member.name,member.image_url)
-    #     # # employee_category =)
     context={
         "start_date": start_date,
         "end_date": end_date,
@@ -261,6 +244,8 @@ def about(request):
         return render(request, "main/team.html",context)
     elif sub_title == 'letter':
         return render(request, "main/doc_templates/letter.html",context)
+    elif sub_title == 'appointment_letter':
+        return render(request, "main/doc_templates/appointment_letter.html",context)
     elif sub_title == 'about':
         return render(request, "main/about.html",context)
     

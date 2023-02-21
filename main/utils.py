@@ -2,12 +2,33 @@ import requests
 import string
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
-
+from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
 from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
 from .models import Service,Assets
 import datetime
+import pdfkit
 
+# def convert_html_to_pdf():
+#     html="main/doc_templates/appointment_letter.html"
+#     html_str=str(html)
+#     pdfkit.from_string(html_str, 'appointment_letter.pdf')
+#     print("success")
+
+# def convert_html_to_pdf():
+#     html_path = "main/doc_templates/appointment_letter.html"
+#     pdf_path = "appointment_letter.pdf"
+#     pdfkit.from_file(html_path, pdf_path)
+#     print("Success: HTML converted to PDF.")
+
+def convert_html_to_pdf(request):
+    html_path = "main/doc_templates/letter.html"
+    pdf_path = "appointment_letter.pdf"
+    pdfkit.from_file(html_path, pdf_path)
+    with open(pdf_path, 'rb') as pdf_file:
+        response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="appointment_letter.pdf"'
+        return response
 
 def countdown_in_month():
     now = datetime.datetime.now()

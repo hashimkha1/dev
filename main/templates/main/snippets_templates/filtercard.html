@@ -1,9 +1,9 @@
-      <!-- <div class="content-section">
+      <div class="content-section">
         <form method="get">
           {% csrf_token %}
           <fieldset class="form-group">
             <legend class="border-bottom mb-4">{{message}}</legend>
-            {{credential_filters}}
+            {{instance.form}}
           </fieldset>
           <div class="form-group">
                 <button class="btn btn-outline-info" type="submit" >
@@ -11,19 +11,5 @@
                 </button>
           </div>
         </form>
-      </div> -->
+      </div>
 
-<!-- <div class="content-section">
-      <form method="get">
-        {{ credential_filters.form.as_p }}
-        <input type="submit"/>
-    </form>
-</div> -->
-
-<!-- {% for obj in credential_filters.qs %}
-{% include 'main/snippets_templates/filtercard.html'%}
-{% endfor %}
-
-{% for filter in credential_filters.qs%}
-{% include 'main/snippets_templates/filtercard.html'%}
-{% endfor %} -->
