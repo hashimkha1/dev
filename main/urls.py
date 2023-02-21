@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+from .utils import convert_html_to_pdf
 
 app_name = 'main'
 urlpatterns = [
@@ -10,6 +11,8 @@ urlpatterns = [
     path('team/', views.about, name='team'),
     # path('profiles/', views.profiles, name='profiles'),
     path('letter/', views.about, name='letter'),
+    path('appointment_letter/', views.about, name='appointment_letter'),
+    path('download/', convert_html_to_pdf, name='appointment_letter_download'),
     #==============DC48KENYA==============================================
     path('dchome', views.dclayout, name='dc_layout'),
     path('dclogin', views.dc48login, name='dc_login'),
