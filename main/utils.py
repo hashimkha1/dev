@@ -7,7 +7,7 @@ from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
 from .models import Service,Assets
 import datetime
-import pdfkit
+# import pdfkit
 
 # def convert_html_to_pdf():
 #     html="main/doc_templates/appointment_letter.html"
