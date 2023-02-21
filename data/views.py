@@ -515,8 +515,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
         if instance is None:
             return render(request, "main/errors/404.html")
 
-        next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id')
-        print(next_title)
+        next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('order')
         if not next_title.exists():
             next_category = FeaturedCategory.objects.get(id__gt=instance.featuredcategory.id).order_by('id').first()
             return redirect('data:category-detail', title=next_category.title)

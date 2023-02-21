@@ -331,6 +331,7 @@ class FeaturedSubCategory(models.Model):
         on_delete=models.CASCADE,
         default=FeaturedCategory.get_default_pk,
     )
+    order = models.IntegerField(blank=True, null=True)
     # category = models.ManyToManyField(Cat, blank=True,related_name='cats')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField(default="General")

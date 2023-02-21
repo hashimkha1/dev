@@ -8,7 +8,8 @@ from .models import (
 
 
 class FeaturedSubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
+    list_display = ('id', 'order', 'title')
+    list_editable = ('order',)
 
 
 class TrainingResponsesTrackingAdmin(admin.ModelAdmin):
