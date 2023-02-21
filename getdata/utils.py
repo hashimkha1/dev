@@ -31,7 +31,7 @@ from coda_project.settings import dblocal,herokudev,herokuprod
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=herokuprod() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
 
 def get_gmail_service():
     creds = None
@@ -554,6 +554,7 @@ def main_shortput():
     options.add_argument("--headless") 
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--no-sandbox")
+    options.add_argument('--disable-gpu')
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
