@@ -546,10 +546,10 @@ def main_shortput():
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
-    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     ## might not be needed
     options.add_argument("window-size=800x600")
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
 #   options = webdriver.ChromeOptions()
     # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -558,7 +558,7 @@ def main_shortput():
     # options.add_argument("--no-sandbox")
     # options.add_argument('--disable-gpu')
     # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
