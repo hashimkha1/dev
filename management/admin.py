@@ -123,16 +123,20 @@ class TrainingAdmin(admin.ModelAdmin):
                 user.save()
 
                 try:
-
                     group = TaskGroups.objects.all().first()
                     cat = Tag.objects.all().first()
+                    try:
+                        max_point = Task.objects.filter(groupname=group, category=cat).first()
+                        max_point = max_point.mxpoint
+                    except:
+                        max_point = 0
 
-                    create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', '0', '0')
-                    create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', '0', '0')
-                    create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', '0', '0')
-                    create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', '0', '0')
-                    create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', '0', '0')
-                    create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
+                    create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
+                    create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
+                    create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+                    create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+                    create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
                 except:
                     print("Something wrong in task creation")
         except:
