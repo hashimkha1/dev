@@ -553,7 +553,8 @@ def main_shortput():
     ## might not be needed
     options.add_argument("window-size=800x600")
     # driver = webdriver.Chrome(chromedriver.install(), options=options)
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    driver = webdriver.Chrome(options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
