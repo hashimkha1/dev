@@ -127,12 +127,12 @@ class TrainingAdmin(admin.ModelAdmin):
                     group = TaskGroups.objects.all().first()
                     cat = Tag.objects.all().first()
 
-                    create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '10', '5', '6', '100')
-                    create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '10', '5', '6', '100')
-                    create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '10', '5', '6', '100')
-                    create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '10', '5', '6', '100')
-                    create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '10', '5', '6', '100')
-                    create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', '0', '0')
+                    create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', '0', '0')
                 except:
                     print("Something wrong in task creation")
         except:
