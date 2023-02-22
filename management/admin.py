@@ -3,6 +3,7 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import path, reverse
+from accounts.models import CustomerUser, TaskGroups
 from management.models import (
     Requirement,
     Transaction,
@@ -18,8 +19,9 @@ from management.models import (
     RetirementPackage,
     Loan,
     LBandLS,
+    Training,
 )
-from accounts.models import TaskGroups
+
 from django.contrib import messages
 
 # from .models import Activity, Category, Employee, Transaction , Department
@@ -89,6 +91,55 @@ class TaskAdmin(admin.ModelAdmin):
             messages.error(request, 'User is not an Employee')
 
 
+def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
+    x = Task()
+    x.group = group
+    x.groupname = groupname
+    x.category = cat
+    x.employee = user
+    x.activity_name = activity
+    x.description = description
+    x.duration = duration
+    x.point = point
+    x.mxpoint = mxpoint
+    x.mxearning = mxearning
+    x.save()
+
+
+class TrainingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'presenter')
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        user = obj.presenter
+        print(user)
+        try:
+            session = Training.objects.filter(presenter=user).count()
+            print(session)
+
+            if session >= 2 and user.is_applicant:
+                user.is_employee = True
+                user.is_applicant = False
+                user.save()
+
+                try:
+
+                    group = TaskGroups.objects.all().first()
+                    cat = Tag.objects.all().first()
+
+                    create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '10', '5', '6', '100')
+                    create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '10', '5', '6', '100')
+                except:
+                    print("Something wrong in task creation")
+        except:
+            pass
+
+
+admin.site.register(Training, TrainingAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Policy)

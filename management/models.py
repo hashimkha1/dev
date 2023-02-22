@@ -66,8 +66,6 @@ class Training(models.Model):
     featured= models.BooleanField(default=True)
 
 
-
-
 class Transaction(models.Model):
     # Method of Payment
     Cash = "Cash"
