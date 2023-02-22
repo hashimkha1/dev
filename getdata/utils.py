@@ -4,6 +4,7 @@ import re
 from dateutil import parser
 from bs4 import BeautifulSoup
 import psycopg2
+import chromedriver_autoinstaller as chromedriver
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -538,28 +539,17 @@ def dump_data_short_put(values):
     except Exception as err:
         print(err)
 
+
 def main_shortput():
-        # to supress the error messages/logs
-    from selenium.webdriver.chrome.service import Service
+    # to supress the error messages/logs
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
-    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     ## might not be needed
     options.add_argument("window-size=800x600")
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
-#   options = webdriver.ChromeOptions()
-    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    # options.add_argument("--headless")
-    # options.add_argument("--disable-dev-shm-usage")
-    # options.add_argument("--no-sandbox")
-    # options.add_argument('--disable-gpu')
-    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
-    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
-    # driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(chromedriver.install(), options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
