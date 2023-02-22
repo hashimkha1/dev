@@ -542,19 +542,39 @@ def dump_data_short_put(values):
 
 def main_shortput():
     # to supress the error messages/logs
-    chromedriver.install()
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument('--no-sandbox')
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-dev-sh-usage")
-    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    ## might not be needed
-    options.add_argument("window-size=800x600")
-    # driver = webdriver.Chrome(chromedriver.install(), options=options)
-    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
-    driver = webdriver.Chrome(options=options)
+    # chromedriver.install()
+    # options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument('--no-sandbox')
+    # options.add_argument("--disable-gpu")
+    # options.add_argument("--disable-dev-sh-usage")
+    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # ## might not be needed
+    # options.add_argument("window-size=800x600")
+    # # driver = webdriver.Chrome(chromedriver.install(), options=options)
+    # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    # driver = webdriver.Chrome(options=options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--disable-gpu')
+    chrome_options.add_argument('--window-size=1280x1696')
+    chrome_options.add_argument('--user-data-dir=/tmp/user-data')
+    chrome_options.add_argument('--hide-scrollbars')
+    chrome_options.add_argument('--enable-logging')
+    chrome_options.add_argument('--log-level=0')
+    chrome_options.add_argument('--v=99')
+    chrome_options.add_argument('--single-process')
+    chrome_options.add_argument('--data-path=/tmp/data-path')
+    chrome_options.add_argument('--ignore-certificate-errors')
+    chrome_options.add_argument('--homedir=/tmp')
+    chrome_options.add_argument('--disk-cache-dir=/tmp/cache-dir')
+    chrome_options.add_argument(
+        'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100'
+        ' Safari/537.36')
+    from chromedriver_py import binary_path
+    driver = webdriver.Chrome(executable_path=binary_path, options=chrome_options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
