@@ -314,5 +314,12 @@ def payment_details():
 # SITEURL = "https://codadev.herokuapp.com"
 # SITEURL = "https://codamakutano.herokuapp.com"
 #Uncomment for prod purposes
-SITEURL = "https://www.codanalytics.net"
+# SITEURL = "https://www.codanalytics.net"
 # SITEURL=SITE_URL
+
+if os.environ.get('ENVIRONMENT') == 'production':
+    SITEURL = "https://www.codanalytics.net"
+elif os.environ.get('ENVIRONMENT') == 'testing':
+   SITEURL = "https://codamakutano.herokuapp.com"
+else:
+    SITEURL = "http://localhost:8000"
