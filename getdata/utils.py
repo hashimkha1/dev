@@ -542,14 +542,17 @@ def dump_data_short_put(values):
 
 def main_shortput():
     # to supress the error messages/logs
+    chromedriver.install()
     options = webdriver.ChromeOptions()
     options.add_argument("--headless")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument('--no-sandbox')
     options.add_argument("--disable-gpu")
+    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     ## might not be needed
     options.add_argument("window-size=800x600")
-    driver = webdriver.Chrome(chromedriver.install(), options=options)
+    # driver = webdriver.Chrome(chromedriver.install(), options=options)
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
