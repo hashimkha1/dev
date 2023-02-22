@@ -540,22 +540,25 @@ def dump_data_short_put(values):
 
 def main_shortput():
         # to supress the error messages/logs
-    # options = webdriver.ChromeOptions()
-    # options.add_argument("--headless")
-    # options.add_argument("--disable-dev-shm-usage")
-    # options.add_argument('--no-sandbox')
-    # options.add_argument("--disable-gpu")
-    # ## might not be needed
-    # options.add_argument("window-size=800x600")
+    from selenium.webdriver.chrome.service import Service
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    ## might not be needed
+    options.add_argument("window-size=800x600")
     # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
 
-    options = webdriver.ChromeOptions()
-    options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    options.add_argument("--headless") 
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--no-sandbox")
-    options.add_argument('--disable-gpu')
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
+#   options = webdriver.ChromeOptions()
+    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument("--no-sandbox")
+    # options.add_argument('--disable-gpu')
+    # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=options)
+    driver = webdriver.Chrome(options=options)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
