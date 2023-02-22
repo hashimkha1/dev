@@ -30,6 +30,8 @@ urlpatterns = [
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
+    path("employee_contract/", views.employee_contract, name="employee_contract"),
+    path("read_employee_contract/", views.read_employee_contract, name="read_employee_contract"),
     path('tasks/', TaskListView.as_view(), name='tasks'),
     path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
     path('newlink/', TaskCreateView.as_view(), name='newlink'),

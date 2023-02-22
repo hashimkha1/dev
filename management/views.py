@@ -18,6 +18,7 @@ from management.forms import (
     ManagementForm,
     RequirementForm,
     EvidenceForm,
+    EmployeeContractForm,
 )
 from django.views.generic import (
     CreateView,
@@ -121,6 +122,37 @@ def contract(request):
     #     # return render(request, 'management/daf/paystub.html', context)
     #     return render(request, "management/doc_templates/supportcontract_form.html")
 
+
+def employee_contract(request):
+    context = {}
+    form = None
+    try:
+        profile = UserProfile.objects.get(user=request.user)
+    except:
+        profile = None
+
+    print(profile)
+    if request.method == 'POST':
+        if profile:
+            profile.national_id_no = request.POST['national_id_no']
+            profile.id_file = request.POST['id_file']
+            profile.emergency_name = request.POST['emergency_name']
+            profile.emergency_address = request.POST['emergency_address']
+            profile.emergency_citizenship = request.POST['emergency_citizenship']
+            profile.emergency_phone = request.POST['emergency_phone']
+            profile.emergency_email = request.POST['emergency_email']
+            profile.emergency_national_id_no = request.POST['emergency_national_id_no']
+            profile.save()
+
+    form = EmployeeContractForm()
+    context['user'] = request.user
+    context['profile'] = profile
+    context['form'] = form
+    return render(request, "management/contracts/employee_contract.html", {'context': context})
+
+
+def read_employee_contract(request):
+    return render(request, "management/contracts/read_employee_contract.html")
 
 # ==============================PLACE HOLDER MODELS=======================================
 

@@ -4,6 +4,7 @@ from data.models import DSU
 from management.models import TaskLinks, Policy, Requirement, Task
 from finance.models import Transaction, Inflow
 from accounts.models import Department
+from application.models import UserProfile
 
 """
 class EmployeeForm(forms.ModelForm):  
@@ -269,3 +270,10 @@ class TaskForm(forms.ModelForm):
         ]
 
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
+
+class EmployeeContractForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('national_id_no', 'id_file', 'emergency_name', 'emergency_address', 'emergency_citizenship', 'emergency_email', 'emergency_phone', 'emergency_national_id_no')
+

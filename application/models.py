@@ -18,6 +18,7 @@ class UserProfile(models.Model):
     position = models.CharField(max_length=255,blank=True,null=True)
     description = models.TextField(blank=True,null=True)
     section = models.CharField(max_length=2, default="A", blank=True)
+
     image = models.ImageField(
         default="default.jpg", upload_to="Application_Profile_pics", blank=True
     )
@@ -29,6 +30,17 @@ class UserProfile(models.Model):
     # upload_c = models.FileField(upload_to="Application_Profile/uploads")
     is_active = models.BooleanField("Is featured", default=True)
     laptop_status= models.BooleanField("Is lap_status", default=True)
+
+    national_id_no = models.CharField(max_length=254, null=True, blank=True)
+    id_file = models.ImageField(upload_to='id_files/')
+
+    emergency_name = models.CharField(max_length=254, null=True, blank=True)
+    emergency_address = models.CharField(max_length=254, null=True, blank=True)
+    emergency_citizenship = models.CharField(max_length=254, null=True, blank=True)
+    emergency_national_id_no = models.CharField(max_length=254, null=True, blank=True)
+    emergency_phone = models.CharField(max_length=254, null=True, blank=True)
+    emergency_email = models.CharField(max_length=254, null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
