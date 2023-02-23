@@ -24,13 +24,14 @@ from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
-from coda_project.settings import dblocal,herokudev,herokuprod
+from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
+# host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 
 def get_gmail_service():
     creds = None
