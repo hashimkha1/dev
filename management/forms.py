@@ -273,6 +273,14 @@ class TaskForm(forms.ModelForm):
 
 
 class EmployeeContractForm(forms.ModelForm):
+    national_id_no = forms.CharField(required=True)
+    emergency_name = forms.CharField(required=True)
+    emergency_address = forms.CharField(required=True)
+    emergency_citizenship = forms.CharField(required=True)
+    emergency_email = forms.CharField(required=True)
+    emergency_phone = forms.CharField(required=True)
+    emergency_national_id_no = forms.CharField(required=True)
+
     class Meta:
         model = UserProfile
         fields = ('national_id_no', 'id_file', 'emergency_name', 'emergency_address', 'emergency_citizenship', 'emergency_email', 'emergency_phone', 'emergency_national_id_no')

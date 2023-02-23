@@ -181,6 +181,10 @@ def login_view(request):
             CreateProfile()
             # If Category is Staff/employee
             if account is not None and account.category == 2:
+                if account.is_employee and not account.is_employee_contract_signed:
+                    login(request, account)
+                    return redirect("management:employee_contract")
+
                 if account.sub_category == 2:  # contractual
                     login(request, account)
                     return redirect("management:requirements-active")

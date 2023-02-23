@@ -26,6 +26,7 @@ class CustomerAdmin(UserAdmin):
                     "is_employee",
                     "is_client",
                     "is_applicant",
+                    "is_employee_contract_signed",
                     "resume_file",
                 )
             },

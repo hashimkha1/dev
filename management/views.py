@@ -124,35 +124,90 @@ def contract(request):
 
 
 def employee_contract(request):
-    context = {}
-    form = None
-    try:
-        profile = UserProfile.objects.get(user=request.user)
-    except:
-        profile = None
 
-    print(profile)
-    if request.method == 'POST':
-        if profile:
-            profile.national_id_no = request.POST['national_id_no']
-            profile.id_file = request.POST['id_file']
-            profile.emergency_name = request.POST['emergency_name']
-            profile.emergency_address = request.POST['emergency_address']
-            profile.emergency_citizenship = request.POST['emergency_citizenship']
-            profile.emergency_phone = request.POST['emergency_phone']
-            profile.emergency_email = request.POST['emergency_email']
-            profile.emergency_national_id_no = request.POST['emergency_national_id_no']
-            profile.save()
+    if request.user.is_employee_contract_signed:
+        return (redirect('accounts:account-profile'))
+    else:
+        context = {}
+        form = None
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+        except:
+            profile = None
 
-    form = EmployeeContractForm()
-    context['user'] = request.user
-    context['profile'] = profile
-    context['form'] = form
-    return render(request, "management/contracts/employee_contract.html", {'context': context})
+        print(profile)
+        if request.method == 'POST':
+            if profile:
+                profile.national_id_no = request.POST['national_id_no']
+                profile.id_file = request.POST['id_file']
+                profile.emergency_name = request.POST['emergency_name']
+                profile.emergency_address = request.POST['emergency_address']
+                profile.emergency_citizenship = request.POST['emergency_citizenship']
+                profile.emergency_phone = request.POST['emergency_phone']
+                profile.emergency_email = request.POST['emergency_email']
+                profile.emergency_national_id_no = request.POST['emergency_national_id_no']
+                profile.save()
+
+        form = EmployeeContractForm()
+        context['user'] = request.user
+        context['profile'] = profile
+        context['form'] = form
+        return render(request, "management/contracts/employee_contract.html", {'context': context})
 
 
 def read_employee_contract(request):
-    return render(request, "management/contracts/read_employee_contract.html")
+    user = UserProfile.objects.get(user=request.user)
+
+    if user.national_id_no:
+        return render(request, "management/contracts/read_employee_contract.html")
+    else:
+        return redirect("management:employee_contract")
+
+
+def confirm_employee_contract(request):
+    user = UserProfile.objects.get(user=request.user)
+
+    if user.national_id_no:
+        user = request.user
+        user.is_employee_contract_signed = True
+        user.save()
+
+        try:
+            group = TaskGroups.objects.all().first()
+            cat = Tag.objects.all().first()
+            try:
+                max_point = Task.objects.filter(groupname=group, category=cat).first()
+                max_point = max_point.mxpoint
+            except:
+                max_point = 0
+
+            create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
+            create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
+            create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
+            create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+            create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+            create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+        except:
+            print("Something wrong in task creation")
+
+        return(redirect('accounts:account-profile'))
+    else:
+        return redirect("management:employee_contract")
+
+
+def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
+    x = Task()
+    x.group = group
+    x.groupname = groupname
+    x.category = cat
+    x.employee = user
+    x.activity_name = activity
+    x.description = description
+    x.duration = duration
+    x.point = point
+    x.mxpoint = mxpoint
+    x.mxearning = mxearning
+    x.save()
 
 # ==============================PLACE HOLDER MODELS=======================================
 

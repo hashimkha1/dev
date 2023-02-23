@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import path, reverse
 from management.models import (
     Requirement,
@@ -18,6 +18,7 @@ from management.models import (
     RetirementPackage,
     Loan,
     LBandLS,
+    Training,
 )
 from accounts.models import TaskGroups
 from django.contrib import messages
@@ -80,7 +81,10 @@ class TransactionAdmin(admin.ModelAdmin):
 class AdsAdmin(admin.ModelAdmin):
     list_display = ("post_description","created_at")
 
+
 class TaskAdmin(admin.ModelAdmin):
+    list_display = ('id', 'activity_name', )
+
     def save_model(self, request, obj, form, change):
         if obj.employee.is_employee:
             super().save_model(request, obj, form, change)
@@ -89,6 +93,29 @@ class TaskAdmin(admin.ModelAdmin):
             messages.error(request, 'User is not an Employee')
 
 
+class TrainingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'presenter')
+
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        user = obj.presenter
+        print(user)
+        try:
+            session = Training.objects.filter(presenter=user).count()
+            print(session)
+
+            if session >= 2 and user.is_applicant:
+                user.is_employee = True
+                user.is_applicant = False
+                user.save()
+
+                if user == request.user:
+                    return redirect("management:employee_contract")
+        except:
+            pass
+
+
+admin.site.register(Training, TrainingAdmin)
 admin.site.register(Transaction, TransactionAdmin)
 admin.site.register(Inflow)
 admin.site.register(Policy)
