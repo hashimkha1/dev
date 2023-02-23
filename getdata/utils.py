@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 #libraries for Options_play data extraction
+from selenium.webdriver.chrome.service import Service
+from chromedriver_py import binary_path # this will get you the path variable
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -555,14 +557,14 @@ def main_shortput():
     # # driver = webdriver.Chrome(chromedriver.install(), options=options)
     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    driver.get('https://www.optionsplay.com/hub/short-puts')
 
+    service_object = Service(binary_path)
+    driver = webdriver.Chrome(service=service_object)
+
+    # deprecated but works in older selenium versions
+    # driver = webdriver.Chrome(executable_path=binary_path)
+
+    driver.get('https://www.optionsplay.com/hub/short-puts')
     time.sleep(5)
     driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
