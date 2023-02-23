@@ -331,6 +331,7 @@ class FeaturedSubCategory(models.Model):
         on_delete=models.CASCADE,
         default=FeaturedCategory.get_default_pk,
     )
+    order = models.IntegerField(blank=True, null=True)
     # category = models.ManyToManyField(Cat, blank=True,related_name='cats')
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     description = models.TextField(default="General")
@@ -563,3 +564,12 @@ class Job_Tracker(models.Model):
 
     def __str__(self):
         return self.position
+
+
+class TrainingResponsesTracking(models.Model):
+    user = models.ForeignKey(CustomerUser, on_delete=models.CASCADE)
+    featuredsubcategory = models.ForeignKey(FeaturedSubCategory, on_delete=models.CASCADE)
+    course_overview = models.CharField(max_length=254, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.user)
