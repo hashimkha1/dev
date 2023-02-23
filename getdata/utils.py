@@ -558,11 +558,11 @@ def main_shortput():
     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
 
-    # service_object = Service(binary_path)
-    # driver = webdriver.Chrome(service=service_object)
+    service_object = Service(binary_path)
+    driver = webdriver.Chrome(service=service_object)
 
     # deprecated but works in older selenium versions
-    driver = webdriver.Chrome(executable_path=binary_path)
+    # driver = webdriver.Chrome(executable_path=binary_path)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
     time.sleep(5)

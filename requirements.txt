@@ -43,7 +43,6 @@ pandas
 tweepy
 bs4
 pywhatkit
-selenium
 webdriver-manager
 django-crontab==0.7.1
 python-dotenv==0.20.0
@@ -52,5 +51,6 @@ google-auth-httplib2==0.1.0
 google-auth-oauthlib==0.5.2
 pdfkit==1.0.0
 chromedriver-py==111.0.5563.19
+selenium==4.8.2
 
 
