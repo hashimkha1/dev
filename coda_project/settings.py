@@ -305,15 +305,6 @@ def payment_details():
             stan_account_no,coda_account_no,
             dck_account_no)
 
-# from .utils import url
-# protocol,SITE_URL=url(request)
-# SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com"
-# SITEURL = "https://codamakutano.herokuapp.com"
-#Uncomment for prod purposes
-# SITEURL = "https://www.codanalytics.net"
-# SITEURL=SITE_URL
-
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
 elif os.environ.get('ENVIRONMENT') == 'testing':
