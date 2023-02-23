@@ -23,10 +23,7 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
-import os
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+
 from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
@@ -35,27 +32,6 @@ SCOPES = ['https://mail.google.com/']
 #DB VARIABLES
 # host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
 host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
-
-
-def load_driver():
-    options = webdriver.FirefoxOptions()
-
-    # enable trace level for debugging
-    options.log.level = "trace"
-
-    options.add_argument("-remote-debugging-port=9224")
-    options.add_argument("-headless")
-    options.add_argument("-disable-gpu")
-    options.add_argument("-no-sandbox")
-
-    binary = FirefoxBinary(os.environ.get('FIREFOX_BIN'))
-
-    firefox_driver = webdriver.Firefox(
-        firefox_binary=binary,
-        executable_path=os.environ.get('GECKODRIVER_PATH'),
-        options=options)
-
-    return firefox_driver
 
 
 def get_gmail_service():
@@ -579,7 +555,12 @@ def main_shortput():
     # # driver = webdriver.Chrome(chromedriver.install(), options=options)
     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
-    driver = load_driver()
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
     time.sleep(5)
