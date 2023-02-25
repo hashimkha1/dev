@@ -51,4 +51,3 @@ google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
 pdfkit==1.0.0
-chromedriver-py==110.0.5481.77
