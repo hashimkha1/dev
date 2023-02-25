@@ -495,13 +495,14 @@ def options_play_cread_spread(request):
     
 
 def options_play_shortput(request):
-    main_shortput()
+    msg = main_shortput()
     message=f'we are done processing your request'
     context={
          "message":message,
-         "title":"Process Done"
+         "title":"Process Done",
+        "msg": msg
     }
-    return render (request, "main/messages/general.html",context)
+    return render (request, "main/messages/general.html", context)
 
 class OptionList(ListView):
     model=stockmarket
