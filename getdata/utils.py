@@ -561,47 +561,33 @@ def main_shortput():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    driver.get("https://medium.com")
-    # print(driver.page_source)
-    return driver.page_source
-    # print("Finished!")
-
-
-
-
-
-
-
 
     # CLIENT CODE
-    # deprecated but works in older selenium versions
-    # driver = webdriver.Chrome(executable_path=binary_path)
-    #
-    # driver.get('https://www.optionsplay.com/hub/short-puts')
-    # time.sleep(5)
-    # driver.implicitly_wait(5)
-    # form = driver.find_element(By.TAG_NAME, 'form')
-    # form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
-    # form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
-    #
-    # btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
-    # btn.send_keys(Keys.ENTER)
-    # time.sleep(3)
-    # table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
-    # tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
-    # rows = tbody.find_elements(By.TAG_NAME,'tr')
-    # rows = len(rows)
-    # # //*[@id="shortPuts"]/tbody/tr[1]
-    # # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
-    # time.sleep(4)
-    # for row in range(1,rows+1):
-    #     values = []
-    #     for col in range(1,16):
-    #         path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
-    #         value = driver.find_element(By.XPATH,path).text.strip()
-    #         values.append(value)
-    #
-    #     value = float(values[14].replace('%',''))
-    #     if values[11] == 'N' and value < 30:
-    #         dump_data_short_put(tuple(values))
+    driver.get('https://www.optionsplay.com/hub/short-puts')
+    time.sleep(5)
+    driver.implicitly_wait(5)
+    form = driver.find_element(By.TAG_NAME, 'form')
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+
+    btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
+    btn.send_keys(Keys.ENTER)
+    time.sleep(3)
+    table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
+    tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
+    rows = tbody.find_elements(By.TAG_NAME,'tr')
+    rows = len(rows)
+    # //*[@id="shortPuts"]/tbody/tr[1]
+    # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
+    time.sleep(4)
+    for row in range(1,rows+1):
+        values = []
+        for col in range(1,16):
+            path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
+            value = driver.find_element(By.XPATH,path).text.strip()
+            values.append(value)
+
+        value = float(values[14].replace('%',''))
+        if values[11] == 'N' and value < 30:
+            dump_data_short_put(tuple(values))
 
