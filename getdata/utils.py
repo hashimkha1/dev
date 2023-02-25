@@ -557,9 +557,10 @@ def main_shortput():
     # # driver = webdriver.Chrome(chromedriver.install(), options=options)
     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(executable_path=binary_path)
 
-    service_object = Service(binary_path)
-    driver = webdriver.Chrome(service=service_object)
+    # service_object = Service(binary_path)
+    # driver = webdriver.Chrome(service=service_object)
     # import os
     # chrome_options = webdriver.ChromeOptions()
     # chrome_options.add_argument("--headless")
