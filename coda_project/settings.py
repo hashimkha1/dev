@@ -132,6 +132,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password =os.environ.get('HEROKU_DEV_PASS')
     else:
+        # host = os.environ.get('HEROKU_DEV_HOST')
+        # dbname = os.environ.get('HEROKU_DEV_NAME')
+        # user = os.environ.get('HEROKU_DEV_USER')
+        # password =os.environ.get('HEROKU_DEV_PASS')
         host = 'localhost'
         dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
         user = os.environ.get('POSTGRESDB_USER') #'postgres',
