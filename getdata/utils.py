@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 #libraries for Options_play data extraction
+from selenium.webdriver.chrome.service import Service
+from chromedriver_py import binary_path # this will get you the path variable
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -32,6 +34,7 @@ SCOPES = ['https://mail.google.com/']
 #DB VARIABLES
 # host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
 host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
+
 
 def get_gmail_service():
     creds = None
@@ -554,29 +557,14 @@ def main_shortput():
     # # driver = webdriver.Chrome(chromedriver.install(), options=options)
     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
     # driver = webdriver.Chrome(options=options)
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.add_argument('--headless')
-    chrome_options.add_argument('--no-sandbox')
-    chrome_options.add_argument('--disable-gpu')
-    chrome_options.add_argument('--window-size=1280x1696')
-    chrome_options.add_argument('--user-data-dir=/tmp/user-data')
-    chrome_options.add_argument('--hide-scrollbars')
-    chrome_options.add_argument('--enable-logging')
-    chrome_options.add_argument('--log-level=0')
-    chrome_options.add_argument('--v=99')
-    chrome_options.add_argument('--single-process')
-    chrome_options.add_argument('--data-path=/tmp/data-path')
-    chrome_options.add_argument('--ignore-certificate-errors')
-    chrome_options.add_argument('--homedir=/tmp')
-    chrome_options.add_argument('--disk-cache-dir=/tmp/cache-dir')
-    chrome_options.add_argument(
-        'user-agent=Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100'
-        ' Safari/537.36')
-    from chromedriver_py import binary_path
-    driver = webdriver.Chrome(executable_path=binary_path, options=chrome_options)
+
+    # service_object = Service(binary_path)
+    # driver = webdriver.Chrome(service=service_object)
+
+    # deprecated but works in older selenium versions
+    driver = webdriver.Chrome(executable_path=binary_path)
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
-
     time.sleep(5)
     driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
@@ -603,4 +591,4 @@ def main_shortput():
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
-    
+
