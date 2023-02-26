@@ -117,7 +117,7 @@ class TrainingAdmin(admin.ModelAdmin):
             session = Training.objects.filter(presenter=user).count()
             print(session)
 
-            if session >= 2 and user.is_applicant:
+            if session >= 35 and user.is_applicant:
                 user.is_employee = True
                 user.is_applicant = False
                 user.save()
