@@ -221,7 +221,7 @@ def FI_sectionC(request):
             # html_content = f"""
             #     <span><h3>Hi {request.user},</h3>kindly prepare to present your Section C within 48 hours </span>"""
             # SectionCompleteMail(subject,to,html_content)
-            send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionC.html', context={'user': request.user})
+            # send_email(category=request.user.category, to_email=[request.user.email,], subject=subject, html_template='email/FI_sectionC.html', context={'user': request.user})
             # return redirect("management:policies")
             return redirect("application:ratewid", pk="Database")
 
