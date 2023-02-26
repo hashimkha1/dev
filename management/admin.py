@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import path, reverse
 from accounts.models import CustomerUser, TaskGroups
 from management.models import (
@@ -82,14 +82,16 @@ class TransactionAdmin(admin.ModelAdmin):
 class AdsAdmin(admin.ModelAdmin):
     list_display = ("post_description","created_at")
 
+
 class TaskAdmin(admin.ModelAdmin):
+    list_display = ('id', 'activity_name', )
+
     def save_model(self, request, obj, form, change):
         if obj.employee.is_employee:
             super().save_model(request, obj, form, change)
         else:
             messages.set_level(request, messages.ERROR)
             messages.error(request, 'User is not an Employee')
-
 
 def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
     x = Task()
@@ -104,8 +106,6 @@ def create_task(group, groupname, cat, user, activity, description, duration, po
     x.mxpoint = mxpoint
     x.mxearning = mxearning
     x.save()
-
-
 class TrainingAdmin(admin.ModelAdmin):
     list_display = ('id', 'presenter')
 
@@ -139,6 +139,8 @@ class TrainingAdmin(admin.ModelAdmin):
                     create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
                 except:
                     print("Something wrong in task creation")
+                if user == request.user:
+                    return redirect("management:employee_contract")
         except:
             pass
 
