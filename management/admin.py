@@ -19,7 +19,8 @@ from management.models import (
     RetirementPackage,
     Loan,
     LBandLS,
-    Training,
+    Training,ProcessJustification,ProcessBreakdown
+
 )
 
 from django.contrib import messages
@@ -155,7 +156,8 @@ admin.site.register(TaskHistory)
 admin.site.register(Tag)
 admin.site.register(Requirement)
 admin.site.register(Advertisement, AdsAdmin)
-
+admin.site.register(ProcessJustification)
+admin.site.register(ProcessBreakdown)
 admin.site.register(TaskGroups)
 
 admin.site.register(Payslip)
