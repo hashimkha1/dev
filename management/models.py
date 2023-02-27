@@ -950,7 +950,7 @@ class Requirement(models.Model):
         default=1,
         on_delete=models.SET_NULL,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_employee=True) |Q(is_client=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     assigned_to = models.ForeignKey(
         User,
