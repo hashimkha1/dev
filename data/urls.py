@@ -25,6 +25,10 @@ from data.views import (
 app_name = "data"
 urlpatterns = [
     path("", views.analysis, name="home"),
+    path("services/", views.services, name="services"),
+    path("job_support/", views.job_support, name="job_support"),
+    path("data_analysis/", views.data_analysis, name="data_analysis"),
+    path("single_course/", views.single_course, name="single_course"),
     path("report/", views.report, name="report"),
     path("database/", views.database, name="database"),
     path("financialsystem/", views.financialsystem, name="finance"),
