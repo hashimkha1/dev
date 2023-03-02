@@ -297,6 +297,8 @@ class ClientInterviewListView(ListView):
         return Interviews.objects.all().filter(user=user)
 
 @method_decorator(login_required, name="dispatch")
+
+
 class InterviewDetailView(DetailView):
     model = Interviews
     ordering = ["-upload_date"]
@@ -304,6 +306,8 @@ class InterviewDetailView(DetailView):
 # class QuestionDetailView(DetailView):
 #     model = Interviews
 #     ordering = ["-upload_date"]
+
+
 def courseview(request, question_type=None, *args, **kwargs):
     instance = JobRole.objects.get_by_question(question_type)
     form= InterviewForm
@@ -325,6 +329,8 @@ def courseview(request, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
+
 def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'GET':
         instance = JobRole.objects.get_by_question(question_type)
@@ -375,6 +381,8 @@ def questionview(request, question_type=None, *args, **kwargs):
             return redirect('data:question-detail', question_type=question_type)
         return redirect('data:question-detail', question_type=next_topic.first().question_type)
 @method_decorator(login_required, name="dispatch")
+
+
 class InterviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Interviews
     success_url = "/data/iuploads"
@@ -566,6 +574,7 @@ def activitydetail(request, slug=None, *args, **kwargs):
     if activities is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     model = ActivityLinks
@@ -821,3 +830,19 @@ def updatelinks_employetraining(request):
     with open(settings.STATIC_ROOT + '/employeetraining.json', "w") as jsonFile:
         json.dump(data, jsonFile)
     return JsonResponse({"success": True})
+
+
+def services(request):
+    return render(request, "data/training/services.html")
+
+
+def data_analysis(request):
+    return render(request, "data/training/data_analysis.html")
+
+
+def job_support(request):
+    return render(request, "data/training/job_support.html")
+
+
+def single_course(request):
+    return render(request, "data/training/single_course.html")
