@@ -27,7 +27,7 @@ urlpatterns = [
     path("", views.analysis, name="home"),
     path("services/", views.services, name="services"),
     path("job_support/", views.job_support, name="job_support"),
-    path("data_analysis/", views.data_analysis, name="data_analysis"),
+    path("job_market/", views.job_market, name="job_market"),
     path("single_course/", views.single_course, name="single_course"),
     path("report/", views.report, name="report"),
     path("database/", views.database, name="database"),
@@ -53,6 +53,7 @@ urlpatterns = [
     path("student_feedback/", views.feedback, name="student_feedback"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
+    path("interview_roles/", views.interview_roles, name="interview_roles"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
     # path("testing/", views.questionview, name="testing"),
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),

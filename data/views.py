@@ -19,7 +19,7 @@ from data.forms import (
     PrepQuestionsForm,TrainingResponseForm,
     InterviewForm, DSUForm ,RoleForm,
 )
-from main.utils import data_interview
+from main.utils import data_interview,Meetings,image_view,path_values
 from data.models import (
     Interviews,
     FeaturedCategory,
@@ -54,6 +54,9 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, "data/training/training.html", {"title": "training"})
+
+
+
 
 @login_required
 def training_v2(request):
@@ -835,9 +838,9 @@ def updatelinks_employetraining(request):
 def services(request):
     return render(request, "data/training/services.html")
 
-
-def data_analysis(request):
-    return render(request, "data/training/data_analysis.html")
+@login_required
+def job_market(request):
+    return render(request, "data/training/job_market.html")
 
 
 def job_support(request):
@@ -846,3 +849,39 @@ def job_support(request):
 
 def single_course(request):
     return render(request, "data/training/single_course.html")
+
+def single_course(request):
+    return render(request, "data/training/single_course.html")
+
+@login_required
+def interview_roles(request):
+    # team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    sub_title=path_values(request)[-1]
+    print("sub_title",sub_title)
+    date_object="01/20/2023"
+    # start_date = datetime.strptime(date_object, '%m/%d/%Y')
+    # end_date=start_date + relativedelta(months=3)
+    images,image_names=image_view(request)
+    # staff=[member for member in team_members if member.img_category=='employee']
+    # img_urls=[member.img_url for member in team_members if member.img_category=='employee']
+    context={
+        # "start_date": start_date,
+        # "end_date": end_date,
+        # "title_team": "team",
+        # "employee_subcategories": employee_subcategories,
+        # "active_employees": staff,
+        "title": "Training",
+        # "images": images,
+        # "img_urls": img_urls,
+        "title_letter": "letter",
+    }
+    
+    # if sub_title == 'training':
+    #     return render(request, "main/team.html",context)
+    # elif sub_title == 'interview':
+    #     return render(request, "main/doc_templates/letter.html",context)
+    # elif sub_title == 'jobsupport':
+    #     return render(request, "main/doc_templates/appointment_letter.html",context)
+    # elif sub_title == 'other':
+    #     return render(request, "main/about.html",context)
+    return render(request, "data/interview/interview_roles.html",context)

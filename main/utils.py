@@ -223,6 +223,14 @@ data_interview = [
         "Lead": "Coach",
         "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
     },
+    {
+        "Inteview": "5. Job Application & Salary Negotiation",
+        # "Concentration": "Data Analysis 1-1 Sessions",
+        "Description": "Guide you on how to apply and respond to recruiters",
+        "Duration": "14 Days",
+        "Lead": "self/Coach",
+        "Link": SITEURL+"/data/job_market/",
+    },
 ]
 
 Automation = [
