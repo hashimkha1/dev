@@ -364,7 +364,6 @@ def pay(request, service=None):
     message = f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
     link = f'{SITEURL}/finance/new_contract/{request.user}/'
     images, image_names = image_view(request)
-    print(service)
     if service:
         context = None
         try:
@@ -383,10 +382,7 @@ def pay(request, service=None):
 
         return render(request, "finance/payments/pay.html", context)
 
-    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
-    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-    link=f'{SITEURL}/finance/new_contract/{request.user}/'
-    images,image_names=image_view(request)
+
     try:
         payment_info = Payment_Information.objects.filter(
             customer_id=request.user.id
@@ -399,12 +395,10 @@ def pay(request, service=None):
             "message": message,
             "link": link,
         }
-        return redirect('finance:newcontract', username=request.user.username)
-        # return render(request, "finance/payments/pay.html",context)
+        return render(request, "finance/payments/pay.html", context)
     except:
-        #return render(request, "management/contracts/contract_error.html", context)
         url = '../new_contract/' + request.user.username + '/'
-        return redirect('finance:newcontract', username=request.user.username)
+        return redirect(url)
 
 
 def paymentComplete(request):
