@@ -35,6 +35,7 @@ from main.views import images
 from main.utils import image_view,download_image,Meetings,path_values
 from management.utils import loan_computation
 from main.filters import FoodFilter
+from main.models import Service
 from .utils import check_default_fee,get_exchange_rate
 from main.utils import countdown_in_month
 
@@ -139,10 +140,10 @@ def contract_form_submission(request):
 				if request.user.category == 3 and request.user.sub_category == 2 or request.user.is_superuser: 
 					return redirect('data:train')
 				else:
-					return redirect('management:companyagenda')
+					return redirect('finance:pay')
 			else:
 				messages.success(request, f'Account created for {username}!')
-				return redirect('management:companyagenda')
+				return redirect('finance:pay')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
@@ -358,7 +359,30 @@ def payment(request,method):
 
 
 @login_required
-def pay(request):
+def pay(request, service=None):
+    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    message = f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+    link = f'{SITEURL}/finance/new_contract/{request.user}/'
+    images, image_names = image_view(request)
+    print(service)
+    if service:
+        context = None
+        try:
+            service = Service.objects.get(pk=service)
+            context = {
+                "title": "PAYMENT",
+                "images": images,
+                "image_name": image_names,
+                "payments": service,
+                "message": message,
+                "link": link,
+                "service": True
+            }
+        except:
+            pass
+
+        return render(request, "finance/payments/pay.html", context)
+
     url="https://www.codanalytics.net/static/main/img/service-3.jpg"
     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
     link=f'{SITEURL}/finance/new_contract/{request.user}/'
@@ -368,17 +392,20 @@ def pay(request):
             customer_id=request.user.id
         ).first()
         context={
-            "title": "PAYMENT", 
-            "images":images, 
-            "image_name": image_names, 
+            "title": "PAYMENT",
+            "images":images,
+            "image_name": image_names,
             "payments": payment_info,
             "message": message,
             "link": link,
         }
-        return render(request, "finance/payments/pay.html",context)
+        return redirect('finance:newcontract', username=request.user.username)
+        # return render(request, "finance/payments/pay.html",context)
     except:
-        return render(request, "management/contracts/contract_error.html", context)
-        
+        #return render(request, "management/contracts/contract_error.html", context)
+        url = '../new_contract/' + request.user.username + '/'
+        return redirect('finance:newcontract', username=request.user.username)
+
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
