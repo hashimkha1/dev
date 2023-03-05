@@ -115,7 +115,7 @@ class Picture(models.Model):
 class Service(models.Model):
     name = models.CharField(max_length=200)
     category = models.CharField(default='Data Analysis',max_length=200,null=True, blank=True)
-    # subcategory_category = models.CharField(default='Data Analysis',max_length=200,null=True, blank=True)
+    subcategory = models.CharField(default='Data Analysis', max_length=200,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)

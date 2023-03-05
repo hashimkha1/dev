@@ -35,55 +35,24 @@
     <!-------------------Cards-Category Section----------------------->
 <div class="container-fluid padding">
   <div class="row padding text-center">
-    <div class="col-md-4" id="bada">
-      <div class="card">
-       <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-        <div class="card-body">
-          <h4><b>Plan A</b></h4>
-          <hr/>
-          <p>Cost :$999 </p>
-          <p>Allocation :30 HOURS</p>
-          <p>Expiration :30 DAYS</p>
 
-          <a href="{% url 'data:train' %}" >
-            <button type="button" class="btn btn-primary">Pay Now</button>
-        </a>
+    {% for service in services %}
+      <div class="col-md-4" id="bada">
+        <div class="card">
+          <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+          <div class="card-body">
+            <h4><b>{{ service.name }}</b></h4>
+            <hr/>
+            <p>Cost :${{ service.price }}</p>
+            <p>{{ service.description|safe }}</p>
+            <a href="{% url 'finance:service_pay' service=service.id  %}" >
+              <button type="button" class="btn btn-primary">Pay Now</button>
+          </a>
+          </div>
         </div>
       </div>
-    </div>
-    <hr>
-    <div class="col-md-4" id="bada">
-      <div class="card">
-        <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-        <div class="card-body">
-          <h4><b>Plan B</b></h4>
-          <hr/>
-          <p>Cost :$1999 </p>
-          <p>Allocation :70 HOURS</p>
-          <p>Expiration :60 DAYS/2 Months</p>
-          <a href="{% url 'data:train' %}" >
-            <button type="button" class="btn btn-primary">Pay Now</button>
-        </a>
-        </div>
-      </div>
-    </div>
-    <hr>
-    <div class="col-md-4" id="bada">
-      <div class="card">
-        <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-        <div class="card-body">
-          <h4><b>Plan C</b></h4>
-          <hr/>
-          <p>Cost :$2999</p>
-          <p>Allocation :120 HOURS</p>
-          <p>Expiration :90 DAYS/3 Months</p>
-          <a href="{% url 'data:train' %}" >
-            <button type="button" class="btn btn-primary">Pay Now</button>
-        </a>
-        </div>
-      </div>
-    </div>
-    <hr>
+    {% endfor %}
+
 
   </div>
 </div>
