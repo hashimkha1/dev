@@ -13,6 +13,11 @@ urlpatterns = [
     path('letter/', views.about, name='letter'),
     path('appointment_letter/', views.about, name='appointment_letter'),
     # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
+    #=======================SERVICES=====================================
+    path('newservice/', views.ServiceCreateView.as_view(template_name='main/form.html'), name='newservice'),
+    path('services/', views.services, name='services'),
+    path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
+    path('delete/<int:id>/', views.delete_service, name='delete_service'),
     #==============DC48KENYA==============================================
     path('dchome', views.dclayout, name='dc_layout'),
     path('dclogin', views.dc48login, name='dc_login'),

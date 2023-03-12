@@ -113,12 +113,32 @@ class Picture(models.Model):
 
 
 class Service(models.Model):
-    name = models.CharField(max_length=200)
-    category = models.CharField(default='Data Analysis',max_length=200,null=True, blank=True)
-    subcategory = models.CharField(default='Data Analysis', max_length=200,null=True, blank=True)
+    CAT_CHOICES = [
+            ("Management","Management"),
+            ("Data Analysis","Data Analysis"),
+            ("Stocks & Options","Stocks & Options"),
+            ("Other","Other"),
+       ]
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+    )
+    subcategory = models.CharField(default='Full Course',max_length=200,null=True, blank=True)
+    # subcategory = models.CharField(default='Data Analysis', max_length=200,null=True, blank=True)
+    name = models.CharField(max_length=200,null=True, blank=True) # onboarding ,interview
+    slug = models.SlugField(max_length=255, blank=True, default="slug")
+    product_name1 = models.CharField(max_length=200,null=True, blank=True) # onboarding ,interview
+    product_name2 = models.CharField(max_length=200,null=True, blank=True) # onboarding ,interview
+    cat_description = models.TextField(null=True, blank=True)
+    sub_description = models.TextField(null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    description1 = models.TextField(null=True, blank=True)
+    description2 = models.TextField(null=True, blank=True)
     image_url = models.CharField(max_length=1000, null=True, blank=True)
     price = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
     class Meta:
         verbose_name_plural = "Services"
 

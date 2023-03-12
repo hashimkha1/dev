@@ -837,7 +837,21 @@ def updatelinks_employetraining(request):
 
 
 def services(request):
-    return render(request, "data/training/services.html")
+    # services = Service.objects.all()
+    services = Service.objects.filter(category='Data Analysis')
+    # title,description = Service.objects.values_list('category','cat_description')
+    # title, description = Service.objects.values_list(
+    #                 "category", "cat_description").filter(category='Data Analysis')
+    title, description = Service.objects.values_list("category", "cat_description").filter(category='Data Analysis').first()
+    print(title,description)
+    context={
+        "services":services,
+        "title":title,
+        "description":description,
+    }
+    # for service in services2:
+    #     print(service.category)
+    return render(request, "data/training/services.html",context)
 
 @login_required
 def job_market(request):

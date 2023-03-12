@@ -286,7 +286,8 @@
 <div class="container-fluid padding">
   <div class="row welcome text-center">
     <div class="col-12">
-      <h2 class="display-4">{{title}}</h2>
+      <!-- <h2 class="display-4">{{title}}</h2> -->
+      <h2 class="display-6">WHAT WE OFFER</h2>
     </div>
     <hr/>
     <div class="col-12">
@@ -302,20 +303,29 @@
     <div class="col-md-3" id="bada">
       <div class="card">
         <div class="card-body">
-          <h4 class="text-center"><b>{{service.subcategory}}</b></h4>
-          <!-- <h4 class="text-center"><b>Full Course</b></h4> -->
+            <!-- <p class="display-5 text-center"><b>{{service.subcategory}}</b></p> -->
+            <p class="display-5 text-center"><b>{{service.subcategory}}</b></p>
+            <!-- <h4 class="text-center"><b>Full Course</b></h4> -->
           <hr/>
           <ul>
             <li><b>{{service.name}}:</b>{{service.description}}</li>
+            <li><b>{{service.product_name1}}:</b>{{service.description1}}</li>
+            <li><b>{{service.product_name2}}:</b>{{service.description2}}</li>
             <!-- <li><b>Data Analysis:</b> Train on Reporting(Tableau,PowerBI),ETL(Alteryx),Database(SQL,Snowflake)</li>
             <li><b>Interview:</b>Help to prepare for the interview in the industry on questions ranging from resume,performance to use case descriptions</li> -->
           </ul>
-          <a href="{% url 'data:train' %}" >
-            <button type="button" class="btn btn-primary">Read More</button>
+          <!-- <a href="{% url 'data:train' %}" >
+            <button type="button" class="btn btn-primary">More</button>
+          </a> -->
+          <a href="{{SITEURL}}/data/{{service.slug}}/" >
+            <button type="button" class="btn btn-primary">More</button>
           </a>
           {%if request.user.is_superuser %}
           <a href="{% url 'main:update_service' service.id %}" >
             <button type="button" class="btn btn-primary">edit</button>
+          </a>
+          <a href="{% url 'main:delete_service' service.id %}" >
+            <button type="button" class="btn btn-primary">Delete</button>
           </a>
           {%endif%}
         </div>
