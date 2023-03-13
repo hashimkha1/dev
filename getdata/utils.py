@@ -570,8 +570,8 @@ def main_shortput():
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
 
-    btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
-    btn.send_keys(Keys.ENTER)
+    # btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
+    # btn.send_keys(Keys.ENTER)
     time.sleep(3)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
