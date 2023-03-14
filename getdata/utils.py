@@ -582,7 +582,8 @@ def main_shortput():
     # //*[@id="shortPuts"]/tbody/tr[1]
     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
     time.sleep(4)
-    for row in range(1,rows+1):
+    # for row in range(1,rows+1):
+    for row in range(1):
         values = []
         for col in range(1,16):
             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
