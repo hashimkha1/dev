@@ -574,9 +574,9 @@ def main_shortput():
     btn.send_keys(Keys.ENTER)
     time.sleep(7)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
-    time.sleep(7)
+    time.sleep(5)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
-    time.sleep(7)
+    time.sleep(5)
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
     # //*[@id="shortPuts"]/tbody/tr[1]
