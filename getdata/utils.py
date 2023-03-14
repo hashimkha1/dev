@@ -572,7 +572,7 @@ def main_shortput():
 
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
-    time.sleep(7)
+    time.sleep(5)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
     time.sleep(3)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
