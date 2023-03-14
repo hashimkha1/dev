@@ -564,15 +564,15 @@ def main_shortput():
 
     # CLIENT CODE
     driver.get('https://www.optionsplay.com/hub/short-puts')
-    time.sleep(5)
-    driver.implicitly_wait(5)
+    time.sleep(3)
+    driver.implicitly_wait(3)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
 
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
-    time.sleep(5)
+    time.sleep(3)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
     time.sleep(1)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
