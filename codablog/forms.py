@@ -1,6 +1,6 @@
 from django import forms
-
-from .models import Rated
+from django.forms import ModelForm, Textarea
+from .models import Rated,Post
 
 
 class RatingForm(forms.ModelForm):
@@ -24,3 +24,13 @@ class RatingForm(forms.ModelForm):
         self.fields['understanding'].empty_label= "Select"
         self.fields['topic'].required= False
 
+
+class PostForm(forms.ModelForm):  
+    class Meta:  
+        model = Post  
+        fields=['title','content']
+        widgets = {"content": Textarea(attrs={"cols": 40, "rows": 3})}
+
+    def __init__(self, *args, **kwargs):
+        super(PostForm, self).__init__(*args, **kwargs)
+        # self.fields["title"].empty_label = "Select"

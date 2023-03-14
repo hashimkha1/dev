@@ -1,11 +1,12 @@
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth.models import User
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView)
 
-from .forms import RatingForm
+from .forms import RatingForm,PostForm
 from .models import Post, Rate
+from .utils import buildmodel
 
 class PostDetailView(DetailView):
     model=Post
@@ -16,6 +17,41 @@ class PostListView(ListView):
     template_name='codablog/success.html'
     context_object_name='posts'
     ordering=['-date_posted']
+
+# class PostCreateView(LoginRequiredMixin, CreateView):
+#     model=Post
+#     fields=['title','content']
+
+#     def form_valid(self,form):
+#         form.instance.author=self.request.user
+#         return super().form_valid(form)   
+#  
+def newpost(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            # quest = 'List the fininancial statements?'
+            try:
+                form.instance.author = request.user
+                print("User",form.instance.author)
+                form.save()
+                return redirect('layout:home')
+            except:
+                return render(request, "main/errors/404.html")
+    else:
+        form = PostForm()
+        quest = "write 3 full paragraphs each on how good my data analyst coach was"
+        # sample_description=buildmodel(question=quest)
+        # print("sample_description",sample_description)
+        response = buildmodel(question=quest)
+        context={
+            "response" : response,
+            "form": form
+        }
+        # form.instance.description = buildmodel(question=quest)
+        print("response",response)
+    return render(request, "codablog/post_form.html", context)
+
 
 class PostCreateView(LoginRequiredMixin, CreateView):
     model=Post
@@ -74,4 +110,11 @@ class RateListView(ListView):
     template_name='codablog/rating.html'
     context_object_name='ratings'
     ordering=['-date_posted']
+
+
+
+
+    
+
+
 
