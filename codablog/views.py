@@ -30,14 +30,15 @@ def newpost(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            # quest = 'List the fininancial statements?'
-            try:
-                form.instance.author = request.user
-                print("User",form.instance.author)
-                form.save()
-                return redirect('layout:home')
-            except:
-                return render(request, "main/errors/404.html")
+            # # quest = 'List the fininancial statements?'
+            form.instance.writer = request.user
+            # print("request_user", request.user)
+            # print("User",form.instance.author)            
+            form.save()
+            return redirect('main:layout')
+            # try:
+            # except:
+            #     return render(request, "main/errors/404.html")
     else:
         form = PostForm()
         quest = "write 3 full paragraphs each on how good my data analyst coach was"

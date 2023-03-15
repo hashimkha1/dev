@@ -1,6 +1,7 @@
 import requests
 import json
 import time
+from django.db.models import Min,Max
 from django.http import JsonResponse
 from django.db.models import Q
 from celery import shared_task
@@ -12,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings,image_view,path_values
 from accounts.utils import employees
-from codablog.models import Post
+from codablog.models import Post,Testimonials
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from coda_project.task import advertisement
@@ -87,23 +88,30 @@ def test(request):
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
+from django.shortcuts import get_object_or_404
+
+
 def layout(request):
-    # advertisement()
-    # TrainingLoanDeduction()
-    posts=Post.objects.all()
-    services=Service.objects.all()
-    images,image_names=image_view(request)
+    # get the latest post for each user
+    latest_posts = Testimonials.objects.values('writer_id').annotate(
+        latest_post=Max('date_posted'),
+        title=Max('title'),
+        content=Max('content')
+    )
 
-    # print( images,image_names)
+    services = Service.objects.all()
+    images, image_names = image_view(request)
 
-    context={
-            "images":images,
-            "image_names":image_names,
-            "services":services,
-            "posts":posts,
-            "title": "layout"
-        }
-    return render(request, "main/home_templates/newlayout.html",context)
+    context = {
+        "images": images,
+        "image_names": image_names,
+        "services": services,
+        "posts": latest_posts,
+        "title": "layout",
+    }
+    return render(request, "main/home_templates/newlayout.html", context)
+
+
 
 # =====================DC_KENYA VIEWS=======================================
 def dclayout(request):
