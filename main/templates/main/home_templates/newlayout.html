@@ -91,25 +91,23 @@
       <h1>CLIENT SUCCESS STORIES</h1>
       <div class="owl-carousel">
         {% for post in posts %}
+        <!-- {{post.writer.profile.image2.image_url}} -->
           <div class="carousel-card">
               <div class="img-div p-3">
                   <span>
-                    <img 
-                    {%for image in images%}
-                        {% if image.name == "layout_age_v1"%}
-                            src="{{googledriveurl}}={{image.image_url}}""
-                        {%endif%}
-                    {% endfor %}
-                    class="d-block img-fluid"
-                    alt="home3"
-                    >
+                        <img
+                        src="{{googledriveurl}}="
+                        class="team-img"
+                        width="150px"
+                        height="150px"
+                        />
                   </span>
-              </div>
+            </div>
               <h3> {{ post.writer.first_name }},{{post.writer.last_name}}</h3>
               <h3>{{post.title}}</h3>
-              <p>{{post.content}}</p>
-             
-              
+              <font size="2">
+                  {{post.content|truncatewords:50}}
+                </font>
           </div>
           {% endfor %}
 

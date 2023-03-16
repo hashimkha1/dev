@@ -91,25 +91,33 @@ def checkout(request):
 from django.shortcuts import get_object_or_404
 
 
-def layout(request):
-    # get the latest post for each user
-    latest_posts = Testimonials.objects.values('writer_id').annotate(
-        latest_post=Max('date_posted'),
-        title=Max('title'),
-        content=Max('content')
-    )
 
+def layout(request):
+    latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
+    testimonials = []
+    for post in latest_posts:
+        writer = post['writer']
+        #querying for the latest post
+        user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
+        if user_profile:
+            latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
+            testimonials.append(latest_post)
+
+    print("posts",testimonials)
+    for post in testimonials:
+        print("title",post.title)
+        print("image",post.writer.profile.image2.image_url)
     services = Service.objects.all()
     images, image_names = image_view(request)
-
     context = {
         "images": images,
         "image_names": image_names,
         "services": services,
-        "posts": latest_posts,
+        "posts": testimonials,
         "title": "layout",
     }
     return render(request, "main/home_templates/newlayout.html", context)
+
 
 
 
@@ -388,10 +396,10 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         return reverse("management:companyagenda")
 
     def test_func(self):
-        profile = self.get_object()
+        # profile = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == profile.user:
+        elif self.request.user:
             return True
         return False
 
