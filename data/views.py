@@ -8,7 +8,7 @@ from django.urls import path, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
-from main.models import Service
+from main.models import Service, Course
 from django.views.generic import (
         CreateView,
         DeleteView,
@@ -859,8 +859,9 @@ def job_market(request):
 
 
 def job_support(request):
-    services = Service.objects.filter(category='Job Support')
-    return render(request, "data/training/job_support.html", {'services': services})
+    courses = Course.objects.filter()
+    print(courses)
+    return render(request, "data/training/job_support.html", {'services': courses})
 
 
 def single_course(request):
