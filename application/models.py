@@ -47,8 +47,10 @@ class UserProfile(models.Model):
 
     @property
     def img_url(self):
-        imgurl=self.image2.image_url
-        return imgurl
+        if self.image2:
+            return self.image2.image_url
+        else:
+            return "default_image_url.jpg"
 
     @property
     def img_category(self):

@@ -98,8 +98,8 @@ def layout(request):
     for post in latest_posts:
         writer = post['writer']
         #querying for the latest post
-        # user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
-        user_profile = UserProfile.objects.filter(user=writer).first()
+        user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
+        # user_profile = UserProfile.objects.filter(user=writer).first()
         if user_profile:
             latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
             testimonials.append(latest_post)
