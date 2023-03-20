@@ -118,7 +118,7 @@ class RatingForm(forms.ModelForm):
         # self.fields["communication"].empty_label = "Select"
         # self.fields["understanding"].empty_label = "Select"
         self.fields["topic"].required = False
-        # self.fields["uploadlinkurl"].required = True
+        self.fields["uploadlinkurl"].required = True
 
 
 class InterviewForm(forms.ModelForm):

@@ -90,18 +90,14 @@
   <div class="container">
       <h1>CLIENT SUCCESS STORIES</h1>
       <div class="owl-carousel">
+      <div class="row text-center commit"> 
         {% for post in posts %}
-        <!-- {{post.writer.profile.image2.image_url}} -->
+        <div class="col-md-6">
           <div class="carousel-card">
-              <div class="img-div p-3">
-                  <span>
-                        <img
-                        src="{{googledriveurl}}="
-                        class="team-img"
-                        width="150px"
-                        height="150px"
-                        />
-                  </span>
+            <div class="img-div p-3">
+              <span>
+                <img src="{{googledriveurl}}={{post.writer.profile.image2.image_url}}" class="team-img" width="110px" height="110px" style="border-radius: 50%;"/>
+              </span>
             </div>
               <h3> {{ post.writer.first_name }},{{post.writer.last_name}}</h3>
               <h3>{{post.title}}</h3>
@@ -109,7 +105,10 @@
                   {{post.content|truncatewords:50}}
                 </font>
           </div>
-          {% endfor %}
+        </div>
+        {% endfor %}
+       </div>
+
 
       </div>
   </div>
