@@ -501,7 +501,7 @@ def options_play_shortput(request):
     context={
          "message":message,
          "title":"Process Done",
-        "msg": msg,
+        "msg": "DONE",
         "values":values
     }
     return render (request, "main/messages/general.html", context)
