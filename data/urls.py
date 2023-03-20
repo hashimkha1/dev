@@ -119,7 +119,9 @@ urlpatterns = [
         name="job-create",
     ),
     path("job_tracker/", JobListView.as_view(), name="job-list"),
+
     path("job_tracker/<str:username>/", views.userjobtracker, name="userjoblist"),
+    
     # TRAINING SECTION
     # ----------------------Creation----------------------------------------------------
     path(
