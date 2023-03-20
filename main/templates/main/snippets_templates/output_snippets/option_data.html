@@ -35,11 +35,13 @@
               <th>Premium</th>
               <th>N1</th>
               <th>N2</th>
-              'MARA', 'Sell to Open', '04/21/2023', '32', '$8.00', '$1.40', '$1.37', '$1.42', '57%', '05/04/2023', 'N', '$7.85', '15.86%', '180.9%', '1.91%
+              <!-- 'MARA', 'Sell to Open', '04/21/2023', '32', '$8.00', '$1.40', '$1.37', '$1.42', '57%', '05/04/2023', 'N', '$7.85', '15.86%', '180.9%', '1.91% -->
             </tr>
           </thead>
           <tbody>
+            {{values}}
             {% for row in values %}
+            {{row}}
             {% include 'main/snippets_templates/generaltable.html' with instance=row %}
             {% endfor %}
           </tbody>
