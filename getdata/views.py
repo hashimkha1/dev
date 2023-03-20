@@ -494,7 +494,7 @@ def options_play_cread_spread(request):
     return render (request, "main/messages/general.html",context)
     
 
-def options_play_shortput(request):
+def options_play_shortput_message(request):
     # msg = main_shortput()
     values=main_shortput()
     message=f'we are done processing your request'
@@ -505,6 +505,19 @@ def options_play_shortput(request):
         "values":values
     }
     return render (request, "main/messages/general.html", context)
+
+def options_play_shortput(request):
+    # msg = main_shortput()
+    values=main_shortput()
+    message=f'we are done processing your request'
+    context={
+         "message":message,
+         "title":"Process Done",
+        "msg": "DONE",
+        "values":values
+    }
+    return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+
 
 class OptionList(ListView):
     model=stockmarket

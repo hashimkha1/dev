@@ -17,6 +17,9 @@
          Hi,{{request.user}},Here are {{values}},
         </p>
 
+        {% if values %}
+        <a href="{% url 'getdata:shortput'%}" class="btn btn-secondary">SEE ACCESS</a>
+        {% endif %}
         {% if site %}
         <a href="{{site}}" class="btn btn-secondary">WATCH </a>
         {% endif %}
