@@ -561,6 +561,7 @@ def main_shortput():
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+    # driver = webdriver.Chrome(executable_path="/app/.chromedriver/bin/chromedriver", chrome_options=chrome_options)
 
     # CLIENT CODE
     driver.get('https://www.optionsplay.com/hub/short-puts')
@@ -593,4 +594,5 @@ def main_shortput():
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
+        return values
 
