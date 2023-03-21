@@ -139,22 +139,26 @@ class stockmarket(models.Model):
 # 	Rank = models.CharField(max_length=255)
 # 	Earnings_Date = models.CharField(max_length=255)
 
-# class short_put(models.Model):
-# 	Symbol = models.CharField(max_length=255)
-# 	Action = models.CharField(max_length=255)
-# 	Expiry = models.CharField(max_length=255)
-# 	Days_To_Expiry = models.CharField(max_length=255)
-# 	Strike_Price = models.CharField(max_length=255)
-# 	Mid_Price = models.CharField(max_length=255)
-# 	Bid_Price = models.CharField(max_length=255)
-# 	Ask_Price = models.CharField(max_length=255)
-# 	Implied_Volatility_Rank = models.CharField(max_length=255)
-# 	Earnings_Date = models.CharField(max_length=255)
-# 	Earnings_Flag =  models.BooleanField(),
-# 	Stock_Price = models.CharField(max_length=255)
-# 	Raw_Return = models.CharField(max_length=255)
-# 	Annualized_Return = models.CharField(max_length=255)
-# 	Distance_To_Strike  = models.CharField(max_length=255)
+class ShortPut(models.Model):
+	Symbol = models.CharField(max_length=255)
+	Action = models.CharField(max_length=255)
+	Expiry = models.CharField(max_length=255)
+	Days_To_Expiry = models.CharField(max_length=255)
+	Strike_Price = models.CharField(max_length=255)
+	Mid_Price = models.CharField(max_length=255)
+	Bid_Price = models.CharField(max_length=255)
+	Ask_Price = models.CharField(max_length=255)
+	Implied_Volatility_Rank = models.CharField(max_length=255)
+	Earnings_Date = models.CharField(max_length=255)
+	Earnings_Flag =  models.BooleanField(),
+	Stock_Price = models.CharField(max_length=255)
+	Raw_Return = models.CharField(max_length=255)
+	Annualized_Return = models.CharField(max_length=255)
+	Distance_To_Strike  = models.CharField(max_length=255)
+
+	def __str__(self):
+		return self.stock
+
 
 # class covered_calls(models.Model):
 # 	Symbol = models.CharField(max_length=255)

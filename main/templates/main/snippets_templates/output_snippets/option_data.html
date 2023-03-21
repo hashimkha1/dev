@@ -8,17 +8,17 @@
         <div class="row text-center">
           <div class="col-md-6" id="gi">
             <p>
-              <a href="{% url 'getdata:shortput_message'%}" class="btn btn-secondary btn-sm"
+              <a href="{% url 'getdata:shortput'%}" class="btn btn-secondary btn-sm"
                 >Refresh
               </a>
            </p>
 
           </div>
-          <div class="col-md-6" id="gi">
+          <!-- <div class="col-md-6" id="gi">
             <p><a href="{% url 'getdata:shortput'%}" class="btn btn-secondary btn-sm"
               >Previous Data
           </a></p>
-          </div>
+          </div> -->
       </div>
       <p class="lead">{{message}}</p>
         <div class="table-responsive">
@@ -33,15 +33,13 @@
               <th>Strike</th>
               <th>Amount</th>
               <th>Premium</th>
-              <th>N1</th>
-              <th>N2</th>
+              <!-- <th>N1</th>
+              <th>N2</th> -->
               <!-- 'MARA', 'Sell to Open', '04/21/2023', '32', '$8.00', '$1.40', '$1.37', '$1.42', '57%', '05/04/2023', 'N', '$7.85', '15.86%', '180.9%', '1.91% -->
             </tr>
           </thead>
           <tbody>
-            {{values}}
-            {% for row in values %}
-            {{row}}
+            {% for row in data %}
             {% include 'main/snippets_templates/generaltable.html' with instance=row %}
             {% endfor %}
           </tbody>

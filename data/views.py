@@ -790,6 +790,7 @@ class JobListView(ListView):
     queryset = Job_Tracker.objects.all()
     template_name = "data/interview/job_tracker.html"
     ordering = ["-created_at"]
+
 def userjobtracker(request, user=None, *args, **kwargs):
     user = get_object_or_404(User, username=kwargs.get("username"))
     jobs = Job_Tracker.objects.all().filter(created_by=user).order_by("-created_at")
@@ -813,6 +814,7 @@ def userjobtracker(request, user=None, *args, **kwargs):
         "delta": delta,
     }
     return render(request, "data/interview/userjobtracker.html", context)
+
 def employetraining(request):
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/employeetraining.json', 'r') as file:

@@ -23,6 +23,8 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
@@ -596,3 +598,42 @@ def main_shortput():
             dump_data_short_put(tuple(values))
         return values
 
+
+
+def main_shortput(email, password):
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
+    # CLIENT CODE
+    driver.get('https://www.optionsplay.com/hub/short-puts')
+
+    # Login
+    form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'form')))
+    form.find_element(By.ID, 'Login').send_keys(email)
+    form.find_element(By.ID, 'Password').send_keys(password)
+    btn = form.find_element(By.XPATH, '//button[text()="Log In"]')
+    btn.click()
+
+    # Wait for table to load
+    table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="shortPuts"]')))
+    tbody = table.find_element(By.XPATH,'./tbody')
+    rows = len(tbody.find_elements(By.TAG_NAME,'tr'))
+
+    data = []
+    for row in range(1,rows+1):
+        values = []
+        for col in range(1,16):
+            path = f'./tr[{row}]/td[{col}]'
+            value = tbody.find_element(By.XPATH, path).text.strip()
+            values.append(value)
+
+        if values[11] == 'N' and float(values[14].replace('%','')) < 30:
+            dump_data_short_put(tuple(values))
+        data.append(values)
+
+    driver.quit()
+    return data
