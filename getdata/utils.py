@@ -23,8 +23,8 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+# from selenium.webdriver.support.ui import WebDriverWait
+# from selenium.webdriver.support import expected_conditions as EC
 
 from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
@@ -580,7 +580,7 @@ def dump_data_short_put(values):
 #     return data
 
 
-def main_shortput(email, password):
+def main_shortput():
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
