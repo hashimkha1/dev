@@ -19,12 +19,11 @@
 <div class="container-fluid padding">
   <div class="row padding">
     {% for service in services %}
-    <div class="col-md-3" id="bada">
+    <div class="col-md-4" id="bada">
       <div class="card">
         <div class="card-body">
             <p class="display-5 text-center"><b>{{service.title}}</b></p>
           <hr/>
-
           {{ service.description|safe }}
         </div>
       </div>

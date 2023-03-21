@@ -139,7 +139,8 @@ class stockmarket(models.Model):
 # 	Rank = models.CharField(max_length=255)
 # 	Earnings_Date = models.CharField(max_length=255)
 
-# class short_put(models.Model):
+class ShortPut(models.Model):
+	pass
 # 	Symbol = models.CharField(max_length=255)
 # 	Action = models.CharField(max_length=255)
 # 	Expiry = models.CharField(max_length=255)
