@@ -157,8 +157,7 @@ class ShortPut(models.Model):
 	Distance_To_Strike  = models.CharField(max_length=255)
 
 	def __str__(self):
-		return self.stock
-
+		return self.Symbol
 
 # class covered_calls(models.Model):
 # 	Symbol = models.CharField(max_length=255)

@@ -567,7 +567,7 @@ def options_play_shortput(request):
          "message":message,
          "title":"Process Done",
         "msg": "DONE",
-        "values":data,
+        "data":data,
     }
     # Pass the data to the template
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)

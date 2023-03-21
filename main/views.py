@@ -245,46 +245,15 @@ class ServiceCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-    
-def services(request):
-    # services = Service.objects.all()
-    SITEURL=settings.SITEURL
-    services = Service.objects.filter(category='Data Analysis')
-    # title,description = Service.objects.values_list('category','cat_description')
-    # title, description = Service.objects.values_list(
-    #                 "category", "cat_description").filter(category='Data Analysis')
-    title, description = Service.objects.values_list("category", "cat_description").filter(category='Data Analysis').first()
-    print(title,description)
-    context={
-        "services":services,
-        "SITEURL":SITEURL,
-        "title":title,
-        "description":description,
-    }
-    # for service in services2:
-    #     print(service.category)
-    # return render(request, "data/training/services.html",context)
-    return render(request, "main/services.html",context)
 
-# def services(request):
-#     day_name = date.today().strftime("%A")
-#     services = Service.objects.filter(is_active=True)
-#     service_categories_list = Service.objects.values_list(
-#                     'category', flat=True).distinct()
-#     service_categories=sorted(service_categories_list)
-#     # print(Service_categories)
-#     # for service in services:
-#     #     delivery_date=Service.created_at +  timedelta(days=Service.duration*30)
-#     context = {
-#         "Services": services,
-#         "Service_categories": service_categories,
-#         # "delivery_date": delivery_date,
-#         "day_name": day_name,
-#     }
-#     if request.user.is_superuser:
-#         return render(request, "main/services.html", context)
-#     else:
-#         return render(request, "main/errors/404.html", context)
+
+def services(request):
+    services = Service.objects.filter(is_active=True).order_by('serial')
+    context = {
+        "services": services
+    }
+    return render(request, "main/services.html", context)
+
 
 class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Service
