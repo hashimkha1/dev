@@ -23,8 +23,6 @@ from selenium.webdriver.common.keys import Keys
 from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
 
 from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
@@ -541,53 +539,28 @@ def dump_data_short_put(values):
     except Exception as err:
         print(err)
 
-# def main_shortput(email, password):
-#     chrome_options = webdriver.ChromeOptions()
-#     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-#     chrome_options.add_argument("--headless")
-#     chrome_options.add_argument("--disable-dev-shm-usage")
-#     chrome_options.add_argument("--no-sandbox")
-#     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-#     # CLIENT CODE
-#     driver.get('https://www.optionsplay.com/hub/short-puts')
-
-#     # Login
-#     form = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'form')))
-#     form.find_element(By.ID, 'Login').send_keys(email)
-#     form.find_element(By.ID, 'Password').send_keys(password)
-#     btn = form.find_element(By.XPATH, '//button[text()="Log In"]')
-#     btn.click()
-
-#     # Wait for table to load
-#     table = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="shortPuts"]')))
-#     tbody = table.find_element(By.XPATH,'./tbody')
-#     rows = len(tbody.find_elements(By.TAG_NAME,'tr'))
-
-#     data = []
-#     for row in range(1,rows+1):
-#         values = []
-#         for col in range(1,16):
-#             path = f'./tr[{row}]/td[{col}]'
-#             value = tbody.find_element(By.XPATH, path).text.strip()
-#             values.append(value)
-
-#         if values[11] == 'N' and float(values[14].replace('%','')) < 30:
-#             dump_data_short_put(tuple(values))
-#         data.append(values)
-
-#     driver.quit()
-#     return data
-
 
 def main_shortput():
+    # to supress the error messages/logs
+    # chromedriver.install()
+    # options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument('--no-sandbox')
+    # options.add_argument("--disable-gpu")
+    # options.add_argument("--disable-dev-sh-usage")
+    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # ## might not be needed
+    # options.add_argument("window-size=800x600")
+    # # driver = webdriver.Chrome(chromedriver.install(), options=options)
+    # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    # driver = webdriver.Chrome(options=options)
     chrome_options = webdriver.ChromeOptions()
     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-    # driver = webdriver.Chrome(executable_path="/app/.chromedriver/bin/chromedriver", chrome_options=chrome_options)
 
     # CLIENT CODE
     driver.get('https://www.optionsplay.com/hub/short-puts')
@@ -609,9 +582,8 @@ def main_shortput():
     # //*[@id="shortPuts"]/tbody/tr[1]
     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
     time.sleep(5)
-    data = []
-    for row in range(1,rows+1):
-    # for row in range(1,2):
+    # for row in range(1,rows+1):
+    for row in range(1,2):
         values = []
         for col in range(1,16):
             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
@@ -621,11 +593,4 @@ def main_shortput():
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
-        data.append(values)
-    return data
-
-
-
-
-
 
