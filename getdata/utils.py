@@ -564,24 +564,24 @@ def main_shortput():
 
     # CLIENT CODE
     driver.get('https://www.optionsplay.com/hub/short-puts')
-    time.sleep(3)
-    driver.implicitly_wait(3)
+    time.sleep(15)
+    driver.implicitly_wait(15)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
 
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
-    time.sleep(3)
+    time.sleep(5)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
-    time.sleep(3)
+    time.sleep(5)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
     # time.sleep(5)
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
     # //*[@id="shortPuts"]/tbody/tr[1]
     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
-    time.sleep(5)
+    time.sleep(10)
     data=[]
     for row in range(1,rows+1):
     # for row in range(1,2):
