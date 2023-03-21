@@ -593,4 +593,4 @@ def main_shortput():
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
-
+    return values
