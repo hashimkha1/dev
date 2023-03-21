@@ -34,5 +34,6 @@ urlpatterns = [
     # path('gotomeetingresult/',views.gotomeetingresult,name='gotomeetingresult'),
     # #meeting detail
     # re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
+    path('testselinum/', views.selinum_test, name='testselinum'),
 
 ]
