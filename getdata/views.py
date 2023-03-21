@@ -531,7 +531,8 @@ def options_play_shortput(request):
     email = __smtp_user.get("USER")
     password = __smtp_user.get("PASS")
     # Call the main_shortput function to retrieve the data
-    data=main_shortput(email, password)
+    # data=main_shortput(email, password)
+    data=main_shortput()
     # Loop through the data and insert it into the database
     for row in data:
         Symbol=row[0]
