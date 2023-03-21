@@ -1,4 +1,3 @@
-
 {%extends "main/base_templates/new_base.html"%} {% block content %}
     <section id="career">
       <div class="career text-center">
@@ -6,7 +5,7 @@
         <hr/>
 
         <div class="row text-center">
-          <div class="col-md-6" id="gi">
+          <div class="col-md-12" id="gi">
             <p>
               <a href="{% url 'getdata:shortput'%}" class="btn btn-secondary btn-sm"
                 >Refresh
@@ -26,21 +25,41 @@
           <table class="table table-striped table-bordered" style="width: 100%">
           <thead class="border-bottom font-weight-bold">
             <tr>
-              <!-- <th>Applicant_Id</th> -->
-              <th>stock</th>
-              <th>Action</th>
-              <th>date</th>
-              <th>Strike</th>
-              <th>Amount</th>
-              <th>Premium</th>
-              <!-- <th>N1</th>
-              <th>N2</th> -->
-              <!-- 'MARA', 'Sell to Open', '04/21/2023', '32', '$8.00', '$1.40', '$1.37', '$1.42', '57%', '05/04/2023', 'N', '$7.85', '15.86%', '180.9%', '1.91% -->
+                <th>Symbol</th>
+                <th>Action</th>
+                <th>Expiry</th>
+                <th>Days_To_Expiry</th>
+                <th>Strike_Price</th>
+                <th>Mid_Price</th>
+                <th>Bid_Price</th>
+                <th>Ask_Price</th>
+                <th>Implied_Volatility_Rank</th>
+                <th>Earnings_Date</th>
+                <th>Earnings_Flag </th>
+                <th>Stock_Price</th>
+                <th>Raw_Return</th>
+                <th>Annualized_Return</th>
+                <th>Distance_To_Strike </th>
             </tr>
           </thead>
           <tbody>
             {% for row in data %}
-            {% include 'main/snippets_templates/generaltable.html' with instance=row %}
+                <td>{{row.Symbol}}</td>
+                <td>{{row.Action}}</td>
+                <td>{{row.Expiry}}</td>
+                <td>{{row.Days_To_Expiry}}</td>
+                <td>{{row.Strike_Price}}</td>
+                <td>{{row.Mid_Price}}</td>
+                <td>{{row.Bid_Price}}</td>
+                <td>{{row.Ask_Price}}</td>
+                <td>{{row.Implied_Volatility_Rank}}</td>
+                <td>{{row.Earnings_Date}}</td>
+                <td>{{row.Earnings_Flag }}</td>
+                <td>{{row.Stock_Price}}</td>
+                <td>{{row.Raw_Return}}</td>
+                <td>{{row.Annualized_Return}}</td>
+                <td>{{row.Distance_To_Strike }}</td>
+            <!-- {% include 'main/snippets_templates/generaltable.html' with instance=row %} -->
             {% endfor %}
           </tbody>
         </table>
