@@ -114,8 +114,8 @@ class Picture(models.Model):
 
 class Service(models.Model):
     serial = models.PositiveIntegerField(null=True, blank=True)
-    title = models.CharField(max_length=254)
-    slug = models.SlugField(max_length=255)
+    title = models.CharField(default='training',max_length=254)
+    slug = models.SlugField(default='slug',max_length=255)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
