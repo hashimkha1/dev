@@ -582,8 +582,9 @@ def main_shortput():
     # //*[@id="shortPuts"]/tbody/tr[1]
     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
     time.sleep(5)
-    # for row in range(1,rows+1):
-    for row in range(1,2):
+    data=[]
+    for row in range(1,rows+1):
+    # for row in range(1,2):
         values = []
         for col in range(1,16):
             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
@@ -593,4 +594,5 @@ def main_shortput():
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
-    return values
+            data.append(values)
+    return data
