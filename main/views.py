@@ -250,6 +250,7 @@ class ServiceCreateView(LoginRequiredMixin, CreateView):
 def services(request):
     services = Service.objects.filter(is_active=True).order_by('serial')
     context = {
+        "SITEURL" :settings.SITEURL,
         "services": services
     }
     return render(request, "main/services.html", context)
