@@ -497,20 +497,21 @@ def options_play_cread_spread(request):
     return render (request, "main/messages/general.html",context)
     
 
-# def options_play_shortput_message(request):
-#     # msg = main_shortput()
-#     # values=main_shortput()
-#     email = __smtp_user.get("USER")
-#     password = __smtp_user.get("PASS")
-#     data=main_shortput(email, password)
-#     message=f'we are done processing your request'
-#     context={
-#          "message":message,
-#          "title":"Process Done",
-#         "msg": "DONE",
-#         "values":data
-#     }
-#     return render (request, "main/messages/general.html", context)
+def options_play_shortput(request):
+    # msg = main_shortput()
+    # values=main_shortput()
+    # email = __smtp_user.get("USER")
+    # password = __smtp_user.get("PASS")
+    # data=main_shortput(email, password)
+    data=main_shortput()
+    message=f'we are done processing your request'
+    context={
+         "message":message,
+         "title":"Process Done",
+        "msg": "DONE",
+        "values":data
+    }
+    return render (request, "main/messages/general.html", context)
 
 # def options_play_shortput(request):
 #     # msg = main_shortput()
@@ -528,7 +529,7 @@ def options_play_cread_spread(request):
 #     }
 #     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
 
-def options_play_shortput(request):
+def options_play_shortputer(request):
     email = __smtp_user.get("USER")
     password = __smtp_user.get("PASS")
     # Call the main_shortput function to retrieve the data
