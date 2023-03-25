@@ -18,6 +18,7 @@ from django.views.generic import (
 	DetailView,
 	DeleteView,
 )
+import json
 from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from .models import (
@@ -933,3 +934,187 @@ class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+    
+
+#DYS Implementation
+class DYSPaymentCreateView(LoginRequiredMixin, CreateView):
+	model = Default_Payment_Fees
+	success_url = "/finance/contract_form"
+	fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+	]
+	def form_valid(self, form):
+		form.instance.user = self.request.user
+		return super().form_valid(form)
+
+def DYSpayments(request):
+	payment_history=Payment_History.objects.all()
+	Payment_Info=Payment_Information.objects.all()
+	context={
+		"title":"Payments",
+		"payment_history":payment_history,
+		"Payment_Info":Payment_Info
+	}
+	return render(request,"finance/DYS/payments.html",context)
+# finance\templates\finance\payments\payments.html
+# finance\templates\DYS\payments.html
+
+
+def DYSpayment(request,method):
+    (phone_number,email_info,
+    email_dck,cashapp,
+    venmo,stan_account_no,
+    coda_account_no,dck_account_no)=payment_details()
+    path_value,sub_title=path_values(request)
+    subject='PAYMENT'
+    url='email/payment/payment_method.html'
+    message=f'Hi,{request.user.first_name}, an email has been sent \
+            with {sub_title} details for your payment.In the unlikely event\
+            that you have not received it, kindly \
+            check your spam folder.'
+    context={
+                "title": "PAYMENT DETAILS",
+                'user': request.user.first_name,
+                "images":images, 
+                "message": message,
+        }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[request.user.email,], 
+                    subject=subject, html_template=url, 
+                    context={
+                            'subtitle': sub_title,
+                            'user': request.user.first_name,
+                            'mpesa_number':phone_number,
+                            'cashapp':cashapp,
+                            'venmo':venmo,
+                            'stan_account_no':stan_account_no,
+                            'coda_account_no':coda_account_no,
+                            'dck_account_no':dck_account_no,
+                            'email':email_info,
+                            'email':email_dck,
+                            }
+                    )
+        return render(request, "main/errors/generalerrors.html",context)
+    except:
+        return render(request, "main/errors/500.html")
+
+
+@login_required
+def DYSpay(request):
+    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
+    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+    link=f'{SITEURL}/finance/new_contract/{request.user}/'
+    images,image_names=image_view(request)
+    try:
+        payment_info = Payment_Information.objects.filter(
+            customer_id=request.user.id
+        ).first()
+        context={
+            "title": "PAYMENT", 
+            "images":images, 
+            "image_name": image_names, 
+            "payments": payment_info,
+            "message": message,
+            "link": link,
+        }
+        return render(request, "finance/DYS/pay.html",context)
+    except:
+        return render(request, "management/contracts/contract_error.html", context)
+        
+
+def DYSpaymentComplete(request):
+    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+    # print(payments)
+    customer = request.user
+    body = json.loads(request.body)
+    # print("payment_complete:", body)
+    payment_fees = body["payment_fees"]
+    down_payment = payments.down_payment
+    studend_bonus = payments.student_bonus
+    plan = payments.plan
+    fee_balance = payments.fee_balance
+    payment_mothod = payments.payment_method
+    contract_submitted_date = payments.contract_submitted_date
+    client_signature = payments.client_signature
+    company_rep = payments.company_rep
+    client_date = payments.client_date
+    rep_date = payments.rep_date
+    Payment_History.objects.create(
+        customer=customer,
+        payment_fees=payment_fees,
+        down_payment=down_payment,
+        student_bonus=studend_bonus,
+        plan=plan,
+        fee_balance=fee_balance,
+        payment_method=payment_mothod,
+        contract_submitted_date=contract_submitted_date,
+        client_signature=client_signature,
+        company_rep=company_rep,
+        client_date=client_date,
+        rep_date=rep_date,
+    )
+    return JsonResponse("Payment completed!", safe=False)
+
+class DYSDefaultPaymentListView(ListView):
+	model = Default_Payment_Fees
+	template_name = "finance/DYS/defaultpayments.html"
+	context_object_name = "defaultpayments"
+
+class DYSDefaultPaymentUpdateView(UpdateView):
+	model = Default_Payment_Fees
+	success_url = "/finance/payments"
+	
+	fields = [
+				"job_down_payment_per_month",
+				"job_plan_hours_per_month",
+				"student_down_payment_per_month",
+				"student_bonus_payment_per_month",
+				"loan_amount",
+	]
+	# fields=['user','activity_name','description','point']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		if self.request.user.is_superuser:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"management/contracts/supportcontract_form.html")
+
+	def test_func(self):
+		task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		# elif self.request.user == task.employee:
+		#     return True
+		return False
+
+
+
+# For payment purposes
+class DYSPaymentInformationUpdateView(UpdateView):
+	model = Payment_Information
+	success_url = "/finance/DYSpay/"
+	template_name="main/snippets_templates/generalform.html"
+	
+	# fields ="__all__"
+	fields=['customer_id','down_payment']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		# if self.request.user.is_superuser or self.request.user:
+		if self.request.user is not None:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		task = self.get_object()
+		# if self.request.user.is_superuser:
+		# 	return True
+		# elif self.request.user == task.employee:
+		if self.request.user:
+		    return True

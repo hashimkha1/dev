@@ -77,4 +77,15 @@ urlpatterns = [
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
     path("food/",views.foodlist,name="supplies"),
+
+    #Testing DYS
+    path('DYSpay/', views.DYSpay, name='DYSpay'),
+    path('DYSpayment_method/<str:method>/', views.DYSpayment, name='DYSpayment_method'),
+    path("DYSpayment_complete/", views.DYSpaymentComplete, name="DYSpayment_complete"),
+    path('DYSpayments/', views.DYSpayments, name='DYSpayments'),
+    path('DYSpay/<int:pk>/', views.DYSPaymentInformationUpdateView.as_view(), name='DYSupdatepay'),
+    
+    # path('defaultpayments/', DYSDefaultPaymentListView.as_view(template_name='finance/DYS/defaultpayments.html'), name='defaultpayments'),
+    # path('newpayment/', DYSPaymentCreateView.as_view(template_name='finance/DYS/payment_form.html'), name='newpayment'),
+    # path('payment/<int:pk>/update/', DYSDefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
 ]
