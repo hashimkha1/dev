@@ -127,26 +127,13 @@ def join(request):
                     print("category", form.cleaned_data.get("category"))
 
             if form.is_valid():
-                print("category", form.cleaned_data.get("category"))
-
-                # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
-                #     if form.cleaned_data.get('sub_category') == 6:
-                #         form.instance.is_admin = True
-                #         form.instance.is_superuser = True
-                #     else:
-                #         form.instance.is_employee = True
-                # elif form.cleaned_data.get('category') == 3:# Client
-                #     form.instance.is_client = True
-                # else:
-                #     form.instance.is_applicant = True
-                if form.cleaned_data.get("category") == 1:
-                    form.instance.is_applicant = True
-                elif form.cleaned_data.get("category") == 2:
+                # print("category", form.cleaned_data.get("category"))
+                if form.cleaned_data.get("category") == 2:
                     form.instance.is_employee = True
                 elif form.cleaned_data.get("category") == 3:
                     form.instance.is_client = True
                 else:
-                    form.instance.is_admin = True
+                    form.instance.is_applicant = True
 
                 form.save()
 
@@ -160,7 +147,7 @@ def join(request):
         msg = "error validating form"
         form = UserForm()
         print(msg)
-    return render(request, "accounts/registration/join.html", {"form": form})
+    return render(request, "accounts/registration/DYS/register.html", {"form": form})
 
 
 def CreateProfile():
@@ -206,6 +193,7 @@ def login_view(request):
             elif account is not None and account.category == 4:
                     login(request, account)
                     return redirect("management:dckdashboard")
+           
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
                 if account.profile.section == "A":
@@ -291,6 +279,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "sub_category",
         "first_name",
         "last_name",
+        "username",
         "date_joined",
         "email",
         "gender",

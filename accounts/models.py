@@ -28,7 +28,8 @@ class CustomerUser(AbstractUser):
         Contractual = 4
         Agent = 5
         DC48Kenya = 6
-        Other = 7
+        DYS = 7
+        Other = 8
 
     class Score(models.IntegerChoices):
         Male = 1
@@ -307,7 +308,7 @@ class Tracker(models.Model):
         ("database", "database"),
         ("Business Analysis", "Business Analysis"),
         ("Data Cleaning", "Data Cleaning"),
-        ("Other", "Other"),
+        ("Other", "Other"), 
     ]
     category = models.CharField(
         max_length=25,

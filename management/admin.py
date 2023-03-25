@@ -19,7 +19,7 @@ from management.models import (
     RetirementPackage,
     Loan,
     LBandLS,
-    Training,ProcessJustification,ProcessBreakdown
+    Training,ProcessJustification,ProcessBreakdown,Whatsapp
 
 )
 
@@ -165,6 +165,7 @@ admin.site.register(Payslip)
 admin.site.register(RetirementPackage)
 admin.site.register(Loan)
 admin.site.register(LBandLS)
+admin.site.register(Whatsapp)
 
 """
 admin.site.register(Employee)
