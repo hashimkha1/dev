@@ -28,7 +28,8 @@ class CustomerUser(AbstractUser):
         Contractual = 4
         Agent = 5
         DC48Kenya = 6
-        Other = 7
+        DYS = 7
+        Other = 8
 
     class Score(models.IntegerChoices):
         Male = 1
@@ -57,6 +58,7 @@ class CustomerUser(AbstractUser):
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
     is_applicant = models.BooleanField("Is applicant", default=False)
+    is_employee_contract_signed = models.BooleanField(default=False)
     resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
 
     # is_active = models.BooleanField('Is applicant', default=True)
@@ -306,7 +308,7 @@ class Tracker(models.Model):
         ("database", "database"),
         ("Business Analysis", "Business Analysis"),
         ("Data Cleaning", "Data Cleaning"),
-        ("Other", "Other"),
+        ("Other", "Other"), 
     ]
     category = models.CharField(
         max_length=25,

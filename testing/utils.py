@@ -193,3 +193,17 @@ def target_date():
 # @register.filter(name='activitieslist')
 # def activitieslist(value, myactivities):
 #     return True if value in myactivities else False
+
+# VALID_USERNAME_RESPONSE='username is valid'
+# IVALID_USERNAME_RESPONSE='username is ivalid'
+
+# def forgot_pass():
+#     if request.method =='POST':
+#         username = request.form.get('username'):
+#         token=db.generate_reset_token(username)
+#         if token:
+#             email(db.get_user(username),token)
+#             flash(VALID_USERNAME_RESPONSE,'success')
+#         else:
+#             flash(IVALID_USERNAME_RESPONSE,'error')
+#     return render_template('forgot.html')

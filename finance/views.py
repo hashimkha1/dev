@@ -36,6 +36,7 @@ from main.views import images
 from main.utils import image_view,download_image,Meetings,path_values
 from management.utils import loan_computation
 from main.filters import FoodFilter
+from main.models import Service
 from .utils import check_default_fee,get_exchange_rate
 from main.utils import countdown_in_month
 
@@ -140,10 +141,10 @@ def contract_form_submission(request):
 				if request.user.category == 3 and request.user.sub_category == 2 or request.user.is_superuser: 
 					return redirect('data:train')
 				else:
-					return redirect('management:companyagenda')
+					return redirect('finance:pay')
 			else:
 				messages.success(request, f'Account created for {username}!')
-				return redirect('management:companyagenda')
+				return redirect('finance:pay')
 	except Exception as e:
 		print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
@@ -159,9 +160,9 @@ def mycontract(request, *args, **kwargs):
 	check_default_fee = Default_Payment_Fees.objects.all()
 	if check_default_fee:
 		# default_fee = Default_Payment_Fees.objects.get(id=1)
-		default_fee = Default_Payment_Fees.objects.filter(id=1).first()
+		# default_fee = Default_Payment_Fees.objects.filter(id=1).first()
+		default_fee = Default_Payment_Fees.objects.filter().first()
 		print(default_fee)
-		# default_fee = Default_Payment_Fees.objects.filter().first()
 	else:
 		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
@@ -172,7 +173,9 @@ def mycontract(request, *args, **kwargs):
 		print(default_fee)
 		
 	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
-		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
+		# payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
+		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+		print("payemnt_details",payemnt_details)
 		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
 		if client_data.category == 3 and client_data.sub_category == 1:
 			plan_dict = {"1":40,"2":80,"3":120}
@@ -357,27 +360,47 @@ def payment(request,method):
 
 
 @login_required
-def pay(request):
-    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
-    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-    link=f'{SITEURL}/finance/new_contract/{request.user}/'
-    images,image_names=image_view(request)
+def pay(request, service=None):
+    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    message = f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
+    link = f'{SITEURL}/finance/new_contract/{request.user}/'
+    images, image_names = image_view(request)
+    if service:
+        context = None
+        try:
+            service = Service.objects.get(pk=service)
+            context = {
+                "title": "PAYMENT",
+                "images": images,
+                "image_name": image_names,
+                "payments": service,
+                "message": message,
+                "link": link,
+                "service": True
+            }
+        except:
+            pass
+
+        return render(request, "finance/payments/pay.html", context)
+
+
     try:
         payment_info = Payment_Information.objects.filter(
             customer_id=request.user.id
         ).first()
         context={
-            "title": "PAYMENT", 
-            "images":images, 
-            "image_name": image_names, 
+            "title": "PAYMENT",
+            "images":images,
+            "image_name": image_names,
             "payments": payment_info,
             "message": message,
             "link": link,
         }
-        return render(request, "finance/payments/pay.html",context)
+        return render(request, "finance/payments/pay.html", context)
     except:
-        return render(request, "management/contracts/contract_error.html", context)
-        
+        url = '../new_contract/' + request.user.username + '/'
+        return redirect(url)
+
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()

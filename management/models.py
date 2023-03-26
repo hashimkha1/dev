@@ -66,8 +66,6 @@ class Training(models.Model):
     featured= models.BooleanField(default=True)
 
 
-
-
 class Transaction(models.Model):
     # Method of Payment
     Cash = "Cash"
@@ -952,7 +950,7 @@ class Requirement(models.Model):
         default=1,
         on_delete=models.SET_NULL,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_employee=True) |Q(is_client=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     assigned_to = models.ForeignKey(
         User,
@@ -997,6 +995,24 @@ class Requirement(models.Model):
     def __str__(self):
         return self.category
 
+class ProcessJustification(models.Model):
+    requirements = models.ForeignKey(Requirement, on_delete=models.CASCADE, related_name="Requirement_in_Process",
+                                     null=True, blank=True)
+    justification = models.CharField(max_length=255, null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+
+class ProcessBreakdown(models.Model):
+    process = models.ForeignKey(ProcessJustification, on_delete=models.CASCADE, related_name="Process_in_breakdown",
+                                null=True, blank=True)
+    breakdown = models.CharField(max_length=255, null=True, blank=True)
+    time = models.PositiveIntegerField(null=True, blank=True)
+    Quantity = models.PositiveIntegerField(null=True, blank=True)
+    total = models.PositiveIntegerField(null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+    
 class Estimate(models.Model):
     # Apps
     CAT_CHOICES = [
@@ -1076,6 +1092,9 @@ class Advertisement(models.Model):
         return self.post_description
 class Whatsapp(models.Model):
     # whatsapp
+    product_id = models.CharField(max_length=100, null=True, blank=True)
+    token = models.CharField(max_length=100, null=True, blank=True)
+    screen_id = models.CharField(max_length=500, null=True, blank=True)
     group_name = models.CharField(max_length=100, null=True, blank=True)
     group_id = models.CharField(max_length=100, null=True, blank=True)
     image_url = models.CharField(max_length=500, null=True, blank=True)

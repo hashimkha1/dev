@@ -1,5 +1,7 @@
 import requests
 import json
+import time
+from django.db.models import Min,Max
 from django.http import JsonResponse
 from django.db.models import Q
 from celery import shared_task
@@ -11,7 +13,7 @@ from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings,image_view,path_values
 from accounts.utils import employees
-from codablog.models import Post
+from codablog.models import Post,Testimonials
 from finance.models import Payment_History, Payment_Information
 from management.models import Advertisement
 from coda_project.task import advertisement
@@ -86,23 +88,39 @@ def test(request):
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
+from django.shortcuts import get_object_or_404
+
+
+
 def layout(request):
-    # advertisement()
-    # TrainingLoanDeduction()
-    posts=Post.objects.all()
-    services=Service.objects.all()
-    images,image_names=image_view(request)
+    latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
+    testimonials = []
+    for post in latest_posts:
+        writer = post['writer']
+        #querying for the latest post
+        user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
+        # user_profile = UserProfile.objects.filter(user=writer).first()
+        if user_profile:
+            latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
+            testimonials.append(latest_post)
 
-    # print( images,image_names)
+    for post in testimonials:
+        print("title",post.title)
+        # print("image",post.writer.profile.image2.image_url)
+        # print("image",post.writer.profile.img_url)
+    services = Service.objects.all()
+    images, image_names = image_view(request)
+    context = {
+        "images": images,
+        "image_names": image_names,
+        "services": services,
+        "posts": testimonials,
+        "title": "layout",
+    }
+    return render(request, "main/home_templates/newlayout.html", context)
 
-    context={
-            "images":images,
-            "image_names":image_names,
-            "services":services,
-            "posts":posts,
-            "title": "layout"
-        }
-    return render(request, "main/home_templates/newlayout.html",context)
+
+
 
 # =====================DC_KENYA VIEWS=======================================
 def dclayout(request):
@@ -217,21 +235,56 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
+
+# =====================SERVICE VIEWS=======================================
+class ServiceCreateView(LoginRequiredMixin, CreateView):
+    model = Service
+    success_url = "/services/"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+def services(request):
+    services = Service.objects.filter(is_active=True).order_by('serial')
+    context = {
+        "SITEURL" :settings.SITEURL,
+        "services": services
+    }
+    return render(request, "main/services.html", context)
+
+
+class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Service
+    fields ="__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:services")
+
+    def test_func(self):
+        service = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == service.staff:
+            return True
+        return False
+
+def delete_service(request,id):
+    service = service.objects.get(pk=id)
+    if request.user.is_superuser:
+        service.delete()
+    return redirect('main:services')
+
+
+
 def about(request):
-    # emp_obj = User.objects.filter(
-    #                                         Q(sub_category=3),
-    #                                         Q(is_admin=True),
-    #                                         Q(is_employee=True),
-    #                                         Q(is_active=True),
-    #                                         Q(is_staff=True),
-    #                     ).order_by("-date_joined")
-    # # dept_obj = Department.objects.all().distinct()
-    # # departments=[dept.name for dept in dept_obj ]
-    # employees=[employee.first_name for employee in emp_obj ]
-    # employee_subcategories,active_employees=employees()
     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-    # print("employees",team_members)
-    
     sub_title=path_values(request)[-1]
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
@@ -239,12 +292,6 @@ def about(request):
     images,image_names=image_view(request)
     staff=[member for member in team_members if member.img_category=='employee']
     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
-    # print(staff,img_urls)
-    # for member in staff:
-    #     print(member.user.first_name)
-    #     # if member.category=='employee':
-    #     #     print(member.category,member.name,member.image_url)
-    #     # # employee_category =)
     context={
         "start_date": start_date,
         "end_date": end_date,
@@ -260,6 +307,8 @@ def about(request):
         return render(request, "main/team.html",context)
     elif sub_title == 'letter':
         return render(request, "main/doc_templates/letter.html",context)
+    elif sub_title == 'appointment_letter':
+        return render(request, "main/doc_templates/appointment_letter.html",context)
     elif sub_title == 'about':
         return render(request, "main/about.html",context)
     
@@ -318,10 +367,10 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         return reverse("management:companyagenda")
 
     def test_func(self):
-        profile = self.get_object()
+        # profile = self.get_object()
         if self.request.user.is_superuser:
             return True
-        elif self.request.user == profile.user:
+        elif self.request.user:
             return True
         return False
 
@@ -562,45 +611,113 @@ def whatsapp_apis(request):
     }
     return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
 
+
+# def runwhatsapp(request):
+#     # whatsapp_items = Whatsapp.objects.all()
+#     group_ids = Whatsapp.objects.values_list('group_id', flat=True)
+#     image_url = Whatsapp.objects.values_list('image_url', flat=True).first()
+#     message = Whatsapp.objects.values_list('message', flat=True).first()
+
+#     print("Groups====>", group_ids, image_url, message)
+
+#     image_name = "image.jpg"
+#     screen_id = 26504
+#     product_id = '333b59c1-c310-43c0-abb5-e5c4f0379e61'
+#     image = image_url
+#     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+
+#     payload = json.dumps({
+#         "type": "media",
+#         "message": image,
+#         "filename": image_name
+#     })
+
+
+#     headers = {
+#         'accept': 'application/json',
+#         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686',
+#         'Content-Type': 'application/json'
+#     }
+
+#     for group_id in group_ids:
+#         payload_data = json.loads(payload)
+#         payload_data['to_number'] = group_id
+#         payload_data['type'] = 'media' if image else 'text'
+#         payload_data['message'] = image if image else message
+
+#         response = requests.request("POST", url, headers=headers, data=json.dumps(payload_data))
+#         print(response.text)
+
+#     message = f'Hi, {request.user}, your messages have been posted to your groups.'
+#     context = {
+#         'title': 'WHATSAPP',
+#         'message': message
+#     }
+#     return render(request, "main/errors/generalerrors.html", context)
+
+
 def runwhatsapp(request):
-    whatsaapitems=Whatsapp.objects.all()
-    group_id=Whatsapp.objects.values_list('group_id',flat=True).first()
-    image_url=Whatsapp.objects.values_list('image_url',flat=True).first()
-    message=Whatsapp.objects.values_list('message',flat=True).first()
+    whatsapp_items = Whatsapp.objects.all()
 
-    print("Groups====>",group_id)
-    # group_id = "120363047226624982@g.us" #group_id #"14174137966-1445706887@g.us" #
-    image_name = "image.jpg"
-    screen_id=26504
-    product_id='333b59c1-c310-43c0-abb5-e5c4f0379e61' #"6985f35e-b282-4316-91ef-83019d3e31c5"
-    image = image_url  #"https://www.codanalytics.net/static/main/img/service-3.jpg"
-    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
-    # url = "https://api.maytapi.com/api/6985f35e-b282-4316-91ef-83019d3e31c5/26503/sendMessage"
-    url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+    # Get a list of all group IDs from the Whatsapp model
+    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
 
-    # payload = json.dumps({
-    #   "to_number": group_id, #"120363047226624982@g.us", #'14174137966-1445706887@g.us', # 
-    #   "type": "text",
-    #   "message":  message # "this text message send"
-    # })
+    # Get the image URL and message from the first item in the Whatsapp model
+    image_url = whatsapp_items[0].image_url
+    message = whatsapp_items[0].message
+    product_id = whatsapp_items[0].product_id
+    screen_id = whatsapp_items[0].screen_id
+    token = whatsapp_items[0].token
 
-    payload = json.dumps({
-        "to_number": group_id,
-        "type": "media",
-        "message": image, #"this text message send", #image,
-        "filename": image_name
-    })
+    # print("Group IDs:", group_ids)
+    # print("Image URL:", image_url)
+    # print("Message:", message)
+    # print("product_id:", product_id)
+    # print("screen_id:", screen_id)
+    # print("token:", token)
 
-    headers = {
-        'accept': 'application/json',
-        'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686', # 'b914dbd3-e225-48c0-bdbf-cbffa39ce44c',
-        'Content-Type': 'application/json'
-    }
-    response = requests.request("POST", url, headers=headers, data=payload)
-    print(response.text)
-    message=f'Hi,{request.user}, your messages have been post to your groups'
-    context={
-        'title':'WHATSAPP',
-        'message':message
-    }
-    return render (request, "main/errors/generalerrors.html",context)
+    # Loop through all group IDs and send the message to each group
+    for group_id in group_ids:
+        print("Sending message to group", group_id)
+
+        # Set the message type to "text" or "media" depending on whether an image URL is provided
+        if image_url:
+            message_type = "media"
+            message_content = image_url
+            filename = "image.jpg"
+        else:
+            message_type = "text"
+            message_content = message
+            filename = None
+
+        # Set up the API request payload and headers
+        payload = {
+            "to_number": group_id,
+            "type": message_type,
+            "message": message_content,
+            "filename": filename,
+        }
+        
+        headers = {
+            "Content-Type": "application/json",
+            "x-maytapi-key": token,
+        }
+        # Send the API request and print the response
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # print(response.status_code)
+        # print(response.text)
+        # print(url)
+
+        # Check if the API request was successful
+        if response.status_code == 200:
+            print("Message sent successfully!")
+        else:
+            print("Error sending message:", response.text)
+
+        # time.sleep(5) # add a delay of 1 second
+
+    # Display a success message on the page
+    message = f"Hi, {request.user}, your messages have been sent to your groups."
+    context = {"title": "WHATSAPP", "message": message}
+    return render(request, "main/errors/generalerrors.html", context)

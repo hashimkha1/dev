@@ -119,33 +119,35 @@ TEMPLATES = [
 ]
 
 #  ==============DBFUNCTIONS=====================================
-def dblocal():
-    host = 'localhost'
-    dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
-    user = os.environ.get('POSTGRESDB_USER') #'postgres',
-    password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
-    return host,dbname,user,password
-
-def herokudev():
-    # In Heroku/Postgres it is Heroku_UAT
-    host = os.environ.get('HEROKU_DEV_HOST')
-    dbname = os.environ.get('HEROKU_DEV_NAME') 
-    user = os.environ.get('HEROKU_DEV_USER') 
-    password =os.environ.get('HEROKU_DEV_PASS') 
+def dba_values():
+    if os.environ.get('ENVIRONMENT') == 'production':
+        host = os.environ.get('HEROKU_PROD_HOST')
+        dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
+        user = os.environ.get('HEROKU_PROD_USER') #'postgres',
+        password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
+    elif os.environ.get('ENVIRONMENT') == 'testing':
+        # In Heroku/Postgres it is Heroku_UAT
+        host = os.environ.get('HEROKU_DEV_HOST')
+        dbname = os.environ.get('HEROKU_DEV_NAME')
+        user = os.environ.get('HEROKU_DEV_USER')
+        password =os.environ.get('HEROKU_DEV_PASS')
+    else:
+        host = os.environ.get('HEROKU_DEV_HOST')
+        dbname = os.environ.get('HEROKU_DEV_NAME')
+        user = os.environ.get('HEROKU_DEV_USER')
+        password =os.environ.get('HEROKU_DEV_PASS')
+        # host = 'localhost'
+        # dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
+        # user = os.environ.get('POSTGRESDB_USER') #'postgres',
+        # password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
     # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
-    return host,dbname,user,password
-
-def herokuprod():
-    host = os.environ.get('HEROKU_PROD_HOST')
-    dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
-    user = os.environ.get('HEROKU_PROD_USER') #'postgres',
-    password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
-    # print(f'HOST:{host},HOST2:{host2},DB:{dbname}USER:{user}PASS:{password}')
-    return host,dbname,user,password
+    return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=herokuprod() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+
+host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -308,11 +310,9 @@ def payment_details():
             stan_account_no,coda_account_no,
             dck_account_no)
 
-# from .utils import url
-# protocol,SITE_URL=url(request)
-# SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com"
-# SITEURL = "https://codamakutano.herokuapp.com"
-#Uncomment for prod purposes
-SITEURL = "https://www.codanalytics.net"
-# SITEURL=SITE_URL
+if os.environ.get('ENVIRONMENT') == 'production':
+    SITEURL = "https://www.codanalytics.net"
+elif os.environ.get('ENVIRONMENT') == 'testing':
+   SITEURL = "https://codamakutano.herokuapp.com"
+else:
+    SITEURL = "http://localhost:8000"

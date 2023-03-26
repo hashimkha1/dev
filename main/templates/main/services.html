@@ -1,0 +1,38 @@
+{% extends "main/base_templates/new_base.html"%}
+{% block content %}
+
+<div class="container-fluid padding">
+  <div class="row welcome text-center">
+    <div class="col-12">
+      <!-- <h2 class="display-4">{{title}}</h2> -->
+      <h2 class="display-6">WHAT WE OFFER</h2>
+    </div>
+    <hr/>
+    <div class="col-12">
+      <p class="lead">
+       CODA offers comprehensive job support services to help individuals succeed in their roles and achieve their professional goals. Our services include onboarding,troubleshooting technical issues,requirements analysis and more;With our job support services, individuals can be confident that they have the support they need to overcome any technical or organizational obstacles and achieve success in their work.
+      </p>
+    </div>
+  </div> 
+</div>
+<div class="container-fluid padding">
+  <div class="row padding">
+    {% for service in services %}
+    <div class="col-md-4" id="bada">
+      <div class="card">
+        <div class="">
+            <p class="display-5 text-center"><b>{{service.title}}</b></p>
+            <hr>
+            <p>{{ service.description|safe}}</p>
+          <a href="{{SITEURL}}/data/{{service.slug}}/" ><button type="button" class="btn btn-primary">More</button></a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div> 
+
+<br>
+<br>
+
+{% endblock content %}

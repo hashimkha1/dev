@@ -40,6 +40,7 @@ urlpatterns = [
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
     path('pay/', views.pay, name='pay'),
+    path('payment/<int:service>/', views.pay, name='service_pay'),
     path('payment_method/<str:method>/', views.payment, name='payment_method'),
     path("payment_complete/", views.paymentComplete, name="payment_complete"),
     path('payments/', views.payments, name='payments'),

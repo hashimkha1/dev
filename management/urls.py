@@ -6,10 +6,9 @@ from management.views import (
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         TaskHistoryView,
                         AssessListView,TagCreateView,TaskGroupCreateView,
-                        DepartmentUpdateView,
+                        DepartmentUpdateView, add_requirement_justification,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
-from testing.views import add_requirement_justification
 
 app_name = 'management'
 urlpatterns = [
@@ -30,6 +29,9 @@ urlpatterns = [
     path('benefits/', views.benefits, name='benefits'),
 
     #========================Employee Assessment=====================================================
+    path("employee_contract/", views.employee_contract, name="employee_contract"),
+    path("read_employee_contract/", views.read_employee_contract, name="read_employee_contract"),
+    path("confirm_employee_contract/", views.confirm_employee_contract, name="confirm_employee_contract"),
     path('tasks/', TaskListView.as_view(), name='tasks'),
     path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
     path('newlink/', TaskCreateView.as_view(), name='newlink'),
@@ -86,6 +88,8 @@ urlpatterns = [
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),
     path('requirementvideo/<int:detail_id>/', views.videolink, name='video_req_code'),
     # path('addjustification/<int:detail_id>/', views.add_requirement_justification, name='addjustification'),
+    path('justification/<int:pk>/', views.justification, name='justification'),
+    path('add_justification/', views.add_requirement_justification, name='join'),
     path('estimate/', views.EstimateCreateView.as_view(template_name='management/activity_form.html'), name='RequirementDetail'),
     path('estimates/', views.EstimateListView.as_view(), name='estimates'),
 

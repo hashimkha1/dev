@@ -8,6 +8,7 @@ from django.urls import path, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
+from main.models import Service, Course
 from django.views.generic import (
         CreateView,
         DeleteView,
@@ -19,7 +20,7 @@ from data.forms import (
     PrepQuestionsForm,TrainingResponseForm,
     InterviewForm, DSUForm ,RoleForm,
 )
-from main.utils import data_interview
+from main.utils import data_interview,Meetings,image_view,path_values
 from data.models import (
     Interviews,
     FeaturedCategory,
@@ -30,7 +31,8 @@ from data.models import (
     Job_Tracker,
     JobRole,
     Training_Responses,
-    Prep_Questions
+    Prep_Questions,
+    TrainingResponsesTracking
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
 from .utils import training_responses
@@ -53,6 +55,9 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, "data/training/training.html", {"title": "training"})
+
+
+
 
 @login_required
 def training_v2(request):
@@ -296,6 +301,8 @@ class ClientInterviewListView(ListView):
         return Interviews.objects.all().filter(user=user)
 
 @method_decorator(login_required, name="dispatch")
+
+
 class InterviewDetailView(DetailView):
     model = Interviews
     ordering = ["-upload_date"]
@@ -303,6 +310,8 @@ class InterviewDetailView(DetailView):
 # class QuestionDetailView(DetailView):
 #     model = Interviews
 #     ordering = ["-upload_date"]
+
+
 def courseview(request, question_type=None, *args, **kwargs):
     instance = JobRole.objects.get_by_question(question_type)
     form= InterviewForm
@@ -324,6 +333,8 @@ def courseview(request, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
+
 def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'GET':
         instance = JobRole.objects.get_by_question(question_type)
@@ -374,6 +385,8 @@ def questionview(request, question_type=None, *args, **kwargs):
             return redirect('data:question-detail', question_type=question_type)
         return redirect('data:question-detail', question_type=next_topic.first().question_type)
 @method_decorator(login_required, name="dispatch")
+
+
 class InterviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Interviews
     success_url = "/data/iuploads"
@@ -485,52 +498,62 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+
 def subcategorydetail(request, title=None, *args, **kwargs):
-    if request.method == "GET":
-        instance = FeaturedSubCategory.objects.get_by_subcategory(title)
-        tasks=FeaturedActivity.objects.filter(featuredsubcategory=instance.id)
-        # Introduction=FeaturedActivity.objects.filter(featuredsubcategory=2)
-        print(tasks)
-        # sub_title=training_responses(request)
-        # for activity in tasks:
-        #     if activity.question != None:
-        #         task_name=activity.activity_name
-        #         task_question=activity.question
-        # next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id').first()
-        form= TrainingResponseForm
-        print(form)
-        url=f'data/training/training_progress/course.html'
-        context = {
-            # "task_name":task_name,
-            # "task_question":task_question,
-            "tasks":tasks,
-            "form":form,
-            "object": instance,
-            "title_":title
-        }
-        if instance is None:
-            return render(request, "main/errors/404.html")
-        return render(request, url, context)
+
+    try:
+        tracking = TrainingResponsesTracking.objects.get(user=request.user)
+        if title != tracking.featuredsubcategory.title:
+            return redirect('data:subcategory-detail', title=tracking.featuredsubcategory.title)
+    except:
+        tracking = TrainingResponsesTracking()
+        obj = FeaturedSubCategory.objects.get(title=title)
+        tracking.user = request.user
+        tracking.featuredsubcategory = obj
+        tracking.save()
+
+    instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+    print(instance)
     if request.method == 'POST':
         try:
             form=TrainingResponseForm(request.POST, request.FILES)
             if form.is_valid():
-                instance = form.save(commit=False)
-                instance.user = request.user
-                instance.save()
-                # data = form.cleaned_data
+                form_obj = form.save(commit=False)
+                form_obj.user = request.user
+                form_obj.save()
         except Exception as e:
-            print(e)
             return render(request, "main/errors/404.html")
-        instance = FeaturedSubCategory.objects.get_by_subcategory(title)
+
         if instance is None:
             return render(request, "main/errors/404.html")
-        next_title = FeaturedSubCategory.objects.filter(id__gt=instance.id).order_by('id')
+
+        next_title = FeaturedSubCategory.objects.filter(order__gt=instance.order).order_by('order')
+        print(next_title)
         if not next_title.exists():
-            next_category = FeaturedCategory.objects.filter(id__gt=instance.featuredcategory.id).order_by('id').first()
+            next_category = FeaturedCategory.objects.filter(title='Course Overview').first()
+            tracking.featuredsubcategory = FeaturedSubCategory.objects.get(order='1')
+            tracking.save()
+            print(tracking.featuredsubcategory)
             return redirect('data:category-detail', title=next_category.title)
         next_title = next_title.first()
+        tracking.featuredsubcategory = next_title
+        tracking.save()
         return redirect('data:subcategory-detail', title=next_title.title)
+
+    tasks= FeaturedActivity.objects.filter(featuredsubcategory=instance.id)
+    form= TrainingResponseForm
+    url= f'data/training/training_progress/course.html'
+    context = {
+        "tasks": tasks,
+        "form": form,
+        "object": instance,
+        "title_": title
+    }
+
+    if instance is None:
+        return render(request, "main/errors/404.html")
+    return render(request, url, context)
+
 
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
@@ -555,6 +578,7 @@ def activitydetail(request, slug=None, *args, **kwargs):
     if activities is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityLinksCreateView(LoginRequiredMixin, CreateView):
     model = ActivityLinks
@@ -766,6 +790,7 @@ class JobListView(ListView):
     queryset = Job_Tracker.objects.all()
     template_name = "data/interview/job_tracker.html"
     ordering = ["-created_at"]
+
 def userjobtracker(request, user=None, *args, **kwargs):
     user = get_object_or_404(User, username=kwargs.get("username"))
     jobs = Job_Tracker.objects.all().filter(created_by=user).order_by("-created_at")
@@ -789,6 +814,7 @@ def userjobtracker(request, user=None, *args, **kwargs):
         "delta": delta,
     }
     return render(request, "data/interview/userjobtracker.html", context)
+
 def employetraining(request):
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/employeetraining.json', 'r') as file:
@@ -810,3 +836,71 @@ def updatelinks_employetraining(request):
     with open(settings.STATIC_ROOT + '/employeetraining.json', "w") as jsonFile:
         json.dump(data, jsonFile)
     return JsonResponse({"success": True})
+
+
+def services(request):
+    # services = Service.objects.all()
+    services = Service.objects.filter(category='Data Analysis')
+    # title,description = Service.objects.values_list('category','cat_description')
+    # title, description = Service.objects.values_list(
+    #                 "category", "cat_description").filter(category='Data Analysis')
+    title, description = Service.objects.values_list("category", "cat_description").filter(category='Data Analysis').first()
+    print(title,description)
+    context={
+        "services":services,
+        "title":title,
+        "description":description,
+    }
+    # for service in services2:
+    #     print(service.category)
+    return render(request, "data/training/services.html",context)
+
+@login_required
+def job_market(request):
+    return render(request, "data/training/job_market.html")
+
+
+def job_support(request):
+    courses = Course.objects.filter()
+    print(courses)
+    return render(request, "data/training/job_support.html", {'services': courses})
+
+
+def single_course(request):
+    return render(request, "data/training/single_course.html")
+
+def single_course(request):
+    return render(request, "data/training/single_course.html")
+
+@login_required
+def interview_roles(request):
+    # team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    sub_title=path_values(request)[-1]
+    print("sub_title",sub_title)
+    date_object="01/20/2023"
+    # start_date = datetime.strptime(date_object, '%m/%d/%Y')
+    # end_date=start_date + relativedelta(months=3)
+    images,image_names=image_view(request)
+    # staff=[member for member in team_members if member.img_category=='employee']
+    # img_urls=[member.img_url for member in team_members if member.img_category=='employee']
+    context={
+        # "start_date": start_date,
+        # "end_date": end_date,
+        # "title_team": "team",
+        # "employee_subcategories": employee_subcategories,
+        # "active_employees": staff,
+        "title": "Training",
+        # "images": images,
+        # "img_urls": img_urls,
+        "title_letter": "letter",
+    }
+    
+    # if sub_title == 'training':
+    #     return render(request, "main/team.html",context)
+    # elif sub_title == 'interview':
+    #     return render(request, "main/doc_templates/letter.html",context)
+    # elif sub_title == 'jobsupport':
+    #     return render(request, "main/doc_templates/appointment_letter.html",context)
+    # elif sub_title == 'other':
+    #     return render(request, "main/about.html",context)
+    return render(request, "data/interview/interview_roles.html",context)

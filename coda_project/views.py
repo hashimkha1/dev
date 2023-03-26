@@ -14,7 +14,3 @@ def hendler403(request, exception):
 
 def hendler404(request, exception):
     return render(request, "404.html")
-
-
-def hendler500(request):
-    return render(request, "500.html", status=500)

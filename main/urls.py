@@ -1,6 +1,7 @@
 from django.urls import path
 
 from . import views
+# from .utils import convert_html_to_pdf
 
 app_name = 'main'
 urlpatterns = [
@@ -10,6 +11,13 @@ urlpatterns = [
     path('team/', views.about, name='team'),
     # path('profiles/', views.profiles, name='profiles'),
     path('letter/', views.about, name='letter'),
+    path('appointment_letter/', views.about, name='appointment_letter'),
+    # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
+    #=======================SERVICES=====================================
+    path('newservice/', views.ServiceCreateView.as_view(template_name='main/form.html'), name='newservice'),
+    path('services/', views.services, name='services'),
+    path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
+    path('delete/<int:id>/', views.delete_service, name='delete_service'),
     #==============DC48KENYA==============================================
     path('dchome', views.dclayout, name='dc_layout'),
     path('dclogin', views.dc48login, name='dc_login'),
@@ -22,7 +30,7 @@ urlpatterns = [
 
         #--------------------------MANAGEMENT--------------------#
         path('newprofile/', views.UserCreateView.as_view(template_name='main/form.html'), name='newprofile'),
-        path('update/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
+        path('updateprofile/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
         path('newplan/', views.PlanCreateView.as_view(template_name='main/form.html'), name='newplan'),
         path('plans/', views.plans, name='plans'),
         path('update/<int:pk>/', views.PlanUpdateView.as_view(template_name='main/form.html'), name='update_plan'),

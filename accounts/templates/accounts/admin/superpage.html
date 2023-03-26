@@ -2,13 +2,16 @@
 <section id="career">
   <div class="career text-center">
     <h2>USERS</h2>
-    {% include 'main/snippets_templates/paginator.html' %}
+   
+    {% include 'main/snippets_templates/filtercard.html' with instance=userfilters%}
+    
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
           <th>Date</th>
           <th>Category</th>
           <th>Sub_Category</th>
+          <th>user_id</th>
           <th>username</th>
           <th>First</th>
           <th>Last</th>
@@ -33,11 +36,12 @@
         </tr>
       </thead>
       <tbody>
-        {% for user in objects %}
+        {% for user in userfilters.qs %}
         <tr>
           <td>{{user.date_joined|date:"F d, Y"}}</td>
           <td>{{user.category}}</td>
           <td>{{user.sub_category}}</td>
+          <td>{{user.id}}</td>
           <td>{{user.username}}</td>
           <td>{{user.first_name}}</td>
           <td>{{user.last_name}}</td>
@@ -63,9 +67,10 @@
           <td> <a class="article-title" href="{% url 'accounts:user-delete' user.id %}">Delete</a></td>
         </tr>
         {% endfor %}
+        
       </tbody>
     </table>
-
+    {% include 'main/snippets_templates/paginator.html' %}
     
   </div>
 

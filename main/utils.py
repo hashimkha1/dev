@@ -2,12 +2,33 @@ import requests
 import string
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
-
+from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
 from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
 from .models import Service,Assets
 import datetime
+#import pdfkit
 
+# def convert_html_to_pdf():
+#     html="main/doc_templates/appointment_letter.html"
+#     html_str=str(html)
+#     pdfkit.from_string(html_str, 'appointment_letter.pdf')
+#     print("success")
+
+# def convert_html_to_pdf():
+#     html_path = "main/doc_templates/appointment_letter.html"
+#     pdf_path = "appointment_letter.pdf"
+#     pdfkit.from_file(html_path, pdf_path)
+#     print("Success: HTML converted to PDF.")
+
+# def convert_html_to_pdf(request):
+#     html_path = "main/doc_templates/letter.html"
+#     pdf_path = "appointment_letter.pdf"
+#     pdfkit.from_file(html_path, pdf_path)
+#     with open(pdf_path, 'rb') as pdf_file:
+#         response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+#         response['Content-Disposition'] = 'attachment; filename="appointment_letter.pdf"'
+#         return response
 
 def countdown_in_month():
     now = datetime.datetime.now()
@@ -201,6 +222,14 @@ data_interview = [
         "Duration": "2 Mock/4 Past Interviews",
         "Lead": "Coach",
         "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
+    },
+    {
+        "Inteview": "5. Job Application & Salary Negotiation",
+        # "Concentration": "Data Analysis 1-1 Sessions",
+        "Description": "Guide you on how to apply and respond to recruiters",
+        "Duration": "14 Days",
+        "Lead": "self/Coach",
+        "Link": SITEURL+"/data/job_market/",
     },
 ]
 

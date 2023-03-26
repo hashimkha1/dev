@@ -113,21 +113,38 @@ class Picture(models.Model):
 
 
 class Service(models.Model):
-    name = models.CharField(max_length=200)
-    category = models.CharField(default='Data Analysis',max_length=200,null=True, blank=True)
-    # subcategory_category = models.CharField(default='Data Analysis',max_length=200,null=True, blank=True)
+    serial = models.PositiveIntegerField(null=True, blank=True)
+    title = models.CharField(default='training',max_length=254)
+    slug = models.SlugField(default='slug',max_length=255)
     description = models.TextField(null=True, blank=True)
-    image_url = models.CharField(max_length=1000, null=True, blank=True)
-    price = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
     class Meta:
         verbose_name_plural = "Services"
 
     def __str__(self):
-        return f"{self.id} Service"
+        return self.title
 
-    def get_absolute_url(self):
-        return reverse("main:layout")
-        # return reverse('employee-detail', kwargs={'pk': self.pk})
+
+class CourseCategory(models.Model):
+    name = models.CharField(max_length=254)
+
+    def __str__(self):
+        return self.name
+
+
+class Course(models.Model):
+    serial = models.PositiveIntegerField(null=True, blank=True)
+    title = models.CharField(max_length=254)
+    description = models.TextField(null=True, blank=True)
+    category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
+    subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
+    price = models.FloatField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
+
 
 class Assets(models.Model):
     name = models.CharField(max_length=200)

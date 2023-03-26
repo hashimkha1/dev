@@ -4,7 +4,6 @@ import re
 from dateutil import parser
 from bs4 import BeautifulSoup
 import psycopg2
-
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -25,13 +24,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
-from coda_project.settings import dblocal,herokudev,herokuprod
+from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=herokuprod() #herokudev() #dblocal() #,herokuprod()
+# host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
+
 
 def get_gmail_service():
     creds = None
@@ -538,44 +539,60 @@ def dump_data_short_put(values):
     except Exception as err:
         print(err)
 
+
 def main_shortput():
-        # to supress the error messages/logs
-    options = webdriver.ChromeOptions()
-    options.add_argument("--headless")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument('--no-sandbox')
-    options.add_argument("--disable-gpu")
-    ## might not be needed
-    options.add_argument("window-size=800x600")
+    # to supress the error messages/logs
+    # chromedriver.install()
+    # options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument('--no-sandbox')
+    # options.add_argument("--disable-gpu")
+    # options.add_argument("--disable-dev-sh-usage")
+    # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    # ## might not be needed
+    # options.add_argument("window-size=800x600")
+    # # driver = webdriver.Chrome(chromedriver.install(), options=options)
+    # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
+    # driver = webdriver.Chrome(options=options)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
-    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
+    # CLIENT CODE
     driver.get('https://www.optionsplay.com/hub/short-puts')
-
-    time.sleep(5)
-    driver.implicitly_wait(5)
+    time.sleep(15)
+    driver.implicitly_wait(15)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
 
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
-    time.sleep(3)
+    time.sleep(5)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
+    time.sleep(5)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
+    # time.sleep(5)
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
     # //*[@id="shortPuts"]/tbody/tr[1]
     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
-    time.sleep(4)
+    time.sleep(10)
+    data=[]
     for row in range(1,rows+1):
+    # for row in range(1,2):
         values = []
         for col in range(1,16):
             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
             value = driver.find_element(By.XPATH,path).text.strip()
             values.append(value)
-        
+
         value = float(values[14].replace('%',''))
         if values[11] == 'N' and value < 30:
             dump_data_short_put(tuple(values))
-    
+            data.append(values)
+    return data

@@ -22,7 +22,7 @@ from django.views.generic import (
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees
-from main.filters import CredentialFilter
+from main.filters import CredentialFilter,UserFilter
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
@@ -127,26 +127,13 @@ def join(request):
                     print("category", form.cleaned_data.get("category"))
 
             if form.is_valid():
-                print("category", form.cleaned_data.get("category"))
-
-                # if form.cleaned_data.get('category') == 2:# Staff-->Full,Agent,Other
-                #     if form.cleaned_data.get('sub_category') == 6:
-                #         form.instance.is_admin = True
-                #         form.instance.is_superuser = True
-                #     else:
-                #         form.instance.is_employee = True
-                # elif form.cleaned_data.get('category') == 3:# Client
-                #     form.instance.is_client = True
-                # else:
-                #     form.instance.is_applicant = True
-                if form.cleaned_data.get("category") == 1:
-                    form.instance.is_applicant = True
-                elif form.cleaned_data.get("category") == 2:
+                # print("category", form.cleaned_data.get("category"))
+                if form.cleaned_data.get("category") == 2:
                     form.instance.is_employee = True
                 elif form.cleaned_data.get("category") == 3:
                     form.instance.is_client = True
                 else:
-                    form.instance.is_admin = True
+                    form.instance.is_applicant = True
 
                 form.save()
 
@@ -160,7 +147,7 @@ def join(request):
         msg = "error validating form"
         form = UserForm()
         print(msg)
-    return render(request, "accounts/registration/join.html", {"form": form})
+    return render(request, "accounts/registration/DYS/register.html", {"form": form})
 
 
 def CreateProfile():
@@ -181,6 +168,10 @@ def login_view(request):
             CreateProfile()
             # If Category is Staff/employee
             if account is not None and account.category == 2:
+                if account.is_employee and not account.is_employee_contract_signed:
+                    login(request, account)
+                    return redirect("management:employee_contract")
+
                 if account.sub_category == 2:  # contractual
                     login(request, account)
                     return redirect("management:requirements-active")
@@ -202,6 +193,7 @@ def login_view(request):
             elif account is not None and account.category == 4:
                     login(request, account)
                     return redirect("management:dckdashboard")
+           
             # If Category is applicant
             elif account is not None and account.profile.section is not None:
                 if account.profile.section == "A":
@@ -254,15 +246,18 @@ def login_view(request):
 
 # ================================USERS SECTION================================
 def users(request):
-    # users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     queryset = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    userfilters=UserFilter(request.GET,queryset=users)
+
     # Use the Paginator to paginate the queryset
-    paginator = Paginator(queryset, 10) # Show 10 objects per page
+    paginator = Paginator(userfilters.qs, 10) # Show 10 objects per page
     page = request.GET.get('page')
     objects = paginator.get_page(page)
 
     context={
-        "users": queryset,
+        # "users": queryset,
+        "userfilters": userfilters,
         "objects":objects
     }
 
@@ -284,6 +279,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "sub_category",
         "first_name",
         "last_name",
+        "username",
         "date_joined",
         "email",
         "gender",
