@@ -23,6 +23,7 @@ urlpatterns = [
 
 #=============================CREDENTIALS VIEWS=====================================
     path('credentials/', views.credential_view, name='account-crendentials'),
+    
     path('newcredentialcategory/', views.newcredentialCategory, name='account-newcredentialcategory'),
     path('newcredential/', views.newcredential, name='account-newcredentials'),
     path('credential/update/<int:pk>/', CredentialUpdateView.as_view(template_name="accounts/admin/forms/credential_form.html"), name='credential-update'),
@@ -48,4 +49,11 @@ urlpatterns = [
     path('track/<int:pk>/update/', TrackUpdateView.as_view(), name='tracker-update'),
     path('track/<int:pk>/delete/', TrackDeleteView.as_view(), name='tracker-delete'),
     path('thank/',views.thank, name='thank-you'),
+
+
+#=============================TESTING VIEWS=====================================
+   path('createtestusers/', views.CustomUserCreateView.as_view(template_name="accounts/customeruser_form.html"),name='testusers'),
+   path('testusers/', views.displayusers, name='testusers'),
+    # path('newcredential/', views.newcredential, name='account-newcredentials'),
+    # path('credential/update/<int:pk>/', CredentialUpdateView.as_view(template_name="accounts/admin/forms/credential_form.html"), name='credential-update'),
 ]

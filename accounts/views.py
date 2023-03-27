@@ -20,7 +20,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
+from .models import CustomerUser,CustomUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees
 from main.filters import CredentialFilter,UserFilter
 from management.models import Task
@@ -854,3 +854,21 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+
+# ==============================Testing Purposes=============================
+class CustomUserCreateView(CreateView):
+    model = CustomUser
+    success_url = "/"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        # form.instance.user = self.request.user
+        return super().form_valid(form)
+    
+
+def displayusers(request):
+    customusers=CustomUser.objects.all()
+    context={
+        "users":customusers
+    }
+    return render(request, "accounts/admin/users.html", context)

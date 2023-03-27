@@ -39,6 +39,7 @@ urlpatterns = [
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
+    path('userpay/', views.userpay, name='userpay'),
     path('pay/', views.pay, name='pay'),
     path('payment/<int:service>/', views.pay, name='service_pay'),
     path('payment_method/<str:method>/', views.payment, name='payment_method'),

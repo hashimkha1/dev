@@ -295,65 +295,55 @@ CELERYBEAT_SCHEDULE = {
 }
 
 #==================PAYMENT SETTINGS=================
-def payment_details():
-    # ================MPESA/CASHAPP/VENMO========================
-    phone_number = os.environ.get('PHONE_NUMBER')
-    email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-    email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
-    cashapp = os.environ.get('CASHAPP') #'postgres',
-    venmo= os.environ.get('VENMO') #'postgres',
-    stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-    coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-    dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
-    return (phone_number,email_info,
-            email_dck,cashapp,venmo,
-            stan_account_no,coda_account_no,
-            dck_account_no)
-
-#Testing Payment methods
-# def payment_details(request):
+# def payment_details():
 #     # ================MPESA/CASHAPP/VENMO========================
-#     if request.user.category == 4:
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_dck,cashapp,venmo,
-#                 stan_account_no,coda_account_no,
-#                 dck_account_no)
+#     phone_number = os.environ.get('PHONE_NUMBER')
+#     email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
+#     email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
+#     cashapp = os.environ.get('CASHAPP') #'postgres',
+#     venmo= os.environ.get('VENMO') #'postgres',
+#     stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+#     coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
+#     dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
+#     return (phone_number,email_info,
+#             email_dck,cashapp,venmo,
+#             stan_account_no,coda_account_no,
+#             dck_account_no)
+
+# Testing Payment methods
+def payment_details(request):
+    # ================MPESA/CASHAPP/VENMO========================
+    if request.user.category == 4 and request.user.subcategory == 7:
+        phone_number = os.environ.get('DYC_PHONE_NUMBER')
+        email_info = os.environ.get('EMAIL_DYC_USER') #'Coda_analytics',
+        cashapp = os.environ.get('DYC_CASHAPP') #'postgres',
+        venmo= os.environ.get('DYC_VENMO') #'postgres',
+        stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+        account_no = os.environ.get('DYC_ACCOUNT_NO') #'postgres',
+        return (phone_number,email_info,
+                email_info,cashapp,venmo,
+                stan_account_no,account_no)
     
-#     elif request.user.category == 5:
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_dck,cashapp,venmo,
-#                 stan_account_no,coda_account_no,
-#                 dck_account_no)
-    
-#     else:
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         email_dck = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         coda_account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         dck_account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_dck,cashapp,venmo,
-#                 stan_account_no,coda_account_no,
-#                 dck_account_no)
+    elif request.user.category == 4 and request.user.subcategory == 6 :
+        phone_number = os.environ.get('PHONE_NUMBER')
+        email_info = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
+        cashapp = os.environ.get('CASHAPP') #'postgres',
+        venmo= os.environ.get('VENMO') #'postgres',
+        stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+        account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
+        return (phone_number,email_info,
+                email_info,cashapp,venmo,
+                stan_account_no,account_no)
+    else:
+        phone_number = os.environ.get('PHONE_NUMBER')
+        email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
+        cashapp = os.environ.get('CASHAPP') #'postgres',
+        venmo= os.environ.get('VENMO') #'postgres',
+        stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+        account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
+        return (phone_number,email_info,
+                email_info,cashapp,venmo,
+                stan_account_no,account_no)
 
 
 if os.environ.get('ENVIRONMENT') == 'production':

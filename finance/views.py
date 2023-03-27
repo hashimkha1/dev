@@ -358,6 +358,12 @@ def payment(request,method):
     except:
         return render(request, "main/errors/500.html")
 
+#determines user type to run payment
+def userpay(request):
+	if request.user.sub_category == 7:
+		return redirect('finance:DYCpay')
+	else:
+		return redirect("finance:pay")
 
 @login_required
 def pay(request, service=None):
@@ -382,7 +388,6 @@ def pay(request, service=None):
             pass
 
         return render(request, "finance/payments/pay.html", context)
-
 
     try:
         payment_info = Payment_Information.objects.filter(
