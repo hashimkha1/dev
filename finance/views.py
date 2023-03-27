@@ -959,8 +959,8 @@ class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
     
 
-#DYS Implementation
-class DYSPaymentCreateView(LoginRequiredMixin, CreateView):
+#DYC Implementation
+class DYCPaymentCreateView(LoginRequiredMixin, CreateView):
 	model = Default_Payment_Fees
 	success_url = "/finance/contract_form"
 	fields = [
@@ -973,7 +973,7 @@ class DYSPaymentCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
-def DYSpayments(request):
+def DYCpayments(request):
 	payment_history=Payment_History.objects.all()
 	Payment_Info=Payment_Information.objects.all()
 	context={
@@ -981,12 +981,12 @@ def DYSpayments(request):
 		"payment_history":payment_history,
 		"Payment_Info":Payment_Info
 	}
-	return render(request,"finance/DYS/payments.html",context)
+	return render(request,"finance/DYC/payments.html",context)
 # finance\templates\finance\payments\payments.html
-# finance\templates\DYS\payments.html
+# finance\templates\DYC\payments.html
 
 
-def DYSpayment(request,method):
+def DYCpayment(request,method):
     (phone_number,email_info,
     email_dck,cashapp,
     venmo,stan_account_no,
@@ -1027,7 +1027,7 @@ def DYSpayment(request,method):
 
 
 @login_required
-def DYSpay(request):
+def DYCpay(request):
     url="https://www.codanalytics.net/static/main/img/service-3.jpg"
     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
     link=f'{SITEURL}/finance/new_contract/{request.user}/'
@@ -1044,12 +1044,12 @@ def DYSpay(request):
             "message": message,
             "link": link,
         }
-        return render(request, "finance/DYS/pay.html",context)
+        return render(request, "finance/DYC/pay.html",context)
     except:
         return render(request, "management/contracts/contract_error.html", context)
         
 
-def DYSpaymentComplete(request):
+def DYCpaymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
     # print(payments)
     customer = request.user
@@ -1082,12 +1082,12 @@ def DYSpaymentComplete(request):
     )
     return JsonResponse("Payment completed!", safe=False)
 
-class DYSDefaultPaymentListView(ListView):
+class DYCDefaultPaymentListView(ListView):
 	model = Default_Payment_Fees
-	template_name = "finance/DYS/defaultpayments.html"
+	template_name = "finance/DYC/defaultpayments.html"
 	context_object_name = "defaultpayments"
 
-class DYSDefaultPaymentUpdateView(UpdateView):
+class DYCDefaultPaymentUpdateView(UpdateView):
 	model = Default_Payment_Fees
 	success_url = "/finance/payments"
 	
@@ -1118,9 +1118,9 @@ class DYSDefaultPaymentUpdateView(UpdateView):
 
 
 # For payment purposes
-class DYSPaymentInformationUpdateView(UpdateView):
+class DYCPaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
-	success_url = "/finance/DYSpay/"
+	success_url = "/finance/DYCpay/"
 	template_name="main/snippets_templates/generalform.html"
 	
 	# fields ="__all__"

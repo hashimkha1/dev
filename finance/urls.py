@@ -79,14 +79,14 @@ urlpatterns = [
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
     path("food/",views.foodlist,name="supplies"),
 
-    #Testing DYS
-    path('DYSpay/', views.DYSpay, name='DYSpay'),
-    path('DYSpayment_method/<str:method>/', views.DYSpayment, name='DYSpayment_method'),
-    path("DYSpayment_complete/", views.DYSpaymentComplete, name="DYSpayment_complete"),
-    path('DYSpayments/', views.DYSpayments, name='DYSpayments'),
-    path('DYSpay/<int:pk>/', views.DYSPaymentInformationUpdateView.as_view(), name='DYSupdatepay'),
+    #Testing DYC
+    path('DYCpay/', views.DYCpay, name='DYCpay'),
+    path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
+    path("DYCpayment_complete/", views.DYCpaymentComplete, name="DYCpayment_complete"),
+    path('DYCpayments/', views.DYCpayments, name='DYCpayments'),
+    path('DYCpay/<int:pk>/', views.DYCPaymentInformationUpdateView.as_view(), name='DYCupdatepay'),
     
-    # path('defaultpayments/', DYSDefaultPaymentListView.as_view(template_name='finance/DYS/defaultpayments.html'), name='defaultpayments'),
-    # path('newpayment/', DYSPaymentCreateView.as_view(template_name='finance/DYS/payment_form.html'), name='newpayment'),
-    # path('payment/<int:pk>/update/', DYSDefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
+    # path('defaultpayments/', DYCDefaultPaymentListView.as_view(template_name='finance/DYC/defaultpayments.html'), name='defaultpayments'),
+    # path('newpayment/', DYCPaymentCreateView.as_view(template_name='finance/DYC/payment_form.html'), name='newpayment'),
+    # path('payment/<int:pk>/update/', DYCDefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
 ]
