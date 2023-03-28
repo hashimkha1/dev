@@ -313,7 +313,7 @@ CELERYBEAT_SCHEDULE = {
 # Testing Payment methods
 def payment_details(request):
     # ================MPESA/CASHAPP/VENMO========================
-    if request.user.category == 4 and request.user.subcategory == 7:
+    if request.user.category == 4 and request.user.sub_category == 7:
         phone_number = os.environ.get('DYC_PHONE_NUMBER')
         email_info = os.environ.get('EMAIL_DYC_USER') #'Coda_analytics',
         cashapp = os.environ.get('DYC_CASHAPP') #'postgres',
@@ -323,8 +323,9 @@ def payment_details(request):
         return (phone_number,email_info,
                 email_info,cashapp,venmo,
                 stan_account_no,account_no)
+
     
-    elif request.user.category == 4 and request.user.subcategory == 6 :
+    elif request.user.category == 4 and request.user.sub_category == 6 :
         phone_number = os.environ.get('PHONE_NUMBER')
         email_info = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
         cashapp = os.environ.get('CASHAPP') #'postgres',

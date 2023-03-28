@@ -82,7 +82,7 @@ urlpatterns = [
 
     #Testing DYC
     path('DYCpay/', views.DYCpay, name='DYCpay'),
-    path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
+    # path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
     path("DYCpayment_complete/", views.DYCpaymentComplete, name="DYCpayment_complete"),
     path('DYCpayments/', views.DYCpayments, name='DYCpayments'),
     path('DYCpay/<int:pk>/', views.DYCPaymentInformationUpdateView.as_view(), name='DYCupdatepay'),

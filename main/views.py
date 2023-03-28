@@ -61,6 +61,62 @@ def error500(request):
 # def result(request):
 #     return render(request, "main/errors/result.html", {"title": "result"})
 
+def template_errors(request):
+    url = request.path
+    contact = 'Please contact admin at info@codanalytics.net'
+    title = ['Bad Request', 'Permission Denied', 'Page Not Found', 'System Issue']
+
+    # Map each error code to its corresponding context
+    context_dict = {
+        400: {'title': title[0], 'error_message': 'Kindly check your URL/link provided', 'contact_message': contact},
+        403: {'title': title[1], 'error_message': 'You are not allowed to visit this page', 'contact_message': contact},
+        404: {'title': title[2], 'error_message': 'Page not found', 'contact_message': contact},
+        500: {'title': title[3], 'error_message': 'There is an issue on our end. Please try again later.', 'contact_message': contact},
+    }
+
+    # Get the context based on the error code, or use a default context
+    error_code = getattr(url, 'response', None)
+    context = context_dict.get(error_code, {'title': 'Error', 'error_message': 'An error has occurred', 'contact_message': contact})
+
+    print(error_code)
+    return render(request, 'main/errors/template_error.html', context)
+
+
+# def template_errors(request):
+#     url=request.path
+#     # if url.response.code=400
+#     contact='Please Contact admin at info@codanalytics.net'
+#     title=['Bad Request','Permission Denied','Page Not Found','System Issue']
+#     if url.response.code==400:
+#         context={
+#                     'title':title[0],
+#                     'message':'Kindly check your url/link provided',
+#                     'message':contact,
+#                  }
+#     if url.response.code==403:
+#         context={
+#                     'title':title[1],
+#                     'message':'You are not allowed to vist this page',
+#                     'message':contact,
+#                  }
+#     if url.response.code==404:
+#         context={
+#                     'title':title[2],
+#                     'message':'Please contact admin at info@codanalytics.net',
+#                     'message':contact,
+#                  }
+        
+#     if url.response.code==500:
+#         context={
+#                     'title':title[3],
+#                     'message':'There is an issue on our end Please Try again later',
+#                     'message':contact,
+#                  }
+#     print(url.response.code)
+#     return render(request,'main/errors/generalerrors.html',context)
+
+
+
 def general_errors(request):
     # return render(request, "main/errors/noresult.html")
     context={'message':'message'}

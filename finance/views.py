@@ -320,10 +320,7 @@ def payments(request):
 
 
 def payment(request,method):
-    (phone_number,email_info,
-    email_dck,cashapp,
-    venmo,stan_account_no,
-    coda_account_no,dck_account_no)=payment_details()
+    (phone_number,email_info,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
     path_value,sub_title=path_values(request)
     subject='PAYMENT'
     url='email/payment/payment_method.html'
@@ -331,6 +328,7 @@ def payment(request,method):
             with {sub_title} details for your payment.In the unlikely event\
             that you have not received it, kindly \
             check your spam folder.'
+    
     context={
                 "title": "PAYMENT DETAILS",
                 'user': request.user.first_name,
@@ -348,15 +346,14 @@ def payment(request,method):
                             'cashapp':cashapp,
                             'venmo':venmo,
                             'stan_account_no':stan_account_no,
-                            'coda_account_no':coda_account_no,
-                            'dck_account_no':dck_account_no,
+                            'coda_account_no':account_no,
                             'email':email_info,
-                            'email':email_dck,
                             }
                     )
-        return render(request, "main/errors/generalerrors.html",context)
+        return render(request, "main/errors/message.html",context)
     except:
-        return render(request, "main/errors/500.html")
+        print("message", message)
+        return render(request, "main/errors/template_error.html")
 
 #determines user type to run payment
 def userpay(request):
@@ -991,67 +988,66 @@ def DYCpayments(request):
 # finance\templates\DYC\payments.html
 
 
-def DYCpayment(request,method):
-    (phone_number,email_info,
-    email_dck,cashapp,
-    venmo,stan_account_no,
-    coda_account_no,dck_account_no)=payment_details()
-    path_value,sub_title=path_values(request)
-    subject='PAYMENT'
-    url='email/payment/payment_method.html'
-    message=f'Hi,{request.user.first_name}, an email has been sent \
-            with {sub_title} details for your payment.In the unlikely event\
-            that you have not received it, kindly \
-            check your spam folder.'
-    context={
-                "title": "PAYMENT DETAILS",
-                'user': request.user.first_name,
-                "images":images, 
-                "message": message,
-        }
-    try:
-        send_email( category=request.user.category, 
-                    to_email=[request.user.email,], 
-                    subject=subject, html_template=url, 
-                    context={
-                            'subtitle': sub_title,
-                            'user': request.user.first_name,
-                            'mpesa_number':phone_number,
-                            'cashapp':cashapp,
-                            'venmo':venmo,
-                            'stan_account_no':stan_account_no,
-                            'coda_account_no':coda_account_no,
-                            'dck_account_no':dck_account_no,
-                            'email':email_info,
-                            'email':email_dck,
-                            }
-                    )
-        return render(request, "main/errors/generalerrors.html",context)
-    except:
-        return render(request, "main/errors/500.html")
+# def DYCpayment(request,method):
+#     (phone_number,email_info,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
+#     path_value,sub_title=path_values(request)
+#     subject='PAYMENT'
+#     url='email/payment/payment_method.html'
+#     message=f'Hi,{request.user.first_name}, an email has been sent \
+#             with {sub_title} details for your payment.In the unlikely event\
+#             that you have not received it, kindly \
+#             check your spam folder.'
+#     context={
+#                 "title": "PAYMENT DETAILS",
+#                 'user': request.user.first_name,
+#                 "images":images, 
+#                 "message": message,
+#         }
+#     try:
+#         send_email( category=request.user.category, 
+#                     to_email=[request.user.email,], 
+#                     subject=subject, html_template=url, 
+#                     context={
+#                             'subtitle': sub_title,
+#                             'user': request.user.first_name,
+#                             'mpesa_number':phone_number,
+#                             'cashapp':cashapp,
+#                             'venmo':venmo,
+#                             'stan_account_no':stan_account_no,
+#                             'coda_account_no':account_no,
+#                             'email':email_info,
+#                             }
+#                     )
+#         return render(request, "main/messages/general.html",context)
+#     except:
+#         return render(request, "main/errors/template_error.html")
 
 
 @login_required
 def DYCpay(request):
-    url="https://www.codanalytics.net/static/main/img/service-3.jpg"
     message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
     link=f'{SITEURL}/finance/new_contract/{request.user}/'
     images,image_names=image_view(request)
-    try:
-        payment_info = Payment_Information.objects.filter(
-            customer_id=request.user.id
-        ).first()
-        context={
-            "title": "PAYMENT", 
-            "images":images, 
-            "image_name": image_names, 
-            "payments": payment_info,
-            "message": message,
-            "link": link,
-        }
-        return render(request, "finance/DYC/pay.html",context)
-    except:
-        return render(request, "management/contracts/contract_error.html", context)
+    context_dict = {
+        "student": {'cost': 100, 'message': 'if in error kindly go back'},
+        "business": {'cost': 200, 'message': 'if in error kindly go back'},
+        "greencard": {'cost': 300, 'message': 'if in error kindly go back'},
+    }
+    for usertype, values in context_dict.items():
+        if usertype=='student':
+            cost= values["cost"]
+            print(cost)
+    context={
+        "title": "PAYMENT", 
+        "images":images, 
+        "image_name": image_names, 
+        # "payments": payment_info,
+        "message": message,
+        "link": link,
+        "cost": cost,
+    }
+    return render(request, "finance/DYC/pay.html",context)
+
         
 
 def DYCpaymentComplete(request):
