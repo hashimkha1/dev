@@ -658,16 +658,23 @@ def whatsapp_apis(request):
 
 def runwhatsapp(request):
     whatsapp_items = Whatsapp.objects.all()
-
+    image_url = None
     # Get a list of all group IDs from the Whatsapp model
-    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+    # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+    group_ids = ["120363047226624982@g.us"]
 
     # Get the image URL and message from the first item in the Whatsapp model
-    image_url = whatsapp_items[0].image_url
-    message = whatsapp_items[0].message
-    product_id = whatsapp_items[0].product_id
-    screen_id = whatsapp_items[0].screen_id
-    token = whatsapp_items[0].token
+    if whatsapp_items:
+        image_url = whatsapp_items[0].image_url
+        message = whatsapp_items[0].message
+    else:
+        message = "local testing"
+    # product_id = whatsapp_items[0].product_id
+    # screen_id = whatsapp_items[0].screen_id
+    # token = whatsapp_items[0].token
+    product_id = "333b59c1-c310-43c0-abb5-e5c4f0379e61"
+    screen_id = 26504
+    token = "cce10961-db15-46e7-b5f1-6d6bf091b686"
 
     # print("Group IDs:", group_ids)
     # print("Image URL:", image_url)
@@ -697,7 +704,7 @@ def runwhatsapp(request):
             "message": message_content,
             "filename": filename,
         }
-        
+
         headers = {
             "Content-Type": "application/json",
             "x-maytapi-key": token,
