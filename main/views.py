@@ -665,8 +665,9 @@ def runwhatsapp(request):
 
     # Get the image URL and message from the first item in the Whatsapp model
     if whatsapp_items:
-        image_url = whatsapp_items[0].image_url
-        message = whatsapp_items[0].message
+        # image_url = whatsapp_items[0].image_url
+        # message = whatsapp_items[0].message
+        message = "server testing"
     else:
         message = "local testing"
     # product_id = whatsapp_items[0].product_id
@@ -684,50 +685,48 @@ def runwhatsapp(request):
     # print("token:", token)
 
     # Loop through all group IDs and send the message to each group
-    # for group_id in group_ids:
-    #     print("Sending message to group", group_id)
+    for group_id in group_ids:
+        print("Sending message to group", group_id)
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
-    if image_url:
-        message_type = "media"
-        message_content = image_url
-        filename = "image.jpg"
-    else:
-        message_type = "text"
-        message_content = message
-        filename = None
+        if image_url:
+            message_type = "media"
+            message_content = image_url
+            filename = "image.jpg"
+        else:
+            message_type = "text"
+            message_content = message
+            filename = None
 
-    # Set up the API request payload and headers
-    payload = {
-        # "to_number": group_id,
-        "to_number": "120363047226624982@g.us",
-        "type": message_type,
-        "message": message_content,
-        "filename": filename,
-    }
+        # Set up the API request payload and headers
+        payload = {
+            "to_number": group_id,
+            "type": message_type,
+            "message": message_content,
+            "filename": filename,
+        }
 
-    headers = {
-        "x-maytapi-key": token,
-    }
-    # Send the API request and print the response
-    url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-    response = requests.post(url, headers=headers, data=json.dumps(payload))
-    # print(response.status_code)
-    # print(response.text)
-    # print(url)
+        headers = {
+            "x-maytapi-key": token,
+        }
+        # Send the API request and print the response
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # print(response.status_code)
+        # print(response.text)
+        # print(url)
 
-    # Check if the API request was successful
-    if response.status_code == 200:
-        print("Message sent successfully!")
-        message = f"Hi, {request.user}, your messages have been sent to your groups."
-    else:
-        print("Error sending message:", response.text)
-        message = response.text
+        # Check if the API request was successful
+        if response.status_code == 200:
+            print("Message sent successfully!")
+            message = f"Hi, {request.user}, your messages have been sent to your groups."
+        else:
+            print("Error sending message:", response.text)
+            message = response.text
 
-    # time.sleep(5) # add a delay of 1 second
+        # time.sleep(5) # add a delay of 1 second
 
     # Display a success message on the page
     # message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": "WHATSAPP", "message": message}
     return render(request, "main/errors/generalerrors.html", context)
-
