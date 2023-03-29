@@ -41,7 +41,6 @@ urlpatterns = [
         
         #---------------MARKETING--------------------#
         path('whatsapp/', views.runwhatsapp, name='whatsapp'),
-        path('getwhatsapp/', views.testingapi, name='whatsapp'),
         path('whatsapplist/', views.whatsapp_apis, name='whatsapp_list'),
         path('newwhatsapp/', views.whatsappCreateView.as_view(template_name='main/form.html'), name='whatsapp_new'),
         path('whatsapp/<int:pk>/', views.whatsappUpdateView.as_view(template_name='main/form.html'), name='whatsapp_update'),
