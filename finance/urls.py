@@ -31,8 +31,8 @@ urlpatterns = [
     path('newinflow/', views.DC48InflowCreateView.as_view(), name='dcinflow'),
     path('updateinflow/<int:pk>/update/', views.DC48InflowUpdateView.as_view(), name='dcinflow-update'),
     path('deleteinflow/<int:pk>/delete/', views.DC48InflowDeleteView.as_view(), name='dcinflow-delete'),
-    # path('listinflow/', views.DC48InflowListview.as_view(), name='list-inflow'),
-    path('listinflow/', views.dcinflows, name='list-inflow'),
+    # path('listinflow/', views.DC48InflowListview.as_view(), name='dcklist'),
+    path('listinflow/', views.dcinflows, name='dcklist'),
     #=============================CLIENT CONTRACT FORM SUBMISSIONS=====================================
     
     path('contract_form/', views.contract_form_submission, name='finance-contract_form_submission'),

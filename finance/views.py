@@ -329,7 +329,7 @@ def payment(request,method):
             that you have not received it, kindly \
             check your spam folder.'
     
-    context={
+    context_add={
                 "title": "PAYMENT DETAILS",
                 'user': request.user.first_name,
                 "images":images, 
@@ -348,12 +348,14 @@ def payment(request,method):
                             'stan_account_no':stan_account_no,
                             'coda_account_no':account_no,
                             'email':email_info,
+			    			'message':'Check Your Email for Payment Details'
                             }
                     )
         return render(request, "main/errors/message.html",context)
     except:
         print("message", message)
         return render(request, "main/errors/template_error.html")
+    
 
 #determines user type to run payment
 def userpay(request):
