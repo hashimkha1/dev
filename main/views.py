@@ -706,7 +706,6 @@ def runwhatsapp(request):
         }
 
         headers = {
-            "Content-Type": "application/json",
             "x-maytapi-key": token,
         }
         # Send the API request and print the response
@@ -719,30 +718,15 @@ def runwhatsapp(request):
         # Check if the API request was successful
         if response.status_code == 200:
             print("Message sent successfully!")
+            message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
             print("Error sending message:", response.text)
+            message = response.text
 
         # time.sleep(5) # add a delay of 1 second
 
     # Display a success message on the page
-    message = f"Hi, {request.user}, your messages have been sent to your groups."
+    # message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": "WHATSAPP", "message": message}
     return render(request, "main/errors/generalerrors.html", context)
 
-
-def testingapi(request):
-    import requests
-
-    url = "https://api.maytapi.com/api/333b59c1-c310-43c0-abb5-e5c4f0379e61/26504/getGroups"
-
-    payload = {}
-    files = {}
-    headers = {
-        'x-maytapi-key': 'cce10961-db15-46e7-b5f1-6d6bf091b686',
-        'Authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjc0NzUxNTc4LCJqdGkiOiI0MmJkYzU1ZmFhY2I0MDg5ODEwZjZhY2E5NTA3NDRhOCIsInVzZXJfaWQiOjh9.3Zjq68_Xg6H-tD2ngeO9ou_jsAPchdVHNbDD-ASQrBo'
-    }
-
-    response = requests.request("GET", url, headers=headers, data=payload, files=files)
-
-    print(response.text)
-    return HttpResponse(response.text)
