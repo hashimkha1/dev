@@ -690,71 +690,49 @@ def runwhatsapp(request):
         print("Sending message to group", group_id)
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
-        conn = http.client.HTTPSConnection("api.maytapi.com")
         if image_url:
             # message_type = "media"
             # message_content = image_url
             # filename = "image.jpg"
             # Set the length of the random string
             length = 10
-
             # Generate a random string of lowercase letters and digits
             random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
-            payload = json.dumps({
+            payload = {
                 "to_number": group_id,
                 "type": "media",
                 "message": image_url,
                 "filename": random_string
-            })
+            }
         else:
-            # message_type = "text"
-            # message_content = message
-            # filename = None
-
-        # Set up the API request payload and headers
+            # Set up the API request payload and headers
             # Set the length of the random string
             length = 10
-
             # Generate a random string of lowercase letters and digits
             random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-            payload = json.dumps({
+            payload = {
                 "to_number": group_id,
                 "type": "text",
                 "message": random_string
-            })
-        # payload = {
-        #     "to_number": group_id,
-        #     "type": message_type,
-        #     "message": message_content,
-        #     "filename": filename,
-        # }
+            }
 
-        # headers = {
-        #     "x-maytapi-key": token,
-        # }
+        headers = {
+            "x-maytapi-key": token,
+        }
         # Send the API request and print the response
-        # url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        # response = requests.post(url, headers=headers, data=json.dumps(payload))
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
         # print(response.status_code)
         # print(response.text)
         # print(url)
 
-        headers = {
-            'accept': 'application/json',
-            'x-maytapi-key': token,
-            'Content-Type': 'application/json'
-        }
-        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
-        response = conn.getresponse()
-        data = response.read()
         # Check if the API request was successful
-        if response.code == 200:
+        if response.status_code == 200:
             print("Message sent successfully!")
             message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
-            # print("Error sending message:", response.text)
-            message = data
+            print("Error sending message:", response.text)
 
         # time.sleep(5) # add a delay of 1 second
 
