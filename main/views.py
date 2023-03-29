@@ -485,7 +485,6 @@ def interview(request):
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})
 
-@login_required
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST, request.FILES)

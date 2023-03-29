@@ -348,16 +348,16 @@ def payment(request,method):
                             'stan_account_no':stan_account_no,
                             'coda_account_no':account_no,
                             'email':email_info,
-			    			'message':'Check Your Email for Payment Details'
+                            'message':message,
                             }
                     )
         return render(request, "main/errors/message.html",context)
     except:
-        print("message", message)
         return render(request, "main/errors/template_error.html")
     
 
 #determines user type to run payment
+@login_required
 def userpay(request):
 	if request.user.sub_category == 7:
 		return redirect('finance:DYCpay')
@@ -879,6 +879,7 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
 #     # fields=['category','method','period','sender','receiver'
 # 	# 		'description','phone','qty','amount']
 
+@login_required
 def dcinflows(request):
 	(
                 remaining_days,
