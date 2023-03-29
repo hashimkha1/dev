@@ -706,23 +706,41 @@ def runwhatsapp(request):
             "filename": filename,
         }
 
-        headers = {
-            "x-maytapi-key": token,
-        }
+        # headers = {
+        #     "x-maytapi-key": token,
+        # }
         # Send the API request and print the response
-        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        # response = requests.post(url, headers=headers, data=json.dumps(payload))
         # print(response.status_code)
         # print(response.text)
         # print(url)
+        import http.client
+        import json
 
+        conn = http.client.HTTPSConnection("api.maytapi.com")
+        payload = json.dumps({
+            "to_number": "120363047226624982@g.us",
+            "type": "text",
+            "message": "Hello World!"
+        })
+        headers = {
+            'accept': 'application/json',
+            'x-maytapi-key': token,
+            'Content-Type': 'application/json'
+        }
+        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        print(data.decode("utf-8"))
         # Check if the API request was successful
-        if response.status_code == 200:
+        # if response.status_code == 200:
+        if json.loads(data).get('success'):
             print("Message sent successfully!")
             message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
-            print("Error sending message:", response.text)
-            message = response.text
+            # print("Error sending message:", response.text)
+            message = data
 
         # time.sleep(5) # add a delay of 1 second
 
