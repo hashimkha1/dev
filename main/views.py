@@ -671,12 +671,15 @@ def runwhatsapp(request):
     if whatsapp_items:
         # image_url = whatsapp_items[0].image_url
         # message = whatsapp_items[0].message
-        message = "local testing"
+        message = "server testing"
     else:
         message = "local testing"
-    product_id = whatsapp_items[0].product_id
-    screen_id = whatsapp_items[0].screen_id
-    token = whatsapp_items[0].token
+    # product_id = whatsapp_items[0].product_id
+    # screen_id = whatsapp_items[0].screen_id
+    # token = whatsapp_items[0].token
+    product_id = "333b59c1-c310-43c0-abb5-e5c4f0379e61"
+    screen_id = 26504
+    token = "cce10961-db15-46e7-b5f1-6d6bf091b686"
 
     # print("Group IDs:", group_ids)
     # print("Image URL:", image_url)
@@ -691,48 +694,57 @@ def runwhatsapp(request):
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
         if image_url:
-            # message_type = "media"
-            # message_content = image_url
-            # filename = "image.jpg"
-            # Set the length of the random string
-            length = 10
-            # Generate a random string of lowercase letters and digits
-            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-
-            payload = {
-                "to_number": group_id,
-                "type": "media",
-                "message": image_url,
-                "filename": random_string
-            }
+            message_type = "media"
+            message_content = image_url
+            filename = "image.jpg"
         else:
-            # Set up the API request payload and headers
-            # Set the length of the random string
-            length = 10
-            # Generate a random string of lowercase letters and digits
-            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-            payload = {
-                "to_number": group_id,
-                "type": "text",
-                "message": random_string
-            }
+            message_type = "text"
+            message_content = message
+            filename = None
 
-        headers = {
-            "x-maytapi-key": token,
+        # Set up the API request payload and headers
+        payload = {
+            "to_number": group_id,
+            "type": message_type,
+            "message": message_content,
+            "filename": filename,
         }
+
+        # headers = {
+        #     "x-maytapi-key": token,
+        # }
         # Send the API request and print the response
-        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        # response = requests.post(url, headers=headers, data=json.dumps(payload))
         # print(response.status_code)
         # print(response.text)
         # print(url)
+        import http.client
+        import json
 
+        conn = http.client.HTTPSConnection("api.maytapi.com")
+        payload = json.dumps({
+            "to_number": "120363047226624982@g.us",
+            "type": "text",
+            "message": "Hello World!"
+        })
+        headers = {
+            'accept': 'application/json',
+            'x-maytapi-key': token,
+            'Content-Type': 'application/json'
+        }
+        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        print(data.decode("utf-8"))
         # Check if the API request was successful
-        if response.status_code == 200:
+        # if response.status_code == 200:
+        if json.loads(data).get('success'):
             print("Message sent successfully!")
             message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
-            print("Error sending message:", response.text)
+            # print("Error sending message:", response.text)
+            message = data
 
         # time.sleep(5) # add a delay of 1 second
 
