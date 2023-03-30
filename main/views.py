@@ -1,6 +1,8 @@
 import requests
 import json
 import time
+import http.client
+import json
 from django.db.models import Min,Max
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Q
@@ -669,17 +671,13 @@ def runwhatsapp(request):
 
     # Get the image URL and message from the first item in the Whatsapp model
     if whatsapp_items:
-        # image_url = whatsapp_items[0].image_url
-        # message = whatsapp_items[0].message
-        message = "server testing"
+        image_url = whatsapp_items[0].image_url
+        message = whatsapp_items[0].message
     else:
         message = "local testing"
-    # product_id = whatsapp_items[0].product_id
-    # screen_id = whatsapp_items[0].screen_id
-    # token = whatsapp_items[0].token
-    product_id = "333b59c1-c310-43c0-abb5-e5c4f0379e61"
-    screen_id = 26504
-    token = "cce10961-db15-46e7-b5f1-6d6bf091b686"
+    product_id = whatsapp_items[0].product_id
+    screen_id = whatsapp_items[0].screen_id
+    token = whatsapp_items[0].token
 
     # print("Group IDs:", group_ids)
     # print("Image URL:", image_url)
@@ -693,22 +691,32 @@ def runwhatsapp(request):
         print("Sending message to group", group_id)
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
+        conn = http.client.HTTPSConnection("api.maytapi.com")
         if image_url:
-            message_type = "media"
-            message_content = image_url
-            filename = "image.jpg"
+            # Set the length of the random string
+            length = 10
+            # Generate a random string of lowercase letters and digits
+            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+            payload = json.dumps({
+                "to_number": group_id,
+                "type": "media",
+                "message": image_url,
+                "filename": random_string
+            })
         else:
-            message_type = "text"
-            message_content = message
-            filename = None
+            payload = json.dumps({
+                "to_number": group_id,
+                "type": "text",
+                "message": message
+            })
 
         # Set up the API request payload and headers
-        payload = {
-            "to_number": group_id,
-            "type": message_type,
-            "message": message_content,
-            "filename": filename,
-        }
+        # payload = {
+        #     "to_number": group_id,
+        #     "type": message_type,
+        #     "message": message_content,
+        #     "filename": filename,
+        # }
 
         # headers = {
         #     "x-maytapi-key": token,
@@ -719,15 +727,8 @@ def runwhatsapp(request):
         # print(response.status_code)
         # print(response.text)
         # print(url)
-        import http.client
-        import json
 
-        conn = http.client.HTTPSConnection("api.maytapi.com")
-        payload = json.dumps({
-            "to_number": "120363047226624982@g.us",
-            "type": "text",
-            "message": "Hello World!"
-        })
+
         headers = {
             'accept': 'application/json',
             'x-maytapi-key': token,
@@ -739,7 +740,7 @@ def runwhatsapp(request):
         print(data.decode("utf-8"))
         # Check if the API request was successful
         # if response.status_code == 200:
-        if json.loads(data).get('success'):
+        if json.loads(data).get('success') is True:
             print("Message sent successfully!")
             message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
