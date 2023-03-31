@@ -318,7 +318,7 @@ def payment_details(request):
         email_info = os.environ.get('EMAIL_DYC_USER') #'Coda_analytics',
         cashapp = os.environ.get('DYC_CASHAPP') #'postgres',
         venmo= os.environ.get('DYC_VENMO') #'postgres',
-        stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+        stan_account_no = os.environ.get('DYC_STANBIC_ACCOUNT_NO') #'postgres',
         account_no = os.environ.get('DYC_ACCOUNT_NO') #'postgres',
         return (phone_number,email_info,
                 email_info,cashapp,venmo,
