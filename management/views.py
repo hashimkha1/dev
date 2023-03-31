@@ -251,7 +251,7 @@ def companyagenda(request):
         # usersubcat=request.user.category
         # usercat=request.user.category
         # print("usercat",usercat,"usersubcat",usersubcat)
-        return render(request, "management/departments/agenda/user_dashboard.html", {"title": "Client dashboard"})
+        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
 
 
 def updatelinks_companyagenda(request):
