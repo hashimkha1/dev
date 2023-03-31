@@ -177,4 +177,3 @@ class ShortPut(models.Model):
 # 	Distance_To_Strike  = models.CharField(max_length=255)
 
 
-

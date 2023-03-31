@@ -4,7 +4,7 @@ import time
 import json
 import requests
 import threading
-
+from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime,date
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
@@ -14,7 +14,7 @@ from django.contrib import admin, messages
 from django.urls import path, reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from webdriver_manager.chrome import ChromeDriverManager
 from django.views.generic import (
 	ListView,
     FormView
@@ -586,5 +586,34 @@ class OptionList(ListView):
     template_name="getdata/options.html"
     context_object_name = "stocks"
 
+
+def selinum_test(request):
+    # to test on server
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
+
+    # to test on local
+    # options = webdriver.ChromeOptions()
+    # options.add_argument("--headless")
+    # options.add_argument("--disable-dev-shm-usage")
+    # options.add_argument('--no-sandbox')
+    # options.add_argument("--disable-gpu")
+    # ## might not be needed
+    # options.add_argument("window-size=800x600")
+    #
+    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
+
+    # Navigate to Google's homepage
+    driver.get("https://www.google.com/")
+
+    # Get the page title
+    title = driver.title
+    return HttpResponse(title)
 
 
