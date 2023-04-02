@@ -667,7 +667,8 @@ def runwhatsapp(request):
     image_url = None
     # Get a list of all group IDs from the Whatsapp model
     # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    group_ids = ["120363047226624982@g.us"]
+    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+    # group_ids = ["120363047226624982@g.us"]
 
     # Get the image URL and message from the first item in the Whatsapp model
     if whatsapp_items:
