@@ -1,8 +1,10 @@
 import requests
 import json
 import time
+import http.client
+import json
 from django.db.models import Min,Max
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.db.models import Q
 from celery import shared_task
 from django.shortcuts import redirect, render
@@ -34,6 +36,8 @@ from django.views.generic import (
 from accounts.forms import LoginForm
 from .forms import RegistrationForm,ContactForm
 from accounts.views import CreateProfile
+import http.client
+import json
 from coda_project.task import TrainingLoanDeduction
 # from finance.utils import pay_info
 # from django.core.management import call_command
@@ -41,6 +45,8 @@ from coda_project.task import TrainingLoanDeduction
 import urllib.request
 from PIL import Image
 from django.contrib.auth import get_user_model
+import random
+import string
 User=get_user_model()
 
 
@@ -713,13 +719,18 @@ def whatsapp_apis(request):
 
 def runwhatsapp(request):
     whatsapp_items = Whatsapp.objects.all()
-
+    image_url = None
     # Get a list of all group IDs from the Whatsapp model
+    # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+    # group_ids = ["120363047226624982@g.us"]
 
     # Get the image URL and message from the first item in the Whatsapp model
-    image_url = whatsapp_items[0].image_url
-    message = whatsapp_items[0].message
+    if whatsapp_items:
+        image_url = whatsapp_items[0].image_url
+        message = whatsapp_items[0].message
+    else:
+        message = "local testing"
     product_id = whatsapp_items[0].product_id
     screen_id = whatsapp_items[0].screen_id
     token = whatsapp_items[0].token
@@ -736,43 +747,65 @@ def runwhatsapp(request):
         print("Sending message to group", group_id)
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
+        conn = http.client.HTTPSConnection("api.maytapi.com")
         if image_url:
-            message_type = "media"
-            message_content = image_url
-            filename = "image.jpg"
+            # Set the length of the random string
+            length = 10
+            # Generate a random string of lowercase letters and digits
+            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+            payload = json.dumps({
+                "to_number": group_id,
+                "type": "media",
+                "message": image_url,
+                "filename": random_string
+            })
         else:
-            message_type = "text"
-            message_content = message
-            filename = None
+            payload = json.dumps({
+                "to_number": group_id,
+                "type": "text",
+                "message": message
+            })
 
         # Set up the API request payload and headers
-        payload = {
-            "to_number": group_id,
-            "type": message_type,
-            "message": message_content,
-            "filename": filename,
-        }
-        
-        headers = {
-            "Content-Type": "application/json",
-            "x-maytapi-key": token,
-        }
+        # payload = {
+        #     "to_number": group_id,
+        #     "type": message_type,
+        #     "message": message_content,
+        #     "filename": filename,
+        # }
+
+        # headers = {
+        #     "x-maytapi-key": token,
+        # }
         # Send the API request and print the response
-        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        # response = requests.post(url, headers=headers, data=json.dumps(payload))
         # print(response.status_code)
         # print(response.text)
         # print(url)
 
+
+        headers = {
+            'accept': 'application/json',
+            'x-maytapi-key': token,
+            'Content-Type': 'application/json'
+        }
+        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
+        res = conn.getresponse()
+        data = res.read()
+        print(data.decode("utf-8"))
         # Check if the API request was successful
-        if response.status_code == 200:
+        # if response.status_code == 200:
+        if json.loads(data).get('success') is True:
             print("Message sent successfully!")
+            message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
-            print("Error sending message:", response.text)
+            # print("Error sending message:", response.text)
+            message = data
 
         # time.sleep(5) # add a delay of 1 second
 
     # Display a success message on the page
-    message = f"Hi, {request.user}, your messages have been sent to your groups."
+    # message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": "WHATSAPP", "message": message}
     return render(request, "main/errors/generalerrors.html", context)
