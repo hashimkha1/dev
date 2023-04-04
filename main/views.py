@@ -1,4 +1,5 @@
 import requests
+import os
 import json
 import time
 import http.client
@@ -552,6 +553,15 @@ def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
 
+def market(request):
+    path,sub_title=path_values(request)
+    print("path",path,sub_title)
+    if sub_title=='trainingad':
+        return render(request, "main/snippets_templates/marketing/trainingad.html", {"title": "project"})
+    if sub_title=='market':
+        return render(request, "main/snippets_templates/marketing/marketing.html", {"title": "project"})
+
+
 # -----------------------------Documents---------------------------------
 """
 def codadocuments(request):
@@ -673,50 +683,6 @@ def whatsapp_apis(request):
     return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
 
 
-# def runwhatsapp(request):
-#     # whatsapp_items = Whatsapp.objects.all()
-#     group_ids = Whatsapp.objects.values_list('group_id', flat=True)
-#     image_url = Whatsapp.objects.values_list('image_url', flat=True).first()
-#     message = Whatsapp.objects.values_list('message', flat=True).first()
-
-#     print("Groups====>", group_ids, image_url, message)
-
-#     image_name = "image.jpg"
-#     screen_id = 26504
-#     product_id = '333b59c1-c310-43c0-abb5-e5c4f0379e61'
-#     image = image_url
-#     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-
-#     payload = json.dumps({
-#         "type": "media",
-#         "message": image,
-#         "filename": image_name
-#     })
-
-
-#     headers = {
-#         'accept': 'application/json',
-#         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686',
-#         'Content-Type': 'application/json'
-#     }
-
-#     for group_id in group_ids:
-#         payload_data = json.loads(payload)
-#         payload_data['to_number'] = group_id
-#         payload_data['type'] = 'media' if image else 'text'
-#         payload_data['message'] = image if image else message
-
-#         response = requests.request("POST", url, headers=headers, data=json.dumps(payload_data))
-#         print(response.text)
-
-#     message = f'Hi, {request.user}, your messages have been posted to your groups.'
-#     context = {
-#         'title': 'WHATSAPP',
-#         'message': message
-#     }
-#     return render(request, "main/errors/generalerrors.html", context)
-
-
 def runwhatsapp(request):
     whatsapp_items = Whatsapp.objects.all()
     image_url = None
@@ -734,13 +700,16 @@ def runwhatsapp(request):
     product_id = whatsapp_items[0].product_id
     screen_id = whatsapp_items[0].screen_id
     token = whatsapp_items[0].token
+    # product_id = os.environ.get('MYAPI_PRODUCT_ID')
+    # screen_id = os.environ.get('MYAPI_SCREEN_ID')
+    # token = os.environ.get('MYAPI_TOKEN_ID')
 
     # print("Group IDs:", group_ids)
     # print("Image URL:", image_url)
     # print("Message:", message)
-    # print("product_id:", product_id)
-    # print("screen_id:", screen_id)
-    # print("token:", token)
+    print("product_id:", product_id)
+    print("screen_id:", screen_id)
+    print("token:", token)
 
     # Loop through all group IDs and send the message to each group
     for group_id in group_ids:
@@ -765,25 +734,6 @@ def runwhatsapp(request):
                 "type": "text",
                 "message": message
             })
-
-        # Set up the API request payload and headers
-        # payload = {
-        #     "to_number": group_id,
-        #     "type": message_type,
-        #     "message": message_content,
-        #     "filename": filename,
-        # }
-
-        # headers = {
-        #     "x-maytapi-key": token,
-        # }
-        # Send the API request and print the response
-        # url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        # response = requests.post(url, headers=headers, data=json.dumps(payload))
-        # print(response.status_code)
-        # print(response.text)
-        # print(url)
-
 
         headers = {
             'accept': 'application/json',
