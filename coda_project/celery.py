@@ -36,6 +36,12 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(minute='*/1'),
         'schedule': crontab(0, 0, day_of_month='1'),
     },
+    
+    'advertisement_whatsapp': {
+        'task': 'advertisement_whatsapp',
+        # 'schedule': crontab(minute='*/1'),
+        'schedule': crontab(0, 0, day_of_month='5'),
+    },
 
     'replies_mails': {
         'task': 'replies_job_mail',
