@@ -81,11 +81,11 @@ urlpatterns = [
     path("food/",views.foodlist,name="supplies"),
 
     #Testing DYC
-    path('DYCpay/', views.DYCpay, name='DYCpay'),
-    # path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
-    path("DYCpayment_complete/", views.DYCpaymentComplete, name="DYCpayment_complete"),
-    path('DYCpayments/', views.DYCpayments, name='DYCpayments'),
-    path('DYCpay/<int:pk>/', views.DYCPaymentInformationUpdateView.as_view(), name='DYCupdatepay'),
+    # path('DYCpay/', views.DYCpay, name='DYCpay'),
+    # # path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
+    # path("DYCpayment_complete/", views.DYCpaymentComplete, name="DYCpayment_complete"),
+    # path('DYCpayments/', views.DYCpayments, name='DYCpayments'),
+    # path('DYCpay/<int:pk>/', views.DYCPaymentInformationUpdateView.as_view(), name='DYCupdatepay'),
     
     # path('defaultpayments/', DYCDefaultPaymentListView.as_view(template_name='finance/DYC/defaultpayments.html'), name='defaultpayments'),
     # path('newpayment/', DYCPaymentCreateView.as_view(template_name='finance/DYC/payment_form.html'), name='newpayment'),

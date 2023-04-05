@@ -24,7 +24,7 @@ from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import Whatsapp
 from main.forms import WhatsappForm
-from whatsapp.script import whatsapp
+# from whatsapp.script import whatsapp
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.urls import reverse

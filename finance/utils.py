@@ -139,3 +139,17 @@ def get_exchange_rate(base, target):
     data = response.json()
     # print(data)
     return data['rates'][target]
+
+# ====================================================================
+#DYC Implementation
+def DYCpay():
+    context_dict = {
+        "student": {'cost': 100, 'message': 'if in error kindly go back'},
+        "business": {'cost': 200, 'message': 'if in error kindly go back'},
+        "greencard": {'cost': 300, 'message': 'if in error kindly go back'},
+    }
+    for usertype, values in context_dict.items():
+        if usertype=='student':
+            cost= values["cost"]
+    return cost
+    

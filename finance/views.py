@@ -1,11 +1,11 @@
 from unicodedata import category
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
 from requests import request
@@ -30,17 +30,13 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from management.utils import paymentconfigurations
-from management.views import loan_update_save
-from main.views import images
 from main.utils import image_view,download_image,Meetings,path_values
-from management.utils import loan_computation
 from main.filters import FoodFilter
 from main.models import Service
-from .utils import check_default_fee,get_exchange_rate
+from .utils import check_default_fee,get_exchange_rate,DYCpay
 from main.utils import countdown_in_month
 
-from management.views import pay
+
 
 User = get_user_model()
 
@@ -316,19 +312,12 @@ def payments(request):
 def payment(request,method):
     path_value,sub_title=path_values(request)
     subject='PAYMENT'
-    # print("phone_number",phone_number)
-    # print("cashapp",cashapp)
-    # print("venmo",venmo)
-    # print("account_no",account_no)
-    # print("email_info",email_info)
-    
     url='email/payment/payment_method.html'
     message=f'Hi,{request.user.first_name}, an email has been sent \
             with {sub_title} details for your payment.In the unlikely event\
             that you have not received it, kindly \
             check your spam folder.'
     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
-    contact_message='info@codanalytics.net'
     context={
                 'subtitle': sub_title,
                 'user': request.user.first_name,
@@ -339,7 +328,7 @@ def payment(request,method):
                 'email':email_info,
                 'message':message,
                 'error_message':error_message,
-                'contact_message':contact_message,
+                'contact_message':'info@codanalytics.net',
             }
     try:
         send_email( category=request.user.category, 
@@ -347,59 +336,105 @@ def payment(request,method):
                     subject=subject, html_template=url, 
 		    		context=context
                     )
-        return render(request, "main/errors/message.html",context)
+        return render(request, "main/messages/message.html",context)
     except:
-        return render(request, "main/errors/template_error.html",context)
+        return render(request, "main/errors/500.html",context)
     
 
 #determines user type to run payment
 @login_required
 def userpay(request):
 	if request.user.sub_category == 7:
-		return redirect('finance:DYCpay')
+		
+		return redirect('finance:pay')
 	else:
 		return redirect("finance:pay")
 
-@login_required
+
+# @login_required
+# def pay(request, service=None):
+#     # Use consistent naming conventions
+#     contract_url = f"{SITEURL}/finance/new_contract/{request.user}/"
+#     message=f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net."
+#     title="PAYMENT",
+#     # Check if user is sub_category ==7
+#     if request.user.sub_category == 7:
+#         cost=DYCpay()
+#         context = {
+#             "title": title,
+#             "payments": service,
+#             "message": message,
+#             "link": contract_url,
+#             "service": True,
+#             "cost": cost,
+#         }
+#         return render(request, "finance/DYC/pay.html", context)
+#     # Check if a service is specified
+#     if service:
+#         try:
+#             service = Service.objects.get(pk=service)
+#         except Service.DoesNotExist:
+#             service = None
+#         context = {
+#             "title": title,
+#             "payments": service,
+#             "message": message,
+#             "link": contract_url,
+#             "service": True,
+#         }
+#         return render(request, "finance/payments/pay.html", context)		
+#     else:
+#         try:
+#             payment_info = Payment_Information.objects.filter(
+# 				customer_id=request.user.id
+# 			).first()
+			
+#         except Payment_Information.DoesNotExist:
+#             # Use specific error messages
+#             # error_message = f"No payment information found for user {request.user}."
+#             # return HttpResponseBadRequest(error_message)
+#             url = '../new_contract/' + request.user.username + '/'
+#             return redirect(url)
+#         context={
+# 				"title": "PAYMENT",
+# 				"payments": payment_info,
+# 				"message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+# 				"link": contract_url,
+# 			}
+#     return render(request, "finance/payments/pay.html", context)
+
+
+
 def pay(request, service=None):
-    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
-    message = f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-    link = f'{SITEURL}/finance/new_contract/{request.user}/'
-    images, image_names = image_view(request)
-    if service:
-        context = None
-        try:
-            service = Service.objects.get(pk=service)
-            context = {
-                "title": "PAYMENT",
-                "images": images,
-                "image_name": image_names,
-                "payments": service,
-                "message": message,
-                "link": link,
-                "service": True
-            }
-        except:
-            pass
+    if not request.user.is_authenticated:
+        return redirect(reverse('login'))
 
-        return render(request, "finance/payments/pay.html", context)
-
-    try:
-        payment_info = Payment_Information.objects.filter(
-            customer_id=request.user.id
-        ).first()
-        context={
+    contract_url = reverse('finance:newcontract', args=[request.user.username])
+    if request.user.sub_category == 7:
+        cost = DYCpay()
+        context = {
             "title": "PAYMENT",
-            "images":images,
-            "image_name": image_names,
-            "payments": payment_info,
-            "message": message,
-            "link": link,
+            # "payments": service,
+            "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+            "link": contract_url,
+            "service": True,
+            "cost": cost,
         }
-        return render(request, "finance/payments/pay.html", context)
-    except:
-        url = '../new_contract/' + request.user.username + '/'
-        return redirect(url)
+        return render(request, "finance/DYC/pay.html", context)
+
+    if service:
+        payment_info = get_object_or_404(Service, pk=service) 
+    else:
+        payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
+	
+    context = {
+            "title": "PAYMENT",
+            "payments": payment_info,
+            "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+            "link": contract_url,
+            "service": True,
+        }
+    return render(request, "finance/payments/pay.html", context)
 
 
 def paymentComplete(request):
@@ -834,20 +869,46 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+@method_decorator(login_required, name="dispatch")
+class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = DC48_Inflow
+    template_name="finance/payments/inflow_form.html"
+    success_url = "/finance/listinflow"
+    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    # fields =("receiver",
+    #         "phone",
+    #         "category",
+    #         "task",
+    #         "method",
+    #         "period",
+    #         "qty",
+    #         "amount",
+    #         "transaction_cost",
+    #         "description",
+	#    )
+    fields ="__all__"
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
+        # DC48_Inflow = self.get_object()
+        if self.request.user.is_superuser or self.request.user:
+            return True
+        return redirect("data:training-list")
 
-# @method_decorator(login_required, name="dispatch")
-# class DC48InflowListview(LoginRequiredMixin,ListView):
-#     queryset = DC48_Inflow.objects.all()
-#     for item in queryset:
-#         print (item.total_payment)
-#     transactions=queryset
-#     template_name="finance/payments/dcinflows.html"
-#     context_object_name = "transactions"
-#     # fields ="__all__"
-#     # fields=['category','method','period','sender','receiver'
-# 	# 		'description','phone','qty','amount']
-
-
+@method_decorator(login_required, name="dispatch")
+class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = DC48_Inflow
+    success_url = "/finance/listinflow/"
+    template_name="finance/payments/inflow_confirm_delete.html"
+    def test_func(self):
+        # timer = self.get_object()
+        # if self.request.user == timer.author:
+        # if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+    
 @login_required
 def clientinflows(request, user=None, *args, **kwargs):
 	try:
@@ -884,8 +945,6 @@ def clientinflows(request, user=None, *args, **kwargs):
 	except:
 		return render(request, "main/errors/template_error.html",context)
     
-
-
 @login_required
 def dcinflows(request):
     (remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
@@ -932,189 +991,3 @@ def dcinflows(request):
     }
     return render(request, "finance/payments/dcinflows.html", context)
 
-
-
-@method_decorator(login_required, name="dispatch")
-class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = DC48_Inflow
-    template_name="finance/payments/inflow_form.html"
-    success_url = "/finance/listinflow"
-    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    # fields =("receiver",
-    #         "phone",
-    #         "category",
-    #         "task",
-    #         "method",
-    #         "period",
-    #         "qty",
-    #         "amount",
-    #         "transaction_cost",
-    #         "description",
-	#    )
-    fields ="__all__"
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        return super().form_valid(form)
-    def test_func(self):
-        # DC48_Inflow = self.get_object()
-        if self.request.user.is_superuser or self.request.user:
-            return True
-        return redirect("data:training-list")
-
-@method_decorator(login_required, name="dispatch")
-class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
-    model = DC48_Inflow
-    success_url = "/finance/listinflow/"
-    template_name="finance/payments/inflow_confirm_delete.html"
-    def test_func(self):
-        # timer = self.get_object()
-        # if self.request.user == timer.author:
-        # if self.request.user.is_superuser:
-        if self.request.user.is_superuser:
-            return True
-        return False
-    
-
-#DYC Implementation
-class DYCPaymentCreateView(LoginRequiredMixin, CreateView):
-	model = Default_Payment_Fees
-	success_url = "/finance/contract_form"
-	fields = [
-				"job_down_payment_per_month",
-				"job_plan_hours_per_month",
-				"student_down_payment_per_month",
-				"student_bonus_payment_per_month",
-	]
-	def form_valid(self, form):
-		form.instance.user = self.request.user
-		return super().form_valid(form)
-
-def DYCpayments(request):
-	payment_history=Payment_History.objects.all()
-	Payment_Info=Payment_Information.objects.all()
-	context={
-		"title":"Payments",
-		"payment_history":payment_history,
-		"Payment_Info":Payment_Info
-	}
-	return render(request,"finance/DYC/payments.html",context)
-
-@login_required
-def DYCpay(request):
-    message=f'Hi,{request.user}, you are yet to sign the contract with us kindly contact us at info@codanalytics.net'
-    link=f'{SITEURL}/finance/new_contract/{request.user}/'
-    images,image_names=image_view(request)
-    context_dict = {
-        "student": {'cost': 100, 'message': 'if in error kindly go back'},
-        "business": {'cost': 200, 'message': 'if in error kindly go back'},
-        "greencard": {'cost': 300, 'message': 'if in error kindly go back'},
-    }
-    for usertype, values in context_dict.items():
-        if usertype=='student':
-            cost= values["cost"]
-            print(cost)
-    context={
-        "title": "PAYMENT", 
-        "images":images, 
-        "image_name": image_names, 
-        # "payments": payment_info,
-        "message": message,
-        "link": link,
-        "cost": cost,
-    }
-    return render(request, "finance/DYC/pay.html",context)
-
-        
-
-def DYCpaymentComplete(request):
-    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-    # print(payments)
-    customer = request.user
-    body = json.loads(request.body)
-    # print("payment_complete:", body)
-    payment_fees = body["payment_fees"]
-    down_payment = payments.down_payment
-    studend_bonus = payments.student_bonus
-    plan = payments.plan
-    fee_balance = payments.fee_balance
-    payment_mothod = payments.payment_method
-    contract_submitted_date = payments.contract_submitted_date
-    client_signature = payments.client_signature
-    company_rep = payments.company_rep
-    client_date = payments.client_date
-    rep_date = payments.rep_date
-    Payment_History.objects.create(
-        customer=customer,
-        payment_fees=payment_fees,
-        down_payment=down_payment,
-        student_bonus=studend_bonus,
-        plan=plan,
-        fee_balance=fee_balance,
-        payment_method=payment_mothod,
-        contract_submitted_date=contract_submitted_date,
-        client_signature=client_signature,
-        company_rep=company_rep,
-        client_date=client_date,
-        rep_date=rep_date,
-    )
-    return JsonResponse("Payment completed!", safe=False)
-
-class DYCDefaultPaymentListView(ListView):
-	model = Default_Payment_Fees
-	template_name = "finance/DYC/defaultpayments.html"
-	context_object_name = "defaultpayments"
-
-class DYCDefaultPaymentUpdateView(UpdateView):
-	model = Default_Payment_Fees
-	success_url = "/finance/payments"
-	
-	fields = [
-				"job_down_payment_per_month",
-				"job_plan_hours_per_month",
-				"student_down_payment_per_month",
-				"student_bonus_payment_per_month",
-				"loan_amount",
-	]
-	# fields=['user','activity_name','description','point']
-	def form_valid(self, form):
-		# form.instance.author=self.request.user
-		if self.request.user.is_superuser:
-			return super().form_valid(form)
-		else:
-			# return redirect("management:tasks")
-			return render(request,"management/contracts/supportcontract_form.html")
-
-	def test_func(self):
-		task = self.get_object()
-		if self.request.user.is_superuser:
-			return True
-		# elif self.request.user == task.employee:
-		#     return True
-		return False
-
-
-
-# For payment purposes
-class DYCPaymentInformationUpdateView(UpdateView):
-	model = Payment_Information
-	success_url = "/finance/DYCpay/"
-	template_name="main/snippets_templates/generalform.html"
-	
-	# fields ="__all__"
-	fields=['customer_id','down_payment']
-	def form_valid(self, form):
-		# form.instance.author=self.request.user
-		# if self.request.user.is_superuser or self.request.user:
-		if self.request.user is not None:
-			return super().form_valid(form)
-		else:
-			# return redirect("management:tasks")
-			return render(request,"main/snippets_templates/generalform.html")
-
-	def test_func(self):
-		task = self.get_object()
-		# if self.request.user.is_superuser:
-		# 	return True
-		# elif self.request.user == task.employee:
-		if self.request.user:
-		    return True
