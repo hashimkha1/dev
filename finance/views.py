@@ -320,7 +320,7 @@ def payments(request):
 
 
 def payment(request,method):
-    (phone_number,email_info,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
+    (phone_number,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
     path_value,sub_title=path_values(request)
     subject='PAYMENT'
     url='email/payment/payment_method.html'
@@ -328,32 +328,30 @@ def payment(request,method):
             with {sub_title} details for your payment.In the unlikely event\
             that you have not received it, kindly \
             check your spam folder.'
-    
-    context_add={
-                "title": "PAYMENT DETAILS",
+    error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
+    contact_message='info@codanalytics.net'
+    context={
+                'subtitle': sub_title,
                 'user': request.user.first_name,
-                "images":images, 
-                "message": message,
-        }
+                'mpesa_number':phone_number,
+                'cashapp':cashapp,
+                'venmo':venmo,
+                'stan_account_no':stan_account_no,
+                'coda_account_no':account_no,
+                'email':email_info,
+                'message':message,
+                'error_message':error_message,
+                'contact_message':contact_message,
+            }
     try:
         send_email( category=request.user.category, 
                     to_email=[request.user.email,], 
                     subject=subject, html_template=url, 
-                    context={
-                            'subtitle': sub_title,
-                            'user': request.user.first_name,
-                            'mpesa_number':phone_number,
-                            'cashapp':cashapp,
-                            'venmo':venmo,
-                            'stan_account_no':stan_account_no,
-                            'coda_account_no':account_no,
-                            'email':email_info,
-                            'message':message,
-                            }
+		    		context=context
                     )
         return render(request, "main/errors/message.html",context)
     except:
-        return render(request, "main/errors/template_error.html")
+        return render(request, "main/errors/template_error.html",context)
     
 
 #determines user type to run payment
