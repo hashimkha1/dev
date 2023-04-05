@@ -791,19 +791,6 @@ class SupplierListView(ListView):
     ordering = ["-created_at"]
     
 
-# class FoodListView(ListView):
-#     model = Food
-#     foodfilter=FoodFilter
-#     template_name = "finance/payments/food.html"
-#     context_object_name = "supplies,foodfilter"
-#     ordering = ["-created_at"]
-
-    # def get_context_data(self,*args, **kwargs):
-    #     context = super(FoodListView, self).get_context_data(*args,**kwargs)
-    #     context['foodfilter'] = Food.objects.all()
-    #     return context
-
-
 def foodlist(request):
     supplies = Food.objects.all().order_by("-id")
     food_filters=FoodFilter(request.GET,queryset=supplies)
