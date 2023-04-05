@@ -1,6 +1,5 @@
 import requests
 import os
-import json
 import time
 import http.client
 import json

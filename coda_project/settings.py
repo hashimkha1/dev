@@ -132,14 +132,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password =os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('HEROKU_DEV_HOST')
-        dbname = os.environ.get('HEROKU_DEV_NAME')
-        user = os.environ.get('HEROKU_DEV_USER')
-        password =os.environ.get('HEROKU_DEV_PASS')
-        # host = 'localhost'
-        # dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
-        # user = os.environ.get('POSTGRESDB_USER') #'postgres',
-        # password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
+        host = 'localhost'
+        dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
+        user = os.environ.get('POSTGRESDB_USER') #'postgres',
+        password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
     # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
     return host,dbname,user,password  
 
@@ -343,16 +339,31 @@ CELERYBEAT_SCHEDULE = {
 #                 email_info,cashapp,venmo,
 #                 stan_account_no,account_no)
 
-
-
 def payment_details(request):
-    payment_info = {
-        'phone_number': os.environ.get('MPESA_PHONE_NUMBER'),
-        'email_info': os.environ.get('EMAIL_INFO_USER'),
-        'cashapp': os.environ.get('CASHAPP'),
-        'venmo': os.environ.get('VENMO'),
-        'coda_account_no': os.environ.get('STANBIC_ACCOUNT_NO')
-    }
+    # ================MPESA/CASHAPP/VENMO========================
+    phone_number = os.environ.get('MPESA_PHONE_NUMBER')
+    email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
+    cashapp = os.environ.get('CASHAPP') #'postgres',
+    venmo= os.environ.get('VENMO') #'postgres',
+    account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
+    # account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
+    # print("phone_number===>",phone_number)
+    # print("email_info====>",email_info)
+    # print("cashapp===>",cashapp)
+    # print("venmo===>",venmo)
+    # print("account_no===>",account_no)
+    return (phone_number,email_info,cashapp,venmo,account_no)
+
+
+
+# def payment_details(request):
+#     payment_info = {
+#         'phone_number': os.environ.get('MPESA_PHONE_NUMBER'),
+#         'email_info': os.environ.get('EMAIL_INFO_USER'),
+#         'cashapp': os.environ.get('CASHAPP'),
+#         'venmo': os.environ.get('VENMO'),
+#         'coda_account_no': os.environ.get('STANBIC_ACCOUNT_NO')
+#     }
 
     # if request.user.category == 4 and request.user.sub_category == 7:
     #     # update payment_info with DYC payment details
@@ -376,7 +387,7 @@ def payment_details(request):
     #         'coda_account_no': os.environ.get('DCK_CODA_ACCOUNT_NO')
     #     })
 
-    return payment_info
+    # return payment_info
 
 
 if os.environ.get('ENVIRONMENT') == 'production':

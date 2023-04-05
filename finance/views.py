@@ -47,6 +47,7 @@ User = get_user_model()
 # payment details
 (phone_number,email_info,cashapp,venmo,account_no)=payment_details(request)
 
+
 #Time details
 (remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
 #Exchange Rate details
@@ -315,6 +316,12 @@ def payments(request):
 def payment(request,method):
     path_value,sub_title=path_values(request)
     subject='PAYMENT'
+    # print("phone_number",phone_number)
+    # print("cashapp",cashapp)
+    # print("venmo",venmo)
+    # print("account_no",account_no)
+    # print("email_info",email_info)
+    
     url='email/payment/payment_method.html'
     message=f'Hi,{request.user.first_name}, an email has been sent \
             with {sub_title} details for your payment.In the unlikely event\
