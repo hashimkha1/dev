@@ -342,67 +342,13 @@ def payment(request,method):
     
 
 #determines user type to run payment
-@login_required
-def userpay(request):
-	if request.user.sub_category == 7:
-		
-		return redirect('finance:pay')
-	else:
-		return redirect("finance:pay")
-
-
 # @login_required
-# def pay(request, service=None):
-#     # Use consistent naming conventions
-#     contract_url = f"{SITEURL}/finance/new_contract/{request.user}/"
-#     message=f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net."
-#     title="PAYMENT",
-#     # Check if user is sub_category ==7
-#     if request.user.sub_category == 7:
-#         cost=DYCpay()
-#         context = {
-#             "title": title,
-#             "payments": service,
-#             "message": message,
-#             "link": contract_url,
-#             "service": True,
-#             "cost": cost,
-#         }
-#         return render(request, "finance/DYC/pay.html", context)
-#     # Check if a service is specified
-#     if service:
-#         try:
-#             service = Service.objects.get(pk=service)
-#         except Service.DoesNotExist:
-#             service = None
-#         context = {
-#             "title": title,
-#             "payments": service,
-#             "message": message,
-#             "link": contract_url,
-#             "service": True,
-#         }
-#         return render(request, "finance/payments/pay.html", context)		
-#     else:
-#         try:
-#             payment_info = Payment_Information.objects.filter(
-# 				customer_id=request.user.id
-# 			).first()
-			
-#         except Payment_Information.DoesNotExist:
-#             # Use specific error messages
-#             # error_message = f"No payment information found for user {request.user}."
-#             # return HttpResponseBadRequest(error_message)
-#             url = '../new_contract/' + request.user.username + '/'
-#             return redirect(url)
-#         context={
-# 				"title": "PAYMENT",
-# 				"payments": payment_info,
-# 				"message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
-# 				"link": contract_url,
-# 			}
-#     return render(request, "finance/payments/pay.html", context)
-
+# def userpay(request):
+# 	if request.user.sub_category == 7:
+		
+# 		return redirect('finance:pay')
+# 	else:
+# 		return redirect("finance:pay")
 
 
 def pay(request, service=None):

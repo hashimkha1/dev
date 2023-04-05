@@ -39,7 +39,7 @@ urlpatterns = [
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
     path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
     #Pay URLS
-    path('userpay/', views.userpay, name='userpay'),
+    # path('userpay/', views.userpay, name='userpay'),
     path('pay/', views.pay, name='pay'),
     path('payment/<int:service>/', views.pay, name='service_pay'),
     path('payment_method/<str:method>/', views.payment, name='payment_method'),
@@ -81,13 +81,4 @@ urlpatterns = [
     path("food/",views.foodlist,name="supplies"),
 
     #Testing DYC
-    # path('DYCpay/', views.DYCpay, name='DYCpay'),
-    # # path('DYCpayment_method/<str:method>/', views.DYCpayment, name='DYCpayment_method'),
-    # path("DYCpayment_complete/", views.DYCpaymentComplete, name="DYCpayment_complete"),
-    # path('DYCpayments/', views.DYCpayments, name='DYCpayments'),
-    # path('DYCpay/<int:pk>/', views.DYCPaymentInformationUpdateView.as_view(), name='DYCupdatepay'),
-    
-    # path('defaultpayments/', DYCDefaultPaymentListView.as_view(template_name='finance/DYC/defaultpayments.html'), name='defaultpayments'),
-    # path('newpayment/', DYCPaymentCreateView.as_view(template_name='finance/DYC/payment_form.html'), name='newpayment'),
-    # path('payment/<int:pk>/update/', DYCDefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
 ]
