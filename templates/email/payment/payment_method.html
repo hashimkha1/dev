@@ -1,4 +1,4 @@
-<h3>Hi {{ user }},</h3>
+<!-- <h3>Hi {{ user }},</h3>
 <span>
     Please use this number to make your payment through {{subtitle}} account<br>
     {% if subtitle == 'mpesa' %} 
@@ -16,4 +16,28 @@
     {% endif %}
     Thank You.<br>
     Finance Department
-</span>
+</span> -->
+
+<div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
+    <h3 style="margin-top:0;">Hi {{ user }},</h3>
+    <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p>
+    <ul style="list-style:none; padding-left:0;">
+        {% if subtitle == 'mpesa' %} 
+            <li><strong>M-Pesa:</strong> {{mpesa_number}}</li>
+            <li><strong>Paybill No:</strong>600100</li>
+            <li><strong>Account No:</strong> {{account_no}}</li>
+        {% elif subtitle == 'cashapp' %}
+            <li><strong>Cash App:</strong> {{cashapp}}</li>
+            <li><strong>Venmo:</strong> {{venmo}}</li>
+        {% elif subtitle == 'zelle' %}
+            <li><strong>Email:</strong> {{email_info}}</li>
+            <!-- <li><strong>Account No:</strong> {{coda_account_no}}</li> -->
+        <!-- {% else %}
+            <li><strong>Email:</strong> {{email_dck}}</li>
+            <li><strong>Account No:</strong> {{dck_account_no}}</li> -->
+        {% endif %}
+    </ul>
+    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+    <p>Thank you,</p>
+    <p>The Finance Team</p>
+</div>

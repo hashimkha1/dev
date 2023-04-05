@@ -347,12 +347,11 @@ CELERYBEAT_SCHEDULE = {
 
 def payment_details(request):
     payment_info = {
-        'phone_number': os.environ.get('PHONE_NUMBER'),
+        'phone_number': os.environ.get('MPESA_PHONE_NUMBER'),
         'email_info': os.environ.get('EMAIL_INFO_USER'),
         'cashapp': os.environ.get('CASHAPP'),
         'venmo': os.environ.get('VENMO'),
-        'stanbic_account_no': os.environ.get('STANBIC_ACCOUNT_NO'),
-        'coda_account_no': os.environ.get('CODA_ACCOUNT_NO')
+        'coda_account_no': os.environ.get('STANBIC_ACCOUNT_NO')
     }
 
     # if request.user.category == 4 and request.user.sub_category == 7:

@@ -44,7 +44,8 @@ from management.views import pay
 
 User = get_user_model()
 
-# Create your views here.
+# payment details
+(phone_number,email_info,cashapp,venmo,account_no)=payment_details(request)
 
 
 def finance_report(request):
@@ -320,7 +321,6 @@ def payments(request):
 
 
 def payment(request,method):
-    (phone_number,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
     path_value,sub_title=path_values(request)
     subject='PAYMENT'
     url='email/payment/payment_method.html'
@@ -336,7 +336,6 @@ def payment(request,method):
                 'mpesa_number':phone_number,
                 'cashapp':cashapp,
                 'venmo':venmo,
-                'stan_account_no':stan_account_no,
                 'coda_account_no':account_no,
                 'email':email_info,
                 'message':message,
@@ -985,44 +984,6 @@ def DYCpayments(request):
 		"Payment_Info":Payment_Info
 	}
 	return render(request,"finance/DYC/payments.html",context)
-# finance\templates\finance\payments\payments.html
-# finance\templates\DYC\payments.html
-
-
-# def DYCpayment(request,method):
-#     (phone_number,email_info,email_info,cashapp,venmo,stan_account_no,account_no)=payment_details(request)
-#     path_value,sub_title=path_values(request)
-#     subject='PAYMENT'
-#     url='email/payment/payment_method.html'
-#     message=f'Hi,{request.user.first_name}, an email has been sent \
-#             with {sub_title} details for your payment.In the unlikely event\
-#             that you have not received it, kindly \
-#             check your spam folder.'
-#     context={
-#                 "title": "PAYMENT DETAILS",
-#                 'user': request.user.first_name,
-#                 "images":images, 
-#                 "message": message,
-#         }
-#     try:
-#         send_email( category=request.user.category, 
-#                     to_email=[request.user.email,], 
-#                     subject=subject, html_template=url, 
-#                     context={
-#                             'subtitle': sub_title,
-#                             'user': request.user.first_name,
-#                             'mpesa_number':phone_number,
-#                             'cashapp':cashapp,
-#                             'venmo':venmo,
-#                             'stan_account_no':stan_account_no,
-#                             'coda_account_no':account_no,
-#                             'email':email_info,
-#                             }
-#                     )
-#         return render(request, "main/messages/general.html",context)
-#     except:
-#         return render(request, "main/errors/template_error.html")
-
 
 @login_required
 def DYCpay(request):
