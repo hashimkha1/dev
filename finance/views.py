@@ -47,6 +47,11 @@ User = get_user_model()
 # payment details
 (phone_number,email_info,cashapp,venmo,account_no)=payment_details(request)
 
+#Time details
+(remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
+#Exchange Rate details
+usd_to_kes = get_exchange_rate('USD', 'KES')
+rate = round(Decimal(usd_to_kes), 2)
 
 def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
@@ -160,8 +165,6 @@ def mycontract(request, *args, **kwargs):
 	client_data=CustomerUser.objects.get(username=username)
 	check_default_fee = Default_Payment_Fees.objects.all()
 	if check_default_fee:
-		# default_fee = Default_Payment_Fees.objects.get(id=1)
-		# default_fee = Default_Payment_Fees.objects.filter(id=1).first()
 		default_fee = Default_Payment_Fees.objects.filter().first()
 		print(default_fee)
 	else:
@@ -210,17 +213,6 @@ def newcontract(request, *args, **kwargs):
 	#Gets client/user information from the custom user table
 	client_data=CustomerUser.objects.get(username=username)
 	print('CLIENTS DATA',client_data)
-	# check_default_fee = Default_Payment_Fees.objects.all().first()
-	# if check_default_fee:
-	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
-	# else:
-	# 	default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-	# 			job_plan_hours_per_month=40,
-	# 			student_down_payment_per_month=500,
-	# 			student_bonus_payment_per_month=100)
-	# 	default_payment_fees.save()
-	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
-
 	#Gets any payment default values from the Default table
 	check_default_fee = Default_Payment_Fees.objects.all()
 	print(check_default_fee)
@@ -597,8 +589,6 @@ class InflowDetailView(DetailView):
 
 def inflows(request):
 	inflows = Inflow.objects.all().order_by("-transaction_date")
-	# total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-	# total_communication=Rated.objects.all().aggregate(Sum('communication'))
 	total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
 	revenue = total.get("Total_Cashinflows")
 	context = {"inflows": inflows, "revenue": revenue}
@@ -654,16 +644,6 @@ class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ============LOAN VIEWS========================
-# def loan(request):
-# 	if request.method == "POST":
-# 		form = LoanForm(request.POST, request.FILES)
-# 		if form.is_valid():
-# 			form.save()
-# 			return redirect('finance:trainingloans')
-# 	else:
-# 		form=LoanForm()
-# 	return render(request, "finance/payments/payment_form.html", {"form":form})
-	
 class LoanCreateView(LoginRequiredMixin, CreateView):
 	model = PayslipConfig
 	success_url = "/finance/loans"
@@ -838,9 +818,6 @@ def foodlist(request):
     return render(request,"finance/payments/food.html",context)
 
 # =========================DC 48 KENYA===================================
-
-
-
 @method_decorator(login_required, name="dispatch")
 class DC48InflowCreateView(LoginRequiredMixin, CreateView):
     model = DC48_Inflow
@@ -876,48 +853,91 @@ class DC48InflowCreateView(LoginRequiredMixin, CreateView):
 #     # fields=['category','method','period','sender','receiver'
 # 	# 		'description','phone','qty','amount']
 
+
+@login_required
+def clientinflows(request, user=None, *args, **kwargs):
+	try:
+		client = get_object_or_404(User, username=kwargs.get("username"))
+		transactions = DC48_Inflow.objects.filter(sender=client, is_active=True)
+		total_members = transactions.count()
+		paid_members = transactions.filter(has_paid=True).count()
+		total_amt = 0
+		total_paid = 0
+		for transact in transactions:
+			print("clients_category",transact.clients_category)
+			total_amt += transact.total_payment
+			if transact.has_paid:
+				total_paid += transact.total_paid
+		
+		pledged = total_amt - total_paid
+		amount_ksh = total_amt * rate  # Initialize amount_ksh outside the if block
+		context = {
+			"message":"Kindly contact adminstrator info@codanalytics.net",
+			"transactions": transactions,
+			"total_count": total_members,
+			"paid_count": paid_members,
+			"total_amt": total_amt,
+			"amount_ksh": amount_ksh,
+			"total_paid": total_paid,
+			"pledged": pledged,
+			"rate": rate,
+			"remaining_days": remaining_days,
+			"remaining_seconds ": int(remaining_seconds % 60),
+			"remaining_minutes ": int(remaining_minutes % 60),
+			"remaining_hours": int(remaining_hours % 24),
+		}
+		return render(request, "finance/payments/dcinflows.html", context)
+	except:
+		return render(request, "main/errors/template_error.html",context)
+    
+
+
 @login_required
 def dcinflows(request):
-	(
-                remaining_days,
-                remaining_seconds ,
-                remaining_minutes ,
-                remaining_hours 
-    )=countdown_in_month()
-	# remaining_days=remaining_days
-	print(f"{int(remaining_days)} days, {int(remaining_hours % 24)} hours, {int(remaining_minutes % 60)} minutes, {int(remaining_seconds % 60)} seconds remaining in the month")
-	# trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
-	usd_to_kes = get_exchange_rate('USD', 'KES')
-	rate = round(Decimal(usd_to_kes), 2)
-	# print(usd_to_kes)
-	transactions=DC48_Inflow.objects.all()
-	total_members=DC48_Inflow.objects.all().count()
-	paid_members=DC48_Inflow.objects.all().filter(has_paid=True).count()
-	total_amt = 0
-	total_paid=0
-	for transact in transactions:
-		# amount_kes=Decimal(transact.amount)*usd_to_kes
-		total_amt = total_amt + transact.total_payment
-		if transact.has_paid:
-			total_paid =total_paid + transact.total_paid
-		pledged=total_amt-total_paid
-		amount_ksh=transact.total_payment*rate
-	context={
-		"transactions":transactions,
-		"total_count":total_members,
-		"paid_count":paid_members,
-		"total_amt":total_amt,
-		"amount_ksh":amount_ksh,
-		"total_paid":total_paid,
-		"pledged":pledged,
-		"rate":rate,
-		"remaining_days":remaining_days,
-        "remaining_seconds ":int(remaining_seconds % 60) ,
-        "remaining_minutes ":int(remaining_minutes % 60) ,
-        "remaining_hours":int(remaining_hours % 24),
-	}
-	return render(request, "finance/payments/dcinflows.html", context)
-	
+    (remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
+    usd_to_kes = get_exchange_rate('USD', 'KES')
+    rate = round(Decimal(usd_to_kes), 2)
+    
+    if request.user.sub_category == 7 or request.user.is_superuser:
+        transactions = DC48_Inflow.objects.filter(clients_category="DYC")
+        total_members = transactions.filter(clients_category="DYC").count()
+        paid_members = transactions.filter(clients_category="DYC", has_paid=True).count()
+        total_amt = 0
+        total_paid = 0
+    else:
+        transactions = DC48_Inflow.objects.filter(clients_category="DC48KENYA")
+        total_members = transactions.filter(clients_category="DC48KENYA").count()
+        paid_members = transactions.filter(clients_category="DC48KENYA", has_paid=True).count()
+        total_amt = 0
+        total_paid = 0
+        
+    amount_ksh = 0  # Assign a default value of 0
+    
+    for transact in transactions:
+        # print("clients_category",transact.clients_category)
+        total_amt += transact.total_payment
+        if transact.has_paid:
+            total_paid += transact.total_paid
+    
+    pledged = total_amt - total_paid
+    amount_ksh = total_amt * rate  # Initialize amount_ksh outside the if block
+    
+    context = {
+        "transactions": transactions,
+        "total_count": total_members,
+        "paid_count": paid_members,
+        "total_amt": total_amt,
+        "amount_ksh": amount_ksh,
+        "total_paid": total_paid,
+        "pledged": pledged,
+        "rate": rate,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+    }
+    return render(request, "finance/payments/dcinflows.html", context)
+
 
 
 @method_decorator(login_required, name="dispatch")

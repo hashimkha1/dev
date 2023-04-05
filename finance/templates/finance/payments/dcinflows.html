@@ -123,8 +123,10 @@
             {{transanction.category}}
             </a>
         </td>
-          
-          <td>{{transanction.sender.first_name}},{{transanction.sender.last_name}}</td>
+        <td>
+        <a class="article-title" href="{% url 'finance:userclientinflows' transanction.sender %}">
+          {{transanction.sender.first_name}},{{transanction.sender.last_name}}
+        </td>
           <!-- <td>{{transanction.receiver}}</td>
             <td>{{transanction.phone}}</td> -->
             <!-- <td>{{transanction.department}}</td> -->

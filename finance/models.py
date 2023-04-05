@@ -331,92 +331,88 @@ class Inflow(models.Model):
 
 class DC48_Inflow(models.Model):
     # Period of Payment
-    Weekly = "Weekly"
-    Bi_Weekly = "Bi_Weekly"
-    Monthly = "Monthly"
-    Yearly = "Yearly"
+    # Weekly = "Weekly"
+    # Bi_Weekly = "Bi_Weekly"
+    # Monthly = "Monthly"
+    # Yearly = "Yearly"
 
     # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Cashapp = "Cashapp"
-    Zelle = "Zelle"
-    Venmo = "Venmo"
-    Paypal = "Paypal"
+    # Cash = "Cash"
+    # Mpesa = "Mpesa"
+    # Check = "Check"
+    # Cashapp = "Cashapp"
+    # Zelle = "Zelle"
+    # Venmo = "Venmo"
+    # Paypal = "Paypal"
 
     # Category.
-    Contributions = "Contributions"
-    Donations = "Donations"
-    Business = "Business"
-    Stocks = "Stocks"
-    Other = "Other"
-    # # Task/Activities
-    # Reporting = "reporting"
-    # Database = "database"
-    # Business_Analysis = "Business Analysis"
-    # ETL = "Data Cleaning"
-    # Options = "Options"
-    # Other = "Any Other"
+    # Contributions = "Contributions"
+    # Donations = "Donations"
+    # Business = "Business"
+    # Stocks = "Stocks"
+    # Other = "Other"
+
+    CLIENTS_CHOICES = [
+        ("DYC", "Diaspora Youth Caucus"),
+        ("DC48KENYA", "DC48KENYA"),
+        ("Other", "Other"),
+    ]
 
     PERIOD_CHOICES = [
-        (Weekly, "Weekly"),
-        (Bi_Weekly, "Bi_Weekly"),
-        (Monthly, "Monthly"),
-        (Yearly, "Yearly"),
+        ("Weekly", "Weekly"),
+        ("Bi_Weekly", "Bi_Weekly"),
+        ("Monthly", "Monthly"),
+        ("Yearly", "Yearly"),
     ]
     CAT_CHOICES = [
-        (Contributions, "Contributions"),
-        (Donations, "Donations"),
-        (Business, "Business"),
-        (Stocks, "Stocks"),
-        (Other, "Other"),
+        ("Registration Fee", "Registration Fee"),
+        ("Contributions", "Contributions"),
+        ("Donations", "Donations"),
+        ("GC Application", "GC Application"),
+        ("Business", "Business"),
+        ("Tourism", "Tourism"),
+        ("Stocks", "Stocks"),
+        ("Other", "Other"),
     ]
-
-    # TASK_CHOICES = [
-    #     (Reporting, "reporting"),
-    #     (Database, "database"),
-    #     (Business_Analysis, "Business Analysis"),
-    #     (ETL, "Data Cleaning"),
-    #     (Options, "Options"),
-    #     (Other, "Other"),
-    # ]
 
     PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Cashapp, "Cashapp"),
-        (Zelle, "Zelle"),
-        (Venmo, "Venmo"),
-        (Paypal, "Paypal"),
-        (Other, "Other"),
+        ("Cash", "Cash"),
+        ("Mpesa", "Mpesa"),
+        ("Check", "Check"),
+        ("Cashapp", "Cashapp"),
+        ("Zelle", "Zelle"),
+        ("Venmo", "Venmo"),
+        ("Paypal", "Paypal"),
+        ("Other", "Other"),
     ]
+
+    clients_category = models.CharField(
+        max_length=25,
+        choices=CLIENTS_CHOICES,
+        default="Other",
+    )
 
     category = models.CharField(
         max_length=25,
         choices=CAT_CHOICES,
+        default="Other",
+        
     )
-    # task = models.CharField(
-    #     max_length=25,
-    #     choices=TASK_CHOICES,
-    # )
     method = models.CharField(
         max_length=25,
         choices=PAY_CHOICES,
-        default=Other,
+        default="Other",
     )
 
     period = models.CharField(
         max_length=25,
         choices=PERIOD_CHOICES,
-        default=Other,
+        default="Other",
     )
-
     sender = models.ForeignKey(
         "accounts.CustomerUser", 
         on_delete=models.CASCADE, 
-        limit_choices_to=(Q(sub_category=6) | Q(is_superuser=True)),
+        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
         # limit_choices_to={"category": 4, "is_active": True },
         related_name="dc_inflows")
     receiver = models.CharField(max_length=100, null=True, default=None)
@@ -459,12 +455,6 @@ class DC48_Inflow(models.Model):
     def total_payment(self):
         total_amount = round(Decimal(self.amount), 2)
         return total_amount
-
-    # @property
-    # def amount_kes(self):
-    #     usd_to_kes = get_exchange_rate('USD', 'KES')
-    #     amt_kes = round(Decimal(self.amount), 2)*round(Decimal(usd_to_kes), 2)
-    #     return amt_kes
 
     @property
     def total_paid(self):
