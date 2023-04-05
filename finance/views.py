@@ -1,4 +1,3 @@
-from unicodedata import category
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
@@ -324,7 +323,7 @@ def payment(request,method):
                 'mpesa_number':phone_number,
                 'cashapp':cashapp,
                 'venmo':venmo,
-                'coda_account_no':account_no,
+                'account_no':account_no,
                 'email':email_info,
                 'message':message,
                 'error_message':error_message,
@@ -340,16 +339,6 @@ def payment(request,method):
     except:
         return render(request, "main/errors/500.html",context)
     
-
-#determines user type to run payment
-# @login_required
-# def userpay(request):
-# 	if request.user.sub_category == 7:
-		
-# 		return redirect('finance:pay')
-# 	else:
-# 		return redirect("finance:pay")
-
 
 def pay(request, service=None):
     if not request.user.is_authenticated:
