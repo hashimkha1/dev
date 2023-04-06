@@ -19,12 +19,10 @@ app.conf.beat_schedule = {
         'schedule': crontab(minute='*'),
     },
 
-    # 'TrainingLoanDeduction': {
-    #     'task': 'TrainingLoanDeduction',
-    #     # 'schedule': crontab(minute='*/1'),
-    #     # 'schedule': crontab(day_of_month=28),
-    #     'schedule': crontab(0, 0, day_of_month='1'),
-    # },
+    'LBandLSDeduction': {
+        'task': 'LBandLSDeduction',
+        'schedule': crontab(minute=0, hour=23, day_of_month='1'),
+    },
 
     'TrainingLoanDeduction': {
         'task': 'TrainingLoanDeduction',

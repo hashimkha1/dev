@@ -1,10 +1,5 @@
 from django import forms
 from django.forms import ModelForm, Textarea
-from django.db.models import Q
-from data.models import DSU
-from accounts.models import CustomerUser
-from .models import Services
-from finance.models import Transaction,Inflow
 from accounts.models import Department
 
 class DepartmentForm(forms.ModelForm):  

@@ -90,8 +90,7 @@ urlpatterns = [
     # path('addjustification/<int:detail_id>/', views.add_requirement_justification, name='addjustification'),
     path('justification/<int:pk>/', views.justification, name='justification'),
     path('add_justification/', views.add_requirement_justification, name='join'),
-    path('estimate/', views.EstimateCreateView.as_view(template_name='management/activity_form.html'), name='RequirementDetail'),
-    path('estimates/', views.EstimateListView.as_view(), name='estimates'),
+
 
     # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("create_advertisement/", views.AdsCreateView.as_view(), name="create_advertisement"),

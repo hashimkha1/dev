@@ -1,18 +1,18 @@
 import calendar,string
 import requests
+from django.contrib import messages
 from django import template
 from datetime import date, datetime, timedelta
 from django.db import transaction
 from decimal import Decimal
+from django.db.models import Q,Sum,F
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.utils.decorators import method_decorator
-from django.db.models import Sum,F
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from mail.custom_email import send_email
-from application.models import UserProfile
 from management.forms import (
     DepartmentForm,
     PolicyForm,
@@ -28,32 +28,28 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from application.models import UserProfile
 from management.models import (
     Advertisement,
     Policy,
-    Tag,
-    Estimate,
+    TaskCategory,
     Task,
     TaskHistory,
     TaskLinks,
     Requirement,
-    LBandLS,
     Training,
     ProcessJustification,
     ProcessBreakdown
 )
 from data.models import DSU
-from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
+from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
+from accounts.models import Tracker, Department, TaskGroups
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from coda_project import settings
-from datetime import date, timedelta
-from django.db.models import Q
 
-from accounts.models import Tracker, Department, TaskGroups
-from finance.models import  PayslipConfig
 from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,emp_average_earnings,
@@ -61,8 +57,6 @@ from management.utils import (email_template,text_num_split,
                                addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus
                         )
 from main.utils import countdown_in_month
-
-from django.contrib import messages
     
 
 import logging
@@ -83,12 +77,10 @@ def dckdashboard(request):
     # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
     return render(request, "management/departments/agenda/user_dashboard.html", {'title': "DCK DASHBOARD"})
 
-
 # ================================DEPARTMENT SECTION================================
 def department(request):
     departments = Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html", {'departments': departments})
-
 
 def newdepartment(request):
     if request.method == "POST":
@@ -178,7 +170,7 @@ def confirm_employee_contract(request):
 
         try:
             group = TaskGroups.objects.all().first()
-            cat = Tag.objects.all().first()
+            cat = TaskCategory.objects.all().first()
             try:
                 max_point = Task.objects.filter(groupname=group, category=cat).first()
                 max_point = max_point.mxpoint
@@ -339,9 +331,9 @@ def benefits(request):
 
 # ===================================ACTIVITY CLASS-BASED VIEWS=========================================
 
-# ======================TAG=======================
+# ======================TaskCategory=======================
 class TagCreateView(LoginRequiredMixin, CreateView):
-    model = Tag
+    model = TaskCategory
     success_url = "/management/newtask"
     fields = ["title", "description"]
 
@@ -440,11 +432,11 @@ def newtaskcreation(request):
         # return redirect("management:tasks")
         return JsonResponse({"success": True})
     else:
-        tag = Tag.objects.all()
+        task_categories = TaskCategory.objects.all()
         group = TaskGroups.objects.all()
         employess = User.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
 
-    return render(request, "management/tasknew_form.html", {"group": group, "category": tag, "employess": employess})
+    return render(request, "management/tasknew_form.html", {"group": group, "category": task_categories, "employess": employess})
 
 
 def gettasksuggestions(request):
@@ -1458,21 +1450,6 @@ def videolink(request,detail_id):
     } 
     return render(request, "main/messages/general.html",context)
 
-# ====================ESTIMATEVIEWS===============================
-class EstimateCreateView(LoginRequiredMixin, CreateView):
-    model=Estimate
-    success_url = "/management/activerequirements"
-    fields= "__all__"
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-class EstimateListView(ListView):
-    model = Estimate
-    template_name = "management/doc_templates/estimates.html"
-    context_object_name = "estimates"
-    ordering = ["-created_at"]
 
 def getaveragetargets(request):
     print("+++++++++getaveragetargets+++++++++")
@@ -1567,6 +1544,9 @@ class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == post.author:
             return True
         return False
+    
+
+# ====================ESTIMATEVIEWS===============================
 
 def justification(request, *args, **kwargs):
     justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\

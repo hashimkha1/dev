@@ -40,7 +40,8 @@ from getdata.utils import(
     main_cread_spread,
     main_shortput
 )
-from .models import CashappMail,stockmarket,ShortPut
+from .models import CashappMail,ReplyMail
+from investing.models import stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
 from django.contrib.auth import get_user_model
 
 from .forms import CsvImportForm
@@ -58,10 +59,6 @@ def getrating(request):
 
 def index(request):
     return render(request, 'getdata/index.html', {'title': 'index'})
-
-def show(request):  
-    employees = Employee.objects.all()  
-    return render(request,"accounts/show.html",{'employees':employees})  
 
 def uploaddata(request):  
     # context = {"posts": posts}

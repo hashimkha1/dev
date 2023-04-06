@@ -129,6 +129,73 @@ class PayslipConfig(models.Model):
     def __str__(self):
         return str(self.loan_amount)
 
+class LBandLS(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    laptop_bonus =  models.FloatField(null=True)
+    laptop_savings = models.FloatField(null=True)
+
+    def __str__(self):
+        return self.user.username
+
+class RetirementPackage(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopSaving(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class TrainingLoan(models.Model):
+    LOAN_CHOICES = [
+        ("Debit", "Debit"),
+        ("Credit", "Credit"),
+    ]
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    category = models.CharField(max_length=25, choices=LOAN_CHOICES,)
+    amount = models.BigIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField('Is complete', default=True)
+    # training_loan_amount = models.ForeignKey('PayslipConfig',on_delete=models.CASCADE,null=True)
+    training_loan_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    deduction_date = models.DateField(auto_now_add=True)
+    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class Payslip(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    # month and year of period we are paying
+    period = models.CharField(max_length=10)
+
+    # points based on the work the employee done
+    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # earnings calculated based on points
+    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # benefits
+    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # retirement_package is long term benefit and does not affect the net pay
+    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+
+    # deductions
+    loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
+    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+
 class Transaction(models.Model):
     # Method of Category
     CAT_CHOICES = [
@@ -466,23 +533,7 @@ class DC48_Inflow(models.Model):
             return total_amt_paid
             
 
-class TrainingLoan(models.Model):
-    LOAN_CHOICES = [
-        ("Debit", "Debit"),
-        ("Credit", "Credit"),
-    ]
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    category = models.CharField(max_length=25, choices=LOAN_CHOICES,)
-    amount = models.BigIntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField('Is complete', default=True)
-    # training_loan_amount = models.ForeignKey('PayslipConfig',on_delete=models.CASCADE,null=True)
-    training_loan_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    deduction_date = models.DateField(auto_now_add=True)
-    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
 
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

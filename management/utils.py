@@ -292,7 +292,7 @@ def addloantable(loantable,employee,total_pay,payslip_config,user_data):
     # laptop_bonus = Decimal(0)
     # if LBandLS.objects.filter(user=emp).exists():
         # lbandls = LBandLS.objects.get(user_id=emp)
-        # laptop_saving = lbandls.laptop_service
+        # laptop_saving = lbandls.laptop_savings
     # else:
         # laptop_saving = Decimal(0)
 # laptop_bonus = round(Decimal(laptop_bonus), 2)
@@ -358,7 +358,7 @@ def addloantable(loantable,employee,total_pay,payslip_config,user_data):
     # else:
     #     laptop_bonus = Decimal(0)
     #     if LBLS.exists():
-    #         laptop_saving = LBLS.laptop_service
+    #         laptop_saving = LBLS.laptop_savings
     #     else:
     #         laptop_saving = Decimal(0)
     # return laptop_bonus,laptop_saving

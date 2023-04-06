@@ -66,109 +66,6 @@ class Training(models.Model):
     featured= models.BooleanField(default=True)
 
 
-class Transaction(models.Model):
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Other = "Other"
-
-    #  Cost Category.
-    Salary = "Salary"
-    Health = "Health"
-    Transport = "Transport"
-    Food_Accomodation = "Food & Accomodation"
-    Internet_Airtime = "Internet & Airtime"
-    Recruitment = "Recruitment"
-    Labour = "Labour"
-    Management = "Management"
-    Electricity = "Electricity"
-    Construction = "Construction"
-    Other = "Other"
-
-    # Department
-    HR = "HR Department"
-    IT = "IT Department"
-    MKT = "Marketing Department"
-    FIN = "Finance Department"
-    SECURITY = "Security Department"
-    MANAGEMENT = "Management Department"
-    HEALTH = "Health Department"
-    Other = "Other"
-    DEPARTMENT_CHOICES = [
-        (HR, "HR Department"),
-        (IT, "IT Department"),
-        (MKT, "Marketing Department"),
-        (FIN, "Finance Department"),
-        (SECURITY, "Security Department"),
-        (MANAGEMENT, "Management Department"),
-        (HEALTH, "Health Department"),
-        (Other, "Other"),
-    ]
-    CAT_CHOICES = [
-        (Salary, "Salary"),
-        (Health, "Health"),
-        (Transport, "Transport"),
-        (Food_Accomodation, "Food & Accomodation"),
-        (Internet_Airtime, "Internet & Airtime"),
-        (Recruitment, "Recruitment"),
-        (Labour, "Labour"),
-        (Management, "Management"),
-        (Electricity, "Electricity"),
-        (Construction, "Construction"),
-        (Other, "Other"),
-    ]
-    PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Other, "Other"),
-    ]
-    # id = models.AutoField(primary_key=True,default=99999999)
-    sender = models.CharField(max_length=100, null=True, default=None)
-    receiver = models.CharField(max_length=100, null=True, default=None)
-    phone = models.CharField(max_length=50, null=True, default=None)
-    department = models.CharField(max_length=100, default=None)
-    type = models.CharField(max_length=100, default=None, null=True)
-    activity_date = models.DateTimeField(default=timezone.now)
-    receipt_link = models.CharField(max_length=100, blank=True, null=True)
-    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
-    amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=None
-    )
-    transaction_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=0
-    )
-    description = models.TextField(max_length=1000, default=None)
-
-    payment_method = models.CharField(
-        max_length=25,
-        choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    department = models.CharField(
-        max_length=100,
-        choices=DEPARTMENT_CHOICES,
-        default=Other,
-    )
-
-    category = models.CharField(
-        max_length=100,
-        choices=CAT_CHOICES,
-        default=Other,
-    )
-
-    def get_absolute_url(self):
-        return reverse("management:transaction-detail", kwargs={"pk": self.pk})
-
-    class Meta:
-        verbose_name_plural = "Transactions"
-
-    def __str__(self):
-        return f"{self.id} Transactions"
-
-
 # -------------------------------------CASH FLOW MODEL---------------------------------------
 class Outflow(models.Model):
     # Method of Payment
@@ -469,12 +366,15 @@ class Policy(models.Model):
     is_featured = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name_plural = "Policies"
+
     def __str__(self):
         return f"{self.id} policy"
 
 
 # ==================================ACTIVITIES====================================
-class Tag(models.Model):
+class TaskCategory(models.Model):
     # Tasks Category.
     Meetings = "Meetings"
     Data_Analyis = "Data Analysis"
@@ -504,12 +404,16 @@ class Tag(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     # active=models.IntegerField(default=1)
 
+    class Meta:
+        verbose_name_plural = "Task Categories"
+
     @classmethod
     def get_default_pk(cls):
         cat, created = cls.objects.get_or_create(
             title="Other", defaults=dict(description="this is not an cat")
         )
         return cat.pk
+
 
     def get_absolute_url(self):
         return reverse("category_list")
@@ -584,7 +488,7 @@ class Task(models.Model):
         to=TaskGroups, on_delete=models.CASCADE, default=1
     )
     category = models.ForeignKey(
-        to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk
     )
     employee = models.ForeignKey(
         User,
@@ -750,7 +654,7 @@ class TaskLinks(models.Model):
     is_featured = models.BooleanField("Is featured", default=False)
 
     class Meta:
-        verbose_name_plural = "links"
+        verbose_name_plural = "Task Reference"
 
     def get_absolute_url(self):
         return reverse("tasks")
@@ -777,9 +681,9 @@ class TaskHistory(models.Model):
         default="Group A",
     )
     category = models.ForeignKey(
-        to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk
     )
-    # category = models.ManyToManyField(Tag, blank=True)
+    # category = models.ManyToManyField(TaskCategory, blank=True)
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
@@ -1012,51 +916,7 @@ class ProcessBreakdown(models.Model):
     total = models.PositiveIntegerField(null=True, blank=True)
     crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     updated_at = models.DateTimeField(null=True, blank=True)
-    
-class Estimate(models.Model):
-    # Apps
-    CAT_CHOICES = [
-            ("Table","Table"),
-            ("Api_Integration","Api_Integration"),
-            ("View","View"),
-            ("Diagram","Diagram"),
-            ("Templates","Templates"),
-            ("Forms","Forms"),
-            ("Other","Other"),
-       ]
-        # activity
-    TASK_CHOICES = [
-            ("creation","creation"),
-            ("Testing","Testing"),
-            ("dictionary","dictionary"),
-            ("diagram","diagram"),
-            ("Other","Other"),
-       ]
-    requirement = models.ForeignKey(
-         Requirement,
-         on_delete=models.CASCADE,
-         default=1,
-      )
-    category = models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-        default="Other",
-    )
-    task = models.CharField(
-        max_length=25,
-        choices=TASK_CHOICES,
-        default="Other",
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    qty = models.CharField(max_length=50)
-    duration = models.IntegerField(null=False, default=4)
-    comment = models.TextField()
-    is_active = models.BooleanField(default=True)
 
-    @property
-    def estimated_time(self):
-        est_time=round(Decimal(self.qty* self.duration), 2)
-        return est_time
 
 def task_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -1090,6 +950,7 @@ class Advertisement(models.Model):
 
     def __str__(self):
         return self.post_description
+    
 class Whatsapp(models.Model):
     # whatsapp
     product_id = models.CharField(max_length=100, null=True, blank=True)
@@ -1104,60 +965,3 @@ class Whatsapp(models.Model):
 
     def __str__(self):
         return self.group_name
-
-
-class LBandLS(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    laptop_bonus =  models.FloatField(null=True)
-    laptop_service = models.FloatField(null=True)
-
-    def __str__(self):
-        return self.user.username
-
-class RetirementPackage(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-class Loan(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class LaptopSaving(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class Payslip(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-
-    # month and year of period we are paying
-    period = models.CharField(max_length=10)
-
-    # points based on the work the employee done
-    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # earnings calculated based on points
-    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # benefits
-    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # retirement_package is long term benefit and does not affect the net pay
-    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
-
-    # deductions
-    loan = models.OneToOneField(Loan, on_delete=models.CASCADE)
-    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)

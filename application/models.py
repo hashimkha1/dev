@@ -79,7 +79,6 @@ class Application(models.Model):
     application_date = models.DateTimeField(default=timezone.now)
     country = models.CharField(max_length=100, blank=True, null=True)
     resume = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
-    # cover=models.FileField(default=None,upload_to='cover/doc/')
     type = models.CharField(
         max_length=25,
         choices=APPLICATION_CHOICES,
@@ -158,12 +157,9 @@ class Rated(models.Model):
         ("Other", "Other"),
     ]
     id = models.AutoField(primary_key=True)
-    # first_name = models.CharField(max_length=100)
-    # last_name = models.CharField(max_length=100)
     employeename =  models.ForeignKey(
                     "accounts.CustomerUser", limit_choices_to=Q(is_employee=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="rating_empname",default=1,blank=True)
-    # topic = models.CharField(max_length=100, default=None)
     topic = models.CharField(
         max_length=255,
         choices=TOPIC_CHOICES,
@@ -171,9 +167,6 @@ class Rated(models.Model):
     )
     uploadlinkurl = models.CharField(max_length=1000,blank=True, null=True)
     rating_date = models.DateTimeField(default=timezone.now)
-    # punctuality = models.IntegerField(choices=Score.choices)
-    # communication = models.IntegerField(choices=Score.choices)
-    # understanding = models.IntegerField(choices=Score.choices)
     projectDescription = models.BooleanField(default=False)# 2
     requirementsAnalysis  = models.BooleanField(default=False)# 3
     development = models.BooleanField(default=False)# 5
@@ -185,34 +178,15 @@ class Rated(models.Model):
         return f"{self.id} Rating"
 
 
-"""
-class FirstUpload(models.Model):
-    id = models.AutoField(primary_key=True)
-    username=models.CharField(max_length=100)
-    first_name=models.CharField(max_length=100,null=True,blank=True)
-    last_name=models.CharField(max_length=100,null=True,blank=True)
-    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
-    ppt=models.FileField(upload_to='Powerpoints/doc/')
-    report=models.FileField( upload_to='Reports/doc/',null=True,blank=True)
-    workflow=models.FileField(upload_to='Workflows/doc/',null=True,blank=True)
-    proc=models.FileField(upload_to='Procedures/doc/',null=True,blank=True)
-    other=models.FileField(default="None",upload_to='Others/doc/')
-   # Applicant=models.ManyToManyField(Application)
-
-    def __str__(self):
-        return f'{self.username} upload'
-"""
-
 class Reporting(models.Model):
     internal = "Internal Interview"
     first_interview = "First Interview"
     second_interview = "Second Interview"
     third_interview = "Third Interview"
     Other = "Other"
-    # male = "Male"
-    # female = "Female"
     direct = "Direct"
     indirect = "Indirect"
+
     INTERVIEW_CHOICES = [
         (internal, "Internal Interview"),
         (first_interview, "First Interview"),
@@ -220,10 +194,6 @@ class Reporting(models.Model):
         (third_interview, "Third Interview"),
         (Other, "Other"),
     ]
-    # GENDER_CHOICES = [
-    #     (male, "Male"),
-    #     (female, "Female"),
-    # ]
     METHOD_CHOICES = [
         (direct, "Direct"),
         (indirect, "Indirect"),
@@ -238,21 +208,12 @@ class Reporting(models.Model):
         #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         # limit_choices_to={"is_employee": True, "is_active": True},
     )
-    # first_name = models.CharField(max_length=100, null=True, blank=True)
-    # last_name = models.CharField(max_length=100, null=True, blank=True)
-    # gender=models.CharField(max_length=50,null=True,blank=True)
     rate=models.CharField(max_length=50,null=True,blank=True)
     interview_type = models.CharField(
         max_length=25,
         choices=INTERVIEW_CHOICES,
         default="other"
     )
-    # gender = models.CharField(
-    #     max_length=25,
-    #     null=True,
-    #     blank=True,
-    #     choices=GENDER_CHOICES,
-    # )
     method = models.CharField(
         max_length=25,
         null=True,
@@ -271,60 +232,3 @@ class Reporting(models.Model):
 
     def __str__(self):
         return f"{self.id} Reporting"
-
-# class Reporting(models.Model):
-#     internal = "Internal Interview"
-#     first_interview = "First Interview"
-#     second_interview = "Second Interview"
-#     third_interview = "Third Interview"
-#     male = "Male"
-#     female = "Female"
-#     direct = "Direct"
-#     indirect = "Indirect"
-#     INTERVIEW_CHOICES = [
-#         (internal, "Internal Interview"),
-#         (first_interview, "First Interview"),
-#         (second_interview, "Second Interview"),
-#         (third_interview, "Third Interview"),
-#     ]
-#     GENDER_CHOICES = [
-#         (male, "Male"),
-#         (female, "Female"),
-#     ]
-#     METHOD_CHOICES = [
-#         (direct, "Direct"),
-#         (indirect, "Indirect"),
-#     ]
-#     id = models.AutoField(primary_key=True)
-#     first_name = models.CharField(max_length=100, null=True, blank=True)
-#     last_name = models.CharField(max_length=100, null=True, blank=True)
-#     # gender=models.CharField(max_length=50,null=True,blank=True)
-#     # method=models.CharField(max_length=50,null=True,blank=True)
-#     interview_type = models.CharField(
-#         max_length=25,
-#         choices=INTERVIEW_CHOICES,
-#     )
-#     gender = models.CharField(
-#         max_length=25,
-#         null=True,
-#         blank=True,
-#         choices=GENDER_CHOICES,
-#     )
-#     method = models.CharField(
-#         max_length=25,
-#         null=True,
-#         blank=True,
-#         choices=METHOD_CHOICES,
-#     )
-#     reporting_date = models.DateTimeField(
-#         "Reporting Date(mm/dd/yyyy)",
-#         auto_now_add=False,
-#         auto_now=False,
-#         blank=True,
-#         null=True,
-#     )
-#     update_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
-#     comment = models.TextField()
-
-#     def __str__(self):
-#         return f"{self.id} Reporting"

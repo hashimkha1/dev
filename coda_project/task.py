@@ -1,45 +1,33 @@
 import json
-from celery import shared_task
-import http.client
-from django.http import HttpResponse
-from django.shortcuts import render
-from mail.custom_email import send_email
-from management.models import Task, TaskHistory,LBandLS
-from accounts.models import CustomerUser
-from datetime import datetime, timedelta
-from decimal import Decimal
-from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees
-from django.contrib.auth import get_user_model
-from django.db.models import Q, Sum
-from application.models import UserProfile
-# from accounts.utils import employees
-
-from finance.models import PayslipConfig
-
-from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
-from main.utils import image_view,download_image
-
-from management.models import Advertisement,Whatsapp
 import tweepy
 import random
 import string
-# importing modules
-import urllib.request
 
+import urllib.request
 import logging
 
+from celery import shared_task
+import http.client
+from django.shortcuts import render
+from mail.custom_email import send_email
+from datetime import datetime, timedelta
+from decimal import Decimal
+from django.contrib.auth import get_user_model
+# importing modules
+from management.models import Task, TaskHistory,Advertisement,Whatsapp
+from accounts.models import CustomerUser
+from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
+from application.models import UserProfile
+from getdata.models import ReplyMail
+
+# importing utils & Views
+from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
+from main.utils import image_view,download_image
+from management.utils import deductions
 from management.views import loan_update_save, normalize_period
 
-from management.utils import deductions
-
 from gapi.gservices import get_service, search_messages
-from getdata.models import ReplyMail
 from mail.custom_email import send_reply
-# from django.core.management import call_command
-import tweepy
-# importing modules
-import urllib.request
-from PIL import Image
 
 logger = logging.getLogger(__name__)
 
@@ -159,7 +147,8 @@ def SendMsgApplicatUser():
 #                 TrainingLoan.objects.create(user=emp,total_earnings_amount=total_pay,detection_amount=loan, category="Credit", balance_amount=balance, training_loan_amount=default_payment_fees)
 #                 LBandLSDetection(emp_id)
 
-def LBandLSDetection(emp):
+@shared_task(name="LBandLSDeduction")
+def LBandLSDeduction(emp):
     LBandLsAmount = 1000
     userprofile = UserProfile.objects.get(user_id=emp)
     if userprofile.laptop_status == True:
@@ -173,14 +162,13 @@ def LBandLSDetection(emp):
         if LBandLS.objects.filter(user_id=emp).exists():
             # lbandlsfilter = LBandLS.objects.filter(user_id=emp)
             lbandls = LBandLS.objects.get(user_id=emp)
-            laptop_service_amount = lbandls.laptop_service
-            # laptop_service_amount = lbandlsfilter.aggregate(Sum('laptop_service'))
-            # laptop_service_amount = laptop_service_amount['laptop_service__sum']
-            if float(laptop_service_amount) < 20000:
-                laptop_service_amt = lbandls.laptop_service + float(LBandLsAmount)
-                LBandLS.objects.filter(user_id=emp).update(laptop_service=laptop_service_amt)
+            laptop_saving_amount = lbandls.laptop_savings
+
+            if float(laptop_saving_amount) < 20000:
+                laptop_saving_amt = lbandls.laptop_savings + float(LBandLsAmount)
+                LBandLS.objects.filter(user_id=emp).update(laptop_saving=laptop_saving_amt)
         else:
-            LBandLS.objects.create(user_id=emp,laptop_service=LBandLsAmount)
+            LBandLS.objects.create(user_id=emp,laptop_saving=LBandLsAmount)
 
 
 @shared_task(name="TrainingLoanDeduction")
@@ -193,13 +181,6 @@ def TrainingLoanDeduction():
     # print(employee,employee_number)
     # print(active_employees)
     for emp in employee:
-        # print(emp)
-        # LBLS = LBandLS.objects.filter(user=emp)
-        # lbandls = LBandLS.objects.get(user_id=employee)
-        # today, year, month, day, deadline_date = paytime()
-        # task_obj = Task.objects.filter(submission__contains=year)
-        # userprofile = UserProfile.objects.get(user_id=emp)
-        # print(userprofile)
         tasks = Task.objects.all().filter(employee=emp)
         user_data = TrainingLoan.objects.filter(user=emp, is_active=True)
         loantable = TrainingLoan
@@ -209,12 +190,9 @@ def TrainingLoanDeduction():
         for task in tasks:
             total_pay = total_pay + task.get_pay
         # Deductions
-        # print(loan_amount,loan_payment,balance_amount)
-        # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
         loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
         # print(loan_amount, loan_payment, balance_amount)
         logger.debug(f'balance_amount: {balance_amount}')
-        # loan_update_save(loantable, user_data, emp, total_pay, payslip_config)
         
 
 @shared_task(name="replies_job_mail")
@@ -228,9 +206,6 @@ def search_job_mail():
     for search in search_query:
         se=search+" is:unread"
         search_results += search_messages(service, se)
-
-    # search_results += search_messages(service, search_query)
-    # search_results_len = len(search_results)
 
     if not search_results:
         logger.error('NO SEARCH RESULTS FOUND !')

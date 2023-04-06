@@ -343,37 +343,74 @@ def delete_service(request,id):
         service.delete()
     return redirect('main:services')
 
+#    print("url====>",staff.img_url)
+#     for x in staff:
+#         print("image",x.img_url)
+#         # print("name",x.name)
 
-
+# def about(request):
+#     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+#     sub_title=path_values(request)[-1]
+#     date_object="01/20/2023"
+#     start_date = datetime.strptime(date_object, '%m/%d/%Y')
+#     end_date=start_date + relativedelta(months=3)
+#     staff=[member for member in team_members if member.img_category=='employee']
+#     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
+#     context={
+#         "start_date": start_date,
+#         "end_date": end_date,
+#         "title_team": "team",
+#         "active_employees": staff,
+#         "title_about": "about",
+#         "img_urls": img_urls,
+#         "title_letter": "letter",
+#     }
+#     if sub_title == 'team':
+#         return render(request, "main/team.html",context)
+#     elif sub_title == 'letter':
+#         return render(request, "main/doc_templates/letter.html",context)
+#     elif sub_title == 'appointment_letter':
+#         return render(request, "main/doc_templates/appointment_letter.html",context)
+#     elif sub_title == 'about':
+#         return render(request, "main/about.html",context)
+    
 def about(request):
-    team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-    sub_title=path_values(request)[-1]
-    date_object="01/20/2023"
-    start_date = datetime.strptime(date_object, '%m/%d/%Y')
-    end_date=start_date + relativedelta(months=3)
-    images,image_names=image_view(request)
-    staff=[member for member in team_members if member.img_category=='employee']
-    img_urls=[member.img_url for member in team_members if member.img_category=='employee']
-    context={
+    # Get active employee team members
+    team_members = UserProfile.objects.filter(user__is_employee=True, user__is_active=True, user__is_staff=True)
+    
+    # Set start and end dates
+    start_date_str = "01/20/2023"
+    start_date = datetime.strptime(start_date_str, '%m/%d/%Y')
+    end_date = start_date + relativedelta(months=3)
+    
+    # Filter active employees and get their image URLs
+    active_employees = [member for member in team_members if member.img_category == 'employee']
+    img_urls = [member.img_url for member in active_employees]
+    
+    # Set context variables
+    context = {
         "start_date": start_date,
         "end_date": end_date,
         "title_team": "team",
-        # "employee_subcategories": employee_subcategories,
-        "active_employees": staff,
+        "active_employees": active_employees,
         "title_about": "about",
-        # "images": images,
         "img_urls": img_urls,
         "title_letter": "letter",
     }
-    if sub_title == 'team':
-        return render(request, "main/team.html",context)
-    elif sub_title == 'letter':
-        return render(request, "main/doc_templates/letter.html",context)
-    elif sub_title == 'appointment_letter':
-        return render(request, "main/doc_templates/appointment_letter.html",context)
-    elif sub_title == 'about':
-        return render(request, "main/about.html",context)
     
+    # Map page names to templates
+    templates = {
+        'team': 'main/team.html',
+        'letter': 'main/doc_templates/letter.html',
+        'appointment_letter': 'main/doc_templates/appointment_letter.html',
+        'about': 'main/about.html',
+    }
+    
+    # Render the appropriate template based on the page name
+    page_name = path_values(request)[-1]
+    template = templates.get(page_name, 'main/about.html')
+    return render(request, template, context)
+
 
 class UserCreateView(LoginRequiredMixin, CreateView):
     model = UserProfile
