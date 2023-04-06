@@ -1,10 +1,9 @@
 from django.db.models import Q
-from typing import List
+from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
 from django.http import Http404, JsonResponse
-from django.urls import path, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -60,18 +59,8 @@ def training(request):
 
 @login_required
 def training_v2(request):
-    # return render(request, "data/training/training_v2.html", {"title": "training_v2"})
-    # return render(request,"data/interview/interview_progress/resume.html", {"title": "training_v2"})
+    return render(request, "data/training/training_v2.html", {"title": "training_v2"})
     
-    return render(request, "data/training/c.html", {"title": "training_v2"})
-
-# @login_required
-# def bitraining(request):
-#     return render(request, "data/training/bitraining.html", {"title": "training"})
-
-# @login_required
-# def bi_training(request):
-#     return render(request, "data/training/bi_training.html", {"title": "training"})
 
 # interview starts
 @login_required
@@ -496,10 +485,15 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedSubCategory
     success_url = "/data/bitraining2"
     fields = ["featuredcategory", "title", "description"]
+    page_title = 'Add Sub Category'
+
     def form_valid(self, form):
         form.instance.created_by = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title']=capfirst(self.page_title)
 
 def subcategorydetail(request, title=None, *args, **kwargs):
 

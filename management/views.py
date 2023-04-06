@@ -5,6 +5,7 @@ from django import template
 from datetime import date, datetime, timedelta
 from django.db import transaction
 from decimal import Decimal
+from django.utils.text import capfirst
 from django.db.models import Q,Sum,F
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
@@ -68,9 +69,11 @@ register = template.Library()
 
 
 def home(request):
-    return render(
-        request, "main/home_templates/management_home.html", {"title": "home"}
-    )
+    return redirect('main:layout')
+    # return render(
+        # request, "main/home_templates/management_home.html", {"title": "home"}
+        # request, "management/doc_templates/contract.html", {"title": "home"}
+    # )
 
 def dckdashboard(request):
     # departments = Department.objects.filter(is_active=True)
@@ -238,11 +241,9 @@ def companyagenda(request):
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
     if request.user.is_superuser or (request.user.is_employee and request.user.sub_category==3):
-        return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+        # return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
     else:
-        # usersubcat=request.user.category
-        # usercat=request.user.category
-        # print("usercat",usercat,"usersubcat",usersubcat)
         return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
 
 
@@ -332,7 +333,7 @@ def benefits(request):
 # ===================================ACTIVITY CLASS-BASED VIEWS=========================================
 
 # ======================TaskCategory=======================
-class TagCreateView(LoginRequiredMixin, CreateView):
+class TaskCategoryCreateView(LoginRequiredMixin, CreateView):
     model = TaskCategory
     success_url = "/management/newtask"
     fields = ["title", "description"]
@@ -365,25 +366,6 @@ def task(request, slug=None, *args, **kwargs):
 
     context = {"object": instance}
     return render(request, "management/daf/task.html", context)
-
-
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    success_url = "/management/tasks"
-    fields = [
-        "groupname",
-        "category",
-        "employee",
-        "activity_name",
-        "description",
-        "point",
-        "mxpoint",
-        "mxearning",
-    ]
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
 
 
 def newtaskcreation(request):
@@ -492,15 +474,6 @@ class TaskListView(ListView):
     queryset = Task.objects.all()
     template_name = "management/daf/tasklist.html"
 
-# def task_list(request):
-#     tasks=Task.objects.filter(employee__is_employee=True,employee__is_active=True)
-#     print(tasks)
-#     # myfilter=TaskFilter(request.GET,queryset=tasks)
-#     context={
-#         "tasks":tasks,
-#         # "TaskFilter":myfilter
-#     }
-#     return render(request,"management/daf/taskhistory.html", context)
 
 def FilterUsersByLoan(request):
     user_loan_filter = request.POST["user_loan_filter"]
@@ -1009,7 +982,8 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 @method_decorator(login_required, name="dispatch")
 class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
-
+    template_name='main/snippets_templates/generalform.html'
+    
     # success_url = "/management/thank"
     def get_success_url(self):
         task = self.get_object()
@@ -1149,37 +1123,6 @@ def evidence_update_view(request, id, *args, **kwargs):
     }
     return render(request, "main/snippets_templates/generalform.html", context)
 
-# @method_decorator(login_required, name="dispatch")
-# class EvidenceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-#     model = TaskLinks
-#     success_url = "/management/evidence"
-#     message="Edit Evidence"
-   
-#     fields = [
-#             #    "task",
-#             #    "added_by",
-#                "link_name",
-#                "linkpassword",
-#                "description",
-#                "doc",
-#                "link",
-#                "linkpassword",
-#                "is_active",
-#                "is_featured",
-#            ]
-#     def form_valid(self, form):
-#         # form.instance.author=self.request.user
-#         return super().form_valid(form)
-
-#     def test_func(self):
-#         evidence = self.get_object()
-#         if self.request.user.is_admin or self.request.user.is_superuser:
-#             return True
-#         elif self.request.user == evidence.added_by:
-#             return True
-#         return False
-
-
 
 # =============================EMPLOYEE SESSIONS========================================
 class SessionCreateView(LoginRequiredMixin, CreateView):
@@ -1191,12 +1134,6 @@ class SessionCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.presenter = self.request.user
         return super().form_valid(form)
-
-class SessionListView(ListView):
-    pass
-    # # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-    # queryset=Training.objects.all().order_by("-created_date")
-    # template_name = "management/departments/hr/sessions.html"
 
 def sessions(request):
     # total_sessions=Training.objects.all().count()
@@ -1307,7 +1244,7 @@ def requirements(request):
         "requirements": requirements,
         "requirement_filters": requirement_filters
     }
-    return render(request,"management/doc_templates/requirementlist.html",context)
+    return render(request,"management/doc_templates/requirements.html",context)
 
 
 def newrequirement(request):
@@ -1330,14 +1267,6 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                # html_content = f"""""
-                #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
-                #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
-                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
-                #     <b>Dead Line: </b><b style='color:red;'>
-                #     {request.POST['delivery_date']}</b><br><b>Created by:
-                #     {request.user}</b></span>"""
-                # email_template(subject, to, html_content)
                 context = {
                     'request_what': request.POST['what'],
                     'url': protocol + request.get_host() + reverse('management:RequirementDetail',
@@ -1520,18 +1449,24 @@ class AdsContent(ListView):
 
 class AdsCreateView(LoginRequiredMixin, CreateView):
     model = Advertisement
-    template_name = "management/create_advertisement.html"
+    template_name = "main/snippets_templates/generalform.html"
     fields = "__all__"
     success_url = "/management/advertisement"
+    page_title = 'Advertisement Details'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = capfirst(self.page_title)
+        return context
+
 
 class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Advertisement
-    template_name = "management/create_advertisement.html"
+    template_name = "main/snippets_templates/generalform.html"
     fields = "__all__"
     success_url = "/management/advertisement"
 

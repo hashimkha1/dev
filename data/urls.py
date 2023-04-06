@@ -122,32 +122,32 @@ urlpatterns = [
     path(
         "newcategory/",
         FeaturedCategoryCreateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="featuredcategory",
     ),
     path(
         "newsubcategory/",
         FeaturedSubCategoryCreateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="featuredsubcategory",
     ),
     path(
         "newactivity/",
         FeaturedActivityCreateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="featuredactivity",
     ),
     path(
         "newlink/",
         FeaturedActivityLinksCreateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="featuredlink",
     ),
-    # path('dsu/new', DSUCreateView.as_view(template_name='data/training/form_templates/task_form.html'), name='dsu'),
+    # path('dsu/new', DSUCreateView.as_view(template_name='main/snippets_templates/generalform.html'), name='dsu'),
     path("dsu/new", views.dsu_entry, name="dsu_entry"),
     # ----------------------List----------------------------------------------------
     path('<str:title>/', views.categorydetail, name='category-detail'),
@@ -159,28 +159,28 @@ urlpatterns = [
     path(
         "category/<int:pk>/update",
         FeaturedCategoryUpdateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="update-category",
     ),
     path(
         "subcategory/<int:pk>/update",
         FeaturedSubCategoryUpdateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="update-subcategory",
     ),
     path(
         "activity/<int:pk>/update",
         FeaturedActivityUpdateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="update-activity",
     ),
     path(
         "links/<int:pk>/update",
         FeaturedActivityLinksUpdateView.as_view(
-            template_name="data/training/form_templates/task_form.html"
+            template_name="main/snippets_templates/generalform.html"
         ),
         name="update-links",
     ),
