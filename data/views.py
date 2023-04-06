@@ -35,7 +35,7 @@ from data.models import (
     TrainingResponsesTracking
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
-from .utils import training_responses
+
 # User=settings.AUTH_USER_MODEL
 import json
 from coda_project import settings
@@ -58,18 +58,20 @@ def training(request):
 
 
 
-
 @login_required
 def training_v2(request):
-    return render(request, "data/training/training_v2.html", {"title": "training_v2"})
+    # return render(request, "data/training/training_v2.html", {"title": "training_v2"})
+    # return render(request,"data/interview/interview_progress/resume.html", {"title": "training_v2"})
+    
+    return render(request, "data/training/c.html", {"title": "training_v2"})
 
-@login_required
-def bitraining(request):
-    return render(request, "data/training/bitraining.html", {"title": "training"})
+# @login_required
+# def bitraining(request):
+#     return render(request, "data/training/bitraining.html", {"title": "training"})
 
-@login_required
-def bi_training(request):
-    return render(request, "data/training/bi_training.html", {"title": "training"})
+# @login_required
+# def bi_training(request):
+#     return render(request, "data/training/bi_training.html", {"title": "training"})
 
 # interview starts
 @login_required
@@ -467,7 +469,7 @@ class RoleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 @method_decorator(login_required, name="dispatch")
 class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedCategory
-    success_url = "/data/bitraining2"
+    success_url = "/data/bitraining"
     fields = ["title", "description"]
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -558,7 +560,7 @@ def subcategorydetail(request, title=None, *args, **kwargs):
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityCreateView(LoginRequiredMixin, CreateView):
     model = FeaturedActivity
-    success_url = "/data/bitraining2"
+    success_url = "/data/bitraining"
     fields = ["featuredsubcategory", "activity_name", "description","guiding_question","interview_question"]
     def form_valid(self, form):
         form.instance.created_by = self.request.user
@@ -729,7 +731,7 @@ def activity_view(request):
     categories = BiFilter.qs
     context = {"categories": categories, "cats": cats, "BiFilter": BiFilter}
     return render(
-        request=request, template_name="data/training/bitraining2.html", context=context
+        request=request, template_name="data/training/bitraining.html", context=context
     )
 def table_activity_view(request):
     categories = (
@@ -788,7 +790,7 @@ class JobCreateView(LoginRequiredMixin, CreateView):
 @method_decorator(login_required, name="dispatch")
 class JobListView(ListView):
     queryset = Job_Tracker.objects.all()
-    template_name = "data/interview/job_tracker.html"
+    template_name = "data/jobroles/job_tracker.html"
     ordering = ["-created_at"]
 
 def userjobtracker(request, user=None, *args, **kwargs):

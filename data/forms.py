@@ -25,28 +25,6 @@ class InterviewForm(forms.ModelForm):
 
 
 class PrepQuestionsForm(forms.ModelForm):
-    # position = forms.ModelChoiceField(queryset=JobRole.objects.all())
-    # position = forms.ChoiceField(choices=[(x.id, x.category) for x in JobRole.objects.all()])
-    # position = forms.ModelChoiceField(
-    #     queryset=JobRole.objects.all(), 
-    #     to_field_name="category",
-    #     empty_label="(Select Position)",
-    # )
-    # category = forms.ModelChoiceField(
-    #     queryset=JobRole.objects.all(),
-    #     empty_label="Select a position",
-    #     required=True
-    # )
-    # position = forms.CharField(
-    #     widget=forms.Select(
-    #         choices=Prep_Questions.position.field.related_model.CAT_CHOICES
-    #     )
-    # )
-    # category = forms.CharField(
-    #     widget=forms.Select(
-    #         choices=Prep_Questions.position.field.related_model.QUESTION_CHOICES
-    #     )
-    # )
     class Meta:
         model = Prep_Questions
         fields = ["questioner","company",'position', 'category',"question", "response","is_answered"]
@@ -98,17 +76,6 @@ class RoleForm(forms.ModelForm):
                     "desc2": Textarea(attrs={"cols": 30, "rows": 6})
                   }
         # widgets = {"desc2": Textarea(attrs={"cols": 15, "rows": 2})}
-'''
-class UploadForm(forms.ModelForm):
-    class Meta:
-        model = DocUpload
-        fields = ['id','doc_type','doc_name','doc','link']
-        labels={
-                'doc_type':'Document Type',
-                'doc_name':'Document Name',
-                'doc':'Document',
-        }
-'''
 
 class DSUForm(forms.ModelForm):
     class Meta:
@@ -126,12 +93,3 @@ class DSUForm(forms.ModelForm):
                 'challenge':'What Challenges are you facing?',
                 'uploaded' : 'Have you uploaded your assignments to Interview Portal?'
                 }
-        
-'''
-    def __init__(self, **kwargs):
-        super(DSUForm, self).__init__(**kwargs)
-        self.fields["trained_by"].queryset = CustomerUser.objects.filter(
-            # Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
-            Q(is_client=True)
-        )
-'''
