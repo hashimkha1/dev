@@ -126,6 +126,7 @@ def dsu_entry(request):
         form = DSUForm()
     return render(request, "data/training/form_templates/dsu_form.html", {"form": form})
 # for uploading interviews
+
 @login_required
 def iuploads(request):
     uploads = Interviews.objects.all().order_by("-upload_date")
@@ -268,9 +269,11 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
         # form.instance.question_type = "testing"
         return super().form_valid(form)
 @method_decorator(login_required, name="dispatch")
+
 class InterviewListView(ListView):
     queryset = Interviews.objects.all()
-    template_name = "data/interview/iuploads.html"
+    # template_name = "data/interview/iuploads.html"
+    template_name = "data/interview/interviewuploads.html"
     ordering = ["-upload_date"]
 
 @method_decorator(login_required, name="dispatch")
