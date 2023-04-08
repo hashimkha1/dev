@@ -103,10 +103,10 @@ class RatingForm(forms.ModelForm):
         is_employee = kwargs.pop('is_employee', False)
         super(RatingForm, self).__init__(*args, **kwargs)
         self.fields["topic"].required = False
-        # if is_employee:
-        #     self.fields["uploadlinkurl"].required = False
-        # else:
-        #     self.fields["uploadlinkurl"].required = True
+        if is_employee:
+            self.fields["uploadlinkurl"].required = False
+        else:
+            self.fields["uploadlinkurl"].required = True
 
 
 class InterviewForm(forms.ModelForm):
