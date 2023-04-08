@@ -951,6 +951,7 @@ class UserTaskListView(ListView):
 class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     success_url = "/management/tasks"
+    template_name='main/snippets_templates/generalform.html'
     fields = [
         "groupname",
         "category",

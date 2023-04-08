@@ -74,37 +74,24 @@ class ApplicantForm(forms.ModelForm):
         super(ApplicantForm, self).__init__(*args, **kwargs)
         self.fields["type"].empty_label = "Select"
 
-
 class RatingForm(forms.ModelForm):
     class Meta:
         model = Rated
         fields = [
-            # "id",
-            # "first_name",
-            # "last_name",
             "employeename",
             "topic",
             "uploadlinkurl",
-            # "punctuality",
-            # "communication",
-            # "understanding",
             "projectDescription",
             "requirementsAnalysis",
             "development",
             "testing",
             "deployment",
             "totalpoints"
-
         ]
         labels = {
-            # "first_name": "First Name",
-            # "last_name": "Last Name",
             "employeename":"Employee Name",
             "topic": "Topic",
             "uploadlinkurl": "Upload link url",
-            # "punctuality": "Punctuality",
-            # "communication": "Communication",
-            # "understanding": "Understanding",
             "projectDescription": "Project Description",
             "requirementsAnalysis": "Requirements Analysis",
             "development": "Development",
@@ -113,13 +100,14 @@ class RatingForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        is_employee = kwargs.pop('is_employee', False)
         super(RatingForm, self).__init__(*args, **kwargs)
-        # self.fields["punctuality"].empty_label = "Select"
-        # self.fields["communication"].empty_label = "Select"
-        # self.fields["understanding"].empty_label = "Select"
         self.fields["topic"].required = False
-        self.fields["uploadlinkurl"].required = True
-
+        if is_employee:
+            self.fields["uploadlinkurl"].required = False
+        else:
+            self.fields["uploadlinkurl"].required = True
+            
 
 class InterviewForm(forms.ModelForm):
     class Meta:
@@ -132,37 +120,6 @@ class InterviewForm(forms.ModelForm):
             "proc": "SQL Script",
             "other": "Other Documents",
         }
-
-
-"""  
-class InterviewForm(forms.ModelForm):
-    class Meta:
-        model = FirstUpload
-        fields = ['username','first_name','last_name','ppt','report','workflow', 'proc']
-        labels={
-                'username':'User Name',
-                'first_name':'First Name',
-                'last_name':'Last Name',
-                'ppt':'Powerpoint',
-                'report':'Tableau Reports',
-                'workflow':'Alteryx Workflow',
-                'proc':'SQL Script',
-
-                }
-"""
-
-
-# class PolicyForm(forms.ModelForm):
-#     class Meta:
-#         model = Policy
-#         fields = ["first_name", "last_name", "policy_type", "description", "policy_doc"]
-#         labels = {
-#             "first_name": "First Name",
-#             "last_name": "Last Name",
-#             "policy_type": "Policy Type",
-#             "description": "Description",
-#             "policy_doc": "Attach Policy",
-#         }
 
 
 class ReportingForm(forms.ModelForm):
@@ -180,7 +137,6 @@ class ReportingForm(forms.ModelForm):
         labels = {
             "reporter": "User Name",
             "rate": "Rate Per Hour",
-            # "gender": "Gender",
             "method": "Method",
             "interview_type": "Interview Type",
             "reporting_date": "Reporting Date(mm/dd/yy)",

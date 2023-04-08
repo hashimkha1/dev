@@ -297,7 +297,6 @@ class FeaturedCategory(models.Model):
         default=Other,
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    # level=models.CharField(max_length=50,default='A')
     description = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -338,9 +337,6 @@ class FeaturedSubCategory(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=255)
     updated_at = models.DateTimeField(auto_now=True)
-    # doc=models.FileField(default="None",upload_to='training/docs/')
-    # link=models.CharField(max_length=100,blank=True, null=True)
-    # link_name=models.CharField(max_length=255, default='General')
     is_active = models.IntegerField(default=1)
 
     objects=SubCategoryManager()
