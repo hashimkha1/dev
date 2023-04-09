@@ -3,22 +3,17 @@ from accounts.models import Credential,CustomerUser
 from management.models import Requirement,TaskHistory,Task
 from finance.models import Food
 
+
 class UserFilter(django_filters.FilterSet):
+    email = django_filters.CharFilter(label='Email', lookup_expr='icontains')
+    first_name = django_filters.CharFilter(label='First name', lookup_expr='icontains')
+    last_name = django_filters.CharFilter(label='Last name', lookup_expr='icontains')
+    username = django_filters.CharFilter(label='Username', lookup_expr='icontains')
+    date_joined = django_filters.DateFilter(label='Entry date', lookup_expr='exact')
+
     class Meta:
-        model=CustomerUser
-        fields ={
-        'category':['icontains'],
-        'country':['icontains'],
-        'username':['icontains'],
-        'first_name':['icontains'],
-        'last_name':['icontains'],
-        # 'entry_date':['icontains'],
-        }
-        # fields ={'name','link_name','entry_date'}
-        # labels={
-        #         'name':'credential',
-        #         'link_name':'username/email',
-        # }
+        model = CustomerUser
+        fields = ['email', 'first_name', 'last_name', 'username','date_joined']
 
 
 class CredentialFilter(django_filters.FilterSet):
@@ -26,16 +21,14 @@ class CredentialFilter(django_filters.FilterSet):
         model=Credential
         # fields= '__all__'
         fields ={
-        # 'category':['icontains'],
         'name':['icontains'],
         'link_name':['icontains'],
-        # 'entry_date':['icontains'],
         }
-        # fields ={'name','link_name','entry_date'}
         labels={
                 'name':'credential',
                 'link_name':'username/email',
         }
+
 class TaskHistoryFilter(django_filters.FilterSet):
     class Meta:
         model=TaskHistory
@@ -49,6 +42,7 @@ class TaskHistoryFilter(django_filters.FilterSet):
                 'activity_name':'Task',
                 'group':'Group',
         }
+
 class TaskFilter(django_filters.FilterSet):
     class Meta:
         model=Task
@@ -69,14 +63,8 @@ class RequirementFilter(django_filters.FilterSet):
         fields ={
         'category':['icontains'],
         'status':['icontains'],
-        # 'company':['icontains'],
         'is_active':['icontains'],
         }
-        # fields ={'name','link_name','entry_date'}
-        # labels={
-        #         'name':'credential',
-        #         'link_name':'username/email',
-        # }
     
 class FoodFilter(django_filters.FilterSet):
     class Meta:

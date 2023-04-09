@@ -46,19 +46,5 @@ urlpatterns = [
     path("rating/", views.rating, name="rating"),
     path("rate/", views.rate, name="rate"),
     path("rate/<str:pk>", views.ratewid, name="ratewid"),
-    # path('firstupload/', views.firstupload, name='firstupload'),
-    # path('fupload/', views.fupload, name='fupload'),
-    # path('uploaded/', views.uploaded, name='uploaded'),
-    # path('<int:id>/', views.employee_form, name='emp_update'),
-    # path('<int:id>/', views.employee_delete, name='emp_delete'),
-    # path('employee_list/', views.employee_list, name='emp_list'),
-    # path("tinterview/", views.testinterview, name="tinterview"),
-    # API data
-    # path('applicants', views.applicants, name='applicants'),
-    # path('applicationapi/', views.ApplicationDataAPI),
-    # path('get_total/', views.get_total),
-    # Create activity
-    # path('createactivity/', views.createActivity),
-    # path('updateapplication/', views.updateApplication),
-    # path('deleteapplication/', views.deleteApplication),
+
 ]

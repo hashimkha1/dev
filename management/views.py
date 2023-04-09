@@ -1030,53 +1030,52 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # =============================EMPLOYEE EVIDENCE========================================
+
+
+JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
+ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
+
 def newevidence(request, taskid):
+    task = get_object_or_404(Task, id=taskid)
+
     if request.method == "POST":
         form = EvidenceForm(request.POST)
-        # Check whether the task exist then only we allow to create evidence
-        try:
-            task = Task.objects.get(id=taskid)
-            activity_name = task.activity_name
-        except:
-            return render(request, "errors/404.html")
-
         if form.is_valid():
-            points, maxpoints, taskname = \
-                Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
-            jobsup_list = ["job support", "job_support", "jobsupport"]
-            if points != maxpoints and taskname.lower() not in jobsup_list:
+            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
+            
+            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
                 Task.objects.filter(id=taskid).update(point=points + 1)
 
-            # User will taken from the request
             data = form.cleaned_data
             link = data['link']
+            
             if not link:
-                messages.error(request, "please provide evidence link")
+                messages.error(request, "Please provide evidence link")
                 return render(request, "management/daf/evidence_form.html", {"form": form})
+            
             try:
-                a=requests.get(link)
+                a = requests.get(link)
                 if a.status_code == 200:
-                    user_list=[]
                     check = TaskLinks.objects.filter(link=link)
+                    
                     if check.exists():
-                        users = check.values_list('added_by__username')
-                        for username in users:
-                            user_list.append(username[0])
-                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions','Project',"web sessions"]
-                        if activity_name in act_list:
-                            if request.user.username in user_list:
-                                messages.error(request, "you have already uploaded this link")
-                                return render(request, "management/daf/evidence_form.html", {"form": form})
+                        users = check.values_list('added_by__username', flat=True)
+                        
+                        if request.user.username in users:
+                            messages.error(request, "You have already uploaded this link")
+                            return render(request, "management/daf/evidence_form.html", {"form": form})
+                        
+                        if task.activity_name in ACTIVITY_LIST:
                             form.save()
                             return redirect("management:evidence")
                         else:
-                            messages.error(request, "this link is already uploaded")
+                            messages.error(request, "This link is already uploaded")
                             return render(request, "management/daf/evidence_form.html", {"form": form})
-
+                        
                     form.save()
                     return redirect("management:evidence")
                 else:
-                    messages.error(request, "link is not valid,please check again")
+                    messages.error(request, "Link is not valid, please check again")
                     return render(request, "management/daf/evidence_form.html", {"form": form})
 
             except:
@@ -1087,6 +1086,65 @@ def newevidence(request, taskid):
         form = EvidenceForm()
 
     return render(request, "management/daf/evidence_form.html", {"form": form})
+
+
+# def newevidence(request, taskid):
+#     if request.method == "POST":
+#         form = EvidenceForm(request.POST)
+#         # Check whether the task exist then only we allow to create evidence
+#         try:
+#             task = Task.objects.get(id=taskid)
+#             activity_name = task.activity_name
+#         except:
+#             return render(request, "errors/404.html")
+
+#         if form.is_valid():
+#             points, maxpoints, taskname = \
+#                 Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
+#             jobsup_list = ["job support", "job_support", "jobsupport"]
+#             if points != maxpoints and taskname.lower() not in jobsup_list:
+#                 Task.objects.filter(id=taskid).update(point=points + 1)
+
+#             # User will taken from the request
+#             data = form.cleaned_data
+#             link = data['link']
+#             if not link:
+#                 messages.error(request, "please provide evidence link")
+#                 return render(request, "management/daf/evidence_form.html", {"form": form})
+#             try:
+#                 a=requests.get(link)
+#                 if a.status_code == 200:
+#                     user_list=[]
+#                     check = TaskLinks.objects.filter(link=link)
+#                     if check.exists():
+#                         users = check.values_list('added_by__username')
+#                         for username in users:
+#                             user_list.append(username[0])
+#                         act_list = ['BOG', 'BI Sessions', 'DAF Sessions','Project',"web sessions"]
+#                         if activity_name in act_list:
+#                             if request.user.username in user_list:
+#                                 messages.error(request, "you have already uploaded this link")
+#                                 return render(request, "management/daf/evidence_form.html", {"form": form})
+#                             form.save()
+#                             return redirect("management:evidence")
+#                         else:
+#                             messages.error(request, "this link is already uploaded")
+#                             return render(request, "management/daf/evidence_form.html", {"form": form})
+
+#                     form.save()
+#                     return redirect("management:evidence")
+#                 else:
+#                     messages.error(request, "link is not valid,please check again")
+#                     return render(request, "management/daf/evidence_form.html", {"form": form})
+
+#             except:
+#                 messages.error(request, "Please check your link")
+#                 return render(request, "management/daf/evidence_form.html", {"form": form})
+
+#     else:
+#         form = EvidenceForm()
+
+#     return render(request, "management/daf/evidence_form.html", {"form": form})
 
 
 def evidence(request):

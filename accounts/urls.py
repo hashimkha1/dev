@@ -34,15 +34,11 @@ urlpatterns = [
     path('client/<int:pk>/update/', ClientUpdateView.as_view(), name='client-update'),
     path('client/<int:pk>/', ClientDetailView.as_view(), name='client-detail'),
     path('client/<int:pk>/delete/', ClientDeleteView.as_view(), name='client-delete'),
-    #path('applicants/', views.applicantlist, name='applicants'),
 
      #=============================EMPLOYEES VIEWS=====================================
     path('employees/', views.Employeelist, name='employees'),
-    # path('employee/<int:pk>/', employeeDetailView.as_view(), name='employee-detail'),
     #=============================CLIENTS WORK=====================================
     path('tracker/', TrackListView.as_view(), name='tracker-list'),
-    #path('user/<str:username>', UserTrackListView.as_view(), name='user-list'),
-    #path('user_tracker/', UserTrackListView.as_view(), name='single-list'),
     path('client/<str:username>/', views.usertracker, name='user-list'),
     path('track/new/', TrackCreateView.as_view(), name='tracker-create'),
     path('track/<int:pk>/', TrackDetailView.as_view(), name='tracker-detail'),
@@ -54,6 +50,4 @@ urlpatterns = [
 #=============================TESTING VIEWS=====================================
    path('createtestusers/', views.CustomUserCreateView.as_view(template_name="accounts/customeruser_form.html"),name='testusers'),
    path('testusers/', views.displayusers, name='testusers'),
-    # path('newcredential/', views.newcredential, name='account-newcredentials'),
-    # path('credential/update/<int:pk>/', CredentialUpdateView.as_view(template_name="accounts/admin/forms/credential_form.html"), name='credential-update'),
 ]

@@ -100,22 +100,18 @@ class RatingForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
         super(RatingForm, self).__init__(*args, **kwargs)
         self.fields["topic"].required = False
-        if self.request.user.is_superuser or self.request.user.is_employee:
-            self.fields["uploadlinkurl"].required = False
+        if self.request and self.request.user:
+            is_employee = self.request.user.is_employee
+            if is_employee:
+                self.fields["uploadlinkurl"].required = False
+            else:
+                self.fields["uploadlinkurl"].required = True
         else:
+            # handle the case when self.request is None or self.request.user is None
             self.fields["uploadlinkurl"].required = True
-
-    # def __init__(self, *args, **kwargs):
-    #     is_employee = kwargs.pop('is_employee', False)
-    #     super(RatingForm, self).__init__(*args, **kwargs)
-    #     self.fields["topic"].required = False
-    #     if is_employee:
-    #         self.fields["uploadlinkurl"].required = False
-    #     else:
-    #         self.fields["uploadlinkurl"].required = True
-
 
 
 class InterviewForm(forms.ModelForm):

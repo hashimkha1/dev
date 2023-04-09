@@ -1,11 +1,11 @@
 import random
 import string
+import boto3
 from datetime import date, timedelta
 from multiprocessing import context
 from django.views.decorators.csrf import csrf_exempt
-
-import boto3
-
+from django.shortcuts import render, redirect
+from django.db.models import Q
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -15,7 +15,6 @@ from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-from django.db.models import Q
 from .forms import (
     RatingForm,
     ReportingForm,
@@ -25,7 +24,7 @@ from .forms import (
 )
 from .models import UserProfile, Application,Rated, Reporting
 from management.models import Policy,Task
-from .utils import alteryx_list, dba_list, posts, tableau_list
+from .utils import alteryx_list, dba_list, posts, tableau_list,rewardpoints
 from datetime import datetime, timedelta
 from main.utils import path_values
 
@@ -200,7 +199,6 @@ def first_interview(request):
         "alteryx_list": alteryx_list,
         "dba_list": dba_list,
         "tableau_list": tableau_list,
-        # 'section': section
     }
 
     return render(
@@ -263,94 +261,54 @@ def policies(request):
     return render(request, "application/orientation/policies.html", context)
 
 # -------------------------rating Section-------------------------------------#
+
 def rate(request):
     if request.method == "POST":
-        form = RatingForm(request.POST, request.FILES)
-        if request.user.is_employee == True or request.user.is_applicant == True:
-            print("employee or applicant",request.user)
+        form = RatingForm(request.POST, request.FILES, request=request)
+        if request.user.is_employee or request.user.is_applicant:
             form.instance.employeename = request.user
-
-        print(form.is_valid())
+        
         if form.is_valid():
-            totalpoints = 0
-            try:
-                if request.POST["projectDescription"] == "on":
-                    totalpoints += 2
-            except:
-                pass
-            try:
-                if request.POST["requirementsAnalysis"] == "on":
-                    totalpoints += 3
-            except:
-                pass
-            try:
-                if request.POST["development"] == "on":
-                    totalpoints += 5
-            except:
-                pass
-            try:
-                if request.POST["testing"] == "on":
-                    totalpoints += 3
-            except:
-                pass
-            try:
-                if request.POST["deployment"] == "on":
-                    totalpoints += 2
-            except:
-                pass
-            
+            total_points=rewardpoints(form)
             form.instance.topic = "Other"
-            form.instance.totalpoints = totalpoints
+            form.instance.totalpoints = total_points
+            
             # Saving form data to rating table only if the user is applicant
-            if form.instance.employeename.is_applicant == True:
-                if not form.cleaned_data['uploadlinkurl']:
-                    return render(request, "application/orientation/rate.html", {"form": form, "applicant_error": "please provide the evidence link"})
+            if form.instance.employeename.is_applicant:
+                upload_link_url = form.cleaned_data.get('uploadlinkurl')
+                if not upload_link_url:
+                    return render(request, "application/orientation/rate.html", {"form": form, "applicant_error": "Please provide the evidence link"})
                 form.save()
-                userprof = UserProfile.objects.get(user__username=form.instance.employeename)
-                if userprof.section == "D":
+                user_profile = UserProfile.objects.get(user__username=form.instance.employeename)
+                if user_profile.section == "D":
                     return redirect("application:policies")
-                else:   
-                    return redirect("application:section_"+userprof.section.lower()+"")
+                else:
+                    return redirect("application:section_"+user_profile.section.lower()+"")
 
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
             try:
-                idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
-                    Q(activity_name="one on one sessions")
-                    | Q(activity_name="One on one sessions")
-                    | Q(activity_name="One On One Sessions")
-                    | Q(activity_name="One On One")
-                    | Q(activity_name="one on one"),
-                    employee__username=form.instance.employeename,
-                )[0]
-                point = point + totalpoints
-                if point >= mxpoint or point + 15 >= mxpoint:
-                    mxpoint += 15
-                
-                Task.objects.filter(
-                    Q(activity_name="one on one sessions")
-                    | Q(activity_name="One on one sessions")
-                    | Q(activity_name="One On One Sessions")
-                    | Q(activity_name="One On One")
-                    | Q(activity_name="one on one"),
-                    employee__username=form.instance.employeename,
-                ).update(point=point, mxpoint=mxpoint)
-                        
-                return redirect(
-                            "management:new_evidence", taskid=idval
-                        )
-            except:
-                print("under except")
-                form = RatingForm()
-                return render(request, "application/orientation/rate.html", {"form": form,"error":True})
+                task = Task.objects.filter(
+                    Q(activity_name__icontains="one on one")
+                ).get(employee__username=form.instance.employeename)
+                task.point += total_points
+                if task.point >= task.mxpoint or task.point + 15 >= task.mxpoint:
+                    task.mxpoint += 15
+                task.save()
+                return redirect("management:new_evidence", taskid=task.id)
+            except Task.DoesNotExist:
+                print("Task does not exist")
         
     else:
-        form = RatingForm()
+        form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
+
+
+
 
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
-        if request.user.is_employee == True or request.user.is_applicant == True:
+        if request.user.is_employee or request.user.is_applicant:
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
 
@@ -423,11 +381,11 @@ def ratewid(request,pk):
             except:
                 form = RatingForm()
                 return render(request, "application/orientation/rate.html", {"form": form,"error":True})
-        
-            
     else:
         form = RatingForm()
     return render(request, "application/orientation/rate.html", {"form": form})
+
+
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")

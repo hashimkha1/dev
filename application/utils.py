@@ -116,3 +116,16 @@ TaskInfos = [
         "Lead": "Scrum Master",
     },
 ]
+def rewardpoints(form):
+    total_points = 0
+    if form.cleaned_data.get('projectDescription'):
+        total_points += 2
+    if form.cleaned_data.get('requirementsAnalysis'):
+        total_points += 3
+    if form.cleaned_data.get('development'):
+        total_points += 5
+    if form.cleaned_data.get('testing'):
+        total_points += 3
+    if form.cleaned_data.get('deployment'):
+        total_points += 2
+    return total_points
