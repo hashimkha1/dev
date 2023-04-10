@@ -355,7 +355,7 @@ def pay(request, service=None):
             "service": True,
             "cost": cost,
         }
-        return render(request, "finance/DYC/pay.html", context)
+        return render(request, "finance/DYC/pay2.html", context)
 
     if service:
         payment_info = get_object_or_404(Service, pk=service) 
