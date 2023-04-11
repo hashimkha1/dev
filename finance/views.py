@@ -230,7 +230,7 @@ def newcontract(request, *args, **kwargs):
 			'job_support_data': client_data,
 			'student_data': client_data,
 			'contract_date':contract_date,
-			'default_fee':default_fee
+			'payments':default_fee
 			}
 	if client_data.category == 3 and client_data.sub_category == 1 or request.user.is_superuser:
 		return render(request, 'management/contracts/supportcontract_form.html',context)
@@ -342,26 +342,15 @@ def payment(request,method):
 
 def pay(request, service=None):
     if not request.user.is_authenticated:
-        return redirect(reverse('login'))
-
+        return redirect(reverse('accounts:account-login'))
     contract_url = reverse('finance:newcontract', args=[request.user.username])
-    if request.user.sub_category == 7:
-        cost = DYCpay()
-        context = {
-            "title": "PAYMENT",
-            # "payments": service,
-            "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
-            "link": contract_url,
-            "service": True,
-            "cost": cost,
-        }
-        return render(request, "finance/DYC/pay2.html", context)
-
-    if service:
-        payment_info = get_object_or_404(Service, pk=service) 
-    else:
-        payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
-	
+    try:
+        if service:
+            payment_info = get_object_or_404(Service, pk=service) 
+        else:
+            payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
+    except:
+	    return redirect('finance:newcontract',request.user)
     context = {
             "title": "PAYMENT",
             "payments": payment_info,
@@ -369,8 +358,11 @@ def pay(request, service=None):
             "link": contract_url,
             "service": True,
         }
-    return render(request, "finance/payments/pay.html", context)
 
+    if request.user.sub_category == 7:
+        return render(request, "finance/DYC/pay2.html", context)
+    else:
+        return render(request, "finance/payments/pay.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()

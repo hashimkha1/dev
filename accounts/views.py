@@ -21,11 +21,12 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser,CustomUser, Tracker, CredentialCategory, Credential, Department
-from .utils import agreement_data,employees
+from .utils import agreement_data,employees,compute_default_fee
 from main.filters import CredentialFilter,UserFilter
 from management.models import Task
 from application.models import UserProfile
 from finance.models import Default_Payment_Fees,Payment_History
+from finance.utils import DYCDefaultPayments
 from mail.custom_email import send_email
 import string, random
 
@@ -50,25 +51,9 @@ def join(request):
             form = UserForm()
             return redirect("/password-reset")
         else:
+            contract_data,contract_date=agreement_data(request)
+            dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
             if request.POST.get("category") == "3":
-                student_data = {}
-                student_data["first_name"] = request.POST.get("first_name")
-                student_data["last_name"] = request.POST.get("last_name")
-                student_data["address"] = request.POST.get("address")
-                student_data["category"] = request.POST.get("category")
-                student_data["sub_category"] = request.POST.get("sub_category")
-                student_data["username"] = request.POST.get("username")
-                student_data["password1"] = request.POST.get("password1")
-                student_data["password2"] = request.POST.get("password2")
-                student_data["email"] = request.POST.get("email")
-                student_data["phone"] = request.POST.get("phone")
-                student_data["gender"] = request.POST.get("gender")
-                student_data["city"] = request.POST.get("city")
-                student_data["state"] = request.POST.get("state")
-                student_data["country"] = request.POST.get("country")
-                student_data["resume_file"] = request.POST.get("resume_file")
-                today = date.today()
-                contract_date = today.strftime("%d %B, %Y")
                 check_default_fee = Default_Payment_Fees.objects.all()
                 if check_default_fee:
                     # default_fee = Default_Payment_Fees.objects.get(id=1)
@@ -91,9 +76,9 @@ def join(request):
                         request,
                         "management/contracts/supportcontract_form.html",
                         {
-                            "job_support_data": student_data,
+                            "job_support_data": contract_data,
                             "contract_date": contract_date,
-                            "default_fee": default_fee,
+                            "payment_data": default_fee,
                         },
                     )
                 if (
@@ -104,9 +89,9 @@ def join(request):
                         request,
                         "management/contracts/trainingcontract_form.html",
                         {
-                            "student_data": student_data,
+                            "contract_data": contract_data,
                             "contract_date": contract_date,
-                            "default_fee": default_fee,
+                            "payment_data": default_fee,
                         },
                     )
                 if (
@@ -114,10 +99,13 @@ def join(request):
                 ):
                     return render(
                         request,
-                        "management/contracts/trainingcontract_form.html",
+                        "management/contracts/dyc_contracts/student_contract.html",
                         {
-                            "student_data": student_data,
+                            "contract_data": contract_data,
                             "contract_date": contract_date,
+                            "dyc_total_amount": dyc_total_amount,
+                            "contract_date": dyc_down_payment,
+                            "early_registration_bonus": early_registration_bonus,
                             "default_fee": default_fee,
                         },
                     )
@@ -136,18 +124,183 @@ def join(request):
                     form.instance.is_applicant = True
 
                 form.save()
-
-                username = form.cleaned_data.get('username')
-                category = form.cleaned_data.get('category')
-                gender = form.cleaned_data.get('gender')
-                country = form.cleaned_data.get('country')
+                # username = form.cleaned_data.get('username')
+                # category = form.cleaned_data.get('category')
+                # gender = form.cleaned_data.get('gender')
+                # country = form.cleaned_data.get('country')
                 # messages.success(request, f'Account created for {username}!')
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"
         form = UserForm()
         print(msg)
-    return render(request, "accounts/registration/DYS/register.html", {"form": form})
+    return render(request, "accounts/registration/coda/join.html", {"form": form})
+
+
+# def join(request):
+#     if request.method == "POST":
+#         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
+#         if len(previous_user) > 0:
+#             messages.success(request, f'User already exist with this email')
+#             form = UserForm()
+#             return redirect("/password-reset")
+#         else:
+#             if request.POST.get("category") == "3":
+#                 student_data = {}
+#                 student_data["first_name"] = request.POST.get("first_name")
+#                 student_data["last_name"] = request.POST.get("last_name")
+#                 student_data["address"] = request.POST.get("address")
+#                 student_data["category"] = request.POST.get("category")
+#                 student_data["sub_category"] = request.POST.get("sub_category")
+#                 student_data["username"] = request.POST.get("username")
+#                 student_data["password1"] = request.POST.get("password1")
+#                 student_data["password2"] = request.POST.get("password2")
+#                 student_data["email"] = request.POST.get("email")
+#                 student_data["phone"] = request.POST.get("phone")
+#                 student_data["gender"] = request.POST.get("gender")
+#                 student_data["city"] = request.POST.get("city")
+#                 student_data["state"] = request.POST.get("state")
+#                 student_data["country"] = request.POST.get("country")
+#                 student_data["resume_file"] = request.POST.get("resume_file")
+#                 today = date.today()
+#                 contract_date = today.strftime("%d %B, %Y")
+#                 check_default_fee = Default_Payment_Fees.objects.all()
+#                 if check_default_fee:
+#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
+#                     default_fee = Default_Payment_Fees.objects.all().first()
+#                 else:
+#                     default_payment_fees = Default_Payment_Fees(
+#                         job_down_payment_per_month=1000,
+#                         job_plan_hours_per_month=40,
+#                         student_down_payment_per_month=500,
+#                         student_bonus_payment_per_month=100,
+#                     )
+#                     default_payment_fees.save()
+#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
+#                     default_fee = Default_Payment_Fees.objects.all().first()
+#                 if (
+#                     request.POST.get("category") == "3"
+#                     and request.POST.get("sub_category") == "1"
+#                 ):
+#                     return render(
+#                         request,
+#                         "management/contracts/supportcontract_form.html",
+#                         {
+#                             "job_support_data": student_data,
+#                             "contract_date": contract_date,
+#                             "default_fee": default_fee,
+#                         },
+#                     )
+#                 if (
+#                     request.POST.get("category") == "3"
+#                     and request.POST.get("sub_category") == "2"
+#                 ):
+#                     return render(
+#                         request,
+#                         "management/contracts/trainingcontract_form.html",
+#                         {
+#                             "student_data": student_data,
+#                             "contract_date": contract_date,
+#                             "default_fee": default_fee,
+#                         },
+#                     )
+#                 if (
+#                     request.POST.get("category") == "4"
+#                 ):
+#                     dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
+                    
+#                     return render(
+#                         request,
+#                         "management/contracts/dyc_contracts/student_contract.html",
+#                         {
+#                             "student_data": student_data,
+#                             "contract_date": contract_date,
+#                             "dyc_total_amount": dyc_total_amount,
+#                             "contract_date": dyc_down_payment,
+#                             "default_fee": default_fee,
+#                         },
+#                     )
+#             else:
+#                 form = UserForm(request.POST, request.FILES)
+#                 if form.is_valid():
+#                     print("category", form.cleaned_data.get("category"))
+
+#             if form.is_valid():
+#                 # print("category", form.cleaned_data.get("category"))
+#                 if form.cleaned_data.get("category") == 2:
+#                     form.instance.is_employee = True
+#                 elif form.cleaned_data.get("category") == 3:
+#                     form.instance.is_client = True
+#                 else:
+#                     form.instance.is_applicant = True
+
+#                 form.save()
+
+#                 username = form.cleaned_data.get('username')
+#                 category = form.cleaned_data.get('category')
+#                 gender = form.cleaned_data.get('gender')
+#                 country = form.cleaned_data.get('country')
+#                 # messages.success(request, f'Account created for {username}!')
+#                 return redirect('accounts:account-login')
+#     else:
+#         msg = "error validating form"
+#         form = UserForm()
+#         print(msg)
+#     return render(request, "accounts/registration/DYS/register.html", {"form": form})
+
+
+
+# ---------------ACCOUNTS VIEWS----------------------
+
+# def join(request):
+#     if request.method == "POST":
+#         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
+#         if len(previous_user) > 0:
+#             messages.success(request, f'User already exist with this email')
+#             form = UserForm()
+#             return redirect("/password-reset")
+#         else:
+#             category=request.POST.get("category")
+#             subcategory=request.POST.get("sub_category")
+#             user=request.POST.get("username")
+#             contract_data,contract_date=agreement_data(request)
+#             default_amounts = Default_Payment_Fees.objects.all()
+#             default_fee=compute_default_fee(category, default_amounts, Default_Payment_Fees)
+#             dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
+#             context={
+#                         "contract_data": contract_data,
+#                         "contract_date": contract_date,
+#                         "payment_data": default_fee,
+#                         "signature": user,
+#                         "dyc_total_amount": dyc_total_amount,
+#                         "dyc_down_payment": dyc_down_payment,
+#                         "early_registration_bonus": early_registration_bonus,
+#                     }
+#             print("user==============>",user)
+#             if (category == "3" and subcategory == "1"):
+#                 return render(request,"management/contracts/supportcontract_form.html",context)
+#             elif (category == "3" and subcategory == "2"):
+#                 return render(request,"management/contracts/trainingcontract_form.html",context)
+#             elif (category == "4"):
+#                 print(user)
+#                 return render(request,"management/contracts/dyc_contracts/student_contract.html",context)
+#             else:
+#                 form = UserForm(request.POST, request.FILES)
+#                 if form.is_valid():
+#                     if form.cleaned_data.get("category") == 2:
+#                         form.instance.is_employee = True
+#                     elif form.cleaned_data.get("category") == 3:
+#                         form.instance.is_client = True
+#                     else:
+#                         form.instance.is_applicant = True
+
+#                     form.save()
+#                     return redirect('accounts:account-login')
+#     else:
+#         msg = "error validating form"
+#         form = UserForm()
+#     # return render(request, "accounts/registration/DYS/register.html", {"form": form})
+#     return render(request, "accounts/registration/coda/join.html", {"form": form})
 
 
 def CreateProfile():

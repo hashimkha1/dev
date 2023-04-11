@@ -122,29 +122,20 @@ TEMPLATES = [
 def dba_values():
     if os.environ.get('ENVIRONMENT') == 'production':
         host = os.environ.get('HEROKU_PROD_HOST')
-        dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
-        user = os.environ.get('HEROKU_PROD_USER') #'postgres',
-        password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
+        dbname = os.environ.get('HEROKU_PROD_NAME')
+        user = os.environ.get('HEROKU_PROD_USER')
+        password = os.environ.get('HEROKU_PROD_PASS')
     elif os.environ.get('ENVIRONMENT') == 'testing':
         # In Heroku/Postgres it is Heroku_UAT
-        host = os.environ.get('HEROKU_DEV_HOST')
-        dbname = os.environ.get('HEROKU_DEV_NAME')
-        user = os.environ.get('HEROKU_DEV_USER')
-        password =os.environ.get('HEROKU_DEV_PASS')
+        host = '' #os.environ.get('HEROKU_DEV_HOST')
+        dbname = '' #os.environ.get('HEROKU_DEV_NAME')
+        user = '' #os.environ.get('HEROKU_DEV_USER')
+        password = '' #os.environ.get('HEROKU_DEV_PASS')
     else:
-        # host = os.environ.get('HEROKU_PROD_HOST')
-        # dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
-        # user = os.environ.get('HEROKU_PROD_USER') #'postgres',
-        # password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
-        host = os.environ.get('HEROKU_DEV_HOST')
-        dbname = os.environ.get('HEROKU_DEV_NAME')
-        user = os.environ.get('HEROKU_DEV_USER')
-        password =os.environ.get('HEROKU_DEV_PASS')
-        # host = 'localhost'
-        # dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
-        # user = os.environ.get('POSTGRESDB_USER') #'postgres',
-        # password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
-    # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
+        host = 'localhost'
+        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
@@ -300,102 +291,15 @@ CELERYBEAT_SCHEDULE = {
 
 #==================PAYMENT SETTINGS=================
 # Testing Payment methods
-# def payment_details(request):
-#     # ================MPESA/CASHAPP/VENMO========================
-#     if request.user.category == 4 and request.user.sub_category == 7:
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         # phone_number = os.environ.get('DYC_PHONE_NUMBER')
-#         # email_info = os.environ.get('EMAIL_DYC_USER') #'Coda_analytics',
-#         # cashapp = os.environ.get('DYC_CASHAPP') #'postgres',
-#         # venmo= os.environ.get('DYC_VENMO') #'postgres',
-#         # stan_account_no = os.environ.get('DYC_STANBIC_ACCOUNT_NO') #'postgres',
-#         # account_no = os.environ.get('DYC_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_info,cashapp,venmo,
-#                 stan_account_no,account_no)
-
-    
-#     elif request.user.category == 4 and request.user.sub_category == 6 :
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         # phone_number = os.environ.get('PHONE_NUMBER')
-#         # email_info = os.environ.get('EMAIL_DCK_USER') #'Coda_analytics',
-#         # cashapp = os.environ.get('CASHAPP') #'postgres',
-#         # venmo= os.environ.get('VENMO') #'postgres',
-#         # stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         # account_no = os.environ.get('DCK_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_info,cashapp,venmo,
-#                 stan_account_no,account_no)
-#     else:
-#         phone_number = os.environ.get('PHONE_NUMBER')
-#         email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-#         cashapp = os.environ.get('CASHAPP') #'postgres',
-#         venmo= os.environ.get('VENMO') #'postgres',
-#         stan_account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-#         account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-#         return (phone_number,email_info,
-#                 email_info,cashapp,venmo,
-#                 stan_account_no,account_no)
-
 def payment_details(request):
     # ================MPESA/CASHAPP/VENMO========================
-    phone_number = os.environ.get('MPESA_PHONE_NUMBER')
-    email_info = os.environ.get('EMAIL_INFO_USER') #'Coda_analytics',
-    cashapp = os.environ.get('CASHAPP') #'postgres',
-    venmo= os.environ.get('VENMO') #'postgres',
-    account_no = os.environ.get('STANBIC_ACCOUNT_NO') #'postgres',
-    # account_no = os.environ.get('CODA_ACCOUNT_NO') #'postgres',
-    # print("phone_number===>",phone_number)
-    # print("email_info====>",email_info)
-    # print("cashapp===>",cashapp)
-    # print("venmo===>",venmo)
-    # print("account_no===>",account_no)
+    phone_number =os.environ.get('MPESA_PHONE_NUMBER')
+    email_info =os.environ.get('EMAIL_INFO_USER')
+    cashapp = os.environ.get('CASHAPP'),
+    venmo= os.environ.get('VENMO'),
+    account_no = os.environ.get('STANBIC_ACCOUNT_NO'),
+    # print(phone_number,email_info,cashapp,venmo,account_no)
     return (phone_number,email_info,cashapp,venmo,account_no)
-
-
-
-# def payment_details(request):
-#     payment_info = {
-#         'phone_number': os.environ.get('MPESA_PHONE_NUMBER'),
-#         'email_info': os.environ.get('EMAIL_INFO_USER'),
-#         'cashapp': os.environ.get('CASHAPP'),
-#         'venmo': os.environ.get('VENMO'),
-#         'coda_account_no': os.environ.get('STANBIC_ACCOUNT_NO')
-#     }
-
-    # if request.user.category == 4 and request.user.sub_category == 7:
-    #     # update payment_info with DYC payment details
-    #     payment_info.update({
-    #         'mpesa_phone_number': os.environ.get('DYC_MPESA_PHONE_NUMBER'),
-    #         'user_email': os.environ.get('DYC_USER_EMAIL'),
-    #         'cashapp': os.environ.get('DYC_CASHAPP'),
-    #         'venmo': os.environ.get('DYC_VENMO'),
-    #         'stanbic_account_no': os.environ.get('DYC_STANBIC_ACCOUNT_NO'),
-    #         'coda_account_no': os.environ.get('DYC_CODA_ACCOUNT_NO')
-    #     })
-
-    # elif request.user.category == 4 and request.user.sub_category == 6:
-    #     # update payment_info with DCK payment details
-    #     payment_info.update({
-    #         'mpesa_phone_number': os.environ.get('DCK_MPESA_PHONE_NUMBER'),
-    #         'user_email': os.environ.get('DCK_USER_EMAIL'),
-    #         'cashapp': os.environ.get('DCK_CASHAPP'),
-    #         'venmo': os.environ.get('DCK_VENMO'),
-    #         'stanbic_account_no': os.environ.get('DCK_STANBIC_ACCOUNT_NO'),
-    #         'coda_account_no': os.environ.get('DCK_CODA_ACCOUNT_NO')
-    #     })
-
-    # return payment_info
 
 
 if os.environ.get('ENVIRONMENT') == 'production':

@@ -6,7 +6,6 @@ from django.urls import path, reverse
 from accounts.models import CustomerUser, TaskGroups
 from management.models import (
     Requirement,
-    Inflow,
     Policy,
     TaskCategory,
     Task,
@@ -92,7 +91,6 @@ class TrainingAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Training, TrainingAdmin)
-admin.site.register(Inflow)
 admin.site.register(Policy)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskLinks)

@@ -147,9 +147,24 @@ def DYCpay():
         "student": {'cost': 100, 'message': 'if in error kindly go back'},
         "business": {'cost': 200, 'message': 'if in error kindly go back'},
         "greencard": {'cost': 300, 'message': 'if in error kindly go back'},
+        
     }
     for usertype, values in context_dict.items():
         if usertype=='student':
             cost= values["cost"]
     return cost
     
+# ==================================================
+def DYCDefaultPayments():
+    context_dict = {
+        "student": {'total_amount': 5000, 'down_payment': 500,'early_registration_bonus':100,},
+        "business": {'total_amount': 10000, 'down_payment': 500,'early_registration_bonus':100,},
+        "greencard": {'total_amount': 20000, 'down_payment': 500,'early_registration_bonus':100,},
+    }
+    for usertype, values in context_dict.items():
+        if usertype=='student':
+            total_amount= values["total_amount"]
+            down_payment= values["down_payment"]
+            early_registration_bonus= values["early_registration_bonus"]
+            print(total_amount,down_payment,early_registration_bonus)
+    return total_amount,down_payment,early_registration_bonus

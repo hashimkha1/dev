@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import date
 from accounts.models import CustomerUser
-
+from finance.utils import DYCDefaultPayments
 
 def agreement_data(request):
     contract_data = {}
@@ -27,6 +27,46 @@ def agreement_data(request):
     contract_date = today.strftime("%d %B, %Y")
     return contract_data,contract_date
 
+def compute_default_fee(category, default_amounts, Default_Payment_Fees):
+    if default_amounts:
+        default_fee = default_amounts.first()
+    else:
+        if category == "4" : #and subcategory == "1":
+            default_fee = Default_Payment_Fees.objects.create(
+                job_down_payment_per_month=1000,
+                job_plan_hours_per_month=40,
+                student_down_payment_per_month=500,
+                student_bonus_payment_per_month=100,
+            )
+        else:
+            default_fee = Default_Payment_Fees.objects.create(
+                job_down_payment_per_month=1000,
+                job_plan_hours_per_month=40,
+                student_down_payment_per_month=500,
+                student_bonus_payment_per_month=100,
+            )
+    return default_fee
+
+# ============================FDYC===========================================
+def dyc_compute_default_fee(category,subcategory,dyc_default_amounts, Default_Payment_Fees):
+    if dyc_default_amounts:
+        dyc_default_fee = dyc_default_amounts.first()
+    else:
+        # if category == "4" and subcategory == "7":
+        #     default_fee = Default_Payment_Fees.objects.create(
+        #         job_down_payment_per_month=1000,
+        #         job_plan_hours_per_month=40,
+        #         student_down_payment_per_month=500,
+        #         student_bonus_payment_per_month=100,
+        #     )
+        # else:
+        default_fee = Default_Payment_Fees.objects.create(
+            job_down_payment_per_month=1000,
+            job_plan_hours_per_month=40,
+            student_down_payment_per_month=500,
+            student_bonus_payment_per_month=100,
+        )
+    return default_fee
 
 
 # ================================USERS========================================
