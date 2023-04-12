@@ -229,6 +229,7 @@ def newcontract(request, *args, **kwargs):
 	context={
 			'job_support_data': client_data,
 			'student_data': client_data,
+			'contract_data': client_data,
 			'contract_date':contract_date,
 			'payments':default_fee
 			}
@@ -237,7 +238,7 @@ def newcontract(request, *args, **kwargs):
 	if client_data.category == 3 and client_data.sub_category == 2 or request.user.is_superuser:
 		return render(request, 'management/contracts/trainingcontract_form.html',context)
 	if client_data.category == 4 or request.user.is_superuser:
-		return render(request, 'management/contracts/generalcontract_form.html',context)
+		return render(request, 'management/contracts/dyc_contracts/student_contract.html',context)
 	else:
 		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
 		context={"title": "CONTRACT", 
