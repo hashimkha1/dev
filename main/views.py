@@ -599,22 +599,6 @@ def market(request):
 
 
 # -----------------------------Documents---------------------------------
-"""
-def codadocuments(request):
-    codadocuments=Codadoc.objects.all().order_by('-date_uploaded')
-    return render(request, 'main/documentation.html', {'codadocuments': codadocuments})
-
-
-def doc(request):
-    if request.method== "POST":
-        form=CodadocumentsForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('main-documents')
-    else:
-        form=CodadocumentsForm()
-    return render(request, 'main/doc.html',{'form':form})
-"""
 
 # @shared_task(name="advertisement")
 # def advertisement():
