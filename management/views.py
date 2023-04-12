@@ -670,7 +670,6 @@ def task_payslip(request, employee=None, *args, **kwargs):
     for task in tasks:
         month_set.add(str(task.submission.month) + str(task.submission.year))
 
-    print(month_set)
     total_lap_saving = len(month_set) * lap_saving
     if total_lap_saving >= 20000:
         total_lap_saving = 20000
