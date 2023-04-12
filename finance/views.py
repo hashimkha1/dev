@@ -40,7 +40,7 @@ from main.utils import countdown_in_month
 User = get_user_model()
 
 # payment details
-(phone_number,email_info,cashapp,venmo,account_no)=payment_details(request)
+phone_number,email_info,cashapp,venmo,account_no=payment_details(request)
 
 
 #Time details
@@ -336,9 +336,9 @@ def payment(request,method):
                     subject=subject, html_template=url, 
 		    		context=context
                     )
-        return render(request, "main/messages/message.html",context)
+        return render(request, "email/payment/payment_method.html",context)
     except:
-        return render(request, "main/errors/500.html",context)
+        return render(request, "email/payment/payment_method.html",context)
     
 
 def pay(request, service=None):
