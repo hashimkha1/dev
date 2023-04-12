@@ -11,7 +11,22 @@
 <div class="data_training text-center">
   <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
   <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p>
-<div class="container-fluid mr-auto">
+
+    <div class="container-fluid mr-auto">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form.month }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.year }}
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-md btn-info">Filter</button>
+                </div>
+            </div>
+        </form>
       <div class="row text-center">
                     <div class="col-md-2" id="bada">
                       <div class="card">

@@ -273,3 +273,28 @@ class EmployeeContractForm(forms.ModelForm):
         model = UserProfile
         fields = ('national_id_no', 'id_file', 'emergency_name', 'emergency_address', 'emergency_citizenship', 'emergency_email', 'emergency_phone', 'emergency_national_id_no')
 
+
+class MonthForm(forms.Form):
+    MONTHS = (
+        ('0', 'Month'),
+        ('1', 'January'),
+        ('2', 'February'),
+        ('3', 'March'),
+        ('4', 'April'),
+        ('5', 'May'),
+        ('6', 'June'),
+        ('7', 'July'),
+        ('8', 'August'),
+        ('9', 'September'),
+        ('10', 'October'),
+        ('11', 'November'),
+        ('12', 'December'),
+    )
+
+    YEAR = (
+        ('0', 'Year'),
+        ('2022', '2022'),
+        ('2023', '2023'),
+    )
+    month = forms.ChoiceField(choices=MONTHS)
+    year = forms.ChoiceField(choices=YEAR)
