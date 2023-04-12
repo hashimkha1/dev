@@ -20,6 +20,7 @@ from management.forms import (
     RequirementForm,
     EvidenceForm,
     EmployeeContractForm,
+    MonthForm,
 )
 from django.views.generic import (
     CreateView,
@@ -581,23 +582,43 @@ class TaskHistoryView(ListView):
 #     myfilter=TaskHistoryFilter(request.GET,queryset=queryset)
 #     template_name = "management/daf/taskhistory.html"
 
+
 def historytasks(request):
     # print('======================================')
     # print('Employees',employees)
     # print('Active_Employees',activeemployees)
     # print('======================================')
-    historytasks=TaskHistory.objects.filter(employee__is_employee=True,employee__is_active=True)
+    historytask=TaskHistory.objects.filter(employee__is_employee=True,employee__is_active=True)
     # historytasks=TaskHistory.objects.all().order_by('-submission')
-    myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
+    myfilter=TaskHistoryFilter(request.GET,queryset=historytask)
     context={
-        "historytasks":historytasks,
+        "historytasks":historytask,
         "TaskHistoryFilter":myfilter
     }
     return render(request,"management/daf/taskhistory.html", context)
 
+
 def task_payslip(request, employee=None, *args, **kwargs):
+    date = datetime.now()
+    selected_month = date.month
+    selected_year = date.year
+
+    if selected_month == 1:
+        selected_month = 12
+        selected_year -= selected_year
+    else:
+        selected_month -= 1
+
+    if request.method == "POST":
+        form = MonthForm(request.POST)
+        if form.is_valid():
+            selected_month = int(form.cleaned_data['month'])
+            selected_year = int(form.cleaned_data['year'])
+    else:
+        form = MonthForm()
+
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    today,year,deadline_date,month,last_month,*_=paytime()
+    today,year, deadline_date,month,last_month,*_=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     num_sessions = sessions.count()
@@ -612,7 +633,8 @@ def task_payslip(request, employee=None, *args, **kwargs):
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
+
+    tasks =TaskHistory.objects.filter(employee=employee,submission__month=selected_month,submission__year=selected_year)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
@@ -623,6 +645,14 @@ def task_payslip(request, employee=None, *args, **kwargs):
     total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
+
+    # Deductions & Bonus
+    laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
+    total_deduction, sub_bonus = additional_earnings(user_data, tasks, total_pay, payslip_config)
+    food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment, total_deductions = deductions(
+        user_data, payslip_config, total_pay)
+    loan = Decimal(total_pay) * Decimal("0.2")
+
     # Net Pay
     total_bonus = sub_bonus + laptop_bonus
     total_value=total_pay + total_bonus
@@ -630,18 +660,47 @@ def task_payslip(request, employee=None, *args, **kwargs):
         net = total_value - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
+    bonus_points_ammount, latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
     net = total_value - total_deduction
-    # print('======================================')
-    # print('total_bonus=======>',total_bonus)
-    # print('total_deduction=======>',total_deduction)
-    # print('total_pay=======>',total_pay)
-    # print('total_value=====>',total_value)
-    # print('net=====>',net)
-    # print('======================================')
+
+    # Total LS
+    tasks = TaskHistory.objects.filter(employee=employee, submission__month__lte=selected_month)
+    month_set = set()
+
+    for task in tasks:
+        month_set.add(str(task.submission.month) + str(task.submission.year))
+
+    print(month_set)
+    total_lap_saving = len(month_set) * lap_saving
+    if total_lap_saving >= 20000:
+        total_lap_saving = 20000
+        lap_saving = 0
+
+
+    # Retirement Yearly Package
+    tasks = TaskHistory.objects.filter(employee=employee, submission__month__lte=selected_month, submission__year=selected_year)
+    month_year = {}
+    for task in tasks:
+        month_year[str(task.submission.month) + str(task.submission.year)] = {'month': str(task.submission.month), 'year': str(task.submission.year)}
+
+    this_year_point = 0
+    for month_year_obj in month_year.values():
+        _tasks = TaskHistory.objects.filter(employee=employee, submission__month=month_year_obj['month'], submission__year=month_year_obj['year'])
+        _total_pay = 0
+        for task in tasks:
+            _total_pay = total_pay + task.get_pay
+
+        _bonus_points_ammount, _latenight_Bonus, _yearly, _offpay, _EOM, _EOQ, _EOY, _sub_bonus = bonus(_tasks, _total_pay, payslip_config)
+
+        this_year_point += (_bonus_points_ammount + num_sessions)
+
     context = {
+        "selected_month":selected_month,
+        "selected_year":selected_year,
+        "form": form,
         # deductions
         "laptop_saving": lap_saving,
+        "total_laptop_saving": total_lap_saving,
         "computer_maintenance": computer_maintenance,
         "food_accomodation": food_accomodation,
         "health": health,
@@ -653,7 +712,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         # "pointsearning": bonus_points_ammount,
         "pointsearning": bonus_points_ammount + num_sessions,
         "holidaypay": offpay,
-        "yearly": yearly,
+        "yearly": 12000 + this_year_point,
         # General
         "tasks": tasks,
         "deadline_date": deadline_date,
@@ -661,6 +720,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "total_pay": total_pay,
         "total_value": total_value,
         "net": net,
+        "employee": employee,
     }
 
     if request.user == employee or request.user.is_superuser:
@@ -764,11 +824,29 @@ def usertask(request, user=None, *args, **kwargs):
 
 
 def usertaskhistory(request, user=None,  *args, **kwargs):
+    date = datetime.now()
+    month = date.month
+    year = date.year
+
+    if month == 1:
+        month = 12
+        year -= year
+    else:
+        month -= 1
+
+    if request.method == "POST":
+        form = MonthForm(request.POST)
+        if form.is_valid():
+            month = int(form.cleaned_data['month'])
+            year = int(form.cleaned_data['year'])
+    else:
+        form = MonthForm()
+
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     userprofile = UserProfile.objects.get(user_id=employee)
     LBLS=LBandLS.objects.filter(user=employee)
-    tasks =TaskHistory.objects.filter(employee=employee,submission__month=paytime()[3],submission__year=paytime()[1])
+    tasks =TaskHistory.objects.filter(employee=employee, submission__month=str(month+1), submission__year=str(year))
     if tasks is None:
         message=f'Hi {request.user}, you do not have history information for last month,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
@@ -794,6 +872,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         net = 0.00
     # ==================PRINT=================
     context = {
+        'form': form,
         'employee':employee,
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
@@ -840,6 +919,7 @@ def normalize_period(year:int, month:int) -> str:
         month = '0' + str(month)
 
     return str(year) + '-' + str(month)
+
 
 def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
     # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
