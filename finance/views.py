@@ -361,7 +361,7 @@ def pay(request, service=None):
         }
 
     if request.user.sub_category == 7:
-        return render(request, "finance/DYC/pay2.html", context)
+        return render(request, "finance/DYC/pay.html", context)
     else:
         return render(request, "finance/payments/pay.html", context)
 

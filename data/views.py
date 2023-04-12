@@ -259,6 +259,7 @@ class RoleListView(LoginRequiredMixin, ListView):
     queryset = JobRole.objects.all()
     template_name = "data/interview/interview_progress/interview_progress.html"
     success_url = "/data/project_story"
+
 class InterviewCreateView(LoginRequiredMixin, CreateView):
     model = Interviews
     form_class = InterviewForm
@@ -268,8 +269,8 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
         form.instance.client = self.request.user
         # form.instance.question_type = "testing"
         return super().form_valid(form)
+    
 @method_decorator(login_required, name="dispatch")
-
 class InterviewListView(ListView):
     queryset = Interviews.objects.all()
     # template_name = "data/interview/iuploads.html"
