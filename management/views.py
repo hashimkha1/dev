@@ -176,32 +176,32 @@ def read_employee_contract(request):
 def confirm_employee_contract(request):
     user = UserProfile.objects.get(user=request.user)
 
-    if user.national_id_no:
-        user = request.user
-        user.is_employee_contract_signed = True
-        user.save()
+    # if user.national_id_no:
+    user = request.user
+    user.is_employee_contract_signed = True
+    user.save()
 
+    try:
+        group = TaskGroups.objects.all().first()
+        cat = Tag.objects.all().first()
         try:
-            group = TaskGroups.objects.all().first()
-            cat = Tag.objects.all().first()
-            try:
-                max_point = Task.objects.filter(groupname=group, category=cat).first()
-                max_point = max_point.mxpoint
-            except:
-                max_point = 0
-
-            create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+            max_point = Task.objects.filter(groupname=group, category=cat).first()
+            max_point = max_point.mxpoint
         except:
-            print("Something wrong in task creation")
+            max_point = 0
 
-        return(redirect('accounts:account-profile'))
-    else:
-        return redirect("management:employee_contract")
+        create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+    except:
+        print("Something wrong in task creation")
+
+    return(redirect('accounts:account-profile'))
+    # else:
+    #     return redirect("management:employee_contract")
 
 
 def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
