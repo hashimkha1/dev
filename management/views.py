@@ -84,7 +84,7 @@ def dckdashboard(request):
     return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
 
 
-# ================================DEPARTMENT SECTION================================
+# ================================ DEPARTMENT SECTION ================================
 def department(request):
     departments = Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html", {'departments': departments})
@@ -128,7 +128,7 @@ def contract(request):
 
 
 def employee_contract(request):
-
+    submitted = False
     if request.user.is_employee_contract_signed:
         return (redirect('accounts:account-profile'))
     else:
@@ -151,21 +151,26 @@ def employee_contract(request):
                 profile.emergency_email = request.POST['emergency_email']
                 profile.emergency_national_id_no = request.POST['emergency_national_id_no']
                 profile.save()
+                submitted = True
 
         form = EmployeeContractForm()
         context['user'] = request.user
         context['profile'] = profile
         context['form'] = form
-        return render(request, "management/contracts/employee_contract.html", {'context': context})
+
+        if submitted:
+            return redirect("management:employee_contract")
+        else:
+            return render(request, "management/contracts/employee_contract.html", {'context': context})
 
 
 def read_employee_contract(request):
     user = UserProfile.objects.get(user=request.user)
 
-    if user.national_id_no:
-        return render(request, "management/contracts/read_employee_contract.html")
-    else:
-        return redirect("management:employee_contract")
+    # if user.national_id_no:
+    return render(request, "management/contracts/read_employee_contract.html")
+    # else:
+    # return redirect("management:employee_contract")
 
 
 def confirm_employee_contract(request):
