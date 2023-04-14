@@ -23,7 +23,7 @@ class UserProfile(models.Model):
         default="default.jpg", upload_to="Application_Profile_pics", blank=True
     )
     image2 = models.ForeignKey(
-        Assets, related_name="profile_image", on_delete=models.CASCADE,default=8
+        Assets, related_name="profile_image", on_delete=models.CASCADE,default=1
     )
     # upload_a = models.FileField(upload_to="Application_Profile/uploads")
     # upload_b = models.FileField(upload_to="Application_Profile/uploads")

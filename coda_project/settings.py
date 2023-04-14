@@ -127,15 +127,19 @@ def dba_values():
         password = os.environ.get('HEROKU_PROD_PASS')
     elif os.environ.get('ENVIRONMENT') == 'testing':
         # In Heroku/Postgres it is Heroku_UAT
-        host = '' #os.environ.get('HEROKU_DEV_HOST')
-        dbname = '' #os.environ.get('HEROKU_DEV_NAME')
-        user = '' #os.environ.get('HEROKU_DEV_USER')
-        password = '' #os.environ.get('HEROKU_DEV_PASS')
+        host = os.environ.get('HEROKU_DEV_HOST')
+        dbname = os.environ.get('HEROKU_DEV_NAME')
+        user = os.environ.get('HEROKU_DEV_USER')
+        password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = 'localhost'
-        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
-        user = "postgres" #os.environ.get('POSTGRESDB_USER')
-        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
+        host = os.environ.get('HEROKU_DEV_HOST')
+        dbname = os.environ.get('HEROKU_DEV_NAME')
+        user = os.environ.get('HEROKU_DEV_USER')
+        password = os.environ.get('HEROKU_DEV_PASS')
+        # host = 'localhost'
+        # dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        # user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        # password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"

@@ -1,5 +1,4 @@
-import calendar,string
-import requests
+import calendar,string,requests
 from django.contrib import messages
 from django import template
 from datetime import date, datetime, timedelta
@@ -81,7 +80,7 @@ def dckdashboard(request):
     # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
     return render(request, "management/departments/agenda/user_dashboard.html", {'title': "DCK DASHBOARD"})
 
-# ================================DEPARTMENT SECTION================================
+# ================================ DEPARTMENT SECTION ================================
 def department(request):
     departments = Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html", {'departments': departments})
@@ -124,7 +123,7 @@ def contract(request):
 
 
 def employee_contract(request):
-
+    submitted = False
     if request.user.is_employee_contract_signed:
         return (redirect('accounts:account-profile'))
     else:
@@ -135,7 +134,7 @@ def employee_contract(request):
         except:
             profile = None
 
-        print(profile)
+        # print(profile)
         if request.method == 'POST':
             if profile:
                 profile.national_id_no = request.POST['national_id_no']
@@ -147,52 +146,57 @@ def employee_contract(request):
                 profile.emergency_email = request.POST['emergency_email']
                 profile.emergency_national_id_no = request.POST['emergency_national_id_no']
                 profile.save()
+                submitted = True
 
         form = EmployeeContractForm()
         context['user'] = request.user
         context['profile'] = profile
         context['form'] = form
-        return render(request, "management/contracts/employee_contract.html", {'context': context})
+
+        if submitted:
+            return redirect("management:employee_contract")
+        else:
+            return render(request, "management/contracts/employee_contract.html", {'context': context})
 
 
 def read_employee_contract(request):
     user = UserProfile.objects.get(user=request.user)
 
-    if user.national_id_no:
-        return render(request, "management/contracts/read_employee_contract.html")
-    else:
-        return redirect("management:employee_contract")
+    # if user.national_id_no:
+    return render(request, "management/contracts/read_employee_contract.html")
+    # else:
+    # return redirect("management:employee_contract")
 
 
 def confirm_employee_contract(request):
     user = UserProfile.objects.get(user=request.user)
 
-    if user.national_id_no:
-        user = request.user
-        user.is_employee_contract_signed = True
-        user.save()
+    # if user.national_id_no:
+    user = request.user
+    user.is_employee_contract_signed = True
+    user.save()
 
+    try:
+        group = TaskGroups.objects.all().first()
+        cat = TaskCategory.objects.all().first()
         try:
-            group = TaskGroups.objects.all().first()
-            cat = TaskCategory.objects.all().first()
-            try:
-                max_point = Task.objects.filter(groupname=group, category=cat).first()
-                max_point = max_point.mxpoint
-            except:
-                max_point = 0
-
-            create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
-            create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+            max_point = Task.objects.filter(groupname=group, category=cat).first()
+            max_point = max_point.mxpoint
         except:
-            print("Something wrong in task creation")
+            max_point = 0
 
-        return(redirect('accounts:account-profile'))
-    else:
-        return redirect("management:employee_contract")
+        create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+    except:
+        print("Something wrong in task creation")
+
+    return(redirect('accounts:account-profile'))
+    # else:
+    #     return redirect("management:employee_contract")
 
 
 def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
@@ -439,7 +443,7 @@ def verifytaskgroupexists(request):
 
 
 def getaveragetargets(request):
-    print("+++++++++getaveragetargets+++++++++")
+    # print("+++++++++getaveragetargets+++++++++")
     taskname = request.POST["taskname"]
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
@@ -636,7 +640,6 @@ def task_payslip(request, employee=None, *args, **kwargs):
     for task in tasks:
         month_set.add(str(task.submission.month) + str(task.submission.year))
 
-    print(month_set)
     total_lap_saving = len(month_set) * lap_saving
     if total_lap_saving >= 20000:
         total_lap_saving = 20000
@@ -1520,7 +1523,7 @@ def videolink(request,detail_id):
 
 
 def getaveragetargets(request):
-    print("+++++++++getaveragetargets+++++++++")
+    # print("+++++++++getaveragetargets+++++++++")
     taskname = request.POST["taskname"]
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
