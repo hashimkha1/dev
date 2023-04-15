@@ -20,7 +20,7 @@ urlpatterns = [
     path('delete/<int:id>/', views.delete_service, name='delete_service'),
 
     #=======================SERVICES=====================================
-    path('', views.PostListView.as_view(), name='success'),
+    path('testimonies/', views.PostListView.as_view(), name='success'),
     path('post/new/', views.newpost, name='post-create'),
     # path('post/new/', PostCreateView.as_view(), name='post-create'),
     path('post/<str:slug>/', views.PostDetailSlugView.as_view(), name='post-detail'),
