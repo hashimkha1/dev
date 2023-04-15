@@ -82,7 +82,6 @@ urlpatterns = [
         "projectmanagement/",
         include("projectmanagement.urls", namespace="projectmanagement"),
     ),
-    path("blog/", include("codablog.urls", namespace="blog")),
     path("investing/", include("investing.urls", namespace="investing")),
     path("management/", include("management.urls", namespace="management")),
     path("globalsearch/", include("globalsearch.urls"), name="search"),

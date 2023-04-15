@@ -1,6 +1,7 @@
 from .models import Service,Assets
 from data.models import FeaturedCategory,FeaturedSubCategory
-from .utils import image_view
+# from .utils import image_view
+
 
 #availabity of images in this app
 
@@ -14,12 +15,24 @@ def subcategories (request):
         'subcategories': FeaturedSubCategory.objects.all()
     }
 
-def images(request):
-    images,image_names=image_view(request)
+def image_view(request):
+    # images,image_names=image_view(request)
+    images= Assets.objects.all()
+    image_names=Assets.objects.values_list('name',flat=True)
     return {
         'images': images,
         "image_names":image_names
     }
+
+def images(request):
+    # images,image_names=image_view(request)
+    images= Assets.objects.all()
+    image_names=Assets.objects.values_list('name',flat=True)
+    return {
+        'images': images,
+        "image_names":image_names
+    }
+
 
 def services(request):
     return {

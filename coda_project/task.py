@@ -22,7 +22,8 @@ from getdata.models import ReplyMail
 
 # importing utils & Views
 from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
-from main.utils import image_view,download_image
+from main.utils import download_image
+# from main.context_processors import image_view
 from management.utils import deductions
 from management.views import loan_update_save, normalize_period
 

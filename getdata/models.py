@@ -1,4 +1,5 @@
 from django.db import models
+from django.http import Http404
 from decimal import Decimal
 from datetime import datetime,date
 from django.utils import timezone
@@ -43,4 +44,3 @@ class ReplyMail(models.Model):
 
 	def __str__(self):
 		return self.subject
-

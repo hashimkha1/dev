@@ -29,7 +29,7 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from main.utils import image_view,download_image,Meetings,path_values
+from main.utils import download_image,Meetings,path_values
 from main.filters import FoodFilter
 from main.models import Service
 from .utils import check_default_fee,get_exchange_rate,DYCpay

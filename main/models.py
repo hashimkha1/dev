@@ -1,6 +1,9 @@
 from django.contrib.auth.models import User
 from django.db import models
+
 from django.db.models import Q
+from django.db.models.signals import pre_save
+from .utils import unique_slug_generator
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
@@ -57,6 +60,28 @@ class Course(models.Model):
     def __str__(self):
         return self.title
 
+
+class Testimonials(models.Model):
+    # asset_id = models.ForeignKey(Assets, on_delete=models.CASCADE,default=1)
+    title = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=255, unique=True)
+    content = models.TextField()
+    date_posted = models.DateTimeField(default=timezone.now)
+    writer = models.ForeignKey(
+        User,
+        verbose_name=("writer name"),
+        on_delete=models.CASCADE,
+        # related_name="employee_name"
+        )
+    class Meta:
+        verbose_name_plural = "Testimonials"
+
+    def __str__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('main:post-detail', kwargs={'pk': self.pk})
+    
 
 class Assets(models.Model):
     name = models.CharField(max_length=200)
@@ -166,3 +191,9 @@ class Plan(models.Model):
     def __str__(self):
         return self.goal
 
+# ===================PRESAVE FUNCTIONALITIES=====================
+def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
+    if not instance.slug:
+        instance.slug=unique_slug_generator
+
+pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)

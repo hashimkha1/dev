@@ -1,34 +1,40 @@
-import requests
-import string
+import os,requests,openai
+import random,string
 from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from accounts.forms import UserForm
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
 from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
-from .models import Service,Assets
 import datetime
-#import pdfkit
+from django.utils.text import slugify
+# from main.models import Assets
+# from yourapp.utils import random_string_generator
 
-# def convert_html_to_pdf():
-#     html="main/doc_templates/appointment_letter.html"
-#     html_str=str(html)
-#     pdfkit.from_string(html_str, 'appointment_letter.pdf')
-#     print("success")
+def buildmodel(question):
+    #fetching api key 
+    # https://platform.openai.com/account/api-keys
+    # 
+    openai.api_key = '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'
 
-# def convert_html_to_pdf():
-#     html_path = "main/doc_templates/appointment_letter.html"
-#     pdf_path = "appointment_letter.pdf"
-#     pdfkit.from_file(html_path, pdf_path)
-#     print("Success: HTML converted to PDF.")
+    # openai.api_key = os.environ.get('OPENAI_API_KEY')
+    print(openai.api_key)
 
-# def convert_html_to_pdf(request):
-#     html_path = "main/doc_templates/letter.html"
-#     pdf_path = "appointment_letter.pdf"
-#     pdfkit.from_file(html_path, pdf_path)
-#     with open(pdf_path, 'rb') as pdf_file:
-#         response = HttpResponse(pdf_file.read(), content_type='application/pdf')
-#         response['Content-Disposition'] = 'attachment; filename="appointment_letter.pdf"'
-#         return response
+    #Building engine
+    request = openai.Completion.create(
+        model="text-davinci-001",
+        prompt=question,
+        temperature=0.4,
+        max_tokens=500,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    res = request["choices"][0]
+    print(res['text'])
+    result=res['text']
+    return result
+
 
 def countdown_in_month():
     now = datetime.datetime.now()
@@ -66,11 +72,11 @@ def download_image(url):
         print("Image Couldn't be retrieved")
     return image_path
 
-#===============Processing Images from Database==================
-def image_view(request):
-    images= Assets.objects.all()
-    image_names=Assets.objects.values_list('name',flat=True)
-    return images,image_names
+# def image_view(images):
+#     images= Assets.objects.all()
+#     images= images
+#     image_names=Assets.objects.values_list('name',flat=True)
+#     return images,image_names
 
 
 
@@ -409,3 +415,58 @@ Management = [
 ]
 
 
+
+def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
+    return ''.join(random.choice(chars) for _ in range(size))
+
+
+print(random_string_generator())
+
+print(random_string_generator(size=50))
+
+
+
+def unique_slug_generator(instance, new_slug=None):
+    """
+    This is for a Django project and it assumes your instance 
+    has a model with a slug field and a title character (char) field.
+    """
+    if new_slug is not None:
+        slug = new_slug
+    else:
+        slug = slugify(instance.title)
+
+    Klass = instance.__class__
+    qs_exists = Klass.objects.filter(slug=slug).exists()
+    if qs_exists:
+        new_slug = "{slug}-{randstr}".format(
+                    slug=slug,
+                    randstr=random_string_generator(size=4)
+                )
+        return unique_slug_generator(instance, new_slug=new_slug)
+    return slug
+
+
+
+#import pdfkit
+
+# def convert_html_to_pdf():
+#     html="main/doc_templates/appointment_letter.html"
+#     html_str=str(html)
+#     pdfkit.from_string(html_str, 'appointment_letter.pdf')
+#     print("success")
+
+# def convert_html_to_pdf():
+#     html_path = "main/doc_templates/appointment_letter.html"
+#     pdf_path = "appointment_letter.pdf"
+#     pdfkit.from_file(html_path, pdf_path)
+#     print("Success: HTML converted to PDF.")
+
+# def convert_html_to_pdf(request):
+#     html_path = "main/doc_templates/letter.html"
+#     pdf_path = "appointment_letter.pdf"
+#     pdfkit.from_file(html_path, pdf_path)
+#     with open(pdf_path, 'rb') as pdf_file:
+#         response = HttpResponse(pdf_file.read(), content_type='application/pdf')
+#         response['Content-Disposition'] = 'attachment; filename="appointment_letter.pdf"'
+#         return response

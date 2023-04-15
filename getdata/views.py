@@ -17,7 +17,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from webdriver_manager.chrome import ChromeDriverManager
 from django.views.generic import (
 	ListView,
-    FormView
+    FormView,
+    DetailView
 )
 from main.utils import Finance,Data,Management,Automation,Stocks,General
 from getdata.utils import (
@@ -91,6 +92,30 @@ class CashappListView(ListView):
 	template_name = "main/snippets_templates/interview_snippets/result.html"
 	context_object_name = "cashappdata"
 
+
+class CashappMailDetailSlugView(DetailView):
+    queryset = CashappMail.objects.all()
+    template_name = "getdata/detail.html"
+ 
+    def get_context_data(self, *args, **kwargs):
+        context = super(CashappMailDetailSlugView, self).get_context_data(*args, **kwargs)
+        return context
+ 
+    def get_object(self, *args, **kwargs):
+        request = self.request
+        slug = self.kwargs.get('slug')
+ 
+        #instance = get_object_or_404(CashappMail, slug=slug, active=True)
+        try:
+            instance = CashappMail.objects.get(slug=slug, active=True)
+        except CashappMail.DoesNotExist:
+            raise Http404("Not found..")
+        except CashappMail.MultipleObjectsReturned:
+            qs = CashappMail.objects.filter(slug=slug, active=True)
+            instance = qs.first()
+        except:
+            raise Http404("Uhhmmm ")
+        return instance
 
 # # ==================GOTOMEETING===========================
 # dir_path = os.path.dirname(os.path.realpath(__file__))

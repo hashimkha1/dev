@@ -32,9 +32,7 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 # Application definition
 INSTALLED_APPS = [
     "main.apps.MainConfig",
-    #'users.apps.UsersConfig',
     "accounts.apps.AccountsConfig",
-    "codablog.apps.CodablogConfig",
     "data.apps.DataConfig",
     "application.apps.ApplicationConfig",
     "getdata.apps.GetdataConfig",
@@ -58,8 +56,6 @@ INSTALLED_APPS = [
     "django_filters",
     "django_celery_beat",
     "django_celery_results",
-    #'dbbackup',
-    # "django_extensions",
     "django_crontab",
     'testing.apps.TestingConfig',
 ]

@@ -1,10 +1,8 @@
 import requests
-import os
-import time
-import http.client
 import json
+import time
 from django.db.models import Min,Max
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse,Http404
 from django.db.models import Q
 from celery import shared_task
 from django.shortcuts import redirect, render
@@ -13,137 +11,38 @@ import calendar,string
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import Meetings,image_view,path_values
+from .utils import Meetings,path_values,buildmodel
 from accounts.utils import employees
-from codablog.models import Post,Testimonials
-from finance.models import Payment_History, Payment_Information
+from .models import Testimonials
 from management.models import Advertisement
 from coda_project.task import advertisement
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import Whatsapp
-from main.forms import WhatsappForm
-# from whatsapp.script import whatsapp
+from main.forms import WhatsappForm,PostForm,ContactForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
-    CreateView,
-    UpdateView,
-)
+        CreateView,
+        DeleteView,
+        ListView,
+        DetailView,
+        UpdateView,
+    )
 from accounts.forms import LoginForm
-from .forms import RegistrationForm,ContactForm
-from accounts.views import CreateProfile
-import http.client
-import json
-from coda_project.task import TrainingLoanDeduction
-# from finance.utils import pay_info
-# from django.core.management import call_command
-# importing modules
 import urllib.request
 from PIL import Image
 from django.contrib.auth import get_user_model
-import random
-import string
 User=get_user_model()
 
 
 
-def error400(request):
-    return render(request, "main/errors/400.html", {"title": "400Error"})
 
-def error403(request):
-    return render(request, "main/errors/403.html", {"title": "403Error"})
-
-def error404(request):
-    return render(request, "main/errors/404.html", {"title": "404Error"})
-    
-def error500(request):
-    return render(request, "main/errors/500.html", {"title": "500Error"})
-
-#Other Error pages or no results error
-# def result(request):
-#     return render(request, "main/errors/result.html", {"title": "result"})
-
-def template_errors(request):
-    url = request.path
-    contact = 'Please contact admin at info@codanalytics.net'
-    title = ['Bad Request', 'Permission Denied', 'Page Not Found', 'System Issue']
-
-    # Map each error code to its corresponding context
-    context_dict = {
-        400: {'title': title[0], 'error_message': 'Kindly check your URL/link provided', 'contact_message': contact},
-        403: {'title': title[1], 'error_message': 'You are not allowed to visit this page', 'contact_message': contact},
-        404: {'title': title[2], 'error_message': 'Page not found', 'contact_message': contact},
-        500: {'title': title[3], 'error_message': 'There is an issue on our end. Please try again later.', 'contact_message': contact},
-    }
-
-    # Get the context based on the error code, or use a default context
-    error_code = getattr(url, 'response', None)
-    context = context_dict.get(error_code, {'title': 'Error', 'error_message': 'An error has occurred', 'contact_message': contact})
-
-    print(error_code)
-    return render(request, 'main/errors/template_error.html', context)
-
-
-# def template_errors(request):
-#     url=request.path
-#     # if url.response.code=400
-#     contact='Please Contact admin at info@codanalytics.net'
-#     title=['Bad Request','Permission Denied','Page Not Found','System Issue']
-#     if url.response.code==400:
-#         context={
-#                     'title':title[0],
-#                     'message':'Kindly check your url/link provided',
-#                     'message':contact,
-#                  }
-#     if url.response.code==403:
-#         context={
-#                     'title':title[1],
-#                     'message':'You are not allowed to vist this page',
-#                     'message':contact,
-#                  }
-#     if url.response.code==404:
-#         context={
-#                     'title':title[2],
-#                     'message':'Please contact admin at info@codanalytics.net',
-#                     'message':contact,
-#                  }
-        
-#     if url.response.code==500:
-#         context={
-#                     'title':title[3],
-#                     'message':'There is an issue on our end Please Try again later',
-#                     'message':contact,
-#                  }
-#     print(url.response.code)
-#     return render(request,'main/errors/generalerrors.html',context)
-
-
-
-def general_errors(request):
-    # return render(request, "main/errors/noresult.html")
-    context={'message':'message'}
-    return render(request,'main/errors/generalerrors.html',context)
 
 #  ===================================================================================   
-def hendler400(request,exception):
-    return render(request, "errors/400.html")
-
-def hendler403(request,exception):
-    return render(request, "main/errors/403.html")
-
-def hendler404(request,exception):
-    return render(request, "main/errors/404.html")
-
-def hendler404(request,exception):
-    return render(request, "main/errors/404.html")
-
-def hendler500(request):
-    return render(request, "main/errors/500.html")
-    
 def test(request):
     return render(request, "main/test.html", {"title": "test"})
 
@@ -152,9 +51,11 @@ def checkout(request):
 
 from django.shortcuts import get_object_or_404
 
-
+#===============Processing Images from Database==================
 
 def layout(request):
+    images= Assets.objects.all()
+    image_names=Assets.objects.values_list('name',flat=True)
     latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
     testimonials = []
     for post in latest_posts:
@@ -168,10 +69,8 @@ def layout(request):
 
     for post in testimonials:
         print("title",post.title)
-        # print("image",post.writer.profile.image2.image_url)
-        # print("image",post.writer.profile.img_url)
+
     services = Service.objects.all()
-    images, image_names = image_view(request)
     context = {
         "images": images,
         "image_names": image_names,
@@ -184,11 +83,113 @@ def layout(request):
 
 
 
+# =====================TESTIMONIALS  VIEWS=======================================
+def newpost(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            # # quest = 'List the fininancial statements?'
+            form.instance.writer = request.user
+            # print("request_user", request.user)
+            # print("User",form.instance.author)            
+            form.save()
+            return redirect('main:layout')
+            # try:
+            # except:
+            #     return render(request, "main/errors/404.html")
+    else:
+        form = PostForm()
+        quest = "write 3 full paragraphs each on how good my data analyst coach was"
+        # sample_description=buildmodel(question=quest)
+        # print("sample_description",sample_description)
+        response = buildmodel(question=quest)
+        context={
+            "response" : response,
+            "form": form
+        }
+        # form.instance.description = buildmodel(question=quest)
+        print("response",response)
+    return render(request, "main/testimonials/post_form.html", context)
+
+
+# class PostCreateView(LoginRequiredMixin, CreateView):
+#     model=Post
+#     fields=['title','content']
+
+#     def form_valid(self,form):
+#         form.instance.author=self.request.user
+#         return super().form_valid(form)   
+    # PostListView
+
+class PostListView(ListView):
+    model=Testimonials
+    template_name='main/testimonials/success.html'
+    context_object_name='posts'
+    ordering=['-date_posted']
+
+class PostDetailView(DetailView):
+    model=Testimonials
+    ordering=['-date_posted']
+
+
+class PostDetailSlugView(DetailView):
+    queryset = Testimonials.objects.all()
+    template_name = "main/post_detail.html"
+ 
+    def get_context_data(self, *args, **kwargs):
+        context = super(PostDetailSlugView, self).get_context_data(*args, **kwargs)
+        return context
+ 
+    def get_object(self, *args, **kwargs):
+        request = self.request
+        slug = self.kwargs.get('slug')
+ 
+        #instance = get_object_or_404(Post, slug=slug, active=True)
+        try:
+            instance = Testimonials.objects.get(slug=slug, active=True)
+        except Testimonials.DoesNotExist:
+            raise Http404("Not found..")
+        except Testimonials.MultipleObjectsReturned:
+            qs = Testimonials.objects.filter(slug=slug, active=True)
+            instance = qs.first()
+        except:
+            raise Http404("Uhhmmm ")
+        return instance
+
+
+
+ 
+
+class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
+    model=Testimonials
+    fields=['title','content']
+
+    def form_valid(self,form):
+        form.instance.author=self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
+    model=Testimonials
+    success_url="/"
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+# =====================DC_KENYA VIEWS=======================================
 # =====================DC_KENYA VIEWS=======================================
 def dclayout(request):
     # advertisement()
     
-    posts=Post.objects.all()
+    posts=Testimonials.objects.all()
     services=Service.objects.all()
 
     context={
@@ -198,49 +199,6 @@ def dclayout(request):
         }
     return render(request, "main/dc48kenya/dc_layout.html",context)
 
-def register(request):
-    if request.method == "POST":
-        previous_user = User.objects.filter(email = request.POST.get("email"))
-        if len(previous_user) > 0:
-            messages.success(request, f'User already exist with this email')
-            form = RegistrationForm()
-            return redirect("/password-reset")
-        else:
-            if form.is_valid():
-                if form.cleaned_data.get("category") == 4:
-                    form.instance.is_applicant = True
-                form.save()
-                username = form.cleaned_data.get('username')
-                messages.success(request, f'Account created for {username}!')
-                return redirect('main:dc_login')
-    else:
-        msg = "error validating form"
-        form = RegistrationForm()
-    return render(request, "main/dc48kenya/dc_register.html", {"form": form,"msg":msg})
-
-
-def dc48login(request):
-    form = LoginForm(request.POST or None)
-    msg = f'account with that username and password does not exist!'
-    if request.method == "POST":
-        if form.is_valid():
-            request.session["siteurl"] = settings.SITEURL
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            account = authenticate(username=username, password=password)
-            CreateProfile()
-            # If Category is DC48KENYA User
-            if account is not None and account.category == 4:
-                if account.sub_category == 6:  # contractual
-                    login(request, account)
-                    return redirect("finance:list-inflow")
-                else:  # parttime (agents) & Fulltime
-                    login(request, account)
-                    # return redirect("management:user_task", username=request.user)
-                    return redirect("main:dc_home")
-    return render(
-       request, "main/dc48kenya/dc_login.html", {"form": form, "msg": msg})
-    
 
 # =====================PLAN=======================================
 class PlanCreateView(LoginRequiredMixin, CreateView):
@@ -343,74 +301,38 @@ def delete_service(request,id):
         service.delete()
     return redirect('main:services')
 
-#    print("url====>",staff.img_url)
-#     for x in staff:
-#         print("image",x.img_url)
-#         # print("name",x.name)
 
-# def about(request):
-#     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-#     sub_title=path_values(request)[-1]
-#     date_object="01/20/2023"
-#     start_date = datetime.strptime(date_object, '%m/%d/%Y')
-#     end_date=start_date + relativedelta(months=3)
-#     staff=[member for member in team_members if member.img_category=='employee']
-#     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
-#     context={
-#         "start_date": start_date,
-#         "end_date": end_date,
-#         "title_team": "team",
-#         "active_employees": staff,
-#         "title_about": "about",
-#         "img_urls": img_urls,
-#         "title_letter": "letter",
-#     }
-#     if sub_title == 'team':
-#         return render(request, "main/team.html",context)
-#     elif sub_title == 'letter':
-#         return render(request, "main/doc_templates/letter.html",context)
-#     elif sub_title == 'appointment_letter':
-#         return render(request, "main/doc_templates/appointment_letter.html",context)
-#     elif sub_title == 'about':
-#         return render(request, "main/about.html",context)
-    
+
 def about(request):
-    # Get active employee team members
-    team_members = UserProfile.objects.filter(user__is_employee=True, user__is_active=True, user__is_staff=True)
-    
-    # Set start and end dates
-    start_date_str = "01/20/2023"
-    start_date = datetime.strptime(start_date_str, '%m/%d/%Y')
-    end_date = start_date + relativedelta(months=3)
-    
-    # Filter active employees and get their image URLs
-    active_employees = [member for member in team_members if member.img_category == 'employee']
-    img_urls = [member.img_url for member in active_employees]
-    
-    # Set context variables
-    context = {
+    images= Assets.objects.all()
+    image_names=Assets.objects.values_list('name',flat=True)
+    team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    sub_title=path_values(request)[-1]
+    date_object="01/20/2023"
+    start_date = datetime.strptime(date_object, '%m/%d/%Y')
+    end_date=start_date + relativedelta(months=3)
+    staff=[member for member in team_members if member.img_category=='employee']
+    img_urls=[member.img_url for member in team_members if member.img_category=='employee']
+    context={
         "start_date": start_date,
         "end_date": end_date,
         "title_team": "team",
-        "active_employees": active_employees,
+        # "employee_subcategories": employee_subcategories,
+        "active_employees": staff,
         "title_about": "about",
+        # "images": images,
         "img_urls": img_urls,
         "title_letter": "letter",
     }
+    if sub_title == 'team':
+        return render(request, "main/team.html",context)
+    elif sub_title == 'letter':
+        return render(request, "main/doc_templates/letter.html",context)
+    elif sub_title == 'appointment_letter':
+        return render(request, "main/doc_templates/appointment_letter.html",context)
+    elif sub_title == 'about':
+        return render(request, "main/about.html",context)
     
-    # Map page names to templates
-    templates = {
-        'team': 'main/team.html',
-        'letter': 'main/doc_templates/letter.html',
-        'appointment_letter': 'main/doc_templates/appointment_letter.html',
-        'about': 'main/about.html',
-    }
-    
-    # Render the appropriate template based on the page name
-    page_name = path_values(request)[-1]
-    template = templates.get(page_name, 'main/about.html')
-    return render(request, template, context)
-
 
 class UserCreateView(LoginRequiredMixin, CreateView):
     model = UserProfile
@@ -420,38 +342,6 @@ class UserCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
-
-# def profiles(request):
-#     sub_title=path_values(request)[-1]
-#     images = Assets.objects.values_list('name', flat=True)
-#     team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
-#     print(team_members)
-#     for team in team_members:
-#         profile_image=team.image2
-#         profile_image_category=team.img_category 
-#         profile_image_image_url=team.img_url
-
-#         print(profile_image,profile_image_category,profile_image_image_url)
-#     # for image in images:
-#     #     image_name=image
-    
-#     # if profile_image=="banner_page_v1":
-#     #     print("YES")
-#     # else:
-#     #     print("NO")
-#     #     # print(image_name,"==",profile_image)
-
-#     context={
-#         "team_members":team_members,
-#         "title": "team",
-#         "profile_image": profile_image
-#         # "image_name": image_name
-#     }
-#     if sub_title == 'team':
-#         return render(request, "main/team.html",context)
-#     else:
-#         return render(request, "main/profiles.html",context)
 
 
 class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -528,6 +418,7 @@ def interview(request):
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})
 
+@login_required
 def contact(request):
     if request.method == "POST":
         form = ContactForm(request.POST, request.FILES)
@@ -562,7 +453,7 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-        
+       
 def images(request):
     # images = Assets.objects.all().first()
     images = Assets.objects.all()
@@ -587,15 +478,6 @@ def training(request):
 
 def project(request):
     return render(request, "main/project.html", {"title": "project"})
-
-
-def market(request):
-    path,sub_title=path_values(request)
-    print("path",path,sub_title)
-    if sub_title=='trainingad':
-        return render(request, "main/snippets_templates/marketing/trainingad.html", {"title": "project"})
-    if sub_title=='market':
-        return render(request, "main/snippets_templates/marketing/marketing.html", {"title": "project"})
 
 
 # -----------------------------Documents---------------------------------
@@ -703,79 +585,147 @@ def whatsapp_apis(request):
     return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
 
 
+# def runwhatsapp(request):
+#     # whatsapp_items = Whatsapp.objects.all()
+#     group_ids = Whatsapp.objects.values_list('group_id', flat=True)
+#     image_url = Whatsapp.objects.values_list('image_url', flat=True).first()
+#     message = Whatsapp.objects.values_list('message', flat=True).first()
+
+#     print("Groups====>", group_ids, image_url, message)
+
+#     image_name = "image.jpg"
+#     screen_id = 26504
+#     product_id = '333b59c1-c310-43c0-abb5-e5c4f0379e61'
+#     image = image_url
+#     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+
+#     payload = json.dumps({
+#         "type": "media",
+#         "message": image,
+#         "filename": image_name
+#     })
+
+
+#     headers = {
+#         'accept': 'application/json',
+#         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686',
+#         'Content-Type': 'application/json'
+#     }
+
+#     for group_id in group_ids:
+#         payload_data = json.loads(payload)
+#         payload_data['to_number'] = group_id
+#         payload_data['type'] = 'media' if image else 'text'
+#         payload_data['message'] = image if image else message
+
+#         response = requests.request("POST", url, headers=headers, data=json.dumps(payload_data))
+#         print(response.text)
+
+#     message = f'Hi, {request.user}, your messages have been posted to your groups.'
+#     context = {
+#         'title': 'WHATSAPP',
+#         'message': message
+#     }
+#     return render(request, "main/errors/generalerrors.html", context)
+
+
 def runwhatsapp(request):
     whatsapp_items = Whatsapp.objects.all()
-    image_url = None
+
     # Get a list of all group IDs from the Whatsapp model
-    # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    # group_ids = ["120363047226624982@g.us"]
 
     # Get the image URL and message from the first item in the Whatsapp model
-    if whatsapp_items:
-        image_url = whatsapp_items[0].image_url
-        message = whatsapp_items[0].message
-    else:
-        message = "local testing"
+    image_url = whatsapp_items[0].image_url
+    message = whatsapp_items[0].message
     product_id = whatsapp_items[0].product_id
     screen_id = whatsapp_items[0].screen_id
     token = whatsapp_items[0].token
-    # product_id = os.environ.get('MYAPI_PRODUCT_ID')
-    # screen_id = os.environ.get('MYAPI_SCREEN_ID')
-    # token = os.environ.get('MYAPI_TOKEN_ID')
 
     # print("Group IDs:", group_ids)
     # print("Image URL:", image_url)
     # print("Message:", message)
-    print("product_id:", product_id)
-    print("screen_id:", screen_id)
-    print("token:", token)
+    # print("product_id:", product_id)
+    # print("screen_id:", screen_id)
+    # print("token:", token)
 
     # Loop through all group IDs and send the message to each group
     for group_id in group_ids:
         print("Sending message to group", group_id)
 
         # Set the message type to "text" or "media" depending on whether an image URL is provided
-        conn = http.client.HTTPSConnection("api.maytapi.com")
         if image_url:
-            # Set the length of the random string
-            length = 10
-            # Generate a random string of lowercase letters and digits
-            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-            payload = json.dumps({
-                "to_number": group_id,
-                "type": "media",
-                "message": image_url,
-                "filename": random_string
-            })
+            message_type = "media"
+            message_content = image_url
+            filename = "image.jpg"
         else:
-            payload = json.dumps({
-                "to_number": group_id,
-                "type": "text",
-                "message": message
-            })
+            message_type = "text"
+            message_content = message
+            filename = None
 
-        headers = {
-            'accept': 'application/json',
-            'x-maytapi-key': token,
-            'Content-Type': 'application/json'
+        # Set up the API request payload and headers
+        payload = {
+            "to_number": group_id,
+            "type": message_type,
+            "message": message_content,
+            "filename": filename,
         }
-        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
-        res = conn.getresponse()
-        data = res.read()
-        print(data.decode("utf-8"))
+        
+        headers = {
+            "Content-Type": "application/json",
+            "x-maytapi-key": token,
+        }
+        # Send the API request and print the response
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        # print(response.status_code)
+        # print(response.text)
+        # print(url)
+
         # Check if the API request was successful
-        # if response.status_code == 200:
-        if json.loads(data).get('success') is True:
+        if response.status_code == 200:
             print("Message sent successfully!")
-            message = f"Hi, {request.user}, your messages have been sent to your groups."
         else:
-            # print("Error sending message:", response.text)
-            message = data
+            print("Error sending message:", response.text)
 
         # time.sleep(5) # add a delay of 1 second
 
     # Display a success message on the page
-    # message = f"Hi, {request.user}, your messages have been sent to your groups."
+    message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": "WHATSAPP", "message": message}
     return render(request, "main/errors/generalerrors.html", context)
+
+
+
+def error400(request):
+    return render(request, "main/errors/400.html", {"title": "400Error"})
+
+def error403(request):
+    return render(request, "main/errors/403.html", {"title": "403Error"})
+
+def error404(request):
+    return render(request, "main/errors/404.html", {"title": "404Error"})
+    
+def error500(request):
+    return render(request, "main/errors/500.html", {"title": "500Error"})
+
+def general_errors(request):
+    # return render(request, "main/errors/noresult.html")
+    context={'message':'message'}
+    return render(request,'main/errors/generalerrors.html',context)
+
+#  ===================================================================================   
+def hendler400(request,exception):
+    return render(request, "errors/400.html")
+
+def hendler403(request,exception):
+    return render(request, "main/errors/403.html")
+
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
+
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
+
+def hendler500(request):
+    return render(request, "main/errors/500.html")

@@ -19,7 +19,8 @@ from data.forms import (
     PrepQuestionsForm,TrainingResponseForm,
     InterviewForm, DSUForm ,RoleForm,
 )
-from main.utils import data_interview,Meetings,image_view,path_values
+from main.utils import data_interview,Meetings,path_values
+from main.context_processors import image_view
 from data.models import (
     Interviews,
     FeaturedCategory,
@@ -876,11 +877,10 @@ def single_course(request):
 def interview_roles(request):
     # team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
     sub_title=path_values(request)[-1]
-    print("sub_title",sub_title)
     date_object="01/20/2023"
     # start_date = datetime.strptime(date_object, '%m/%d/%Y')
     # end_date=start_date + relativedelta(months=3)
-    images,image_names=image_view(request)
+    # images,image_names=image_view(request)
     # staff=[member for member in team_members if member.img_category=='employee']
     # img_urls=[member.img_url for member in team_members if member.img_category=='employee']
     context={

@@ -7,4 +7,5 @@ admin.site.register(Service)
 admin.site.register(Course)
 admin.site.register(CourseCategory)
 admin.site.register(Assets)
+admin.site.register(Testimonials)
 

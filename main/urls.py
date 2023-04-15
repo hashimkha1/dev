@@ -18,16 +18,16 @@ urlpatterns = [
     path('services/', views.services, name='services'),
     path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
     path('delete/<int:id>/', views.delete_service, name='delete_service'),
-    #==============DC48KENYA==============================================
-    path('dchome', views.dclayout, name='dc_layout'),
-    path('dclogin', views.dc48login, name='dc_login'),
-    path('dcregister', views.register, name='dc_register'),
 
+    #=======================SERVICES=====================================
+    path('', views.PostListView.as_view(), name='success'),
+    path('post/new/', views.newpost, name='post-create'),
+    # path('post/new/', PostCreateView.as_view(), name='post-create'),
+    path('post/<str:slug>/', views.PostDetailSlugView.as_view(), name='post-detail'),
+    # path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
+    # path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
+    # path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     #==============DEPARTMENTS==============================================
-        #---------------HUMAN RESOURCE--------------------#
-
-     #-----------------------------FINANCE--------------------#
-
         #--------------------------MANAGEMENT--------------------#
         path('newprofile/', views.UserCreateView.as_view(template_name='main/form.html'), name='newprofile'),
         path('updateprofile/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
@@ -45,8 +45,6 @@ urlpatterns = [
         path('newwhatsapp/', views.whatsappCreateView.as_view(template_name='main/form.html'), name='whatsapp_new'),
         path('whatsapp/<int:pk>/', views.whatsappUpdateView.as_view(template_name='main/form.html'), name='whatsapp_update'),
         path('delete_whatsapp/<int:id>/', views.delete_whatsapp, name='delete_whatsapp'),
-        path('trainingad/', views.market, name='trainingad'),
-        path('market/', views.market, name='market'),
 
 
     #----------------------------IT-------------------------#
@@ -73,7 +71,6 @@ urlpatterns = [
     path('403Error/', views.error403, name='403error'),
     path('404Error/', views.error404, name='404error'),
     path('500Error/', views.error500, name='500error'),
-    path('errors/', views.template_errors, name='template_errors'),
     # path('result/', views.result, name='result'),
     # path('noresult/', views.noresult, name='noresult'),
 

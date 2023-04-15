@@ -1668,7 +1668,7 @@ def add_requirement_justification(request):
     requirement_id = request.POST.get('requirement_id')
 
     requirement_obj = Requirement.objects.filter(id=requirement_id).first()
-    print("requirement_obj:==>",requirement_obj)
+    # print("requirement_obj:==>",requirement_obj)
     if not requirement_obj:
         messages.warning(
             request, "requirement id is wrong"

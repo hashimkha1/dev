@@ -98,7 +98,11 @@
                 <img src="{{googledriveurl}}={{post.writer.profile.image2.image_url}}" class="team-img" width="110px" height="110px" style="border-radius: 50%;"/>
               </span>
             </div>
-              <h3> {{ post.writer.first_name }},{{post.writer.last_name}}</h3>
+              <h3> 
+                <a href="{% url 'main:post-detail' slug=slug %}">
+                  {{ post.writer.first_name }},{{post.writer.last_name}}
+                </a>
+              </h3>
               <h3>{{post.title}}</h3>
               <font size="2">
                   {{post.content|truncatewords:50}}
@@ -115,7 +119,7 @@
  <div class="row text-center">
 
   <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
-    <a href="{% url 'codablog:post-create' %}">Share Your Experiences</a>
+    <a href="{% url 'main:post-create' %}">Share Your Experiences</a>
   </div>
   <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
     <a href="">back to top</a>
