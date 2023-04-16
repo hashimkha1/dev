@@ -12,7 +12,7 @@
         <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
       </div>
       <h2>
-        <a class="article-title" href="{% url 'codablog:post-detail' post.id %}">{{ post.title }}</a>
+        <a class="article-title" href="{% url 'main:post-detail' post.id %}">{{ post.title }}</a>
       </h2>
       <p class="article-content">{{ post.content|truncatewords:5}}</p>
  
@@ -22,7 +22,7 @@
   {% endfor %}
   <a
         class="btn btn-secondary btn-md mt-1 mb-1"
-        href="{%url 'codablog:post-create' %}"
+        href="{%url 'main:post-create' %}"
       >
         Add Your Story</a
       >
