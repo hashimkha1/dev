@@ -33,7 +33,7 @@
 
   <form  method="POST" action="/finance/contract_form/" class="form-group">
     {% csrf_token %}
-        <input type="hidden" name="usr_data" value="first_name={{student_data.first_name}}&last_name={{student_data.last_name}}&address={{student_data.addres}}&category={{student_data.category}}&sub_category={{student_data.sub_category}}&username={{student_data.username}}&password1={{student_data.password1}}&password2={{student_data.password2}}&email={{student_data.email}}&phone={{student_data.phone}}&gender={{student_data.gender}}&city={{student_data.city}}&state={{student_data.state}}&country={{student_data.country}}&resume_file={{student_data.resume_file}}">
+        <input type="hidden" name="usr_data" value="first_name={{contract_data.first_name}}&last_name={{contract_data.last_name}}&address={{contract_data.addres}}&category={{contract_data.category}}&sub_category={{contract_data.sub_category}}&username={{contract_data.username}}&password1={{contract_data.password1}}&password2={{contract_data.password2}}&email={{contract_data.email}}&phone={{contract_data.phone}}&gender={{contract_data.gender}}&city={{contract_data.city}}&state={{contract_data.state}}&country={{contract_data.country}}&resume_file={{contract_data.resume_file}}">
         <input type="hidden" name="student_contract" value="student_contract">
     <fieldset class="form-group">
       <div class="row">
@@ -44,10 +44,10 @@
             Student Email: 
         </div>
         <div class="col-md-6">
-            {{student_data.first_name}} {{student_data.last_name}} <br>
-            {%if student_data.address %}{{student_data.address}}{% else %} - {% endif %} <br>
-            {{student_data.phone}} <br>
-            {{student_data.email}}
+            {{contract_data.first_name}} {{contract_data.last_name}} <br>
+            {%if contract_data.address %}{{contract_data.address}}{% else %} - {% endif %} <br>
+            {{contract_data.phone}} <br>
+            {{contract_data.email}}
         </div>
       </div>
       <legend class="border-bottom  border-top text-center">
@@ -109,7 +109,7 @@
       <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
           <div class="row" >
             <div class="col-md-6">
-                Student signature:<input type="text" name="client_sign" class="signature" value="{{request.user}}" required><br>
+                Student signature:<input type="text" name="client_sign" class="signature" value="{{contract_data.last_name}}" required><br>
             </div>
             <div class="col-md-6">
                 Company Rep:      <input type="text" name="rep_name" class="signature" value="coda" required><br>
