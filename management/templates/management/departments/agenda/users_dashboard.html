@@ -96,6 +96,9 @@
         <a class="btn btn-secondary" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>
       </div>
       <div class="col-md-2">
+        <a class="btn btn-secondary" href="{% url 'main:my_availability' %}" target="__blank" >My Schedule</a>
+      </div>
+      <div class="col-md-2">
         <a class="btn btn-secondary" href="{% url 'management:user_session' request.user %}" target="__blank" >My Sessions</a>
       </div>
     </div>

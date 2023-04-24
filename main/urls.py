@@ -30,7 +30,7 @@ urlpatterns = [
     #==============DEPARTMENTS==============================================
     #==============Clint Available Time==============================================
     path('add_availability/', views.add_availability, name='add_availability'),
-    path('my_availability/', views.my_availability, name='may_availability'),
+    path('my_availability/', views.my_availability, name='my_availability'),
     path('clints_availability/', views.clints_availability, name='clints_availability'),
 
     #==============DEPARTMENTS==============================================

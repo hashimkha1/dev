@@ -1,4 +1,4 @@
-{%extends "main/base_templates/analysis_index.html"%} 
+{%extends "main/base_templates/new_base.html"%} 
 {%block content %}
 <style type="text/css">
   .signature
@@ -20,16 +20,20 @@
         text-align: center;
     }
 
-
 </style>
 <div class="content-section">
-
     <div class="container">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <h3 class="text-center">Available Time</h3>
             </div>
-
+            <div class="col-md-6">
+                <a class="article-title" href="{% url 'main:add_availability' %}">
+                    <button>
+                        Add Your Availablity
+                    </button>
+                  </a>
+            </div>
             <div class="col-12">
                     <div class="row">
                         <div class="col-md-12">

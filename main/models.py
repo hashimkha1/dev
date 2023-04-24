@@ -211,8 +211,10 @@ class ClientAvailability(models.Model):
     ]
 
     TIME = [
-        ("EAT", "EAT"),
         ("PST", "PST"),
+        ("CST", "CST"),
+        ("EST", "EST"),
+        ("EAT", "EAT"),
     ]
 
     client = models.ForeignKey(User, related_name="Clint", on_delete=models.CASCADE)
