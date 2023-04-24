@@ -197,3 +197,30 @@ def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
         instance.slug=unique_slug_generator
 
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
+
+
+class ClientAvailability(models.Model):
+    DAY = [
+        ("0", "Monday"),
+        ("1", "Tuesday"),
+        ("2", "Wednesday"),
+        ("3", "Thursday"),
+        ("4", "Friday"),
+        ("5", "Saturday"),
+        ("6", "Sunday"),
+    ]
+
+    TIME = [
+        ("EAT", "EAT"),
+        ("PST", "PST"),
+    ]
+
+    client = models.ForeignKey(User, related_name="Clint", on_delete=models.CASCADE)
+    day = models.CharField(max_length=100, choices=DAY)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    time_standards = models.CharField(max_length=100, choices=TIME)
+    topic = models.CharField(max_length=254, blank=True, null=True)
+
+    def __str__(self):
+        return str(self.client)

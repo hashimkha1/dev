@@ -1,13 +1,13 @@
 import requests
 import json
+import datetime
 import time
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
 from django.db.models import Q
 from celery import shared_task
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib import messages
-import calendar,string
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
@@ -33,6 +33,9 @@ from django.views.generic import (
         UpdateView,
     )
 from accounts.forms import LoginForm
+from .forms import *
+from accounts.views import CreateProfile
+from coda_project.task import TrainingLoanDeduction
 import urllib.request
 from PIL import Image
 from django.contrib.auth import get_user_model
@@ -49,8 +52,22 @@ def test(request):
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
-from django.shortcuts import get_object_or_404
 
+
+def hendler400(request,exception):
+    return render(request, "errors/400.html")
+
+def hendler403(request,exception):
+    return render(request, "main/errors/403.html")
+
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
+
+def hendler404(request,exception):
+    return render(request, "main/errors/404.html")
+
+def hendler500(request):
+    return render(request, "main/errors/500.html")
 #===============Processing Images from Database==================
 
 def layout(request):
@@ -369,8 +386,6 @@ def it(request):
 def finance(request):
     return render(request, "main/departments/finance_landing_page.html", {"title": "Finance"})
 
-# def finance(request):
-#     return render(request, "finance\reports\finance.html", {"title": "Finance"})
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
@@ -696,7 +711,6 @@ def runwhatsapp(request):
     return render(request, "main/errors/generalerrors.html", context)
 
 
-
 def error400(request):
     return render(request, "main/errors/400.html", {"title": "400Error"})
 
@@ -715,17 +729,58 @@ def general_errors(request):
     return render(request,'main/errors/generalerrors.html',context)
 
 #  ===================================================================================   
-def hendler400(request,exception):
-    return render(request, "errors/400.html")
+def add_availability(request):
+    context = {}
+    if request.method == "POST":
+        form = ClientAvailabilityForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.client = request.user
+            instance.save()
+            form = ClientAvailabilityForm()
+    else:
+        form = ClientAvailabilityForm()
+    return render(request, "main/availability/add_availability.html", {"form": form, "context": context})
 
-def hendler403(request,exception):
-    return render(request, "main/errors/403.html")
 
-def hendler404(request,exception):
-    return render(request, "main/errors/404.html")
+def my_availability(request):
+    context = {}
+    dist = {}
+    try:
+        availability = ClientAvailability.objects.filter(client=request.user).order_by('-id')
+        for obj in availability:
+            today = datetime.today()
+            day_dif = abs(today.weekday()-int(obj.day))
+            date = today.replace(day=(today.day+day_dif))
+            day = date.strftime("%A")
+            print(day)
+            print(date)
 
-def hendler404(request,exception):
-    return render(request, "main/errors/404.html")
+            dist[obj] = {'date': date, 'day': day}
+    except:
+        availability = None
+    context['obj'] = dist
 
-def hendler500(request):
-    return render(request, "main/errors/500.html")
+    return render(request, "main/availability/my_availability.html", {"context": context})
+
+
+def clints_availability(request):
+    context = {}
+    availability = None
+    dist = {}
+    if request.method == "POST":
+        form = ClientNameForm(request.POST)
+        if form.is_valid():
+            client = form.cleaned_data['client']
+            availability = ClientAvailability.objects.filter(client=client).order_by('-id')
+            for obj in availability:
+                today = datetime.today()
+                day_dif = abs(today.weekday() - int(obj.day))
+                date = today.replace(day=(today.day + day_dif))
+                day = date.strftime("%A")
+                dist[obj] = {'date': date, 'day': day}
+    else:
+        form = ClientNameForm()
+
+    context['obj'] = dist
+    return render(request, "main/availability/client_availability.html", {"form": form, "context": context})

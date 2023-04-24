@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 
 # from .models import Expenses
 from data.models import DSU
+from .models import *
 
 # from django.db import transaction
 class ContactForm(forms.ModelForm):
@@ -78,3 +79,14 @@ class WhatsappForm(forms.ModelForm):
                     "screen_id":"Enter Screen ID",
                     "token":"Enter token",
         }
+
+
+class ClientAvailabilityForm(forms.ModelForm):
+    class Meta:
+        model = ClientAvailability
+        fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
+
+
+class ClientNameForm(forms.Form):
+    client = forms.ModelChoiceField(queryset=CustomerUser.objects.filter(is_client=True))
+    fields = ['client']

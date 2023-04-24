@@ -28,6 +28,16 @@ urlpatterns = [
     # path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
     # path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
     #==============DEPARTMENTS==============================================
+    #==============Clint Available Time==============================================
+    path('add_availability/', views.add_availability, name='add_availability'),
+    path('my_availability/', views.my_availability, name='may_availability'),
+    path('clints_availability/', views.clints_availability, name='clints_availability'),
+
+    #==============DEPARTMENTS==============================================
+    #---------------HUMAN RESOURCE--------------------#
+
+    #-----------------------------FINANCE--------------------#
+
         #--------------------------MANAGEMENT--------------------#
         path('newprofile/', views.UserCreateView.as_view(template_name='main/form.html'), name='newprofile'),
         path('updateprofile/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
