@@ -101,24 +101,18 @@ def layout(request):
 
 
 # =====================TESTIMONIALS  VIEWS=======================================
+@login_required
 def newpost(request):
     if request.method == "POST":
         form = PostForm(request.POST, request.FILES)
         if form.is_valid():
-            # # quest = 'List the fininancial statements?'
             form.instance.writer = request.user
-            # print("request_user", request.user)
-            # print("User",form.instance.author)            
             form.save()
             return redirect('main:layout')
-            # try:
-            # except:
-            #     return render(request, "main/errors/404.html")
     else:
         form = PostForm()
-        quest = "write 3 full paragraphs each on how good my data analyst coach was"
-        # sample_description=buildmodel(question=quest)
-        # print("sample_description",sample_description)
+        quest = "write 3 full paragraphs each on how good my data analyst coach was" # pick a question bunch of questions
+
         response = buildmodel(question=quest)
         context={
             "response" : response,
@@ -126,17 +120,7 @@ def newpost(request):
         }
         # form.instance.description = buildmodel(question=quest)
         print("response",response)
-    return render(request, "main/testimonials/post_form.html", context)
-
-
-# class PostCreateView(LoginRequiredMixin, CreateView):
-#     model=Post
-#     fields=['title','content']
-
-#     def form_valid(self,form):
-#         form.instance.author=self.request.user
-#         return super().form_valid(form)   
-    # PostListView
+    return render(request, "main/testimonials/newpost.html", context)
 
 class PostListView(ListView):
     model=Testimonials
@@ -173,9 +157,6 @@ class PostDetailSlugView(DetailView):
             raise Http404("Uhhmmm ")
         return instance
 
-
-
- 
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Testimonials
