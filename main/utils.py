@@ -241,8 +241,8 @@ data_interview = [
 
 Automation = [
     {
-        "title": "Whatsapp",
-        "link":SITEURL+"/whatsapp/",
+        "title": "Social Media",
+        "link":SITEURL+"/marketing/",
         "linkname":"Pics&Messages-Whatsapp",
     },
     {

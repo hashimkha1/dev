@@ -371,6 +371,9 @@ def finance(request):
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
+def marketing(request):
+    return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
+
 @login_required
 def meetings(request):
     emp_obj = User.objects.filter(
@@ -477,65 +480,6 @@ def project(request):
 
 
 # -----------------------------Documents---------------------------------
-
-# @shared_task(name="advertisement")
-# def advertisement():
-    # This function will post the latest Facebook Ad
-    # context = Advertisement.objects.all().first()
-    # # facebook_context = Advertisement.objects.all().first()
-    # apiKey =context.twitter_api_key # '1zPxZNd57aXHZb8WwQFYEvNbv'  
-    # apiSecret = context.twitter_api_key_secret # 'UdRcVGDSE9Ntpwz1Rbq3qsGPcYYBCor7Yl6X3wVLR5J6hKczmZ' 
-    # accessToken = context.twitter_access_token # '1203036386011570177-rgXHzNM25WeUMnua6U13dS7jQmDgWg' 
-    # accessTokenSecret =context.twitter_access_token_secret #'17cKoLwVdiZMnvKCWSxONCWj1A8atW6OvEAWtpqdUeZLF' 
-
-    # 3. Create Oauth client and set authentication and create API object
-    # oauth = tweepy.OAuthHandler(apiKey, apiSecret)
-    # oauth.set_access_token(accessToken, accessTokenSecret)
-
-    # api = tweepy.API(oauth)
-
-    # 4. upload media
-    # urllib.request.urlretrieve(
-    # 'https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link',
-    # "advertisement.png")
-    # urllib.request.urlretrieve(
-    # 'https://media.geeksforgeeks.org/wp-content/uploads/20210318103632/gfg-300x300.png',
-    # "advertisement.png")
-    # image = Image.open("advertisement.png")
-    # image_path='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    # link = urllib.request.urlopen(image_path).read()
-    # image = Image.open(r"https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link") 
-    # This method will show image in any image viewer 
-    # image.show() 
-    # media=googledriveurl={{image.image_url}}
-    # image=link
-    # image='media/profile_pics/Chris.jpg'
-    # image='https://drive.google.com/file/d/11X9ZMLnGop3qVoG-vsF9iOd2MpNuwV-M/view?usp=share_link'
-    
-    
-    # media = api.media_upload(image)
-
-    # api.update_status(
-    #     status=context.post_description,
-    #     # media_ids=[context.tweet_media],
-    #     media_ids=[media.media_id]
-    # )
-
-#     # facebook_page_id = facebook_context.facebook_page_id
-#     # access_token = facebook_context.facebook_access_token
-#     # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
-#     # msg = facebook_context.post_description
-#     # image_location = facebook_context.image
-#     # payload = {
-#     #     "url": image_location,
-#     #     "access_token": access_token,
-#     #     "message": msg,
-#     # }
-
-#     # Send the POST request
-#     # requests.post(url, data=payload)
-
-
 class whatsappCreateView(LoginRequiredMixin, CreateView):
     model = Whatsapp
     success_url = "/whatsapplist/"  
@@ -578,51 +522,7 @@ def whatsapp_apis(request):
     context={
             "whatsaapitems":whatsaapitems
     }
-    return render(request, 'main/snippets_templates/table/whatsapp_apis.html',context)
-
-
-# def runwhatsapp(request):
-#     # whatsapp_items = Whatsapp.objects.all()
-#     group_ids = Whatsapp.objects.values_list('group_id', flat=True)
-#     image_url = Whatsapp.objects.values_list('image_url', flat=True).first()
-#     message = Whatsapp.objects.values_list('message', flat=True).first()
-
-#     print("Groups====>", group_ids, image_url, message)
-
-#     image_name = "image.jpg"
-#     screen_id = 26504
-#     product_id = '333b59c1-c310-43c0-abb5-e5c4f0379e61'
-#     image = image_url
-#     url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-
-#     payload = json.dumps({
-#         "type": "media",
-#         "message": image,
-#         "filename": image_name
-#     })
-
-
-#     headers = {
-#         'accept': 'application/json',
-#         'x-maytapi-key':'cce10961-db15-46e7-b5f1-6d6bf091b686',
-#         'Content-Type': 'application/json'
-#     }
-
-#     for group_id in group_ids:
-#         payload_data = json.loads(payload)
-#         payload_data['to_number'] = group_id
-#         payload_data['type'] = 'media' if image else 'text'
-#         payload_data['message'] = image if image else message
-
-#         response = requests.request("POST", url, headers=headers, data=json.dumps(payload_data))
-#         print(response.text)
-
-#     message = f'Hi, {request.user}, your messages have been posted to your groups.'
-#     context = {
-#         'title': 'WHATSAPP',
-#         'message': message
-#     }
-#     return render(request, "main/errors/generalerrors.html", context)
+    return render(request, 'main/snippets_templates/marketing/whatsapplist.html',context)
 
 
 def runwhatsapp(request):

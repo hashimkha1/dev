@@ -380,9 +380,8 @@ def questionview(request, question_type=None, *args, **kwargs):
         if not next_topic.exists():
             return redirect('data:question-detail', question_type=question_type)
         return redirect('data:question-detail', question_type=next_topic.first().question_type)
+    
 @method_decorator(login_required, name="dispatch")
-
-
 class InterviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Interviews
     success_url = "/data/iuploads"

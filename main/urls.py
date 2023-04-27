@@ -61,6 +61,7 @@ urlpatterns = [
         path('it/', views.it, name='it'),
     #-----------------------finance-------------------------#
         path('finance/', views.finance, name='finance'),
+        path('marketing/', views.marketing, name='marketing'),
 
     path('coach_profile/', views.coach_profile, name='coach'),
     path('contact/', views.contact, name='contact'),
