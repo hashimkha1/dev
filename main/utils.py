@@ -274,7 +274,7 @@ Stocks = [
     },
     {
         "title": "Get short Put Data",
-        "link":SITEURL+"/getdata/shortput/",
+        "link":SITEURL+"/getdata/shortputdata/",
         "linkname":"Get short Put Data",
     },
     {

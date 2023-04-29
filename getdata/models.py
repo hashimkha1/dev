@@ -44,3 +44,14 @@ class ReplyMail(models.Model):
 
 	def __str__(self):
 		return self.subject
+
+class Editable(models.Model):
+	name = models.CharField(max_length=255,blank=True,null=True)
+	putsrow = models.PositiveIntegerField(blank=True,null=True)
+	callsrow = models.PositiveIntegerField(blank=True,null=True)
+
+	class Meta:
+		verbose_name_plural = "General"
+
+	def __str__(self):
+		return self.name

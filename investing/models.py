@@ -1,8 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
-
-# Create your models here.
 from django.db import models
 from decimal import Decimal
 from datetime import datetime,date
@@ -55,21 +53,21 @@ class cread_spread(models.Model):
 		return self.Symbol
 	
 class ShortPut(models.Model):
-	Symbol = models.CharField(max_length=255)
-	Action = models.CharField(max_length=255)
-	Expiry = models.CharField(max_length=255)
-	Days_To_Expiry = models.CharField(max_length=255)
-	Strike_Price = models.CharField(max_length=255)
-	Mid_Price = models.CharField(max_length=255)
-	Bid_Price = models.CharField(max_length=255)
-	Ask_Price = models.CharField(max_length=255)
-	Implied_Volatility_Rank = models.CharField(max_length=255)
-	Earnings_Date = models.CharField(max_length=255)
-	Earnings_Flag =  models.BooleanField(),
-	Stock_Price = models.CharField(max_length=255)
-	Raw_Return = models.CharField(max_length=255)
-	Annualized_Return = models.CharField(max_length=255)
-	Distance_To_Strike  = models.CharField(max_length=255)
+	Symbol = models.CharField(max_length=255,blank=True,null=True)
+	Action = models.CharField(max_length=255,blank=True,null=True)
+	Expiry = models.CharField(max_length=255,blank=True,null=True)
+	Days_To_Expiry = models.CharField(max_length=255,blank=True,null=True)
+	Strike_Price = models.CharField(max_length=255,blank=True,null=True)
+	Mid_Price = models.CharField(max_length=255,blank=True,null=True)
+	Bid_Price = models.CharField(max_length=255,blank=True,null=True)
+	Ask_Price = models.CharField(max_length=255,blank=True,null=True)
+	Implied_Volatility_Rank = models.CharField(max_length=255,blank=True,null=True)
+	Earnings_Date = models.CharField(max_length=255,blank=True,null=True)
+	Earnings_Flag =  models.CharField(max_length=255,blank=True,null=True),
+	Stock_Price = models.CharField(max_length=255,blank=True,null=True)
+	Raw_Return = models.CharField(max_length=255,blank=True,null=True)
+	Annualized_Return = models.CharField(max_length=255,blank=True,null=True)
+	Distance_To_Strike  = models.CharField(max_length=255,blank=True,null=True)
 
 	class Meta:
 		verbose_name_plural = "ShortPut"
@@ -88,7 +86,7 @@ class covered_calls(models.Model):
 	Ask_Price = models.CharField(max_length=255)
 	Implied_Volatility_Rank = models.CharField(max_length=255)
 	Earnings_Date = models.CharField(max_length=255)
-	Earnings_Flag =  models.BooleanField(),
+	Earnings_Flag =  models.CharField(max_length=255),
 	Stock_Price = models.CharField(max_length=255)
 	Raw_Return = models.CharField(max_length=255)
 	Annualized_Return = models.CharField(max_length=255)
@@ -99,32 +97,3 @@ class covered_calls(models.Model):
 
 	def __str__(self):
 		return self.Symbol
-
-
-class Document(models.Model):
-    id = models.AutoField(primary_key=True)
-    document_date = models.DateTimeField(default=timezone.now)
-    doc_type=models.CharField(max_length=100,blank=True, null=True)
-    doc_name=models.CharField(max_length=100,blank=True, null=True)
-    doc=models.FileField(upload_to='document/doc/')
-
-    class Meta:
-        verbose_name_plural = 'Documents'
-
-    def __str__(self):
-        return f'{self.id} Document'
-
-class Uploads(models.Model):
-    id = models.AutoField(primary_key=True)
-    document_date = models.DateTimeField(default=timezone.now)
-    doc_type=models.CharField(max_length=100,blank=True, null=True)
-    doc_name=models.CharField(max_length=100,blank=True, null=True)
-    doc=models.FileField(upload_to='Uploads/doc/')
-    link=models.CharField(max_length=100,blank=True, null=True)
-
-    class Meta:
-        verbose_name_plural = 'Uploads'
-
-    def __str__(self):
-        return f'{self.id} Uploads'
-        

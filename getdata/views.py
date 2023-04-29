@@ -18,7 +18,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 from django.views.generic import (
 	ListView,
     FormView,
-    DetailView
+    DetailView,
+    UpdateView
 )
 from main.utils import Finance,Data,Management,Automation,Stocks,General
 from getdata.utils import (
@@ -28,7 +29,8 @@ from getdata.utils import (
                     getdata,
                     GetSubject,
                     get_crypto_price,
-                    get_stock_price
+                    get_stock_price,
+                    row_value
 
 )
 from finance.models import (
@@ -41,12 +43,14 @@ from getdata.utils import(
     main_cread_spread,
     main_shortput
 )
-from .models import CashappMail,ReplyMail
+from .models import CashappMail,ReplyMail,Editable
 from investing.models import stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
 from django.contrib.auth import get_user_model
 
 from .forms import CsvImportForm
 from coda_project.settings import EMAIL_INFO
+
+putsrow_value,callsrow_value,id_value=row_value()
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -519,89 +523,134 @@ def options_play_cread_spread(request):
     return render (request, "main/messages/general.html",context)
     
 
-def options_play_shortput(request):
-    # msg = main_shortput()
-    # values=main_shortput()
-    # email = __smtp_user.get("USER")
-    # password = __smtp_user.get("PASS")
-    # data=main_shortput(email, password)
-    data=main_shortput()
-    message=f'we are done processing your request'
-    context={
-         "message":message,
-         "title":"Process Done",
-        "msg": "DONE",
-        "values":data
-    }
-    return render (request, "main/messages/general.html", context)
-
 # def options_play_shortput(request):
-#     # msg = main_shortput()
-#     # values=main_shortput()
-#     email = __smtp_user.get("USER")
-#     password = __smtp_user.get("PASS")
-#     # data=main_shortput(email, password)
-#     data=main_shortput()
+#     # Call the main_shortput function to retrieve the data
 #     message=f'we are done processing your request'
-#     context={
-#          "message":message,
-#          "title":"Process Done",
-#         "msg": "DONE",
-#         "values":data,
-#     }
-#     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-def options_play_shortputer(request):
-    email = __smtp_user.get("USER")
-    password = __smtp_user.get("PASS")
-    # Call the main_shortput function to retrieve the data
-    # data=main_shortput(email, password)
-    data=main_shortput()
-    # Loop through the data and insert it into the database
-    for row in data:
-        Symbol=row[0]
-        Action=row[1]
-        Expiry=row[2]
-        Days_To_Expiry=row[3]
-        Strike_Price=row[4]
-        Mid_Price=row[5]
-        Bid_Price=row[6]
-        Ask_Price=row[7]
-        Implied_Volatility_Rank=row[8]
-        Earnings_Date=row[9]
-        Earnings_Flag =row[10]
-        Stock_Price=row[11]
-        Raw_Return=row[12]
-        Annualized_Return=row[13]
-        Distance_To_Strike =row[14]
+#     data=main_shortput()
+#     # Loop through the data and insert it into the database
+#     for row in data:
+#         Symbol=row[0]
+#         Action=row[1]
+#         Expiry=row[2]
+#         Days_To_Expiry=row[3]
+#         Strike_Price=row[4]
+#         Mid_Price=row[5]
+#         Bid_Price=row[6]
+#         Ask_Price=row[7]
+#         Implied_Volatility_Rank=row[8]
+#         Earnings_Date=row[9]
+#         # Earnings_Flag =row[10]
+#         Stock_Price=row[11]
+#         Raw_Return=row[12]
+#         Annualized_Return=row[13]
+#         Distance_To_Strike =row[14]
+#         try:
+#             obj = ShortPut(
+#                         Symbol=Symbol,Action=Action,Expiry=Expiry,Days_To_Expiry=Days_To_Expiry,
+#                         Strike_Price=Strike_Price,Mid_Price=Mid_Price,Bid_Price=Bid_Price,Ask_Price=Ask_Price, 
+#                         Implied_Volatility_Rank=Implied_Volatility_Rank,Earnings_Date=Earnings_Date, 
+#                         Stock_Price=Stock_Price,Raw_Return=Raw_Return,
+#                         Annualized_Return=Annualized_Return,Distance_To_Strike=Distance_To_Strike
+#                         )
+#             obj.save()
+#             context={
+#             "message":message,
+#             "title":"Process Success",
+#             }
+#             return render (request, "main/messages/general.html", context)
+#         except:
+#             context={
+#             "message":message,
+#             "title":"Process Failure",
+#             }
+#             return render (request, "main/messages/general.html", context)
         
-        obj = ShortPut(
-                       stock=stock, action=action, Days_To_Expiry=Days_To_Expiry, 
-                       Strike_Price=Strike_Price, Mid_Price=Mid_Price, Bid_Price=Bid_Price, 
-                       Ask_Price=Ask_Price, Implied_Volatility_Rank=Implied_Volatility_Rank, 
-                       Earnings_Date=Earnings_Date, Earnings_Flag=Earnings_Flag,Stock_Price=Stock_Price,
-                       Raw_Return=Raw_Return, Annualized_Return=Annualized_Return,Distance_To_Strike=Distance_To_Strike
-                       )
-        obj.save()
+    
 
+def options_play_shortput(request):
+    # Call the main_shortput function to retrieve the data
+    message = 'we are done processing your request'
+    data = main_shortput()
+    # Loop through the data and insert it into the database
+    created_count = 0
+    for row in data:
+        symbol = row[0]
+        action = row[1]
+        expiry = row[2]
+        days_to_expiry = row[3]
+        strike_price = row[4]
+        mid_price = row[5]
+        bid_price = row[6]
+        ask_price = row[7]
+        implied_volatility_rank = row[8]
+        earnings_date = row[9]
+        stock_price = row[11]
+        raw_return = row[12]
+        annualized_return = row[13]
+        distance_to_strike = row[14]
+
+        obj, created = ShortPut.objects.get_or_create(
+            Symbol=symbol,
+            Action=action,
+            Expiry=expiry,
+            Days_To_Expiry=days_to_expiry,
+            Strike_Price=strike_price,
+            defaults={
+                'Mid_Price': mid_price,
+                'Bid_Price': bid_price,
+                'Ask_Price': ask_price,
+                'Implied_Volatility_Rank': implied_volatility_rank,
+                'Earnings_Date': earnings_date,
+                'Stock_Price': stock_price,
+                'Raw_Return': raw_return,
+                'Annualized_Return': annualized_return,
+                'Distance_To_Strike': distance_to_strike
+            }
+        )
+        if created:
+            created_count += 1
+    
+    context = {
+        "putsrow_value":putsrow_value,
+        "callsrow_value":callsrow_value,
+        "id_value":id_value,
+        'new_rows': created_count,
+        "duplicate_rows" :len(data) - created_count,
+        'title': 'Success',
+    }
+    return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+def shortputdata(request):
+    message=f'we are done processing your request'
     # Retrieve the data from the database
     data = ShortPut.objects.all()
-
-    message=f'we are done processing your request'
+    putsrow_value,callsrow_value,id_value=row_value()
     context={
-         "message":message,
-         "title":"Process Done",
-        "msg": "DONE",
         "data":data,
+        "putsrow_value":putsrow_value,
+        "callsrow_value":callsrow_value,
+        "id_value":id_value,
     }
     # Pass the data to the template
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
 
+class shortputupdate(UpdateView):
+    model = Editable
+    success_url = "/getdata/shortputdata"
+    fields = "__all__"
+    template_name="main/snippets_templates/generalform.html"
 
-class OptionList(ListView):
-    model=stockmarket
-    template_name="getdata/options.html"
-    context_object_name = "stocks"
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
+        # interview = self.get_object()
+        # if self.request.user.is_superuser:
+            # return True
+        # elif self.request.user == interview.client:
+            # return True
+        return True
+    
 
 class OptionList(ListView):
     model=stockmarket

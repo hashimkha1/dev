@@ -6,19 +6,16 @@
         <h1 class="display-4">{{title}}</h1>
       </div>
       <hr/>
-      <div class="col-12">
+      <!-- <div class="col-12">
         <p class="lead">
          Hi,{{request.user}}, {{message}},
         </p>
       <p class="lead">
          Hi,{{request.user}}, {{msg}},
-        </p>
-      <p class="lead">
-         Hi,{{request.user}},Here are {{values}},
-        </p>
+        </p> -->
 
         {% if values %}
-        <a href="{% url 'getdata:shortput'%}" class="btn btn-secondary">SEE ACCESS</a>
+        <a href="{% url 'getdata:shortputdata'%}" class="btn btn-secondary">SEE ACCESS</a>
         {% endif %}
         {% if site %}
         <a href="{{site}}" class="btn btn-secondary">WATCH </a>
