@@ -369,8 +369,6 @@ def finance(request):
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
-def marketing(request):
-    return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
 
 @login_required
 def meetings(request):

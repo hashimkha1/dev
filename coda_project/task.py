@@ -2,7 +2,7 @@ import json
 import tweepy
 import random
 import string
-
+import re
 import urllib.request
 import logging
 
@@ -291,10 +291,10 @@ def advertisement_facebook():
     # # Send the POST request
     # requests.post(url, data=payload)
 
-@shared_task(name="advertisement_whatsapp")
-def advertisement_whatsapp():
-    runwhatsapp()
 
+@shared_task(name="advertisement_whatsapp")
+def advertisement_whatsapp(request):
+    runwhatsapp(request)
 
 # def advertisement_whatsapp(request):
 #     whatsapp_items = Whatsapp.objects.all()

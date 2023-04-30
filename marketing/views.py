@@ -1,3 +1,6 @@
+from django.shortcuts import render
+
+# Create your views here.
 import requests
 import urllib.request
 import json
@@ -15,6 +18,7 @@ from django.shortcuts import redirect, render,get_object_or_404
 from dateutil.relativedelta import relativedelta
 from coda_project import settings
 from management.models import Whatsapp,Advertisement
+# from .utils import runwhatsapp
 from .forms import WhatsappForm
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -28,7 +32,8 @@ from django.views.generic import (
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
-
+def marketing(request):
+    return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
 #====================Social Media===========================
 
 class whatsappCreateView(LoginRequiredMixin, CreateView):
@@ -76,7 +81,55 @@ def whatsapp_apis(request):
     return render(request, 'main/snippets_templates/marketing/whatsapplist.html',context)
 
 
+# def runwhatsapp(request):
+#     print("Print this")
+#     whatsapp_items = Whatsapp.objects.all()
+
+#     # Get a list of all group IDs from the Whatsapp model
+#     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+
+#     # Get the image URL and message from the first item in the Whatsapp model
+#     image_url = whatsapp_items[0].image_url
+#     message = whatsapp_items[0].message
+#     product_id = whatsapp_items[0].product_id
+#     screen_id = whatsapp_items[0].screen_id
+#     token = whatsapp_items[0].token
+
+#     # Loop through all group IDs and send the message to each group
+#     for group_id in group_ids:
+#         print("Sending message to group", group_id)
+
+#         # Set the message type to "text" or "media" depending on whether an image URL is provided
+#         if image_url:
+#             message_type = "media"
+#             message_content = image_url
+#             filename = "image.jpg"
+#         else:
+#             message_type = "text"
+#             message_content = message
+#             filename = None
+
+#         # Set up the API request payload and headers
+#         payload = {
+#             "to_number": group_id,
+#             "type": message_type,
+#             "message": message_content,
+#             "filename": filename,
+#         }
+        
+#         headers = {
+#             "Content-Type": "application/json",
+#             "x-maytapi-key": token,
+#         }
+#         # Send the API request and print the response
+#         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+#         response = requests.post(url, headers=headers, data=json.dumps(payload))
+#         # Check if the API request was successful
+#         return
+#         return redirect('marketing:whatsapp_status')
+
 def runwhatsapp(request):
+    print("Print this")
     whatsapp_items = Whatsapp.objects.all()
 
     # Get a list of all group IDs from the Whatsapp model
@@ -118,22 +171,158 @@ def runwhatsapp(request):
         # Send the API request and print the response
         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
         response = requests.post(url, headers=headers, data=json.dumps(payload))
-        # print(response.status_code)
-        # print(response.text)
-        # print(url)
-
         # Check if the API request was successful
-        if response.status_code == 200:
-            print("Message sent successfully!")
-        else:
-            print("Error sending message:", response.text)
+        if response.status_code != 200:
+            return response
 
-        # time.sleep(5) # add a delay of 1 second
+    return redirect('marketing:whatsapp_status')
 
-    # Display a success message on the page
-    message = f"Hi, {request.user}, your messages have been sent to your groups."
-    context = {"title": "WHATSAPP", "message": message}
+
+
+# def runwhatsapp(request):
+#     print("Print this")
+#     whatsapp_items = Whatsapp.objects.all()
+
+#     # Get a list of all group IDs from the Whatsapp model
+#     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+
+#     # Get the image URL and message from the first item in the Whatsapp model
+#     image_url = whatsapp_items[0].image_url
+#     message = whatsapp_items[0].message
+#     product_id = whatsapp_items[0].product_id
+#     screen_id = whatsapp_items[0].screen_id
+#     token = whatsapp_items[0].token
+
+#     # Loop through all group IDs and send the message to each group
+#     for group_id in group_ids:
+#         print("Sending message to group", group_id)
+
+#         # Set the message type to "text" or "media" depending on whether an image URL is provided
+#         if image_url:
+#             message_type = "media"
+#             message_content = image_url
+#             filename = "image.jpg"
+#         else:
+#             message_type = "text"
+#             message_content = message
+#             filename = None
+
+#         # Set up the API request payload and headers
+#         payload = {
+#             "to_number": group_id,
+#             "type": message_type,
+#             "message": message_content,
+#             "filename": filename,
+#         }
+        
+#         headers = {
+#             "Content-Type": "application/json",
+#             "x-maytapi-key": token,
+#         }
+#         # Send the API request and print the response
+#         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+#         response = requests.post(url, headers=headers, data=json.dumps(payload))
+#         # Check if the API request was successful
+#         if response.status_code != 200:
+#             return response.json()
+#     return response.json()
+
+
+# def runwhatsapp():
+#     # whatsapp_items = Whatsapp.objects.all()
+#     # Get a list of all group IDs from the Whatsapp model
+#     whatsapp_obj=whatsapp
+#     print("whatsapp_items======>",whatsapp_obj)
+#     best_users = tuple(whatsapp_obj.values_list('group_id'))
+#     group_ids = list(whatsapp_obj.values_list('group_id', flat=True))
+
+#     # Get the image URL and message from the first item in the Whatsapp model
+#     image_url = whatsapp_obj[0].image_url
+#     message = whatsapp_obj[0].message
+#     product_id = whatsapp_obj[0].product_id
+#     screen_id = whatsapp_obj[0].screen_id
+#     token = whatsapp_obj[0].token
+
+#     # Loop through all group IDs and send the message to each group
+#     for group_id in group_ids:
+#         print("Sending message to group", group_id)
+
+#         # Set the message type to "text" or "media" depending on whether an image URL is provided
+#         if image_url:
+#             message_type = "media"
+#             message_content = image_url
+#             filename = "image.jpg"
+#         else:
+#             message_type = "text"
+#             message_content = message
+#             filename = None
+
+#         # Set up the API request payload and headers
+#         payload = {
+#             "to_number": group_id,
+#             "type": message_type,
+#             "message": message_content,
+#             "filename": filename,
+#         }
+        
+#         headers = {
+#             "Content-Type": "application/json",
+#             "x-maytapi-key": token,
+#         }
+#         # Send the API request and print the response
+#         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+#         response = requests.post(url, headers=headers, data=json.dumps(payload))
+#         # Check if the API request was successful
+#         if response.status_code != 200:
+#             return response
+#     return response
+
+# def whatsapp(request):
+#     whatsapp_obj = Whatsapp.objects.all()
+#     if whatsapp_obj:
+#         title = 'WHATSAPP'
+#         response = runwhatsapp()
+#         if response.status_code == 200:
+#             message = f"Hi, {request.user}, your messages have been sent to your groups."
+#         else:
+#             message = f"Hi, {request.user}, your messages have not been sent to your groups. Error sending message: {response.text}"
+#     else:
+#         message = "No whatsapp messages found."
+#     context = {"title": title, "message": message}
+#     return render(request, "main/errors/generalerrors.html", context)
+
+def whatsapp_status(request):
+    title = 'WHATSAPP'
+    response = runwhatsapp(request)
+    if response.status_code == 200:
+        message = f"Hi, {request.user}, your messages have been sent to your groups."
+    else:
+        message = f"Hi, {request.user}, your messages have not been sent to your groups"
+    context = {"title": title, "message": message}
     return render(request, "main/errors/generalerrors.html", context)
+
+
+
+# def whatsapp_status(request):
+#     title = 'WHATSAPP'
+#     try:
+#         runwhatsapp()
+#         message = f"Hi, {request.user}, your messages have been sent to your groups."
+#     except Exception as e:
+#         message = f"Hi, {request.user}, an error occurred while sending your messages: {str(e)}"
+#     context = {"title": title, "message": message}
+#     return render(request, "main/errors/generalerrors.html", context)
+
+
+# def whatsapp_status(request):
+#     title='WHATSAPP'
+#     # response=runwhatsapp()
+#     if response.status_code == 200:
+#         message = f"Hi, {request.user}, your messages have been sent to your groups."
+#     else:
+#         message = f"Hi, {request.user}, your messages have not been sent to your groups.Error sending message:, {response.text}"
+#     context = {"title": title, "message": message}
+#     return render(request, "main/errors/generalerrors.html", context)
 
 
 '''
