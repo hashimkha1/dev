@@ -31,7 +31,7 @@ from gapi.gservices import get_service, search_messages
 from mail.custom_email import send_reply
 
 logger = logging.getLogger(__name__)
-
+from marketing.views import runwhatsapp
 User = get_user_model()
 
 @shared_task(name="task_history")
@@ -292,67 +292,70 @@ def advertisement_facebook():
     # requests.post(url, data=payload)
 
 @shared_task(name="advertisement_whatsapp")
-def advertisement_whatsapp(request):
-    whatsapp_items = Whatsapp.objects.all()
-    image_url = None
-    # Get a list of all group IDs from the Whatsapp model
-    # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    # group_ids = ["120363047226624982@g.us"]
+def advertisement_whatsapp():
+    runwhatsapp()
 
-    # Get the image URL and message from the first item in the Whatsapp model
-    if whatsapp_items:
-        image_url = whatsapp_items[0].image_url
-        message = whatsapp_items[0].message
-    else:
-        message = "local testing"
-    product_id = whatsapp_items[0].product_id
-    screen_id = whatsapp_items[0].screen_id
-    token = whatsapp_items[0].token
-    # product_id = os.environ.get('MYAPI_PRODUCT_ID')
-    # screen_id = os.environ.get('MYAPI_SCREEN_ID')
-    # token = os.environ.get('MYAPI_TOKEN_ID')
-    # Loop through all group IDs and send the message to each group
-    for group_id in group_ids:
-        print("Sending message to group", group_id)
 
-        # Set the message type to "text" or "media" depending on whether an image URL is provided
-        conn = http.client.HTTPSConnection("api.maytapi.com")
-        if image_url:
-            # Set the length of the random string
-            length = 10
-            # Generate a random string of lowercase letters and digits
-            random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
-            payload = json.dumps({
-                "to_number": group_id,
-                "type": "media",
-                "message": image_url,
-                "filename": random_string
-            })
-        else:
-            payload = json.dumps({
-                "to_number": group_id,
-                "type": "text",
-                "message": message
-            })
+# def advertisement_whatsapp(request):
+#     whatsapp_items = Whatsapp.objects.all()
+#     image_url = None
+#     # Get a list of all group IDs from the Whatsapp model
+#     # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+#     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+#     # group_ids = ["120363047226624982@g.us"]
 
-        headers = {
-            'accept': 'application/json',
-            'x-maytapi-key': token,
-            'Content-Type': 'application/json'
-        }
-        conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
-        res = conn.getresponse()
-        data = res.read()
-        print(data.decode("utf-8"))
-        # Check if the API request was successful
-        # if response.status_code == 200:
-        if json.loads(data).get('success') is True:
-            print("Message sent successfully!")
-            message = f"Hi, {request.user}, your messages have been sent to your groups."
-        else:
-            # print("Error sending message:", response.text)
-            message = data
-    # Display a success message on the page
-    context = {"title": "WHATSAPP", "message": message}
-    return render(request, "main/errors/generalerrors.html", context)
+#     # Get the image URL and message from the first item in the Whatsapp model
+#     if whatsapp_items:
+#         image_url = whatsapp_items[0].image_url
+#         message = whatsapp_items[0].message
+#     else:
+#         message = "local testing"
+#     product_id = whatsapp_items[0].product_id
+#     screen_id = whatsapp_items[0].screen_id
+#     token = whatsapp_items[0].token
+#     # product_id = os.environ.get('MYAPI_PRODUCT_ID')
+#     # screen_id = os.environ.get('MYAPI_SCREEN_ID')
+#     # token = os.environ.get('MYAPI_TOKEN_ID')
+#     # Loop through all group IDs and send the message to each group
+#     for group_id in group_ids:
+#         print("Sending message to group", group_id)
+
+#         # Set the message type to "text" or "media" depending on whether an image URL is provided
+#         conn = http.client.HTTPSConnection("api.maytapi.com")
+#         if image_url:
+#             # Set the length of the random string
+#             length = 10
+#             # Generate a random string of lowercase letters and digits
+#             random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+#             payload = json.dumps({
+#                 "to_number": group_id,
+#                 "type": "media",
+#                 "message": image_url,
+#                 "filename": random_string
+#             })
+#         else:
+#             payload = json.dumps({
+#                 "to_number": group_id,
+#                 "type": "text",
+#                 "message": message
+#             })
+
+#         headers = {
+#             'accept': 'application/json',
+#             'x-maytapi-key': token,
+#             'Content-Type': 'application/json'
+#         }
+#         conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
+#         res = conn.getresponse()
+#         data = res.read()
+#         print(data.decode("utf-8"))
+#         # if response.status_code == 200:
+#         if json.loads(data).get('success') is True:
+#             print("Message sent successfully!")
+#             message = f"Hi, {request.user}, your messages have been sent to your groups."
+#         else:
+#             # print("Error sending message:", response.text)
+#             message = data
+#     # Display a success message on the page
+#     context = {"title": "WHATSAPP", "message": message}
+#     return render(request, "main/errors/generalerrors.html", context)

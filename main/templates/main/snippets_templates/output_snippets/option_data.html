@@ -22,9 +22,20 @@
                 <div class="card-body">
                   <h5><b>OPTIONS RESULTS</b></h5>
                   <hr/>
-                  <h5><i class="remaining-time">
-                    1. IV>15% 2. Annualized Return>65%</i>
-                  </h5>
+                  <div class="row text-center">
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Implied Volatility(IV)</br> <i>15% to 40%</i></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Days To Expiration(DTE)</br> <i>More than 21 days</i></a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">
+                      Annualized Returns (AR)<br>
+                      <small style="font-size: 80%;">Greater than 65%</small>
+                    </a>
+                  </div>
+                </div>
                   <hr/>
                   <i><h6>New Rows:{{new_rows}} | Duplicates: {{duplicates_rows}}|Sample:{{putsrow_value}}
                     <a href="{% url 'getdata:shortputupdate' id_value %}" class="btn btn-secondary btn-sm"

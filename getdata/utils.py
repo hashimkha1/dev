@@ -42,9 +42,12 @@ def row_value():
         putsrow_value = first_row.putsrow  # get the value of the `putsrow` field
         callsrow_value = first_row.callsrow  # get the value of the `callsrow` field
         id_value=first_row.id
-        print(putsrow_value,callsrow_value,id_value)
+        # print(putsrow_value,callsrow_value,id_value)
     else:
         print("No objects found with id=1")
+        putsrow_value=1
+        callsrow_value=1
+        id_value=1
     return putsrow_value,callsrow_value,id_value
 
 def get_gmail_service():
@@ -553,70 +556,7 @@ def dump_data_short_put(values):
         print(err)
 
 
-# def main_shortput():
-#     # to supress the error messages/logs
-#     # chromedriver.install()
-#     # options = webdriver.ChromeOptions()
-#     # options.add_argument("--headless")
-#     # options.add_argument("--disable-dev-shm-usage")
-#     # options.add_argument('--no-sandbox')
-#     # options.add_argument("--disable-gpu")
-#     # options.add_argument("--disable-dev-sh-usage")
-#     # options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-#     # ## might not be needed
-#     # options.add_argument("window-size=800x600")
-#     # # driver = webdriver.Chrome(chromedriver.install(), options=options)
-#     # # driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), options=options)
-#     # driver = webdriver.Chrome(options=options)
-#     chrome_options = webdriver.ChromeOptions()
-#     chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-#     chrome_options.add_argument("--headless")
-#     chrome_options.add_argument("--disable-dev-shm-usage")
-#     chrome_options.add_argument("--no-sandbox")
-#     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-#     # CLIENT CODE
-#     driver.get('https://www.optionsplay.com/hub/short-puts')
-#     time.sleep(15)
-#     driver.implicitly_wait(15)
-#     form = driver.find_element(By.TAG_NAME, 'form')
-#     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
-#     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
-
-#     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
-#     btn.send_keys(Keys.ENTER)
-#     time.sleep(5)
-#     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
-#     time.sleep(5)
-#     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
-#     # time.sleep(5)
-#     rows = tbody.find_elements(By.TAG_NAME,'tr')
-#     rows = len(rows)
-#     # //*[@id="shortPuts"]/tbody/tr[1]
-#     # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
-#     time.sleep(10)
-#     data=[]
-#     for row in range(1,rows+1):
-#     # for row in range(1,2):
-#         values = []
-#         for col in range(1,16):
-#             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
-#             value = driver.find_element(By.XPATH,path).text.strip()
-#             values.append(value)
-
-#         value = float(values[14].replace('%',''))
-#         if values[11] == 'N' and value < 30:
-#             dump_data_short_put(tuple(values))
-#             data.append(values)
-#     return data
-
-
-
-# def main_shortput():
-
-
 def main_shortput():
-
     chrome_options = webdriver.ChromeOptions()
     # chrome_options.binary_location = "/app/.apt/usr/bin/google-chrome"
     # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -660,11 +600,10 @@ def main_shortput():
         Return = float(values[13].replace('%',''))
         num_days =float(values[3])
         sp= float(values[11][1:])
-        print(sp)
 
         # if values[10] == 'N' and num_days >= 21:
-        if num_days >= 21 and iv >=10 and Return >= 65 and sp>15:
-            print(f'Days to Expiration==>:{num_days},sp==>:{sp},iv==>{iv},Return==>:{Return}')
+        if num_days >= 21 and iv >=15 and iv <= 50 and Return >= 65 and sp>15:
+            # print(f'Days to Expiration==>:{num_days},sp==>:{sp},iv==>{iv},Return==>:{Return}')
             dump_data_short_put(tuple(values))
             data.append(values)
     return data

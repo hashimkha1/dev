@@ -523,49 +523,6 @@ def options_play_cread_spread(request):
     return render (request, "main/messages/general.html",context)
     
 
-# def options_play_shortput(request):
-#     # Call the main_shortput function to retrieve the data
-#     message=f'we are done processing your request'
-#     data=main_shortput()
-#     # Loop through the data and insert it into the database
-#     for row in data:
-#         Symbol=row[0]
-#         Action=row[1]
-#         Expiry=row[2]
-#         Days_To_Expiry=row[3]
-#         Strike_Price=row[4]
-#         Mid_Price=row[5]
-#         Bid_Price=row[6]
-#         Ask_Price=row[7]
-#         Implied_Volatility_Rank=row[8]
-#         Earnings_Date=row[9]
-#         # Earnings_Flag =row[10]
-#         Stock_Price=row[11]
-#         Raw_Return=row[12]
-#         Annualized_Return=row[13]
-#         Distance_To_Strike =row[14]
-#         try:
-#             obj = ShortPut(
-#                         Symbol=Symbol,Action=Action,Expiry=Expiry,Days_To_Expiry=Days_To_Expiry,
-#                         Strike_Price=Strike_Price,Mid_Price=Mid_Price,Bid_Price=Bid_Price,Ask_Price=Ask_Price, 
-#                         Implied_Volatility_Rank=Implied_Volatility_Rank,Earnings_Date=Earnings_Date, 
-#                         Stock_Price=Stock_Price,Raw_Return=Raw_Return,
-#                         Annualized_Return=Annualized_Return,Distance_To_Strike=Distance_To_Strike
-#                         )
-#             obj.save()
-#             context={
-#             "message":message,
-#             "title":"Process Success",
-#             }
-#             return render (request, "main/messages/general.html", context)
-#         except:
-#             context={
-#             "message":message,
-#             "title":"Process Failure",
-#             }
-#             return render (request, "main/messages/general.html", context)
-        
-    
 
 def options_play_shortput(request):
     # Call the main_shortput function to retrieve the data
@@ -609,16 +566,8 @@ def options_play_shortput(request):
         )
         if created:
             created_count += 1
-    
-    context = {
-        "putsrow_value":putsrow_value,
-        "callsrow_value":callsrow_value,
-        "id_value":id_value,
-        'new_rows': created_count,
-        "duplicate_rows" :len(data) - created_count,
-        'title': 'Success',
-    }
-    return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+    # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+    return redirect ('getdata:shortputdata')
 
 def shortputdata(request):
     message=f'we are done processing your request'
@@ -630,6 +579,9 @@ def shortputdata(request):
         "putsrow_value":putsrow_value,
         "callsrow_value":callsrow_value,
         "id_value":id_value,
+        # 'new_rows': created_count,
+        # "duplicate_rows" :len(data) - created_count,
+        'title': 'Success',
     }
     # Pass the data to the template
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
@@ -639,17 +591,20 @@ class shortputupdate(UpdateView):
     success_url = "/getdata/shortputdata"
     fields = "__all__"
     template_name="main/snippets_templates/generalform.html"
-
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        return super().form_valid(form)
-    def test_func(self):
-        # interview = self.get_object()
-        # if self.request.user.is_superuser:
-            # return True
-        # elif self.request.user == interview.client:
-            # return True
-        return True
+    if model:
+        def form_valid(self, form):
+            # form.instance.author=self.request.user
+            return super().form_valid(form)
+        def test_func(self):
+            # interview = self.get_object()
+            # if self.request.user.is_superuser:
+                # return True
+            # elif self.request.user == interview.client:
+                # return True
+            return True
+    else:
+        print("set default values")
+        
     
 
 class OptionList(ListView):

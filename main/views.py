@@ -20,7 +20,7 @@ from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import Whatsapp
-from main.forms import WhatsappForm,PostForm,ContactForm
+from main.forms import PostForm,ContactForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
@@ -51,8 +51,6 @@ def test(request):
 
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
-
-
 
 def hendler400(request,exception):
     return render(request, "errors/400.html")
@@ -478,118 +476,6 @@ def training(request):
 def project(request):
     return render(request, "main/project.html", {"title": "project"})
 
-
-# -----------------------------Documents---------------------------------
-class whatsappCreateView(LoginRequiredMixin, CreateView):
-    model = Whatsapp
-    success_url = "/whatsapplist/"  
-    form_class=WhatsappForm
-    # fields = "__all__"
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
-class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Whatsapp
-    form_class=WhatsappForm
-
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("main:whatsapp_list")
-
-    def test_func(self):
-        # plan = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user:
-            return True
-        return False
-
-def delete_whatsapp(request,id):
-    whatsapp_record = Whatsapp.objects.get(pk=id)
-    if request.user.is_superuser:
-        whatsapp_record.delete()
-    return redirect('main:whatsapp_list')
-
-
-def whatsapp_apis(request):
-    whatsaapitems=Whatsapp.objects.all()
-    context={
-            "whatsaapitems":whatsaapitems
-    }
-    return render(request, 'main/snippets_templates/marketing/whatsapplist.html',context)
-
-
-def runwhatsapp(request):
-    whatsapp_items = Whatsapp.objects.all()
-
-    # Get a list of all group IDs from the Whatsapp model
-    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-
-    # Get the image URL and message from the first item in the Whatsapp model
-    image_url = whatsapp_items[0].image_url
-    message = whatsapp_items[0].message
-    product_id = whatsapp_items[0].product_id
-    screen_id = whatsapp_items[0].screen_id
-    token = whatsapp_items[0].token
-
-    # print("Group IDs:", group_ids)
-    # print("Image URL:", image_url)
-    # print("Message:", message)
-    # print("product_id:", product_id)
-    # print("screen_id:", screen_id)
-    # print("token:", token)
-
-    # Loop through all group IDs and send the message to each group
-    for group_id in group_ids:
-        print("Sending message to group", group_id)
-
-        # Set the message type to "text" or "media" depending on whether an image URL is provided
-        if image_url:
-            message_type = "media"
-            message_content = image_url
-            filename = "image.jpg"
-        else:
-            message_type = "text"
-            message_content = message
-            filename = None
-
-        # Set up the API request payload and headers
-        payload = {
-            "to_number": group_id,
-            "type": message_type,
-            "message": message_content,
-            "filename": filename,
-        }
-        
-        headers = {
-            "Content-Type": "application/json",
-            "x-maytapi-key": token,
-        }
-        # Send the API request and print the response
-        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        # print(response.status_code)
-        # print(response.text)
-        # print(url)
-
-        # Check if the API request was successful
-        if response.status_code == 200:
-            print("Message sent successfully!")
-        else:
-            print("Error sending message:", response.text)
-
-        # time.sleep(5) # add a delay of 1 second
-
-    # Display a success message on the page
-    message = f"Hi, {request.user}, your messages have been sent to your groups."
-    context = {"title": "WHATSAPP", "message": message}
-    return render(request, "main/errors/generalerrors.html", context)
 
 
 def error400(request):
