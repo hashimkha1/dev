@@ -43,7 +43,7 @@ from getdata.utils import(
     main_cread_spread,
     main_shortput
 )
-from .models import CashappMail,ReplyMail,Editable
+from .models import CashappMail,ReplyMail,Editable,Logs
 from investing.models import stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
 from django.contrib.auth import get_user_model
 
@@ -643,3 +643,10 @@ def selinum_test(request):
     return HttpResponse(title)
 
 
+def LogsViewSet(request):
+    logs = Logs.objects.all().order_by("-id")
+    if request.user.is_superuser:
+        return render(request, "testing/logs.html", {"logs": logs})
+
+    else:
+        return redirect("main:layout")

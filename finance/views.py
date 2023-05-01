@@ -50,6 +50,7 @@ usd_to_kes = get_exchange_rate('USD', 'KES')
 rate = round(Decimal(usd_to_kes), 2)
 
 def finance_report(request):
+    print("rate=====>",rate)
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================

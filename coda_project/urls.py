@@ -85,9 +85,9 @@ urlpatterns = [
     path("investing/", include("investing.urls", namespace="investing")),
     path("management/", include("management.urls", namespace="management")),
     path("marketing/", include("marketing.urls", namespace="marketing")),
-    path("globalsearch/", include("globalsearch.urls"), name="search"),
+    # path("globalsearch/", include("globalsearch.urls"), name="search"),
     path("finance/", include("finance.urls"), name="finance"),
-    path('testing/', include("testing.urls"))
+    # path('testing/', include("testing.urls"))
 ]
 
 if settings.DEBUG:

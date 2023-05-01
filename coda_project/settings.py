@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "projectmanagement.apps.ProjectmanagementConfig",
     "investing.apps.InvestingConfig",
     "management.apps.ManagementConfig",
-    "globalsearch.apps.GlobalsearchConfig",
+    # "globalsearch.apps.GlobalsearchConfig",
     "finance.apps.FinanceConfig",
     "marketing",
     "crispy_forms",
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "django_crontab",
-    'testing.apps.TestingConfig',
+    # 'testing.apps.TestingConfig',
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

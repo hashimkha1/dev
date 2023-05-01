@@ -4,7 +4,10 @@ from decimal import Decimal
 from datetime import datetime,date
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.contrib.auth import get_user_model
 
+#User=settings.AUTH_USER_MODEL
+User = get_user_model()
 # Create your models here.
 class CashappMail(models.Model):
 	id = models.CharField(max_length=30, unique=True, primary_key=True)
@@ -55,3 +58,16 @@ class Editable(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
+
+class Logs(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_in_logs", null=True, blank=True)
+    location_in_code = models.CharField(max_length=255, null=True, blank=True)
+    reason_code_crash = models.CharField(max_length=255, null=True, blank=True)
+    exception = models.CharField(max_length=255, null=True, blank=True)
+    api = models.URLField(max_length=255, null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Logs"

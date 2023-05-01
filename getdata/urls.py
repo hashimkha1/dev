@@ -37,5 +37,5 @@ urlpatterns = [
     # #meeting detail
     # re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
     path('testselinum/', views.selinum_test, name='testselinum'),
-
+    path('all_logs/', views.LogsViewSet, name='all_logs'),
 ]
