@@ -9,17 +9,15 @@
             {% if subcategory == 3 %}
             FULL TIME
             {% else %} 
-            CONTRACTUAL
+            MEMBERS IN THE PORTAL FOR DYC
             {% endif %} 
           </a></p>
         </div>
         <h2 class="title"></h2>
-
-
     <hr>
     <table class="table table-borderless">
         {% include 'main/snippets_templates/table/empheaders.html' with instance=user %}
-        {% for user in dck_users %}
+        {% for user in dyc_users %}
           {% include 'main/snippets_templates/table/emptable.html' with instance=user %}
         {% endfor %}
     </table>
