@@ -292,9 +292,9 @@ def advertisement_facebook():
     # requests.post(url, data=payload)
 
 
-@shared_task(name="advertisement_whatsapp")
-def advertisement_whatsapp(request):
-    runwhatsapp(request)
+# @shared_task(name="advertisement_whatsapp")
+# def advertisement_whatsapp(request):
+#     runwhatsapp(request)
 
 # def advertisement_whatsapp(request):
 #     whatsapp_items = Whatsapp.objects.all()
