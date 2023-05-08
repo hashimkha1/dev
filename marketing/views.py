@@ -77,7 +77,7 @@ def whatsapp_apis(request):
     context={
             "whatsaapitems":whatsaapitems
     }
-    return render(request, 'main/snippets_templates/marketing/whatsapplist.html',context)
+    return render(request, 'marketing/whatsapplist.html',context)
 
 def runwhatsapp(request):
     print("Print this")
