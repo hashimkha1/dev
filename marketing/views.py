@@ -56,7 +56,7 @@ class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("main:whatsapp_list")
+        return reverse("marketing:whatsapp_list")
 
     def test_func(self):
         # plan = self.get_object()
@@ -70,7 +70,7 @@ def delete_whatsapp(request,id):
     whatsapp_record = Whatsapp.objects.get(pk=id)
     if request.user.is_superuser:
         whatsapp_record.delete()
-    return redirect('main:whatsapp_list')
+    return redirect('marketing:whatsapp_list')
 
 def whatsapp_apis(request):
     whatsaapitems=Whatsapp.objects.all()

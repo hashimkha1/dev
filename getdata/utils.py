@@ -11,12 +11,13 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import date,datetime
 from .models import Editable
+from main.utils import path_values
 # To encode the data
 from base64 import urlsafe_b64decode
 import logging
 logger = logging.getLogger(__name__)
-
-
+import urllib.request
+import requests
 #libraries for Options_play data extraction
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -34,6 +35,8 @@ SCOPES = ['https://mail.google.com/']
 # host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
 host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 
+# path_values,sub_title=path_values(request)
+# print("===============>",path_values,sub_title)
 
 def row_value():
     rows = Editable.objects.all()
@@ -488,6 +491,7 @@ def main_covered_calls():
     options.add_argument("window-size=800x600")
 
     driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
     driver.get('https://www.optionsplay.com/hub/covered-calls')
 
     time.sleep(5)
@@ -556,7 +560,15 @@ def dump_data_short_put(values):
         print(err)
 
 
-def main_shortput():
+def main_shortput(request):
+    pathvalue,subtitle=path_values(request)
+    print("pathvalue================>",pathvalue)
+    print("subtitle===>",subtitle)
+    
+    # value=request.path.split("/")
+    # print(value)
+    # path_values = [i for i in value if i.strip()]
+    # sub_title=path_values[-1]
     chrome_options = webdriver.ChromeOptions()
     # chrome_options.binary_location = "/app/.apt/usr/bin/google-chrome"
     # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
@@ -566,7 +578,13 @@ def main_shortput():
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
 
     # CLIENT CODE
+#     if sub_title=='shortput' or sub_title='shortputdata'
+#         driver.get('https://www.optionsplay.com/hub/short-puts')
+#    elif:
+
+
     driver.get('https://www.optionsplay.com/hub/short-puts')
+
     time.sleep(15)
     driver.implicitly_wait(15)
     form = driver.find_element(By.TAG_NAME, 'form')

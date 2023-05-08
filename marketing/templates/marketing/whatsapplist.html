@@ -42,12 +42,12 @@
                           </div>
                           {%if request.user%}
                             <div class="col-md-3">
-                              <p><a class="article-title" href="{% url 'main:whatsapp_update' obj.id %}">Edit</a></p>
+                              <p><a class="article-title" href="{% url 'marketing:whatsapp_update' obj.id %}">Edit</a></p>
                             </div>
                           {%endif%}
                           {%if user.is_admin or user.is_superuser%}
                             <div class="col-md-3">
-                                <p><a class="article-title" href="{% url 'main:delete_whatsapp' obj.id %}">Delete</a></p>
+                                <p><a class="article-title" href="{% url 'marketing:delete_whatsapp' obj.id %}">Delete</a></p>
                             </div>
                           {%endif%}
                         </div>

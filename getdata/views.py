@@ -527,7 +527,7 @@ def options_play_cread_spread(request):
 def options_play_shortput(request):
     # Call the main_shortput function to retrieve the data
     message = 'we are done processing your request'
-    data = main_shortput()
+    data = main_shortput(request)
     # Loop through the data and insert it into the database
     created_count = 0
     for row in data:
