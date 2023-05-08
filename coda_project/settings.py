@@ -19,7 +19,7 @@ SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
 if os.environ.get('ENVIRONMENT') == 'production':
-    DEBUG = False
+    DEBUG = True
 else:
     DEBUG = True
 
