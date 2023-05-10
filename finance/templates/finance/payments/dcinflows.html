@@ -108,7 +108,7 @@
             <th>period</th>
             <th>Quantity</th>
             <th>Amount</th>
-            <th>Amount(Ksh)</th>
+            <!-- <th>Amount(Ksh)</th> -->
             <th>Paid by</th>
             <th>Receipt</th>
         </tr>
@@ -136,14 +136,14 @@
           <td>{{transanction.qty}}</td>
           <td>{{transanction.amount}}</td>
           <!-- <td>{{transanction.qty|mul:transanction.amount}}</td>  -->
-          <td>{{transanction.amount|mul:rate}}</td> 
+          <!-- <td>{{transanction.amount|mul:rate}}</td>  -->
           <!-- <td>{{transanction.amount}}</td>  -->
           <!-- <td>{{amount_ksh}}</td>  -->
           <td>{{transanction.transaction_date|date:"n/d/Y"}}</td>
-          {% if transanction.receipturl.status_code == 302 %}
-          <td> <a class="article-title" href="{% url 'main:404error'%} ">No Receipt</a></td>
-          {%else%}
+          {% if transanction.receipturl.status_code == 200 %}
           <td> <a class="article-title" href="{{transanction.receipturl}}">View Receipt</a></td>
+          {%else%}
+          <td> <a class="article-title" href="{% url 'main:404error'%} ">No Receipt</a></td>
           {%endif%}
           {%if user.is_admin or user.is_superuser%}
           <td> <a class="article-title" href="{% url 'finance:dcinflow-update' transanction.id %}">Edit</a></td>
