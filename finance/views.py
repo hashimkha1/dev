@@ -896,10 +896,14 @@ def dcinflows(request):
     amount_ksh = 0  # Assign a default value of 0
     
     for transact in transactions:
-        # print("clients_category",transact.clients_category)
+        # print("receipturl",transact.receipturl)
         total_amt += transact.total_payment
         if transact.has_paid:
             total_paid += transact.total_paid
+        if transact.receipturl:
+            receipt_url=transact.receipturl
+        else:
+            return redirect('main:404error')
     
     pledged = total_amt - total_paid
     amount_ksh = total_amt * rate  # Initialize amount_ksh outside the if block
@@ -917,6 +921,7 @@ def dcinflows(request):
         "remaining_seconds ": int(remaining_seconds % 60),
         "remaining_minutes ": int(remaining_minutes % 60),
         "remaining_hours": int(remaining_hours % 24),
+        "receipt_url": receipt_url,
     }
     return render(request, "finance/payments/dcinflows.html", context)
 
