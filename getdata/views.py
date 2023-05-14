@@ -586,60 +586,24 @@ def shortputdata(request):
     # Pass the data to the template
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
 
-# def covered_callsdata(request):
-#     message=f'we are done processing your request'
-#     # Retrieve the data from the database
-#     data = covered_calls.objects.all()
-#     print(data)
-#     putsrow_value,callsrow_value,id_value=row_value()
-#     context={
-#         "data":data,
-#         "putsrow_value":putsrow_value,
-#         "callsrow_value":callsrow_value,
-#         "id_value":id_value,
-#         # 'new_rows': created_count,
-#         # "duplicate_rows" :len(data) - created_count,
-#         'title': 'Success',
-#     }
-#     # Pass the data to the template
-#     return render (request, "main/snippets_templates/output_snippets/option_data_covered.html", context)
-
-from django.core.paginator import Paginator
-
 def covered_callsdata(request):
-    try:
-        # Retrieve the data from the database
-        covered_calls_data = covered_calls.objects.all()
-        print(covered_calls_data)
-        # Paginate the data
-        paginator = Paginator(covered_calls_data, 10)  # Display 10 items per page
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
+    message=f'we are done processing your request'
+    # Retrieve the data from the database
+    data = covered_calls.objects.all()
+    print(data)
+    putsrow_value,callsrow_value,id_value=row_value()
+    context={
+        "data":data,
+        "putsrow_value":putsrow_value,
+        "callsrow_value":callsrow_value,
+        "id_value":id_value,
+        # 'new_rows': created_count,
+        # "duplicate_rows" :len(data) - created_count,
+        'title': 'Success',
+    }
+    # Pass the data to the template
+    return render (request, "main/snippets_templates/output_snippets/option_data_covered.html", context)
 
-        # Get the number of rows for puts and calls
-        puts_rows = len(covered_calls_data.filter(option_type='put'))
-        calls_rows = len(covered_calls_data.filter(option_type='call'))
-
-        # Get the unique IDs
-        ids = covered_calls_data.order_by().values('id').distinct()
-
-        # Render the template with the data
-        context = {
-            'page_obj': page_obj,
-            'puts_rows': puts_rows,
-            'calls_rows': calls_rows,
-            'ids': ids,
-            'title': 'Option Data - Covered Calls',
-        }
-        return render(request, 'main/snippets_templates/output_snippets/option_data_covered.html', context)
-
-    except Exception as e:
-        # Handle any errors that occur
-        context = {
-            'error': f'An error occurred: {e}',
-            'title': 'Error',
-        }
-        return render(request, 'main/errors/error.html', context)
 
 def credit_spreaddata(request):
     message=f'we are done processing your request'
