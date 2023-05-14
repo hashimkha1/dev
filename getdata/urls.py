@@ -19,11 +19,11 @@ urlpatterns = [
     path('cashappdetail/',views.CashappMailDetailSlugView.as_view(), name='cashappdetail'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('options/', views.options, name='option-data'),
-    path('covered_calls/', views.options_play_covered_calls, name='covered_calls'),
+    path('covered_calls/', views.covered_callsdata, name='covered_calls'),
     path('shortput/', views.options_play_shortput, name='shortput'),
     path('shortputdata/', views.shortputdata, name='shortputdata'),
     path('shortputupdate/<int:pk>', views.shortputupdate.as_view(), name='shortputupdate'),
-    path('credit_spread/', views.options_play_cread_spread, name='credit_spread'),
+    path('credit_spread/', views.credit_spreaddata, name='credit_spread'),
     path('replies/',search_job_mail, name='replies-email'),
     
     path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),
