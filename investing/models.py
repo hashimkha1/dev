@@ -86,7 +86,7 @@ class covered_calls(models.Model):
 	Ask_Price = models.CharField(max_length=255)
 	Implied_Volatility_Rank = models.CharField(max_length=255)
 	Earnings_Date = models.CharField(max_length=255)
-	Earnings_Flag =  models.CharField(max_length=255),
+	Earnings_Flag =  models.CharField(max_length=255)
 	Stock_Price = models.CharField(max_length=255)
 	Raw_Return = models.CharField(max_length=255)
 	Annualized_Return = models.CharField(max_length=255)

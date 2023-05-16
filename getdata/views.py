@@ -608,6 +608,7 @@ def covered_callsdata(request):
 def credit_spreaddata(request):
     message=f'we are done processing your request'
     # Retrieve the data from the database
+    print(message)
     data = cread_spread.objects.all()
     print(data)
     putsrow_value,callsrow_value,id_value=row_value()
