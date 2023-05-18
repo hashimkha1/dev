@@ -5,17 +5,13 @@ import time
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
 from django.db.models import Q
-from celery import shared_task
 from django.shortcuts import redirect, render,get_object_or_404
 from django.contrib import messages
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import Meetings,path_values,buildmodel
-from accounts.utils import employees
 from .models import Testimonials
-from management.models import Advertisement
-from coda_project.task import advertisement
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
@@ -32,11 +28,7 @@ from django.views.generic import (
         DetailView,
         UpdateView,
     )
-from accounts.forms import LoginForm
 from .forms import *
-from accounts.views import CreateProfile
-from coda_project.task import TrainingLoanDeduction
-import urllib.request
 from PIL import Image
 from django.contrib.auth import get_user_model
 User=get_user_model()

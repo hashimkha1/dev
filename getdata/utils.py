@@ -39,18 +39,21 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 # print("===============>",path_values,sub_title)
 
 def row_value():
-    rows = Editable.objects.all()
-    if rows:
-        first_row = rows[0]  # get the first object in the QuerySet
-        putsrow_value = first_row.putsrow  # get the value of the `putsrow` field
-        callsrow_value = first_row.callsrow  # get the value of the `callsrow` field
-        id_value=first_row.id
-        # print(putsrow_value,callsrow_value,id_value)
-    else:
-        print("No objects found with id=1")
-        putsrow_value=1
-        callsrow_value=1
-        id_value=1
+    putsrow_value=3
+    callsrow_value=3
+    id_value=3
+#     rows = Editable.objects.all()
+#     if rows:
+#         first_row = rows[0]  # get the first object in the QuerySet
+#         putsrow_value = first_row.putsrow  # get the value of the `putsrow` field
+#         callsrow_value = first_row.callsrow  # get the value of the `callsrow` field
+#         id_value=first_row.id
+#         # print(putsrow_value,callsrow_value,id_value)
+#     else:
+#         print("No objects found with id=1")
+#         putsrow_value=1
+#         callsrow_value=1
+#         id_value=1
     return putsrow_value,callsrow_value,id_value
 
 def get_gmail_service():

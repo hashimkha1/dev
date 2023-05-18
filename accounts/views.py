@@ -4,8 +4,6 @@ from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
-# from django.contrib.auth.views import PasswordChangeView ,PasswordSetView
-# from django.contrib.auth.forms import PasswordChangeForm,SetPasswordForm,PasswordResetForm
 from django.utils.decorators import method_decorator
 from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
@@ -20,11 +18,11 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from .models import CustomerUser,CustomUser, Tracker, CredentialCategory, Credential, Department
+from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees,compute_default_fee
 from main.filters import CredentialFilter,UserFilter
 from management.models import Task
-from application.models import UserProfile
+from application.models import UserProfile,Assets
 from finance.models import Default_Payment_Fees,Payment_History
 from finance.utils import DYCDefaultPayments
 from mail.custom_email import send_email
@@ -120,7 +118,6 @@ def join(request):
                     print("category", form.cleaned_data.get("category"))
 
             if form.is_valid():
-                # print("category", form.cleaned_data.get("category"))
                 if form.cleaned_data.get("category") == 2:
                     form.instance.is_employee = True
                 elif form.cleaned_data.get("category") == 3:
@@ -138,62 +135,19 @@ def join(request):
     return render(request, "accounts/registration/coda/join.html", {"form": form})
 
 # ---------------ACCOUNTS VIEWS----------------------
-
-# def join(request):
-#     if request.method == "POST":
-#         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
-#         if len(previous_user) > 0:
-#             messages.success(request, f'User already exist with this email')
-#             form = UserForm()
-#             return redirect("/password-reset")
-#         else:
-#             category=request.POST.get("category")
-#             subcategory=request.POST.get("sub_category")
-#             user=request.POST.get("username")
-#             contract_data,contract_date=agreement_data(request)
-#             default_amounts = Default_Payment_Fees.objects.all()
-#             default_fee=compute_default_fee(category, default_amounts, Default_Payment_Fees)
-#             dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
-#             context={
-#                         "contract_data": contract_data,
-#                         "contract_date": contract_date,
-#                         "payment_data": default_fee,
-#                         "signature": user,
-#                         "dyc_total_amount": dyc_total_amount,
-#                         "dyc_down_payment": dyc_down_payment,
-#                         "early_registration_bonus": early_registration_bonus,
-#                     }
-#             print("user==============>",user)
-#             if (category == "3" and subcategory == "1"):
-#                 return render(request,"management/contracts/supportcontract_form.html",context)
-#             elif (category == "3" and subcategory == "2"):
-#                 return render(request,"management/contracts/trainingcontract_form.html",context)
-#             elif (category == "4"):
-#                 print(user)
-#                 return render(request,"management/contracts/dyc_contracts/student_contract.html",context)
-#             else:
-#                 form = UserForm(request.POST, request.FILES)
-#                 if form.is_valid():
-#                     if form.cleaned_data.get("category") == 2:
-#                         form.instance.is_employee = True
-#                     elif form.cleaned_data.get("category") == 3:
-#                         form.instance.is_client = True
-#                     else:
-#                         form.instance.is_applicant = True
-
-#                     form.save()
-#                     return redirect('accounts:account-login')
-#     else:
-#         msg = "error validating form"
-#         form = UserForm()
-#     # return render(request, "accounts/registration/DYS/register.html", {"form": form})
-#     return render(request, "accounts/registration/coda/join.html", {"form": form})
-
-
-def CreateProfile():
+def create_profile():
     users = CustomerUser.objects.filter(profile=None)
-    for user in users:
-        UserProfile.objects.create(user=user)
+    assets = Assets.objects.all()
+    # print(assets)
+    if not assets:
+        for user in users:
+            Assets.objects.create(
+                name='default',
+                category='default',
+                description='default',
+                image_url='default',
+            )
+            UserProfile.objects.create(user=user)
 
 
 def login_view(request):
@@ -205,7 +159,7 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-            CreateProfile()
+            create_profile()
             # If Category is Staff/employee
             if account is not None and account.category == 2:
                 if account.is_employee and not account.is_employee_contract_signed:
@@ -924,19 +878,19 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
 
 # ==============================Testing Purposes=============================
-class CustomUserCreateView(CreateView):
-    model = CustomUser
-    success_url = "/"
-    fields = "__all__"
+# class CustomUserCreateView(CreateView):
+#     model = CustomUser
+#     success_url = "/"
+#     fields = "__all__"
 
-    def form_valid(self, form):
-        # form.instance.user = self.request.user
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         # form.instance.user = self.request.user
+#         return super().form_valid(form)
     
 
-def displayusers(request):
-    customusers=CustomUser.objects.all()
-    context={
-        "users":customusers
-    }
-    return render(request, "accounts/admin/users.html", context)
+# def displayusers(request):
+#     customusers=CustomUser.objects.all()
+#     context={
+#         "users":customusers
+#     }
+#     return render(request, "accounts/admin/users.html", context)

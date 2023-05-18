@@ -4,7 +4,7 @@ from .models import (
 	cryptomarket,
 	cread_spread,
 	ShortPut,
-	covered_calls,
+	covered_calls
 )
 
 # Register your models here.
@@ -13,3 +13,4 @@ admin.site.register(cryptomarket)
 admin.site.register(cread_spread)
 admin.site.register(ShortPut)
 admin.site.register(covered_calls)
+

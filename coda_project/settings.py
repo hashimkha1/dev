@@ -144,7 +144,9 @@ WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
 
 host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
-
+print("HOST", host)
+print("User", user)
+print("PASSWORD", password)
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
