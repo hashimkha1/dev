@@ -48,6 +48,6 @@ urlpatterns = [
 
 
 #=============================TESTING VIEWS=====================================
-   path('createtestusers/', views.CustomUserCreateView.as_view(template_name="accounts/customeruser_form.html"),name='testusers'),
-   path('testusers/', views.displayusers, name='testusers'),
+#    path('createtestusers/', views.CustomUserCreateView.as_view(template_name="accounts/customeruser_form.html"),name='testusers'),
+#    path('testusers/', views.displayusers, name='testusers'),
 ]

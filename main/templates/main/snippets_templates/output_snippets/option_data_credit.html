@@ -99,9 +99,7 @@
                 <td>{{row.Prem_Width}}</td>
                 <td>{{row.Rank}}</td>
                 <td>{{row.Earnings_Date}}</td>
-                <!-- <td>{{row.Annualized_Return}}</td>
-                <td>{{row.Distance_To_Strike }}</td> -->
-                <!-- {% include 'main/snippets_templates/generaltable.html' with instance=row %}  -->
+                {% include 'main/snippets_templates/generaltable.html' with instance=r %} 
             {% endfor %}
           </tbody>
         </table>

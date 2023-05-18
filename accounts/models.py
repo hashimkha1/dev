@@ -52,9 +52,6 @@ class CustomerUser(AbstractUser):
     sub_category = models.IntegerField(
         choices=SubCategory.choices, blank=True, null=True
     )
-    # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
-    # applicant=models.BooleanField('Is Job Applicant', default=True)
-    # Changes Made to Model-3/29/2022
     is_admin = models.BooleanField("Is admin", default=False)
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
@@ -75,41 +72,6 @@ class CustomerUser(AbstractUser):
     def is_recent(self):
         return self.date_joined >= timezone.now() - timedelta(days=365)
     
-# class CODA_User_Categories(models.model):
-#     # added this column here
-#     class Category(models.IntegerChoices):
-#         Job_Applicant = 1
-#         Coda_Staff_Member = 2
-#         Client_OR_Customer_or_Student = 3
-#         DYC_Business = 4
-#         DYC_Staff = 5
-#         DYC_Student = 6
-#         No_selection = 0
-#         Other = 8
-#     # added this column here
-#     class SubCategory(models.IntegerChoices):
-#         No_selection = 0
-#         Job_Support = 1
-#         Student = 2
-#         Full_time = 3
-#         Contractual = 4
-#         Agent = 5
-#         Other = 8
-#     user= models.ForeignKey(
-#         "accounts.CustomUser",
-#         verbose_name=_("User"),
-#         related_name="user",
-#         null=True,
-#         blank=True,
-#         on_delete=models.SET_NULL,
-#         limit_choices_to={"is_employee": True, "is_active": True},
-#     )
-#     category = models.IntegerField(choices=Category.choices, default=999)
-#     # added this column here
-#     sub_category = models.IntegerField(
-#         choices=SubCategory.choices, blank=True, null=True
-#     )
-
 class CustomUser(models.Model):
     class Category(models.IntegerChoices):
         CODA = 1
@@ -131,13 +93,6 @@ class CustomUser(models.Model):
     state = models.CharField(blank=True, null=True, max_length=100)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=Category.choices, default=999)
-    # added this column here
-    # sub_category = models.IntegerField(
-    #     choices=SubCategory.choices, blank=True, null=True
-    # )
-    # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
-    # applicant=models.BooleanField('Is Job Applicant', default=True)
-    # Changes Made to Model-3/29/2022
     is_admin = models.BooleanField("Is admin", default=False)
     is_employee = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
@@ -158,43 +113,6 @@ class CustomUser(models.Model):
     def is_recent(self):
         return self.date_joined >= timezone.now() - timedelta(days=365)
     
-
-class CODAUserCategories(models.Model):
-    # added this column here
-    class Category(models.IntegerChoices):
-        Job_Applicant = 1
-        Coda_Staff_Member = 2
-        Client_OR_Customer_or_Student = 3
-        No_selection = 0
-        Other = 8
-    # added this column here
-    class SubCategory(models.IntegerChoices):
-        No_selection = 0
-        Job_Support = 1
-        Student = 2
-        Full_time = 3
-        Contractual = 4
-        Agent = 5
-        Other = 8
-    user= models.ForeignKey(
-        "accounts.CustomUser",
-        verbose_name=_("User"),
-        related_name="user",
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL,
-        limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(category=1) and Q(is_active=True)
-        # limit_choices_to={"is_employee": True, "category"=1, "is_active": True},
-    )
-    category = models.IntegerField(choices=Category.choices, default=999)
-    # added this column here
-    sub_category = models.IntegerField(
-        choices=SubCategory.choices, blank=True, null=True
-    )
-    entry_date = models.DateTimeField(_("entered on"), auto_now_add=True, editable=True)
-    class Meta:
-        ordering = ["-entry_date"]
-        # ordering = ["username"]
 
 class DYCUserCategories(models.Model):
     # added this column here

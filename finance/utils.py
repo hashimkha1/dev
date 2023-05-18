@@ -134,13 +134,16 @@ def get_exchange_rate(base, target):
     # api_key = 'YOUR_APP_ID'
     exchange_api_key = '07c439585ffa45e0a254d01fef4b0c33'
     # api_key = exchange_api_key
-    url = f'https://openexchangerates.org/api/latest.json?app_id={exchange_api_key}&base={base}'
-    response = requests.get(url)
-    if response.status_code != 200:
-        rate=135.50
-    else:
+    try:
+        url = f'https://openexchangerates.org/api/latest.json?app_id={exchange_api_key}&base={base}'
+        response = requests.get(url)
+        # if response.status_code != 200:
+        #     rate=135.50
+        # else:
         data = response.json()
         rate=data['rates'][target]
+    except:
+        rate=135.50
     print(rate)
     return rate
 

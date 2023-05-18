@@ -72,21 +72,21 @@
                 <th>Expiry</th>
                 <th>Days_To_Expiry</th>
                 <th>Strike_Price</th>
-                <th>Mid_Price</th>
+                <!-- <th>Mid_Price</th>
                 <th>Bid_Price</th>
-                <th>Ask_Price</th>
+                <th>Ask_Price</th> -->
                 <th>Implied_Volatility_Rank</th>
                 <th>Earnings_Date</th>
-                <th>Earnings_Flag</th>
+                <!-- <th>Earnings_Flag</th> -->
                 <th>Stock_Price</th>
                 <th>Raw_Return</th>
                 <th>Annualized_Return</th>
-                <th>Distance_To_Strike </th>
+                <!-- <th>Distance_To_Strike </th> -->
             </tr>
           </thead>
           <tbody>
             {% for row in data %}
-                <td>{{row.Symbol}}</td>
+                <!-- <td>{{row.Symbol}}</td>
                 <td>{{row.Action}}</td>
                 <td>{{row.Expiry}}</td>
                 <td>{{row.Days_To_Expiry}}</td>
@@ -100,8 +100,8 @@
                 <td>{{row.Stock_Price}}</td>
                 <td>{{row.Raw_Return}}</td>
                 <td>{{row.Annualized_Return}}</td>
-                <td>{{row.Distance_To_Strike }}</td>
-                <!-- {% include 'main/snippets_templates/generaltable.html' with instance=row %}  -->
+                <td>{{row.Distance_To_Strike }}</td> -->
+                {% include 'main/snippets_templates/output_snippets/generaltable.html' with instance=row %}
             {% endfor %}
           </tbody>
         </table>

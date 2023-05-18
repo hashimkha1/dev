@@ -20,7 +20,7 @@
             <div class="col-md-8" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>SHORTPUT OPTIONS RESULTS</b></h5>
+                  <h5><b>{{title}} OPTIONS RESULTS</b></h5>
                   <hr/>
                   <div class="row text-center">
                     <div class="col-md-4">
@@ -31,7 +31,7 @@
                   </div>
                   <div class="col-md-4">
                     <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">
-                      Annualized Returns (AR)<br>
+                      Annualized Returnssssss (AR)<br>
                       <small style="font-size: 80%;">Greater than 65%</small>
                     </a>
                   </div>
@@ -53,7 +53,7 @@
                   <i><h6>{{payday}}</h6></i>
                   <hr/>
                   <div class="col-md-12" id="gi">
-                    <p><a href="{% url 'getdata:shortputdata'%}" class="btn btn-secondary btn-sm"
+                    <p><a href="#" class="btn btn-secondary btn-sm"
                       >Previous Data
                   </a></p>
                   </div>
@@ -67,40 +67,29 @@
           <table class="table table-striped table-bordered" style="width: 100%">
           <thead class="border-bottom font-weight-bold">
             <tr>
-                <th>Symbol</th>
-                <th>Action</th>
-                <th>Expiry</th>
-                <th>Days_To_Expiry</th>
-                <th>Strike_Price</th>
-                <!-- <th>Mid_Price</th>
-                <th>Bid_Price</th>
-                <th>Ask_Price</th> -->
-                <th>Implied_Volatility_Rank</th>
-                <th>Earnings_Date</th>
-                <!-- <th>Earnings_Flag </th> -->
-                <th>Stock_Price</th>
-                <th>Raw_Return</th>
-                <th>Annualized_Return</th>
-                <!-- <th>Distance_To_Strike </th> -->
+                  <th>Symbol</th>
+                  <th>Action</th>
+                  <th>Stock_Price</th>
+                  {% if subtitle == 'credit_spread' %} 
+                  <th>Type</th>
+                  <th>Sell Strike</th>
+                  <th>Buy Strike</th>
+                  <th>Premium</th>
+                  {% else %}
+                  <th>Strike_Price</th>
+                  <th>Return</th>
+                  <th>Days_To_Expiry</th>
+                  <th>Annualized_Return</th>
+                  {% endif %}
+                  <th>Rank</th>
+                  <th>Expiry</th>
+                  <th>Earnings_Date</th>
+                  
             </tr>
           </thead>
           <tbody>
             {% for row in data %}
-                <td>{{row.Symbol}}</td>
-                <td>{{row.Action}}</td>
-                <td>{{row.Expiry}}</td>
-                <td>{{row.Days_To_Expiry}}</td>
-                <td>{{row.Strike_Price}}</td>
-                <!-- <td>{{row.Mid_Price}}</td>
-                <td>{{row.Bid_Price}}</td>
-                <td>{{row.Ask_Price}}</td> -->
-                <td>{{row.Implied_Volatility_Rank}}</td>
-                <td>{{row.Earnings_Date}}</td>
-                <td>{{row.Stock_Price}}</td>
-                <td>{{row.Raw_Return}}</td>
-                <td>{{row.Annualized_Return}}</td>
-                <!-- <td>{{row.Distance_To_Strike }}</td> -->
-                <!-- {% include 'main/snippets_templates/generaltable.html' with instance=row %}  -->
+                {% include 'main/snippets_templates/output_snippets/generaltable.html' with instance=row %} 
             {% endfor %}
           </tbody>
         </table>

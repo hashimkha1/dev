@@ -13,15 +13,12 @@ from django.utils.dateformat import format
 from django.contrib import admin, messages
 from django.urls import path, reverse, reverse_lazy
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from webdriver_manager.chrome import ChromeDriverManager
 from django.views.generic import (
 	ListView,
-    FormView,
     DetailView,
     UpdateView
 )
-from main.utils import Finance,Data,Management,Automation,Stocks,General
+from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values
 from getdata.utils import (
                     get_gmail_service,
                     search_messages,
@@ -504,25 +501,26 @@ def options(request):
         return redirect("getdata:stockmarket")
 
 
-def options_play_covered_calls(request):
-    main_covered_calls()
-    message=f'we are done processing your request'
-    context={
-         "message":message,
-         "title":"Process Done"
-    }
-    return render (request, "main/messages/general.html",context)
+# def options_play_covered_calls(request):
+#     main_covered_calls()
+#     message=f'we are done processing your request'
+#     context={
+#          "message":message,
+#          "title":"Process Done"
+#     }
+#     return render (request, "main/messages/general.html",context)
 
-def options_play_cread_spread(request):
-    main_cread_spread()
-    message=f'we are done processing your request'
-    context={
-         "message":message,
-         "title":"Process Done"
-    }
-    return render (request, "main/messages/general.html",context)
+# def options_play_cread_spread(request):
+#     main_cread_spread()
+#     message=f'we are done processing your request'
+#     context={
+#          "message":message,
+#          "title":"Process Done"
+#     }
+#     return render (request, "main/messages/general.html",context)
     
 
+#Eliminate duplicates
 
 def options_play_shortput(request):
     # Call the main_shortput function to retrieve the data
@@ -569,60 +567,151 @@ def options_play_shortput(request):
     # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
     return redirect ('getdata:shortputdata')
 
-def shortputdata(request):
-    message=f'we are done processing your request'
+# def shortputdata(request):
+#     message=f'we are done processing your request'
+#     # Retrieve the data from the database
+#     data = ShortPut.objects.all()
+#     putsrow_value,callsrow_value,id_value=row_value()
+#     context={
+#         "data":data,
+#         "putsrow_value":putsrow_value,
+#         "callsrow_value":callsrow_value,
+#         "id_value":id_value,
+#         # 'new_rows': created_count,
+#         # "duplicate_rows" :len(data) - created_count,
+#         'title': 'Success',
+#     }
+#     # Pass the data to the template
+#     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+# def credit_spreaddata(request):
+#     message=f'we are done processing your request'
+#     # Retrieve the data from the database
+#     data = cread_spread.objects.all()
+#     print(data)
+#     putsrow_value,callsrow_value,id_value=row_value()
+#     context={
+#         "data":data,
+#         "putsrow_value":putsrow_value,
+#         "callsrow_value":callsrow_value,
+#         "id_value":id_value,
+#         # 'new_rows': created_count,
+#         # "duplicate_rows" :len(data) - created_count,
+#         'title': 'Success',
+#     }
+#     # Pass the data to the template
+#     return render (request, "main/snippets_templates/output_snippets/option_data_credit.html", context)
+
+
+def optiondata(request):
     # Retrieve the data from the database
-    data = ShortPut.objects.all()
     putsrow_value,callsrow_value,id_value=row_value()
+    path_value,sub_title=path_values(request)
+    putdata = ShortPut.objects.all()
+    calldata = covered_calls.objects.all()
+    creditdata = cread_spread.objects.all()
+    print(creditdata)
+    data=[]
+    if sub_title == 'covered_calls':
+        title='COVERED CALLS'
+        for row in calldata:
+            try:
+                iv = float(row.Implied_Volatility_Rank.replace('%',''))
+                rr = float(row.Raw_Return.replace('%',''))
+                ar = float(row.Annualized_Return.replace('%',''))
+                sp= float(row.Stock_Price[1:])
+            except:
+                continue
+            if  iv>4 and rr >= 3.5 and sp >=15 :
+                data.append(row)
+    elif sub_title == 'shortputdata':
+        title='SHORT PUT'
+        for row in putdata:
+            try:
+                iv = float(row.Implied_Volatility_Rank.replace('%',''))
+                rr = float(row.Raw_Return.replace('%',''))
+                ar = float(row.Annualized_Return.replace('%',''))
+                sp= float(row.Stock_Price[1:])
+                num_days=float(row.Days_To_Expiry)
+            except:
+                continue
+            # if  iv>4 and rr >= 3.5 and sp >=15 :
+            if num_days >= 21 and iv >=15 and iv <= 50 and ar >= 65 and sp>15:
+                data.append(row)
+    else:
+        title='CREDIT SPREAD'
+        for row in creditdata:
+            iv = float(row.Rank.replace('%',''))
+            pw = float(row.Prem_Width.replace('%',''))
+            # ar = float(row.Annualized_Return.replace('%',''))
+            sp= float(row.Price[1:])
+            print(row,iv,pw,sp)
+            if  iv>4 and pw >= 35 and sp >=15 :
+                data.append(row)
+    # print(data)
     context={
-        "data":data,
-        "putsrow_value":putsrow_value,
-        "callsrow_value":callsrow_value,
-        "id_value":id_value,
-        # 'new_rows': created_count,
-        # "duplicate_rows" :len(data) - created_count,
-        'title': 'Success',
-    }
-    # Pass the data to the template
+            "data":data,
+            "putsrow_value":putsrow_value,
+            "callsrow_value":callsrow_value,
+            "id_value":id_value,
+            "subtitle":sub_title,
+            'title': title,
+        }
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
 
-def covered_callsdata(request):
-    message=f'we are done processing your request'
-    # Retrieve the data from the database
-    data = covered_calls.objects.all()
-    print(data)
-    putsrow_value,callsrow_value,id_value=row_value()
-    context={
-        "data":data,
-        "putsrow_value":putsrow_value,
-        "callsrow_value":callsrow_value,
-        "id_value":id_value,
-        # 'new_rows': created_count,
-        # "duplicate_rows" :len(data) - created_count,
-        'title': 'Success',
-    }
-    # Pass the data to the template
-    return render (request, "main/snippets_templates/output_snippets/option_data_covered.html", context)
+# def optiondata(request):
+#     # Retrieve the data from the database
+#     putsrow_value, callsrow_value, id_value = row_value()
+#     path_value, sub_title = path_values(request)
+#     data = []
+#     if sub_title == 'covered_calls':
+#         calldata = covered_calls.objects.filter()
+#         for row in calldata:
+#             try:
+#                 iv = float(row.Implied_Volatility_Rank.replace('%', ''))
+#                 rr = float(row.Raw_Return.replace('%', ''))
+#                 sp = float(row.Stock_Price[1:])
+#             except:
+#                 continue
+#             if iv > 4 and rr >= 3.5:
+#                 data.append(row)
+#     elif sub_title == 'shortputdata':
+#         putdata = ShortPut.objects.filter(
+#             Implied_Volatility_Rank__contains='%'
+#         ).filter(Raw_Return__contains='%').filter(Stock_Price__gte=15).filter(Days_To_Expiry__gte=21)
+#         for row in putdata:
+#             try:
+#                 iv = float(row.Implied_Volatility_Rank.replace('%', ''))
+#                 rr = float(row.Raw_Return.replace('%', ''))
+#                 sp = float(row.Stock_Price[1:])
+#                 num_days=float(row.Days_To_Expiry)
+#             except:
+#                 continue
+#             if iv >= 15 and iv <= 50 and rr >= 3.5 and sp > 15 and num_days >= 21:
+#                 data.append(row)
+#     else:
+#         creditdata = cread_spread.objects.filter(
+#             Rank__contains='%'
+#         ).filter(Prem_Width__contains='%').filter(Price__gte=15)
+#         for row in creditdata:
+#             try:
+#                 iv = float(row.Rank.replace('%', ''))
+#                 pw = float(row.Prem_Width.replace('%', ''))
+#                 sp = float(row.Price[1:])
+#             except:
+#                 continue
+#             if iv > 4 and pw >= 35:
+#                 data.append(row)
+#     print(data)
+#     context = {
+#         "data": data,
+#         "putsrow_value": putsrow_value,
+#         "callsrow_value": callsrow_value,
+#         "id_value": id_value,
+#         'title': 'Success',
+#     }
+#     return render(request, "main/snippets_templates/output_snippets/option_data_covered.html", context)
 
-
-def credit_spreaddata(request):
-    message=f'we are done processing your request'
-    # Retrieve the data from the database
-    print(message)
-    data = cread_spread.objects.all()
-    print(data)
-    putsrow_value,callsrow_value,id_value=row_value()
-    context={
-        "data":data,
-        "putsrow_value":putsrow_value,
-        "callsrow_value":callsrow_value,
-        "id_value":id_value,
-        # 'new_rows': created_count,
-        # "duplicate_rows" :len(data) - created_count,
-        'title': 'Success',
-    }
-    # Pass the data to the template
-    return render (request, "main/snippets_templates/output_snippets/option_data_credit.html", context)
 
 class shortputupdate(UpdateView):
     model = Editable
@@ -659,19 +748,6 @@ def selinum_test(request):
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-
-    # to test on local
-    # options = webdriver.ChromeOptions()
-    # options.add_argument("--headless")
-    # options.add_argument("--disable-dev-shm-usage")
-    # options.add_argument('--no-sandbox')
-    # options.add_argument("--disable-gpu")
-    # ## might not be needed
-    # options.add_argument("window-size=800x600")
-    #
-    # driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
-
 
     # Navigate to Google's homepage
     driver.get("https://www.google.com/")
