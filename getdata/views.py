@@ -418,7 +418,6 @@ def meetingFormView(request):
 
 # ========================================UPLOADING DATA SECTION========================
 
-
 	
 def get_urls(self):
     urls = super().get_urls()
@@ -464,7 +463,6 @@ def upload_csv(request):
         return HttpResponseRedirect(url)
     form = CsvImportForm()
     data = {"form": form}
-    # return render(request, "admin/csv_upload.html", data)
     return render(request, "getdata/uploaddata.html", data)
 
 
@@ -500,25 +498,6 @@ def options(request):
         # return render(request, "getdata/options.html")
         return redirect("getdata:stockmarket")
 
-
-# def options_play_covered_calls(request):
-#     main_covered_calls()
-#     message=f'we are done processing your request'
-#     context={
-#          "message":message,
-#          "title":"Process Done"
-#     }
-#     return render (request, "main/messages/general.html",context)
-
-# def options_play_cread_spread(request):
-#     main_cread_spread()
-#     message=f'we are done processing your request'
-#     context={
-#          "message":message,
-#          "title":"Process Done"
-#     }
-#     return render (request, "main/messages/general.html",context)
-    
 
 #Eliminate duplicates
 
@@ -566,41 +545,6 @@ def options_play_shortput(request):
             created_count += 1
     # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
     return redirect ('getdata:shortputdata')
-
-# def shortputdata(request):
-#     message=f'we are done processing your request'
-#     # Retrieve the data from the database
-#     data = ShortPut.objects.all()
-#     putsrow_value,callsrow_value,id_value=row_value()
-#     context={
-#         "data":data,
-#         "putsrow_value":putsrow_value,
-#         "callsrow_value":callsrow_value,
-#         "id_value":id_value,
-#         # 'new_rows': created_count,
-#         # "duplicate_rows" :len(data) - created_count,
-#         'title': 'Success',
-#     }
-#     # Pass the data to the template
-#     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-# def credit_spreaddata(request):
-#     message=f'we are done processing your request'
-#     # Retrieve the data from the database
-#     data = cread_spread.objects.all()
-#     print(data)
-#     putsrow_value,callsrow_value,id_value=row_value()
-#     context={
-#         "data":data,
-#         "putsrow_value":putsrow_value,
-#         "callsrow_value":callsrow_value,
-#         "id_value":id_value,
-#         # 'new_rows': created_count,
-#         # "duplicate_rows" :len(data) - created_count,
-#         'title': 'Success',
-#     }
-#     # Pass the data to the template
-#     return render (request, "main/snippets_templates/output_snippets/option_data_credit.html", context)
 
 
 def optiondata(request):
@@ -658,60 +602,6 @@ def optiondata(request):
             'title': title,
         }
     return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-# def optiondata(request):
-#     # Retrieve the data from the database
-#     putsrow_value, callsrow_value, id_value = row_value()
-#     path_value, sub_title = path_values(request)
-#     data = []
-#     if sub_title == 'covered_calls':
-#         calldata = covered_calls.objects.filter()
-#         for row in calldata:
-#             try:
-#                 iv = float(row.Implied_Volatility_Rank.replace('%', ''))
-#                 rr = float(row.Raw_Return.replace('%', ''))
-#                 sp = float(row.Stock_Price[1:])
-#             except:
-#                 continue
-#             if iv > 4 and rr >= 3.5:
-#                 data.append(row)
-#     elif sub_title == 'shortputdata':
-#         putdata = ShortPut.objects.filter(
-#             Implied_Volatility_Rank__contains='%'
-#         ).filter(Raw_Return__contains='%').filter(Stock_Price__gte=15).filter(Days_To_Expiry__gte=21)
-#         for row in putdata:
-#             try:
-#                 iv = float(row.Implied_Volatility_Rank.replace('%', ''))
-#                 rr = float(row.Raw_Return.replace('%', ''))
-#                 sp = float(row.Stock_Price[1:])
-#                 num_days=float(row.Days_To_Expiry)
-#             except:
-#                 continue
-#             if iv >= 15 and iv <= 50 and rr >= 3.5 and sp > 15 and num_days >= 21:
-#                 data.append(row)
-#     else:
-#         creditdata = cread_spread.objects.filter(
-#             Rank__contains='%'
-#         ).filter(Prem_Width__contains='%').filter(Price__gte=15)
-#         for row in creditdata:
-#             try:
-#                 iv = float(row.Rank.replace('%', ''))
-#                 pw = float(row.Prem_Width.replace('%', ''))
-#                 sp = float(row.Price[1:])
-#             except:
-#                 continue
-#             if iv > 4 and pw >= 35:
-#                 data.append(row)
-#     print(data)
-#     context = {
-#         "data": data,
-#         "putsrow_value": putsrow_value,
-#         "callsrow_value": callsrow_value,
-#         "id_value": id_value,
-#         'title': 'Success',
-#     }
-#     return render(request, "main/snippets_templates/output_snippets/option_data_covered.html", context)
-
 
 class shortputupdate(UpdateView):
     model = Editable
