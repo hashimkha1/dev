@@ -432,7 +432,6 @@ def main_cread_spread():
     tbody = table.find_element(By.XPATH,'//*[@id="CreditSpreadFile"]/tbody')
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
-    print(rows)
     # //*[@id="CreditSpreadFile"]/tbody/tr[1]
     # //*[@id="CreditSpreadFile"]/tbody/tr[1]/td[15]
     time.sleep(5)
@@ -442,7 +441,6 @@ def main_cread_spread():
             path = '//*[@id="CreditSpreadFile"]/tbody/tr[{}]/td[{}]'.format(row,col)
             value = driver.find_element(By.XPATH,path).text
             values.append(value)
-            # print(value, end =' ')
         dump_data_credit(tuple(values))
 
 #covered_calls
@@ -565,26 +563,11 @@ def dump_data_short_put(values):
 
 def main_shortput(request):
     pathvalue,subtitle=path_values(request)
-    print("pathvalue================>",pathvalue)
-    print("subtitle===>",subtitle)
-    
-    # value=request.path.split("/")
-    # print(value)
-    # path_values = [i for i in value if i.strip()]
-    # sub_title=path_values[-1]
     chrome_options = webdriver.ChromeOptions()
-    # chrome_options.binary_location = "/app/.apt/usr/bin/google-chrome"
-    # chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")
     chrome_options.add_argument("--no-sandbox")
     driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-    # CLIENT CODE
-#     if sub_title=='shortput' or sub_title='shortputdata'
-#         driver.get('https://www.optionsplay.com/hub/short-puts')
-#    elif:
-
 
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
@@ -622,7 +605,6 @@ def main_shortput(request):
         num_days =float(values[3])
         sp= float(values[11][1:])
 
-        # if values[10] == 'N' and num_days >= 21:
         if num_days >= 21 and iv >=15 and iv <= 50 and Return >= 65 and sp>15:
             # print(f'Days to Expiration==>:{num_days},sp==>:{sp},iv==>{iv},Return==>:{Return}')
             dump_data_short_put(tuple(values))

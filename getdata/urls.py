@@ -22,7 +22,6 @@ urlpatterns = [
     path('covered_calls/', views.optiondata, name='covered_calls'),
     path('shortputdata/', views.optiondata, name='shortput'),
     path('credit_spread/', views.optiondata, name='credit_spread'),
-    # path('shortputdata/', views.shortputdata, name='shortputdata'),
     path('shortputupdate/<int:pk>', views.shortputupdate.as_view(), name='shortputupdate'),
     path('replies/',search_job_mail, name='replies-email'),
     

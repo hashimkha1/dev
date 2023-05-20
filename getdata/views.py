@@ -554,7 +554,7 @@ def optiondata(request):
     putdata = ShortPut.objects.all()
     calldata = covered_calls.objects.all()
     creditdata = cread_spread.objects.all()
-    print(creditdata)
+    # print(creditdata)
     data=[]
     if sub_title == 'covered_calls':
         title='COVERED CALLS'
@@ -589,10 +589,9 @@ def optiondata(request):
             pw = float(row.Prem_Width.replace('%',''))
             # ar = float(row.Annualized_Return.replace('%',''))
             sp= float(row.Price[1:])
-            print(row,iv,pw,sp)
+            # print(row,iv,pw,sp)
             if  iv>4 and pw >= 35 and sp >=15 :
                 data.append(row)
-    # print(data)
     context={
             "data":data,
             "putsrow_value":putsrow_value,
