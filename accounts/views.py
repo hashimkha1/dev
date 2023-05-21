@@ -140,14 +140,15 @@ def create_profile():
     assets = Assets.objects.all()
     # print(assets)
     if not assets:
-        for user in users:
-            Assets.objects.create(
-                name='default',
-                category='default',
-                description='default',
-                image_url='default',
-            )
-            UserProfile.objects.create(user=user)
+        Assets.objects.create(
+            name='default',
+            category='default',
+            description='default',
+            image_url='default',
+        )
+    for user in users:
+        UserProfile.objects.create(user=user)
+
 
 
 def login_view(request):
@@ -160,6 +161,7 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
             create_profile()
+            
             # If Category is Staff/employee
             if account is not None and account.category == 2:
                 if account.is_employee and not account.is_employee_contract_signed:
