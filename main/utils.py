@@ -10,6 +10,14 @@ from django.utils.text import slugify
 # from main.models import Assets
 # from yourapp.utils import random_string_generator
 
+from django import template
+
+register = template.Library()
+
+@register.filter
+def convert_date(date_string):
+    return datetime.strptime(date_string, "%m/%d/%Y").date()
+
 def buildmodel(question):
     #fetching api key 
     # https://platform.openai.com/account/api-keys

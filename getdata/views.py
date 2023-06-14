@@ -18,7 +18,7 @@ from django.views.generic import (
     DetailView,
     UpdateView
 )
-from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values
+from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
                     get_gmail_service,
                     search_messages,
@@ -33,7 +33,7 @@ from getdata.utils import (
 from finance.models import (
         Transaction
 	)
-
+from management.utils import paytime
 #importing Options play funcationality
 from getdata.utils import(
     main_covered_calls,
@@ -548,59 +548,65 @@ def options_play_shortput(request):
 
 
 def optiondata(request):
-    # Retrieve the data from the database
-    putsrow_value,callsrow_value,id_value=row_value()
-    path_value,sub_title=path_values(request)
+    putsrow_value, callsrow_value, id_value = row_value()
+    path_value, sub_title = path_values(request)
     putdata = ShortPut.objects.all()
     calldata = covered_calls.objects.all()
     creditdata = cread_spread.objects.all()
-    # print(creditdata)
-    data=[]
+    date_today = date.today()
+    data = []
     if sub_title == 'covered_calls':
-        title='COVERED CALLS'
+        title = 'COVERED CALLS'
         for row in calldata:
             try:
-                iv = float(row.Implied_Volatility_Rank.replace('%',''))
-                rr = float(row.Raw_Return.replace('%',''))
-                ar = float(row.Annualized_Return.replace('%',''))
-                sp= float(row.Stock_Price[1:])
-            except:
+                iv = float(row.Implied_Volatility_Rank.replace('%', ''))
+                rr = float(row.Raw_Return.replace('%', ''))
+                ar = float(row.Annualized_Return.replace('%', ''))
+                sp = float(row.Stock_Price[1:])
+                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
+                days_to_exp=(date_expiry - date_today).days
+            except ValueError:
                 continue
-            if  iv>4 and rr >= 3.5 and sp >=15 :
+            if days_to_exp >= 21 and iv > 4 and rr >= 3.5 and sp >= 15:
                 data.append(row)
     elif sub_title == 'shortputdata':
-        title='SHORT PUT'
+        title = 'SHORT PUT'
         for row in putdata:
             try:
-                iv = float(row.Implied_Volatility_Rank.replace('%',''))
-                rr = float(row.Raw_Return.replace('%',''))
-                ar = float(row.Annualized_Return.replace('%',''))
-                sp= float(row.Stock_Price[1:])
-                num_days=float(row.Days_To_Expiry)
-            except:
+                iv = float(row.Implied_Volatility_Rank.replace('%', ''))
+                rr = float(row.Raw_Return.replace('%', ''))
+                ar = float(row.Annualized_Return.replace('%', ''))
+                sp = float(row.Stock_Price[1:])
+                num_days = float(row.Days_To_Expiry)
+                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
+                days_to_exp=(date_expiry - date_today).days
+            except ValueError:
                 continue
-            # if  iv>4 and rr >= 3.5 and sp >=15 :
-            if num_days >= 21 and iv >=15 and iv <= 50 and ar >= 65 and sp>15:
+            if days_to_exp >= 21 and 15 <= iv <= 50 and ar >= 65 and sp > 15:
                 data.append(row)
     else:
-        title='CREDIT SPREAD'
+        title = 'CREDIT SPREAD'
         for row in creditdata:
-            iv = float(row.Rank.replace('%',''))
-            pw = float(row.Prem_Width.replace('%',''))
-            # ar = float(row.Annualized_Return.replace('%',''))
-            sp= float(row.Price[1:])
-            # print(row,iv,pw,sp)
-            if  iv>4 and pw >= 35 and sp >=15 :
+            try:
+                iv = float(row.Rank.replace('%', ''))
+                pw = float(row.Prem_Width.replace('%', ''))
+                sp = float(row.Price[1:])
+                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
+                days_to_exp=(date_expiry - date_today).days
+            except ValueError:
+                continue
+            if days_to_exp >= 21 and iv > 4 and pw >= 35 and sp >= 15:
                 data.append(row)
-    context={
-            "data":data,
-            "putsrow_value":putsrow_value,
-            "callsrow_value":callsrow_value,
-            "id_value":id_value,
-            "subtitle":sub_title,
-            'title': title,
-        }
-    return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
+    context = {
+        "data": data,
+        "putsrow_value": putsrow_value,
+        "callsrow_value": callsrow_value,
+        "id_value": id_value,
+        "subtitle": sub_title,
+        'title': title,
+    }
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+
 
 class shortputupdate(UpdateView):
     model = Editable

@@ -10,12 +10,13 @@
     {% else %}
     <td>{{row.Strike_Price}}</td>
     <td>{{row.Raw_Return}}</td>
-    <td>{{row.Days_To_Expiry}}</td>
+    <td>{{days_expiration}}</td>
+    <!-- <td>{{row.Days_To_Expiry}}</td> -->
     <td>{{row.Annualized_Return}}</td>
     {% endif %}
     <td>{{row.Implied_Volatility_Rank}}{{row.Rank}}</td>
+    <!-- <td>{{date_today|date:"n/d/Y"}}</td> -->
     <td>{{row.Expiry}}</td>
     <td>{{row.Earnings_Date}}</td>
-    
     
     </tr>
