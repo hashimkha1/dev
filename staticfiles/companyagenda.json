@@ -111,7 +111,9 @@
         "OTHER IT PROJECTS": {
             "D2A-PPT": "#",
             "D2A-SITE": "#",
-            "GADC-PPT": "#",
+            "DYC-PPT": "#",
+            "DYC-SITE": "https://www.dycservice.org/",
+            "CODA-TESTING": "https://codamakutano.herokuapp.com/",
             "GADC-SITE": "https://gadcafrica.org/",
             "DC48ENTRYFORM": "https://www.codanalytics.net/finance/listinflow/",
             "DC48USERDASHBOARD": "https://www.codanalytics.net/management/dckdashboard/",
