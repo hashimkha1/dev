@@ -1,14 +1,10 @@
 from django import forms
+from .models import Investments
 
-# class DocumentForm(forms.ModelForm):
-#     class Meta:
-#         model = Document
-#         fields = ['id','doc_type','doc_name','doc']
-#         labels={
-#                 'doc_type':'Document Type',
-#                 'doc_name':'Document Name',
-#                 'doc':'Document',
-#         }
+class InvestmentForm(forms.ModelForm):
+    class Meta:
+        model = Investments
+        fields = "__all__"
 
 # class UploadForm(forms.ModelForm):
 #     class Meta:

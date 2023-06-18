@@ -6,8 +6,28 @@ from decimal import Decimal
 from datetime import datetime,date
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
+from django.contrib.auth import get_user_model
+# from finance.utils import get_exchange_rate
+User = get_user_model()
 
 # Create your models here.
+
+from django.conf import settings
+
+
+class Investments(models.Model):
+    client = models.ForeignKey(
+	    		   User,
+			       limit_choices_to={'is_active': True, 'is_client': True},
+			       on_delete=models.CASCADE
+				   )
+    investment_date = models.DateField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    description = models.TextField()
+
+    def __str__(self):
+        return f"Investment ID: {self.id}, Client: {self.client.username}"
+
 class stockmarket(models.Model):
 	symbol = models.CharField(max_length=255)
 	action = models.CharField(max_length=255)
