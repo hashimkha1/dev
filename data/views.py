@@ -7,7 +7,7 @@ from django.http import Http404, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
-from main.models import Service, Course
+from main.models import Service,ServiceCategory, Pricing
 from django.views.generic import (
         CreateView,
         DeleteView,
@@ -838,13 +838,13 @@ def updatelinks_employetraining(request):
     return JsonResponse({"success": True})
 
 
-def services(request):
+def training_services(request):
     # services = Service.objects.all()
-    services = Service.objects.filter(category='Data Analysis')
+    services = Service.objects.filter(title='Data Analysis')
     # title,description = Service.objects.values_list('category','cat_description')
     # title, description = Service.objects.values_list(
     #                 "category", "cat_description").filter(category='Data Analysis')
-    title, description = Service.objects.values_list("category", "cat_description").filter(category='Data Analysis').first()
+    title, description = Service.objects.values_list("title", "description").filter(title='Data Analysis').first()
     print(title,description)
     context={
         "services":services,
@@ -855,22 +855,6 @@ def services(request):
     #     print(service.category)
     return render(request, "data/training/services.html",context)
 
-@login_required
-def job_market(request):
-    return render(request, "data/training/job_market.html")
-
-
-def job_support(request):
-    courses = Course.objects.filter()
-    print(courses)
-    return render(request, "data/training/job_support.html", {'services': courses})
-
-
-def single_course(request):
-    return render(request, "data/training/single_course.html")
-
-def single_course(request):
-    return render(request, "data/training/single_course.html")
 
 @login_required
 def interview_roles(request):

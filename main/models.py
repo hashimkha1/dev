@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 from django.db.models import Q
+from django.utils.text import slugify
 from django.db.models.signals import pre_save
 from .utils import unique_slug_generator
 from django.urls import reverse
@@ -38,24 +39,47 @@ class Service(models.Model):
         return "/services/{slug}/".format(slug=self.slug)
 
 
-class CourseCategory(models.Model):
+# class CourseCategory(models.Model):
+#     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
+#     name = models.CharField(max_length=254)
+
+#     class Meta:
+#         verbose_name_plural = "Course Categories"
+
+#     def __str__(self):
+#         return self.name
+
+class ServiceCategory(models.Model):
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
     name = models.CharField(max_length=254)
+    slug = models.SlugField(null=True, blank=True,unique=True)
+    description = models.TextField(null=True, blank=True)
 
     class Meta:
-        verbose_name_plural = "Course Categories"
+        verbose_name_plural = "Service Categories"
 
     def __str__(self):
         return self.name
 
 
-class Course(models.Model):
+class Pricing(models.Model):
+    class Contract(models.IntegerChoices):
+        One_month = 1
+        Two_months = 2
+        Three_months = 3
+        open = 4
     serial = models.PositiveIntegerField(null=True, blank=True)
     title = models.CharField(max_length=254)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(CourseCategory, on_delete=models.CASCADE)
-    subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
+    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE)
+    # subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
     price = models.FloatField()
+    duration =  models.PositiveIntegerField(null=True, blank=True)
+    contract_length = models.IntegerField(choices=Contract.choices, default=3)
     is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Pricing"
 
     def __str__(self):
         return self.title
@@ -191,12 +215,7 @@ class Plan(models.Model):
     def __str__(self):
         return self.goal
 
-# ===================PRESAVE FUNCTIONALITIES=====================
-def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
-    if not instance.slug:
-        instance.slug=unique_slug_generator
 
-pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
 
 
 class ClientAvailability(models.Model):
@@ -226,3 +245,19 @@ class ClientAvailability(models.Model):
 
     def __str__(self):
         return str(self.client)
+    
+
+# ===================PRESAVE FUNCTIONALITIES=====================
+def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
+    if not instance.slug:
+        instance.slug=unique_slug_generator
+
+
+def servicecategory_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        if instance.name:
+            instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
+
+pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)

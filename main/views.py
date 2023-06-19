@@ -87,8 +87,78 @@ def layout(request):
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
+# =====================SERVICES  VIEWS=======================================
+class ServiceCreateView(LoginRequiredMixin, CreateView):
+    model = Service
+    success_url = "/services/"
+    fields = "__all__"
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
+def services(request):
+    services = Service.objects.filter(is_active=True).order_by('serial')
+    context = {
+        "SITEURL" :settings.SITEURL,
+        "services": services
+    }
+    return render(request, "main/services/bi_services.html", context)
+
+class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Service
+    fields ="__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:services")
+
+    def test_func(self):
+        service = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == service.staff:
+            return True
+        return False
+
+def delete_service(request,id):
+    service = service.objects.get(pk=id)
+    if request.user.is_superuser:
+        service.delete()
+    return redirect('main:services')
+
+def bi_services(request):
+    data_analysis = Service.objects.get(title='Data Analysis')
+    data_analysis_categories = ServiceCategory.objects.filter(service=data_analysis.id)
+    context={
+        "SITEURL" :settings.SITEURL,
+        "title":data_analysis.title,
+        "service_desc":data_analysis.description,
+        'services': data_analysis_categories
+    }
+    return render(request, "main/services/bi_services.html", context)
+
+def job_support(request):
+    job_support = ServiceCategory.objects.get(name__iexact='Job Support')
+    plans = Pricing.objects.filter(category=job_support.id)
+    # return render(request, "main/services/job_support.html", {'services': plans})
+    context={
+        "SITEURL" :settings.SITEURL,
+        "title":job_support.name,
+        # "service_desc":job_support.description,
+        'services': plans
+    }
+    return render(request, "main/services/bi_services.html", context)
+
+def single_course(request):
+    return render(request, "main/services/single_course.html")
+
+@login_required
+def job_market(request):
+    return render(request, "data/training/job_market.html")
 
 # =====================TESTIMONIALS  VIEWS=======================================
 @login_required
@@ -172,22 +242,6 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
             return True
         return False
 
-# =====================DC_KENYA VIEWS=======================================
-# =====================DC_KENYA VIEWS=======================================
-def dclayout(request):
-    # advertisement()
-    
-    posts=Testimonials.objects.all()
-    services=Service.objects.all()
-
-    context={
-            "services":services,
-            "posts":posts,
-            "title": "DCKENYA"
-        }
-    return render(request, "main/dc48kenya/dc_layout.html",context)
-
-
 # =====================PLAN=======================================
 class PlanCreateView(LoginRequiredMixin, CreateView):
     model = Plan
@@ -242,52 +296,6 @@ def delete_plan(request,id):
     if request.user.is_superuser:
         plan.delete()
     return redirect('main:plans')
-
-
-# =====================SERVICE VIEWS=======================================
-class ServiceCreateView(LoginRequiredMixin, CreateView):
-    model = Service
-    success_url = "/services/"
-    fields = "__all__"
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
-def services(request):
-    services = Service.objects.filter(is_active=True).order_by('serial')
-    context = {
-        "SITEURL" :settings.SITEURL,
-        "services": services
-    }
-    return render(request, "main/services.html", context)
-
-
-class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Service
-    fields ="__all__"
-
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("main:services")
-
-    def test_func(self):
-        service = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user == service.staff:
-            return True
-        return False
-
-def delete_service(request,id):
-    service = service.objects.get(pk=id)
-    if request.user.is_superuser:
-        service.delete()
-    return redirect('main:services')
 
 
 

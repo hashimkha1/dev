@@ -113,7 +113,7 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 
 def contract(request):
-    return render(request, "management/doc_templates/trainingcontract_form.html")
+    return render(request, "management/contracts/trainingcontract_form.html")
     # if request.user == employee:
     #     # return render(request, 'management/daf/paystub.html', context)
     #     return render(request, "management/doc_templates/studentcontract_form.html")
