@@ -57,7 +57,7 @@ from management.utils import (email_template,text_num_split,
                                bonus,additional_earnings,best_employee,updateloantable,
                                addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus
                         )
-from main.utils import countdown_in_month
+from main.utils import countdown_in_month,path_values
     
 
 import logging
@@ -390,12 +390,6 @@ def newtaskcreation(request):
                                                       employee_id=emp)
             group=employee_group_level(historytasks,TaskGroups)                                        
          
-            #     group_obj = TaskGroups.objects.filter(title='Group A')
-            #     if group_obj.exists():
-            #         group = group_obj.first().id
-            #     else:
-            #         group_obj = TaskGroups.objects.create(title='Group A')
-            #         group = group_obj.id
             for act in activitys:
                 #check if activity exist
                 count=Task.objects.filter(category_id=category, activity_name=act).count()
@@ -1379,7 +1373,16 @@ def active_requirements(request, Status=None, *args, **kwargs):
 
 
 def requirements(request):
-    requirements = Requirement.objects.all().order_by("-id")
+    *_,subtitle=path_values(request)
+    if subtitle == 'dyc_requirements':
+        requirements = Requirement.objects.filter(requestor__iexact='client', company__iexact='dyc').order_by('-id')
+    elif subtitle == 'client_requirements':
+        requirements = Requirement.objects.exclude(company__iexact='dyc').filter(requestor__iexact='client').order_by('-id')
+    elif subtitle == 'coda_requirements':
+        requirements = Requirement.objects.filter(requestor__iexact='management', company__iexact='coda').order_by('-id')
+    else:
+        requirements = Requirement.objects.all().order_by("-id")
+
     requirement_filters=RequirementFilter(request.GET,queryset=requirements)
 
     context={
