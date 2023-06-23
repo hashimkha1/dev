@@ -20,7 +20,7 @@ urlpatterns = [
     path("bi_services/", views.bi_services, name="bi_services"),
     path("job-support/", views.job_support, name="job_support"),
     path("job_market/", views.job_market, name="job_market"),
-    path("single_course/", views.single_course, name="single_course"),
+    path("full-course/", views.full_course, name="full_course"),
     path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
     path('delete/<int:id>/', views.delete_service, name='delete_service'),
 

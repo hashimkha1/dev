@@ -8,30 +8,7 @@
 {% block content %}
 <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
 <main>
-  {% if user is not None and user.category == 4 %}
-    <div class="row text-center">
-        <div class="col-md-2">
-          <a href="{% url 'main:dc_layout' %}" class="btn btn-secondary">DC48 KENYA Services</a>
-        </div>
-          <div class="col-md-2">
-              <a href="{% url 'main:layout' %}" class="btn btn-secondary">CODA Services</a>
-          </div>
-          <div class="col-md-2">
-            <a href="{% url 'finance:pay'%}" class="btn btn-secondary">Make Payment</a>
-          </div>
-          <div class="col-md-2">
-            <a href="{% url 'application:dckmembers'%}" class="btn btn-secondary">Registered Members</a>
-          </div>
-          <div class="col-md-2">
-            <a href="{% url 'finance:newcontract' request.user%}" class="btn btn-secondary">New Contract</a>
-          </div>
-          <div class="col-md-2">
-              <a href="{% url 'main:contact'%}" class="btn btn-secondary">Help?</a>
-          </div>
-      </div>
-      <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
-      
-      {% elif user.category == 1 or user.is_applicant %}
+      {% if user.category == 1 or user.is_applicant %}
       <div class="row text-center">
       <div class="col-md-2">
         <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
@@ -59,7 +36,7 @@
     </div>
       </div>
       
-      {% elif user.category == 2 and user.sub_category == 4  %}
+      {% elif user.category == 2 and user.sub_category == 2  %}
       <div class="row text-center">
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
@@ -108,7 +85,13 @@
           <a class="btn btn-secondary" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>
         </div>
         <div class="col-md-2">
-          <a href="{% url 'finance:newcontract' request.user%}" class="btn btn-secondary">New Contract</a>
+          {% if request.user.category == 3 %}
+          <a href="{% url 'main:job_support' %}" class="btn btn-secondary">New Contract</a>
+          {% elif user.category == 4 %}
+          <a href="{% url 'main:full_course' %}" class="btn btn-secondary">New Contract</a>
+          {%else%}
+          <a href="{% url 'main:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
+          {%endif%}
         </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'finance:pay'%}" target="__blank" >Make Payment</a>

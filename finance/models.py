@@ -224,7 +224,7 @@ class Transaction(models.Model):
          related_name="sender", 
          null=True, blank=True,
          on_delete=models.SET_NULL,
-         limit_choices_to={"is_employee": True, "is_active": True},
+         limit_choices_to={"is_staff": True, "is_active": True},
          )
     department = models.ForeignKey(
         to=Department, on_delete=models.CASCADE, default=None
@@ -533,8 +533,6 @@ class DC48_Inflow(models.Model):
             return total_amt_paid
             
 
-
-
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     is_loan = models.BooleanField(default=True)
@@ -551,7 +549,7 @@ class Supplier(models.Model):
         null=True,
         blank=True,
         on_delete=models.RESTRICT,
-        limit_choices_to={"is_employee": True, "is_active": True},
+        limit_choices_to={"is_staff": True, "is_active": True},
     )
     supplier = models.CharField(
         max_length=255,

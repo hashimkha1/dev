@@ -31,48 +31,18 @@ def compute_default_fee(category, default_amounts, Default_Payment_Fees):
     if default_amounts:
         default_fee = default_amounts.first()
     else:
-        if category == "4" : #and subcategory == "1":
-            default_fee = Default_Payment_Fees.objects.create(
-                job_down_payment_per_month=1000,
-                job_plan_hours_per_month=40,
-                student_down_payment_per_month=500,
-                student_bonus_payment_per_month=100,
-            )
-        else:
-            default_fee = Default_Payment_Fees.objects.create(
-                job_down_payment_per_month=1000,
-                job_plan_hours_per_month=40,
-                student_down_payment_per_month=500,
-                student_bonus_payment_per_month=100,
-            )
-    return default_fee
-
-# ============================FDYC===========================================
-def dyc_compute_default_fee(category,subcategory,dyc_default_amounts, Default_Payment_Fees):
-    if dyc_default_amounts:
-        dyc_default_fee = dyc_default_amounts.first()
-    else:
-        # if category == "4" and subcategory == "7":
-        #     default_fee = Default_Payment_Fees.objects.create(
-        #         job_down_payment_per_month=1000,
-        #         job_plan_hours_per_month=40,
-        #         student_down_payment_per_month=500,
-        #         student_bonus_payment_per_month=100,
-        #     )
-        # else:
         default_fee = Default_Payment_Fees.objects.create(
             job_down_payment_per_month=1000,
             job_plan_hours_per_month=40,
             student_down_payment_per_month=500,
             student_bonus_payment_per_month=100,
-        )
+            )
     return default_fee
-
 
 # ================================USERS========================================
 def employees():
     active_employees = CustomerUser.objects.filter(
-                                             Q(is_employee=True),Q(is_active=True)
+                                             Q(is_staff=True),Q(is_active=True)
                                           ).order_by("-date_joined")
     employees_categories_list = CustomerUser.objects.values_list(
                     'sub_category', flat=True).distinct()

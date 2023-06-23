@@ -651,11 +651,9 @@ def selinum_test(request):
     title = driver.title
     return HttpResponse(title)
 
-
 def LogsViewSet(request):
     logs = Logs.objects.all().order_by("-id")
     if request.user.is_superuser:
-        return render(request, "testing/logs.html", {"logs": logs})
-
+        return render(request, "getdata/logs.html", {"logs": logs})
     else:
         return redirect("main:layout")

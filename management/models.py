@@ -33,8 +33,8 @@ class Training(models.Model):
         User,
         verbose_name=("presenter name"),
         on_delete=models.CASCADE,
-        # limit_choices_to={"is_employee": True,"is_client": True, "is_active": True},
-        limit_choices_to=Q(is_employee=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        # limit_choices_to={"is_staff": True,"is_client": True, "is_active": True},
+        limit_choices_to=Q(is_staff=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         related_name="employee_name")
     department = models.ForeignKey(
         Department,
@@ -343,11 +343,10 @@ class Policy(models.Model):
     id = models.AutoField(primary_key=True)
     # staff = models.ForeignKey(
     #     User, on_delete=models.RESTRICT, related_name="staff_entry",
-    #     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+    #     limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True),
     #     default=1
     # )
     staff = models.CharField(max_length=100, null=True, blank=True, default="admin")
-    # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
     link = models.CharField(max_length=1000, blank=True, null=True)
@@ -494,7 +493,7 @@ class Task(models.Model):
         User,
         on_delete=models.RESTRICT,
         related_name="user_assiged",
-        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)
+        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
         and Q(is_active=True),
         default=999,
     )
@@ -641,7 +640,7 @@ class TaskLinks(models.Model):
     added_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),
+        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True),
     )
     link_name = models.CharField(max_length=255, default="General")
     description = models.TextField()
@@ -854,14 +853,14 @@ class Requirement(models.Model):
         default=1,
         on_delete=models.SET_NULL,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) |Q(is_client=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_staff=True) |Q(is_client=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     assigned_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         default=1,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     company = models.CharField(max_length=255, default="CODA")
     created_by = models.CharField(max_length=255, default="admin")

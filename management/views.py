@@ -239,14 +239,10 @@ import json
 
 @login_required
 def companyagenda(request):
-    # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
-    # data = json.load(f)
-    # f.close()
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
-    if request.user.is_superuser or (request.user.is_employee and request.user.sub_category==3):
-        # return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+    if request.user.is_superuser or (request.user.is_staff and request.user.sub_category==3):
         return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
     else:
         return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
@@ -295,9 +291,6 @@ def policies(request):
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    # if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
-    #     return render(request, "application/orientation/policies.html", context)
-    # else:
     return render(request, "management/departments/hr/policies.html", context)
 
 
@@ -386,7 +379,7 @@ def newtaskcreation(request):
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
-            historytasks = TaskHistory.objects.filter(employee__is_employee=True, employee__is_active=True,
+            historytasks = TaskHistory.objects.filter(employee__is_staff=True, employee__is_active=True,
                                                       employee_id=emp)
             group=employee_group_level(historytasks,TaskGroups)                                        
          
@@ -415,7 +408,7 @@ def newtaskcreation(request):
     else:
         task_categories = TaskCategory.objects.all()
         group = TaskGroups.objects.all()
-        employess = User.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
+        employess = User.objects.filter(Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
 
     return render(request, "management/tasknew_form.html", {"group": group, "category": task_categories, "employess": employess})
 
@@ -552,7 +545,7 @@ def historytasks(request):
     # print('Employees',employees)
     # print('Active_Employees',activeemployees)
     # print('======================================')
-    historytask=TaskHistory.objects.filter(employee__is_employee=True,employee__is_active=True)
+    historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
     # historytasks=TaskHistory.objects.all().order_by('-submission')
     myfilter=TaskHistoryFilter(request.GET,queryset=historytask)
     context={
@@ -1275,7 +1268,7 @@ def sessions(request):
     # total_sessions=Training.objects.all().count()
     sessions=Training.objects.all()
     client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True).order_by("-created_date")
-    employee_sessions=Training.objects.filter(presenter__is_employee=True).order_by("-created_date")
+    employee_sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
     # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
     context_a={
        "object_list":client_sessions,
@@ -1287,7 +1280,7 @@ def sessions(request):
     }
     if request.user.is_client :
         return render(request,"management/departments/hr/sessions.html", context_a)
-    elif request.user.is_employee :
+    elif request.user.is_staff :
         return render(request,"management/departments/hr/sessions.html", context_b)
     else:
         return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
@@ -1334,14 +1327,13 @@ def usersession(request, user=None, *args, **kwargs):
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
 
-    if request.user.is_superuser or request.user.is_employee:
+    if request.user.is_superuser or request.user.is_staff:
         return render(request, "management/departments/hr/usersessions.html", context)
     elif request.user.is_superuser:
         return render(request, "management/departments/hr/sessions.html", context)
     elif request.user.is_superuser or request.user.is_client:
         return render(request, "management/departments/hr/clientsessions.html", context)
     else:
-        # raise Http404("Login/Wrong Page: Contact Admin Please!")
         return redirect("main:layout")
 
 

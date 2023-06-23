@@ -14,6 +14,8 @@ from accounts.models import Department
 
 
 CustomUser = get_user_model()
+
+
 def calculate_loan(user):
     debit = TrainingLoan.objects.filter(
         user=user,
@@ -175,3 +177,27 @@ def DYCDefaultPayments():
             early_registration_bonus= values["early_registration_bonus"]
             print(total_amount,down_payment,early_registration_bonus)
     return total_amount,down_payment,early_registration_bonus
+
+# ======================PAYPAL CHARGES============================
+def calculate_paypal_charges(amount):
+    # Define the PayPal charge brackets and corresponding fees
+    charge_brackets = [
+        (0, 500.00, 0.029, 0.30),
+        (500.01, 1000.00, 0.027, 0.30),
+        (1000.01, 5000.00, 0.025, 0.30),
+        (5000.01, 10000.00, 0.023, 0.30),
+        (10000.01, 15000.00, 0.021, 0.30),
+        (15000.01, float('inf'), 0.019, 0.30)
+    ]
+    # Cast the amount to float
+    amount = float(amount)
+    # Iterate over the charge brackets to find the applicable fee
+    for bracket in charge_brackets:
+        start_amount, end_amount, fee_percentage, fee_fixed = bracket
+        if start_amount <= amount <= end_amount:
+            # Calculate the PayPal charge
+            charge = amount * fee_percentage + fee_fixed
+            return charge
+
+    # If the amount is not within any of the charge brackets, return None
+    return None

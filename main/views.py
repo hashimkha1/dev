@@ -151,10 +151,21 @@ def job_support(request):
         # "service_desc":job_support.description,
         'services': plans
     }
-    return render(request, "main/services/bi_services.html", context)
+    return render(request, "main/services/job_support.html", context)
 
-def single_course(request):
-    return render(request, "main/services/single_course.html")
+
+def full_course(request):
+    full_course = ServiceCategory.objects.get(name__iexact='Full Course')
+    plans = Pricing.objects.filter(category=full_course.id)
+    # return render(request, "main/services/job_support.html", {'services': plans})
+    context={
+        "SITEURL" :settings.SITEURL,
+        "title":full_course.name,
+        # "service_desc":job_support.description,
+        'services': plans
+    }
+    return render(request, "main/services/full_course.html", context)
+
 
 @login_required
 def job_market(request):
@@ -302,7 +313,7 @@ def delete_plan(request,id):
 def about(request):
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
-    team_members = UserProfile.objects.filter(user__is_employee=True,user__is_active=True,user__is_staff=True)
+    team_members = UserProfile.objects.filter(user__is_staff=True,user__is_active=True)
     sub_title=path_values(request)[-1]
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
@@ -375,7 +386,6 @@ def meetings(request):
     emp_obj = User.objects.filter(
                                             Q(sub_category=3),
                                             Q(is_admin=True),
-                                            Q(is_employee=True),
                                             Q(is_active=True),
                                             Q(is_staff=True),
                         ).order_by("-date_joined")

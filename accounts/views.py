@@ -41,98 +41,127 @@ def thank(request):
 
 
 # ---------------ACCOUNTS VIEWS----------------------
+
 def join(request):
+    form = UserForm()  # Define form variable with initial value
     if request.method == "POST":
-        previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
+        previous_user = CustomerUser.objects.filter(email=request.POST.get("email"))
         if len(previous_user) > 0:
-            messages.success(request, f'User already exist with this email')
-            form = UserForm()
+            messages.success(request, f'User already exists with this email')
             return redirect("/password-reset")
         else:
-            contract_data,contract_date=agreement_data(request)
-            dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
-            if request.POST.get("category") == "3":
-                check_default_fee = Default_Payment_Fees.objects.all()
-                if check_default_fee:
-                    # default_fee = Default_Payment_Fees.objects.get(id=1)
-                    default_fee = Default_Payment_Fees.objects.all().first()
-                else:
-                    default_payment_fees = Default_Payment_Fees(
-                        job_down_payment_per_month=1000,
-                        job_plan_hours_per_month=40,
-                        student_down_payment_per_month=500,
-                        student_bonus_payment_per_month=100,
-                    )
-                    default_payment_fees.save()
-                    # default_fee = Default_Payment_Fees.objects.get(id=1)
-                    default_fee = Default_Payment_Fees.objects.all().first()
-                if (
-                    request.POST.get("category") == "3"
-                    and request.POST.get("sub_category") == "1"
-                ):
-                    return render(
-                        request,
-                        "management/contracts/supportcontract_form.html",
-                        {
-                            "job_support_data": contract_data,
-                            "contract_date": contract_date,
-                            "payment_data": default_fee,
-                        },
-                    )
-                if (
-                    request.POST.get("category") == "3"
-                    and request.POST.get("sub_category") == "2"
-                ):
-                    return render(
-                        request,
-                        "management/contracts/trainingcontract_form.html",
-                        {
-                            "contract_data": contract_data,
-                            "contract_date": contract_date,
-                            "payment_data": default_fee,
-                        },
-                    )
-                if (request.POST.get("category") == "4"):
-                    context={
-                                    'job_support_data': contract_data,
-                                    'student_data': contract_data,
-                                    'contract_date':contract_date,
-                                    'payments':default_fee
-                                }
-                    return render(request, 'management/contracts/dyc_contracts/student_contract.html',context)
-                    # return render(
-                    #     request,
-                    #     "management/contracts/dyc_contracts/student_contract.html",
-                    #     {
-                    #         "contract_data": contract_data,
-                    #         "contract_date": contract_date,
-                    #         "dyc_total_amount": dyc_total_amount,
-                    #         "contract_date": dyc_down_payment,
-                    #         "early_registration_bonus": early_registration_bonus,
-                    #         "default_fee": default_fee,
-                    #     },
-                    # )
-            else:
-                form = UserForm(request.POST, request.FILES)
-                if form.is_valid():
-                    print("category", form.cleaned_data.get("category"))
-
+            contract_data, contract_date = agreement_data(request)
+            form = UserForm(request.POST)  # Assign form with request.POST data
             if form.is_valid():
                 if form.cleaned_data.get("category") == 2:
-                    form.instance.is_employee = True
-                elif form.cleaned_data.get("category") == 3:
+                    form.instance.is_staff = True
+                elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4:
                     form.instance.is_client = True
                 else:
                     form.instance.is_applicant = True
 
                 form.save()
-                # messages.success(request, f'Account created for {username}!')
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"
-        form = UserForm()
         print(msg)
+    
     return render(request, "accounts/registration/coda/join.html", {"form": form})
+
+
+# def join(request):
+#     if request.method == "POST":
+#         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
+#         if len(previous_user) > 0:
+#             messages.success(request, f'User already exist with this email')
+#             form = UserForm()
+#             return redirect("/password-reset")
+#         else:
+#             contract_data,contract_date=agreement_data(request)
+#             dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
+#             if request.POST.get("category") == "3":
+#                 check_default_fee = Default_Payment_Fees.objects.all()
+#                 if check_default_fee:
+#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
+#                     default_fee = Default_Payment_Fees.objects.all().first()
+#                 else:
+#                     default_payment_fees = Default_Payment_Fees(
+#                         job_down_payment_per_month=1000,
+#                         job_plan_hours_per_month=40,
+#                         student_down_payment_per_month=500,
+#                         student_bonus_payment_per_month=100,
+#                     )
+#                     default_payment_fees.save()
+#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
+#                     default_fee = Default_Payment_Fees.objects.all().first()
+#                 if (
+#                     request.POST.get("category") == "3"
+#                     and request.POST.get("sub_category") == "1"
+#                 ):
+#                     return render(
+#                         request,
+#                         "management/contracts/supportcontract_form.html",
+#                         {
+#                             "job_support_data": contract_data,
+#                             "contract_date": contract_date,
+#                             "payment_data": default_fee,
+#                         },
+#                     )
+#                 if (
+#                     request.POST.get("category") == "3"
+#                     and request.POST.get("sub_category") == "2"
+#                 ):
+#                     return render(
+#                         request,
+#                         "management/contracts/trainingcontract_form.html",
+#                         {
+#                             "contract_data": contract_data,
+#                             "contract_date": contract_date,
+#                             "payment_data": default_fee,
+#                         },
+#                     )
+#                 if (request.POST.get("category") == "4"):
+#                     context={
+#                                     'job_support_data': contract_data,
+#                                     'student_data': contract_data,
+#                                     'contract_date':contract_date,
+#                                     'payments':default_fee
+#                                 }
+#                     return render(request, 'management/contracts/dyc_contracts/student_contract.html',context)
+#                     # return render(
+#                     #     request,
+#                     #     "management/contracts/dyc_contracts/student_contract.html",
+#                     #     {
+#                     #         "contract_data": contract_data,
+#                     #         "contract_date": contract_date,
+#                     #         "dyc_total_amount": dyc_total_amount,
+#                     #         "contract_date": dyc_down_payment,
+#                     #         "early_registration_bonus": early_registration_bonus,
+#                     #         "default_fee": default_fee,
+#                     #     },
+#                     # )
+#             else:
+#                 form = UserForm(request.POST, request.FILES)
+#                 if form.is_valid():
+#                     print("category", form.cleaned_data.get("category"))
+
+#             if form.is_valid():
+#                 if form.cleaned_data.get("category") == 2:
+#                     form.instance.is_staff = True
+#                 elif form.cleaned_data.get("category") == 3:
+#                     form.instance.is_client = True
+#                 else:
+#                     form.instance.is_applicant = True
+
+#                 form.save()
+#                 # messages.success(request, f'Account created for {username}!')
+#                 return redirect('accounts:account-login')
+#     else:
+#         msg = "error validating form"
+#         form = UserForm()
+#         print(msg)
+#     return render(request, "accounts/registration/coda/join.html", {"form": form})
+
 
 # ---------------ACCOUNTS VIEWS----------------------
 def create_profile():
@@ -164,7 +193,7 @@ def login_view(request):
             
             # If Category is Staff/employee
             if account is not None and account.category == 2:
-                if account.is_employee and not account.is_employee_contract_signed:
+                if account.is_staff and not account.is_employee_contract_signed:
                     login(request, account)
                     return redirect("management:employee_contract")
 
@@ -176,22 +205,30 @@ def login_view(request):
                     # return redirect("management:user_task", username=request.user)
                     return redirect("management:companyagenda")
 
-            # If Category is client/customer
-            elif account is not None and account.category == 3:
-                if account.sub_category == 1:  # Job Support
-                    login(request, account)
-                    # return redirect("accounts:user-list", username=request.user)
-                    return redirect('management:companyagenda')
-                else:  # Student
-                    login(request, account)
-                    return redirect('management:companyagenda')
-
-            elif account is not None and account.category == 4:
-                    login(request, account)
-                    return redirect("management:dckdashboard")
+            # If Category is client/customer:# Student # Job Support
+            elif account is not None and (account.category == 3 or account.category == 4) :
+                login(request, account)
+                return redirect('management:companyagenda')
            
             # If Category is applicant
-            elif account is not None and account.profile.section is not None:
+            # elif account is not None and account.profile.section is not None:
+            #     if account.profile.section == "A":
+            #         login(request, account)
+            #         return redirect("application:section_a")
+            #     elif account.profile.section == "B":
+            #         login(request, account)
+            #         return redirect("application:section_b")
+            #     elif account.profile.section == "C":
+            #         login(request, account)
+            #         return redirect("application:policies")
+            #     else:
+            #         login(request, account)
+            #         return redirect("application:interview")
+            elif account is not None and account.profile.section is not None and account.category == 1:
+                # if account.country in ("KE", "UG", "RW", "TZ"):  # Male
+                # if account.gender == 1:
+                #     login(request, account)
+                #     return redirect("application:interview")
                 if account.profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
@@ -201,26 +238,6 @@ def login_view(request):
                 elif account.profile.section == "C":
                     login(request, account)
                     return redirect("application:policies")
-                else:
-                    login(request, account)
-                    return redirect("application:interview")
-            elif account is not None and account.category == 1:
-                if account.country in ("KE", "UG", "RW", "TZ"):  # Male
-                    if account.gender == 1:
-                        login(request, account)
-                        return redirect("application:interview")
-                    if account.account_profile.section == "A":
-                        login(request, account)
-                        return redirect("application:sectionA")
-                    elif account.account_profile.section == "B":
-                        login(request, account)
-                        return redirect("application:sectionB")
-                    elif account.account_profile.section == "C":
-                        login(request, account)
-                        return redirect("application:policies")
-                    else:
-                        login(request, account)
-                        return redirect("application:interview")
                 else:
                     login(request, account)
                     return redirect("application:interview")
@@ -286,7 +303,6 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "country",
         "is_superuser",
         "is_admin",
-        "is_employee",
         "is_client",
         "is_applicant",
         "is_active",
@@ -329,7 +345,7 @@ class UserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "state",
         "country",
         "is_admin",
-        "is_employee",
+        "is_staff",
         "is_client",
         "is_applicant",
     ]
@@ -479,7 +495,6 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if (
             self.request.user.is_superuser
             or self.request.user.is_admin
-            # or self.request.user.is_staff
         ):
             return super().form_valid(form)
         else:
@@ -491,7 +506,6 @@ class CredentialUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if (
             self.request.user.is_superuser
             or self.request.user.is_admin
-            # or self.request.user.is_staff
         ):
             return True
         else:

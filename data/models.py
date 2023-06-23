@@ -241,7 +241,7 @@ class Prep_Questions(models.Model):
                             null=True,
                             blank=True,
                             on_delete=models.SET_NULL,
-                            limit_choices_to=Q(is_client=True) | Q(is_employee=True)| Q(is_superuser=True)
+                            limit_choices_to=Q(is_client=True) | Q(is_staff=True)| Q(is_superuser=True)
                             # limit_choices_to=Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
                             #  limit_choices_to=Q(is_client=True|Q(is_admin=True),
                             # limit_choices_to={"is_client": True , "is_active": True},
@@ -493,7 +493,7 @@ class DSU(models.Model):
     trained_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        limit_choices_to=Q(is_employee=True)
+        limit_choices_to=Q(is_staff=True)
         | Q(is_client=True)
         | Q(is_admin=True)
         | Q(is_superuser=True),

@@ -158,7 +158,7 @@ class Rated(models.Model):
     ]
     id = models.AutoField(primary_key=True)
     employeename =  models.ForeignKey(
-                    "accounts.CustomerUser", limit_choices_to=Q(is_employee=True)|Q(is_applicant=True), 
+                    "accounts.CustomerUser", limit_choices_to=Q(is_staff=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="rating_empname",default=1,blank=True)
     topic = models.CharField(
         max_length=255,
@@ -205,8 +205,8 @@ class Reporting(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
-        # limit_choices_to={"is_employee": True, "is_active": True},
+        #  limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        # limit_choices_to={"is_staff": True, "is_active": True},
     )
     rate=models.CharField(max_length=50,null=True,blank=True)
     interview_type = models.CharField(

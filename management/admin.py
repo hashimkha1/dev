@@ -32,7 +32,7 @@ class TaskAdmin(admin.ModelAdmin):
     list_display = ('id', 'activity_name', )
 
     def save_model(self, request, obj, form, change):
-        if obj.employee.is_employee:
+        if obj.employee.is_staff:
             super().save_model(request, obj, form, change)
         else:
             messages.set_level(request, messages.ERROR)
@@ -63,7 +63,7 @@ class TrainingAdmin(admin.ModelAdmin):
             print(session)
 
             if session >= 35 and user.is_applicant:
-                user.is_employee = True
+                user.is_staff = True
                 user.is_applicant = False
                 user.save()
 

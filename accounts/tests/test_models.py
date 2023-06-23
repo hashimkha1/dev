@@ -57,7 +57,7 @@ class TestCredential(TestCase):
             last_name='Doe',
             email= 'johndoe@gmail.com',
             gender='1',
-            is_employee=True,
+            is_staff=True,
             is_active=True,
             )
         self.credential = Credential.objects.create(

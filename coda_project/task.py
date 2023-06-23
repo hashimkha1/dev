@@ -175,24 +175,17 @@ def LBandLSDeduction(emp):
 @shared_task(name="TrainingLoanDeduction")
 def TrainingLoanDeduction():
     from tqdm import tqdm
-    # employee = CustomerUser.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),is_active=True)
-    employee = CustomerUser.objects.filter(is_employee=True,is_staff=True,is_active=True)
-    employee_number = CustomerUser.objects.filter(is_employee=True,is_staff=True,is_active=True).count()
-    # (employee_subcategories,active_employees)=employees()
-    # print(employee,employee_number)
-    # print(active_employees)
+    employee = CustomerUser.objects.filter(is_staff=True,is_active=True)
     for emp in employee:
         tasks = Task.objects.all().filter(employee=emp)
         user_data = TrainingLoan.objects.filter(user=emp, is_active=True)
         loantable = TrainingLoan
         payslip_config = paymentconfigurations(PayslipConfig, emp)
-        # mxearning, points = payinitial(tasks)
         total_pay = Decimal(0)
         for task in tasks:
             total_pay = total_pay + task.get_pay
         # Deductions
         loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
-        # print(loan_amount, loan_payment, balance_amount)
         logger.debug(f'balance_amount: {balance_amount}')
         
 

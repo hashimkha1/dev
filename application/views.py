@@ -265,7 +265,7 @@ def policies(request):
 def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES, request=request)
-        if request.user.is_employee or request.user.is_applicant:
+        if request.user.is_staff or request.user.is_applicant:
             form.instance.employeename = request.user
         
         if form.is_valid():
@@ -308,7 +308,7 @@ def rate(request):
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
-        if request.user.is_employee or request.user.is_applicant:
+        if request.user.is_staff or request.user.is_applicant:
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
 

@@ -29,7 +29,7 @@
               {% if service.slug %}
               <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
                 {% else %}
-              <a href="{% url 'finance:newcontract' request.user %}"><button type="button" class="btn btn-primary">Sign</button></a>
+                  <a href="{% url 'main:layout' %}"><button type="button" class="btn btn-primary">Proceed</button></a>
                 {% endif %}
             </div>
           </div>

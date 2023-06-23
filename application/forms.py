@@ -104,7 +104,7 @@ class RatingForm(forms.ModelForm):
         super(RatingForm, self).__init__(*args, **kwargs)
         self.fields["topic"].required = False
         if self.request and self.request.user:
-            is_employee = self.request.user.is_employee
+            is_employee = self.request.user.is_staff
             if is_employee:
                 self.fields["uploadlinkurl"].required = False
             else:

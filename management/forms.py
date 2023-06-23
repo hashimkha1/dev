@@ -177,7 +177,6 @@ class RequirementForm(forms.ModelForm):
         ]
 
         labels = {
-            # "created_by": "oldcreator",
             "creator": "Creator",
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
@@ -196,8 +195,8 @@ class RequirementForm(forms.ModelForm):
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
     #     self.fields["created_by"].queryset = CustomerUser.objects.filter(
-    #         is_employee=True
-    #         # Q(is_employee=True)
+    #         is_staff=True
+    #         # Q(is_staff=True)
     #     )
 
 
@@ -240,7 +239,7 @@ class EvidenceForm(forms.ModelForm):
 
     # def __init__(self, **kwargs):
     #     super(EvidenceForm, self).__init__(**kwargs)
-    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
+    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_staff=True)
 
 
 class TaskForm(forms.ModelForm):

@@ -31,8 +31,8 @@ from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import download_image,Meetings,path_values
 from main.filters import FoodFilter
-from main.models import Service
-from .utils import check_default_fee,get_exchange_rate,DYCpay
+from main.models import Service,ServiceCategory,Pricing
+from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
 from main.utils import countdown_in_month
 
 
@@ -76,7 +76,7 @@ def contract_form_submission(request):
 				if form.cleaned_data.get('category') == 1:
 					form.instance.is_applicant = True
 				elif form.cleaned_data.get('category') == 2:
-					form.instance.is_employee = True 
+					form.instance.is_staff = True 
 				elif form.cleaned_data.get('category') == 3:
 					form.instance.is_client = True 
 				else:
@@ -137,11 +137,9 @@ def contract_form_submission(request):
 			payment_history_data.save()
 			if payment:
 				messages.success(request, f'Added New Contract For the {username}!')
-				if request.user.category == 4 or request.user.is_superuser:
-					return redirect('management:dckdashboard')
-				if request.user.category == 3 and request.user.sub_category == 1 or request.user.is_superuser: 
+				if request.user.category == 3  or request.user.is_superuser: 
 					return redirect('accounts:user-list', username=request.user)
-				if request.user.category == 3 and request.user.sub_category == 2 or request.user.is_superuser: 
+				if request.user.category == 4 or request.user.is_superuser: 
 					return redirect('data:train')
 				else:
 					return redirect('finance:pay')
@@ -178,7 +176,7 @@ def mycontract(request, *args, **kwargs):
 		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
 		print("payemnt_details",payemnt_details)
 		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
-		if client_data.category == 3 and client_data.sub_category == 1:
+		if client_data.category == 3:
 			plan_dict = {"1":40,"2":80,"3":120}
 			selected_plan = plan_dict[str(payemnt_details.plan)]
 			job_support_hours = selected_plan - 30
@@ -190,7 +188,7 @@ def mycontract(request, *args, **kwargs):
 					"job_support_hours":job_support_hours
 				}
 			return render(request, 'management/contracts/my_supportcontract_form.html',context)
-		if client_data.category == 3 and client_data.sub_category == 2:
+		if client_data.category == 4:
 			context={
 				'student_data': client_data,
 				'contract_date':contract_date,
@@ -205,46 +203,75 @@ def mycontract(request, *args, **kwargs):
 		return render(request, 'management/contracts/contract_error.html',context)
 		
 @login_required
-def newcontract(request, *args, **kwargs):
+def newcontract_jobsupport(request, *args, **kwargs):
+	job_support = ServiceCategory.objects.get(name__iexact='Job Support')
+	contract_months = request.POST.get('contract_length') if request.method == 'POST' else None
+	plan = Pricing.objects.filter(category=job_support.id, contract_length=contract_months).first() 
+	contract_charge = plan.price if plan else None; 
+	contract_duration = plan.duration if plan else None; 
+	contract_period = plan.contract_length if plan else None
+
 	username = kwargs.get('username')
 	#Gets client/user information from the custom user table
 	client_data=CustomerUser.objects.get(username=username)
-	print('CLIENTS DATA',client_data)
+	
 	#Gets any payment default values from the Default table
-	check_default_fee = Default_Payment_Fees.objects.all()
-	print(check_default_fee)
-	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.filter().first()
-		print(default_fee)
-	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=default_payment_fees.id)
-		print('new default:',default_fee)
-	# 	default_fee=check_default_fee(Default_Payment_Fees,username)
+
 	today = date.today()
 	contract_date = today.strftime("%d %B, %Y")
 	context={
-			'job_support_data': client_data,
-			'student_data': client_data,
-			'contract_data': client_data,
+			'client_data': client_data,
+			'contract_data': plan,
+			'contract_charge': contract_charge,
+			'contract_duration': contract_duration,
+			'contract_period': contract_period,
 			'contract_date':contract_date,
-			'payments':default_fee
 			}
-	if client_data.category == 3 and client_data.sub_category == 1 or request.user.is_superuser:
-		return render(request, 'management/contracts/supportcontract_form.html',context)
-	if client_data.category == 3 and client_data.sub_category == 2 or request.user.is_superuser:
-		return render(request, 'management/contracts/trainingcontract_form.html',context)
-	if client_data.category == 4 or request.user.is_superuser:
-		return render(request, 'management/contracts/dyc_contracts/student_contract.html',context)
-	else:
-		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
-		context={"title": "CONTRACT", 
-				"message": message}
-		return render(request, "management/contracts/contract_error.html", context)
+	return render(request, 'management/contracts/client_contract.html',context)
+
+@login_required
+def new_training_contract(request, *args, **kwargs):
+    # Gets client/user information from the custom user table
+    username = kwargs.get('username')
+    client_data = CustomerUser.objects.get(username=username)
+    today = date.today()
+    contract_date = today.strftime("%d %B, %Y")
+
+    # Getting contract information based on the submitted value
+    job_support = ServiceCategory.objects.get(name__iexact='Job Support')
+    full_course = ServiceCategory.objects.get(name__iexact='Full Course')
+
+    course = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    contract_months = request.POST.get('contract_length') if request.method == 'POST' and request.POST.get('contract_length') else None
+
+    plan = None
+    contract_charge = None
+    contract_duration = None
+    contract_period = None
+    if course:
+        if course in ('database', 'reporting', 'etl', 'end_to_end'):
+            plan = Pricing.objects.filter(category=full_course.id, title__iexact=course).first()
+        else:
+            print('invalid course',course)
+    elif contract_months:
+        plan = Pricing.objects.filter(category=job_support.id, contract_length=contract_months).first()
+    else:
+        plan = Pricing.objects.exclude(category__in=[job_support, full_course]).first()
+        print('plan=========>',plan)
+    if plan:
+        contract_charge = plan.price
+        contract_duration = plan.duration
+        contract_period = plan.contract_length
+
+    context = {
+        'client_data': client_data,
+        'contract_data': plan,
+        'contract_charge': contract_charge,
+        'contract_duration': contract_duration,
+        'contract_period': contract_period,
+        'contract_date': contract_date,
+    }
+    return render(request, 'management/contracts/client_contract.html', context)
 
 # ==================PAYMENT CONFIGURATIONS VIEWS=======================
 class PaymentConfigCreateView(LoginRequiredMixin, CreateView):
@@ -342,29 +369,56 @@ def payment(request,method):
         return render(request, "email/payment/payment_method.html",context)
     
 
-def pay(request, service=None):
+@login_required
+def pay(request, *args, **kwargs):
     if not request.user.is_authenticated:
         return redirect(reverse('accounts:account-login'))
-    contract_url = reverse('finance:newcontract', args=[request.user.username])
+    contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
+    
+    # Getting contract fees based on the submitted value
     try:
-        if service:
-            payment_info = get_object_or_404(Service, pk=service) 
-        else:
+        if request.method == 'POST' and request.POST.get('fees'):
+            payment_info = request.POST.get('fees')
+
+        else: 
             payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
     except:
-	    return redirect('finance:newcontract',request.user)
+        if request.user.category == 3 or request.user.category == 4:
+            return redirect('main:bi_services')
+        if request.user.category == 5:
+            return redirect('main:layout')
+        else:
+            payment_info=1
+    print("payment_info============>",payment_info)
+    total_payment= float(payment_info) + calculate_paypal_charges(payment_info)
+    print("total_payment============>",total_payment)
     context = {
-            "title": "PAYMENT",
-            "payments": payment_info,
-            "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
-            "link": contract_url,
-            "service": True,
-        }
+	    "title": "PAYMENT",
+        'total_payment': total_payment,
+        "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+        "link": contract_url,
+    }
+    return render(request, "finance/payments/pay.html", context)
 
-    if request.user.sub_category == 7:
-        return render(request, "finance/DYC/pay.html", context)
-    else:
-        return render(request, "finance/payments/pay.html", context)
+# def pay(request, service=None):
+#     if not request.user.is_authenticated:
+#         return redirect(reverse('accounts:account-login'))
+#     contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
+#     try:
+#         if service:
+#             payment_info = get_object_or_404(Service, pk=service) 
+#         else:
+#             payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
+#     except:
+# 	    return redirect('finance:newtrainingcontract',request.user)
+#     context = {
+# 				"title": "PAYMENT",
+# 				"payments": payment_info,
+# 				"message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+# 				"link": contract_url,
+# 				"service": True,
+# 			}
+#     return render(request, "finance/payments/pay.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()

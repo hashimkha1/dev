@@ -18,7 +18,7 @@
                 <div class="col-md-3">
                     <div style="border: 1px solid black;padding:20px;">
                             <h5 class="text-center text-dark">My Dashboard</h5>
-                            {% if user.is_employee or user.is_superuser %}
+                            {% if user.is_staff or user.is_superuser %}
                             <div style="border: 1px solid black;padding:20px;">
                                 <a class="dropdown-item" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
                                 <div class="dropdown-divider"></div>
