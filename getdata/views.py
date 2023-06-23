@@ -554,13 +554,13 @@ def optiondata(request):
     # days_to_exp = (date_expiry - date_today).days
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
-        stockdata = covered_calls.objects.all()
+        stockdata = covered_calls.objects.all().filter(is_featured=True)
     elif sub_title == 'shortputdata':
-        stockdata = ShortPut.objects.all()
         title = 'SHORT PUT'
+        stockdata = ShortPut.objects.all().filter(is_featured=True)
     else:
         title = 'CREDIT SPREAD'
-        stockdata = cread_spread.objects.all()
+        stockdata = cread_spread.objects.all().filter(is_featured=True)
     context = {
         "data": stockdata,
         "putsrow_value": putsrow_value,

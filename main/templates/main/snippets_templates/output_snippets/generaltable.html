@@ -1,22 +1,25 @@
 <tr>
-    <td>{{row.Symbol}}</td>
-    <td>{{row.Action}}{{row.Strategy}}</td>
-    <td>{{row.Stock_Price}}{{row.Price}}</td>
+    <td>{{ row.Symbol }}</td>
+    <td>{{ row.Action }}{{ row.Strategy }}</td>
+    <td>{{ row.Stock_Price }}{{ row.Price }}</td>
     {% if subtitle == 'credit_spread' %} 
-    <td>{{row.Type}}</td>
-    <td>{{row.Sell_Strike}}</td>
-    <td>{{row.Buy_Strike}}</td>
-    <td>{{row.Premium}}</td>
+        <td>{{ row.Type }}</td>
+        <td>{{ row.Sell_Strike }}</td>
+        <td>{{ row.Buy_Strike }}</td>
+        <td>{{ row.Premium }}</td>
     {% else %}
-    <td>{{row.Strike_Price}}</td>
-    <td>{{row.Raw_Return}}</td>
-    <td>{{row.Days_To_Expiry}}</td>
-    <!-- <td>{{row.Days_To_Expiry}}</td> -->
-    <td>{{row.Annualized_Return}}</td>
+        <td>{{ row.Strike_Price }}</td>
+        <td>{{ row.Raw_Return }}</td>
+        <td>{{ row.Days_To_Expiry }}</td>
+        <!-- <td>{{ row.Days_To_Expiry }}</td> -->
+        <td>{{ row.Annualized_Return }}</td>
     {% endif %}
-    <td>{{row.Implied_Volatility_Rank}}{{row.Rank}}</td>
-    <!-- <td>{{date_today|date:"n/d/Y"}}</td> -->
-    <td>{{row.Expiry}}</td>
-    <td>{{row.Earnings_Date}}</td>
-    
-    </tr>
+    <td>{{ row.Implied_Volatility_Rank }}{{ row.Rank }}</td>
+    <!-- <td>{{ date_today|date:"n/d/Y" }}</td> -->
+    <td>{{ row.Expiry }}</td>
+    <td>{{ row.Earnings_Date }}</td>
+    <td>
+        <!-- <input type="checkbox" {% if row.is_featured %}checked{% endif %} disabled> -->
+        <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
+    </td>
+</tr>
