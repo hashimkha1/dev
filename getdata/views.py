@@ -38,7 +38,8 @@ from management.utils import paytime
 from getdata.utils import(
     main_covered_calls,
     main_cread_spread,
-    main_shortput
+    main_shortput,
+    compute_stock_values
 )
 from .models import CashappMail,ReplyMail,Editable,Logs
 from investing.models import stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
@@ -548,64 +549,59 @@ def options_play_shortput(request):
 
 
 def optiondata(request):
-    putsrow_value, callsrow_value, id_value = row_value()
     path_value, sub_title = path_values(request)
-    putdata = ShortPut.objects.all()
-    calldata = covered_calls.objects.all()
-    creditdata = cread_spread.objects.all()
-    date_today = date.today()
-    data = []
+    # date_expiry = current_row.Expiry.date()  # Assign the datetime object directly
+    # days_to_exp = (date_expiry - date_today).days
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
-        for row in calldata:
-            try:
-                iv = float(row.Implied_Volatility_Rank.replace('%', ''))
-                rr = float(row.Raw_Return.replace('%', ''))
-                ar = float(row.Annualized_Return.replace('%', ''))
-                sp = float(row.Stock_Price[1:])
-                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
-                days_to_exp=(date_expiry - date_today).days
-            except ValueError:
-                continue
-            if days_to_exp >= 21 and iv > 4 and rr >= 3.5 and sp >= 15:
-                data.append(row)
+        stockdata = covered_calls.objects.all()
     elif sub_title == 'shortputdata':
+        stockdata = ShortPut.objects.all()
         title = 'SHORT PUT'
-        for row in putdata:
-            try:
-                iv = float(row.Implied_Volatility_Rank.replace('%', ''))
-                rr = float(row.Raw_Return.replace('%', ''))
-                ar = float(row.Annualized_Return.replace('%', ''))
-                sp = float(row.Stock_Price[1:])
-                num_days = float(row.Days_To_Expiry)
-                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
-                days_to_exp=(date_expiry - date_today).days
-            except ValueError:
-                continue
-            if days_to_exp >= 21 and 15 <= iv <= 50 and ar >= 65 and sp > 15:
-                data.append(row)
     else:
         title = 'CREDIT SPREAD'
-        for row in creditdata:
-            try:
-                iv = float(row.Rank.replace('%', ''))
-                pw = float(row.Prem_Width.replace('%', ''))
-                sp = float(row.Price[1:])
-                date_expiry = datetime.strptime(row.Expiry, "%m/%d/%Y").date()
-                days_to_exp=(date_expiry - date_today).days
-            except ValueError:
-                continue
-            if days_to_exp >= 21 and iv > 4 and pw >= 35 and sp >= 15:
-                data.append(row)
+        stockdata = cread_spread.objects.all()
     context = {
-        "data": data,
+        "data": stockdata,
         "putsrow_value": putsrow_value,
         "callsrow_value": callsrow_value,
-        "id_value": id_value,
         "subtitle": sub_title,
         'title': title,
     }
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+# def optiondata(request):
+#     putsrow_value, callsrow_value, id_value = row_value()
+#     path_value, sub_title = path_values(request)
+#     data = []
+#     if sub_title == 'covered_calls':
+#         title = 'COVERED CALLS'
+#         stockdata = covered_calls.objects.all()
+#         row,iv,rr,ar,sp,num_days,date_expiry,days_to_exp=compute_stock_values(stockdata)
+#         # if days_to_exp >= 21 and float(iv) > 4 and float(rr) >= 3.5 and float(sp) >= 15:
+#         data.append(row)
+#     elif sub_title == 'shortputdata':
+#         stockdata = ShortPut.objects.all()
+#         row,iv,rr,ar,sp,num_days,date_expiry,days_to_exp=compute_stock_values(stockdata)
+#         title = 'SHORT PUT'
+#         # if days_to_exp >= 21 and float(iv) > 50 and float(ar) >= 65 and float(sp) >= 15:
+#         data.append(row)
+#     else:
+#         title = 'CREDIT SPREAD'
+#         stockdata = cread_spread.objects.all()
+#         row,*_,days_to_exp=compute_stock_values(stockdata)
+#         # if days_to_exp >= 21 and float(iv) > 4  and float(sp) >= 15:
+#         data.append(row)
+#     context = {
+#         "data": data,
+#         "putsrow_value": putsrow_value,
+#         "callsrow_value": callsrow_value,
+#         "days_expiration": days_to_exp,
+#         "id_value": id_value,
+#         "subtitle": sub_title,
+#         'title': title,
+#     }
+#     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
 
 
 class shortputupdate(UpdateView):

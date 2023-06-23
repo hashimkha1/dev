@@ -1,3 +1,4 @@
+import os
 import requests
 from datetime import datetime
 import dateutil.relativedelta
@@ -7,7 +8,6 @@ from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .models import TrainingLoan, Transaction
 from management.models import TaskHistory
-# from coda_project.settings import exchange_api_key
 from getdata.views import uploaddata
 from main.utils import Finance,Data,Management
 from accounts.models import Department
@@ -120,7 +120,6 @@ def upload_csv(request):
 def check_default_fee(Default_Payment_Fees,username):
     try:
         default_fee = get_object_or_404(Default_Payment_Fees, user=username)
-        # default_fee = Default_Payment_Fees.objects.get(id=1)
     except:
         default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
@@ -134,19 +133,15 @@ def check_default_fee(Default_Payment_Fees,username):
 #This function obtains exchange rate information
 def get_exchange_rate(base, target):
     # api_key = 'YOUR_APP_ID'
-    exchange_api_key = '07c439585ffa45e0a254d01fef4b0c33'
+    exchange_api_key = os.environ.get('EXCHANGE_API_KEY')
     # api_key = exchange_api_key
     try:
         url = f'https://openexchangerates.org/api/latest.json?app_id={exchange_api_key}&base={base}'
         response = requests.get(url)
-        # if response.status_code != 200:
-        #     rate=135.50
-        # else:
         data = response.json()
         rate=data['rates'][target]
     except:
-        rate=135.50
-    print(rate)
+        rate=138.50
     return rate
 
 # ====================================================================

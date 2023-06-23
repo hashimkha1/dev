@@ -71,7 +71,7 @@ class Pricing(models.Model):
     serial = models.PositiveIntegerField(null=True, blank=True)
     title = models.CharField(max_length=254)
     description = models.TextField(null=True, blank=True)
-    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE)
+    category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE,default=1)
     # subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
     price = models.FloatField()
     duration =  models.PositiveIntegerField(null=True, blank=True)

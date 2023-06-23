@@ -38,6 +38,59 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 # path_values,sub_title=path_values(request)
 # print("===============>",path_values,sub_title)
 
+
+# def compute_stock_values(stockdata):
+#     date_today = date.today()
+#     row = None  # Initialize row to None
+
+#     for current_row in stockdata:
+#         try:
+#             iv = getattr(current_row, 'Implied_Volatility_Rank', '').replace('%', '')
+#             rr = getattr(current_row, 'Raw_Return', '').replace('%', '')
+#             ar = getattr(current_row, 'Annualized_Return', '').replace('%', '')
+#             sp = getattr(current_row, 'Stock_Price', '')[1:]
+#             num_days = getattr(current_row, 'Days_To_Expiry', None)
+#             date_expiry = datetime.strptime(getattr(current_row, 'Expiry', ''), "%m/%d/%Y").date()
+#             days_to_exp = (date_expiry - date_today).days
+#             row = current_row  # Update row with the current valid row
+#         except ValueError:
+#             continue
+
+#     return row, iv, rr, ar, sp, num_days, date_expiry, days_to_exp
+
+
+def compute_stock_values(stockdata):
+    date_today = date.today()
+    row = None  # Initialize row to None
+    iv = rr = ar = sp = num_days = date_expiry = days_to_exp = None  # Initialize variables
+    for current_row in stockdata:
+        try:
+            iv = current_row.Implied_Volatility_Rank
+            rr = current_row.Raw_Return
+            ar = current_row.Annualized_Return
+            sp = current_row.Stock_Price
+            num_days = current_row.Days_To_Expiry
+            date_expiry = current_row.Expiry.date()  # Assign the datetime object directly
+            days_to_exp = (date_expiry - date_today).days
+
+            if isinstance(iv, str):
+                iv = iv.replace('%', '')
+            if isinstance(rr, str):
+                rr = rr.replace('%', '')
+            if isinstance(ar, str):
+                ar = ar.replace('%', '')
+            if isinstance(sp, str):
+                sp = sp[1:]
+
+            row = current_row  # Update row with the current valid row
+        except (ValueError, AttributeError):
+            continue
+
+    return row, iv, rr, ar, sp, num_days, date_expiry, days_to_exp
+
+
+
+
 def row_value():
     putsrow_value=3
     callsrow_value=3
