@@ -48,7 +48,7 @@ urlpatterns = [
         path('updateprofile/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
         path('newplan/', views.PlanCreateView.as_view(template_name='main/form.html'), name='newplan'),
         path('plans/', views.plans, name='plans'),
-        path('update/<int:pk>/', views.PlanUpdateView.as_view(template_name='main/form.html'), name='update_plan'),
+        path('plan/update/<int:pk>/', views.PlanUpdateView.as_view(template_name='main/form.html'), name='update_plan'),
         path('delete/<int:id>/', views.delete_plan, name='delete_plan'),
         path('meetings/', views.meetings, name='meetings'),
         path('meetings/<str:title>/', views.MeetingsUpdateView.as_view(template_name='main/form.html'), name='update_meetings'),

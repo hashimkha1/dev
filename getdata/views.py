@@ -561,12 +561,21 @@ def optiondata(request):
     else:
         title = 'CREDIT SPREAD'
         stockdata = cread_spread.objects.all().filter(is_featured=True)
-    context = {
+    
+    today = date.today()
+    for current_row in stockdata:
+        date_expiry = current_row.Expiry.date()
+        days_to_exp = (date_expiry - today).days
+        print(days_to_exp)
+
+    context = { 
         "data": stockdata,
         "putsrow_value": putsrow_value,
         "callsrow_value": callsrow_value,
         "subtitle": sub_title,
         'title': title,
+        'days_to_exp': days_to_exp,
+        'date_expiry': date_expiry,
     }
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
 

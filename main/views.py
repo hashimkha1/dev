@@ -286,9 +286,11 @@ def plans(request):
 class PlanUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Plan
     fields ="__all__"
+    
 
     def form_valid(self, form):
         form.instance.username = self.request.user
+        print("HERE")
         return super().form_valid(form)
 
     def get_success_url(self):
