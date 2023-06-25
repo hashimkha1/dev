@@ -139,7 +139,9 @@ class Plan(models.Model):
         ("Employment", "Employment"),
         ("Savings", "Savings"),
         ("Insurance", "Insurance"),
+        ("Relationship", "Relationship"),
         ("Trips", "Trips"),
+        ("Other", "Other"),
     ]
     STATUS_CHOICES = [
         ("Critical", "Critical"),
