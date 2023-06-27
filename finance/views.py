@@ -373,31 +373,37 @@ def payment(request,method):
 def pay(request, *args, **kwargs):
     if not request.user.is_authenticated:
         return redirect(reverse('accounts:account-login'))
-    contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
-    
-    # Getting contract fees based on the submitted value
-    try:
-        if request.method == 'POST' and request.POST.get('fees'):
-            payment_info = request.POST.get('fees')
 
-        else: 
-            payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
-    except:
-        if request.user.category == 3 or request.user.category == 4:
-            return redirect('main:bi_services')
-        if request.user.category == 5:
-            return redirect('main:layout')
-        else:
-            payment_info=1
-    print("payment_info============>",payment_info)
-    total_payment= float(payment_info) + calculate_paypal_charges(payment_info)
-    print("total_payment============>",total_payment)
+    contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
+
+    # Getting contract fees based on the submitted value
+    if request.method == 'POST' and request.POST.get('fees'):
+        amount = request.POST.get('fees')
+        print("POSTamount=====>",amount)
+    else:
+        try:
+            payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+            amount = payment_info.payment_fees
+            print("amount",amount)
+        except Payment_Information.DoesNotExist:
+            if request.user.category == 3 or request.user.category == 4:
+                return redirect('main:bi_services')
+            if request.user.category == 5:
+                return redirect('main:layout')
+            else:
+                payment_info = 1
+
+    print("payment_info============>", payment_info)
+    total_payment = float(amount) + calculate_paypal_charges(amount)
+    print("total_payment============>", total_payment)
+
     context = {
-	    "title": "PAYMENT",
+        "title": "PAYMENT",
         'total_payment': total_payment,
         "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
         "link": contract_url,
     }
+
     return render(request, "finance/payments/pay.html", context)
 
 # def pay(request, service=None):

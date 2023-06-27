@@ -1,6 +1,5 @@
 from django import forms
-from .models import Investments
-
+from .models import Investments,stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
 class InvestmentForm(forms.ModelForm):
     class Meta:
         model = Investments
@@ -15,3 +14,21 @@ class InvestmentForm(forms.ModelForm):
 #                 'doc_name':'Document Name',
 #                 'doc':'Document',
 #         }
+
+class CoveredCallsForm(forms.ModelForm):
+    class Meta:
+        model = covered_calls
+        # fields = "__all__"
+        fields = ['Symbol','comment','is_featured']
+
+class ShortPutForm(forms.ModelForm):
+    class Meta:
+        model = ShortPut
+        # fields = "__all__"
+        fields = ['Symbol','comment','is_featured']
+
+class CreadSpreadForm(forms.ModelForm):
+    class Meta:
+        model = cread_spread
+        # fields = "__all__"
+        fields = ['Symbol','comment','is_featured']

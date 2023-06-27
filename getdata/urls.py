@@ -17,12 +17,7 @@ urlpatterns = [
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('cashappdetail/',views.CashappMailDetailSlugView.as_view(), name='cashappdetail'),
-    path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
-    path('options/', views.options, name='option-data'),
-    path('covered_calls/', views.optiondata, name='covered_calls'),
-    path('shortputdata/', views.optiondata, name='shortput'),
-    path('credit_spread/', views.optiondata, name='credit_spread'),
-    path('shortputupdate/<int:pk>', views.shortputupdate.as_view(), name='shortputupdate'),
+   
     path('replies/',search_job_mail, name='replies-email'),
     
     path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),

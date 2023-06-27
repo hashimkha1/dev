@@ -66,6 +66,7 @@ class cread_spread(models.Model):
 	Prem_Width = models.CharField(max_length=255)
 	Rank = models.CharField(max_length=255)
 	Earnings_Date = models.CharField(max_length=255)
+	comment=models.CharField(max_length=255,default='Enter Comment')
 	is_active = models.BooleanField(default=True)
 	is_featured = models.BooleanField(default=True)
 
@@ -91,6 +92,7 @@ class ShortPut(models.Model):
 	Raw_Return = models.CharField(max_length=255,blank=True,null=True)
 	Annualized_Return = models.CharField(max_length=255,blank=True,null=True)
 	Distance_To_Strike  = models.CharField(max_length=255,blank=True,null=True)
+	comment=models.CharField(max_length=255,default='Enter Comment')
 	is_active = models.BooleanField(default=True)
 	is_featured = models.BooleanField(default=True)
 
@@ -116,6 +118,7 @@ class covered_calls(models.Model):
 	Raw_Return = models.CharField(max_length=255)
 	Annualized_Return = models.CharField(max_length=255)
 	Distance_To_Strike  = models.CharField(max_length=255)
+	comment=models.CharField(max_length=255,default='Enter Comment')
 	is_active = models.BooleanField(default=True)
 	is_featured = models.BooleanField(default=True)
 

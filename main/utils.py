@@ -302,22 +302,22 @@ Automation = [
 Stocks = [
     {
         "title": "Cryptomarket",
-        "link":SITEURL+"/getdata/options/",
+        "link":SITEURL+"/investing/options/",
         "linkname":"Cryptomarket Data",
     },
     {
         "title": "Credit Spreads",
-        "link":SITEURL+"/getdata/credit_spread/",
+        "link":SITEURL+"/investing/credit_spread/",
         "linkname":"Credit Spreads Data",
     },
     {
         "title": "Get short Put Data",
-        "link":SITEURL+"/getdata/shortputdata/",
+        "link":SITEURL+"/investing/shortputdata/",
         "linkname":"Get short Put Data",
     },
     {
         "title": "Get covered Calls Data",
-        "link":SITEURL+"/getdata/covered_calls/",
+        "link":SITEURL+"/investing/covered_calls/",
         "linkname":"Get covered Calls Data",
     },
 ]
@@ -329,17 +329,17 @@ General = [
     },
     {
         "title": "Credit Spreads",
-        "link":SITEURL+"/getdata/credit_spread/",
+        "link":SITEURL+"/investing/credit_spread/",
         "linkname":"Credit Spreads Data",
     },
     {
         "title": "Get short Put Data",
-        "link":SITEURL+"/getdata/shortput/",
+        "link":SITEURL+"/investing/shortput/",
         "linkname":"Get short Put Data",
     },
     {
         "title": "Get covered Calls Data",
-        "link":SITEURL+"/getdata/covered_calls/",
+        "link":SITEURL+"/investing/covered_calls/",
         "linkname":"Get covered Calls Data",
     },
 ]

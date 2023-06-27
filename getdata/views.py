@@ -30,21 +30,12 @@ from getdata.utils import (
                     row_value
 
 )
-from finance.models import (
-        Transaction
-	)
-from management.utils import paytime
-#importing Options play funcationality
-from getdata.utils import(
-    main_covered_calls,
-    main_cread_spread,
-    main_shortput,
-    compute_stock_values
-)
-from .models import CashappMail,ReplyMail,Editable,Logs
-from investing.models import stockmarket,ShortPut,covered_calls,cread_spread,cryptomarket
-from django.contrib.auth import get_user_model
+from finance.models import (Transaction)
 
+#importing Options play funcationality
+
+from .models import CashappMail,ReplyMail,Editable,Logs
+from django.contrib.auth import get_user_model
 from .forms import CsvImportForm
 from coda_project.settings import EMAIL_INFO
 
@@ -466,6 +457,30 @@ def upload_csv(request):
     data = {"form": form}
     return render(request, "getdata/uploaddata.html", data)
 
+def selinum_test(request):
+    # to test on server
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
+    # Navigate to Google's homepage
+    driver.get("https://www.google.com/")
+
+    # Get the page title
+    title = driver.title
+    return HttpResponse(title)
+
+def LogsViewSet(request):
+    logs = Logs.objects.all().order_by("-id")
+    if request.user.is_superuser:
+        return render(request, "getdata/logs.html", {"logs": logs})
+    else:
+        return redirect("main:layout")
+    
+
 
 def options(request):
     service = get_gmail_service()
@@ -499,168 +514,3 @@ def options(request):
         # return render(request, "getdata/options.html")
         return redirect("getdata:stockmarket")
 
-
-#Eliminate duplicates
-
-def options_play_shortput(request):
-    # Call the main_shortput function to retrieve the data
-    message = 'we are done processing your request'
-    data = main_shortput(request)
-    # Loop through the data and insert it into the database
-    created_count = 0
-    for row in data:
-        symbol = row[0]
-        action = row[1]
-        expiry = row[2]
-        days_to_expiry = row[3]
-        strike_price = row[4]
-        mid_price = row[5]
-        bid_price = row[6]
-        ask_price = row[7]
-        implied_volatility_rank = row[8]
-        earnings_date = row[9]
-        stock_price = row[11]
-        raw_return = row[12]
-        annualized_return = row[13]
-        distance_to_strike = row[14]
-
-        obj, created = ShortPut.objects.get_or_create(
-            Symbol=symbol,
-            Action=action,
-            Expiry=expiry,
-            Days_To_Expiry=days_to_expiry,
-            Strike_Price=strike_price,
-            defaults={
-                'Mid_Price': mid_price,
-                'Bid_Price': bid_price,
-                'Ask_Price': ask_price,
-                'Implied_Volatility_Rank': implied_volatility_rank,
-                'Earnings_Date': earnings_date,
-                'Stock_Price': stock_price,
-                'Raw_Return': raw_return,
-                'Annualized_Return': annualized_return,
-                'Distance_To_Strike': distance_to_strike
-            }
-        )
-        if created:
-            created_count += 1
-    # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
-    return redirect ('getdata:shortputdata')
-
-
-def optiondata(request):
-    path_value, sub_title = path_values(request)
-    # date_expiry = current_row.Expiry.date()  # Assign the datetime object directly
-    # days_to_exp = (date_expiry - date_today).days
-    if sub_title == 'covered_calls':
-        title = 'COVERED CALLS'
-        stockdata = covered_calls.objects.all().filter(is_featured=True)
-    elif sub_title == 'shortputdata':
-        title = 'SHORT PUT'
-        stockdata = ShortPut.objects.all().filter(is_featured=True)
-    else:
-        title = 'CREDIT SPREAD'
-        stockdata = cread_spread.objects.all().filter(is_featured=True)
-    
-    # today = date.today()
-
-    for current_row in stockdata:
-        expiry_date = current_row.Expiry # Make sure Expiry is a valid date field
-        # expiry_date = current_row.Expiry.date()  # Make sure Expiry is a valid date field
-        # days_to_exp = (expiry_date - today).days
-
-    context = { 
-        "data": stockdata,
-        "putsrow_value": putsrow_value,
-        "callsrow_value": callsrow_value,
-        "subtitle": sub_title,
-        'title': title,
-        'expiry_date': expiry_date,
-        # 'days_to_exp': days_to_exp,
-        # 'date_expiry': date_expiry,
-    }
-    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-# def optiondata(request):
-#     putsrow_value, callsrow_value, id_value = row_value()
-#     path_value, sub_title = path_values(request)
-#     data = []
-#     if sub_title == 'covered_calls':
-#         title = 'COVERED CALLS'
-#         stockdata = covered_calls.objects.all()
-#         row,iv,rr,ar,sp,num_days,date_expiry,days_to_exp=compute_stock_values(stockdata)
-#         # if days_to_exp >= 21 and float(iv) > 4 and float(rr) >= 3.5 and float(sp) >= 15:
-#         data.append(row)
-#     elif sub_title == 'shortputdata':
-#         stockdata = ShortPut.objects.all()
-#         row,iv,rr,ar,sp,num_days,date_expiry,days_to_exp=compute_stock_values(stockdata)
-#         title = 'SHORT PUT'
-#         # if days_to_exp >= 21 and float(iv) > 50 and float(ar) >= 65 and float(sp) >= 15:
-#         data.append(row)
-#     else:
-#         title = 'CREDIT SPREAD'
-#         stockdata = cread_spread.objects.all()
-#         row,*_,days_to_exp=compute_stock_values(stockdata)
-#         # if days_to_exp >= 21 and float(iv) > 4  and float(sp) >= 15:
-#         data.append(row)
-#     context = {
-#         "data": data,
-#         "putsrow_value": putsrow_value,
-#         "callsrow_value": callsrow_value,
-#         "days_expiration": days_to_exp,
-#         "id_value": id_value,
-#         "subtitle": sub_title,
-#         'title': title,
-#     }
-#     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-
-class shortputupdate(UpdateView):
-    model = Editable
-    success_url = "/getdata/shortputdata"
-    fields = "__all__"
-    template_name="main/snippets_templates/generalform.html"
-    if model:
-        def form_valid(self, form):
-            # form.instance.author=self.request.user
-            return super().form_valid(form)
-        def test_func(self):
-            # interview = self.get_object()
-            # if self.request.user.is_superuser:
-                # return True
-            # elif self.request.user == interview.client:
-                # return True
-            return True
-    else:
-        print("set default values")
-        
-    
-
-class OptionList(ListView):
-    model=stockmarket
-    template_name="getdata/options.html"
-    context_object_name = "stocks"
-
-
-def selinum_test(request):
-    # to test on server
-    chrome_options = webdriver.ChromeOptions()
-    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-    chrome_options.add_argument("--headless")
-    chrome_options.add_argument("--disable-dev-shm-usage")
-    chrome_options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-
-    # Navigate to Google's homepage
-    driver.get("https://www.google.com/")
-
-    # Get the page title
-    title = driver.title
-    return HttpResponse(title)
-
-def LogsViewSet(request):
-    logs = Logs.objects.all().order_by("-id")
-    if request.user.is_superuser:
-        return render(request, "getdata/logs.html", {"logs": logs})
-    else:
-        return redirect("main:layout")

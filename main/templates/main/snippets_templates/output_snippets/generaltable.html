@@ -1,25 +1,40 @@
 <tr>
-    <td>{{ row.Symbol }}</td>
+    <td>
+        <a class="text-dark  text-decoration-none" 
+        data-toggle="tooltip" title="{{  row.comment  }}"
+        href="{{ category.get_absolute_url }}">
+          {{ row.Symbol }}  
+        </a>
+    </td>
     <td>{{ row.Action }}{{ row.Strategy }}</td>
     <td>{{ row.Stock_Price }}{{ row.Price }}</td>
     {% if subtitle == 'credit_spread' %} 
         <td>{{ row.Type }}</td>
         <td>{{ row.Sell_Strike }}</td>
-        <td>{{ row.Buy_Strike }}</td>
+        <!-- <td>{{ row.Buy_Strike }}</td> -->
         <td>{{ row.Premium }}</td>
     {% else %}
         <td>{{ row.Strike_Price }}</td>
         <td>{{ row.Raw_Return }}</td>
         <!-- <td>{{ days_to_exp }}</td> -->
-        <td>{{ row.Days_To_Expiry }}</td>
+        <!-- <td>{{ row.Days_To_Expiry }}</td> -->
         <td>{{ row.Annualized_Return }}</td>
     {% endif %}
-    <td>{{ row.Implied_Volatility_Rank }}{{ row.Rank }}</td>
+    <!-- <td>{{ row.Implied_Volatility_Rank }}{{ row.Rank }}</td> -->
     <!-- <td>{{ date_today|date:"n/d/Y" }}</td> -->
     <td>{{ row.Expiry}}</td>
     <td>{{ row.Earnings_Date }}</td>
     <td>
-        <!-- <input type="checkbox" {% if row.is_featured %}checked{% endif %} disabled> -->
         <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
     </td>
+    <!-- <td>
+        <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
+    </td> -->
+    {% if subtitle == 'shortputdata' %}
+    <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
+    {% elif subtitle == 'credit_spread' %}
+        <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
+    {% else %}
+        <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
+    {% endif %}
 </tr>
