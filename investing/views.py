@@ -245,7 +245,7 @@ class covered_calls_update(UpdateView):
     model = covered_calls
     success_url = "/investing/covered_calls"
     # fields = "__all__"
-    fields = ['Symbol','comment']
+    fields = ['Symbol','comment','is_featured']
     template_name="main/snippets_templates/generalform.html"
     def form_valid(self, form):
         # form.instance.author=self.request.user
@@ -259,7 +259,7 @@ class cread_spread_update(UpdateView):
     model = cread_spread
     success_url = "/investing/credit_spread"
     # fields = "__all__"
-    fields = ['Symbol','comment']
+    fields = ['Symbol','comment','is_featured']
     template_name="main/snippets_templates/generalform.html"
     def form_valid(self, form):
         return super().form_valid(form)
