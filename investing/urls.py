@@ -15,6 +15,7 @@ urlpatterns = [
     path('covered_calls/', views.optiondata, name='covered_calls'),
     path('shortputdata/', views.optiondata, name='shortput'),
     path('credit_spread/', views.optiondata, name='credit_spread'),
+    path('overboughtsold/', views.optiondata, name='overboughtsold'),
     # path('shortputupdate/<int:pk>', views.shortputupdate.as_view(), name='shortputupdate'),
     path('creditspreadupdate/<int:pk>', views.cread_spread_update.as_view(), name='creditspreadupdate'),
     path('coveredupdate/<int:pk>', views.covered_calls_update.as_view(), name='coveredupdate'),

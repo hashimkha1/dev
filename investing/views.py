@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
+from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import F
@@ -146,19 +147,25 @@ def options_play_shortput(request):
     return redirect ('getdata:shortputdata')
 
 
+
 def optiondata(request):
     path_value, sub_title = path_values(request)
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
+        over_bought_sold = covered_calls.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
     elif sub_title == 'shortputdata':
         title = 'SHORT PUT'
         stockdata = ShortPut.objects.all().filter(is_featured=True)
+        over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
     else:
         title = 'CREDIT SPREAD'
         stockdata = cread_spread.objects.all().filter(is_featured=True)
+        over_bought_sold = cread_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        print("over_bought_sold===>",over_bought_sold)
     context = { 
         "data": stockdata,
+        "overboughtsold": over_bought_sold,
         "subtitle": sub_title,
         'title': title,
     }

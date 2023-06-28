@@ -11,8 +11,8 @@
                   <i><h6>{{user.first_name|upper }}</h6></i>
                   <hr/>
                       <p>
-                        <a href="#" class="btn btn-secondary btn-sm"
-                          >Refresh
+                        <a href="{% url 'investing:overboughtsold' %}" class="btn btn-secondary btn-sm"
+                          >Bought/Over sold Positions
                         </a>
                      </p>
                 </div>
@@ -37,7 +37,7 @@
                     </a>
                   </div>
                 </div>
-                  <hr/>
+                  <hr/> 
                   <i><h6>New Rows:{{new_rows}} | Duplicates: {{duplicates_rows}}|Sample:{{putsrow_value}}
                     <a href="#" class="btn btn-secondary btn-sm"
                     >Edit
@@ -90,9 +90,16 @@
             </tr>
           </thead>
           <tbody>
-            {% for row in data %}
-                {% include 'main/snippets_templates/output_snippets/generaltable.html' with instance=row %} 
-            {% endfor %}
+            {% if subtitle == 'overboughtsold' %}
+                  {% for row in overboughtsold %}
+                      {% include 'main/snippets_templates/output_snippets/generaltable.html' with instance=row %} 
+                  {% endfor %}
+            {% else %}
+                  {% for row in data %}
+                      {% include 'main/snippets_templates/output_snippets/generaltable.html' with instance=row %} 
+                  {% endfor %}
+            {% endif %}
+
           </tbody>
         </table>
       </div>
