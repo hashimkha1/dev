@@ -35,7 +35,7 @@
                                       <input type="text" id="priceId" hidden> 
                                       <id="priceId"> 
                                         <button>
-                                          $Amount to be Paid <b>$ {{total_payment}}
+                                          $Amount to be Paid <b>$ {{payments.down_payment|add:paypal_charges}}
                                             <!-- {% if service %} 
                                             {{ payments.price }} 
                                             % else %}
@@ -43,7 +43,7 @@
                                             {% endif %} -->
                                           </b>
                                         </button>
-                                      <a class="article-title" href="#">
+                                      <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
                                         <button>
                                           Edit
                                         </button>

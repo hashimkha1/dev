@@ -375,31 +375,45 @@ def pay(request, *args, **kwargs):
         return redirect(reverse('accounts:account-login'))
 
     contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
-
     # Getting contract fees based on the submitted value
-    if request.method == 'POST' and request.POST.get('fees'):
-        amount = request.POST.get('fees')
-        print("POSTamount=====>",amount)
-    else:
-        try:
-            payment_info = Payment_Information.objects.get(customer_id=request.user.id)
-            amount = payment_info.payment_fees
-            print("amount",amount)
-        except Payment_Information.DoesNotExist:
+    try:
+        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        downpayment = payment_info.down_payment
+    except Payment_Information.DoesNotExist:
+        if request.method == 'POST' and request.POST.get('fees'):
+            total_fee = request.POST.get('fees')
+            downpayment=float(total_fee)*0.30
+            fee_balance=total_fee-downpayment
+            Payment_Information.objects.create(
+                    customer=request.user,
+                    payment_fees=total_fee,
+                    down_payment=downpayment,
+                    student_bonus=0,
+                    plan=2,
+                    fee_balance=fee_balance,
+                    payment_method='mpesa',
+                    contract_submitted_date=date.today(),
+                    client_signature="client",
+                    company_rep="coda",
+                    client_date=date.today(),
+                    rep_date=date.today(),
+                    )
+        else:
             if request.user.category == 3 or request.user.category == 4:
                 return redirect('main:bi_services')
             if request.user.category == 5:
                 return redirect('main:layout')
             else:
                 payment_info = 1
+		
+        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        downpayment = payment_info.down_payment
 
-    print("payment_info============>", payment_info)
-    total_payment = float(amount) + calculate_paypal_charges(amount)
-    print("total_payment============>", total_payment)
-
+    paypal_charges = calculate_paypal_charges(downpayment)
     context = {
         "title": "PAYMENT",
-        'total_payment': total_payment,
+        'payments': payment_info,
+        'paypal_charges': paypal_charges,
         "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
         "link": contract_url,
     }
