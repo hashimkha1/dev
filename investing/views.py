@@ -146,10 +146,13 @@ def options_play_shortput(request):
     # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
     return redirect ('getdata:shortputdata')
 
-
+from datetime import date,datetime,time,timezone
 
 def optiondata(request):
     path_value, sub_title = path_values(request)
+    # Get current datetime with UTC timezone
+    date_today = datetime.now(timezone.utc)
+   
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
@@ -162,10 +165,26 @@ def optiondata(request):
         title = 'CREDIT SPREAD'
         stockdata = cread_spread.objects.all().filter(is_featured=True)
         over_bought_sold = cread_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
-        print("over_bought_sold===>",over_bought_sold)
+
+    filtered_stockdata = []
+    for x in stockdata:
+        if isinstance(x.Expiry, str):
+            expiry_str = x.Expiry
+            expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
+            expiry_date = expirydate.astimezone(timezone.utc)
+        elif isinstance(x.Expiry, datetime):
+            expiry_date = x.Expiry.astimezone(timezone.utc)
+        else:
+            continue
+        days_to_exp = expiry_date - date_today
+        days_to_expiration = days_to_exp.days
+        if days_to_expiration > 7:
+            filtered_stockdata.append(x)
+
     context = { 
-        "data": stockdata,
+        "data": filtered_stockdata,
         "overboughtsold": over_bought_sold,
+        "days_to_expiration": days_to_expiration,
         "subtitle": sub_title,
         'title': title,
     }
@@ -176,37 +195,6 @@ class OptionList(ListView):
     model=stockmarket
     template_name="getdata/options.html"
     context_object_name = "stocks"
-
-# class OptionUpdateView(UpdateView):
-#     success_url = "/getdata/shortputdata"
-#     fields = "__all__"
-#     template_name="main/snippets_templates/generalform.html"
-#     def dispatch(self, request, *args, **kwargs):
-#         self.path_value, self.sub_title = path_values(request)
-#         return super().dispatch(request, *args, **kwargs)
-
-#     def test_func(self):
-#         return self.request.user.is_superuser
-
-#     def get_form_class(self):
-#         if self.sub_title == 'covered_calls':
-#             return CoveredCallsForm
-#         elif self.sub_title == 'shortputdata':
-#             return ShortPutForm
-#         else:
-#             return CreadSpreadForm
-
-#     def get_object(self, queryset=None):
-#         if self.sub_title == 'covered_calls':
-#             return covered_calls.objects.filter().first()
-#         elif self.sub_title == 'shortputdata':
-#             return ShortPut.objects.filter().first()
-#         else:
-#             return cread_spread.objects.filter().first()
-
-#     def form_valid(self, form):
-#         response = super().form_valid(form)
-#         return response
 
 
 # class shortputupdate(UpdateView):
