@@ -130,23 +130,17 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('HEROKU_DEV_HOST')
-        dbname = os.environ.get('HEROKU_DEV_NAME')
-        user = os.environ.get('HEROKU_DEV_USER')
-        password = os.environ.get('HEROKU_DEV_PASS')
-        # host = 'localhost'
-        # dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
-        # user = "postgres" #os.environ.get('POSTGRESDB_USER')
-        # password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
+        host = 'localhost'
+        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
 
 host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
-print("HOST", host)
-print("User", user)
-print("PASSWORD", password)
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -312,3 +306,14 @@ elif os.environ.get('ENVIRONMENT') == 'testing':
    SITEURL = "https://codamakutano.herokuapp.com"
 else:
     SITEURL = "http://localhost:8000"
+
+# -----------------------------------------
+def source_target():
+    # Source
+    source_host = os.environ.get('HEROKU_DEV_HOST')
+    source_dbname = os.environ.get('HEROKU_DEV_NAME')
+    source_user = os.environ.get('HEROKU_DEV_USER')
+    source_password = os.environ.get('HEROKU_DEV_PASS')
+    #Target                     
+    target_db_path=os.environ.get('TARGET_PATH_PROD')
+    return (source_host,source_dbname,source_user,source_password,target_db_path)
