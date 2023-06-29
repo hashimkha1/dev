@@ -26,7 +26,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
-from coda_project.settings import dba_values #dblocal,herokudev,herokuprod
+from coda_project.settings import dba_values ,source_target #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
@@ -35,28 +35,139 @@ SCOPES = ['https://mail.google.com/']
 # host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
 host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 
-# path_values,sub_title=path_values(request)
-# print("===============>",path_values,sub_title)
+#DB VARIABLES
+(source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
 
 
-# def compute_stock_values(stockdata):
-#     date_today = date.today()
-#     row = None  # Initialize row to None
 
-#     for current_row in stockdata:
-#         try:
-#             iv = getattr(current_row, 'Implied_Volatility_Rank', '').replace('%', '')
-#             rr = getattr(current_row, 'Raw_Return', '').replace('%', '')
-#             ar = getattr(current_row, 'Annualized_Return', '').replace('%', '')
-#             sp = getattr(current_row, 'Stock_Price', '')[1:]
-#             num_days = getattr(current_row, 'Days_To_Expiry', None)
-#             date_expiry = datetime.strptime(getattr(current_row, 'Expiry', ''), "%m/%d/%Y").date()
-#             days_to_exp = (date_expiry - date_today).days
-#             row = current_row  # Update row with the current valid row
-#         except ValueError:
-#             continue
+def fetch_and_insert_data():
+    (source_host, source_dbname, source_user, source_password, target_db_path) = source_target()
 
-#     return row, iv, rr, ar, sp, num_days, date_expiry, days_to_exp
+    # Connect to the source database
+    source_conn = psycopg2.connect(
+        host=source_host,
+        dbname=source_dbname,
+        user=source_user,
+        password=source_password
+    )
+    source_cursor = source_conn.cursor()
+
+    # Connect to the target database
+    target_conn = psycopg2.connect(target_db_path)
+    target_cursor = target_conn.cursor()
+
+    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
+    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
+
+    try:
+        # Iterate over source and target tables
+        for source_table, target_table in zip(source_tables, target_tables):
+            # Drop the target table if it exists
+            target_cursor.execute(f"DROP TABLE IF EXISTS {target_table}")
+            print("Target table dropped.")
+
+            # Fetch the structure of the source table
+            source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{source_table}'")
+            columns = source_cursor.fetchall()
+
+            # Get unique column names and their corresponding data types
+            unique_columns = {}
+            for column in columns:
+                column_name = column[0]
+                column_data_type = column[1]
+                if column_name not in unique_columns:
+                    unique_columns[column_name] = column_data_type
+
+            create_table_query = f"CREATE TABLE {target_table} ("
+            column_names = set()  # Track column names to avoid duplicates
+            for column_name, column_data_type in unique_columns.items():
+                if column_name not in column_names:
+                    create_table_query += f"{column_name} {column_data_type}, "
+                    column_names.add(column_name)
+            create_table_query = create_table_query.rstrip(", ") + ")"
+
+            # Create the target table
+            target_cursor.execute(create_table_query)
+            print("Target table created.")
+
+            # Fetch data from the source table
+            source_cursor.execute(f"SELECT * FROM {source_table}")
+            rows = source_cursor.fetchall()
+
+            # Insert data into the target table
+            for row in rows:
+                placeholders = "%s, " * len(row)
+                placeholders = placeholders.rstrip(", ")
+                target_cursor.execute(f"INSERT INTO {target_table} VALUES ({placeholders})", row)
+
+        # Commit the changes in the target database
+        target_conn.commit()
+
+        print("Data transfer successful!")
+    except Exception as e:
+        print(f"Data transfer failed: {str(e)}")
+
+    # Close the database connections
+    source_conn.close()
+    target_conn.close()
+
+
+# def fetch_and_insert_data():
+#     (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
+#     print("source_host====>", source_host)
+#     source_table='investing_shortput'
+#     target_table='investing_shortput'
+
+#     # Connect to the source database
+#     source_conn = psycopg2.connect(
+#         host=source_host,
+#         dbname=source_dbname,
+#         user=source_user,
+#         password=source_password
+#     )
+#     source_cursor = source_conn.cursor()
+
+#     # Connect to the target database
+#     target_conn = psycopg2.connect(target_db_path)
+#     target_cursor = target_conn.cursor()
+
+#     try:
+#         # Fetch data from the source table
+#         source_cursor.execute(f"SELECT * FROM {source_table}")
+#         rows = source_cursor.fetchall()
+
+#         # Drop the target table if it exists
+#         target_cursor.execute(f"DROP TABLE IF EXISTS {target_table}")
+#         print("Target table dropped.")
+
+#         # Get the column names and data types from the source table
+#         source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{source_table}'")
+#         columns = source_cursor.fetchall()
+
+#         # Create the target table with the same structure as the source table
+#         create_table_query = f"CREATE TABLE {target_table} ("
+#         for column in columns:
+#             column_name, data_type = column
+#             create_table_query += f"{column_name} {data_type}, "
+#         create_table_query = create_table_query.rstrip(", ") + ")"
+#         target_cursor.execute(create_table_query)
+#         print("Target table created.")
+
+#         # Insert data into the target table
+#         for row in rows:
+#             target_cursor.execute(f"INSERT INTO {target_table} VALUES (%s, %s, ..., %s)", row)
+
+#         # Commit the changes in the target database
+#         target_conn.commit()
+
+#         print("Data transfer successful!")
+#     except Exception as e:
+#         print(f"Data transfer failed: {str(e)}")
+
+#     # Close the database connections
+#     source_conn.close()
+#     target_conn.close()
+
 
 
 def compute_stock_values(stockdata):

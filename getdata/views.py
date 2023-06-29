@@ -27,7 +27,8 @@ from getdata.utils import (
                     GetSubject,
                     get_crypto_price,
                     get_stock_price,
-                    row_value
+                    row_value,
+                    fetch_and_insert_data
 
 )
 from finance.models import (Transaction)
@@ -37,7 +38,7 @@ from finance.models import (Transaction)
 from .models import CashappMail,ReplyMail,Editable,Logs
 from django.contrib.auth import get_user_model
 from .forms import CsvImportForm
-from coda_project.settings import EMAIL_INFO
+from coda_project.settings import EMAIL_INFO,source_target
 
 putsrow_value,callsrow_value,id_value=row_value()
 
@@ -514,3 +515,8 @@ def options(request):
         # return render(request, "getdata/options.html")
         return redirect("getdata:stockmarket")
 
+
+def refetch_data(request):
+    fetch_and_insert_data()
+    previous_path = request.META.get('HTTP_REFERER', '')
+    return redirect(previous_path)

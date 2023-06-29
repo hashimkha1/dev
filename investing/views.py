@@ -13,14 +13,14 @@ from .utils import compute_pay
 from .forms import (
     CoveredCallsForm,
     ShortPutForm,
-    CreadSpreadForm,
+    CreditSpreadForm,
     InvestmentForm
 )
 from .models import (
     stockmarket,
     ShortPut,
     covered_calls,
-    cread_spread,
+    credit_spread,
     cryptomarket,
     Investments
 )
@@ -160,26 +160,31 @@ def optiondata(request):
     elif sub_title == 'shortputdata':
         title = 'SHORT PUT'
         stockdata = ShortPut.objects.all().filter(is_featured=True)
+        print(stockdata)
         over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
     else:
         title = 'CREDIT SPREAD'
-        stockdata = cread_spread.objects.all().filter(is_featured=True)
-        over_bought_sold = cread_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        stockdata = credit_spread.objects.all().filter(is_featured=True)
+        over_bought_sold = credit_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
 
     filtered_stockdata = []
+    days_to_expiration = 0
     for x in stockdata:
-        if isinstance(x.Expiry, str):
-            expiry_str = x.Expiry
+        if isinstance(x.expiry, str):
+            expiry_str = x.expiry
             expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
             expiry_date = expirydate.astimezone(timezone.utc)
-        elif isinstance(x.Expiry, datetime):
-            expiry_date = x.Expiry.astimezone(timezone.utc)
+        elif isinstance(x.expiry, datetime):
+            expiry_date = x.expiry.astimezone(timezone.utc)
         else:
             continue
+        
         days_to_exp = expiry_date - date_today
         days_to_expiration = days_to_exp.days
+
         if days_to_expiration > 7:
             filtered_stockdata.append(x)
+        
 
     context = { 
         "data": filtered_stockdata,
@@ -234,8 +239,6 @@ def shortput_update(request, pk):
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
 
-
-    
 class covered_calls_update(UpdateView):
     model = covered_calls
     success_url = "/investing/covered_calls"
@@ -250,8 +253,8 @@ class covered_calls_update(UpdateView):
             return True
         return False
     
-class cread_spread_update(UpdateView):
-    model = cread_spread
+class credit_spread_update(UpdateView):
+    model = credit_spread
     success_url = "/investing/credit_spread"
     # fields = "__all__"
     fields = ['Symbol','comment','is_featured']

@@ -18,6 +18,7 @@ urlpatterns = [
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('cashappdetail/',views.CashappMailDetailSlugView.as_view(), name='cashappdetail'),
    
+    path('positions/', views.refetch_data, name='fetch_and_insert_data'),
     path('replies/',search_job_mail, name='replies-email'),
     
     path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),

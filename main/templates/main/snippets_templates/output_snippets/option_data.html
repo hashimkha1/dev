@@ -10,9 +10,10 @@
                   <hr/>
                   <i><h6>{{user.first_name|upper }}</h6></i>
                   <hr/>
+  
                       <p>
-                        <a href="{% url 'investing:overboughtsold' %}" class="btn btn-secondary btn-sm"
-                          >Bought/Over sold Positions
+                        <a href="{% url 'getdata:fetch_and_insert_data' %}" class="btn btn-secondary btn-sm"
+                          >Refresh
                         </a>
                      </p>
                 </div>
@@ -54,9 +55,11 @@
                   <i><h6>{{payday}}</h6></i>
                   <hr/>
                   <div class="col-md-12" id="gi">
-                    <p><a href="#" class="btn btn-secondary btn-sm"
-                      >Previous Data
-                  </a></p>
+                    <p>
+                      <a href="{% url 'investing:overboughtsold' %}" class="btn btn-secondary btn-sm"
+                        >Over_Bought/Over_sold
+                      </a>
+                   </p>
                   </div>
                 </div>
               </div>

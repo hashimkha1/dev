@@ -53,77 +53,79 @@ class cryptomarket(models.Model):
 	def __str__(self):
 		return self.symbol
 	
-class cread_spread(models.Model):
-	Symbol = models.CharField(max_length=255)
-	Strategy = models.CharField(max_length=255)
-	Type = models.CharField(max_length=255)
-	Price = models.CharField(max_length=255)
-	Sell_Strike = models.CharField(max_length=255)
-	Buy_Strike = models.CharField(max_length=255)
-	Expiry = models.CharField(max_length=255)
-	Premium = models.CharField(max_length=255)
-	Width = models.CharField(max_length=255)
-	Prem_Width = models.CharField(max_length=255)
-	Rank = models.CharField(max_length=255)
-	Earnings_Date = models.CharField(max_length=255)
-	comment=models.CharField(max_length=255,default='Comment')
-	is_active = models.BooleanField(default=True)
-	is_featured = models.BooleanField(default=True)
-
-	class Meta:
-		verbose_name_plural = "cread_spread"
-
-	def __str__(self):
-		return self.Symbol
 	
+class credit_spread(models.Model):
+    symbol = models.CharField(max_length=255)
+    strategy = models.CharField(max_length=255)
+    type = models.CharField(max_length=255)
+    price = models.CharField(max_length=255)
+    sell_strike = models.CharField(max_length=255)
+    buy_strike = models.CharField(max_length=255)
+    expiry = models.CharField(max_length=255)
+    premium = models.CharField(max_length=255)
+    width = models.CharField(max_length=255)
+    prem_width = models.CharField(max_length=255)
+    rank = models.CharField(max_length=255)
+    earnings_date = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "cread_spread"
+
+    def __str__(self):
+        return self.symbol
+
+
 class ShortPut(models.Model):
-	Symbol = models.CharField(max_length=255,blank=True,null=True)
-	Action = models.CharField(max_length=255,blank=True,null=True)
-	Expiry = models.CharField(max_length=255,blank=True,null=True)
-	Days_To_Expiry = models.CharField(max_length=255,blank=True,null=True)
-	Strike_Price = models.CharField(max_length=255,blank=True,null=True)
-	Mid_Price = models.CharField(max_length=255,blank=True,null=True)
-	Bid_Price = models.CharField(max_length=255,blank=True,null=True)
-	Ask_Price = models.CharField(max_length=255,blank=True,null=True)
-	Implied_Volatility_Rank = models.CharField(max_length=255,blank=True,null=True)
-	Earnings_Date = models.CharField(max_length=255,blank=True,null=True)
-	Earnings_Flag =  models.CharField(max_length=255,blank=True,null=True),
-	Stock_Price = models.CharField(max_length=255,blank=True,null=True)
-	Raw_Return = models.CharField(max_length=255,blank=True,null=True)
-	Annualized_Return = models.CharField(max_length=255,blank=True,null=True)
-	Distance_To_Strike  = models.CharField(max_length=255,blank=True,null=True)
-	comment=models.CharField(max_length=255,default='Comment')
-	is_active = models.BooleanField(default=True)
-	is_featured = models.BooleanField(default=True)
+    symbol = models.CharField(max_length=255, blank=True, null=True)
+    action = models.CharField(max_length=255, blank=True, null=True)
+    expiry = models.CharField(max_length=255, blank=True, null=True)
+    days_to_expiry = models.CharField(max_length=255, blank=True, null=True)
+    strike_price = models.CharField(max_length=255, blank=True, null=True)
+    mid_price = models.CharField(max_length=255, blank=True, null=True)
+    bid_price = models.CharField(max_length=255, blank=True, null=True)
+    ask_price = models.CharField(max_length=255, blank=True, null=True)
+    implied_volatility_rank = models.CharField(max_length=255, blank=True, null=True)
+    earnings_date = models.CharField(max_length=255, blank=True, null=True)
+    earnings_flag = models.CharField(max_length=255, blank=True, null=True)
+    stock_price = models.CharField(max_length=255, blank=True, null=True)
+    raw_return = models.CharField(max_length=255, blank=True, null=True)
+    annualized_return = models.CharField(max_length=255, blank=True, null=True)
+    distance_to_strike = models.CharField(max_length=255, blank=True, null=True)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
 
-	class Meta:
-		verbose_name_plural = "ShortPut"
+    class Meta:
+        verbose_name_plural = "ShortPut"
 
-	def __str__(self):
-		return self.Symbol
+    def __str__(self):
+        return self.symbol
 
 class covered_calls(models.Model):
-	Symbol = models.CharField(max_length=255)
-	Action = models.CharField(max_length=255)
-	Expiry = models.CharField(max_length=255)
-	Days_To_Expiry = models.CharField(max_length=255)
-	Strike_Price = models.CharField(max_length=255)
-	Mid_Price = models.CharField(max_length=255)
-	Bid_Price = models.CharField(max_length=255)
-	Ask_Price = models.CharField(max_length=255)
-	Implied_Volatility_Rank = models.CharField(max_length=255)
-	Earnings_Date = models.CharField(max_length=255)
-	Earnings_Flag =  models.CharField(max_length=255)
-	Stock_Price = models.CharField(max_length=255)
-	Raw_Return = models.CharField(max_length=255)
-	Annualized_Return = models.CharField(max_length=255)
-	Distance_To_Strike  = models.CharField(max_length=255)
-	comment=models.CharField(max_length=255,default='Comment')
-	is_active = models.BooleanField(default=True)
-	is_featured = models.BooleanField(default=True)
+    symbol = models.CharField(max_length=255)
+    action = models.CharField(max_length=255)
+    expiry = models.CharField(max_length=255)
+    days_to_expiry = models.CharField(max_length=255)
+    strike_price = models.CharField(max_length=255)
+    mid_price = models.CharField(max_length=255)
+    bid_price = models.CharField(max_length=255)
+    ask_price = models.CharField(max_length=255)
+    implied_volatility_rank = models.CharField(max_length=255)
+    earnings_date = models.CharField(max_length=255)
+    earnings_flag = models.CharField(max_length=255)
+    stock_price = models.CharField(max_length=255)
+    raw_return = models.CharField(max_length=255)
+    annualized_return = models.CharField(max_length=255)
+    distance_to_strike = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255,blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
 
-	class Meta:
-		verbose_name_plural = "covered_calls"
+    class Meta:
+        verbose_name_plural = "covered_calls"
 
-	def __str__(self):
-		return self.Symbol
+    def __str__(self):
+        return self.symbol

@@ -1,29 +1,29 @@
 <tr>
     <td>
         <a class="text-dark  text-decoration-none" 
-        data-toggle="tooltip" title="{{  row.comment  }}"
+        data-toggle="tooltip" title="{{ row.comment }}"
         href="{{ category.get_absolute_url }}">
-          {{ row.Symbol }}  
+        {{ row.symbol }}
         </a>
     </td>
-    <td>{{ row.Action }}{{ row.Strategy }}</td>
-    <td>{{ row.Stock_Price }}{{ row.Price }}</td>
+    <td>{{ row.action }}{{ row.strategy }}</td>
+    <td>{{ row.stock_price }}{{ row.price }}</td>
     {% if subtitle == 'credit_spread' %} 
-        <td>{{ row.Type }}</td>
-        <td>{{ row.Sell_Strike }}</td>
-        <!-- <td>{{ row.Buy_Strike }}</td> -->
-        <td>{{ row.Premium }}</td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.sell_strike }}</td>
+        <!-- <td>{{ row.buy_strike }}</td> -->
+        <td>{{ row.premium }}</td>
     {% else %}
-        <td>{{ row.Strike_Price }}</td>
-        <td>{{ row.Raw_Return }}</td>
+        <td>{{ row.strike_price }}</td>
+        <td>{{ row.raw_return }}</td>
         <td>{{ days_to_expiration }}</td>
-        <!-- <td>{{ row.Days_To_Expiry }}</td> -->
-        <td>{{ row.Annualized_Return }}</td>
+        <!-- <td>{{ row.days_to_expiry }}</td> -->
+        <td>{{ row.annualized_return }}</td>
     {% endif %}
-    <!-- <td>{{ row.Implied_Volatility_Rank }}{{ row.Rank }}</td> -->
+    <!-- <td>{{ row.implied_volatility_rank }}{{ row.rank }}</td> -->
     <!-- <td>{{ date_today|date:"n/d/Y" }}</td> -->
-    <td>{{ row.Expiry|date:"n/d/Y"}}</td>
-    <td>{{ row.Earnings_Date }}</td>
+    <td>{{ row.expiry|date:"n/d/Y" }}</td>
+    <td>{{ row.earnings_date }}</td>
     <td>
         <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
     </td>
