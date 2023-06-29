@@ -53,7 +53,7 @@ class cryptomarket(models.Model):
 	def __str__(self):
 		return self.symbol
 	
-	
+
 class credit_spread(models.Model):
     symbol = models.CharField(max_length=255)
     strategy = models.CharField(max_length=255)
@@ -72,10 +72,10 @@ class credit_spread(models.Model):
     is_featured = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name_plural = "cread_spread"
+        verbose_name_plural = "credit_spread"
 
-    def __str__(self):
-        return self.symbol
+    # def __str__(self):
+    #     return self.symbol
 
 
 class ShortPut(models.Model):
@@ -101,8 +101,8 @@ class ShortPut(models.Model):
     class Meta:
         verbose_name_plural = "ShortPut"
 
-    def __str__(self):
-        return self.symbol
+    # def __str__(self):
+    #     return self.symbol
 
 class covered_calls(models.Model):
     symbol = models.CharField(max_length=255)
@@ -127,5 +127,5 @@ class covered_calls(models.Model):
     class Meta:
         verbose_name_plural = "covered_calls"
 
-    def __str__(self):
-        return self.symbol
+    # def __str__(self):
+    #     return self.symbol

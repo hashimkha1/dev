@@ -160,7 +160,6 @@ def optiondata(request):
     elif sub_title == 'shortputdata':
         title = 'SHORT PUT'
         stockdata = ShortPut.objects.all().filter(is_featured=True)
-        print(stockdata)
         over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
     else:
         title = 'CREDIT SPREAD'
