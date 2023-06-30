@@ -38,8 +38,7 @@ User=get_user_model()
 
 
 #  ===================================================================================   
-def test(request):
-    return render(request, "main/test.html", {"title": "test"})
+
 
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
@@ -58,6 +57,9 @@ def hendler404(request,exception):
 
 def hendler500(request):
     return render(request, "main/errors/500.html")
+
+def data_policy(request):
+    return render(request, "main/datapolicy.html", {"title": "Data Policy"})
 #===============Processing Images from Database==================
 
 def layout(request):
@@ -76,8 +78,8 @@ def layout(request):
 
     for post in testimonials:
         print("title",post.title)
-
-    services = Service.objects.all()
+    services = Service.objects.filter(is_active=True).order_by('serial')
+    # services = Service.objects.all()
     context = {
         "images": images,
         "image_names": image_names,
