@@ -13,6 +13,7 @@ urlpatterns = [
     path('upload/', views.upload_csv, name='upload'),
     path('dataupload/', views.uploaddata, name='upload-data'),
     path('bigdata/', views.bigdata, name='generate-data'),
+    path('load_files_data/', views.load_files_data, name='load_files_data'),
     path('datauploadcsv/', upload_csv, name='upload-data'),
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),

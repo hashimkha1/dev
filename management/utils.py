@@ -412,6 +412,7 @@ def bonus(tasks,total_pay,payslip_config):
         offpay = payslip_config.holiday_pay if month in (12, 1) and day in (24, 25, 26, 31, 1, 2) else Decimal(0.00)
         # -------------late Night earning-----------
         latenight_Bonus =round(total_pay * payslip_config.rp_increment_max_percentage, 2)
+        print("latenight_Bonus====>",latenight_Bonus)
         yearly = round(payslip_config.rp_starting_amount + (total_pay * payslip_config.rp_increment_percentage), 2)
         # -------------Employee of Award(EOM,EOQ,EOY)-----------
         point_percentage=employee_reward(tasks)

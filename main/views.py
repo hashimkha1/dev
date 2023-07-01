@@ -60,6 +60,7 @@ def hendler500(request):
 
 def data_policy(request):
     return render(request, "main/datapolicy.html", {"title": "Data Policy"})
+
 #===============Processing Images from Database==================
 
 def layout(request):

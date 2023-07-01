@@ -38,6 +38,63 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 #DB VARIABLES
 (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
 
+import glob
+import re
+import psycopg2
+
+def load_xel_data_to_postgres(xel_folder_path,table_name):
+    # Create a PostgreSQL connection and cursor
+    conn = psycopg2.connect(
+        host=source_host,
+        dbname=source_dbname,
+        user=source_user,
+        password=source_password
+    )
+    cursor = conn.cursor()
+
+    # Create the table if it doesn't exist
+    create_table_query = '''
+    CREATE TABLE IF NOT EXISTS {} (
+        event_time TIMESTAMP,
+        session_id INTEGER,
+        event_name TEXT,
+        column1 TEXT,
+        column2 TEXT,
+        column3 TEXT
+    );
+    '''.format(table_name)
+    cursor.execute(create_table_query)
+
+    # Get a list of XEL files in the folder
+    xel_files = glob.glob(os.path.join(xel_folder_path, '*.xel'))
+    for xel_file in xel_files:
+        with open(xel_file, 'r') as file:
+            # Read the contents of the XEL file
+            xel_content = file.read()
+
+            # Extract events using regular expressions
+            events = re.findall(r'<Event event_time="(.*?)" session_id="(.*?)" event_name="(.*?)">(.*?)</Event>', xel_content, re.DOTALL)
+
+            # Process each event
+            for event in events:
+                event_time, session_id, event_name, column_data = event
+
+                # Extract column values
+                column_values = {}
+                columns = re.findall(r'<Column name="(.*?)" value="(.*?)"', column_data)
+                for column_name, column_value in columns:
+                    column_values[column_name] = column_value
+
+                # Insert the event data into the database table
+                insert_query = '''
+                INSERT INTO {} (event_time, session_id, event_name, column1, column2, column3)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                '''.format(table_name)
+                cursor.execute(insert_query, (event_time, session_id, event_name, column_values.get('Column1'), column_values.get('Column2'), column_values.get('Column3')))
+
+    # Commit the changes and close the database connection
+    conn.commit()
+    conn.close()
 
 
 def fetch_and_insert_data():
@@ -110,64 +167,6 @@ def fetch_and_insert_data():
     # Close the database connections
     source_conn.close()
     target_conn.close()
-
-
-# def fetch_and_insert_data():
-#     (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
-#     print("source_host====>", source_host)
-#     source_table='investing_shortput'
-#     target_table='investing_shortput'
-
-#     # Connect to the source database
-#     source_conn = psycopg2.connect(
-#         host=source_host,
-#         dbname=source_dbname,
-#         user=source_user,
-#         password=source_password
-#     )
-#     source_cursor = source_conn.cursor()
-
-#     # Connect to the target database
-#     target_conn = psycopg2.connect(target_db_path)
-#     target_cursor = target_conn.cursor()
-
-#     try:
-#         # Fetch data from the source table
-#         source_cursor.execute(f"SELECT * FROM {source_table}")
-#         rows = source_cursor.fetchall()
-
-#         # Drop the target table if it exists
-#         target_cursor.execute(f"DROP TABLE IF EXISTS {target_table}")
-#         print("Target table dropped.")
-
-#         # Get the column names and data types from the source table
-#         source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{source_table}'")
-#         columns = source_cursor.fetchall()
-
-#         # Create the target table with the same structure as the source table
-#         create_table_query = f"CREATE TABLE {target_table} ("
-#         for column in columns:
-#             column_name, data_type = column
-#             create_table_query += f"{column_name} {data_type}, "
-#         create_table_query = create_table_query.rstrip(", ") + ")"
-#         target_cursor.execute(create_table_query)
-#         print("Target table created.")
-
-#         # Insert data into the target table
-#         for row in rows:
-#             target_cursor.execute(f"INSERT INTO {target_table} VALUES (%s, %s, ..., %s)", row)
-
-#         # Commit the changes in the target database
-#         target_conn.commit()
-
-#         print("Data transfer successful!")
-#     except Exception as e:
-#         print(f"Data transfer failed: {str(e)}")
-
-#     # Close the database connections
-#     source_conn.close()
-#     target_conn.close()
-
 
 
 def compute_stock_values(stockdata):

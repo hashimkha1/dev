@@ -36,5 +36,13 @@
           {% endfor%}
           </div>
     </div>
+  <div class="data_training text-center">
+    <h3 class="title">DATA MIGRATIONS</h3>
+      <h3>XEL</h3>
+      <a href="{% url 'getdata:load_files_data' %}" target="">
+        <button type="button" class="btn btn-primary">Load</button>
+      </a>
+    </div>
+    </div>
 </section>
 {% endblock content %}

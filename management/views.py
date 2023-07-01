@@ -9,6 +9,7 @@ from django.db.models import Q,Sum,F
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.utils.decorators import method_decorator
+from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -541,10 +542,6 @@ class TaskHistoryView(ListView):
 
 
 def historytasks(request):
-    # print('======================================')
-    # print('Employees',employees)
-    # print('Active_Employees',activeemployees)
-    # print('======================================')
     historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
     # historytasks=TaskHistory.objects.all().order_by('-submission')
     myfilter=TaskHistoryFilter(request.GET,queryset=historytask)
@@ -665,6 +662,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "total_deduction": total_deduction,
         # bonus
         "latenight_Bonus": latenight_Bonus,
+        "EOM": EOM,
         # "pointsearning": bonus_points_ammount,
         "pointsearning": bonus_points_ammount + num_sessions,
         "holidaypay": offpay,
@@ -1221,12 +1219,56 @@ def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
     return render(request, "management/daf/evidence.html", {"links": links})
 
+# def userevidence(request, user=None, *args, **kwargs):
+#     # current_user = request.user
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+    
+#     # Calculate the date range for the last 2 months
+#     today = datetime.now().date()
+#     two_months_ago = today - timedelta(days=60)
+
+#     # Filter the TaskLinks based on the created_at field within the date range
+#     userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, today]).order_by("-created_at")
+    
+#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
+
+# def userevidence(request, user=None, *args, **kwargs):
+#     # current_user = request.user
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+
+#     # Calculate the date range for the last 2 months
+#     today = timezone.now().date()
+#     two_months_ago = today - timezone.timedelta(days=60)
+
+#     # Convert the timezone-aware datetime objects to naive datetime objects
+#     today_naive = timezone.make_naive(today)
+#     two_months_ago_naive = timezone.make_naive(two_months_ago)
+
+#     # Filter the TaskLinks based on the created_at field within the date range
+#     userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, today]).order_by("-created_at")
+#     for x in userlinks:
+#         print("x===============>",x)
+#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
+
 
 def userevidence(request, user=None, *args, **kwargs):
     # current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
+
+    # Calculate the date range for the last 2 months
+    now = timezone.localtime()
+    print(now)
+    two_months_ago = now - timezone.timedelta(days=60)
+
+    # Filter the TaskLinks based on the created_at field within the date range
+    userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, now]).order_by("-created_at")
     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
+
+# def userevidence(request, user=None, *args, **kwargs):
+#     # current_user = request.user
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+#     userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
+#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
 
 def evidence_update_view(request, id, *args, **kwargs):
     context = {}
