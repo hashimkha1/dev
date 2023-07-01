@@ -94,15 +94,18 @@ def countdown_in_month():
 def path_values(request):
     try:
         previous_path = request.META.get('HTTP_REFERER', '')
-    except:
-        previous_path=f"{SITEURL}/management/companyagenda/"
+    except Exception as e:
+        previous_path = f"{SITEURL}/management/companyagenda/"
+
     pre_value = previous_path.split("/")
-    previous_path_values=[i for i in pre_value if i.strip()]
-    pre_sub_title=previous_path_values[-1]
-    current_value=request.path.split("/")
+    previous_path_values = [i for i in pre_value if i.strip()]
+    pre_sub_title = previous_path_values[-1] if previous_path_values else ""
+
+    current_value = request.path.split("/")
     path_values = [i for i in current_value if i.strip()]
-    sub_title=path_values[-1]
-    return path_values,sub_title,pre_sub_title
+    sub_title = path_values[-1]
+
+    return path_values, sub_title, pre_sub_title
 
 #===============Downloading Image==================
 def download_image(url):
