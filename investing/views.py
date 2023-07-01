@@ -8,7 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import F
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
-
+from datetime import date,datetime,time,timezone
 from .utils import compute_pay
 from .forms import (
     CoveredCallsForm,
@@ -146,26 +146,35 @@ def options_play_shortput(request):
     # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
     return redirect ('getdata:shortputdata')
 
-from datetime import date,datetime,time,timezone
-
 def optiondata(request):
-    path_value, sub_title = path_values(request)
+    path_list,sub_title,pre_sub_title = path_values(request)
     # Get current datetime with UTC timezone
     date_today = datetime.now(timezone.utc)
    
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
-        over_bought_sold = covered_calls.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        # over_bought_sold = covered_calls.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        over_bought_sold = covered_calls.objects.exclude(Q(comment=''))
     elif sub_title == 'shortputdata':
         title = 'SHORT PUT'
         stockdata = ShortPut.objects.all().filter(is_featured=True)
-        over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        # over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        over_bought_sold = ShortPut.objects.exclude(Q(comment=''))
     else:
         title = 'CREDIT SPREAD'
         stockdata = credit_spread.objects.all().filter(is_featured=True)
-        over_bought_sold = credit_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        # over_bought_sold = credit_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
+        over_bought_sold = credit_spread.objects.exclude(Q(comment=''))
 
+    def get_edit_url(row_id):
+        if pre_sub_title == 'shortputdata':
+            return reverse('investing:shortputupdate', args=[row_id])
+        elif pre_sub_title == 'credit_spread':
+                return reverse('investing:creditspreadupdate', args=[row_id])
+        else:
+            return reverse('investing:coveredupdate', args=[row_id])
+            
     filtered_stockdata = []
     days_to_expiration = 0
     for x in stockdata:
@@ -183,14 +192,16 @@ def optiondata(request):
 
         if days_to_expiration > 7:
             filtered_stockdata.append(x)
-        
+    
 
     context = { 
         "data": filtered_stockdata,
         "overboughtsold": over_bought_sold,
         "days_to_expiration": days_to_expiration,
         "subtitle": sub_title,
+        "pre_sub_title": pre_sub_title,
         'title': title,
+        "get_edit_url": get_edit_url,
     }
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
 
@@ -220,7 +231,7 @@ class OptionList(ListView):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def shortput_update(request, pk):
-    *_,subtitle=path_values(request)
+    path_list,subtitle,pre_sub_title=path_values(request)
     shortput = get_object_or_404(ShortPut, pk=pk)
     success_url = reverse('investing:shortput')
 
@@ -242,7 +253,7 @@ class covered_calls_update(UpdateView):
     model = covered_calls
     success_url = "/investing/covered_calls"
     # fields = "__all__"
-    fields = ['Symbol','comment','is_featured']
+    fields = ['symbol','comment','is_featured']
     template_name="main/snippets_templates/generalform.html"
     def form_valid(self, form):
         # form.instance.author=self.request.user
@@ -256,7 +267,7 @@ class credit_spread_update(UpdateView):
     model = credit_spread
     success_url = "/investing/credit_spread"
     # fields = "__all__"
-    fields = ['Symbol','comment','is_featured']
+    fields = ['symbol','comment','is_featured']
     template_name="main/snippets_templates/generalform.html"
     def form_valid(self, form):
         return super().form_valid(form)

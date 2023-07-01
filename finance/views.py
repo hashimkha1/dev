@@ -338,7 +338,7 @@ def payments(request):
 
 
 def payment(request,method):
-    path_value,sub_title=path_values(request)
+    path_list,sub_title,pre_sub_title=path_values(request)
     subject='PAYMENT'
     url='email/payment/payment_method.html'
     message=f'Hi,{request.user.first_name}, an email has been sent \

@@ -59,8 +59,7 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
 
 
 def applicantlist(request):
-    path_list,sub_title=path_values(request)
-    print(path_list,sub_title)
+    path_list,sub_title,pre_sub_title=path_values(request)
     subcategory = CustomerUser.objects.values_list("sub_category",flat=True).filter(sub_category=None)
     print(subcategory)
     coda_applicants = CustomerUser.objects.filter(

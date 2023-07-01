@@ -1,6 +1,7 @@
 from __future__ import print_function
 import os
 import re
+import glob
 from dateutil import parser
 from bs4 import BeautifulSoup
 import psycopg2
@@ -38,9 +39,6 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 #DB VARIABLES
 (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
 
-import glob
-import re
-import psycopg2
 
 def load_xel_data_to_postgres(xel_folder_path,table_name):
     # Create a PostgreSQL connection and cursor
@@ -725,7 +723,7 @@ def dump_data_short_put(values):
 
 
 def main_shortput(request):
-    pathvalue,subtitle=path_values(request)
+    # path_list,sub_title,pre_sub_title=path_values(request)
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--disable-dev-shm-usage")

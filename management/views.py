@@ -1156,99 +1156,10 @@ def newevidence(request, taskid):
     return render(request, "management/daf/evidence_form.html", {"form": form})
 
 
-# def newevidence(request, taskid):
-#     if request.method == "POST":
-#         form = EvidenceForm(request.POST)
-#         # Check whether the task exist then only we allow to create evidence
-#         try:
-#             task = Task.objects.get(id=taskid)
-#             activity_name = task.activity_name
-#         except:
-#             return render(request, "errors/404.html")
-
-#         if form.is_valid():
-#             points, maxpoints, taskname = \
-#                 Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
-#             jobsup_list = ["job support", "job_support", "jobsupport"]
-#             if points != maxpoints and taskname.lower() not in jobsup_list:
-#                 Task.objects.filter(id=taskid).update(point=points + 1)
-
-#             # User will taken from the request
-#             data = form.cleaned_data
-#             link = data['link']
-#             if not link:
-#                 messages.error(request, "please provide evidence link")
-#                 return render(request, "management/daf/evidence_form.html", {"form": form})
-#             try:
-#                 a=requests.get(link)
-#                 if a.status_code == 200:
-#                     user_list=[]
-#                     check = TaskLinks.objects.filter(link=link)
-#                     if check.exists():
-#                         users = check.values_list('added_by__username')
-#                         for username in users:
-#                             user_list.append(username[0])
-#                         act_list = ['BOG', 'BI Sessions', 'DAF Sessions','Project',"web sessions"]
-#                         if activity_name in act_list:
-#                             if request.user.username in user_list:
-#                                 messages.error(request, "you have already uploaded this link")
-#                                 return render(request, "management/daf/evidence_form.html", {"form": form})
-#                             form.save()
-#                             return redirect("management:evidence")
-#                         else:
-#                             messages.error(request, "this link is already uploaded")
-#                             return render(request, "management/daf/evidence_form.html", {"form": form})
-
-#                     form.save()
-#                     return redirect("management:evidence")
-#                 else:
-#                     messages.error(request, "link is not valid,please check again")
-#                     return render(request, "management/daf/evidence_form.html", {"form": form})
-
-#             except:
-#                 messages.error(request, "Please check your link")
-#                 return render(request, "management/daf/evidence_form.html", {"form": form})
-
-#     else:
-#         form = EvidenceForm()
-
-#     return render(request, "management/daf/evidence_form.html", {"form": form})
-
-
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
     return render(request, "management/daf/evidence.html", {"links": links})
 
-# def userevidence(request, user=None, *args, **kwargs):
-#     # current_user = request.user
-#     employee = get_object_or_404(User, username=kwargs.get("username"))
-    
-#     # Calculate the date range for the last 2 months
-#     today = datetime.now().date()
-#     two_months_ago = today - timedelta(days=60)
-
-#     # Filter the TaskLinks based on the created_at field within the date range
-#     userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, today]).order_by("-created_at")
-    
-#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
-
-# def userevidence(request, user=None, *args, **kwargs):
-#     # current_user = request.user
-#     employee = get_object_or_404(User, username=kwargs.get("username"))
-
-#     # Calculate the date range for the last 2 months
-#     today = timezone.now().date()
-#     two_months_ago = today - timezone.timedelta(days=60)
-
-#     # Convert the timezone-aware datetime objects to naive datetime objects
-#     today_naive = timezone.make_naive(today)
-#     two_months_ago_naive = timezone.make_naive(two_months_ago)
-
-#     # Filter the TaskLinks based on the created_at field within the date range
-#     userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, today]).order_by("-created_at")
-#     for x in userlinks:
-#         print("x===============>",x)
-#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
 
 
 def userevidence(request, user=None, *args, **kwargs):
@@ -1398,16 +1309,13 @@ class AssessListView(ListView):
     template_name = "management/departments/hr/assessment.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
-
-
 def active_requirements(request, Status=None, *args, **kwargs):
     active_requirements = Requirement.objects.all().filter(is_active=True)
     context = {"active_requirements": active_requirements}
     return render(request, "management/doc_templates/active_requirements.html", context)
 
-
 def requirements(request):
-    *_,subtitle=path_values(request)
+    path_list,subtitle,pre_sub_title=path_values(request)
     if subtitle == 'dyc_requirements':
         requirements = Requirement.objects.filter(requestor__iexact='client', company__iexact='dyc').order_by('-id')
     elif subtitle == 'client_requirements':

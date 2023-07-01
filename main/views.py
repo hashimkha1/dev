@@ -319,7 +319,7 @@ def about(request):
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
     team_members = UserProfile.objects.filter(user__is_staff=True,user__is_active=True)
-    sub_title=path_values(request)[-1]
+    path_list,sub_title,pre_sub_title=path_values(request)
     date_object="01/20/2023"
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
     end_date=start_date + relativedelta(months=3)

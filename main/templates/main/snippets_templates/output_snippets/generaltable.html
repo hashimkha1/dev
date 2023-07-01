@@ -30,9 +30,10 @@
     <!-- <td>
         <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
     </td> -->
-    {% if subtitle == 'shortputdata' %}
+
+    {% if pre_sub_title == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
-    {% elif subtitle == 'credit_spread' %}
+    {% elif pre_sub_title == 'credit_spread' %}
         <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
     {% else %}
         <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
