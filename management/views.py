@@ -157,8 +157,8 @@ def employee_contract(request):
         if submitted:
             return redirect("management:employee_contract")
         else:
-            # return render(request, "management/contracts/employee_contract.html", {'context': context})
-            return render(request, "main/snippets_templates/modify.html", {'context': context})
+            return render(request, "management/contracts/employee_contract.html", {'context': context})
+            # return render(request, "main/snippets_templates/modify.html", {'context': context})
 
 def read_employee_contract(request):
     (today,year,deadline_date,month,last_month,day,
