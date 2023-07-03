@@ -90,7 +90,7 @@
           {% elif user.category == 4 %}
           <a href="{% url 'main:full_course' %}" class="btn btn-secondary">New Contract</a>
           {%else%}
-          <a href="{% url 'main:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
+          <a href="{% url 'main:newtrainingcontract' request.user %}" class="btn btn-secondary">New Contract</a>
           {%endif%}
         </div>
         <div class="col-md-2">

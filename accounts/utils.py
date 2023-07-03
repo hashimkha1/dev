@@ -46,6 +46,6 @@ def employees():
                                           ).order_by("-date_joined")
     employees_categories_list = CustomerUser.objects.values_list(
                     'sub_category', flat=True).distinct()
-    employees_categories = [subcat for subcat in employees_categories_list if subcat in (3,4)]
+    employees_categories = [subcat for subcat in employees_categories_list if subcat in (1,2,3)]
     employee_subcategories=list(set(employees_categories))
     return (employee_subcategories,active_employees)

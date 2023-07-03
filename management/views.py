@@ -157,16 +157,22 @@ def employee_contract(request):
         if submitted:
             return redirect("management:employee_contract")
         else:
-            return render(request, "management/contracts/employee_contract.html", {'context': context})
-
+            # return render(request, "management/contracts/employee_contract.html", {'context': context})
+            return render(request, "main/snippets_templates/modify.html", {'context': context})
 
 def read_employee_contract(request):
+    (today,year,deadline_date,month,last_month,day,
+     target_date,time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,*_)=paytime()
     user = UserProfile.objects.get(user=request.user)
-
+    context={
+        "title":"Employee Contract",
+        "today":today,
+        "deadline_date":deadline_date
+    }
     # if user.national_id_no:
-    return render(request, "management/contracts/read_employee_contract.html")
-    # else:
-    # return redirect("management:employee_contract")
+    return render(request, "management/contracts/read_employee_contract.html",context)
+
 
 
 def confirm_employee_contract(request):
@@ -243,7 +249,7 @@ def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
-    if request.user.is_superuser or (request.user.is_staff and request.user.sub_category==3):
+    if request.user.is_superuser or (request.user.is_staff):
         return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
     else:
         return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})

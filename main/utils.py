@@ -73,7 +73,6 @@ def buildmodel(question):
     result=res['text']
     return result
 
-
 def countdown_in_month():
     now = datetime.datetime.now()
     next_month = now.replace(day=28) + datetime.timedelta(days=4)
@@ -119,13 +118,6 @@ def download_image(url):
     else:
         print("Image Couldn't be retrieved")
     return image_path
-
-# def image_view(images):
-#     images= Assets.objects.all()
-#     images= images
-#     image_names=Assets.objects.values_list('name',flat=True)
-#     return images,image_names
-
 
 
 # Interview description data
