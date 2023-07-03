@@ -29,11 +29,11 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from main.utils import download_image,Meetings,path_values
+from main.utils import download_image,Meetings,path_values,countdown_in_month
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
-from main.utils import countdown_in_month
+from management.utils import paytime
 
 
 
@@ -54,6 +54,114 @@ def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
+
+def contract_data_submission(request):
+	(today,*_)=paytime()
+	try:
+		if request.method == "POST":
+			user_student_data = request.POST.get('usr_data')
+			contract_charge = request.POST.get('contract_charge')
+			contract_duration = request.POST.get('contract_duration')
+			contract_period = request.POST.get('contract_period')
+			student_dict_data = QueryDict(user_student_data)
+			username = student_dict_data.get('username')
+			try:
+				customer=CustomerUser.objects.get(username=username)
+				print("student_dict_data===>",customer)
+				ss= customer.id
+				print("student_dict_data===>",ss)
+			except:
+				customer= request.user
+			payment_fees = float(contract_charge)
+			down_payment = int(payment_fees*0.33)
+			student_bonus_amount = 0
+			fee_balance = payment_fees - down_payment
+			plan = int(contract_duration)
+			payment_method = request.POST.get('payment_type')
+			client_signature =username
+			company_rep = "coda"
+			client_date = today
+			rep_date = today
+			print("data",customer,
+					payment_fees,
+					down_payment,
+					student_bonus_amount,
+					fee_balance,
+					plan,
+					payment_method,
+					client_signature,
+					company_rep,
+					client_date,
+					rep_date,)
+			try:
+				payment = Payment_Information.objects.get(customer_id_id=customer.id)
+				print("payment===>", payment)
+			except:
+				payment = None
+			print("payment is none=====>",payment)
+			if payment:
+				payment_data=Payment_Information.objects.filter(customer_id_id=int(customer.id)).update(payment_fees=int(payment_fees),
+					down_payment=down_payment,
+					student_bonus = student_bonus_amount,
+					fee_balance=int(fee_balance),
+					plan=plan,
+					payment_method=payment_method,
+					client_signature=client_signature,
+					company_rep=company_rep,
+					client_date=client_date,
+					rep_date=rep_date)
+			else:
+				print("payment is none=====>",payment)
+				payment_data=Payment_Information(payment_fees=int(payment_fees),
+					down_payment=down_payment,
+					student_bonus = student_bonus_amount,
+					fee_balance=int(fee_balance),
+					plan=plan,
+					payment_method=payment_method,
+					client_signature=client_signature,
+					company_rep=company_rep,
+					client_date=client_date,
+					rep_date=rep_date,
+					customer_id_id=int(customer.id)
+					)
+				payment_data.save()
+			payment_history_data=Payment_History(payment_fees=int(payment_fees),
+				down_payment=down_payment,
+				student_bonus = student_bonus_amount,
+				fee_balance=int(fee_balance),
+				plan=plan,
+				payment_method=payment_method,
+				client_signature=client_signature,
+				company_rep=company_rep,
+				client_date=client_date,
+				rep_date=rep_date,
+				customer_id=int(customer.id)
+				)
+			payment_history_data.save()
+			new_payment_added = Payment_Information.objects.get(customer_id_id=customer.id)
+			print("payment===>", new_payment_added)
+			if new_payment_added:
+				messages.success(request, f'Added New Contract For the {username}!')
+				return redirect('management:companyagenda')
+			else:
+				messages.success(request, f'Account created for {username}!')
+				if request.user.category == 3  or request.user.is_superuser: 
+					return redirect('main:job_support')
+				if request.user.category == 4 or request.user.is_superuser: 
+					return redirect('main:full_course')
+				else:
+					return redirect('management:companyagenda')
+			
+	except Exception as e:
+		# print("Student Form Creation Error ==>",print(e))
+		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
+		context={
+                  "title": "CONTRACT", 
+                  "message": message,
+                }
+		return render(request, "main/errors/generalerrors.html", context)
+
+
 def contract_form_submission(request):
 	try:
 		if request.method == "POST":
@@ -147,13 +255,14 @@ def contract_form_submission(request):
 				messages.success(request, f'Account created for {username}!')
 				return redirect('finance:pay')
 	except Exception as e:
-		print("Student Form Creation Error ==>",print(e))
+		# print("Student Form Creation Error ==>",print(e))
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
 		context={
                   "title": "CONTRACT", 
                   "message": message,
                 }
 		return render(request, "main/errors/generalerrors.html", context)
+
 
 def mycontract(request, *args, **kwargs):
 	username = kwargs.get('username')
