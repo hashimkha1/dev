@@ -1,10 +1,11 @@
 from django.urls import reverse, reverse_lazy
 from django.db.models import Q
+from django.db.models.aggregates import Avg, Sum
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from datetime import date
 from accounts.models import CustomerUser
-from finance.utils import DYCDefaultPayments
+
 
 def agreement_data(request):
     contract_data = {}
@@ -49,3 +50,22 @@ def employees():
     employees_categories = [subcat for subcat in employees_categories_list if subcat in (1,2,3)]
     employee_subcategories=list(set(employees_categories))
     return (employee_subcategories,active_employees)
+
+# ================================USERS========================================
+def get_clients_time(current_info,history_info,trackers):
+	# Payment Infor
+	payment_latest_record = current_info
+	first_history_record = history_info
+	history_time = first_history_record.plan if first_history_record else 0
+	added_time = payment_latest_record.plan if payment_latest_record else 0
+	
+	# Examining Tracker
+	num = trackers.count()
+	Used = trackers.aggregate(Used_Time=Sum("duration"))
+	Usedtime = Used.get("Used_Time") if Used.get("Used_Time") else 0
+	plantime=history_time+added_time
+	try:
+		delta = round(plantime - Usedtime)
+	except (TypeError, AttributeError):
+		delta = 0
+	return plantime,history_time,added_time,Usedtime,delta,num

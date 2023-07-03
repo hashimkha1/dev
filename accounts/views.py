@@ -19,15 +19,14 @@ from django.views.generic import (
     UpdateView,
 )
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
-from .utils import agreement_data,employees,compute_default_fee
+from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import CredentialFilter,UserFilter
 from management.models import Task
 from application.models import UserProfile,Assets
-from finance.models import Default_Payment_Fees,Payment_History
+from finance.models import Default_Payment_Fees,Payment_History,Payment_Information
 from finance.utils import DYCDefaultPayments
 from mail.custom_email import send_email
 import string, random
-
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -612,54 +611,22 @@ class TrackListView(ListView):
     template_name = "accounts/tracker.html"
     context_object_name = "trackers"
     ordering = ["-login_date"]
-    # # total_time=Tracker.objects.all().aggregate(Your_Total_Time=Sum('duration'))
-    # def get_queryset(self, *args, **kwargs):
-    #     qs = super(TrackListView, self).get_queryset(*args, **kwargs)
-    #     em = Tracker.objects.all().values().order_by('-pk')[0]
-    #     trackers=Tracker.objects.all().filter(author=em.get('author_id')).order_by('-login_date')
-    #     num =trackers.count()
-    #     Used=trackers.aggregate(Used_Time=Sum('duration'))
-    #     Usedtime=Used.get('Used_Time')
-    #     customer_get = CustomerUser.objects.values_list('username','email').get(id=em.get('author_id'))
-    #     if Usedtime < 30:
-    #         subject = "New Contract Alert"
-    #         to = customer_get[1]
-    #         html_content = f"""
-    #             <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-    #             <a href='http://127.0.0.1:8000/finance/new_contract/Antony/'>click here to sign new contract</a><br>
-    #             </span>"""
-    #         email_template(subject, to, html_content)
-    #     return qs
 
 def usertracker(request, user=None, *args, **kwargs):
-    # try:
         user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
         trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
         try:
             em = Tracker.objects.all().values().order_by("-pk")[0]
         except:
             return redirect("accounts:tracker-create")
-        num = trackers.count()
-        # Check on my_time=avg("time")
-        my_time = trackers.aggregate(Assigned_Time=Avg("time"))
-        Used = trackers.aggregate(Used_Time=Sum("duration"))
-        Usedtime = Used.get("Used_Time")
-        # plantime = my_time.get("Assigned_Time")
-        payment_details = Payment_History.objects.filter(customer=user)
-        contract_plan_hours = payment_details.aggregate(Sum("plan"))
-        assigned_hours = 0
-        if contract_plan_hours.get("plan__sum"):
-            assigned_hours = contract_plan_hours.get("plan__sum") * 40
-        if my_time.get("Assigned_Time"):
-            plantime = my_time.get("Assigned_Time") + assigned_hours
-        plantime = assigned_hours
+        customer_get = CustomerUser.objects.values_list("username", "email").get(id=em.get("author_id"))
         try:
-            delta = round(plantime - Usedtime)
-        except (TypeError, AttributeError):
-            delta = 0
-        customer_get = CustomerUser.objects.values_list("username", "email").get(
-            id=em.get("author_id")
-        )
+            history_info = Payment_History.objects.filter(customer_id=user.id).order_by('-contract_submitted_date')[1]
+        except IndexError:
+            # Handle the case when there is no previous payment record
+            history_info = None  # Or assign a default value
+        current_info = Payment_Information.objects.filter(customer_id=user.id).first()
+        plantime,history_time,added_time,Usedtime,delta,num=get_clients_time(current_info,history_info,trackers)
         if delta < 30:
             subject = "New Contract Alert!"
             send_email( category=request.user.category,
@@ -687,6 +654,62 @@ def usertracker(request, user=None, *args, **kwargs):
     #     # return render(request, "accounts/usertracker.html", context)
     #     return redirect("accounts:tracker-create")
 
+
+# def usertracker(request, user=None, *args, **kwargs):
+#     # try:
+#         user = get_object_or_404(CustomerUser, username=kwargs.get("username"))
+#         trackers = Tracker.objects.all().filter(author=user).order_by("-login_date")
+#         try:
+#             em = Tracker.objects.all().values().order_by("-pk")[0]
+#         except:
+#             return redirect("accounts:tracker-create")
+#         num = trackers.count()
+#         # Check on my_time=avg("time")
+#         my_time = trackers.aggregate(Assigned_Time=Avg("time"))
+#         Used = trackers.aggregate(Used_Time=Sum("duration"))
+#         Usedtime = Used.get("Used_Time")
+#         # plantime = my_time.get("Assigned_Time")
+#         payment_details = Payment_History.objects.filter(customer=user)
+#         contract_plan_hours = payment_details.aggregate(Sum("plan"))
+#         assigned_hours = 0
+#         if contract_plan_hours.get("plan__sum"):
+#             assigned_hours = contract_plan_hours.get("plan__sum") * 40
+#         if my_time.get("Assigned_Time"):
+#             plantime = my_time.get("Assigned_Time") + assigned_hours
+#         plantime = assigned_hours
+#         try:
+#             delta = round(plantime - Usedtime)
+#         except (TypeError, AttributeError):
+#             delta = 0
+#         customer_get = CustomerUser.objects.values_list("username", "email").get(
+#             id=em.get("author_id")
+#         )
+#         if delta < 30:
+#             subject = "New Contract Alert!"
+#             send_email( category=request.user.category,
+#             to_email=customer_get[1], #[request.user.email,],
+#             subject=subject, 
+#             html_template='email/usertracker.html',
+#             context={'user': request.user})
+#             # to = customer_get[1]
+#             # html_content = f"""
+#             #     <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
+#             #     <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
+                
+#             #     </span>"""
+#             # email_template(subject, to, html_content)
+
+#         context = {
+#             "trackers": trackers,
+#             "num": num,
+#             "plantime": plantime,
+#             "Usedtime": Usedtime,
+#             "delta": delta,
+#         }
+#         return render(request, "accounts/usertracker.html", context)
+#     # except:
+#     #     # return render(request, "accounts/usertracker.html", context)
+#     #     return redirect("accounts:tracker-create")
 
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
@@ -767,33 +790,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     )
 
 
-""" 
-@method_decorator(login_required, name='dispatch')
-class TrackCreateView(LoginRequiredMixin, CreateView):
-    model=Tracker
-    success_url="/accounts/tracker"
-    #success_url="usertime"
-    # There is need to look at the column for client to get the id
-    fields=['employee','author','category','task','duration','plan']
-
-    def form_valid(self,form):
-        form.instance.author=self.request.user
-        total_duration_fil = Tracker.objects.filter(author=self.request.user)
-        total_duration = 0
-        for data in total_duration_fil.all():
-            total_duration += data.duration
-        # Needs a validation message if the employee does not have tasks
-
-        #print("total_duration",total_duration)
-        #x=Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user)
-        #print("Values",x)
-        if form.instance.duration+total_duration > Task.objects.values_list("mxpoint",flat=True).get(employee=self.request.user): 
-            messages.error(self.request, "Total duration is greater than maximum assigned points.")
-            return super().form_invalid(form)
-        return super().form_valid(form)  
-"""
-
-
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Tracker
@@ -847,21 +843,3 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-
-# ==============================Testing Purposes=============================
-# class CustomUserCreateView(CreateView):
-#     model = CustomUser
-#     success_url = "/"
-#     fields = "__all__"
-
-#     def form_valid(self, form):
-#         # form.instance.user = self.request.user
-#         return super().form_valid(form)
-    
-
-# def displayusers(request):
-#     customusers=CustomUser.objects.all()
-#     context={
-#         "users":customusers
-#     }
-#     return render(request, "accounts/admin/users.html", context)
