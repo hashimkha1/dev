@@ -147,7 +147,6 @@ def bi_services(request):
 def job_support(request):
     job_support = ServiceCategory.objects.get(name__iexact='Job Support')
     plans = Pricing.objects.filter(category=job_support.id)
-    # return render(request, "main/services/job_support.html", {'services': plans})
     context={
         "SITEURL" :settings.SITEURL,
         "title":job_support.name,

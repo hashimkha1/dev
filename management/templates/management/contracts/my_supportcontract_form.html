@@ -55,11 +55,11 @@
             <h4>TRAINING INFORMATION</h4>
             <b>Job Support Contract Period</b> <br>
 
-              &emsp;<input type="radio" class="One_month" name="duration" value="1"  {% if payment_data.plan == 1 %} checked {% else %}disabled{% endif %}>
+              &emsp;<input type="radio" class="One_month" name="duration" value="1"  {% if payment_data.plan == 30 %} checked {% else %}disabled{% endif %}>
               <label for="Training">One Month</label>
-              <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 2 %} checked {% else %}disabled{% endif %}>
+              <input type="radio" id="two_month" name="duration" value="2" {% if payment_data.plan == 70 %} checked {% else %}disabled{% endif %}>
               <label for="Training"> Two Month</label>
-              <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 3 %} checked {% else %}disabled{% endif %}>
+              <input type="radio" id="three_month" name="duration" value="3" {% if payment_data.plan == 120 %} checked {% else %}disabled{% endif %}>
               <label for="Training"> Three Month</label><br>
               <b>Training Conferences</b> <br>
             &emsp;<b>1.Tableau &ensp;  2.Zoom</b>
@@ -67,7 +67,7 @@
         <div class="col-md-6">
         <h4>PLAN</h4>
             <b><span class="plan">
-              {{selected_plan}} hours
+              {{payment_data.plan}} hours
             </span> </b> <br>
               &emsp;<b>1.Job Support Hours:<span id="job_support_hrs">{{job_support_hours}}</span><br>
               &emsp;2.Training Hours:<span id="train_hrs">30</span></b>

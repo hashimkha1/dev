@@ -160,54 +160,35 @@ def contract_data_submission(request):
                 }
 		return render(request, "main/errors/generalerrors.html", context)
 
-
+@login_required
 def mycontract(request, *args, **kwargs):
-	username = kwargs.get('username')
-	client_data=CustomerUser.objects.get(username=username)
-	check_default_fee = Default_Payment_Fees.objects.all()
-	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.filter().first()
-		print(default_fee)
-	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.all().first()
-		print(default_fee)
-		
-	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
-		# payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
-		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id)
-		print("payemnt_details",payemnt_details)
-		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
-		if client_data.category == 3:
-			plan_dict = {"1":40,"2":80,"3":120}
-			selected_plan = plan_dict[str(payemnt_details.plan)]
-			job_support_hours = selected_plan - 30
-			context={
-					'job_support_data': client_data,
-					'contract_date':contract_date,
-					'payment_data':payemnt_details,
-					"selected_plan":selected_plan,
-					"job_support_hours":job_support_hours
-				}
-			return render(request, 'management/contracts/my_supportcontract_form.html',context)
-		if client_data.category == 4:
-			context={
-				'student_data': client_data,
-				'contract_date':contract_date,
-				'payment_data':payemnt_details
-			}
-			return render(request, 'management/contracts/my_trainingcontract_form.html',context)
-		else:
-			raise Http404("Login/Wrong Page: Are You a Client?")
-	else:
-		context={"title": "CONTRACT", 
-				'username':username}
-		return render(request, 'management/contracts/contract_error.html',context)
-		
+    username = kwargs.get('username')
+    client_data = CustomerUser.objects.get(username=username)
+
+    try:
+        payment_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+        contract_date = payment_details.contract_submitted_date.strftime("%d %B, %Y")
+        context = {
+            'job_support_data': client_data,
+            'contract_date': contract_date,
+            'payment_data': payment_details,
+        }
+        if client_data.category == 3 or client_data.category == 4:
+            return render(request, 'management/contracts/my_supportcontract_form.html', context)
+        # elif client_data.category == 4:
+        #     return render(request, 'management/contracts/my_trainingcontract_form.html', context)
+        else:
+            raise Http404("Login/Wrong Page: Are You a Client?")
+	
+    except Payment_Information.DoesNotExist:
+        if client_data.category == 3:
+            return redirect('main:job_support')
+        elif client_data.category == 4:
+            return redirect('main:full_course')
+        else:
+            return redirect('main:bi_services')
+
+
 @login_required
 def newcontract_jobsupport(request, *args, **kwargs):
 	job_support = ServiceCategory.objects.get(name__iexact='Job Support')

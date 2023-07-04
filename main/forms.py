@@ -1,17 +1,17 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.db.models import Q
 from django.forms import ModelForm, Textarea
 from django.contrib.auth.forms import UserCreationForm
 from accounts.models import CustomerUser, Tracker,CredentialCategory,Credential
 from management.models import Whatsapp
 from .models import Testimonials
 from django.utils.translation import gettext_lazy as _
-
 # from .models import Expenses
 from data.models import DSU
 from .models import *
-
 # from django.db import transaction
+
 class ContactForm(forms.ModelForm):
     class Meta:
         model = DSU
@@ -66,6 +66,12 @@ class ClientAvailabilityForm(forms.ModelForm):
         fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
 
 
+# class ClientNameForm(forms.Form):
+#     client = forms.ModelChoiceField(queryset=CustomerUser.objects.filter(is_client=True))
+#     fields = ['client']
+
 class ClientNameForm(forms.Form):
-    client = forms.ModelChoiceField(queryset=CustomerUser.objects.filter(is_client=True))
-    fields = ['client']
+    client = forms.ModelChoiceField(
+        queryset=CustomerUser.objects.filter(Q(is_client=True) | Q(is_staff=True)),
+        label='Select a client'
+    )
