@@ -632,7 +632,6 @@ class Task(models.Model):
     def __str__(self):
         return self.activity_name
 
-
 # Adding the evidence table/model
 class TaskLinks(models.Model):
     # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
@@ -964,3 +963,23 @@ class Whatsapp(models.Model):
 
     def __str__(self):
         return self.group_name
+    
+
+
+class Meetings(models.Model):
+    category = models.ForeignKey(
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk)
+    meeting_topic = models.CharField(max_length=100, null=True, blank=True)
+    meeting_id = models.CharField(max_length=100, null=True, blank=True)
+    meeting_type = models.CharField(max_length=100, null=True, blank=True)
+    meeting_link = models.CharField(max_length=500, null=True, blank=True)
+    # group_id = models.CharField(max_length=100, null=True, blank=True)
+    # image_url = models.CharField(max_length=500, null=True, blank=True)
+    meeting_description= models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.meeting_topic
+    

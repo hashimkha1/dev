@@ -12,7 +12,8 @@ from management.models import (
     TaskLinks,
     TaskHistory,
     Advertisement,
-    Training,ProcessJustification,ProcessBreakdown,Whatsapp
+    Training,ProcessJustification,ProcessBreakdown,Whatsapp,
+    Meetings
 
 )
 

@@ -1,11 +1,21 @@
 from django import forms
 from django.forms import Textarea
 from data.models import DSU
-from management.models import TaskLinks, Policy, Requirement, Task
+from management.models import TaskLinks, Policy, Requirement, Task,Meetings
 from finance.models import Transaction, Inflow
 from accounts.models import Department
 from application.models import UserProfile
 
+
+class MeetingForm(forms.ModelForm):
+    class Meta:
+        model = Meetings
+        fields = "__all__"
+        widgets = {"meeting_description": Textarea(attrs={"cols": 40, "rows": 2})}
+
+    def __init__(self, *args, **kwargs):
+        super(MeetingForm, self).__init__(*args, **kwargs)
+        # self.fields["name"].empty_label = "Select"
 
 class DepartmentForm(forms.ModelForm):
     class Meta:

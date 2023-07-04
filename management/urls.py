@@ -69,6 +69,8 @@ urlpatterns = [
     path('newdepartment/', views.newdepartment, name='newdepartment'),
     path('departments/', views.department, name='departments'),
     path('department/<int:pk>/', DepartmentUpdateView.as_view(template_name='management/tag_form.html'), name='department-update'),
+    path('newmeeting/', views.newmeeting, name='newmeeting'),
+    path('meetings/', views.meetings, name='meetings'),
 
     #========================REQUIREMENTS SECTION=====================================================
     path('requirement/new', views.newrequirement, name='new_requirement'),

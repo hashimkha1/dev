@@ -22,6 +22,7 @@ from management.forms import (
     EvidenceForm,
     EmployeeContractForm,
     MonthForm,
+    MeetingForm
 )
 from django.views.generic import (
     CreateView,
@@ -41,7 +42,8 @@ from management.models import (
     Requirement,
     Training,
     ProcessJustification,
-    ProcessBreakdown
+    ProcessBreakdown,
+    Meetings
 )
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
@@ -86,6 +88,7 @@ def department(request):
     departments = Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html", {'departments': departments})
 
+
 def newdepartment(request):
     if request.method == "POST":
         form = DepartmentForm(request.POST, request.FILES)
@@ -111,6 +114,24 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user.is_admin or self.request.user.is_superuser:
             return True
         return False
+
+def meetings(request):
+    sessions=Meetings.objects.all().order_by("created_at")
+    print("sessions====>",sessions)
+    context={
+        "sessions":sessions
+    }
+    return render(request, "management/departments/hr/meetings.html",context)
+
+def newmeeting(request):
+    if request.method == "POST":
+        form = MeetingForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:meetings')
+    else:
+        form = MeetingForm()
+        return render(request, "main/snippets_templates/generalform.html",{"form": form})
 
 
 def contract(request):

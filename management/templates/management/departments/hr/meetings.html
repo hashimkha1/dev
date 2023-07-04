@@ -1,0 +1,62 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h3 class="title">MEETINGS</h3>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <p><a href="{% url 'management:newmeeting'%}" class="btn btn-primary btn-sm"
+          >ADD NEW MEETING
+        </a></p>
+      </div>
+      <div class="col-md-6">
+        <p><a href="#" class="btn btn-primary btn-sm"
+          >ACTIVE MEETINGS
+        </a></p>
+      </div>
+    </div>
+    
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+            <th>category </th>
+            <th>meeting_topic </th>
+            <th>meeting_id </th>
+            <th>meeting_type </th>
+            <!-- <th>meeting_description</th> -->
+            <th>created_at </th>
+            <th>is_active </th>
+            <th>is_featured </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for session in  sessions  %}
+            <tr>
+                <td>{{session.category}} </td>
+                <td>
+                    <a class="text-dark  text-decoration-none" 
+                    data-toggle="tooltip" title="{{  session.meeting_description  }}"
+                    href="{{session.meeting_link}}"">
+                    {{session.meeting_topic}}
+                    </a>
+                </td>
+                <td>{{session.meeting_id}} </td>
+                <td>{{session.meeting_type}} </td>
+                <!-- <td>{{session.meeting_link}} </td> -->
+                <!-- <td><a href="{{session.meeting_link}}" class="meeting" target="_blank"> Link </a></td> -->
+                <!-- <td>{{session.meeting_description}}</td> -->
+                <td>{{session.created_at }}</td>
+                <td>{{session.is_active }}</td>
+                <td>{{session.is_featured }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+</section>
+{% endblock content %}
+
+
+
+
