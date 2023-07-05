@@ -18,19 +18,21 @@
               <div class="col-md-3">
                   <div class="img-div p-3">
                       <span>
-                        <img
-                        src="{{googledriveurl}}={{user.img_url}}""
-                    class="team-img rounded-circle"
-                    width="150px"
-                    height="150px"
-                  />
-                        </span>
+                          <img
+                              src="{{googledriveurl}}={{user.img_url}}""
+                              class="team-img rounded-circle"
+                              width="150px"
+                              height="150px"/>
+                         </span>
                   </div>
                   <h3>{{user.user.first_name}},{{user.user.last_name}}</h3>
                   <h5>{{user.position}},{{user.company}}</h5>
                   <p>
                     {{user.description}}
                   </p>
+                  {% if user.is_admin or user.is_superuser or user == emp.user %}
+                  <a href="{% url 'main:update_profile' emp.user.id %}">Update Profile</a>
+                  {% endif %}
               </div>
               {% endfor %}
             </div>
@@ -59,11 +61,13 @@
                   <p>
                     {{user.description}}
                   </p>
+                  {% if user.is_admin or user.is_superuser or user == emp.user %}
+                  <a href="{% url 'main:update_profile' emp.user.id %}">Update Profile</a>
+                  {% endif %}
               </div>
               {% endfor %}
             </div>
           </div>
-
         </div>
 </div>
 </section>
