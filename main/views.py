@@ -10,7 +10,7 @@ from django.contrib import messages
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import Meetings,path_values,buildmodel
+from .utils import Meetings,path_values,buildmodel,team_members,client_categories
 from .models import Testimonials
 from coda_project import settings
 from application.models import UserProfile
@@ -314,41 +314,35 @@ def delete_plan(request,id):
 
 #========================Internal Team & Clients==============================
 def team(request):
-    path_list,sub_title,pre_sub_title=path_values(request)
-
-    team_members_staff= UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__sub_category=1).order_by("user__date_joined")
-    team_members_agents = UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__sub_category=3).order_by("user__date_joined")
-    team_members_trainees = UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__category=2,user__sub_category=4).order_by("user__date_joined")
+    path_list, sub_title, pre_sub_title = path_values(request)
+    team_members_staff = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
+    team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=3).order_by("user__date_joined")
+    team_members_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
-    clients_job_support = UserProfile.objects.filter(user__is_client=True,user__sub_category=4,user__is_active=True).order_by("user__date_joined")
-    
-    print("======team_members_trainees======>")
-    for x in team_members_trainees:
-        print("team_members_trainees======>",x)
+    clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
 
-    # print("======clients_job_seekers======>")
-    # for x in clients_job_seekers:
-    #     print("clients_job_seekers======>",x)
-
-    # print("======clients_job_support======>")
-    # for x in clients_job_support:
-    #     print("clients_job_seekers======>",x)
-
-    context={
-        "title_team": "team",
-        "active_employees": team_members_staff,
-        "active_agents": team_members_agents,
-        "active_trainees": team_members_trainees,
-        "active_job_seekers": clients_job_seekers,
-        "active_job_support": clients_job_support,
-        "title_about": "about",
-    }
     if sub_title == 'team_profiles':
-        return render(request, "main/team_profiles.html",context)
+        team_categories = {
+        'Lead Team': list(team_members_staff),
+        'Support Team': list(team_members_agents),
+        'Trainee Team': list(team_members_trainees),
+        }
+        user_group=team_members
+        heading="THE BEST TEAM IN ANALYTICS"
     if sub_title == 'client_profiles':
+        team_categories = {
+        'Job Seekers': list(clients_job_seekers),
+        'Job Support': list(clients_job_support),
+        }
+        user_group=client_categories
+        heading="EXPERTS FOR DATA ANALYTICS/SCIENCE"
 
-        return render(request, "accounts/clients/client_profiles.html",context)
-
+    context = {
+        "team_categories": team_categories,
+        "team_members": user_group,
+        "title":heading
+    }
+    return render(request, "main/team_profiles.html", context)
 
 
 #========================Internal documents==============================  

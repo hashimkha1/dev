@@ -454,7 +454,32 @@ Management = [
     },
 ]
 
+team_members = [
+    {
+        "title": "Lead Team",
+        "description":"The Lead Team consists of experienced professionals who provide leadership and guidance in the analytics field. They have a deep understanding of business processes and use their expertise to drive strategic decision-making.These individuals are responsible for overseeing projects, managing teams, and ensuring the successful execution of analytics initiatives.With their strong analytical skills and extensive industry knowledge, the Lead Team plays a crucial role in delivering valuable insights and driving business growth.",
+    },
+    {
+        "title": "Support Team",
+        "description":"The Supporting Tech Team comprises skilled professionals who provide technical support and expertise to enable effective analytics operations. They work closely with the Lead Team and other stakeholders to develop and maintain the infrastructure, tools, and technologies required for data analysis and reporting. These individuals possess strong technical skills and stay up-to-date with the latest advancements in analytics technology.",
+    },
+    {
+        "title": "Trainee Team",
+        "description":"The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies.",
+    },
 
+]
+client_categories = [
+    {
+        "title": "Job Seekers",
+        "description":"Experienced IT professionals actively seeking employment opportunities, including Business Analysts, Project Managers, and Data Analysts, possess valuable insights and skills that can greatly contribute to organizations across diverse domains. These professionals bring a wealth of expertise and industry knowledge, enabling them to make significant contributions to the growth and success of businesses."
+    },
+    {
+        "title": "Job Support",
+        "description":"This is a group of experienced IT Experts whom CODA has assisted in finding employment in the job market. These professionals possess diverse technical skills and contribute to various domains such as software development, systems administration, database management, and cybersecurity. Through the collaborative efforts of CODA and these experts, job seekers receive support in navigating the job market and securing rewarding career opportunities."
+    },
+
+]
 
 
 
