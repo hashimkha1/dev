@@ -248,7 +248,7 @@ def login_view(request):
             elif account is not None and account.is_admin:
                 login(request, account)
                 # return redirect("main:layout")
-                return redirect("management:agenda")
+                return redirect("management:comapanyagenda")
             else:
                 # messages.success(request, f"Invalid credentials.Kindly Try again!!")
                 msg=f"Invalid credentials.Kindly Try again!!"

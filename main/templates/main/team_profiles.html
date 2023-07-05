@@ -1,0 +1,105 @@
+{% extends "main/base_templates/new_base.html" %} 
+{% block content %}
+<section id="testimonials-section">
+  <div class="testimonials text-center">
+    <div class="col-12">
+      <h1 class="display-4">THE BEST TEAM IN ANALYTICS</h1>
+      <hr/>
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+    <div class="row">
+      <div class="col-md-3">
+        <div class="emp">
+          <h1 class="display-6" style="font-size: 24px;">Lead Team</h1>
+          <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+            The Lead Team consists of experienced professionals who provide leadership and guidance in the analytics field. 
+            They have a deep understanding of business processes and use their expertise to drive strategic decision-making. 
+            These individuals are responsible for overseeing projects, managing teams, and ensuring the successful execution of analytics initiatives. 
+            With their strong analytical skills and extensive industry knowledge, the Lead Team plays a crucial role in delivering valuable insights and driving business growth.
+          </p>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="emp">
+         
+          <div class="row text-center commit">
+            {% for emp in active_employees %}
+            <div class="col-md-4">
+              <div class="img-div p-3">
+                <img src="{{ googledriveurl }}={{ emp.img_url }}" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
+              </div>
+              <h3 class="display-6" style="font-size: 20px;">{{ emp.user.first_name }}, {{ emp.user.last_name }}</h3>
+              <h5>{{ emp.position }}</h5>
+              <p style="font-size: 16px;">{{ emp.description }}</p>
+              <a href="{% url 'main:update_profile' emp.user.id %}">Update Profile</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+    <div class="row">
+      <div class="col-md-3 text-center">
+        <div class="emp">
+          <h1 class="display-6" style="font-size: 24px;">Supporting Tech Team</h1>
+          <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+            The Supporting Tech Team comprises skilled professionals who provide technical support and 
+            expertise to enable effective analytics operations. They work closely with the Lead Team and 
+            other stakeholders to develop and maintain the infrastructure, tools, and technologies required 
+            for data analysis and reporting. These individuals possess strong technical skills and stay up-to-date 
+            with the latest advancements in analytics technology. 
+          </p>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="emp">
+          <div class="row text-center commit">
+            {% for emp in active_agents %}
+            <div class="col-md-4">
+              <div class="img-div p-3">
+                <img src="{{ googledriveurl }}={{ emp.img_url }}" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
+              </div>
+              <h3 class="display-6" style="font-size: 20px;">{{ emp.user.first_name }}, {{ emp.user.last_name }}</h3>
+              <h5>{{ emp.position }}</h5>
+              <p style="font-size: 16px;">{{ emp.description }}</p>
+              <a href="{% url 'main:update_profile' emp.user.id %}">Update Profile</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+    <div class="row">
+      <div class="col-md-3">
+        <div class="emp">
+          <h1 class="display-6" style="font-size: 24px;">CODA Trainee Team</h1>
+          <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5;">
+            The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. 
+            The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely 
+            with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies. 
+          </p>
+        </div>
+      </div>
+      <div class="col-md-9">
+        <div class="emp">
+          <div class="row text-center commit">
+            {% for emp in active_trainees %}
+            <div class="col-md-4">
+              <div class="img-div p-3">
+                <img src="{{ googledriveurl }}={{ emp.img_url }}" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
+              </div>
+              <h3 class="display-6" style="font-size: 20px;">{{ emp.user.first_name }}, {{ emp.user.last_name }}</h3>
+              <h5>{{ emp.position }}</h5>
+              <p style="font-size: 16px;">{{ emp.description }}</p>
+              <a href="{% url 'main:update_profile' emp.user.id %}">Update Profile</a>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}

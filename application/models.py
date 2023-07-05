@@ -17,6 +17,8 @@ class UserProfile(models.Model):
     )
     position = models.CharField(max_length=255,blank=True,null=True)
     description = models.TextField(blank=True,null=True)
+    company = models.CharField(max_length=254, null=True, blank=True)
+    linkedin = models.CharField(max_length=500, null=True, blank=True)
     section = models.CharField(max_length=2, default="A", blank=True)
 
     image = models.ImageField(
@@ -32,7 +34,7 @@ class UserProfile(models.Model):
     laptop_status= models.BooleanField("Is lap_status", default=True)
 
     national_id_no = models.CharField(max_length=254, null=True, blank=True)
-    id_file = models.ImageField(upload_to='id_files/')
+    id_file = models.ImageField(upload_to='id_files/', null=True, blank=True)
 
     emergency_name = models.CharField(max_length=254, null=True, blank=True)
     emergency_address = models.CharField(max_length=254, null=True, blank=True)

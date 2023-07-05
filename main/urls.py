@@ -9,10 +9,12 @@ urlpatterns = [
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    path('team/', views.about, name='team'),
+    # path('team/', views.about, name='team'),
+    path('team_profiles/', views.team, name='team_profiles'),
+    path('client_profiles/', views.team, name='client_profiles'),
     # path('profiles/', views.profiles, name='profiles'),
-    path('letter/', views.about, name='letter'),
-    path('appointment_letter/', views.about, name='appointment_letter'),
+    path('letter/', views.letters, name='letter'),
+    path('appointment_letter/', views.letters, name='appointment_letter'),
     # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
 
     #=======================SERVICES=====================================

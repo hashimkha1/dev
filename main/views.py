@@ -312,7 +312,62 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
+#========================Internal Team & Clients==============================
+def team(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
 
+    team_members_staff= UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__sub_category=1).order_by("user__date_joined")
+    team_members_agents = UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__sub_category=3).order_by("user__date_joined")
+    team_members_trainees = UserProfile.objects.filter(user__is_staff=True,user__is_active=True,user__category=2,user__sub_category=4).order_by("user__date_joined")
+    clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
+    clients_job_support = UserProfile.objects.filter(user__is_client=True,user__sub_category=4,user__is_active=True).order_by("user__date_joined")
+    
+    print("======team_members_trainees======>")
+    for x in team_members_trainees:
+        print("team_members_trainees======>",x)
+
+    # print("======clients_job_seekers======>")
+    # for x in clients_job_seekers:
+    #     print("clients_job_seekers======>",x)
+
+    # print("======clients_job_support======>")
+    # for x in clients_job_support:
+    #     print("clients_job_seekers======>",x)
+
+    context={
+        "title_team": "team",
+        "active_employees": team_members_staff,
+        "active_agents": team_members_agents,
+        "active_trainees": team_members_trainees,
+        "active_job_seekers": clients_job_seekers,
+        "active_job_support": clients_job_support,
+        "title_about": "about",
+    }
+    if sub_title == 'team_profiles':
+        return render(request, "main/team_profiles.html",context)
+    if sub_title == 'client_profiles':
+
+        return render(request, "accounts/clients/client_profiles.html",context)
+
+
+
+#========================Internal documents==============================  
+def letters(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    date_object="01/20/2023"
+    start_date = datetime.strptime(date_object, '%m/%d/%Y')
+    end_date=start_date + relativedelta(months=3)
+    context={
+        "start_date": start_date,
+        "end_date": end_date,
+        "title_letter": "letter",
+    }
+
+    if sub_title == 'letter':
+        return render(request, "main/doc_templates/letter.html",context)
+    if sub_title == 'appointment_letter':
+        return render(request, "main/doc_templates/appointment_letter.html",context)
+    
 
 def about(request):
     images= Assets.objects.all()
@@ -347,7 +402,7 @@ def about(request):
 
 class UserCreateView(LoginRequiredMixin, CreateView):
     model = UserProfile
-    success_url = "/team/"
+    success_url = "/team_profiles/"
     fields = "__all__"
 
     def form_valid(self, form):
@@ -360,11 +415,11 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     # fields ="__all__"
     fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
-        form.instance.username = self.request.user
+        # form.instance.username = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("management:companyagenda")
+        return reverse("main:team_profiles")
 
     def test_func(self):
         # profile = self.get_object()
