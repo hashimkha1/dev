@@ -106,7 +106,7 @@ def services(request):
         "SITEURL" :settings.SITEURL,
         "services": services
     }
-    return render(request, "main/services/bi_services.html", context)
+    return render(request, "main/services/show_service.html", context)
 
 class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Service
@@ -133,40 +133,107 @@ def delete_service(request,id):
         service.delete()
     return redirect('main:services')
 
-def bi_services(request):
-    data_analysis = Service.objects.get(title='Data Analysis')
+
+def display_service(request,*args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    data_analysis = Service.objects.get(slug='data_analysis')
+    investing = Service.objects.get(slug='investing')
     data_analysis_categories = ServiceCategory.objects.filter(service=data_analysis.id)
-    context={
-        "SITEURL" :settings.SITEURL,
-        "title":data_analysis.title,
-        "service_desc":data_analysis.description,
-        'services': data_analysis_categories
-    }
-    return render(request, "main/services/bi_services.html", context)
+    investing_categories = ServiceCategory.objects.filter(service=investing.id)
+    
+    context = {}  # Initialize context with an empty dictionary
+    print()
+    if sub_title == data_analysis.slug:
+        context = {
+            'services': data_analysis_categories,
+            "title": data_analysis.title,
+            "service_desc": data_analysis.description,
+            "slug":data_analysis.slug
+        }
+    elif sub_title == investing.slug:
+        context = {
+            'services': investing_categories,
+            "title": investing.title,
+            "service_desc": investing.description,
+        }
+    return render(request, "main/services/show_service.html", context)
 
-def job_support(request):
-    job_support = ServiceCategory.objects.get(name__iexact='Job Support')
-    plans = Pricing.objects.filter(category=job_support.id)
-    context={
-        "SITEURL" :settings.SITEURL,
-        "title":job_support.name,
-        # "service_desc":job_support.description,
-        'services': plans
+
+def service_plans(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    try:
+        if pre_sub_title:
+            service_shown = Service.objects.get(slug=pre_sub_title)
+        else:
+            return redirect('main:display_service')
+    except Service.DoesNotExist:
+        return redirect('main:display_service')
+    context = {}  # Initialize context with an empty dictionary
+
+    service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+    category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
+    category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
+    category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
+    plans = Pricing.objects.filter(category=category_id)
+
+    context = {
+        "SITEURL": settings.SITEURL,
+        "title": category_name,
+        "category_slug": category_slug,
+        "services": plans
     }
-    return render(request, "main/services/job_support.html", context)
+    return render(request, "main/services/service_plan.html", context)
+
+def service_plans(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    try:
+        if pre_sub_title:
+            service_shown = Service.objects.get(slug=pre_sub_title)
+        else:
+            return redirect('main:services')
+    except Service.DoesNotExist:
+        return redirect('main:services')
+
+    service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+    category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
+    category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
+    category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
+    plans = Pricing.objects.filter(category=category_id)
+
+    context = {
+        "SITEURL": settings.SITEURL,
+        "title": category_name,
+        "subcatslug":category_slug,
+        "services": plans
+    }
+    return render(request, "main/services/service_plan.html", context)
 
 
-def full_course(request):
-    full_course = ServiceCategory.objects.get(name__iexact='Full Course')
-    plans = Pricing.objects.filter(category=full_course.id)
-    # return render(request, "main/services/job_support.html", {'services': plans})
-    context={
-        "SITEURL" :settings.SITEURL,
-        "title":full_course.name,
-        # "service_desc":job_support.description,
-        'services': plans
-    }
-    return render(request, "main/services/full_course.html", context)
+# def job_support(request):
+#     job_support = ServiceCategory.objects.get(name__iexact='Job Support')
+#     plans = Pricing.objects.filter(category=job_support.id)
+    
+#     context={
+#         "SITEURL" :settings.SITEURL,
+#         "title":job_support.name,
+#         # "service_desc":job_support.description,
+#         'services': plans
+#     }
+#     # return render(request, "main/services/job_support.html", context)
+#     return render(request, "main/services/full_course.html", context)
+
+
+# def full_course(request):
+#     full_course = ServiceCategory.objects.get(name__iexact='Full Course')
+#     plans = Pricing.objects.filter(category=full_course.id)
+#     # return render(request, "main/services/job_support.html", {'services': plans})
+#     context={
+#         "SITEURL" :settings.SITEURL,
+#         "title":full_course.name,
+#         # "service_desc":job_support.description,
+#         'services': plans
+#     }
+#     return render(request, "main/services/full_course.html", context)
 
 
 @login_required

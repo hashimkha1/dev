@@ -1,5 +1,6 @@
 from .models import Service,Assets
 from data.models import FeaturedCategory,FeaturedSubCategory
+from main.models import Service,ServiceCategory,Pricing
 # from .utils import image_view
 
 
@@ -36,7 +37,8 @@ def images(request):
 
 def services(request):
     return {
-        'services': Service.objects.all()
+            "services": Service.objects.all(),
+            "data_analysis": Service.objects.get(slug='data_analysis')
          }
 
 def googledriveurl(request):

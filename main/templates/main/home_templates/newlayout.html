@@ -37,7 +37,7 @@
                   a 3 months Project Based Program. Your future
                   career starts here..
               </p> -->
-              <a href="{% url 'main:services' %}">read more</a>
+              <a href= "{% url 'main:display_service' slug="data_analysis" %}" >read more</a>
               
           </div>
           <div class="col-md-6">
@@ -57,7 +57,7 @@
                       Learn how to make your capital grow with low risk
                       and high return.
                   </p>
-                  <a href="{% url 'investing:home' %}">read more</a>
+                  <a href="{% url 'main:display_service' slug="investing" %}">read more</a>
               </div>
           </div>
           <div class="col-md-6">
@@ -77,7 +77,7 @@
                   running errands, and writing business plans,
                   payroll management and more.
               </p>
-              <a href="">read more</a>
+              <a href="{% url 'main:display_service' slug="consultancy" %}">read more</a>
           </div>
           <div class="col-md-6">
               <img class="img-fluid ps-lg-5" src="{% static 'main/img/service-3.jpg' %}" alt="">

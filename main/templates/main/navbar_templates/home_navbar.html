@@ -57,15 +57,15 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
             <a
               class="dropdown-item"
-              href="#"
+              href="{% url 'main:display_service' slug="management" %}"
               >Management & Consultancy</a
             >
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{% url 'main:bi_services' %}"
+            <a class="dropdown-item" href="{% url 'main:display_service' slug="data_analysis" %}"
               >Data Analysis Training</a
             >
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="#"
+            <a class="dropdown-item" href="{% url 'main:display_service' slug="investing" %}"
               >Stocks & Options Training</a
             >
           </div>
