@@ -39,10 +39,10 @@
                         <hr/>
                         <div class="row">
                           <div class="col-md-6">
-                            <p> <a class="article-title" href="{{session.meeting_link|default_if_none:'#'}}">LINK</a></p>
+                            <p> <a class="btn btn-secondary btn-sm" href="{{session.meeting_link|default_if_none:'#'}}">LINK</a></p>
                           </div>
                           <div class="col-md-6">
-                            <p> <a class="article-title" href="{% url 'management:meeting-update' session.id %}">EDIT</a></p>
+                            <p> <a class="btn btn-secondary btn-sm" href="{% url 'management:meeting-update' session.id %}">EDIT</a></p>
                           </div>
                         </div>
                     </div>
