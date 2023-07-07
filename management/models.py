@@ -15,7 +15,6 @@ from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups,Department
 from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
 
-
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
@@ -965,21 +964,30 @@ class Whatsapp(models.Model):
         return self.group_name
     
 
-
 class Meetings(models.Model):
+    class Frequecy(models.IntegerChoices):
+        Daily = 1,
+        Weekly = 2
+        Bi_Weekly = 3
+        Monthly = 4
+        Yearly = 5
+    department=models.ForeignKey(
+        to=Department, on_delete=models.CASCADE, default=Department.get_default_pk)
     category = models.ForeignKey(
-        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk)
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk
+    )
     meeting_topic = models.CharField(max_length=100, null=True, blank=True)
     meeting_id = models.CharField(max_length=100, null=True, blank=True)
     meeting_type = models.CharField(max_length=100, null=True, blank=True)
     meeting_link = models.CharField(max_length=500, null=True, blank=True)
-    # group_id = models.CharField(max_length=100, null=True, blank=True)
-    # image_url = models.CharField(max_length=500, null=True, blank=True)
-    meeting_description= models.TextField(null=True, blank=True)
+    meeting_description = models.TextField(null=True, blank=True)
+    meeting_time = models.TimeField(default=timezone.now)
+    frequency = models.IntegerField(choices=Frequecy.choices, default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
     def __str__(self):
         return self.meeting_topic
+
     

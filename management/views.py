@@ -116,10 +116,14 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
 def meetings(request):
-    sessions=Meetings.objects.all().order_by("created_at")
-    print("sessions====>",sessions)
+    # sessions=Meetings.objects.all().order_by("created_at")
+    sessions = Meetings.objects.filter(is_active=True).order_by("created_at")
+    categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
+    meeting_categories=sorted(categories_list)
     context={
+        "meeting_categories":meeting_categories,
         "sessions":sessions
+
     }
     return render(request, "management/departments/hr/meetings.html",context)
 
@@ -134,15 +138,23 @@ def newmeeting(request):
         return render(request, "main/snippets_templates/generalform.html",{"form": form})
 
 
+class MeetingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Meetings
+    success_url = "/management/meetings"
+    fields = "__all__"
+    form = MeetingForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+
 def contract(request):
     return render(request, "management/contracts/trainingcontract_form.html")
-    # if request.user == employee:
-    #     # return render(request, 'management/daf/paystub.html', context)
-    #     return render(request, "management/doc_templates/studentcontract_form.html")
-    # elif request.user.is_superuser:
-    #     # return render(request, 'management/daf/paystub.html', context)
-    #     return render(request, "management/doc_templates/supportcontract_form.html")
-
 
 def employee_contract(request):
     submitted = False
