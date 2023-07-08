@@ -136,27 +136,55 @@ def delete_service(request,id):
 
 def display_service(request,*args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
-    data_analysis = Service.objects.get(slug='data_analysis')
-    investing = Service.objects.get(slug='investing')
-    data_analysis_categories = ServiceCategory.objects.filter(service=data_analysis.id)
-    investing_categories = ServiceCategory.objects.filter(service=investing.id)
-    
+    try:
+        service_shown = Service.objects.all()
+    except Service.DoesNotExist:
+        return redirect('main:display_service')
+
+    service_category_slug = next((x.slug for x in service_shown if sub_title == x.slug), None)
+    service_category_title = next((x.title for x in service_shown if sub_title == x.slug), None)
+    service_description = next((x.description for x in service_shown if sub_title == x.slug), None)
+    service_id = next((x.id for x in service_shown if sub_title == x.slug), None)
+
+    service_categories = ServiceCategory.objects.filter(service=service_id)
+
+    for cat in service_categories:
+        print("cat=====>",cat)
+
+    print(service_category_slug,service_category_title,service_id)
+
     context = {}  # Initialize context with an empty dictionary
-    print()
-    if sub_title == data_analysis.slug:
-        context = {
-            'services': data_analysis_categories,
-            "title": data_analysis.title,
-            "service_desc": data_analysis.description,
-            "slug":data_analysis.slug
-        }
-    elif sub_title == investing.slug:
-        context = {
-            'services': investing_categories,
-            "title": investing.title,
-            "service_desc": investing.description,
-        }
+    context = {
+        'service_categories': service_categories,
+        "title": service_category_title,
+        "service_desc": service_description,
+        "slug":service_category_slug
+    }
     return render(request, "main/services/show_service.html", context)
+
+# def display_service(request,*args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     data_analysis = Service.objects.get(slug='data_analysis')
+#     investing = Service.objects.get(slug='investing')
+#     data_analysis_categories = ServiceCategory.objects.filter(service=data_analysis.id)
+#     investing_categories = ServiceCategory.objects.filter(service=investing.id)
+    
+#     context = {}  # Initialize context with an empty dictionary
+#     print()
+#     if sub_title == data_analysis.slug:
+#         context = {
+#             'services': data_analysis_categories,
+#             "title": data_analysis.title,
+#             "service_desc": data_analysis.description,
+#             "slug":data_analysis.slug
+#         }
+#     elif sub_title == investing.slug:
+#         context = {
+#             'services': investing_categories,
+#             "title": investing.title,
+#             "service_desc": investing.description,
+#         }
+#     return render(request, "main/services/show_service.html", context)
 
 
 def service_plans(request, *args, **kwargs):
@@ -509,10 +537,7 @@ def meetings(request):
                                             Q(is_active=True),
                                             Q(is_staff=True),
                         ).order_by("-date_joined")
-    # dept_obj = Department.objects.all().distinct()
-    # departments=[dept.name for dept in dept_obj ]
     employees=[employee.first_name for employee in emp_obj ]
-    # print(employees)
     _,rand_departments=task_assignment_random(employees)
     context={
         "departments": rand_departments,
@@ -538,7 +563,6 @@ def testing(request):
     
 def interview(request):
     return redirect('data:interview')
-    # return render(request, "main/coach_profile.html", {"title": "coach_profile"})
 
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})

@@ -41,7 +41,7 @@
           <div class="">
             <p class="display-5 text-center"><b>{{ service.name }}{{ service.title }}</b></p>
             <hr>
-            <b>{{ service.price|floatformat:2 }}</b>
+            <b>${{ service.price|floatformat:2 }}</b>
             <p>{{ service.description|safe }}</p>
             {% if service.slug %}
             <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
