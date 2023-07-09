@@ -532,7 +532,7 @@ def hr(request):
 @login_required
 def meetings(request):
     emp_obj = User.objects.filter(
-                                            Q(sub_category=3),
+                                            # Q(sub_category=3),
                                             Q(is_admin=True),
                                             Q(is_active=True),
                                             Q(is_staff=True),

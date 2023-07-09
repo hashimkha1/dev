@@ -539,8 +539,11 @@ def text_num_split(item):
 
 def task_assignment_random(employees):
     # departments=[department.name for department in dept_obj ]
-    departments=['HR','IT','Finance','Health','Marketing','Basics','Projects']
-    departments_per_worker = len(departments) / len(employees)
+    departments=['HR','IT','Finance','Health','Marketing','Basics','IT Projects','Field Projects','Security']
+    try:
+        departments_per_worker = len(departments) / len(employees)
+    except ZeroDivisionError:
+        departments_per_worker = len(departments) / 1
     random.shuffle(departments)
     rand_departments = zip(*[iter(departments)] * int(departments_per_worker))
     return employees,rand_departments
