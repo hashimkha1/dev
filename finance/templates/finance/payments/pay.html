@@ -62,7 +62,7 @@
       
             <script>
               
-              document.getElementById("priceId").value = "{{payments.down_payment|add:10}}";
+              document.getElementById("priceId").value = "{{payments.down_payment|add:paypal_charges}}";
               // document.getElementById("priceId").value = "{{payments.payment_fees}}";
               var price=document.getElementById('priceId');
               var amount=price.value;
