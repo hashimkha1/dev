@@ -85,10 +85,10 @@
           <a class="btn btn-secondary" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>
         </div>
         <div class="col-md-2">
-          {% if request.user.category == 3 %}
-          <a href="{% url 'main:job_support' %}" class="btn btn-secondary">New Contract</a>
-          {% elif user.category == 4 %}
-          <a href="{% url 'main:full_course' %}" class="btn btn-secondary">New Contract</a>
+          {% if request.user.category == 3 or request.user.category == 4 %}
+          <a href="{% url 'main:display_service' slug="data_analysis" %}" class="btn btn-secondary">New Contract</a>
+          {% elif user.category == 5 %}
+          <a href="{% url 'main:display_service' slug="investing" %}" class="btn btn-secondary">New Contract</a>
           {%else%}
           <a href="{% url 'main:newtrainingcontract' request.user %}" class="btn btn-secondary">New Contract</a>
           {%endif%}
