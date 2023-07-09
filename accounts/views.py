@@ -526,21 +526,21 @@ def Employeelist(request):
 # ================================CLIENT SECTION================================
 def clientlist(request):
     clients = {
-        'students': CustomerUser.objects.filter(Q(category=3), Q(sub_category=2), Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
-        'jobsupport': CustomerUser.objects.filter(Q(category=3), Q(sub_category=1), Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
-        'interview': CustomerUser.objects.filter(Q(category=3), Q(sub_category=2), Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
-        'dck_users': CustomerUser.objects.filter(Q(category=4), Q(sub_category=6), Q(is_applicant=True), Q(is_active=True)).order_by('-date_joined'),
-        'dyc_users': CustomerUser.objects.filter(Q(category=4), Q(sub_category=7), Q(is_applicant=True), Q(is_active=True)).order_by('-date_joined'),
-        'past': CustomerUser.objects.filter(Q(category=3) | Q(is_client=True), Q(is_active=False)).order_by('-date_joined'),
+        'students': CustomerUser.objects.filter(Q(category=4), Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
+        'jobsupport': CustomerUser.objects.filter(Q(category=3), Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
+        'interview': CustomerUser.objects.filter(Q(category=4),  Q(is_client=True), Q(is_active=True)).order_by('-date_joined'),
+        # 'dck_users': CustomerUser.objects.filter(Q(category=4), Q(sub_category=6), Q(is_applicant=True), Q(is_active=True)).order_by('-date_joined'),
+        # 'dyc_users': CustomerUser.objects.filter(Q(category=4), Q(sub_category=7), Q(is_applicant=True), Q(is_active=True)).order_by('-date_joined'),
+        'past': CustomerUser.objects.filter(Q(is_client=True), Q(is_active=False)).order_by('-date_joined'),
     }
     template_name = "accounts/clients/clientlist.html"
     
-    if request.user.is_superuser or request.user.is_staff or request.user.sub_category == 6:
-        template_name = "accounts/clients/dcklist.html"
+    # if request.user.is_superuser or request.user.is_staff or request.user.sub_category == 6:
+    #     template_name = "accounts/clients/dcklist.html"
 
-    # if  request.user.is_superuser or request.user.is_staff or request.user.sub_category == 7:
-    if  request.user.is_superuser or request.user.is_staff:
-        template_name = "accounts/clients/dyclist.html"
+    # # if  request.user.is_superuser or request.user.is_staff or request.user.sub_category == 7:
+    # if  request.user.is_superuser or request.user.is_staff:
+    #     template_name = "accounts/clients/dyclist.html"
 
     return render(request, template_name, clients)
 
