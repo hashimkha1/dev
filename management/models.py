@@ -880,6 +880,7 @@ class Requirement(models.Model):
     videolink = models.CharField(max_length=1000,null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_tested = models.BooleanField(default=True)
+    is_reviewed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Requirements"

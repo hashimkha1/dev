@@ -1362,6 +1362,8 @@ def requirements(request):
         requirements = Requirement.objects.exclude(company__iexact='dyc').filter(requestor__iexact='client').order_by('-id')
     elif subtitle == 'coda_requirements':
         requirements = Requirement.objects.filter(requestor__iexact='management', company__iexact='coda').order_by('-id')
+    elif subtitle == 'reviewed':
+        requirements = Requirement.objects.filter(is_reviewed=True).order_by('-id')
     else:
         requirements = Requirement.objects.all().order_by("-id")
 
@@ -1424,7 +1426,7 @@ class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     fields = [
                 "status","assigned_to","requestor","company",
                 "category","app","delivery_date","duration","what",
-                "why","how","comments","doc","pptlink","videolink","is_active","is_tested"
+                "why","how","comments","doc","pptlink","videolink","is_active","is_tested","is_reviewed"
              ]
     form = RequirementForm
     def form_valid(self, form):

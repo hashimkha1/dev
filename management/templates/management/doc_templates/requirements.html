@@ -3,12 +3,12 @@
   <div class="career text-center">
     <h3 class="title">PRODUCT BACKLOG</h3>
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <p><a href="{% url 'management:new_requirement'%}" class="btn btn-primary btn-sm"
           >ADD REQRUIREMENTS
         </a></p>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <p><a href="{% url 'management:dyc_requirements'%}" class="btn btn-primary btn-sm"
           >DYC REQUIREMENTS
         </a></p>
@@ -21,6 +21,11 @@
       <div class="col-md-2">
         <p><a href="{% url 'management:coda_requirements'%}" class="btn btn-primary btn-sm"
           >CODA REQRUIREMENTS
+        </a></p>
+      </div>
+      <div class="col-md-2">
+        <p><a href="{% url 'management:reviewed'%}" class="btn btn-primary btn-sm"
+          >REVIEWED
         </a></p>
       </div>
       <div class="col-md-2">
@@ -52,8 +57,9 @@
           <th>is_active</th>
           <th>status</th>
           <th>category</th>
+          <th>Reviewed</th>
           <th>Update</th>
-          <th>Delete</th>
+          <!-- <th>Delete</th> -->
         </tr>
       </thead>
       <tbody>
@@ -70,6 +76,7 @@
               <td>{{requirement.is_active}}</td>
               <td>{{requirement.status}}</td>
               <td>{{requirement.category}}</td>
+              <td>{{requirement.is_reviewed}}</td>
               <!-------
               <td>{{client.id}}</td>
               <td>{{client.category}}</td>
@@ -77,7 +84,7 @@
                 {% endif %}
               --->
               <td> <a class="article-title" href="{%url 'management:requirement-update' requirement.id%}">Edit</a></td>
-              <td> <a class="article-title" href="#">Delete</a></td>
+              <!-- <td> <a class="article-title" href="#">Delete</a></td> -->
             </tr>
         {% endfor %}
       </tbody>
