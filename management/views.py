@@ -739,6 +739,7 @@ def usertask(request, user=None, *args, **kwargs):
                 remaining_minutes ,
                 remaining_hours 
     )=countdown_in_month()
+
     # -----------Time from utils------------------
     deadline_date=paytime()[2]
     payday=paytime()[10]
