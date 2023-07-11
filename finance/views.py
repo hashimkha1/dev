@@ -229,6 +229,7 @@ def new_training_contract(request, *args, **kwargs):
     full_course = ServiceCategory.objects.get(name__iexact='Full Course')
 
     course = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    print("course============>",course)
     contract_months = request.POST.get('contract_length') if request.method == 'POST' and request.POST.get('contract_length') else None
 
     plan = None

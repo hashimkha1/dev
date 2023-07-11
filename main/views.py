@@ -34,9 +34,6 @@ from django.contrib.auth import get_user_model
 User=get_user_model()
 
 
-
-
-
 #  ===================================================================================   
 
 
@@ -162,30 +159,6 @@ def display_service(request,*args, **kwargs):
     }
     return render(request, "main/services/show_service.html", context)
 
-# def display_service(request,*args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     data_analysis = Service.objects.get(slug='data_analysis')
-#     investing = Service.objects.get(slug='investing')
-#     data_analysis_categories = ServiceCategory.objects.filter(service=data_analysis.id)
-#     investing_categories = ServiceCategory.objects.filter(service=investing.id)
-    
-#     context = {}  # Initialize context with an empty dictionary
-#     print()
-#     if sub_title == data_analysis.slug:
-#         context = {
-#             'services': data_analysis_categories,
-#             "title": data_analysis.title,
-#             "service_desc": data_analysis.description,
-#             "slug":data_analysis.slug
-#         }
-#     elif sub_title == investing.slug:
-#         context = {
-#             'services': investing_categories,
-#             "title": investing.title,
-#             "service_desc": investing.description,
-#         }
-#     return render(request, "main/services/show_service.html", context)
-
 
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -235,34 +208,6 @@ def service_plans(request, *args, **kwargs):
         "services": plans
     }
     return render(request, "main/services/service_plan.html", context)
-
-
-# def job_support(request):
-#     job_support = ServiceCategory.objects.get(name__iexact='Job Support')
-#     plans = Pricing.objects.filter(category=job_support.id)
-    
-#     context={
-#         "SITEURL" :settings.SITEURL,
-#         "title":job_support.name,
-#         # "service_desc":job_support.description,
-#         'services': plans
-#     }
-#     # return render(request, "main/services/job_support.html", context)
-#     return render(request, "main/services/full_course.html", context)
-
-
-# def full_course(request):
-#     full_course = ServiceCategory.objects.get(name__iexact='Full Course')
-#     plans = Pricing.objects.filter(category=full_course.id)
-#     # return render(request, "main/services/job_support.html", {'services': plans})
-#     context={
-#         "SITEURL" :settings.SITEURL,
-#         "title":full_course.name,
-#         # "service_desc":job_support.description,
-#         'services': plans
-#     }
-#     return render(request, "main/services/full_course.html", context)
-
 
 @login_required
 def job_market(request):
