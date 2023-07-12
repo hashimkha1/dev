@@ -1,3 +1,4 @@
+import math
 from datetime import date, timedelta
 from django.core.paginator import Paginator
 from django.urls import reverse, reverse_lazy
@@ -437,15 +438,70 @@ def newcredential(request):
     return render(request, "accounts/admin/forms/credential_form.html", {"form": form})
 
 
+# def credential_view(request):
+#     categories = CredentialCategory.objects.all().order_by("-entry_date")
+#     credentials = Credential.objects.all().order_by("-entry_date")
+#     departments = Department(request)
+#     credential_filters=CredentialFilter(request.GET,queryset=credentials)
+#     context = {
+#         "departments": departments,
+#         "categories": categories,
+#         "credentials": credentials,
+#         "show_password": False,
+#         "credential_filters": credential_filters,
+#     }
+#     try:
+#         request.session["siteurl"] = settings.SITEURL
+#         otp = request.POST["otp"]
+#         if otp == request.session["security_otp"]:
+#             del request.session["security_otp"]
+#             context["show_password"] = True
+#             return render(request, "accounts/admin/credentials.html", context)
+#         else:
+#             error_context = {"message": "Invalid OTP"}
+#             return render(
+#                 request, "accounts/admin/email_verification.html", error_context
+#             )
+
+#     except:
+#         return render(request, "accounts/admin/credentials.html", context)
+
+
 def credential_view(request):
     categories = CredentialCategory.objects.all().order_by("-entry_date")
     credentials = Credential.objects.all().order_by("-entry_date")
     departments = Department(request)
-    credential_filters=CredentialFilter(request.GET,queryset=credentials)
+    credential_filters = CredentialFilter(request.GET, queryset=credentials)
+
+    # Step 1: Create a list of credentials
+    credentials_list = list(credentials)
+    # for record in credentials_list:
+        # print("credentials_list====>",record)
+
+    # Step 2: Determine specific records to be moved to the center
+    specific_records = ['boa','experian','betterment','robin','citi']  # Replace with the actual specific records you want to move
+    # specific_records = ['68','75','85','89','91', '93']  # Replace with the actual specific records you want to move
+
+    # Step 3: Remove specific records from the credentials list
+    for record in specific_records:
+        if record in credentials_list:
+            print("specific_records====>",record)
+            credentials_list.remove(record)
+
+    # Step 4: Sort the credentials list
+    credentials_list.sort(key=lambda cred: cred.entry_date, reverse=True)
+
+    # Step 5: Calculate the index for inserting the specific records
+    center_index = math.ceil(len(credentials_list) / 2)
+
+    # Step 6: Insert the specific records at the center index
+    for record in specific_records:
+        credentials_list.insert(center_index, record)
+
     context = {
         "departments": departments,
         "categories": categories,
-        "credentials": credentials,
+        "credentials": credentials_list,
         "show_password": False,
         "credential_filters": credential_filters,
     }
@@ -465,6 +521,7 @@ def credential_view(request):
 
     except:
         return render(request, "accounts/admin/credentials.html", context)
+
 
 
 def security_verification(request):
