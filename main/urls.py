@@ -61,7 +61,7 @@ urlpatterns = [
         path('finance/', views.finance, name='finance'),
         # path('marketing/', views.marketing, name='marketing'),
 
-    path('coach_profile/', views.coach_profile, name='coach'),
+    path('coach_profile/', views.coach_profile, name='coach_profile'),
     path('contact/', views.contact, name='contact'),
     path('report/', views.report, name='report'),
     path('project/', views.project, name='project'),

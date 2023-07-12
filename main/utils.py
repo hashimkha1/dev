@@ -301,26 +301,27 @@ Automation = [
         "linkname":"CHATGPT",
     },
 ]
+
 Stocks = [
     {
         "title": "Cryptomarket",
-        "link":SITEURL+"/investing/options/",
+        "link":SITEURL+"#",
         "linkname":"Cryptomarket Data",
     },
     {
         "title": "Credit Spreads",
         "link":SITEURL+"/investing/credit_spread/",
-        "linkname":"Credit Spreads Data",
+        "linkname":"Credit Spreads",
     },
     {
-        "title": "Get short Put Data",
+        "title": "Short Puts",
         "link":SITEURL+"/investing/shortputdata/",
-        "linkname":"Get short Put Data",
+        "linkname":"Short Puts",
     },
     {
-        "title": "Get covered Calls Data",
+        "title": "covered Calls",
         "link":SITEURL+"/investing/covered_calls/",
-        "linkname":"Get covered Calls Data",
+        "linkname":"covered Calls",
     },
 ]
 General = [

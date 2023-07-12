@@ -66,9 +66,16 @@
                             <button type="submit">Upload File</button>
                         </form>
                     </div>
-            </div>
-            </div>
+                </div>
+                </div>
             {% endfor %}
-        </div>
+            </div>
+            <div class="data_training text-center">
+                <h3 class="title">DATA MIGRATIONS</h3>
+                  <h4>XEL</h4>
+                  <a href="{% url 'getdata:load_files_data' %}" target="">
+                    <button type="button" class="btn btn-primary">Load</button>
+                  </a>
+            </div>
     </section>
     {% endblock content %}

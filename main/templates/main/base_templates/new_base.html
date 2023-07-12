@@ -19,7 +19,11 @@
         type="text/css"
         href="{% static 'main/css/new_main.css' %}"
       />
-
+      {% if title %}
+      <title>CODA - {{ title }}</title>
+      {% else %}
+      <title>CODA</title>
+      {% endif %}
 </head>
 
 <body>

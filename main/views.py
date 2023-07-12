@@ -142,13 +142,16 @@ def display_service(request,*args, **kwargs):
     service_category_title = next((x.title for x in service_shown if sub_title == x.slug), None)
     service_description = next((x.description for x in service_shown if sub_title == x.slug), None)
     service_id = next((x.id for x in service_shown if sub_title == x.slug), None)
-
     service_categories = ServiceCategory.objects.filter(service=service_id)
 
-    for cat in service_categories:
-        print("cat=====>",cat)
-
-    print(service_category_slug,service_category_title,service_id)
+    if service_category_slug=='investing':
+        context = {
+            'service_categories': service_categories,
+            "title": service_category_title,
+            "service_desc": service_description,
+            "slug":service_category_slug
+       }
+        return render(request, "main/home_templates/investing_home.html", context)
 
     context = {}  # Initialize context with an empty dictionary
     context = {

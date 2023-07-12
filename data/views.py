@@ -470,7 +470,6 @@ class FeaturedCategoryCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 def categorydetail(request, title=None, *args, **kwargs):
-    print("HERE CATEGORIES")
     instance = FeaturedCategory.objects.get_by_category(title)
     tasks=FeaturedActivity.objects.all()
 
@@ -500,61 +499,6 @@ class FeaturedSubCategoryCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['page_title']=capfirst(self.page_title)
-
-
-# def subcategorydetail(request, title=None, *args, **kwargs):
-#     try:
-#         tracking = TrainingResponsesTracking.objects.get(user=request.user)
-#         if title != tracking.featuredsubcategory.title:
-#             return redirect('data:subcategory-detail', title=tracking.featuredsubcategory.title)
-#     except:
-#         tracking = TrainingResponsesTracking()
-#         obj = FeaturedSubCategory.objects.get(title=title)
-#         tracking.user = request.user
-#         tracking.featuredsubcategory = obj
-#         tracking.save()
-
-#     instance = FeaturedSubCategory.objects.get_by_subcategory(title)
-#     print(instance)
-#     if request.method == 'POST':
-#         try:
-#             form=TrainingResponseForm(request.POST, request.FILES)
-#             if form.is_valid():
-#                 form_obj = form.save(commit=False)
-#                 form_obj.user = request.user
-#                 form_obj.save()
-#         except Exception as e:
-#             return render(request, "main/errors/404.html")
-
-#         if instance is None:
-#             return render(request, "main/errors/404.html")
-
-#         next_title = FeaturedSubCategory.objects.filter(order__gt=instance.order).order_by('order')
-#         print(next_title)
-#         if not next_title.exists():
-#             next_category = FeaturedCategory.objects.filter(title='Course Overview').first()
-#             tracking.featuredsubcategory = FeaturedSubCategory.objects.get(order='1')
-#             tracking.save()
-#             print(tracking.featuredsubcategory)
-#             return redirect('data:category-detail', title=next_category.title)
-#         next_title = next_title.first()
-#         tracking.featuredsubcategory = next_title
-#         tracking.save()
-#         return redirect('data:subcategory-detail', title=next_title.title)
-
-#     tasks= FeaturedActivity.objects.filter(featuredsubcategory=instance.id)
-#     form= TrainingResponseForm
-#     url= f'data/training/training_progress/course.html'
-#     context = {
-#         "tasks": tasks,
-#         "form": form,
-#         "object": instance,
-#         "title_": title
-#     }
-#     if instance is None:
-#         return render(request, "main/errors/404.html")
-#     return render(request, url, context)
-
 
 def subcategorydetail(request, title=None, *args, **kwargs):
     if request.user.category == 4:

@@ -1,10 +1,7 @@
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
-from django.db import connection
 from django.db.models import Q
-from django.core.files.storage import FileSystemStorage
 from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import F
 from django.contrib.auth import get_user_model
@@ -22,17 +19,13 @@ from .models import (
     ShortPut,
     covered_calls,
     credit_spread,
-    cryptomarket,
     Investments,
     Oversold
 )
 from django.db.models import Q
 from accounts.models import CustomerUser
 from getdata.utils import (
-    main_covered_calls,
-    main_cread_spread,
     main_shortput,
-    compute_stock_values
 )
 from main.utils import path_values
 
@@ -156,18 +149,12 @@ def optiondata(request):
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
-        # over_bought_sold = covered_calls.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
-        over_bought_sold = covered_calls.objects.exclude(Q(comment=''))
     elif sub_title == 'shortputdata':
         title = 'SHORT PUT'
         stockdata = ShortPut.objects.all().filter(is_featured=True)
-        # over_bought_sold = ShortPut.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
-        over_bought_sold = ShortPut.objects.exclude(Q(comment=''))
     else:
         title = 'CREDIT SPREAD'
         stockdata = credit_spread.objects.all().filter(is_featured=True)
-        # over_bought_sold = credit_spread.objects.exclude(Q(comment='Comment') | Q(comment='Enter Comment'))
-        over_bought_sold = credit_spread.objects.exclude(Q(comment=''))
 
     def get_edit_url(row_id):
         if pre_sub_title == 'shortputdata':
@@ -177,7 +164,6 @@ def optiondata(request):
         else:
             return reverse('investing:coveredupdate', args=[row_id])
             
-    
     filtered_stockdata = []
     days_to_expiration = 0
     for x in stockdata:
@@ -197,7 +183,6 @@ def optiondata(request):
 
     context = { 
         "data": filtered_stockdata,
-        "overboughtsold": over_bought_sold,
         "days_to_expiration": days_to_expiration,
         "subtitle": sub_title,
         "pre_sub_title": pre_sub_title,
