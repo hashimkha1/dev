@@ -14,7 +14,7 @@
                   <img 
                   {%for image in images%}
                   {% if image.name == "investing_page_v1"%}
-                      src="{{googledriveurl}}={{image.image_url}}""
+                      src="{{googledriveurl}}{{image.image_url}}""
                   {%endif%}
                   {% endfor %}
                   class="d-block img-fluid"
