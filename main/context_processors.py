@@ -41,7 +41,12 @@ def services(request):
             "data_analysis": Service.objects.get(slug='data_analysis')
          }
 
+# def googledriveurl(request):
+#     return {
+#         'googledriveurl':'http://drive.google.com/uc?export=view&id'
+#     }
+
 def googledriveurl(request):
     return {
-        'googledriveurl':'http://drive.google.com/uc?export=view&id'
+        'googledriveurl': 'http://drive.google.com/uc?export=view&id='
     }
