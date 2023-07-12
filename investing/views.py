@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
+from django.db import connection
 from django.db.models import Q
 from django.core.files.storage import FileSystemStorage
 from django.shortcuts import get_object_or_404, redirect, render
@@ -9,7 +10,7 @@ from django.db.models import F
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
 from datetime import date,datetime,time,timezone
-from .utils import compute_pay
+from .utils import compute_pay,get_over_postions,computes_days_expiration
 from .forms import (
     CoveredCallsForm,
     ShortPutForm,
@@ -22,8 +23,10 @@ from .models import (
     covered_calls,
     credit_spread,
     cryptomarket,
-    Investments
+    Investments,
+    Oversold
 )
+from django.db.models import Q
 from accounts.models import CustomerUser
 from getdata.utils import (
     main_covered_calls,
@@ -32,7 +35,6 @@ from getdata.utils import (
     compute_stock_values
 )
 from main.utils import path_values
-
 
 
 
@@ -175,6 +177,7 @@ def optiondata(request):
         else:
             return reverse('investing:coveredupdate', args=[row_id])
             
+    
     filtered_stockdata = []
     days_to_expiration = 0
     for x in stockdata:
@@ -189,10 +192,8 @@ def optiondata(request):
         
         days_to_exp = expiry_date - date_today
         days_to_expiration = days_to_exp.days
-
         if days_to_expiration > 7:
             filtered_stockdata.append(x)
-    
 
     context = { 
         "data": filtered_stockdata,
@@ -206,26 +207,12 @@ def optiondata(request):
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
 
 
+
+
 class OptionList(ListView):
     model=stockmarket
     template_name="getdata/options.html"
     context_object_name = "stocks"
-
-
-# class shortputupdate(UpdateView):
-#     model = ShortPut
-#     success_url = "/investing/shortputdata"
-#     # fields = "__all__"
-#     fields = ['comment']
-
-#     template_name="main/snippets_templates/generalform.html"
-#     def form_valid(self, form):
-#         # form.instance.author=self.request.user
-#         return super().form_valid(form)
-#     def test_func(self):
-#         if self.request.user.is_superuser:
-#             return True
-#         return False
 
 
 @login_required
@@ -273,6 +260,39 @@ class credit_spread_update(UpdateView):
         return super().form_valid(form)
     def test_func(self):
         # interview = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        return False
+
+
+def oversoldpositions(request):
+    path_list,sub_title,pre_sub_title = path_values(request)
+    # Get current datetime with UTC timezone
+    table_name = "investing_oversold"
+    get_over_postions(table_name)
+    overboughtsold_records = Oversold.objects.all()
+    # expiry_date,days_to_expiration=computes_days_expiration(stockdata)
+    for record in overboughtsold_records:
+        print("record========>",record)
+
+    context = { 
+        "overboughtsold": overboughtsold_records,
+        "overboughtsold": overboughtsold_records,
+        # "expiry_date": expiry_date,
+        # "days_to_expiration": days_to_expiration,
+    }
+    return render(request, "investing/oversold.html", context)
+
+class oversold_update(UpdateView):
+    model = Oversold
+    success_url = "/investing/overboughtsold"
+    fields ="__all__"
+    # fields = ['symbol','comment','is_featured']
+    template_name="main/snippets_templates/generalform.html"
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
         if self.request.user.is_superuser:
             return True
         return False

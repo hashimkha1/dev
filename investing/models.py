@@ -56,7 +56,7 @@ class cryptomarket(models.Model):
 
 class credit_spread(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
-    strategy = models.CharField(max_length=255,blank=True, null=True)
+    action = models.CharField(max_length=255,blank=True, null=True)
     type = models.CharField(max_length=255,blank=True, null=True)
     price = models.CharField(max_length=255,blank=True, null=True)
     sell_strike = models.CharField(max_length=255,blank=True, null=True)
@@ -129,3 +129,22 @@ class covered_calls(models.Model):
 
     # def __str__(self):
     #     return self.symbol
+
+
+class Oversold(models.Model):
+    symbol = models.CharField(max_length=255,blank=True, null=True)
+    action = models.CharField(max_length=255,blank=True, null=True)
+    strike_price = models.CharField(max_length=255,blank=True, null=True)
+    implied_volatility_rank = models.CharField(max_length=255,blank=True, null=True)
+    stock_price = models.CharField(max_length=255,blank=True, null=True)
+    expiry = models.CharField(max_length=255,blank=True, null=True)
+    earnings_date = models.CharField(max_length=255,blank=True, null=True)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "ShortPut"
+
+    def __str__(self):
+        return self.symbol
