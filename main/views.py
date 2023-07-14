@@ -10,7 +10,9 @@ from django.contrib import messages
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import Meetings,path_values,buildmodel,team_members,client_categories
+from .utils import (Meetings,path_values,buildmodel,team_members,
+                    client_categories,service_instances,service_plan_instances
+)
 from .models import Testimonials
 from coda_project import settings
 from application.models import UserProfile
@@ -123,6 +125,23 @@ class ServiceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif self.request.user == service.staff:
             return True
         return False
+    
+class PriceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Pricing
+    fields ="__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("main:services")
+
+    def test_func(self):
+        # service = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        return False
 
 def delete_service(request,id):
     service = service.objects.get(pk=id)
@@ -137,13 +156,8 @@ def display_service(request,*args, **kwargs):
         service_shown = Service.objects.all()
     except Service.DoesNotExist:
         return redirect('main:display_service')
-
-    service_category_slug = next((x.slug for x in service_shown if sub_title == x.slug), None)
-    service_category_title = next((x.title for x in service_shown if sub_title == x.slug), None)
-    service_description = next((x.description for x in service_shown if sub_title == x.slug), None)
-    service_id = next((x.id for x in service_shown if sub_title == x.slug), None)
+    (service_category_slug,service_category_title,service_description,service_id)=service_instances(service_shown,sub_title)
     service_categories = ServiceCategory.objects.filter(service=service_id)
-
     if service_category_slug=='investing':
         context = {
             'service_categories': service_categories,
@@ -152,7 +166,6 @@ def display_service(request,*args, **kwargs):
             "slug":service_category_slug
        }
         return render(request, "main/home_templates/investing_home.html", context)
-
     context = {}  # Initialize context with an empty dictionary
     context = {
         'service_categories': service_categories,
@@ -172,14 +185,10 @@ def service_plans(request, *args, **kwargs):
             return redirect('main:display_service')
     except Service.DoesNotExist:
         return redirect('main:display_service')
-    context = {}  # Initialize context with an empty dictionary
-
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-    category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
-    category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
-    category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
+    (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
-
+    context = {}
     context = {
         "SITEURL": settings.SITEURL,
         "title": category_name,
@@ -187,6 +196,7 @@ def service_plans(request, *args, **kwargs):
         "services": plans
     }
     return render(request, "main/services/service_plan.html", context)
+
 
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -211,6 +221,9 @@ def service_plans(request, *args, **kwargs):
         "services": plans
     }
     return render(request, "main/services/service_plan.html", context)
+
+
+
 
 @login_required
 def job_market(request):

@@ -7,9 +7,11 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
 from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
+from django.template.defaultfilters import upper
 from requests import request
 from datetime import datetime,date
 from decimal import *
+from django.db.models import Q
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -29,7 +31,7 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from main.utils import download_image,Meetings,path_values,countdown_in_month
+from main.utils import path_values,countdown_in_month,service_instances,service_plan_instances
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
@@ -54,7 +56,6 @@ def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
-
 def contract_data_submission(request):
 	(today,*_)=paytime()
 	try:
@@ -188,76 +189,53 @@ def mycontract(request, *args, **kwargs):
         else:
             return redirect('main:bi_services')
 
-
 @login_required
-def newcontract_jobsupport(request, *args, **kwargs):
-	job_support = ServiceCategory.objects.get(name__iexact='Job Support')
-	contract_months = request.POST.get('contract_length') if request.method == 'POST' else None
-	plan = Pricing.objects.filter(category=job_support.id, contract_length=contract_months).first() 
-	contract_charge = plan.price if plan else None; 
-	contract_duration = plan.duration if plan else None; 
-	contract_period = plan.contract_length if plan else None
-
-	username = kwargs.get('username')
-	#Gets client/user information from the custom user table
-	client_data=CustomerUser.objects.get(username=username)
-	
-	#Gets any payment default values from the Default table
-
-	today = date.today()
-	contract_date = today.strftime("%d %B, %Y")
-	context={
-			'client_data': client_data,
-			'contract_data': plan,
-			'contract_charge': contract_charge,
-			'contract_duration': contract_duration,
-			'contract_period': contract_period,
-			'contract_date':contract_date,
-			}
-	return render(request, 'management/contracts/client_contract.html',context)
-
-@login_required
-def new_training_contract(request, *args, **kwargs):
-    # Gets client/user information from the custom user table
+def new_contract(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
     username = kwargs.get('username')
     client_data = CustomerUser.objects.get(username=username)
     today = date.today()
-    contract_date = today.strftime("%d %B, %Y")
-
-    # Getting contract information based on the submitted value
-    job_support = ServiceCategory.objects.get(name__iexact='Job Support')
-    full_course = ServiceCategory.objects.get(name__iexact='Full Course')
-
-    course = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
-    contract_months = request.POST.get('contract_length') if request.method == 'POST' and request.POST.get('contract_length') else None
-
-    plan = None
-    contract_charge = None
-    contract_duration = None
-    contract_period = None
-    if course:
-        if course in ('database', 'reporting', 'etl', 'end_to_end'):
-            plan = Pricing.objects.filter(category=full_course.id, title__iexact=course).first()
+    plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    
+    plan = contract_charge = contract_duration = contract_period = None
+    try:
+        if pre_sub_title:
+            service_category_instance = ServiceCategory.objects.get(slug=pre_sub_title)
         else:
-            print('invalid course',course)
-    elif contract_months:
-        plan = Pricing.objects.filter(category=job_support.id, contract_length=contract_months).first()
+            return redirect('main:display_service')
+    except ServiceCategory.DoesNotExist:
+        return redirect('main:display_service')
+    
+    # Access the service_instance properties
+    service_instance = Service.objects.filter(servicecategory__name=service_category_instance.name).first()
+    if service_instance:
+        service_title = service_instance.title
+        service_title_uppercase = service_title.upper()
+        service_description = service_instance.description
+        print(service_title_uppercase,service_title, service_description)
     else:
-        plan = Pricing.objects.exclude(category__in=[job_support, full_course]).first()
+        print("No service found for the given pricing title.")
+	
+    plan = Pricing.objects.filter(category=service_category_instance.id, title__iexact=plan_title).first()
     if plan:
         contract_charge = plan.price
         contract_duration = plan.duration
         contract_period = plan.contract_length
 
     context = {
+        'service_title': service_title,
+        'service_title_uppercase': service_title_uppercase,
         'client_data': client_data,
         'contract_data': plan,
         'contract_charge': contract_charge,
         'contract_duration': contract_duration,
         'contract_period': contract_period,
-        'contract_date': contract_date,
+        'contract_date': today.strftime("%d %B, %Y")
     }
-    return render(request, 'management/contracts/client_contract.html', context)
+    if service_title_uppercase == 'INVESTING':
+        return render(request, 'management/contracts/client_investment_contract.html', context)
+    else:
+        return render(request, 'management/contracts/client_contract.html', context)
 
 # ==================PAYMENT CONFIGURATIONS VIEWS=======================
 class PaymentConfigCreateView(LoginRequiredMixin, CreateView):

@@ -37,9 +37,8 @@ urlpatterns = [
     
     path('contract_data/', views.contract_data_submission, name='contract_data_submission'),
     path('mycontract/<str:username>/', views.mycontract, name='mycontract'),
-    # path('new_contract/<str:username>/', views.newcontract, name='newcontract'),
-    path('newcontract_jobsupport/<str:username>/', views.newcontract_jobsupport, name='newcontract_jobsupport'),
-    path('newtrainingcontract/<str:username>/', views.new_training_contract, name='newtrainingcontract'),
+    path('newcontract/<str:username>/', views.new_contract, name='newcontract'),
+    # path('newtrainingcontract/<str:username>/', views.new_training_contract, name='newtrainingcontract'),
     #Pay URLS
     # path('userpay/', views.userpay, name='userpay'),
     path('pay/', views.pay, name='pay'),

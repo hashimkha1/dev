@@ -38,17 +38,6 @@ class Service(models.Model):
     def get_absolute_url(self):
         return "/services/{slug}/".format(slug=self.slug)
 
-
-# class CourseCategory(models.Model):
-#     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
-#     name = models.CharField(max_length=254)
-
-#     class Meta:
-#         verbose_name_plural = "Course Categories"
-
-#     def __str__(self):
-#         return self.name
-
 class ServiceCategory(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
     name = models.CharField(max_length=254)
@@ -216,8 +205,6 @@ class Plan(models.Model):
 
     def __str__(self):
         return self.goal
-
-
 
 
 class ClientAvailability(models.Model):

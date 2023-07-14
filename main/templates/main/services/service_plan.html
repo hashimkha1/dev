@@ -52,9 +52,10 @@
             {% if service.slug %}
             <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
             {% else %}
-            <form action="{% url 'finance:newtrainingcontract' request.user %}" method="POST">
+            <form action="{% url 'finance:newcontract' request.user %}" method="POST">
               {% csrf_token %}
-              <input type="hidden" name="contract_length" value="{{ service.contract_length }}">
+              <!-- <input type="hidden" name="contract_length" value="{{ service.contract_length }}"> -->
+              <input type="hidden" name="service_title" value="{{ service.name }}{{ service.title }}">
               <button type="submit" class="btn btn-primary">Proceed</button>
             </form>
             {% endif %}
