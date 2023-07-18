@@ -890,6 +890,13 @@ class Requirement(models.Model):
     def doc_url(self):
         if self.doc and hasattr(self.doc, 'url'):
             return self.doc.url
+        
+    @property
+    def active(self):
+        if self.is_active is False:
+            return "Ready For Testing"
+        else:
+            return "Not Started"
 
     def get_absolute_url(self):
         return reverse("management:requirements")
