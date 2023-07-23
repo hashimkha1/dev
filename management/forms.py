@@ -202,6 +202,7 @@ class RequirementForm(forms.ModelForm):
             "doc": "Upload Supporting Document",
             "pptlink": "Add link",
             "pptlink": "Add Video link",
+            "is_tested": "Need Testing?",
         }
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)

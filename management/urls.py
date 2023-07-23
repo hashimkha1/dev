@@ -81,6 +81,7 @@ urlpatterns = [
     path('coda_requirements/', views.requirements, name='coda_requirements'),
     path('dyc_requirements/', views.requirements, name='dyc_requirements'),
     path('reviewed/', views.requirements, name='reviewed'),
+    path('tested/', views.requirements, name='tested'),
     path('requirement/<int:pk>/update/', RequirementUpdateView.as_view(template_name='management/doc_templates/requirement_form.html'), name='requirement-update'),
     path('requirement/<int:pk>/delete/', RequirementDeleteView.as_view(), name='requirement-delete'),
     path('requirement/<int:pk>/', RequirementDetailView.as_view(), name='RequirementDetail'),
