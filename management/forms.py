@@ -184,6 +184,7 @@ class RequirementForm(forms.ModelForm):
             "videolink",
             "is_active",
             "is_tested",
+            "is_reviewed",
         ]
 
         labels = {

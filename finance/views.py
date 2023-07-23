@@ -221,6 +221,7 @@ def new_contract(request, *args, **kwargs):
         contract_charge = plan.price
         contract_duration = plan.duration
         contract_period = plan.contract_length
+        plan_id = plan.id
 
     context = {
         'service_title': service_title,
@@ -230,6 +231,7 @@ def new_contract(request, *args, **kwargs):
         'contract_charge': contract_charge,
         'contract_duration': contract_duration,
         'contract_period': contract_period,
+        'plan_id': plan_id,
         'contract_date': today.strftime("%d %B, %Y")
     }
     if service_title_uppercase == 'INVESTING':
@@ -338,7 +340,7 @@ def pay(request, *args, **kwargs):
     if not request.user.is_authenticated:
         return redirect(reverse('accounts:account-login'))
 
-    contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
+    contract_url = reverse('finance:newcontract', args=[request.user.username])
     # Getting contract fees based on the submitted value
     try:
         payment_info = Payment_Information.objects.get(customer_id=request.user.id)
@@ -387,14 +389,14 @@ def pay(request, *args, **kwargs):
 # def pay(request, service=None):
 #     if not request.user.is_authenticated:
 #         return redirect(reverse('accounts:account-login'))
-#     contract_url = reverse('finance:newtrainingcontract', args=[request.user.username])
+#     contract_url = reverse('finance:newcontract', args=[request.user.username])
 #     try:
 #         if service:
 #             payment_info = get_object_or_404(Service, pk=service) 
 #         else:
 #             payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
 #     except:
-# 	    return redirect('finance:newtrainingcontract',request.user)
+# 	    return redirect('finance:newcontract',request.user)
 #     context = {
 # 				"title": "PAYMENT",
 # 				"payments": payment_info,
