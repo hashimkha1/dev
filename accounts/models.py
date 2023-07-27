@@ -62,6 +62,7 @@ class CustomerUser(AbstractUser):
     class Meta:
         # ordering = ["-date_joined"]
         ordering = ["username"]
+        verbose_name_plural = "Users"
 
     @property
     def full_name(self):

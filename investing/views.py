@@ -52,10 +52,10 @@ def newinvestment(request):
         if form.is_valid():
             instance = form.save(commit=False)
             instance.save()
-            return redirect('investing:investments') 
+            return redirect('investing:user_investments', request.user) 
     else:
         form = InvestmentForm()
-    return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+    return render(request, 'investing/investment_form.html', {'form': form})
 
 @login_required
 def newinvestmentrate(request):
@@ -95,7 +95,7 @@ def investments(request):
 def user_investments(request, username=None, *args, **kwargs):
     user = get_object_or_404(CustomerUser, username=username)
     investments = Investments.objects.filter(client=user)
-    investment_test()
+    # investment_test()
     # Check if any investments exist for the user
     if investments.exists():
         latest_investment_rate = Investment_rates.objects.aggregate(latest_created_date=Max('created_date'))
@@ -122,8 +122,11 @@ def user_investments(request, username=None, *args, **kwargs):
     else:
         # Set default values for amount and returns or display an appropriate message
         amount_invested=0.0
-        amount = 0.0
+        protected_capital=0.0
+        total_amount = 0.0
         returns = 0.0
+        number_positions = 0
+        minimum_duration = 0
         print("No investments found for the user.")
 
     context = {

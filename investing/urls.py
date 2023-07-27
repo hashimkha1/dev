@@ -12,7 +12,6 @@ urlpatterns = [
     path('investments/', views.investments, name='investments'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
-    # path('options/', views.options, name='option-data'),
     path('covered_calls/', views.optiondata, name='covered_calls'),
     path('shortputdata/', views.optiondata, name='shortput'),
     path('credit_spread/', views.optiondata, name='credit_spread'),

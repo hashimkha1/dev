@@ -34,6 +34,7 @@ from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,service_instances,service_plan_instances
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
+from investing.models import Investments
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 
@@ -189,6 +190,39 @@ def mycontract(request, *args, **kwargs):
         else:
             return redirect('main:bi_services')
 
+
+@login_required
+def new_option_contract(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    username = kwargs.get('username')
+    client_data = CustomerUser.objects.get(username=username)
+    user = get_object_or_404(CustomerUser, username=username)
+    today = date.today()
+    plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    
+    plan = contract_charge = contract_duration = contract_period = None
+
+    plan = Investments.objects.filter(client=user).first()
+    print("plan====>",plan)
+    if plan:
+        contract_charge = plan.amount
+        contract_duration = plan.duration
+        # contract_period = plan.contract_length
+        plan_id = plan.id
+    print("contract_charge======>",contract_charge)
+    context = {
+        'client_data': client_data,
+        'contract_data': plan,
+        'contract_charge': contract_charge,
+        'contract_duration': contract_duration,
+        'contract_period': contract_period,
+        # 'plan_id': plan_id,
+        'contract_date': today.strftime("%d %B, %Y")
+    }
+    return render(request, 'management/contracts/client_investment_contract.html', context)
+
+
+
 @login_required
 def new_contract(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -238,6 +272,8 @@ def new_contract(request, *args, **kwargs):
         return render(request, 'management/contracts/client_investment_contract.html', context)
     else:
         return render(request, 'management/contracts/client_contract.html', context)
+
+
 
 # ==================PAYMENT CONFIGURATIONS VIEWS=======================
 class PaymentConfigCreateView(LoginRequiredMixin, CreateView):
@@ -386,25 +422,6 @@ def pay(request, *args, **kwargs):
 
     return render(request, "finance/payments/pay.html", context)
 
-# def pay(request, service=None):
-#     if not request.user.is_authenticated:
-#         return redirect(reverse('accounts:account-login'))
-#     contract_url = reverse('finance:newcontract', args=[request.user.username])
-#     try:
-#         if service:
-#             payment_info = get_object_or_404(Service, pk=service) 
-#         else:
-#             payment_info = get_object_or_404(Payment_Information, customer_id=request.user.id)
-#     except:
-# 	    return redirect('finance:newcontract',request.user)
-#     context = {
-# 				"title": "PAYMENT",
-# 				"payments": payment_info,
-# 				"message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
-# 				"link": contract_url,
-# 				"service": True,
-# 			}
-#     return render(request, "finance/payments/pay.html", context)
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
