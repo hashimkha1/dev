@@ -5,7 +5,8 @@ from .models import (
 	credit_spread,
 	ShortPut,
 	covered_calls,
-    Investments
+    Investments,
+    Investment_rates
 )
 
 # Register your models here.
@@ -15,4 +16,5 @@ admin.site.register(credit_spread)
 admin.site.register(ShortPut)
 admin.site.register(covered_calls)
 admin.site.register(Investments)
+admin.site.register(Investment_rates)
 

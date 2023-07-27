@@ -106,7 +106,8 @@
     "PROJECTS": {
         "CODA-CLIENTS": {
             "Clients": "https://www.codanalytics.net/accounts/clients/",
-            "Client Tracker": "https://www.codanalytics.net/accounts/tracker/"
+            "Client Tracker": "https://www.codanalytics.net/accounts/tracker/",
+            "Investors": "https://www.codanalytics.net/investing/investments/"
         },
         "OTHER IT PROJECTS": {
             "D2A-PPT": "#",

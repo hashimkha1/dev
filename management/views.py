@@ -284,6 +284,8 @@ def companyagenda(request):
         data = json.load(file)
     if request.user.is_superuser or (request.user.is_staff):
         return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
+    elif request.user.is_superuser or (request.user.category == 5 and request.user.is_client):
+        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Client dashboard"})
     else:
         return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
 

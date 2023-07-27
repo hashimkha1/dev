@@ -1,21 +1,17 @@
 from django import forms
-from .models import Investments,stockmarket,ShortPut,covered_calls,credit_spread,cryptomarket
+from .models import Investments,Investment_rates,stockmarket,ShortPut,covered_calls,credit_spread,cryptomarket
 from .models import ShortPut
+
 class InvestmentForm(forms.ModelForm):
     class Meta:
         model = Investments
         fields = "__all__"
 
-# class UploadForm(forms.ModelForm):
-#     class Meta:
-#         model = Uploads
-#         fields = ['id','doc_type','doc_name','doc','link']
-#         labels={
-#                 'doc_type':'Document Type',
-#                 'doc_name':'Document Name',
-#                 'doc':'Document',
-#         }
-
+class InvestmentRateForm(forms.ModelForm):
+    class Meta:
+        model = Investment_rates
+        fields = "__all__"
+        
 class CoveredCallsForm(forms.ModelForm):
     class Meta:
         model = covered_calls

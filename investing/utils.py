@@ -20,15 +20,38 @@ User=get_user_model
 
 host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 
-def compute_pay(amount):
-    if amount <= 2000:
-        return 15
-    elif amount <= 4000:
-        return 15 + (amount - 2000) * (12.5 - 15) / 2000
-    elif amount <= 6000:
-        return 15 + 12.5 + (amount - 4000) * (10 - 12.5) / 2000
+
+def compute_pay(amount,minimum_amount= 2000, base_return=10, inc_rate=7, increment_threshold_amt=2000, decrease_threshold_amt=3000):
+    if amount <= minimum_amount:
+        return base_return
+    elif amount <= decrease_threshold_amt:
+        increments = (amount - minimum_amount) // increment_threshold_amt
+        return base_return + increments * inc_rate
     else:
-        return 15 + 12.5 + 10 + (amount - 6000) * (5 - 10) / 2000
+        remaining_amount = amount - decrease_threshold_amt
+        decrease_in_increments = remaining_amount // increment_threshold_amt
+        new_increment_rate = max(inc_rate - decrease_in_increments, 3)
+        return base_return + ((decrease_threshold_amt - minimum_amount) // increment_threshold_amt) * inc_rate + (remaining_amount // increment_threshold_amt) * (new_increment_rate + inc_rate) // 2
+    
+def investment_test():
+    # Test cases
+    investment_amount_1 = 5000
+    investment_amount_2 = 8000
+    investment_amount_3 = 11000
+    investment_amount_4 = 14000
+
+    return_amount_1 = compute_pay(investment_amount_1)
+    return_amount_2 = compute_pay(investment_amount_2)
+    return_amount_3 = compute_pay(investment_amount_3)
+    return_amount_4 = compute_pay(investment_amount_4)
+
+    print("Return for $5000 investment:", return_amount_1)
+    print("Return for $8000 investment:", return_amount_2)
+    print("Return for $11000 investment:", return_amount_3)
+    print("Return for $14000 investment:", return_amount_4)
+
+    return return_amount_1,return_amount_2,return_amount_3,return_amount_4
+
 
 def computes_days_expiration(stockdata):
     date_today = datetime.now(timezone.utc)

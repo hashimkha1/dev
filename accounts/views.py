@@ -197,9 +197,9 @@ def login_view(request):
                     login(request, account)
                     return redirect("management:employee_contract")
                 
-                if account.is_staff and account.is_employee_contract_signed:
-                    login(request, account)
-                    return redirect("management:companyagenda")
+                # if account.is_staff and account.is_employee_contract_signed:
+                #     login(request, account)
+                #     return redirect("management:companyagenda")
 
                 # if account.sub_category == 2 or account.sub_category == 3:  # contractual
                 #     login(request, account)
@@ -207,11 +207,16 @@ def login_view(request):
                 
                 else:  # parttime (agents) & Fulltime
                     login(request, account)
-                    return redirect("management:requirements-active")
+                    return redirect("management:companyagenda")
 
             # If Category is client/customer:# Student # Job Support
             elif account is not None and (account.category == 3 or account.category == 4) :
                 login(request, account)
+                return redirect('management:companyagenda')
+            
+            elif account is not None and (account.category == 5) :
+                login(request, account)
+                print("category,subcat",account.category,account.sub_category)
                 return redirect('management:companyagenda')
            
             # If Category is applicant
@@ -245,7 +250,11 @@ def login_view(request):
                 else:
                     login(request, account)
                     return redirect("application:interview")
-
+            elif account is not None and account.profile.section is not None and account.category == 1 and account.sub_category==0:
+                    login(request, account)
+                    print("account.category",account.sub_category)
+                    return redirect("application:policies")
+            
             elif account is not None and account.is_admin:
                 login(request, account)
                 # return redirect("main:layout")

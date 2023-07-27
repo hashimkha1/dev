@@ -29,6 +29,26 @@ class Investments(models.Model):
     def __str__(self):
         return f"Investment ID: {self.id}, Client: {self.client.username}"
 
+class Investment_rates(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=True)
+    created_date = models.DateField(auto_now_add=True,blank=True,null=True)
+    base_amount=models.PositiveIntegerField(blank=True,null=True)
+    initial_return = models.PositiveIntegerField(blank=True,null=True)
+    increment_rate =models.PositiveIntegerField(blank=True,null=True)
+    increment_threshold = models.PositiveIntegerField(blank=True,null=True)
+    decrease_threshold = models.PositiveIntegerField(blank=True,null=True)
+    duration = models.PositiveIntegerField(blank=True,null=True)
+    investment_rate = models.DecimalField(max_digits=10, decimal_places=2, default=0.33)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "Investment_rates"
+
+    def __str__(self):
+        return self.name
+
+
 class stockmarket(models.Model):
 	symbol = models.CharField(max_length=255)
 	action = models.CharField(max_length=255)

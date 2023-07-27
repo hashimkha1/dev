@@ -36,10 +36,12 @@
                   >
                     Select Category
                   </option>
-                  <option value="1">Applicant Or Job Applicant</option>
+                  <option value="1">Applicant</option>
                   <option value="2">Coda Staff Member</option>
-                  <option value="3">Client Or Customer Or Student</option>
-                  <option value="4">General User</option>
+                  <option value="3">Job Support</option>
+                  <option value="4">Student</option>
+                  <option value="5">Investor</option>
+                  <option value="6">General User</option>
                 </select>
               </div>
             </div>
@@ -68,19 +70,18 @@
                     Select Sub Category
                   </option>
                   <!--Values for Clients -->
-                  <option id="subcategoryoption1" value="1" selected="">
+                  <!-- <option id="subcategoryoption1" value="1" selected="">
                     Job Support
                   </option>
-                  <option id="subcategoryoption2" value="2">Students</option>
+                  <option id="subcategoryoption2" value="2">Students</option> -->
+
                   <!--Values for Employees/Staff -->
-                  <option id="subcategoryoption3" value="3" selected="">
-                    Full Time
-                  </option>
-                  <option id="subcategoryoption4" value="4">Contractual</option>
-                  <option id="subcategoryoption5" value="5">Agent</option>
-                  <option id="subcategoryoption6" value="6">DC48Kenya</option>
-                  <option id="subcategoryoption6" value="7">DYC</option>
-                  <option id="subcategoryoption7" value="8">Other</option>
+                  <option id="subcategoryoption1" value="1" selected="">Full Time</option>
+                  <option id="subcategoryoption2" value="2">Contractual</option>
+                  <option id="subcategoryoption3" value="3">Agent</option>
+                  <!-- <option id="subcategoryoption6" value="6">DC48Kenya</option>
+                  <option id="subcategoryoption6" value="7">DYC</option> -->
+                  <option id="subcategoryoption4" value="4">Other</option>
                 </select>
               </div>
             </div>
@@ -227,28 +228,38 @@
   }
 
   checkCategoryValidity();
-  // <option value="1">Applicant Or Job Applicant</option>
-  //                 <option value="2">Coda Staff Member</option>
-  //                 <option value="3">Client Or Customer Or Student</option>
-  //                 <option value="4">General User</option>
+
   function toggle_sub_selection(selected_value) {
-    if (selected_value == 3| selected_value == 4) {
+    if (selected_value == 3| selected_value == 4|selected_value == 6) {
       //If the Value seclected is Client
       document.getElementById("id_sub_category").style.display = "block";
       document.getElementById("id_sub_category").disabled = false;
       document.getElementById("resume-field").style.display = "none";
       document.getElementById("sub_selection").style.display = "";
+      //Hide Full_time,Contractual,Agent
+      hideSubCategoryOption(1);
+      hideSubCategoryOption(2);
       hideSubCategoryOption(3);
-      hideSubCategoryOption(4);
-      hideSubCategoryOption(5);
-      // hideSubCategoryOption(6);
+      //Show Other and No Selection
+      selectSubCategoryOption(0);
+      showSubCategoryOption(4);
+    } 
+
+    else if (selected_value == 2 )  {
+      //If the Value seclected is staff
+      document.getElementById("id_sub_category").style.display = "block";
+      document.getElementById("id_sub_category").disabled = false;
+      document.getElementById("resume-field").style.display = "none";
+      document.getElementById("sub_selection").style.display = "";
+      // hideSubCategoryOption(1);
+      // hideSubCategoryOption(2);
+      showSubCategoryOption(0);
       showSubCategoryOption(1);
       showSubCategoryOption(2);
-      showSubCategoryOption(6);
-      showSubCategoryOption(7);
-      selectSubCategoryOption(0);
+      showSubCategoryOption(3);
+      showSubCategoryOption(4);
     } 
-    else if (selected_value == 2 )  {
+    else if (selected_value == 5 )  {
       //If the Value seclected is staff
       document.getElementById("id_sub_category").style.display = "block";
       document.getElementById("id_sub_category").disabled = false;
@@ -256,11 +267,9 @@
       document.getElementById("sub_selection").style.display = "";
       hideSubCategoryOption(1);
       hideSubCategoryOption(2);
-      showSubCategoryOption(3);
+      hideSubCategoryOption(3);
+      showSubCategoryOption(0);
       showSubCategoryOption(4);
-      showSubCategoryOption(5);
-      // showSubCategoryOption(6);
-      selectSubCategoryOption(0);
     } 
     else {
       document.getElementById("resume-field").style.display = "block";

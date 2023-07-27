@@ -10,11 +10,19 @@
                   <hr/>
                   <i><h6>{{user.first_name|upper }}</h6></i>
                   <hr/>
-                      <p>
-                        <a href="#" class="btn btn-secondary btn-sm"
-                          >Refresh
-                        </a>
-                     </p>
+                  {% if request.user.is_superuser %}
+                  <p>
+                    <a href="{% url 'investing:newinvestmentrate'%}" class="btn btn-secondary btn-sm"
+                      >Adjust Rate
+                    </a>
+                 </p>
+                 {% else %}
+                 <p>
+                  <a href="#" class="btn btn-secondary btn-sm"
+                    >Rate
+                  </a>
+               </p>
+                  {%endif %}
                 </div>
               </div>
             </div>
@@ -23,21 +31,34 @@
                 <div class="card-body">
                   <h5><b>INVESTMENT PORTAL</b></h5>
                   <hr/>
+
                   <div class="row text-center">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Investment</br> <i>{{amount}}</i></a>
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Amount</br> <i>{{amount}}</i></a>
+                  </div>
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Protected Capital</br> <i>{{protected_capital}}</i></a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Invested Amount</br> <i>{{amount_invested}}</i></a>
+                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Invested</br> <i>{{amount_invested}}</i></a>
+                  </div>
+                </div>
+                
+                  <hr/>
+                  <div class="row text-center">
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Positions</br> <i>{{number_positions}}</i></a>
                   </div>
                   <div class="col-md-4">
                     <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">
-                      Returns (MR)<br>
+                      BI-Weekly Returns<br>
                       <small style="font-size: 80%;">${{returns}}</small>
                     </a>
                   </div>
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Duration</br> <i>{{minimum_duration}} months</i></a>
+                  </div>
                 </div>
-                  <hr/>
                   </b></i>
                 </div>
               </div>
@@ -86,7 +107,7 @@
                 <!-- <td>{{client.rate_return}}</td>
                 <td>{{client.returns}}</td> -->
                 <!-- <td>{{client.is_active}}</td> -->
-                <!-- <td>{{client.is_active}}</td> -->
+                <td>edit</td>
               </tr>
             {% endfor %}
           </tbody>

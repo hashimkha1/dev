@@ -1,18 +1,19 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
-from django.db.models import Q
+import math
+from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models import F
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
 from datetime import date,datetime,time,timezone
-from .utils import compute_pay,get_over_postions,computes_days_expiration
+from .utils import compute_pay,get_over_postions,investment_test,computes_days_expiration
 from .forms import (
     CoveredCallsForm,
     ShortPutForm,
     CreditSpreadForm,
-    InvestmentForm
+    InvestmentForm,
+    InvestmentRateForm
 )
 from .models import (
     stockmarket,
@@ -20,6 +21,7 @@ from .models import (
     covered_calls,
     credit_spread,
     Investments,
+    Investment_rates,
     Oversold
 )
 from django.db.models import Q
@@ -28,7 +30,6 @@ from getdata.utils import (
     main_shortput,
 )
 from main.utils import path_values
-
 
 
 
@@ -50,11 +51,22 @@ def newinvestment(request):
         form = InvestmentForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
-            # config.user = request.user
             instance.save()
             return redirect('investing:investments') 
     else:
         form = InvestmentForm()
+    return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+@login_required
+def newinvestmentrate(request):
+    if request.method == 'POST':
+        form = InvestmentRateForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.save()
+            return redirect('investing:investments') 
+    else:
+        form = InvestmentRateForm()
     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
 
 
@@ -79,22 +91,53 @@ def investments(request):
     }
     return render(request, 'investing/clients_investments.html',context)
 
+
 def user_investments(request, username=None, *args, **kwargs):
     user = get_object_or_404(CustomerUser, username=username)
-    print("username=====>", user)
     investments = Investments.objects.filter(client=user)
-    latest_investment = investments.latest('investment_date')
-    amount = float(latest_investment.amount)
-    returns = compute_pay(amount)
-    print(amount, returns)
+    investment_test()
+    # Check if any investments exist for the user
+    if investments.exists():
+        latest_investment_rate = Investment_rates.objects.aggregate(latest_created_date=Max('created_date'))
+        latest_created_date = latest_investment_rate['latest_created_date']
+        latest_investment_rates = Investment_rates.objects.filter(created_date=latest_created_date).first()
+        minimum_amount = latest_investment_rates.base_amount
+        base_return = latest_investment_rates.initial_return
+        inc_rate = latest_investment_rates.increment_rate
+        increment_threshold_amt = latest_investment_rates.increment_threshold
+        decrease_threshold_amt = latest_investment_rates.decrease_threshold
+        rate_investment = latest_investment_rates.investment_rate
+        minimum_duration = latest_investment_rates.duration
+        total_amt=0
+        for amt  in investments:
+            total_amt=total_amt+amt.amount
+            print(total_amt)
+        amount_invested=float(total_amt)*float(rate_investment)
+        total_amount = float(total_amt)
+        amount = float(amount_invested)
+        protected_capital=total_amount-amount
+        number_positions = math.floor(amount / 1000)
+        returns = compute_pay(amount,minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
+
+    else:
+        # Set default values for amount and returns or display an appropriate message
+        amount_invested=0.0
+        amount = 0.0
+        returns = 0.0
+        print("No investments found for the user.")
+
     context = {
         "investments": investments,
-        "latest_investment": latest_investment,
+        # "latest_investment": latest_investment if investments.exists() else None,
         "title": "training",
+        "amount": total_amount,
+        "protected_capital": protected_capital,
+        "number_positions": number_positions,
+        "amount_invested": amount_invested,
+        "minimum_duration": minimum_duration,
         "returns": returns
     }
     return render(request, 'investing/clients_investments.html', context)
-
 
 def options_play_shortput(request):
     # Call the main_shortput function to retrieve the data

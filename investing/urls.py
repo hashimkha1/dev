@@ -8,6 +8,7 @@ urlpatterns = [
     path('covered/', views.coveredcalls, name='covered'),
     path('training/', views.training, name='training'),
     path('newinvestment/', views.newinvestment, name='newinvestment'),
+    path('newinvestmentrate/', views.newinvestmentrate, name='newinvestmentrate'),
     path('investments/', views.investments, name='investments'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
