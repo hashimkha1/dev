@@ -1,11 +1,13 @@
 from django import forms
-from .models import Investments,Investment_rates,stockmarket,ShortPut,covered_calls,credit_spread,cryptomarket
+from .models import Investments,Investment_rates,Investor_Information,stockmarket,ShortPut,covered_calls,credit_spread,cryptomarket
 from .models import ShortPut
 
 class InvestmentForm(forms.ModelForm):
     class Meta:
-        model = Investments
-        fields = "__all__"
+        model =Investments
+        fields = ['amount','description']
+        # fields = "__all__"
+
 
 class InvestmentRateForm(forms.ModelForm):
     class Meta:

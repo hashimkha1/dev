@@ -6,7 +6,8 @@ from .models import (
 	ShortPut,
 	covered_calls,
     Investments,
-    Investment_rates
+    Investment_rates,
+    Investor_Information
 )
 
 # Register your models here.
@@ -17,4 +18,5 @@ admin.site.register(ShortPut)
 admin.site.register(covered_calls)
 admin.site.register(Investments)
 admin.site.register(Investment_rates)
+admin.site.register(Investor_Information)
 

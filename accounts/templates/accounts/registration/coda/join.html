@@ -74,14 +74,13 @@
                     Job Support
                   </option>
                   <option id="subcategoryoption2" value="2">Students</option> -->
-
                   <!--Values for Employees/Staff -->
                   <option id="subcategoryoption1" value="1" selected="">Full Time</option>
                   <option id="subcategoryoption2" value="2">Contractual</option>
                   <option id="subcategoryoption3" value="3">Agent</option>
-                  <!-- <option id="subcategoryoption6" value="6">DC48Kenya</option>
-                  <option id="subcategoryoption6" value="7">DYC</option> -->
-                  <option id="subcategoryoption4" value="4">Other</option>
+                  <option id="subcategoryoption4" value="4">Short Term</option>
+                  <option id="subcategoryoption5" value="5">Long Term</option>
+                  <option id="subcategoryoption6" value="6">Other</option>
                 </select>
               </div>
             </div>
@@ -240,9 +239,11 @@
       hideSubCategoryOption(1);
       hideSubCategoryOption(2);
       hideSubCategoryOption(3);
+      hideSubCategoryOption(4);
+      hideSubCategoryOption(5);
       //Show Other and No Selection
       selectSubCategoryOption(0);
-      showSubCategoryOption(4);
+      showSubCategoryOption(6);
     } 
 
     else if (selected_value == 2 )  {
@@ -251,25 +252,30 @@
       document.getElementById("id_sub_category").disabled = false;
       document.getElementById("resume-field").style.display = "none";
       document.getElementById("sub_selection").style.display = "";
-      // hideSubCategoryOption(1);
-      // hideSubCategoryOption(2);
+      hideSubCategoryOption(4);
+      hideSubCategoryOption(5);
+
       showSubCategoryOption(0);
       showSubCategoryOption(1);
       showSubCategoryOption(2);
       showSubCategoryOption(3);
-      showSubCategoryOption(4);
+      showSubCategoryOption(6);
     } 
     else if (selected_value == 5 )  {
-      //If the Value seclected is staff
+      //If the Value seclected is investor
       document.getElementById("id_sub_category").style.display = "block";
       document.getElementById("id_sub_category").disabled = false;
       document.getElementById("resume-field").style.display = "none";
       document.getElementById("sub_selection").style.display = "";
+
       hideSubCategoryOption(1);
       hideSubCategoryOption(2);
       hideSubCategoryOption(3);
+
       showSubCategoryOption(0);
       showSubCategoryOption(4);
+      showSubCategoryOption(5);
+      showSubCategoryOption(6);
     } 
     else {
       document.getElementById("resume-field").style.display = "block";

@@ -1,4 +1,5 @@
 import psycopg2
+import math
 from django.urls import reverse
 from django.db import connection
 from django.db.models import Q
@@ -32,7 +33,47 @@ def compute_pay(amount,minimum_amount= 2000, base_return=10, inc_rate=7, increme
         decrease_in_increments = remaining_amount // increment_threshold_amt
         new_increment_rate = max(inc_rate - decrease_in_increments, 3)
         return base_return + ((decrease_threshold_amt - minimum_amount) // increment_threshold_amt) * inc_rate + (remaining_amount // increment_threshold_amt) * (new_increment_rate + inc_rate) // 2
-    
+
+def get_user_investment(investments, latest_investment_rates):
+    if investments.exists():
+        minimum_amount = latest_investment_rates.base_amount
+        base_return = latest_investment_rates.initial_return
+        inc_rate = latest_investment_rates.increment_rate
+        increment_threshold_amt = latest_investment_rates.increment_threshold
+        decrease_threshold_amt = latest_investment_rates.decrease_threshold
+        rate_investment = latest_investment_rates.investment_rate
+        minimum_duration = latest_investment_rates.duration
+        total_amt = 0
+
+        for amt in investments:
+            total_amt += amt.amount
+
+        amount_invested = float(total_amt) * float(rate_investment)
+        total_amount = float(total_amt)
+        protected_capital = total_amount - amount_invested
+        number = (amount_invested / 1000)
+        fractional_part = number - math.floor(number)
+
+        if fractional_part >= 0.5:
+            number_positions = math.ceil(number)
+        else:
+            number_positions = math.floor(number)
+
+        returns = compute_pay(amount_invested, minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
+
+    else:
+        # Set default values for amount and returns or display an appropriate message
+        total_amount = 0.0
+        protected_capital = 0.0
+        amount_invested = 0.0
+        number_positions = 0
+        minimum_duration = 0
+        print("No investments found for the user.")
+
+    print("Details====>", total_amount, protected_capital, amount_invested, returns, number_positions,minimum_duration)
+    return total_amount, protected_capital, amount_invested, returns, number_positions, minimum_duration
+
+
 def investment_test():
     # Test cases
     investment_amount_1 = 5000

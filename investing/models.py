@@ -26,8 +26,34 @@ class Investments(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
 
+
+
     def __str__(self):
         return f"Investment ID: {self.id}, Client: {self.client.username}"
+
+
+class Investor_Information(models.Model):
+	investor= models.ForeignKey(
+	    		   User,
+			       limit_choices_to={'is_active': True, 'is_client': True},
+			       on_delete=models.CASCADE
+				   )
+	total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+	protected_capital = models.DecimalField(max_digits=10, decimal_places=2)
+	amount_invested = models.DecimalField(max_digits=10, decimal_places=2)
+	duration = models.PositiveIntegerField(blank=True,null=True)
+	positions= models.PositiveIntegerField(blank=True,null=True)
+	bi_weekly_returns= models.DecimalField(max_digits=10, decimal_places=2)
+	payment_method= models.CharField(max_length=255,blank=True,null=True)
+	client_signature =models.CharField(max_length=255,blank=True,null=True)
+	company_rep= models.CharField(max_length=255,blank=True,null=True)
+	contract_date=models.DateField(auto_now_add=True,blank=True,null=True)
+
+	class Meta:
+		verbose_name_plural = "Investor_Information"
+
+	def __str__(self):
+		return self.payment_method
 
 class Investment_rates(models.Model):
     name = models.CharField(max_length=255,blank=True,null=True)

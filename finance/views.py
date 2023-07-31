@@ -34,7 +34,8 @@ from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,service_instances,service_plan_instances
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
-from investing.models import Investments
+from investing.models import Investments,Investment_rates,Investor_Information
+from investing.utils import compute_pay,get_over_postions,investment_test,computes_days_expiration,get_user_investment
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 
@@ -161,34 +162,96 @@ def contract_data_submission(request):
                   "message": message,
                 }
 		return render(request, "main/errors/generalerrors.html", context)
+	
+
+def contract_investment_submission(request):
+	(today,*_)=paytime()
+	try:
+		if request.method == "POST":
+			user_investor_data = request.POST.get('usr_data')
+			investment_contract = request.POST.get('investment_contract')
+			total_amount = float(request.POST.get('total_amount'))
+			protected_capital = float(request.POST.get('protected_capital'))
+			amount_invested = float(request.POST.get('amount_invested'))
+			contract_duration = request.POST.get('contract_duration')
+			number_positions = int(request.POST.get('number_positions'))
+			bi_weekly_returns = float(request.POST.get('bi_weekly_returns'))
+			investor_dict_data = QueryDict(user_investor_data)
+			username = investor_dict_data.get('username')
+			try:
+				investor=CustomerUser.objects.get(username=username)
+				ss= investor.id
+			except:
+				investor= request.user
+			payment_method = request.POST.get('payment_type')
+			client_signature =username
+			company_rep = "coda"
+
+			investor_data=Investor_Information(
+				total_amount=int(total_amount),
+				protected_capital=int(protected_capital),
+				amount_invested=amount_invested,
+				duration=int(contract_duration),
+				positions=int(number_positions),
+				bi_weekly_returns=int(bi_weekly_returns),
+				payment_method=payment_method,
+				client_signature=client_signature,
+				company_rep=company_rep,
+				investor_id=int(investor.id)
+				)
+			investor_data.save()
+			# new_payment_added = Investor_Information.objects.get(investor_id=investor.id)
+			# print("new_payment====>",new_payment_added)
+			# if new_payment_added:
+			# messages.success(request, f'Added New Contract For the {username}!')
+			return redirect('management:companyagenda')
+	except Exception as e:
+		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
+		context={
+                  "title": "CONTRACT", 
+                  "message": message,
+                }
+		return render(request, "main/errors/generalerrors.html", context)
 
 @login_required
 def mycontract(request, *args, **kwargs):
-    username = kwargs.get('username')
-    client_data = CustomerUser.objects.get(username=username)
+	username = kwargs.get('username')
+	client_data = CustomerUser.objects.get(username=username)
+    
+	if client_data.category == 5:
+		try:
+			investor_details = Investor_Information.objects.filter(investor_id=client_data.id).order_by('-contract_date').first()
+			contract_date = investor_details.contract_date.strftime("%d %B, %Y")
+			context = {
+				'client_data': client_data,
+				'contract_date': contract_date,
+				'investor_data': investor_details,
+			}
+			return render(request, 'management/contracts/my_investor_contract.html', context)
 
-    try:
-        payment_details = Payment_Information.objects.get(customer_id_id=client_data.id)
-        contract_date = payment_details.contract_submitted_date.strftime("%d %B, %Y")
-        context = {
-            'job_support_data': client_data,
-            'contract_date': contract_date,
-            'payment_data': payment_details,
-        }
-        if client_data.category == 3 or client_data.category == 4:
-            return render(request, 'management/contracts/my_supportcontract_form.html', context)
-        # elif client_data.category == 4:
-        #     return render(request, 'management/contracts/my_trainingcontract_form.html', context)
-        else:
-            raise Http404("Login/Wrong Page: Are You a Client?")
-	
-    except Payment_Information.DoesNotExist:
-        if client_data.category == 3:
-            return redirect('main:job_support')
-        elif client_data.category == 4:
-            return redirect('main:full_course')
-        else:
-            return redirect('main:bi_services')
+		except Investor_Information.DoesNotExist:
+			return redirect('investing:investments')
+	else:
+		try:
+			payment_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+			contract_date = payment_details.contract_submitted_date.strftime("%d %B, %Y")
+			context = {
+				'job_support_data': client_data,
+				'contract_date': contract_date,
+				'payment_data': payment_details,
+			}
+			if client_data.category == 3 or client_data.category == 4:
+				return render(request, 'management/contracts/my_supportcontract_form.html', context)
+			else:
+				raise Http404("Login/Wrong Page: Are You a Client?")
+		
+		except Payment_Information.DoesNotExist:
+			if client_data.category == 3:
+				return redirect('main:job_support')
+			elif client_data.category == 4:
+				return redirect('main:full_course')
+			else:
+				return redirect('main:bi_services')
 
 
 @login_required
@@ -200,23 +263,23 @@ def new_option_contract(request, *args, **kwargs):
     today = date.today()
     plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
     
-    plan = contract_charge = contract_duration = contract_period = None
+    # plan = contract_charge = contract_duration = contract_period = None
 
-    plan = Investments.objects.filter(client=user).first()
-    print("plan====>",plan)
-    if plan:
-        contract_charge = plan.amount
-        contract_duration = plan.duration
-        # contract_period = plan.contract_length
-        plan_id = plan.id
-    print("contract_charge======>",contract_charge)
+    investments = Investments.objects.filter(client=user)
+    latest_investment_rates = Investment_rates.objects.order_by('-created_date').first()
+    
+    (total_amount,protected_capital,amount_invested,
+     bi_weekly_returns,number_positions,minimum_duration
+     )=get_user_investment(investments,latest_investment_rates)
+    print("minimum_duration======>",minimum_duration)
     context = {
         'client_data': client_data,
-        'contract_data': plan,
-        'contract_charge': contract_charge,
-        'contract_duration': contract_duration,
-        'contract_period': contract_period,
-        # 'plan_id': plan_id,
+        'total_amount': total_amount,
+        'protected_capital': protected_capital,
+        'amount_invested': amount_invested,
+        'bi_weekly_returns': bi_weekly_returns,
+        'contract_duration': minimum_duration,
+        'number_positions': number_positions,
         'contract_date': today.strftime("%d %B, %Y")
     }
     return render(request, 'management/contracts/client_investment_contract.html', context)

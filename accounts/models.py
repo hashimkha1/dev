@@ -28,7 +28,9 @@ class CustomerUser(AbstractUser):
         Full_time = 1
         Contractual = 2
         Agent = 3
-        Other = 4
+        Short_Term = 4
+        Long_Term = 5
+        Other = 6
 
     class Score(models.IntegerChoices):
         Male = 1
