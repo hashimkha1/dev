@@ -116,55 +116,6 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
-# def user_investments(request, username=None, *args, **kwargs):
-#     user = get_object_or_404(CustomerUser, username=username)
-#     investments = Investments.objects.filter(client=user)
-#     # investment_test()
-#     # Check if any investments exist for the user
-#     if investments.exists():
-#         latest_investment_rate = Investment_rates.objects.aggregate(latest_created_date=Max('created_date'))
-#         latest_created_date = latest_investment_rate['latest_created_date']
-#         latest_investment_rates = Investment_rates.objects.filter(created_date=latest_created_date).first()
-#         minimum_amount = latest_investment_rates.base_amount
-#         base_return = latest_investment_rates.initial_return
-#         inc_rate = latest_investment_rates.increment_rate
-#         increment_threshold_amt = latest_investment_rates.increment_threshold
-#         decrease_threshold_amt = latest_investment_rates.decrease_threshold
-#         rate_investment = latest_investment_rates.investment_rate
-#         minimum_duration = latest_investment_rates.duration
-#         total_amt=0
-#         for amt  in investments:
-#             total_amt=total_amt+amt.amount
-#             print(total_amt)
-#         amount_invested=float(total_amt)*float(rate_investment)
-#         total_amount = float(total_amt)
-#         amount = float(amount_invested)
-#         protected_capital=total_amount-amount
-#         number_positions = math.floor(amount / 1000)
-#         returns = compute_pay(amount,minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
-
-#     else:
-#         # Set default values for amount and returns or display an appropriate message
-#         amount_invested=0.0
-#         protected_capital=0.0
-#         total_amount = 0.0
-#         returns = 0.0
-#         number_positions = 0
-#         minimum_duration = 0
-#         print("No investments found for the user.")
-
-#     context = {
-#         "investments": investments,
-#         # "latest_investment": latest_investment if investments.exists() else None,
-#         "title": "training",
-#         "amount": total_amount,
-#         "protected_capital": protected_capital,
-#         "number_positions": number_positions,
-#         "amount_invested": amount_invested,
-#         "minimum_duration": minimum_duration,
-#         "returns": returns
-#     }
-#     return render(request, 'investing/clients_investments.html', context)
 
 def options_play_shortput(request):
     # Call the main_shortput function to retrieve the data
@@ -211,6 +162,8 @@ def options_play_shortput(request):
     # return render (request, "main/snippets_templates/output_snippets/option_data.html", context)
     return redirect ('getdata:shortputdata')
 
+
+
 def optiondata(request):
     path_list,sub_title,pre_sub_title = path_values(request)
     # Get current datetime with UTC timezone
@@ -226,14 +179,18 @@ def optiondata(request):
         title = 'CREDIT SPREAD'
         stockdata = credit_spread.objects.all().filter(is_featured=True)
 
+    url_mapping = {
+    'shortputdata': 'investing:shortputupdate',
+    'credit_spread': 'investing:creditspreadupdate',
+    'covered_calls': 'investing:coveredupdate',
+    }
+    # url_name = url_mapping.get(pre_sub_title, 'investing:coveredupdate')
+    url_name = url_mapping[sub_title]
+
     def get_edit_url(row_id):
-        if pre_sub_title == 'shortputdata':
-            return reverse('investing:shortputupdate', args=[row_id])
-        elif pre_sub_title == 'credit_spread':
-                return reverse('investing:creditspreadupdate', args=[row_id])
-        else:
-            return reverse('investing:coveredupdate', args=[row_id])
-            
+        return reverse(url_name, args=[row_id])
+        
+
     filtered_stockdata = []
     days_to_expiration = 0
     for x in stockdata:
@@ -248,6 +205,7 @@ def optiondata(request):
         
         days_to_exp = expiry_date - date_today
         days_to_expiration = days_to_exp.days
+        x.edit_url = reverse(url_name, args=[x.id])
         if days_to_expiration > 7:
             filtered_stockdata.append(x)
 
@@ -258,10 +216,9 @@ def optiondata(request):
         "pre_sub_title": pre_sub_title,
         'title': title,
         "get_edit_url": get_edit_url,
+        "url_name": url_name,
     }
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
-
 
 
 class OptionList(ListView):

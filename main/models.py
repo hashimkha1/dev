@@ -56,7 +56,7 @@ class Pricing(models.Model):
         One_month = 1
         Two_months = 2
         Three_months = 3
-        open = 4
+        open = 12
     serial = models.PositiveIntegerField(null=True, blank=True)
     title = models.CharField(max_length=254)
     description = models.TextField(null=True, blank=True)

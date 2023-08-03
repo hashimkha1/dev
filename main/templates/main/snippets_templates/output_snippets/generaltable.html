@@ -6,14 +6,17 @@
         {{ row.symbol }}
         </a>
     </td>
-    <td>{{ row.action }}{{ row.strategy }}</td>
-    <td>{{ row.stock_price }}{{ row.price }}</td>
+    
     {% if subtitle == 'credit_spread' %} 
+        <td>{{ row.strategy }}</td>
+        <td>{{ row.price }}</td>
         <td>{{ row.type }}</td>
         <td>{{ row.sell_strike }}</td>
         <!-- <td>{{ row.buy_strike }}</td> -->
         <td>{{ row.premium }}</td>
     {% else %}
+        <td>{{ row.action }}</td>
+        <td>{{ row.stock_price }}</td>
         <td>{{ row.strike_price }}</td>
         <td>{{ row.raw_return }}</td>
         <td>{{ days_to_expiration }}</td>
@@ -31,11 +34,16 @@
         <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
     </td> -->
 
-    {% if pre_sub_title == 'shortputdata' %}
+    <!-- {% if pre_sub_title == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
     {% elif pre_sub_title == 'credit_spread' %}
         <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
     {% else %}
         <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
-    {% endif %}
+    {% endif %} -->
+    <td><a class="article-title" href="{{ row.edit_url }}">Edit</a></td>
+
+
+
+
 </tr>

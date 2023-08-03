@@ -293,7 +293,6 @@ def new_contract(request, *args, **kwargs):
     client_data = CustomerUser.objects.get(username=username)
     today = date.today()
     plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
-    
     plan = contract_charge = contract_duration = contract_period = None
     try:
         if pre_sub_title:
@@ -309,7 +308,6 @@ def new_contract(request, *args, **kwargs):
         service_title = service_instance.title
         service_title_uppercase = service_title.upper()
         service_description = service_instance.description
-        print(service_title_uppercase,service_title, service_description)
     else:
         print("No service found for the given pricing title.")
 	
@@ -319,7 +317,6 @@ def new_contract(request, *args, **kwargs):
         contract_duration = plan.duration
         contract_period = plan.contract_length
         plan_id = plan.id
-
     context = {
         'service_title': service_title,
         'service_title_uppercase': service_title_uppercase,
@@ -331,10 +328,11 @@ def new_contract(request, *args, **kwargs):
         'plan_id': plan_id,
         'contract_date': today.strftime("%d %B, %Y")
     }
-    if service_title_uppercase == 'INVESTING':
-        return render(request, 'management/contracts/client_investment_contract.html', context)
-    else:
-        return render(request, 'management/contracts/client_contract.html', context)
+    # if service_title_uppercase == 'INVESTING':
+    #     return render(request, 'management/contracts/client_investment_contract.html', context)
+    # 	return render(request, 'management/contracts/client_contract.html', context)
+    # else:
+    return render(request, 'management/contracts/client_contract.html', context)
 
 
 

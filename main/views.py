@@ -188,6 +188,15 @@ def service_plans(request, *args, **kwargs):
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
+
+    # services = []
+    # if category_slug:
+    #     url = f"{settings.SITEURL}/{category_slug}/"
+    #     services.append({'url': url})
+    # else:
+    #     redirect_url = reverse('finance:newcontract', args=[request.user])
+    #     services.append({'url': redirect_url})
+
     context = {}
     context = {
         "SITEURL": settings.SITEURL,
@@ -198,29 +207,29 @@ def service_plans(request, *args, **kwargs):
     return render(request, "main/services/service_plan.html", context)
 
 
-def service_plans(request, *args, **kwargs):
-    path_list, sub_title, pre_sub_title = path_values(request)
-    try:
-        if pre_sub_title:
-            service_shown = Service.objects.get(slug=pre_sub_title)
-        else:
-            return redirect('main:services')
-    except Service.DoesNotExist:
-        return redirect('main:services')
+# def service_plans(request, *args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     try:
+#         if pre_sub_title:
+#             service_shown = Service.objects.get(slug=pre_sub_title)
+#         else:
+#             return redirect('main:services')
+#     except Service.DoesNotExist:
+#         return redirect('main:services')
 
-    service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-    category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
-    category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
-    category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
-    plans = Pricing.objects.filter(category=category_id)
+#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+#     category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
+#     category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
+#     category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
+#     plans = Pricing.objects.filter(category=category_id)
 
-    context = {
-        "SITEURL": settings.SITEURL,
-        "title": category_name,
-        "subcatslug":category_slug,
-        "services": plans
-    }
-    return render(request, "main/services/service_plan.html", context)
+#     context = {
+#         "SITEURL": settings.SITEURL,
+#         "title": category_name,
+#         "subcatslug":category_slug,
+#         "services": plans
+#     }
+#     return render(request, "main/services/service_plan.html", context)
 
 
 
