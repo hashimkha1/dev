@@ -102,7 +102,7 @@ class cryptomarket(models.Model):
 
 class credit_spread(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
-    action = models.CharField(max_length=255,blank=True, null=True)
+    strategy = models.CharField(max_length=255,blank=True, null=True)
     type = models.CharField(max_length=255,blank=True, null=True)
     price = models.CharField(max_length=255,blank=True, null=True)
     sell_strike = models.CharField(max_length=255,blank=True, null=True)
