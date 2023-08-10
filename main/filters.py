@@ -72,3 +72,13 @@ class FoodFilter(django_filters.FilterSet):
         # fields='__all__'
         fields ={'supplier','item'}
     
+# ==================================INVESTING MODELS==================================================
+
+class ReturnsFilter(django_filters.FilterSet):
+    symbol = django_filters.CharFilter(label='Symbol', lookup_expr='icontains')
+    action = django_filters.CharFilter(label='Type', lookup_expr='icontains')
+    event = django_filters.CharFilter(label='Action', lookup_expr='icontains')
+
+    class Meta:
+        model = CustomerUser
+        fields = ['symbol', 'action', 'event']

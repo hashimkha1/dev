@@ -273,7 +273,6 @@ def login_view(request):
 # ================================USERS SECTION================================
 def users(request):
     users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
-    queryset = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
     userfilters=UserFilter(request.GET,queryset=users)
 
     # Use the Paginator to paginate the queryset

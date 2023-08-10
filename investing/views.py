@@ -10,6 +10,9 @@ from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,get_over_postions,investment_test,
                     computes_days_expiration,get_user_investment,
                     year_to_date)
+
+from main.filters import ReturnsFilter
+
 from .forms import (
     CoveredCallsForm,
     ShortPutForm,
@@ -336,9 +339,10 @@ def options_returns(request):
     ytd_bi_weekly=int(ytd_days/14)
     ytd_month=int(ytd_days/30)
 
+
     stockdata=Options_Returns.objects.all()
     washdata=Options_Returns.objects.filter(event='Wash')
-
+    ReturnsFilters=ReturnsFilter(request.GET,queryset=stockdata)
     total_returns_on_options=0
     total_returns_on_stocks=0
     transactions=0
@@ -363,7 +367,8 @@ def options_returns(request):
         wash_amount += amt.ST_GL
     context = { 
         'title': "CODA INVESTMENT PORTAL",
-        "data": stockdata,
+        # "data": stockdata,
+        "data": ReturnsFilters,
         "days_to_expiration": days_to_expiration,
         "total_proceeds": total_proceeds,
         "transactions": transactions,
