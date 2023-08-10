@@ -93,6 +93,11 @@ def investment_test():
 
     return return_amount_1,return_amount_2,return_amount_3,return_amount_4
 
+def year_to_date():
+    current_date = datetime.now()
+    start_of_year = datetime(current_date.year, 1, 1)  # January 1 of the current year
+    ytd_duration = (current_date - start_of_year).days
+    return ytd_duration
 
 def computes_days_expiration(stockdata):
     date_today = datetime.now(timezone.utc)

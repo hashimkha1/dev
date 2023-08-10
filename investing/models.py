@@ -123,7 +123,6 @@ class credit_spread(models.Model):
     # def __str__(self):
     #     return self.symbol
 
-
 class ShortPut(models.Model):
     symbol = models.CharField(max_length=255, blank=True, null=True)
     action = models.CharField(max_length=255, blank=True, null=True)
@@ -191,6 +190,47 @@ class Oversold(models.Model):
 
     class Meta:
         verbose_name_plural = "ShortPut"
+
+    def __str__(self):
+        return self.symbol
+    
+
+class Options_Returns(models.Model):
+    symbol=models.CharField(max_length=255,blank=True, null=True)
+    expiration_date=models.CharField(max_length=255,blank=True, null=True)
+    action=models.CharField(max_length=255,blank=True, null=True)
+    event=models.CharField(max_length=255,blank=True, null=True)
+    qty=models.CharField(max_length=255,blank=True, null=True)
+    strike_price=models.CharField(max_length=255,blank=True, null=True)
+    open_date=models.CharField(max_length=255,blank=True, null=True)
+    closed_date=models.CharField(max_length=255,blank=True, null=True)
+    cost=models.CharField(max_length=255,blank=True, null=True)
+    LT_GL=models.CharField(max_length=255,blank=True, null=True)
+    ST_GL=models.CharField(max_length=255,blank=True, null=True)
+    proceeds=models.CharField(max_length=255,blank=True, null=True)
+    covered=models.CharField(max_length=255,blank=True, null=True)
+    security_number=models.CharField(max_length=255,blank=True, null=True)
+    cbm=models.CharField(max_length=255,blank=True, null=True)
+    other=models.CharField(max_length=255,blank=True, null=True)
+    description=models.CharField(max_length=255,blank=True, null=True)
+
+    # is_active = models.BooleanField(default=True)
+    # is_featured = models.BooleanField(default=True)
+
+    @property
+    def wash_days(self):
+         date_today = datetime.now(timezone.utc)
+         date_today_date = date_today.date()
+         wash_days = (date_today_date - self.closed_date).days
+         return wash_days
+    
+    @property
+    def wait_time(self):
+         wait_time=(self.closed_date-self.open_date).days
+         return wait_time
+
+    class Meta:
+        verbose_name_plural = "returns"
 
     def __str__(self):
         return self.symbol

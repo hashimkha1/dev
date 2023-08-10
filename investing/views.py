@@ -7,7 +7,9 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
 from datetime import date,datetime,time,timezone
-from .utils import compute_pay,get_over_postions,investment_test,computes_days_expiration,get_user_investment
+from .utils import (compute_pay,get_over_postions,investment_test,
+                    computes_days_expiration,get_user_investment,
+                    year_to_date)
 from .forms import (
     CoveredCallsForm,
     ShortPutForm,
@@ -22,7 +24,8 @@ from .models import (
     credit_spread,
     Investments,
     Investment_rates,
-    Oversold
+    Oversold,
+    Options_Returns
 )
 from django.db.models import Q
 from accounts.models import CustomerUser
@@ -168,7 +171,10 @@ def optiondata(request):
     path_list,sub_title,pre_sub_title = path_values(request)
     # Get current datetime with UTC timezone
     date_today = datetime.now(timezone.utc)
-   
+    # date,symbol=Options_Returns.objects.all().filter(is_featured=True)
+    # period=date-date_today
+    # if period< 30 days:
+    #     # rest of the logic
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
@@ -189,25 +195,27 @@ def optiondata(request):
 
     def get_edit_url(row_id):
         return reverse(url_name, args=[row_id])
-        
+    
+    for x in stockdata:
+        url= reverse(url_name, args=[x.id])
 
     filtered_stockdata = []
     days_to_expiration = 0
-    for x in stockdata:
-        if isinstance(x.expiry, str):
-            expiry_str = x.expiry
-            expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
-            expiry_date = expirydate.astimezone(timezone.utc)
-        elif isinstance(x.expiry, datetime):
-            expiry_date = x.expiry.astimezone(timezone.utc)
-        else:
-            continue
+    # for x in stockdata:
+    #     if isinstance(x.expiry, str):
+    #         expiry_str = x.expiry
+    #         expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
+    #         expiry_date = expirydate.astimezone(timezone.utc)
+    #     elif isinstance(x.expiry, datetime):
+    #         expiry_date = x.expiry.astimezone(timezone.utc)
+    #     else:
+    #         continue
         
-        days_to_exp = expiry_date - date_today
-        days_to_expiration = days_to_exp.days
-        x.edit_url = reverse(url_name, args=[x.id])
-        if days_to_expiration > 7:
-            filtered_stockdata.append(x)
+    #     days_to_exp = expiry_date - date_today
+    #     days_to_expiration = days_to_exp.days
+    filtered_stockdata,expiry_date,days_to_expiration,url=computes_days_expiration(stockdata)
+
+
 
     context = { 
         "data": filtered_stockdata,
@@ -308,3 +316,63 @@ class oversold_update(UpdateView):
         if self.request.user.is_superuser:
             return True
         return False
+    
+
+
+from django import template
+
+register = template.Library()
+
+@register.filter
+def subtract_dates(date1, date2):
+    return date1 - date2
+
+def options_returns(request):
+    date_today = datetime.now(timezone.utc)
+    ytd_days = year_to_date()
+    ytd_weeks=int(ytd_days/7)
+    ytd_bi_weekly=int(ytd_days/14)
+    ytd_month=int(ytd_days/30)
+
+    stockdata=Options_Returns.objects.all()
+    washdata=Options_Returns.objects.filter(event='Wash')
+
+    total_returns_on_options=0
+    total_returns_on_stocks=0
+    transactions=0
+    total_proceeds=0
+    wash_amount=0
+    days_to_expiration=0
+    for amt in stockdata:
+        total_proceeds += amt.proceeds
+        transactions += amt.qty
+        total_returns_on_options += amt.ST_GL 
+        total_returns_on_stocks += amt.LT_GL
+
+    total_proceeds = float(total_proceeds)
+    total_returns_on_options = float(total_returns_on_options)
+    total_returns_on_stocks = float(total_returns_on_stocks)
+    net_returns=total_returns_on_options + total_returns_on_stocks
+    monthly_returns=net_returns/ytd_month
+    ytd_bi_weekly_returns=net_returns/ytd_bi_weekly
+    weekly_returns=net_returns/ytd_weeks
+
+    for amt in washdata:
+        wash_amount += amt.ST_GL
+    context = { 
+        'title': "CODA INVESTMENT PORTAL",
+        "data": stockdata,
+        "days_to_expiration": days_to_expiration,
+        "total_proceeds": total_proceeds,
+        "transactions": transactions,
+        "options_amount": total_returns_on_options,
+        "stocks_amount": total_returns_on_stocks,
+        "wash_amount": wash_amount,
+        "net_returns": net_returns,
+        "monthly_returns": monthly_returns,
+        "bi_weekly_returns": ytd_bi_weekly_returns,
+        "weekly_returns": weekly_returns,
+        "duration": ytd_month,
+
+    }
+    return render(request, "investing/company_returns.html", context)
