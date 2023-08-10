@@ -25,7 +25,8 @@ from .models import (
     Investments,
     Investment_rates,
     Oversold,
-    Options_Returns
+    Options_Returns,
+    Cost_Basis
 )
 from django.db.models import Q
 from accounts.models import CustomerUser
@@ -74,7 +75,7 @@ def newinvestmentrate(request):
         form = InvestmentRateForm()
     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
 
-
+@login_required
 def investments(request):
     investments=Investments.objects.all()
     latest_investment = Investments.objects.latest('investment_date')
@@ -96,7 +97,7 @@ def investments(request):
     }
     return render(request, 'investing/clients_investments.html',context)
 
-
+@login_required
 def user_investments(request, username=None, *args, **kwargs):
     user = get_object_or_404(CustomerUser, username=username)
     investments = Investments.objects.filter(client=user)
@@ -284,7 +285,7 @@ class credit_spread_update(UpdateView):
             return True
         return False
 
-
+@login_required
 def oversoldpositions(request):
     path_list,sub_title,pre_sub_title = path_values(request)
     # Get current datetime with UTC timezone
@@ -327,6 +328,7 @@ register = template.Library()
 def subtract_dates(date1, date2):
     return date1 - date2
 
+@login_required
 def options_returns(request):
     date_today = datetime.now(timezone.utc)
     ytd_days = year_to_date()
@@ -376,3 +378,21 @@ def options_returns(request):
 
     }
     return render(request, "investing/company_returns.html", context)
+
+@login_required
+def cost_basis(request):
+    date_today = datetime.now(timezone.utc)
+    ytd_days = year_to_date()
+    ytd_weeks=int(ytd_days/7)
+    ytd_bi_weekly=int(ytd_days/14)
+    ytd_month=int(ytd_days/30)
+
+    stockdata=Cost_Basis.objects.all()
+
+    context = { 
+        'title': "COST BASIS ANALYSIS",
+        "data": stockdata,
+        "duration": ytd_month,
+
+    }
+    return render(request, "investing/cost_basis.html", context)

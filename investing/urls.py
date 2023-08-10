@@ -11,6 +11,7 @@ urlpatterns = [
     path('newinvestmentrate/', views.newinvestmentrate, name='newinvestmentrate'),
     path('investments/', views.investments, name='investments'),
     path('companyreturns/', views.options_returns, name='companyreturns'),
+    path('costbasis/', views.cost_basis, name='costbasis'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('covered_calls/', views.optiondata, name='covered_calls'),

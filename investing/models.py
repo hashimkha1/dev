@@ -234,3 +234,25 @@ class Options_Returns(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+class Cost_Basis(models.Model):
+    symbol=models.CharField(max_length=255,blank=True, null=True)
+    expiration_date=models.CharField(max_length=255,blank=True, null=True)
+    action=models.CharField(max_length=255,blank=True, null=True)
+    # event=models.CharField(max_length=255,blank=True, null=True)
+    qty=models.CharField(max_length=255,blank=True, null=True)
+    strike_price=models.CharField(max_length=255,blank=True, null=True)
+    open_date=models.CharField(max_length=255,blank=True, null=True)
+    cost=models.CharField(max_length=255,blank=True, null=True)
+    covered=models.CharField(max_length=255,blank=True, null=True)
+    security_number=models.CharField(max_length=255,blank=True, null=True)
+    description=models.CharField(max_length=255,blank=True, null=True)
+
+    # is_active = models.BooleanField(default=True)
+    # is_featured = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name_plural = "cost_basis"
+
+    def __str__(self):
+        return self.symbol
