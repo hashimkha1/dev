@@ -31,10 +31,10 @@ urlpatterns = [
     path('posts/', views.PostListView.as_view(), name='success'),
     path('post/new/', views.newpost, name='post-create'),
     # path('post/new/', PostCreateView.as_view(), name='post-create'),
-    path('post/<str:slug>/', views.PostDetailSlugView.as_view(), name='post-detail'),
-    # path('post/<int:pk>/', PostDetailView.as_view(), name='post-detail'),
-    # path('post/<int:pk>/update/', PostUpdateView.as_view(), name='post-update'),
-    # path('post/<int:pk>/delete/', PostDeleteView.as_view(), name='post-delete'),
+    # path('post/<str:slug>/', views.PostDetailSlugView.as_view(), name='post-detail'),
+    path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
+    path('post/<int:pk>/update/', views.PostUpdateView.as_view(template_name='main/snippets_templates/generalform.html'), name='post-update'),
+    path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
     #==============DEPARTMENTS==============================================
     #==============Clint Available Time==============================================
     path('add_availability/', views.add_availability, name='add_availability'),

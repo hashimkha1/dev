@@ -55,22 +55,23 @@ def buildmodel(question):
     openai.api_key = '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'
 
     # openai.api_key = os.environ.get('OPENAI_API_KEY')
-    print(openai.api_key)
+    # print(openai.api_key)
 
     #Building engine
-    request = openai.Completion.create(
-        model="text-davinci-001",
-        prompt=question,
-        temperature=0.4,
-        max_tokens=500,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
-    )
-
-    res = request["choices"][0]
-    print(res['text'])
-    result=res['text']
+    try:
+        response = openai.Completion.create(
+            model="text-davinci-001",
+            prompt=question,
+            temperature=0.4,
+            max_tokens=500,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        res = response["choices"][0]
+        result=res['text']
+    except:
+        result = None
     return result
 
 def countdown_in_month():
@@ -230,6 +231,20 @@ TaskInfos = [
         "Description": "Measuring,assessing Time sensitivity.",
         "Duration": "7 Days",
         "Lead": "Scrum Master",
+    },
+]
+reviews = [
+    {
+        "topic": "data analyst",
+        "description": "My data analyst coach was truly exceptional, surpassing my expectations in every aspect. Their expertise and dedication to guiding me through the complexities of data analysis were evident from the very beginning. They possessed an in-depth understanding of various analytical techniques, tools, and methodologies, which they skillfully imparted to me. Their teaching style was both informative and engaging, breaking down intricate concepts into easily digestible segments. Through their patient explanations and real-world examples, I gained not only theoretical knowledge but also practical insights into the field of data analysis.",
+    },
+    {
+        "topic": "data analyst",
+        "description": "What truly set my data analyst coach apart was their unwavering commitment to my learning journey. They took a personalized approach, tailoring the coaching sessions to my pace of learning and adapting to my specific learning preferences. This level of individualized attention made me feel valued as a student and boosted my confidence in tackling challenging topics. Beyond the technical aspects, my coach was a great motivator. They consistently encouraged me to explore beyond the curriculum, promoting critical thinking and independent problem-solving. Their mentorship extended beyond the coaching sessions – they were always approachable, ready to answer my questions, and provide guidance whenever I faced hurdles.",
+    },
+    {
+        "topic": "data analyst",
+        "description": "Reflecting on my experience with my data analyst coach, I can confidently say that their impact on my professional growth has been profound. Their guidance not only equipped me with the skills necessary for effective data analysis but also instilled in me a deeper appreciation for the power of data-driven decision-making. Their influence transcended the role of a coach; they became a role model. Their passion for the subject was infectious, inspiring me to push my boundaries and strive for excellence. As I continue to advance in my career as a data analyst, I carry forward the invaluable lessons and insights they imparted. I am truly grateful for the opportunity to have been mentored by such an outstanding data analyst coach.",
     },
 ]
 

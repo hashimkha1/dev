@@ -2,6 +2,7 @@ import requests
 import json
 import datetime
 import time
+import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
 from django.db.models import Q
@@ -11,7 +12,7 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,
-                    client_categories,service_instances,service_plan_instances
+                    client_categories,service_instances,service_plan_instances,reviews
 )
 from .models import Testimonials
 from coda_project import settings
@@ -63,6 +64,12 @@ def data_policy(request):
 #===============Processing Images from Database==================
 
 def layout(request):
+    count_to_class = {
+        2: "col-md-6",
+        3: "col-md-4",
+        4: "col-md-3"
+    }
+    
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
     latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
@@ -76,18 +83,20 @@ def layout(request):
             latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
             testimonials.append(latest_post)
 
-    for post in testimonials:
-        print("title",post.title)
+    number_of_testimonials = len(testimonials)
+    selected_class = count_to_class.get(number_of_testimonials, "default-class")
+
     services = Service.objects.filter(is_active=True).order_by('serial')
-    # services = Service.objects.all()
     context = {
         "images": images,
         "image_names": image_names,
         "services": services,
         "posts": testimonials,
         "title": "layout",
+         "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
+
 
 # =====================SERVICES  VIEWS=======================================
 class ServiceCreateView(LoginRequiredMixin, CreateView):
@@ -207,33 +216,6 @@ def service_plans(request, *args, **kwargs):
     return render(request, "main/services/service_plan.html", context)
 
 
-# def service_plans(request, *args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     try:
-#         if pre_sub_title:
-#             service_shown = Service.objects.get(slug=pre_sub_title)
-#         else:
-#             return redirect('main:services')
-#     except Service.DoesNotExist:
-#         return redirect('main:services')
-
-#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-#     category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
-#     category_name = next((x.name for x in service_categories if sub_title == x.slug), None)
-#     category_id = next((x.id for x in service_categories if sub_title == x.slug), None)
-#     plans = Pricing.objects.filter(category=category_id)
-
-#     context = {
-#         "SITEURL": settings.SITEURL,
-#         "title": category_name,
-#         "subcatslug":category_slug,
-#         "services": plans
-#     }
-#     return render(request, "main/services/service_plan.html", context)
-
-
-
-
 @login_required
 def job_market(request):
     return render(request, "data/training/job_market.html")
@@ -250,26 +232,35 @@ def newpost(request):
     else:
         form = PostForm()
         quest = "write 3 full paragraphs each on how good my data analyst coach was" # pick a question bunch of questions
+        result = buildmodel(question=quest)
 
-        response = buildmodel(question=quest)
+        if result is None:
+            selected_review = random.choice(reviews)
+            selected_description = selected_review["description"]
+            response=selected_description
+        else:
+            response=result
+        # form.instance.content = response
         context={
             "response" : response,
             "form": form
         }
-        # form.instance.description = buildmodel(question=quest)
-        print("response",response)
     return render(request, "main/testimonials/newpost.html", context)
 
 class PostListView(ListView):
-    model=Testimonials
-    template_name='main/testimonials/success.html'
-    context_object_name='posts'
-    ordering=['-date_posted']
+    model = Testimonials
+    template_name = 'main/testimonials/reviews.html'
+    context_object_name = 'posts'
+    ordering = ['-date_posted']
+    paginate_by = 2  # This will ensure only 3 posts are retrieved
 
+    def get_queryset(self):
+        return super().get_queryset()[:2]
+    
 class PostDetailView(DetailView):
     model=Testimonials
+    template_name='main/testimonials/post_detail.html'
     ordering=['-date_posted']
-
 
 class PostDetailSlugView(DetailView):
     queryset = Testimonials.objects.all()
@@ -294,19 +285,23 @@ class PostDetailSlugView(DetailView):
         except:
             raise Http404("Uhhmmm ")
         return instance
+    
 
 
 class PostUpdateView(LoginRequiredMixin,UserPassesTestMixin,UpdateView):
     model=Testimonials
-    fields=['title','content']
+    fields=['writer','title','content']
 
     def form_valid(self,form):
-        form.instance.author=self.request.user
+        # form.instance.writer=self.request.user
         return super().form_valid(form)
-
+    
+    def get_success_url(self):
+        return reverse("main:success")
+    
     def test_func(self):
         post = self.get_object()
-        if self.request.user == post.author:
+        if self.request.user.is_superuser or self.request.user == post.writer:
             return True
         return False
 

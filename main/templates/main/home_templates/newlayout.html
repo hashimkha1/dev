@@ -91,7 +91,27 @@
       <div class="owl-carousel">
       <div class="row text-center commit"> 
         {% for post in posts %}
-        <div class="col-md-6">
+            <div class="{{ selected_class }}">
+              <div class="carousel-card">
+                <div class="img-div p-3">
+                  <span>
+                    <img src="{{googledriveurl}}={{post.writer.profile.image2.image_url}}" class="team-img" width="110px" height="110px" style="border-radius: 50%;"/>
+                  </span>
+                </div>
+                  <h3> 
+                    <a href="{% url 'main:post-detail' post.id %}">
+                      {{ post.writer.first_name }},{{post.writer.last_name}}
+                    </a>
+                  </h3>
+                  <h3>{{post.title}} {{ count_to_class.post.count }}</h3>
+                  <font size="2">
+                      {{post.content|truncatewords:50}}
+                    </font>
+              </div>
+            </div>
+        {% endfor %}
+        <!-- {% for post in posts %}
+        <div class="col-md-4">
           <div class="carousel-card">
             <div class="img-div p-3">
               <span>
@@ -99,7 +119,7 @@
               </span>
             </div>
               <h3> 
-                <a href="{% url 'main:post-detail' slug=slug %}">
+                <a href="{% url 'main:post-detail' post.id %}">
                   {{ post.writer.first_name }},{{post.writer.last_name}}
                 </a>
               </h3>
@@ -109,7 +129,7 @@
                 </font>
           </div>
         </div>
-        {% endfor %}
+        {% endfor %} -->
        </div>
 
 
