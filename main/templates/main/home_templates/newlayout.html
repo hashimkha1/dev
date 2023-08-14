@@ -95,7 +95,7 @@
               <div class="carousel-card">
                 <div class="img-div p-3">
                   <span>
-                    <img src="{{googledriveurl}}={{post.writer.profile.image2.image_url}}" class="team-img" width="110px" height="110px" style="border-radius: 50%;"/>
+                    <img src="{{googledriveurl}}{{post.writer.profile.img_url}}" class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
                   </span>
                 </div>
                   <h3> 
@@ -103,9 +103,11 @@
                       {{ post.writer.first_name }},{{post.writer.last_name}}
                     </a>
                   </h3>
-                  <h3>{{post.title}} {{ count_to_class.post.count }}</h3>
+                  <h3 style="font-size: 16px;">{{ post.title }} {{ count_to_class.post.count }}</h3>
+
+                  <!-- <h3>{{post.title}} {{ count_to_class.post.count }}</h3> -->
                   <font size="2">
-                      {{post.content|truncatewords:50}}
+                      {{post.content|truncatewords:70}}
                     </font>
               </div>
             </div>

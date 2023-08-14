@@ -175,10 +175,6 @@ def optiondata(request):
     path_list,sub_title,pre_sub_title = path_values(request)
     # Get current datetime with UTC timezone
     date_today = datetime.now(timezone.utc)
-    # date,symbol=Options_Returns.objects.all().filter(is_featured=True)
-    # period=date-date_today
-    # if period< 30 days:
-    #     # rest of the logic
     if sub_title == 'covered_calls':
         title = 'COVERED CALLS'
         stockdata = covered_calls.objects.all().filter(is_featured=True)
@@ -200,11 +196,15 @@ def optiondata(request):
     def get_edit_url(row_id):
         return reverse(url_name, args=[row_id])
     
-    for x in stockdata:
-        url= reverse(url_name, args=[x.id])
+    expiry_date,days_to_expiration=computes_days_expiration(stockdata)
 
     filtered_stockdata = []
-    days_to_expiration = 0
+
+    for x in stockdata:
+        if days_to_expiration >= 21:
+            url= reverse(url_name, args=[x.id])
+            filtered_stockdata.append(x)
+
     # for x in stockdata:
     #     if isinstance(x.expiry, str):
     #         expiry_str = x.expiry
@@ -217,10 +217,7 @@ def optiondata(request):
         
     #     days_to_exp = expiry_date - date_today
     #     days_to_expiration = days_to_exp.days
-    filtered_stockdata,expiry_date,days_to_expiration,url=computes_days_expiration(stockdata)
-
-
-
+    
     context = { 
         "data": filtered_stockdata,
         "days_to_expiration": days_to_expiration,

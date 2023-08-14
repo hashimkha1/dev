@@ -84,7 +84,8 @@ class Testimonials(models.Model):
         User,
         verbose_name=("writer name"),
         on_delete=models.CASCADE,
-        # related_name="employee_name"
+        # limit_choices_to=Q(is_staff=True) |Q(is_client=True) and Q(is_active=True)| Q(is_admin=True) | Q(is_superuser=True),
+        limit_choices_to=(Q(is_staff=True) |Q(is_client=True)),
         )
     class Meta:
         verbose_name_plural = "Testimonials"

@@ -69,9 +69,6 @@ def layout(request):
         3: "col-md-4",
         4: "col-md-3"
     }
-    
-    images= Assets.objects.all()
-    image_names=Assets.objects.values_list('name',flat=True)
     latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
     testimonials = []
     for post in latest_posts:
@@ -88,8 +85,6 @@ def layout(request):
 
     services = Service.objects.filter(is_active=True).order_by('serial')
     context = {
-        "images": images,
-        "image_names": image_names,
         "services": services,
         "posts": testimonials,
         "title": "layout",
@@ -374,13 +369,21 @@ def delete_plan(request,id):
 
 #========================Internal Team & Clients==============================
 def team(request):
+    count_to_class = {
+        2: "col-md-6",
+        3: "col-md-4",
+        4: "col-md-3"
+    }
+    
     path_list, sub_title, pre_sub_title = path_values(request)
     team_members_staff = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
     team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=3).order_by("user__date_joined")
     team_members_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
     clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
-
+    number_of_staff = len(team_members_staff)-1
+    print(number_of_staff)
+    selected_class = count_to_class.get(number_of_staff, "default-class")
     if sub_title == 'team_profiles':
         team_categories = {
         'Lead Team': list(team_members_staff),
@@ -400,7 +403,8 @@ def team(request):
     context = {
         "team_categories": team_categories,
         "team_members": user_group,
-        "title":heading
+        "title":heading,
+        "selected_class":selected_class
     }
     return render(request, "main/team_profiles.html", context)
 

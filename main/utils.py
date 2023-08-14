@@ -246,6 +246,14 @@ reviews = [
         "topic": "data analyst",
         "description": "Reflecting on my experience with my data analyst coach, I can confidently say that their impact on my professional growth has been profound. Their guidance not only equipped me with the skills necessary for effective data analysis but also instilled in me a deeper appreciation for the power of data-driven decision-making. Their influence transcended the role of a coach; they became a role model. Their passion for the subject was infectious, inspiring me to push my boundaries and strive for excellence. As I continue to advance in my career as a data analyst, I carry forward the invaluable lessons and insights they imparted. I am truly grateful for the opportunity to have been mentored by such an outstanding data analyst coach.",
     },
+    {
+        "topic": "data analyst",
+        "description": "I consider myself fortunate to have had such an outstanding data analyst coach. Their passion for the subject matter is palpable, and it resonates in their teaching. Beyond the classroom, they encourage independent thinking and provide resources that extend the learning experience beyond the curriculum. What truly sets them apart is their commitment to personalized instruction. They take the time to understand each student's strengths, weaknesses, and learning style, adapting their teaching methods accordingly. Their patience and willingness to repeat explanations or explore alternative approaches ensure that no student is left behind. The coach's mentoring extends beyond technical skills; they offer career guidance, sharing insights about the industry and potential opportunities. This holistic approach has not only refined my data analysis skills but has also prepared me for a successful career in the field.",
+    },
+    {
+        "topic": "data analyst",
+        "description": "My data analyst coach has been nothing short of exceptional throughout my learning journey. Their expertise and dedication have been instrumental in shaping my understanding of data analysis. They have a remarkable ability to simplify complex concepts, making even the most intricate aspects of data analysis accessible and understandable. Their teaching style is engaging and interactive, ensuring that I remain engaged and motivated. The coach's real-world experience in data analysis brings an added dimension to their teaching, as they are able to provide practical insights and share valuable industry examples that enrich my learning experience. Their consistent availability for questions and feedback has created a supportive learning environment where I feel comfortable seeking clarification and guidance. I can confidently say that their guidance has been pivotal in my growth as a data analyst.",
+    },
 ]
 
 

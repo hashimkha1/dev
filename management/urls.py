@@ -88,7 +88,7 @@ urlpatterns = [
     path('requirementvideo/<int:detail_id>/', views.videolink, name='video_req_code'),
     # path('addjustification/<int:detail_id>/', views.add_requirement_justification, name='addjustification'),
     path('justification/<int:pk>/', views.justification, name='justification'),
-    path('add_justification/', views.add_requirement_justification, name='join'),
+    path('add_justification/', views.add_requirement_justification, name='addjustification'),
 
 
     # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),

@@ -1424,6 +1424,10 @@ class RequirementDetailView(DetailView):
     model = Requirement
     ordering = ["created_at "]
 
+# def requirementdetail(request,*args,**kwargs):
+
+
+
 class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     model = Requirement
     success_url = "/management/requirements"
@@ -1617,6 +1621,50 @@ class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
 # ====================ESTIMATEVIEWS===============================
 
+
+
+# def justification(request, *args, **kwargs):
+#     time=20
+#     justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
+#         .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
+#                 time=F("Process_in_breakdown__time"), requirement_id=F("requirements__id"),
+#                 Qty=F("Process_in_breakdown__Quantity"), total=F("Process_in_breakdown__total"))
+#     if justifications:
+#         justofication_dict = {}
+#         justifications_ids = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk')) \
+#             .values_list("id", flat=True)
+#         obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
+#         total_time = obj.aggregate(Sum('total'))
+#         total_qty = obj.aggregate(Sum('Quantity'))
+#         for justification in justifications:
+#             if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
+#                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
+#                                            justification.get('justification') + justification.get('breakdown'):
+#                                                justification.get('breakdown'),
+#                                            justification.get('breakdown') + 'time': justification.get('time'),
+#                                            justification.get('justification') + justification.get('breakdown') +
+#                                            'quantity': justification.get('Qty'),
+#                                            justification.get('justification') + justification.get('breakdown') +
+#                                            'total': justification.get('total'),
+#                                            'requirement_id': justification.get('requirement_id'),
+#                                            })
+#             else:
+#                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
+#                                            justification.get('justification')+justification.get('breakdown'):
+#                                                justification.get('breakdown'),
+#                                            justification.get('breakdown')+'time': justification.get('time'),
+#                                            justification.get('breakdown')+'quantity': justification.get('Qty'),
+#                                            justification.get('breakdown')+'total': justification.get('total'),
+#                                            'requirement_id': justification.get('requirement_id'),
+#                                            })
+#         return render(request, "management/doc_templates/req_justifications.html", {"justifications": justofication_dict,
+#                                                                    "total_time": total_time.get('total__sum'),
+#                                                                     "total_qty": total_qty.get('Quantity__sum')
+#         })
+#     return render(request, "management/doc_templates/req_justifications.html", {"active_requirement": kwargs.get('pk')})
+
+
+
 def justification(request, *args, **kwargs):
     justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
         .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
@@ -1654,7 +1702,13 @@ def justification(request, *args, **kwargs):
                                                                    "total_time": total_time.get('total__sum'),
                                                                     "total_qty": total_qty.get('Quantity__sum')
         })
-    return render(request, "management/doc_templates/req_justifications.html", {"active_requirement": kwargs.get('pk')})
+    context={
+        "active_requirement": kwargs.get('pk'),
+        "total_time":total_time.get('total__sum')
+     }
+    return render(request, "management/doc_templates/req_justifications.html", context)
+
+
 
 def add_requirement_justification(request):
     requirement_id = request.POST.get('requirement_id')
@@ -1968,8 +2022,14 @@ def add_requirement_justification(request):
                 else:
                     ProcessBreakdown.objects.create(process=apis_instance, breakdown="testing", time=time,
                                                     Quantity=qty, total=time * qty)
-
+                    
+        latest_requirement= ProcessBreakdown.objects.latest('crated_at')
+        latest_total = latest_requirement.time
+        print("latest_total=====>",latest_total)
         active_requirements = Requirement.objects.all().filter(is_active=True)
-        context = {"active_requirements": active_requirements}
+        context = {
+                    "active_requirements": active_requirements,
+                    "total": latest_total
+                   }
         return render(request, "management/doc_templates/active_requirements.html", context)
 
