@@ -1,5 +1,6 @@
 import requests
 import json
+import webbrowser
 import datetime
 import time
 import random
@@ -11,7 +12,7 @@ from django.contrib import messages
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import (Meetings,path_values,buildmodel,team_members,
+from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews
 )
 from .models import Testimonials
@@ -366,7 +367,55 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
+# def open_urls(request, url_type):
+#     print("url_type",url_type)
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     if sub_title == url_type:
+#         urls = ["https://www.codanalytics.net","https://github.com/coachofanalytics/coda", "https://id.heroku.com/login", "https://chat.openai.com/"]
+
+#     if sub_title == 'company_urls':
+#         urls = ["https://www.codanalytics.net", "https://www.example.com", "https://www.openai.com"]
+
+#     if sub_title == 'family_urls':
+#         urls = ["https://www.google.com", "https://www.example.com", "https://www.openai.com"]
+
+#     if sub_title == 'investment_urls':
+#         urls = ["https://new.optionsplay.com/login", "https://robinhood.com/", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
+
+#     if sub_title == 'banking_urls':
+#         urls = ["https://wwws.betterment.com/app/login", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
+
+#     if sub_title == 'health_urls':
+#         urls = ["https://new.optionsplay.com/login", "https://robinhood.com/", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
+
+#     for url in urls:
+#         webbrowser.open(url)
+
+import webbrowser
+
+def open_urls(request, url_type):
+    print("url_type", url_type)
+    path_list, sub_title, pre_sub_title = path_values(request)
+    try:
+        # Try to use Chrome
+        chrome_browser = webbrowser.get("chrome")
+        browser = chrome_browser
+    except webbrowser.Error:
+        # Fallback to the default browser
+        browser = webbrowser
+
+    # Get the URLs for the given sub_title
+    urls = url_mapping.get(sub_title, [])
+
+    # Open each URL in the default web browser
+    for url in urls:
+        browser.open(url, new=1)
+        # webbrowser.open(url)
+    
+    return render(request,"main/errors/generalerrors.html")
+
 #========================Internal Team & Clients==============================
+
 def team(request):
     count_to_class = {
         2: "col-md-6",

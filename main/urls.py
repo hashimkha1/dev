@@ -9,7 +9,7 @@ urlpatterns = [
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),
-    # path('team/', views.about, name='team'),
+    
     path('team_profiles/', views.team, name='team_profiles'),
     path('client_profiles/', views.team, name='client_profiles'),
     # path('profiles/', views.profiles, name='profiles'),
@@ -76,13 +76,20 @@ urlpatterns = [
     path('testing/', views.testing, name='testing'),
     path('interview/', views.interview, name='interview'),
 
+   #==============URLS==============================================
+    path('open_urls/<str:url_type>', views.open_urls, name='open_urls'),
+    # path('dev_urls/', views.open_urls, name='dev_urls'),
+    # path('company_urls/', views.open_urls, name='company_urls'),
+    # path('family_urls/', views.open_urls, name='family_urls'),
+    # path('investment_urls/', views.open_urls, name='investment_urls'),
+    # path('banking_urls/', views.open_urls, name='banking_urls'),
+    # path('health_urls/', views.open_urls, name='health_urls'),
+
    #==============ERRORS==============================================
     path('400Error/', views.error400, name='400error'),
     path('403Error/', views.error403, name='403error'),
     path('404Error/', views.error404, name='404error'),
     path('500Error/', views.error500, name='500error'),
-    # path('result/', views.result, name='result'),
-    # path('noresult/', views.noresult, name='noresult'),
 
     path('400/', views.hendler400, name='400-error'),
     path('403/', views.hendler403, name='403-error'),

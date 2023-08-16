@@ -33,6 +33,10 @@ def dates_functionality():
     ytd_duration = (current_date - start_of_year).days
     return ytd_duration,current_year
 
+
+
+
+
 # def tableau_refresh():
 #     # Set Tableau Server credentials and site
 #     tableau_auth = TSC.TableauAuth('USERNAME', 'PASSWORD', site_id='SITE_NAME')
@@ -379,8 +383,8 @@ General = [
         "linkname":"Add Images/Assets",
     },
     {
-        "title": "Credit Spreads",
-        "link":SITEURL+"/investing/credit_spread/",
+        "title": "Open Urls",
+        "link":SITEURL+"/plans/",
         "linkname":"Credit Spreads Data",
     },
     {
@@ -394,6 +398,51 @@ General = [
         "linkname":"Get covered Calls Data",
     },
 ]
+
+url_mapping = {
+        "dev_urls": [
+            "https://www.codanalytics.net",
+            "https://github.com/coachofanalytics/coda",
+            "https://id.heroku.com/login",
+            "https://chat.openai.com/"
+        ],
+        'company_urls': [
+            "https://www.codanalytics.net/management/companyagenda/",
+            "https://www.codanalytics.net/accounts/clients/",
+            "https://www.codanalytics.net/management/tasks/",
+            "https://www.codanalytics.net/management/evidence/",
+        ],
+        'family_urls': [
+            "https://www.google.com",
+            "https://www.example.com",
+            "https://www.openai.com"
+        ],
+        'investment_urls': [
+            "https://new.optionsplay.com/login",
+            "https://robinhood.com/",
+            "https://www.bankofamerica.com/smallbusiness/",
+           "https://www.codanalytics.net/investing/companyreturns/",
+           "https://www.codanalytics.net/investing/overboughtsold/"
+        ],
+        'banking_urls': [
+            "https://wwws.betterment.com/app/login",
+            "https://www.bankofamerica.com/smallbusiness/",
+            "https://www.ibanking.stanbicbank.co.ke/",
+
+        ],
+        'job_urls': [
+            "https://auth.ultimatix.net/utxLogin/login",
+            "https://myapp.tcs.com/logon/LogonPoint/tmindex.html",
+            # "https://www.bankofamerica.com/smallbusiness/",
+            # "https://www.ibanking.stanbicbank.co.ke/"
+        ],
+        'health_urls': [
+            "https://www.ushealthgroup.com/",
+            "https://book.allcarefamilymed.com/primary-care/#locations",
+
+        ]
+    }
+
 Meetings = [
     {
         "title": "1-1 Session",
