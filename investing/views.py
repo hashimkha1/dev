@@ -8,10 +8,10 @@ from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
 from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,get_over_postions,investment_test,
-                    computes_days_expiration,get_user_investment,
-                    year_to_date)
+                    computes_days_expiration,get_user_investment)
 
 from main.filters import ReturnsFilter
+from main.utils import path_values,dates_functionality
 
 from .forms import (
     CoveredCallsForm,
@@ -36,7 +36,6 @@ from accounts.models import CustomerUser
 from getdata.utils import (
     main_shortput,
 )
-from main.utils import path_values
 
 
 
@@ -331,10 +330,11 @@ def subtract_dates(date1, date2):
 @login_required
 def options_returns(request):
     date_today = datetime.now(timezone.utc)
-    ytd_days = year_to_date()
-    ytd_weeks=int(ytd_days/7)
-    ytd_bi_weekly=int(ytd_days/14)
-    ytd_month=int(ytd_days/30)
+    ytd_duration,current_year = dates_functionality()
+    
+    ytd_weeks=int(ytd_duration/7)
+    ytd_bi_weekly=int(ytd_duration/14)
+    ytd_month=int(ytd_duration/30)
 
 
     stockdata=Options_Returns.objects.all()

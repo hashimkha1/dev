@@ -20,6 +20,7 @@ from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import Whatsapp
 from main.forms import PostForm,ContactForm
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.urls import reverse
@@ -38,8 +39,6 @@ User=get_user_model()
 
 
 #  ===================================================================================   
-
-
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 

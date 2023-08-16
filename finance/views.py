@@ -31,7 +31,7 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from main.utils import path_values,countdown_in_month,service_instances,service_plan_instances
+from main.utils import path_values,countdown_in_month,dates_functionality,service_instances,service_plan_instances
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
 from investing.models import Investments,Investment_rates,Investor_Information
@@ -54,8 +54,10 @@ usd_to_kes = get_exchange_rate('USD', 'KES')
 rate = round(Decimal(usd_to_kes), 2)
 
 def finance_report(request):
-    print("rate=====>",rate)
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
+
+def investment_report(request):
+    return render(request, "finance/reports/investment_report.html", {"title": "Investment"})
 
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
 def contract_data_submission(request):
@@ -600,6 +602,53 @@ class TransactionListView(ListView):
 	context_object_name = "transactions"
 	# ordering=['-transaction_date']
 
+def outflows(request):
+    obj = Transaction.objects.all()
+    ytd_duration,current_year=dates_functionality()
+    ytd_transactions = Transaction.objects.filter(activity_date__year=current_year)
+    # outflows=Outflow.objects.all()
+    total_outflows = sum(transact.amount*transact.qty for transact in obj)
+    total_outflows_in_USD =float(total_outflows)/float(rate)
+    # total_model_amt=0
+    
+    ytd_outflows=0
+    avg_montly_expenditure=0
+    avg_daily_expenditure=0
+    avg_hourly_expenditure=0
+
+    for transact in ytd_transactions:
+        ytd_outflows += transact.amount*transact.qty
+
+    total_outflows = float(total_outflows)
+    ytd_outflows = float(ytd_outflows)
+    avg_daily_expenditure=ytd_outflows/ytd_duration
+    avg_hourly_expenditure=avg_daily_expenditure/24
+    avg_minute_expenditure=avg_hourly_expenditure/60
+    avg_second_expenditure=avg_minute_expenditure/60
+    avg_monthly_expenditure=avg_daily_expenditure*30
+    avg_quarterly_expenditure=avg_monthly_expenditure*4
+    # balance_amount=total_amt-total_outflows
+
+    outflow_context = {
+        "transactions": obj,
+        "total_amt": total_outflows,
+        "total_amt_USD": total_outflows_in_USD,
+        "ytd_outflows": ytd_outflows,
+        "quarterly_avg_amt": avg_quarterly_expenditure,
+        "avg_monthly_expenditure": avg_monthly_expenditure,
+        "avg_daily_expenditure": avg_daily_expenditure,
+        "avg_hourly_expenditure": avg_hourly_expenditure,
+        "avg_minute_expenditure": avg_minute_expenditure,
+        "avg_second_expenditure": avg_second_expenditure,
+        # "balance": balance,
+        "rate": rate,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+        # "receipt_url": receipt_url,
+    }
+    return render(request,"finance/payments/transaction.html",outflow_context)
 
 @method_decorator(login_required, name="dispatch")
 class TransanctionDetailView(DetailView):

@@ -257,6 +257,11 @@ class Transaction(models.Model):
         default="Other",
     )
 
+    @property
+    def total_transactions_amt(self):
+        total_transactions_amt = self.amount * self.qty
+        return total_transactions_amt
+    
     def get_absolute_url(self):
         return reverse("management:transaction-detail", kwargs={"pk": self.pk})
 
@@ -266,6 +271,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.id} Transactions"
+    
 
 
 # -------------------------------------CASH FLOW MODEL---------------------------------------

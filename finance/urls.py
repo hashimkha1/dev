@@ -13,8 +13,10 @@ urlpatterns = [
     #=============================FINANCES=====================================
     
     path('finance_report/', views.finance_report, name='finance_report'),
+    path('investment_report/', views.investment_report, name='investment_report'),
     path('transact/', views.transact, name='finance-transact'),
-    path('transaction/', TransactionListView.as_view(), name='transaction-list'),
+    # path('transaction/', TransactionListView.as_view(), name='transaction-list'),
+    path('transaction/', views.outflows, name='transaction-list'),
     path('transaction/<int:pk>/', TransanctionDetailView.as_view(), name='transaction-detail'),
     path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(template_name="finance/payments/transaction_form.html"), name='transaction-update'),
     path('transaction/<int:pk>/delete/', TransactionDeleteView.as_view(template_name="finance/payments/transaction_confirm_delete.html"), name='transaction-delete'),

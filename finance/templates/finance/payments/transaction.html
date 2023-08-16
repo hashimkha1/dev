@@ -3,21 +3,186 @@
   {% block content %}
   <section id="rating">
     <div class="rating text-center">
-      <h2>Cashflows</h2>
-      <hr>
       <div class="row text-center">
-        <div class="col-md-4" id="gi">
-            <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
-                >Add Transaction
-            </a></p>
-        </div>
-        <div class="col-md-4" id="gi">
-          <p>
-            <a href="{% url 'main:finance'%}" class="btn btn-secondary btn-sm"
-              >Finance Report
-            </a>
-         </p>
-        </div>
+          <div class="row text-center">
+            <div class="col-md-2 amount_msg" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>WELCOME BACK</b></h5>
+                    <hr/>
+                    <i><h6>{{user.first_name|upper }}</h6></i>
+                    <hr/>
+                    {% if request.user.is_superuser %}
+                    <p>
+                      <i><h6>Exchange Rate :KES.{{rate}}</h6></i>
+                   </p>
+                   {% else %}
+                   <p>
+                    <a href="#" class="btn btn-secondary btn-sm"
+                      >Rate
+                    </a>
+                 </p>
+                    {%endif %}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-8" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>CASH OUTFLOW PORTAL</b></h5>
+                    <hr/>
+  
+                    <div class="row text-center">
+                      <div class="col-md-3">
+                          <div class="card">
+                            <div class="card-body">
+                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Amount</a>
+                              <hr/>
+                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                              <font size="-1"
+                              <i><h6>Ksh.{{total_amt|floatformat:2}}<br>USD. {{total_amt_USD|floatformat:4}}</h6></i>
+                            </font> 
+                              <!-- <hr/>
+                              <font size="-1"
+                              <i><p>Total amount</p></i>
+                              </font> -->
+                            </div>
+                        </div>
+                    </div>
+                      <div class="col-md-3">
+                          <div class="card">
+                            <div class="card-body">
+                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Year_To_Date Amt</a>
+                              <hr/>
+                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                              <i><h6>Ksh. {{ytd_outflows}}</h6></i>
+                              <!-- <hr/>
+                              <font size="-1"
+                              <i><p>Avg Yearly Expenditure</p></i>
+                              </font> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="card">
+                        <div class="card-body">
+                          <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg.Quarterly Amt</a>
+                          <hr/>
+                          <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                          <i><h6>Ksh. {{quarterly_avg_amt|floatformat:2}}</h6></i>
+                          <!-- <hr/>
+                          <font size="-1"
+                          <i><p>Avg Quarterly Expenditure</p></i>
+                          </font> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Monthly</a>
+                      <hr/>
+                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                      <i><h6>Ksh. {{avg_monthly_expenditure|floatformat:2}}</h6></i>
+                      <!-- <hr/>
+                      <font size="-1"
+                      <i><p>Monthly Average</p></i>
+                      </font> -->
+                    </div>
+                </div>
+              </div>
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Daily</a>
+                      <hr/>
+                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                      <i><h6>Ksh. {{avg_daily_expenditure|floatformat:2}}</h6></i>
+                      <!-- <hr/>
+                      <font size="-1"
+                      <i><p>Monthly Average</p></i>
+                      </font> -->
+                    </div>
+                </div>
+              </div>
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Hourly</a>
+                      <hr/>
+                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                      <i><h6>Ksh. {{avg_hourly_expenditure|floatformat:2}}</h6></i>
+                      <!-- <hr/>
+                      <font size="-1"
+                      <i><p>Monthly Average</p></i>
+                      </font> -->
+                    </div>
+                </div>
+            </div>
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Per Minute</a>
+                      <hr/>
+                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                      <i><h6>Ksh. {{avg_minute_expenditure|floatformat:2}}</h6></i>
+                      <!-- <hr/>
+                      <font size="-1"
+                      <i><p>Monthly Average</p></i>
+                      </font> -->
+                    </div>
+                </div>
+              </div>
+                <div class="col-md-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Per Second</a>
+                      <hr/>
+                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                      <i><h6>Ksh. {{avg_second_expenditure|floatformat:2}}</h6></i>
+                      <!-- <hr/>
+                      <font size="-1"
+                      <i><p>Monthly Average</p></i>
+                      </font> -->
+                    </div>
+                </div>
+              </div>
+                  </div>
+                  
+                    <hr/>
+                    <div class="row text-center">
+
+
+
+                  </div>
+                    </b></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>ACTIONS</b></h5>
+                    <hr/>
+                    <i><h6>{{payday}}</h6></i>
+                    <hr/>
+                    <div class="col-md-12" id="gi">
+                      <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
+                          >Add Transaction
+                      </a></p>
+                  </div>
+                  <div class="col-md-12" id="gi">
+                    <p>
+                      <a href="{% url 'main:finance'%}" class="btn btn-secondary btn-sm"
+                        >Finance Landing Page
+                      </a>
+                   </p>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
     </div>
       <table class="table table-borderless" style="width: 100%">
         <thead class="border-bottom font-weight-bold">

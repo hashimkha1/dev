@@ -5,7 +5,9 @@ from accounts.forms import UserForm
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
 from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
+# import tableauserverclient as TSC
 import datetime
+from datetime import datetime as date_obj
 from django.utils.text import slugify
 # from main.models import Assets
 # from yourapp.utils import random_string_generator
@@ -22,6 +24,29 @@ def convert_date(date_string):
 
 def random_string_generator(size=25, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
+
+
+def dates_functionality():
+    current_year = date_obj.now().year
+    current_date = date_obj.now()
+    start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
+    ytd_duration = (current_date - start_of_year).days
+    return ytd_duration,current_year
+
+# def tableau_refresh():
+#     # Set Tableau Server credentials and site
+#     tableau_auth = TSC.TableauAuth('USERNAME', 'PASSWORD', site_id='SITE_NAME')
+#     server = TSC.Server('https://YOUR_TABLEAU_SERVER')
+
+#     with server.auth.sign_in(tableau_auth):
+#         # Get all the jobs on the site
+#         all_jobs, pagination_item = server.jobs.get()
+
+#         for job in all_jobs:
+#             # Filter out only the 'Extract' type jobs
+#             if job.type == 'Extract':
+#                 print(f"Job ID: {job.id}, Job Type: {job.type}, Status: {job.status}, Created: {job.created_at}")
+
 
 
 def unique_slug_generator(instance, new_slug=None):

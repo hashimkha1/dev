@@ -56,8 +56,7 @@
     },
     "FINANCE": {
         "REPORTS": {
-            "Report":"https://www.codanalytics.net/finance/finance_report/",
-            "Overall Budget":"https://www.codanalytics.net/finance/transaction/",
+            "Finance Landing Page":"https://www.codanalytics.net/finance",
             "Website Budget":"https://docs.google.com/spreadsheets/d/1BmoEyyMNoOvoMjtwgSNg7UxeapdBlGAo2PKtGbkJtII/edit#gid=1898379385"
         },
         "STOCKS & OPTIONS": {
