@@ -400,45 +400,76 @@ General = [
 ]
 
 url_mapping = {
-        "dev_urls": [
+        "devevelopment": [
+            "https://chat.openai.com/",
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://www.codanalytics.net",
             "https://github.com/coachofanalytics/coda",
-            "https://id.heroku.com/login",
-            "https://chat.openai.com/"
+            "https://id.heroku.com/login"
         ],
-        'company_urls': [
+        'company': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://www.codanalytics.net/management/companyagenda/",
             "https://www.codanalytics.net/accounts/clients/",
             "https://www.codanalytics.net/management/tasks/",
             "https://www.codanalytics.net/management/evidence/",
+            "https://www.upwork.com/",
         ],
-        'family_urls': [
+        'family': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://www.google.com",
             "https://www.example.com",
             "https://www.openai.com"
         ],
-        'investment_urls': [
+        'investment': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://new.optionsplay.com/login",
             "https://robinhood.com/",
             "https://www.bankofamerica.com/smallbusiness/",
            "https://www.codanalytics.net/investing/companyreturns/",
            "https://www.codanalytics.net/investing/overboughtsold/"
         ],
-        'banking_urls': [
+        'banking': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://wwws.betterment.com/app/login",
             "https://www.bankofamerica.com/smallbusiness/",
             "https://www.ibanking.stanbicbank.co.ke/",
 
         ],
-        'job_urls': [
+        'job': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://auth.ultimatix.net/utxLogin/login",
             "https://myapp.tcs.com/logon/LogonPoint/tmindex.html",
-            # "https://www.bankofamerica.com/smallbusiness/",
-            # "https://www.ibanking.stanbicbank.co.ke/"
+
         ],
-        'health_urls': [
+        'health': [
+            "https://www.codanalytics.net/accounts/credentials/",
             "https://www.ushealthgroup.com/",
             "https://book.allcarefamilymed.com/primary-care/#locations",
+
+        ],
+        'government': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.irs.gov/",
+            "https://www.kra.go.ke/",
+            "https://www.coinbase.com/",
+
+        ],
+        'presentations': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/investing/companyreturns/",
+            "https://www.codanalytics.net/getdata/bigdata/",
+            "https://drive.google.com/drive/u/0/folders/1eetZ2UnptBQnEcPMVtWaXbOvxNoZKBHJ",
+        ],
+        'interview': [
+            "https://chat.openai.com/",
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://drive.google.com/drive/u/0/folders/1X-3TDBkN3-FJMYHjnaA_g-P76Yy6BgCj",
+            "https://www.codanalytics.net/data/updatelist/",
+            "https://app.box.com/file/345111367782",
+            "https://www.codanalytics.net/finance/finance_report/",
+            "https://www.optionsplay.com/hub/short-puts",
+            "https://docs.google.com/spreadsheets/d/1Ra8Kf2U80wK_Mj9hXfp9B2y2egYlG0Js/edit#gid=855436689",
 
         ]
     }

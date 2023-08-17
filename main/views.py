@@ -367,34 +367,9 @@ def delete_plan(request,id):
         plan.delete()
     return redirect('main:plans')
 
-# def open_urls(request, url_type):
-#     print("url_type",url_type)
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     if sub_title == url_type:
-#         urls = ["https://www.codanalytics.net","https://github.com/coachofanalytics/coda", "https://id.heroku.com/login", "https://chat.openai.com/"]
 
-#     if sub_title == 'company_urls':
-#         urls = ["https://www.codanalytics.net", "https://www.example.com", "https://www.openai.com"]
-
-#     if sub_title == 'family_urls':
-#         urls = ["https://www.google.com", "https://www.example.com", "https://www.openai.com"]
-
-#     if sub_title == 'investment_urls':
-#         urls = ["https://new.optionsplay.com/login", "https://robinhood.com/", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
-
-#     if sub_title == 'banking_urls':
-#         urls = ["https://wwws.betterment.com/app/login", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
-
-#     if sub_title == 'health_urls':
-#         urls = ["https://new.optionsplay.com/login", "https://robinhood.com/", "https://www.bankofamerica.com/smallbusiness/","https://www.ibanking.stanbicbank.co.ke/"]
-
-#     for url in urls:
-#         webbrowser.open(url)
-
-import webbrowser
 
 def open_urls(request, url_type):
-    print("url_type", url_type)
     path_list, sub_title, pre_sub_title = path_values(request)
     try:
         # Try to use Chrome
@@ -413,6 +388,41 @@ def open_urls(request, url_type):
         # webbrowser.open(url)
     
     return render(request,"main/errors/generalerrors.html")
+
+# def open_urls(request, url_type):
+#     print("url_type", url_type)
+#     path_list, sub_title, pre_sub_title = path_values(request)
+
+#     # Fetch plans with category 'Work'
+#     plans = Plan.objects.filter(category='Work')
+    
+#     # Initialize an empty list to store URLs
+#     urls = []
+
+#     # Parse the 'what' field of each plan to extract individual URLs
+#     for plan in plans:
+#         try:
+#             # Attempt to load the string as a JSON list
+#             extracted_urls = json.loads(plan.what)
+#             urls.extend(extracted_urls)
+#         except json.JSONDecodeError:
+#             # If there's an error in parsing, skip this plan's URLs
+#             continue
+
+#     try:
+#         # Try to use Chrome
+#         chrome_browser = webbrowser.get("chrome")
+#         browser = chrome_browser
+#     except webbrowser.Error:
+#         # Fallback to the default browser
+#         browser = webbrowser
+
+#     # Open each URL in the specified browser in a new window
+#     for url in urls:
+#         browser.open(url, new=1)
+
+#     return render(request, "main/errors/generalerrors.html")
+
 
 #========================Internal Team & Clients==============================
 
