@@ -47,6 +47,8 @@
             <th>eom</th>
             <th>eoq</th>
             <th>eoy</th>
+            <th>Hour</th>
+            <th>delta</th>
             <th>Update</th>
           </tr>
         </thead>
@@ -74,6 +76,8 @@
                   <td>{{config.eom_bonus}}</td>
                   <td>{{config.eoq_bonus}}</td>
                   <td>{{config.eoy_bonus}}</td>
+                  <td>{{config.web_pay_hour}}</td>
+                  <td>{{config.web_delta}}</td>
                   {% if user.is_admin or user.is_superuser %}
                   <td> <a class="article-title" href="{% url 'finance:paymentconfigs-update' config.id %}">Edit</a></td>
                   {% endif %}

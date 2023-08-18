@@ -12,6 +12,7 @@ from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
+
 # from finance.utils import get_exchange_rate
 User = get_user_model()
 
@@ -125,6 +126,10 @@ class PayslipConfig(models.Model):
     eom_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
     eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
     eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
+
+    # # website configs
+    web_pay_hour = models.DecimalField(max_digits=10, decimal_places=2, default=30.00)
+    web_delta = models.DecimalField(max_digits=10, decimal_places=2, default=3.00)
 
     def __str__(self):
         return str(self.loan_amount)

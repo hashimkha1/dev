@@ -41,7 +41,39 @@
                               <hr/>
                               <!-- <i><h6>{{GoalAmount}}</h6></i> -->
                               <font size="-1"
-                              <i><h6>Ksh.{{total_amt|floatformat:2}}<br>USD. {{total_amt_USD|floatformat:4}}</h6></i>
+                              <i><h6>USD. {{total_amt|floatformat:2}}</h6></i>
+                            </font> 
+                              <!-- <hr/>
+                              <font size="-1"
+                              <i><p>Total amount</p></i>
+                              </font> -->
+                            </div>
+                        </div>
+                    </div>
+                      <div class="col-md-3">
+                          <div class="card">
+                            <div class="card-body">
+                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Operations</a>
+                              <hr/>
+                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                              <font size="-1"
+                              <i><h6>USD. {{total_op_outflows_usd|floatformat:2}}</h6></i>
+                            </font> 
+                              <!-- <hr/>
+                              <font size="-1"
+                              <i><p>Total amount</p></i>
+                              </font> -->
+                            </div>
+                        </div>
+                    </div>
+                      <div class="col-md-3">
+                          <div class="card">
+                            <div class="card-body">
+                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Web Development</a>
+                              <hr/>
+                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+                              <font size="-1"
+                              <i><h6>USD. {{total_web_ouflow|floatformat:2}}</h6></i>
                             </font> 
                               <!-- <hr/>
                               <font size="-1"
@@ -56,7 +88,7 @@
                               <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Year_To_Date Amt</a>
                               <hr/>
                               <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                              <i><h6>Ksh. {{ytd_outflows}}</h6></i>
+                              <i><h6>USD. {{ytd_outflows|floatformat:2}}</h6></i>
                               <!-- <hr/>
                               <font size="-1"
                               <i><p>Avg Yearly Expenditure</p></i>
@@ -70,7 +102,7 @@
                           <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg.Quarterly Amt</a>
                           <hr/>
                           <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                          <i><h6>Ksh. {{quarterly_avg_amt|floatformat:2}}</h6></i>
+                          <i><h6>USD. {{quarterly_avg_amt|floatformat:2}}</h6></i>
                           <!-- <hr/>
                           <font size="-1"
                           <i><p>Avg Quarterly Expenditure</p></i>
@@ -84,7 +116,7 @@
                       <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Monthly</a>
                       <hr/>
                       <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>Ksh. {{avg_monthly_expenditure|floatformat:2}}</h6></i>
+                      <i><h6>USD. {{avg_monthly_expenditure|floatformat:2}}</h6></i>
                       <!-- <hr/>
                       <font size="-1"
                       <i><p>Monthly Average</p></i>
@@ -98,7 +130,7 @@
                       <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Daily</a>
                       <hr/>
                       <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>Ksh. {{avg_daily_expenditure|floatformat:2}}</h6></i>
+                      <i><h6>USD. {{avg_daily_expenditure|floatformat:2}}</h6></i>
                       <!-- <hr/>
                       <font size="-1"
                       <i><p>Monthly Average</p></i>
@@ -112,7 +144,7 @@
                       <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Hourly</a>
                       <hr/>
                       <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>Ksh. {{avg_hourly_expenditure|floatformat:2}}</h6></i>
+                      <i><h6>USD. {{avg_hourly_expenditure|floatformat:2}}</h6></i>
                       <!-- <hr/>
                       <font size="-1"
                       <i><p>Monthly Average</p></i>
@@ -120,39 +152,11 @@
                     </div>
                 </div>
             </div>
-                <div class="col-md-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Per Minute</a>
-                      <hr/>
-                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>Ksh. {{avg_minute_expenditure|floatformat:2}}</h6></i>
-                      <!-- <hr/>
-                      <font size="-1"
-                      <i><p>Monthly Average</p></i>
-                      </font> -->
-                    </div>
-                </div>
-              </div>
-                <div class="col-md-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Per Second</a>
-                      <hr/>
-                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>Ksh. {{avg_second_expenditure|floatformat:2}}</h6></i>
-                      <!-- <hr/>
-                      <font size="-1"
-                      <i><p>Monthly Average</p></i>
-                      </font> -->
-                    </div>
-                </div>
-              </div>
+
                   </div>
                   
                     <hr/>
                     <div class="row text-center">
-
 
 
                   </div>

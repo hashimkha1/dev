@@ -38,6 +38,7 @@ from investing.models import Investments,Investment_rates,Investor_Information
 from investing.utils import compute_pay,get_over_postions,investment_test,computes_days_expiration,get_user_investment
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
+from management.models import Requirement
 
 
 
@@ -603,36 +604,44 @@ class TransactionListView(ListView):
 	# ordering=['-transaction_date']
 
 def outflows(request):
-    obj = Transaction.objects.all()
     ytd_duration,current_year=dates_functionality()
+    webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
+    #operations totals
+    operations_obj = Transaction.objects.all()
     ytd_transactions = Transaction.objects.filter(activity_date__year=current_year)
-    # outflows=Outflow.objects.all()
-    total_outflows = sum(transact.amount*transact.qty for transact in obj)
-    total_outflows_in_USD =float(total_outflows)/float(rate)
-    # total_model_amt=0
+    ytd_op_outflow = sum(transact.amount*transact.qty for transact in ytd_transactions)
+    total_op_outflows = sum(transact.amount*transact.qty for transact in operations_obj)
+    total_op_outflows_usd =float(total_op_outflows)/float(rate)
+    ytd_op_outflow_usd=float(ytd_op_outflow)/float(rate)
     
-    ytd_outflows=0
-    avg_montly_expenditure=0
-    avg_daily_expenditure=0
-    avg_hourly_expenditure=0
+    # website_totals
+    web_obj = Requirement.objects.all()
+    web_obj_done = Requirement.objects.filter(is_reviewed=False)
+    ytd_requirements = Requirement.objects.filter(created_at__year=current_year,is_reviewed=False)
+    ytd_web_ouflow = sum(req.duration * delta * webhour for req in ytd_requirements)
+    total_web_ouflow = sum(req.duration * delta * webhour for req in web_obj_done)
+    total_web_duration=(x.duration * delta for x in web_obj_done)
 
-    for transact in ytd_transactions:
-        ytd_outflows += transact.amount*transact.qty
-
-    total_outflows = float(total_outflows)
-    ytd_outflows = float(ytd_outflows)
+    # construction_totals
+    # construct_obj = Transaction.objects.all()
+    total_outflows = float(total_op_outflows_usd) + float(total_web_ouflow)
+    ytd_outflows = float(ytd_op_outflow_usd) + float(ytd_web_ouflow)
+    
+    print("Amounts",total_outflows,ytd_outflows,total_op_outflows,total_web_ouflow)
+    
     avg_daily_expenditure=ytd_outflows/ytd_duration
-    avg_hourly_expenditure=avg_daily_expenditure/24
+    avg_hourly_expenditure=avg_daily_expenditure/12
     avg_minute_expenditure=avg_hourly_expenditure/60
     avg_second_expenditure=avg_minute_expenditure/60
     avg_monthly_expenditure=avg_daily_expenditure*30
-    avg_quarterly_expenditure=avg_monthly_expenditure*4
-    # balance_amount=total_amt-total_outflows
+    avg_quarterly_expenditure=avg_monthly_expenditure*3
 
     outflow_context = {
-        "transactions": obj,
+        "transactions": operations_obj,
+        "web_transactions": web_obj,
         "total_amt": total_outflows,
-        "total_amt_USD": total_outflows_in_USD,
+        "total_op_outflows_usd": total_op_outflows_usd,
+        "total_web_ouflow": total_web_ouflow,
         "ytd_outflows": ytd_outflows,
         "quarterly_avg_amt": avg_quarterly_expenditure,
         "avg_monthly_expenditure": avg_monthly_expenditure,
