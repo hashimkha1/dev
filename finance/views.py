@@ -26,7 +26,7 @@ from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow
+		DC48_Inflow,Field_Expense
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
 from mail.custom_email import send_email
@@ -39,6 +39,7 @@ from investing.utils import compute_pay,get_over_postions,investment_test,comput
 from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 from management.models import Requirement
+
 
 
 
@@ -603,6 +604,7 @@ class TransactionListView(ListView):
 	context_object_name = "transactions"
 	# ordering=['-transaction_date']
 
+
 def outflows(request):
     ytd_duration,current_year=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
@@ -621,13 +623,21 @@ def outflows(request):
     ytd_web_ouflow = sum(req.duration * delta * webhour for req in ytd_requirements)
     total_web_ouflow = sum(req.duration * delta * webhour for req in web_obj_done)
     total_web_duration=(x.duration * delta for x in web_obj_done)
-
-    # construction_totals
-    # construct_obj = Transaction.objects.all()
-    total_outflows = float(total_op_outflows_usd) + float(total_web_ouflow)
-    ytd_outflows = float(ytd_op_outflow_usd) + float(ytd_web_ouflow)
     
-    print("Amounts",total_outflows,ytd_outflows,total_op_outflows,total_web_ouflow)
+    # field_totals
+    field_obj = Field_Expense.objects.all()
+    ytd_field_obj = Field_Expense.objects.filter(date__year=current_year)
+    ytd_field_ouflow = sum(transact.transactions_amt for transact in ytd_field_obj)
+    total_field_ouflow = sum(transact.transactions_amt for transact in field_obj)
+    total_field_ouflow_usd =float(total_field_ouflow)/float(rate)
+    ytd_field_ouflow_usd=float(ytd_field_ouflow)/float(rate)
+
+    # print("Amounts",ytd_field_ouflow_usd,total_op_outflows,total_web_ouflow,total_field_ouflow_usd)
+
+    total_outflows = float(total_op_outflows_usd) + float(total_web_ouflow) + float(total_field_ouflow_usd)
+    ytd_outflows = float(ytd_op_outflow_usd) + float(ytd_web_ouflow) + float(ytd_field_ouflow_usd)
+    
+    # print("Amounts",total_outflows,ytd_outflows,total_field_ouflow_usd,total_web_ouflow,total_field_ouflow_usd)
     
     avg_daily_expenditure=ytd_outflows/ytd_duration
     avg_hourly_expenditure=avg_daily_expenditure/12
@@ -635,20 +645,24 @@ def outflows(request):
     avg_second_expenditure=avg_minute_expenditure/60
     avg_monthly_expenditure=avg_daily_expenditure*30
     avg_quarterly_expenditure=avg_monthly_expenditure*3
+    
+    data = [
+        {"title": "Operations", "value": total_op_outflows_usd},
+        {"title": "Web Development", "value": total_web_ouflow},
+        {"title": "Makutano Office", "value": total_field_ouflow_usd},
+        {"title": "Year_To_Date", "value": ytd_outflows},
+        {"title": "Quarterly", "value": avg_quarterly_expenditure},
+        {"title": "Monthly", "value": avg_monthly_expenditure},
+        {"title": "Daily", "value": avg_daily_expenditure},
+        {"title": "Hourly", "value": avg_hourly_expenditure},
+	]
 
     outflow_context = {
         "transactions": operations_obj,
         "web_transactions": web_obj,
+        "field_transactions": field_obj,
         "total_amt": total_outflows,
-        "total_op_outflows_usd": total_op_outflows_usd,
-        "total_web_ouflow": total_web_ouflow,
-        "ytd_outflows": ytd_outflows,
-        "quarterly_avg_amt": avg_quarterly_expenditure,
-        "avg_monthly_expenditure": avg_monthly_expenditure,
-        "avg_daily_expenditure": avg_daily_expenditure,
-        "avg_hourly_expenditure": avg_hourly_expenditure,
-        "avg_minute_expenditure": avg_minute_expenditure,
-        "avg_second_expenditure": avg_second_expenditure,
+        "data": data,
         # "balance": balance,
         "rate": rate,
         "remaining_days": remaining_days,
@@ -658,6 +672,8 @@ def outflows(request):
         # "receipt_url": receipt_url,
     }
     return render(request,"finance/payments/transaction.html",outflow_context)
+
+
 
 @method_decorator(login_required, name="dispatch")
 class TransanctionDetailView(DetailView):

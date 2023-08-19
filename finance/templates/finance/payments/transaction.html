@@ -31,133 +31,27 @@
                 <div class="card">
                   <div class="card-body">
                     <h5><b>CASH OUTFLOW PORTAL</b></h5>
+                    <font size="-1"
+                    <a class="btn btn-primary" href="#"  style="background-color: #5b67a2; border-color: #4CAF50;">USD. {{total_amt|floatformat:2}}</a>
+                    <!-- <i><h6>Total Amount : USD. {{total_amt|floatformat:2}}</h6></i> -->
+                  </font> 
                     <hr/>
-  
                     <div class="row text-center">
-                      <div class="col-md-3">
-                          <div class="card">
-                            <div class="card-body">
-                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Amount</a>
-                              <hr/>
-                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                              <font size="-1"
-                              <i><h6>USD. {{total_amt|floatformat:2}}</h6></i>
-                            </font> 
-                              <!-- <hr/>
-                              <font size="-1"
-                              <i><p>Total amount</p></i>
-                              </font> -->
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-md-3">
-                          <div class="card">
-                            <div class="card-body">
-                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Operations</a>
-                              <hr/>
-                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                              <font size="-1"
-                              <i><h6>USD. {{total_op_outflows_usd|floatformat:2}}</h6></i>
-                            </font> 
-                              <!-- <hr/>
-                              <font size="-1"
-                              <i><p>Total amount</p></i>
-                              </font> -->
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-md-3">
-                          <div class="card">
-                            <div class="card-body">
-                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Web Development</a>
-                              <hr/>
-                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                              <font size="-1"
-                              <i><h6>USD. {{total_web_ouflow|floatformat:2}}</h6></i>
-                            </font> 
-                              <!-- <hr/>
-                              <font size="-1"
-                              <i><p>Total amount</p></i>
-                              </font> -->
-                            </div>
-                        </div>
-                    </div>
-                      <div class="col-md-3">
-                          <div class="card">
-                            <div class="card-body">
-                              <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Year_To_Date Amt</a>
-                              <hr/>
-                              <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                              <i><h6>USD. {{ytd_outflows|floatformat:2}}</h6></i>
-                              <!-- <hr/>
-                              <font size="-1"
-                              <i><p>Avg Yearly Expenditure</p></i>
-                              </font> -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="card">
-                        <div class="card-body">
-                          <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg.Quarterly Amt</a>
-                          <hr/>
-                          <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                          <i><h6>USD. {{quarterly_avg_amt|floatformat:2}}</h6></i>
-                          <!-- <hr/>
-                          <font size="-1"
-                          <i><p>Avg Quarterly Expenditure</p></i>
-                          </font> -->
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Monthly</a>
-                      <hr/>
-                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>USD. {{avg_monthly_expenditure|floatformat:2}}</h6></i>
-                      <!-- <hr/>
-                      <font size="-1"
-                      <i><p>Monthly Average</p></i>
-                      </font> -->
-                    </div>
-                </div>
-              </div>
-                <div class="col-md-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Daily</a>
-                      <hr/>
-                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>USD. {{avg_daily_expenditure|floatformat:2}}</h6></i>
-                      <!-- <hr/>
-                      <font size="-1"
-                      <i><p>Monthly Average</p></i>
-                      </font> -->
-                    </div>
-                </div>
-              </div>
-                <div class="col-md-3">
-                  <div class="card">
-                    <div class="card-body">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Avg Hourly</a>
-                      <hr/>
-                      <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-                      <i><h6>USD. {{avg_hourly_expenditure|floatformat:2}}</h6></i>
-                      <!-- <hr/>
-                      <font size="-1"
-                      <i><p>Monthly Average</p></i>
-                      </font> -->
-                    </div>
-                </div>
-            </div>
-
+                      {% for item in data %}
+                          <div class="col-md-3">
+                              <div class="card">
+                                  <div class="card-body">
+                                      <a class="btn btn-primary" href="#" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
+                                      <hr/>
+                                      <i><h6>USD. {{ item.value|floatformat:2 }}</h6></i>
+                                  </div>
+                              </div>
+                          </div>
+                      {% endfor %}
                   </div>
-                  
+
                     <hr/>
                     <div class="row text-center">
-
 
                   </div>
                     </b></i>

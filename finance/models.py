@@ -622,3 +622,36 @@ class Food(models.Model):
         additional_amount=Decimal(self.qty-self.bal_qty)*self.unit_amt
         return additional_amount
 
+
+
+class Field_Expense(models.Model):
+    category = models.CharField(max_length=255, blank=True, default="")
+    subcategory = models.CharField(max_length=255, blank=True, default="")
+    phase = models.CharField(max_length=255, blank=True, default="")
+    sender = models.ForeignKey(
+        User,
+        verbose_name=_("Sender"),
+        related_name="field_expenses", 
+        blank=True,
+        null=True,  # This allows the field to contain NULL values
+        on_delete=models.SET_NULL,
+        limit_choices_to={"is_staff": True, "is_active": True},
+    )
+    cost_type = models.CharField(max_length=100, blank=True, default="")
+    date = models.DateTimeField(default=timezone.now)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    description = models.TextField(max_length=1000, blank=True, default="")
+
+    @property
+    def transactions_amt(self):
+        unit_cost = self.unit_cost if self.unit_cost is not None else 0.0
+        qty = self.qty if self.qty is not None else 0.0
+        return unit_cost * qty
+    
+    class Meta:
+        verbose_name_plural = "Field Expenses"
+        ordering = ["-date"]
+
+    def __str__(self):
+        return f"Expense {self.id} on {self.date}"
