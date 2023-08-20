@@ -433,7 +433,7 @@ General = [
 ]
 
 url_mapping = {
-        "devevelopment": [
+        "development": [
             "https://chat.openai.com/",
             "https://www.codanalytics.net/accounts/credentials/",
             "https://www.codanalytics.net",
