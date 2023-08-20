@@ -435,41 +435,6 @@ def open_urls(request, url_type):
     
     return render(request,"main/errors/generalerrors.html")
 
-# def open_urls(request, url_type):
-#     print("url_type", url_type)
-#     path_list, sub_title, pre_sub_title = path_values(request)
-
-#     # Fetch plans with category 'Work'
-#     plans = Plan.objects.filter(category='Work')
-    
-#     # Initialize an empty list to store URLs
-#     urls = []
-
-#     # Parse the 'what' field of each plan to extract individual URLs
-#     for plan in plans:
-#         try:
-#             # Attempt to load the string as a JSON list
-#             extracted_urls = json.loads(plan.what)
-#             urls.extend(extracted_urls)
-#         except json.JSONDecodeError:
-#             # If there's an error in parsing, skip this plan's URLs
-#             continue
-
-#     try:
-#         # Try to use Chrome
-#         chrome_browser = webbrowser.get("chrome")
-#         browser = chrome_browser
-#     except webbrowser.Error:
-#         # Fallback to the default browser
-#         browser = webbrowser
-
-#     # Open each URL in the specified browser in a new window
-#     for url in urls:
-#         browser.open(url, new=1)
-
-#     return render(request, "main/errors/generalerrors.html")
-
-
 #========================Internal Team & Clients==============================
 
 def team(request):
