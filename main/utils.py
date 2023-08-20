@@ -330,6 +330,39 @@ data_interview = [
         "Link": SITEURL+"/data/job_market/",
     },
 ]
+job_support = [
+    {
+        "Inteview": "1. onboarding",
+        "Description": "Organization,Working PPT",
+        "Duration": "4 hours",
+        "Lead": "Self/Coach",
+        "Link": SITEURL+"/data/iuploads/",
+    },
+    
+    {
+        "Inteview": "2. Requirements",
+        "Description": "Elicitation  Questions",
+        "Duration": "Ongoing",
+        "Lead": "Self/Coach",
+        "Link": "https://app.box.com/s/oee1wn85sk2slbc0fkzs2sahe8ob8qhi",
+        # https://app.box.com/s/oee1wn85sk2slbc0fkzs2sahe8ob8qhi
+    },
+
+    {
+        "Inteview": "2. Project Definition",
+        "Description": "SDLC Process in Box",
+        "Duration": "Ongoing",
+        "Lead": "Self/Coach",
+        "Link": "https://app.box.com/s/fqdxfywn8c0uixarpuvoo2o7gx18lwdw",
+    },
+    {
+        "Inteview": "3. Technical Support",
+        "Description": "Training & Troubleshooting",
+        "Duration": " >25 hours",
+        "Lead": "Self/Coach",
+        "Link": SITEURL+"/data/Development/",
+    },
+]
 
 Automation = [
     {
@@ -646,3 +679,21 @@ def service_plan_instances(service_categories,sub_title):
 #         response = HttpResponse(pdf_file.read(), content_type='application/pdf')
 #         response['Content-Disposition'] = 'attachment; filename="appointment_letter.pdf"'
 #         return response
+
+def split_sentences(description):
+    # Split the description into separate sentences
+    sentences = description.split('. ')
+    # Initialize lists to store the separate descriptions
+    onboarding_description = ""
+    troubleshooting_description = ""
+    requirement_description = ""
+
+    # Iterate through the sentences and categorize them
+    for sentence in sentences:
+        if "Onboarding" in sentence:
+            onboarding_description = sentence
+        elif "Troubleshooting" in sentence:
+            troubleshooting_description = sentence
+        else:
+            requirement_description = sentence
+    return onboarding_description,troubleshooting_description,requirement_description

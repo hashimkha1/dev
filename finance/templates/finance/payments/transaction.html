@@ -82,6 +82,7 @@
               </div>
             </div>
     </div>
+
       <table class="table table-borderless" style="width: 100%">
         <thead class="border-bottom font-weight-bold">
           <tr>
@@ -96,7 +97,6 @@
             <th>Quantity</th>
             <th>Amount</th>
             <th>Total</th>
-            <!-- <th>total_score</th>-->
           </tr>
         </thead>
         <tbody>
@@ -127,6 +127,42 @@
           {% endfor %}
         </tbody>
       </table>
+<!-- 
+      <table class="table table-borderless" style="width: 100%">
+        <thead class="border-bottom font-weight-bold">
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Requirement</th>
+            <th>Assigned</th>
+            <th>duration</th>
+            <th>delta</th>
+            <th>Time</th>
+            <th>Per Hour</th>
+            <th>total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transanction in web_transactions %}
+          <tr>
+            <td>{{transanction.created_at|date:"n/d/Y"}}</td>
+            <td>{{transanction.category}}</td>
+            <td>CODA000{{transanction.id}}</td>
+            <td>{{transanction.assigned_to}}</td>
+            <td>{{transanction.duration}}</td>
+            <td>{{delta}}</td>
+            <td>{{transanction.duration|mul:delta}}</td>
+            <td>{{webhour}}</td>
+            <td>{{total}}</td>
+            {%if user.is_admin or user.is_superuser%}
+            <td> <a class="article-title" href="{% url 'finance:transaction-detail' transanction.id %}">Edit</a></td>
+            <td> <a class="article-title" href="{% url 'finance:transaction-delete' transanction.id %}">Delete</a></td>
+            {%endif%}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table> -->
+
     </div>
   </section>
   {% endblock content %}

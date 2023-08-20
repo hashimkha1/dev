@@ -48,13 +48,14 @@ urlpatterns = [
     path("student_feedback/", views.feedback, name="student_feedback"),
     # Interview SEction Urls starts
     path("interview/", views.interview, name="interview"),
+    path("start_training/<str:slug>/", views.start_training, name="start_training"),
     path("interview_roles/", views.interview_roles, name="interview_roles"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),
     # Interview section urls ends
     path("deliverable/", views.deliverable, name="deliverable"),
     path("getdata/", views.getdata, name="getdata"),
-    path("pay/", views.pay, name="pay"),
+    # path("pay/", views.pay, name="pay"),
     # Interview/Assignment Section
     # ----------------------CREATION----------------------------------------------------
     path(

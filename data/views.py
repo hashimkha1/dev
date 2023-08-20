@@ -19,7 +19,7 @@ from data.forms import (
     PrepQuestionsForm,TrainingResponseForm,
     InterviewForm, DSUForm ,RoleForm,
 )
-from main.utils import data_interview,Meetings,path_values
+from main.utils import data_interview,Meetings,path_values,job_support,split_sentences
 from main.context_processors import image_view
 from data.models import (
     Interviews,
@@ -63,6 +63,45 @@ def training_v2(request):
     return render(request, "data/training/training_v2.html", {"title": "training_v2"})
     
 
+@login_required
+def start_training(request, slug=None, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    try:
+        service_shown = Service.objects.get(slug="data_analysis")
+    except Service.DoesNotExist:
+        return redirect('main:layout')
+    service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+    category_slug=None
+    category_name=None
+    category_id=None
+    for item in service_categories:
+        if item.slug==slug:
+            category_slug=item.slug
+            category_name=item.name
+            description=item.description
+            data_items=data_interview,
+
+    onboarding_description,troubleshooting_description,requirement_description=split_sentences(description)
+
+    if category_slug == 'interview':
+        data_items=data_interview
+    else:
+        data_items=job_support
+
+    context = {}
+    context = {
+        "SITEURL": settings.SITEURL,
+        "data_items":data_items,
+        "title": category_name,
+        "category_slug": category_slug,
+        "description": description,
+        "onboarding_description": onboarding_description,
+        "requirement_description": requirement_description,
+        "troubleshooting_description": troubleshooting_description
+    }
+    return render(request, "data/interview/interview_progress/start_interview.html",context)
+
+
 # interview starts
 @login_required
 def interview(request):
@@ -95,8 +134,8 @@ def etl(request):
 def getdata(request):
     return render(request, "data/getdata.html", {"title": "getdata"})
 
-def pay(request):
-    return render(request, "data/pay.html", {"title": "pay"})    
+
+  
 def database(request):
     return render(request, "data/database.html", {"title": "report"})
 def etl(request):

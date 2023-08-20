@@ -20,6 +20,7 @@ from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import Whatsapp
+from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
 from django.contrib.auth.decorators import login_required
@@ -180,26 +181,67 @@ def display_service(request,*args, **kwargs):
     return render(request, "main/services/show_service.html", context)
 
 
+# def service_plans(request, *args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+#     print("sub_title====>",sub_title)
+#     print("pre_sub_title====>",pre_sub_title)
+#     try:
+#         if sub_title.lower() in ["job-support","interview","full-course"]:
+#             # service_shown = Data Analysis
+#             service_shown = Service.objects.get(slug="data_analysis")
+#             print("service_shown====>",service_shown)
+#         elif sub_title.lower() =='access_options':
+#             service_shown = Service.objects.get(slug="investing")
+#             print("service_shown====>",service_shown)
+
+#         elif sub_title.lower() in ["field-projects","It_projects"]:
+#             service_shown = Service.objects.get(slug="consultancy")
+#             print("service_shown====>",service_shown)
+#         else:
+#             return redirect('main:services' )
+        
+#     except Service.DoesNotExist:
+#         return redirect('main:display_service')
+    
+#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
+#     plans = Pricing.objects.filter(category=category_id)
+
+#     context = {}
+#     context = {
+#         "SITEURL": settings.SITEURL,
+#         "title": category_name,
+#         "category_slug": category_slug,
+#         "services": plans
+#     }
+#     if payment_details:
+#         return render(request, "data/interview/interview_progress/start_interview.html",context)
+#     else:
+#         return render(request, "main/services/service_plan.html", context)
+
+
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
+    print("pre_sub_title==========>",pre_sub_title)
+    payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
     try:
         if pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
+            print("service_shown====>",service_shown)
+
+        elif sub_title.lower() in ["job-support","interview","full-course"]:
+            # service_shown = Data Analysis
+            service_shown = Service.objects.get(slug="data_analysis")
+            print("service_shown====>",service_shown)
         else:
-            return redirect('main:display_service')
+            return redirect('main:layout')
+        
     except Service.DoesNotExist:
         return redirect('main:display_service')
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
-
-    # services = []
-    # if category_slug:
-    #     url = f"{settings.SITEURL}/{category_slug}/"
-    #     services.append({'url': url})
-    # else:
-    #     redirect_url = reverse('finance:newcontract', args=[request.user])
-    #     services.append({'url': redirect_url})
 
     context = {}
     context = {
@@ -208,7 +250,11 @@ def service_plans(request, *args, **kwargs):
         "category_slug": category_slug,
         "services": plans
     }
-    return render(request, "main/services/service_plan.html", context)
+    print(request.user.category)
+    if payment_details and request.user.category==3:
+        return render(request, "data/interview/interview_progress/start_interview.html",context)
+    else:
+        return render(request, "main/services/service_plan.html", context)
 
 
 @login_required

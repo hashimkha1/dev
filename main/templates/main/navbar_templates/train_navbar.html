@@ -45,6 +45,7 @@
                   
                  
                 </li>
+
               <li class="nav-item dropdown">
                   <a
                     class="nav-link dropdown-toggle"
@@ -61,7 +62,7 @@
                   <div class="dropdown-menu" aria-labelledby="navbarDropDown">
                     {% if user.is_admin or  user.is_staff or  user.is_superuser %}
                     <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="{% url 'data:interview' %}"
+                    <a class="dropdown-item" href="{% url 'data:start_training' slug='interview' %}"
                     >Interview</a>
                       {% for role in roles %}
                       <div class="dropdown-divider"></div>
@@ -88,6 +89,35 @@
                       <a class="dropdown-item" href="{% url 'data:prep_reponses' %}"
                       >Interview Responses</a>
                       {% endif %}
+                  </div>
+                </li>
+              <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Job Support
+                  </a>
+                  
+                  <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'data:start_training' slug='job-support' %}"
+                      >Overview</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'data:category-detail' title='Course Overview' %}"
+                      >Onboarding</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="https://app.box.com/s/fqdxfywn8c0uixarpuvoo2o7gx18lwdw"
+                      >Project Definition</a>
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'data:category-detail' title='Development' %}"
+                      >Technical Support</a>
+                      <div class="dropdown-divider"></div>
                   </div>
                 </li>
 
