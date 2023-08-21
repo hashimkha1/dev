@@ -102,6 +102,7 @@ def investments(request):
 @login_required
 def user_investments(request, username=None, *args, **kwargs):
     print("My name is Chris")
+    print("I am with Edwin")
     user = get_object_or_404(CustomerUser, username=username)
     investments = Investments.objects.filter(client=user)
     latest_investment_rates = Investment_rates.objects.order_by('-created_date').first()
