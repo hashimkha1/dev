@@ -365,14 +365,14 @@ class PlanCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
+    
+@login_required
 def plans(request):
     day_name = date.today().strftime("%A")
     plans = Plan.objects.filter(is_active=True)
     plan_categories_list = Plan.objects.values_list(
                     'category', flat=True).distinct()
     plan_categories=sorted(plan_categories_list)
-    # print(plan_categories)
     for plan in plans:
         delivery_date=plan.created_at +  timedelta(days=plan.duration*30)
     context = {
@@ -414,7 +414,7 @@ def delete_plan(request,id):
     return redirect('main:plans')
 
 
-
+@login_required
 def open_urls(request, url_type):
     path_list, sub_title, pre_sub_title = path_values(request)
     try:
@@ -434,6 +434,26 @@ def open_urls(request, url_type):
         # webbrowser.open(url)
     
     return render(request,"main/errors/generalerrors.html")
+
+@login_required
+def plan_urls(request):
+    day_name = date.today().strftime("%A")
+    open_urls= Plan.objects.filter(category="Work",is_active=True)
+    plan_categories_list = Plan.objects.values_list(
+                    'category', flat=True).distinct()
+    plan_categories=sorted(plan_categories_list)
+    for plan in open_urls:
+        delivery_date=plan.created_at +  timedelta(days=plan.duration*30)
+    context = {
+        "plans": open_urls,
+        "plan_categories": plan_categories,
+        "delivery_date": delivery_date,
+        "day_name": day_name,
+    }
+    if request.user.is_superuser:
+        return render(request, "main/open_urls.html", context)
+    else:
+        return render(request, "main/errors/404.html", context)
 
 #========================Internal Team & Clients==============================
 

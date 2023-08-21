@@ -252,7 +252,7 @@ def login_view(request):
                     return redirect("application:interview")
             elif account is not None and account.profile.section is not None and account.category == 1 and account.sub_category==0:
                     login(request, account)
-                    print("account.category",account.sub_category)
+                    # print("account.category",account.sub_category)
                     return redirect("application:policies")
             
             elif account is not None and account.is_admin:
@@ -493,7 +493,7 @@ def credential_view(request):
     # Step 3: Remove specific records from the credentials list
     for record in specific_records:
         if record in credentials_list:
-            print("specific_records====>",record)
+            # print("specific_records====>",record)
             credentials_list.remove(record)
 
     # Step 4: Sort the credentials list
@@ -541,7 +541,7 @@ def security_verification(request):
     # html_content = "Your One time verification code is " + otp
     # print(to, otp)
     # email_template(subject, to, html_content)
-    print(request.user.category)
+    # print(request.user.category)
     send_email( category=request.user.category,
                 to_email=[request.user.email,],
                 subject=subject, 
@@ -798,7 +798,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
         try:
 
             if form.instance.category == "Job_Support":
-                print(form.instance.empname)
+                # print(form.instance.empname)
                 idval, points, targetpoints = Task.objects.values_list(
                     "id", "point", "mxpoint"
                 ).filter(
@@ -814,10 +814,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 )[
                     0
                 ]
-                # if Development, Testing : 
-                # upto maximum 8 hours
-                # 0------8 max 
-                #
                 self.idval = idval
                 if (
                     form.instance.sub_category == "Development"  
@@ -829,7 +825,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 
                 if points >= targetpoints:
                     targetpoints += 10
-
+                
                 Task.objects.filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")

@@ -417,19 +417,10 @@ General = [
     },
     {
         "title": "Open Urls",
-        "link":SITEURL+"/plans/",
-        "linkname":"Credit Spreads Data",
+        "link":SITEURL+"/plan_urls/",
+        "linkname":"Planning Urls",
     },
-    {
-        "title": "Get short Put Data",
-        "link":SITEURL+"/investing/shortput/",
-        "linkname":"Get short Put Data",
-    },
-    {
-        "title": "Get covered Calls Data",
-        "link":SITEURL+"/investing/covered_calls/",
-        "linkname":"Get covered Calls Data",
-    },
+  
 ]
 
 url_mapping = {
