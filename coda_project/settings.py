@@ -19,7 +19,7 @@ SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
 if os.environ.get('ENVIRONMENT') == 'production':
-    DEBUG = True
+    DEBUG = False
 else:
     DEBUG = True
 
@@ -135,6 +135,7 @@ def dba_values():
         dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
         user = "postgres" #os.environ.get('POSTGRESDB_USER')
         password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
+        
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
