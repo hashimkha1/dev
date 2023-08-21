@@ -148,35 +148,8 @@
   </div>
   </div> 
 
- <div class="row text-center">
-  <style>
-    .chat-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 40px;
-    }
-  
-    .chat-btn a {
-      color: #fff;
-      padding: 6px 12px;
-      border-radius: 50%;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-  
-    .chat-btn a:hover {
-      background-color: #fefefe;
-    }
-  </style>
-  
-  <div class="col-md-1 chat-btn">
-    <a href="https://api.whatsapp.com/send?phone=18167452510" target="_blank">
-      <img class="img-fluid ps-lg-5" src="{% static 'main/img/whatsaap_v1.jpg' %}" alt="">
-    </a>
-  </div>
-  
+  {% include 'main/snippets_templates/chat.html'%}
+
   </div> 
   
 {% endblock %}

@@ -1,0 +1,55 @@
+{% load static %}
+<div class="row text-center">
+
+    <style>
+      .chat-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 40px;
+      }
+  
+      .chat-btn a {
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 50%;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* WhatsApp green color */
+        /* background-color: #25d366;  */
+      }
+  
+      /* .chat-btn a:hover {
+        background-color: #fefefe;
+      } */
+  
+      .chat-icon {
+        border-radius: 50%;
+        animation: shake 4s ease infinite; /* Add animation to the icon */
+      }
+  
+      @keyframes shake {
+        0%, 100% {
+          transform: translateX(0);
+        }
+        10%, 30%, 50%, 70%, 90% {
+          transform: translateX(-5px); /* Adjust the distance and direction of the shake */
+        }
+        20%, 40%, 60%, 80% {
+          transform: translateX(5px); /* Adjust the distance and direction of the shake */
+        }
+      }
+    </style>
+
+
+    <!-- Link to the new_main.css file -->
+    <link rel="stylesheet" type="text/css" href="{% static 'your_app/css/new_main.css' %}">
+
+    <div class="col-md-1 chat-btn">
+      <a href="https://api.whatsapp.com/send?phone=18167452510" target="_blank">
+        <img class="img-fluid ps-lg-5 chat-icon" src="{% static 'main/img/whatsaap_v1.jpg' %}" alt="" width="35" height="35">
+      </a>
+    </div>
+  </div>
+  
