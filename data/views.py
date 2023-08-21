@@ -60,6 +60,7 @@ def training(request):
 
 @login_required
 def training_v2(request):
+    print("I am with Sylivia")
     return render(request, "data/training/training_v2.html", {"title": "training_v2"})
     
 
