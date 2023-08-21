@@ -27,9 +27,11 @@ class UserProfile(models.Model):
     image2 = models.ForeignKey(
         Assets, related_name="profile_image", on_delete=models.CASCADE,default=1
     )
-    # upload_a = models.FileField(upload_to="Application_Profile/uploads")
-    # upload_b = models.FileField(upload_to="Application_Profile/uploads")
-    # upload_c = models.FileField(upload_to="Application_Profile/uploads")
+
+    upload_a = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+    upload_b = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+    upload_c = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+
     is_active = models.BooleanField("Is featured", default=True)
     laptop_status= models.BooleanField("Is lap_status", default=True)
 
