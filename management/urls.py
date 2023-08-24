@@ -75,6 +75,7 @@ urlpatterns = [
 
     #========================REQUIREMENTS SECTION=====================================================
     path('requirement/new', views.newrequirement, name='new_requirement'),
+    path('form_submission_view/', views.form_submission_view, name='form_submission_view'),
     path('requirements/', views.requirements, name='requirements'),
     path('activerequirements/', views.active_requirements, name='requirements-active'),
     path('client_requirements/', views.requirements, name='client_requirements'),

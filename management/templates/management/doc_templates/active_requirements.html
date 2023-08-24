@@ -56,7 +56,8 @@
                 <div class="card">
                   <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
                     <div class="card-body">
-                      <b> REQ:CODA000{{active_requirement.id}} |Deadline: {{active_requirement.delivery_date|date:"F d, Y"}}|Assigned: {{active_requirement.assigned_to}}</b>
+                      <b> REQ:CODA000{{active_requirement.id}} |Deadline: {{active_requirement.delivery_date|date:"F d, Y"}}|Assigned: {{active_requirement.assigned_to}}</b> <br>
+                      <b> Time:{{active_requirement.duration}}</b>
                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                         <p class="gi">
                          As {{active_requirement.requestor}} {{active_requirement.what|truncatewords:15}}.This should be done {{active_requirement.why}}.The active_requirement should take {{requirement.duration}} hours and it should be completed by 

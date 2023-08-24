@@ -141,7 +141,7 @@ def get_exchange_rate(base, target):
         data = response.json()
         rate=data['rates'][target]
     except:
-        rate=138.50
+        rate=139.00
     return rate
 
 # ====================================================================
