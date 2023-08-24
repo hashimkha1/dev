@@ -175,8 +175,9 @@ class Interviews(models.Model):
         default=Other,
     )
     comment = models.TextField()
-    doc = models.FileField(default="None", upload_to="Uploads/doc/")
+    doc = models.FileField(default="None", upload_to="Uploads/doc/",blank=True)
     link = models.CharField(max_length=255, blank=True, null=True)
+    dynamic_fields = models.TextField(blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     objects = InterviewManager()

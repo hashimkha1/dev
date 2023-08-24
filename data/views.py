@@ -329,8 +329,48 @@ def courseview(request, question_type=None, *args, **kwargs):
 
 def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'GET':
+        print('question_typ==============e',question_type)
         instance = JobRole.objects.get_by_question(question_type)
         form= InterviewForm()
+        if question_type == 'performance':
+            form.fields['tableau'].required = True
+            form.fields['alteryx'].required = True
+            form.fields['sql'].required = True
+            form.fields['python'].required = True
+        elif question_type == 'testing':
+            form.fields['project'].required = True
+            form.fields['test_types'].required = True
+            form.fields['process'].required = True
+        elif question_type == 'introduction':
+            form.fields['domain_industry'].required = True
+            form.fields['role'].required = True
+            form.fields['system_security'].required = True
+            form.fields['project_management'].required = True
+            form.fields['data_tools'].required = True
+            form.fields['communication'].required = True
+        elif question_type == 'sdlc':
+            form.fields['initiation'].required = True
+            form.fields['planning'].required = True
+            form.fields['design'].required = True
+            form.fields['development'].required = True
+            form.fields['testing'].required = True
+            form.fields['deployment'].required = True
+            form.fields['maintenance'].required = True
+        elif question_type == 'Project Story':
+            form.fields['description'].required = True
+            form.fields['deliverables'].required = True
+            form.fields['challenges'].required = True
+            form.fields['solutions'].required = True
+        elif question_type == 'resume':
+            form.fields['summary'].required = True
+            form.fields['skills'].required = True
+            form.fields['responsibilities'].required = True
+        elif question_type == 'methodology':
+            form.fields['projects'].required = True
+            form.fields['releases'].required = True
+            form.fields['sprints'].required = True
+            form.fields['stories'].required = True
+            
         # questiontopic=['resume','methodology','testing']
         # value=request.path.split("/")
         # pathvalues = [i for i in value if i.strip()]
@@ -352,6 +392,44 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'POST':
         try:
             form = InterviewForm(request.POST, request.FILES)
+            if question_type == 'performance':
+                form.fields['tableau'].required = True
+                form.fields['alteryx'].required = True
+                form.fields['sql'].required = True
+                form.fields['python'].required = True
+            elif question_type == 'testing':
+                form.fields['project'].required = True
+                form.fields['test_types'].required = True
+                form.fields['process'].required = True
+            elif question_type == 'introduction':
+                form.fields['domain_industry'].required = True
+                form.fields['role'].required = True
+                form.fields['system_security'].required = True
+                form.fields['project_management'].required = True
+                form.fields['data_tools'].required = True
+                form.fields['communication'].required = True
+            elif question_type == 'sdlc':
+                form.fields['initiation'].required = True
+                form.fields['planning'].required = True
+                form.fields['design'].required = True
+                form.fields['development'].required = True
+                form.fields['testing'].required = True
+                form.fields['deployment'].required = True
+                form.fields['maintenance'].required = True
+            elif question_type == 'Project Story':
+                form.fields['description'].required = True
+                form.fields['deliverables'].required = True
+                form.fields['challenges'].required = True
+                form.fields['solutions'].required = True
+            elif question_type == 'resume':
+                form.fields['summary'].required = True
+                form.fields['skills'].required = True
+                form.fields['responsibilities'].required = True
+            elif question_type == 'methodology':
+                form.fields['projects'].required = True
+                form.fields['releases'].required = True
+                form.fields['sprints'].required = True
+                form.fields['stories'].required = True
             if form.is_valid():
                 form_data = form.cleaned_data
                 data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=question_type, link=form_data['link'], comment=form_data['comment'] )
@@ -361,6 +439,64 @@ def questionview(request, question_type=None, *args, **kwargs):
                 instance = form.save(commit=False)
                 instance.client = request.user
                 instance.question_type = question_type
+
+                if question_type == 'performance':
+                    dynamic_fields = {
+                    'tableau': form.cleaned_data['tableau'],
+                    'alteryx': form.cleaned_data['alteryx'],
+                    'sql': form.cleaned_data['sql'],
+                    'python': form.cleaned_data['python']
+                }
+                elif question_type == 'testing':
+                    dynamic_fields = {
+                        'project': form.cleaned_data['project'],
+                        'test_types': form.cleaned_data['test_types'],
+                        'process': form.cleaned_data['process']
+                }
+                elif question_type == 'introduction':
+                    dynamic_fields = {
+                        'domain_industry': form.cleaned_data['domain_industry'],
+                        'role': form.cleaned_data['role'],
+                        'system_security': form.cleaned_data['system_security'],
+                        'project_management': form.cleaned_data['project_management'],
+                        'data_tools': form.cleaned_data['data_tools'],
+                        'communication': form.cleaned_data['communication'],
+                }
+                elif question_type == 'sdlc':
+                    dynamic_fields = {
+                        'initiation': form.cleaned_data['initiation'],
+                        'planning': form.cleaned_data['planning'],
+                        'design': form.cleaned_data['design'],
+                        'development': form.cleaned_data['development'],
+                        'testing': form.cleaned_data['testing'],
+                        'deployment': form.cleaned_data['deployment'],
+                        'maintenance': form.cleaned_data['maintenance'],
+                }
+                elif question_type == 'Project Story':
+                    dynamic_fields = {
+                        'description' : form.cleaned_data['description'],
+                        'deliverables' : form.cleaned_data['deliverables'],
+                        'challenges' : form.cleaned_data['challenges'],
+                        'solutions' : form.cleaned_data['solutions'],      
+                }
+                elif question_type == 'resume':
+                    dynamic_fields = {
+                        'summary': form.cleaned_data['summary'],
+                        'skills': form.cleaned_data['skills'],
+                        'responsibilities': form.cleaned_data['responsibilities'],       
+                }
+                elif question_type == 'methodology':
+                    dynamic_fields = {
+                        'projects': form.cleaned_data['projects'],
+                        'releases': form.cleaned_data['releases'],
+                        'sprints': form.cleaned_data['sprints'],   
+                        'stories': form.cleaned_data['stories'],   
+                }
+                # Convert the dynamic_fields dictionary to a JSON string
+                dynamic_fields_json = json.dumps(dynamic_fields)
+
+                # Save the JSON string to the instance's dynamic_fields field
+                instance.dynamic_fields = dynamic_fields_json
                 instance.save()
                 # data = form.cleaned_data
         except Exception as e:

@@ -4,9 +4,52 @@ from django.db.models import Q
 from .models import Interviews, DSU, JobRole, Interview_Questions
 from accounts.models import CustomerUser
 class InterviewForm(forms.ModelForm):
+    '''========== Performance ============='''
+    tableau = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    alteryx = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    sql = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    python = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== Testing ============='''
+    project = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    test_types = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    process = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== Introduction ============='''
+    domain_industry = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    role = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    system_security = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    project_management = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    data_tools = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    communication = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== SDLC ============='''
+    initiation = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    planning = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    design = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    development = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    testing = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    deployment = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    maintenance = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== Project Story ============='''
+    description = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    deliverables = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    challenges = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    solutions = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== resume ============='''
+    summary = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    skills = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    responsibilities = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    '''========== methodology ============='''
+    projects = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    releases = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    sprints = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    stories = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
     class Meta:
         model = Interviews
-        fields =['category','question_type','doc','link','comment']
+        fields = ['category', 'question_type', 'doc', 'link', 'comment', 'tableau', 'alteryx',
+             'sql', 'python','project','test_types','process',"domain_industry", "role",
+               "system_security", "project_management", "data_tools", "communication",
+               "initiation", "planning", "design", "development", "testing", "deployment", "maintenance",
+               "description", "deliverables", "challenges", "solutions","summary","skills","responsibilities",
+               "projects", "releases", "sprints", "stories"]
         # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',
@@ -15,7 +58,13 @@ class InterviewForm(forms.ModelForm):
                 'question_type':'Interview Question/topic',
                 'doc':'Upload assignment',
                 'link':'Paste Your link',
-                'comment':'Questions/comments on this section?'
+                'comment':'Questions/comments on this section?',
+                'tableau':'Tableau on this section',
+                'alteryx':'Alteryx on this section',
+                'sql':'SQL on this section',
+                'python':'Python on this section',
+                'domain_industry' : 'Domain/Industry',
+               
                 }
 
     def __init__(self, *args, **kwargs):
