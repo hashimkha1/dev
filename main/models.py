@@ -40,7 +40,7 @@ class Service(models.Model):
 
 class ServiceCategory(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
-    name = models.CharField(max_length=254)
+    name = models.CharField(max_length=1000)
     slug = models.SlugField(null=True, blank=True,unique=True)
     description = models.TextField(null=True, blank=True)
 
