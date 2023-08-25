@@ -1,4 +1,4 @@
-{% extends "main/base_templates/base.html" %}
+{% extends "main/base_templates/new_base.html" %}
 {% load static %}
 {% load mathfilters %}
 {% block title %}
@@ -91,7 +91,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-3">
-                    {% if user.is_employee or user.is_superuser %}
+                    {% if user.is_staff or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}
@@ -141,7 +141,7 @@
                 </div>
 
                 <div class="col-md-3">
-                    {% if user.is_employee or user.is_superuser %}
+                    {% if user.is_staff or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
                         {% for departments,sub_departments in  data.items  %}

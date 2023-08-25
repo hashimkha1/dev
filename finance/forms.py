@@ -98,5 +98,5 @@ class LoanForm(forms.ModelForm):
     def __init__(self, **kwargs):
         super(LoanForm, self).__init__(**kwargs)
         self.fields["user"].queryset = CustomerUser.objects.filter(
-            Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
+            Q(is_admin=True) | Q(is_staff=True)| Q(is_client=True)
         )

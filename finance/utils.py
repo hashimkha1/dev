@@ -1,18 +1,21 @@
+import os
+import requests
 from datetime import datetime
 import dateutil.relativedelta
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Max
 from django.shortcuts import get_object_or_404,render
-
+from django.contrib import messages
 from .models import TrainingLoan, Transaction
 from management.models import TaskHistory
-
 from getdata.views import uploaddata
 from main.utils import Finance,Data,Management
 from accounts.models import Department
 
 
 CustomUser = get_user_model()
+
+
 def calculate_loan(user):
     debit = TrainingLoan.objects.filter(
         user=user,
@@ -45,7 +48,7 @@ def balance_loan(user):
     balloan = debit['value__sum'] - credit['value__sum']
     return balloan
 
-from django.contrib import messages
+
 def upload_csv(request):
     context = {
         "Finance": Finance,
@@ -117,7 +120,6 @@ def upload_csv(request):
 def check_default_fee(Default_Payment_Fees,username):
     try:
         default_fee = get_object_or_404(Default_Payment_Fees, user=username)
-        # default_fee = Default_Payment_Fees.objects.get(id=1)
     except:
         default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
 				job_plan_hours_per_month=40,
@@ -126,3 +128,71 @@ def check_default_fee(Default_Payment_Fees,username):
         default_payment_fees.save()
         default_fee = Default_Payment_Fees.objects.get(id=1)
     return default_fee
+
+
+#This function obtains exchange rate information
+def get_exchange_rate(base, target):
+    # api_key = 'YOUR_APP_ID'
+    exchange_api_key = os.environ.get('EXCHANGE_API_KEY')
+    # api_key = exchange_api_key
+    try:
+        url = f'https://openexchangerates.org/api/latest.json?app_id={exchange_api_key}&base={base}'
+        response = requests.get(url)
+        data = response.json()
+        rate=data['rates'][target]
+    except:
+        rate=139.00
+    return rate
+
+# ====================================================================
+#DYC Implementation
+def DYCpay():
+    context_dict = {
+        "student": {'cost': 100, 'message': 'if in error kindly go back'},
+        "business": {'cost': 200, 'message': 'if in error kindly go back'},
+        "greencard": {'cost': 300, 'message': 'if in error kindly go back'},
+        
+    }
+    for usertype, values in context_dict.items():
+        if usertype=='student':
+            cost= values["cost"]
+    return cost
+    
+# ==================================================
+def DYCDefaultPayments():
+    context_dict = {
+        "student": {'total_amount': 5000, 'down_payment': 500,'early_registration_bonus':100,},
+        "business": {'total_amount': 10000, 'down_payment': 500,'early_registration_bonus':100,},
+        "greencard": {'total_amount': 20000, 'down_payment': 500,'early_registration_bonus':100,},
+    }
+    for usertype, values in context_dict.items():
+        if usertype=='student':
+            total_amount= values["total_amount"]
+            down_payment= values["down_payment"]
+            early_registration_bonus= values["early_registration_bonus"]
+            print(total_amount,down_payment,early_registration_bonus)
+    return total_amount,down_payment,early_registration_bonus
+
+# ======================PAYPAL CHARGES============================
+def calculate_paypal_charges(amount):
+    # Define the PayPal charge brackets and corresponding fees
+    charge_brackets = [
+        (0, 500.00, 0.029, 0.30),
+        (500.01, 1000.00, 0.027, 0.30),
+        (1000.01, 5000.00, 0.025, 0.30),
+        (5000.01, 10000.00, 0.023, 0.30),
+        (10000.01, 15000.00, 0.021, 0.30),
+        (15000.01, float('inf'), 0.019, 0.30)
+    ]
+    # Cast the amount to float
+    amount = float(amount)
+    # Iterate over the charge brackets to find the applicable fee
+    for bracket in charge_brackets:
+        start_amount, end_amount, fee_percentage, fee_fixed = bracket
+        if start_amount <= amount <= end_amount:
+            # Calculate the PayPal charge
+            charge = amount * fee_percentage + fee_fixed
+            return charge
+
+    # If the amount is not within any of the charge brackets, return None
+    return None

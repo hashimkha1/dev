@@ -1,0 +1,59 @@
+{%extends "main/base_templates/analysis_index.html"%} {% block content %}
+
+<section id="data_training">
+    <div class="data_training text-center">
+        <h3 class="title">COMPANY MEETINGS</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <p><a href="{% url 'management:newmeeting'%}" class="btn btn-primary btn-sm"
+                  >ADD NEW MEETING
+                </a></p>
+              </div>
+          <div class="col-md-6">
+            <p><a href="#" class="btn btn-primary btn-sm"
+              >ACTIVE MEETINGS
+            </a></p>
+          </div>
+        </div>
+
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <p class="p text-center"> </p>
+        <div class="row text-center">
+            {% for session in  sessions  %}
+            <div class="col-md-4" id="gi">
+                <div class="card">
+                  <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                    <div class="card-body">
+                      <b><h5 class="gi">
+                        <a class="text-dark  text-decoration-none" 
+                        data-toggle="tooltip" title="{{  session.meeting_description  }}"
+                        href="{{ category.get_absolute_url }}">
+                        {{session.meeting_topic}}
+                        </a>
+                    </h5></b>
+                        <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                        <h1class="gi">
+                           ID:{{session.meeting_id}} </br>
+                                Time:{{session.meeting_time}}|Held:{{ session.get_frequency_display }} </br>
+                        </h1>
+                        <hr/>
+                        <div class="row">
+                          <div class="col-md-6">
+                            <p> <a class="btn btn-secondary btn-sm" href="{{session.meeting_link|default_if_none:'#'}}">LINK</a></p>
+                          </div>
+                          <div class="col-md-6">
+                            <p> <a class="btn btn-secondary btn-sm" href="{% url 'management:meeting-update' session.id %}">EDIT</a></p>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+               </div>
+               <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+               {%endfor%}
+        </div>
+    </div>
+    </section>
+{% endblock content %}
+
+
+

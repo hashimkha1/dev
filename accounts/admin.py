@@ -23,9 +23,10 @@ class CustomerAdmin(UserAdmin):
                     "state",
                     "country",
                     "is_admin",
-                    "is_employee",
+                    # "is_staff",
                     "is_client",
                     "is_applicant",
+                    "is_employee_contract_signed",
                     "resume_file",
                 )
             },
@@ -61,6 +62,7 @@ class CustomerAdmin(UserAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(CustomerUser, CustomerAdmin)
+# admin.site.register(CustomerUser)
 
 # Register your models here.
 admin.site.register(Tracker)

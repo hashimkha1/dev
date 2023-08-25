@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} 
+{%extends "main/base_templates/new_base.html"%} 
 {% load static %}
 {% block title %}
 {% if department %}{{ department.name }}{% else %}activities{% endif %}
@@ -10,7 +10,7 @@
     <h3 class="title">MEETINGS</h3>
         <div class="row text-center">
             {% for value in meetings %}
-            <div class="col-md-3" id="gi">
+            <div class="col-md-6" id="gi">
                 {% include 'main/snippets_templates/card.html' with instance=value %}
           </div>
           {% endfor%}

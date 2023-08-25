@@ -26,6 +26,7 @@ from accounts import views as account_views
 from coda_project import settings
 
 from mail.search_mail import parse_mail
+from . import views
 
 # ===========ERROR HANDLING SECTION================
 handler400 = "main.views.hendler400"
@@ -81,12 +82,12 @@ urlpatterns = [
         "projectmanagement/",
         include("projectmanagement.urls", namespace="projectmanagement"),
     ),
-    path("blog/", include("codablog.urls", namespace="blog")),
     path("investing/", include("investing.urls", namespace="investing")),
     path("management/", include("management.urls", namespace="management")),
-    path("globalsearch/", include("globalsearch.urls"), name="search"),
+    path("marketing/", include("marketing.urls", namespace="marketing")),
+    # path("globalsearch/", include("globalsearch.urls"), name="search"),
     path("finance/", include("finance.urls"), name="finance"),
-    path('testing/',include("testing.urls"))
+    # path('testing/', include("testing.urls"))
 ]
 
 if settings.DEBUG:

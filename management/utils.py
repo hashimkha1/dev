@@ -40,7 +40,7 @@ def employee_reward(tasks):
     except (TypeError, AttributeError):
         MaxPoints = 0
     try:
-        point_percentage=round((Points/MaxPoints),2)
+        point_percentage=round((Points/MaxPoints),2)*100
     except (TypeError, AttributeError):
         point_percentage = 0
 
@@ -48,21 +48,75 @@ def employee_reward(tasks):
         EOM = Decimal(0.00)  # employee of month
     return point_percentage
 
+# Usint the number of points to assign employees to different groups 
+
+def employee_group_level(historytasks,TaskGroups):                                          
+    if historytasks.exists():
+        count = historytasks.aggregate(total_point=Sum('point'))
+        if count.get('total_point') < 350:
+            group_obj = TaskGroups.objects.filter(title='Group A')
+            if group_obj.exists():
+                group = group_obj.first().id
+            else:
+                group_obj = TaskGroups.objects.create(title='Group A')
+                group = group_obj.id
+        if 350 <= count.get('total_point') and count.get('total_point') < 600:
+            group_obj = TaskGroups.objects.filter(title='Group B')
+            if group_obj.exists():
+                group = group_obj.first().id
+            else:
+                group_obj = TaskGroups.objects.create(title='Group B')
+                group = group_obj.id
+        if 600 <= count.get('total_point') and count.get('total_point') < 800:
+            group_obj = TaskGroups.objects.filter(title='Group C')
+            if group_obj.exists():
+                group = group_obj.first().id
+            else:
+                group_obj = TaskGroups.objects.create(title='Group C')
+                group = group_obj.id
+        if 800 <= count.get('total_point') and count.get('total_point') < 1000:
+            group_obj = TaskGroups.objects.filter(title='Group D')
+            if group_obj.exists():
+                group = group_obj.first().id
+            else:
+                group_obj = TaskGroups.objects.create(title='Group D')
+                group = group_obj.id
+        if 1000 <= count.get('total_point'):
+            group_obj = TaskGroups.objects.filter(title='Group E')
+            if group_obj.exists():
+                group = group_obj.first().id
+            else:
+                group_obj = TaskGroups.objects.create(title='Group E')
+                group = group_obj.id
+    else:
+        group_obj = TaskGroups.objects.filter(title='Group A')
+        if group_obj.exists():
+            group = group_obj.first().id
+        else:
+            group_obj = TaskGroups.objects.create(title='Group A')
+            group = group_obj.id   
+    return group
+    
 def payinitial(tasks):
     num_tasks = tasks.count()
     Points = tasks.aggregate(Your_Total_Points=Sum("point"))
     Maxpoints = tasks.aggregate(Your_Total_MaxPoints=Sum("mxpoint"))
     Earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     Maxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    # current Pay Values
-    points = Points.get("Your_Total_Points")
-    mxpoints = Maxpoints.get("Your_Total_MaxPoints")
-    pay = Earning.get("Your_Total_Pay")
-    GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
     try:
+    # current Pay Values
+        points = round(Points.get("Your_Total_Points"))
+        mxpoints = round(Maxpoints.get("Your_Total_MaxPoints"))
+        pay = Earning.get("Your_Total_Pay")
+        GoalAmount = Maxearning.get("Your_Total_AssignedAmt")
         pointsbalance = Decimal(mxpoints) - Decimal(points)
     except (TypeError, AttributeError):
-        pointsbalance = 0
+        points=0.00
+        mxpoints=0.00
+        pay=0.00
+        GoalAmount=0.00
+        pointsbalance=0.00
+        pointsbalance=0.00
     return (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)
 
 def paymentconfigurations(PayslipConfig,employee):
@@ -75,6 +129,8 @@ def paymentconfigurations(PayslipConfig,employee):
              Q(user__username="test_user") 
              ).latest('id')
     return payslip_config
+  
+
 
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
@@ -126,7 +182,7 @@ def paytime():
     last_month=last_day_of_prev_month1.strftime("%m")
     return (today,year,deadline_date,month,last_month,day,target_date,
             time_remaining_days,time_remaining_hours,time_remaining_minutes,
-            payday,last_day_of_prev_month1,last_day_of_prev_month2,
+            payday,start_day_of_prev_month2,last_day_of_prev_month1,last_day_of_prev_month2,
             start_day_of_prev_month3,last_day_of_prev_month3)
 
 
@@ -224,61 +280,100 @@ def addloantable(loantable,employee,total_pay,payslip_config,user_data):
 
     return None
 
-# def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
-#     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-#     # training_loan = user_data.order_by('-id')[0]
-#     try:
-#         training_loan = user_data.order_by('-id')[0]
-#     except:
-#         training_loan=None
-#     if training_loan:
-#         loan_data=user_data.update(
-#         user=employee,
-#         category="Debit",
-#         amount=loan_amount,
-#         # created_at,
-#         # updated_at=2022-10-10,
-#         # is_active,
-#         training_loan_amount=loan_amount,
-#         total_earnings_amount=total_pay,
-#         # deduction_date,
-#         deduction_amount=loan_payment,
-#         balance_amount=balance_amount,
-#         )
-#     else:
-#         loan_data=loantable(
-#                 user=employee,
-#                 category="Debit",
-#                 amount=loan_amount,
-#                 # created_at,
-#                 # updated_at=today,
-#                 # is_active,
-#                 training_loan_amount=loan_amount,
-#                 total_earnings_amount=total_pay,
-#                 # deduction_date,
-#                 deduction_amount=loan_payment,
-#                 balance_amount=balance_amount,
-#                 )
-#         loan_data.save()
-#     return 
 
+# userprofile = UserProfile.objects.get(user_id=emp)
+# if userprofile.laptop_status == True:
+            # laptop_saving = Decimal(0)
+            # if LBandLS.objects.filter(user=emp).exists():
+            #     lbandls = LBandLS.objects.get(user_id=emp)
+            #     laptop_bonus = lbandls.laptop_bonus
+            # else:
+            #     laptop_bonus = Decimal(0)
+# else:
+    # laptop_bonus = Decimal(0)
+    # if LBandLS.objects.filter(user=emp).exists():
+        # lbandls = LBandLS.objects.get(user_id=emp)
+        # laptop_saving = lbandls.laptop_savings
+    # else:
+        # laptop_saving = Decimal(0)
+# laptop_bonus = round(Decimal(laptop_bonus), 2)
+# laptop_saving = round(Decimal(laptop_saving), 2)
+# laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
+# ====================Bonus Section=============================
+# pointsearning, Night_Bonus, holidaypay, yearly = bonus(tasks, total_pay, payslip_config)
+# print(pointsearning,Night_Bonus,holidaypay,yearly)
+# EOM = Decimal(0.00)  # employee of month
+# EOQ = Decimal(0.00)  # employee of quarter
+# EOY = Decimal(0.00)  # employee of year
+# if month == 12:
+    # task_obj = Task.objects.filter(submission__contains=year)
+    # logger.debug(f'task_obj: {task_obj}')
+    # eoy_users = best_employee(task_obj)
+    # if (emp,) in eoy_users:
+        # logger.info('this employee is EOY!')
+        # EOY = payslip_config.eoy_bonus
+# elif month % 3 == 0:
+    # task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month - 2))
+                                    # | Q(submission__contains=normalize_period(year, month - 1))
+                                    # | Q(submission__contains=normalize_period(year, month)))
+    # logger.debug(f'task_obj: {task_obj}')
+    # eoq_users = best_employee(task_obj)
+    # user_tuple = (emp.username,)
+    # logger.debug(f'eoq_users: {eoq_users}')
+    # logger.debug(f'user_tuple: {user_tuple}')
 
+    # if user_tuple in eoq_users:
+        # logger.info('this employee is EOQ!')
+        # EOQ = payslip_config.eoq_bonus
+        # logger.debug(f'EOQ: {EOQ}')
+# else:
+    # task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
+    # logger.debug(f'task_obj: {task_obj}')
+    # eom_users = best_employee(task_obj)
+    # if (employee,) in eom_users:
+        # logger.info('this employee is EOM!')
+                # EOM = payslip_config.eom_bonus
+        # ====================Summary Section=============================
+        # total_deduction, total_bonus = additional_earnings(user_data, tasks, total_pay, payslip_config)
+        # total_bonus = total_bonus + EOM + EOQ + EOY
+        # total_value = total_pay + total_bonus
+        # net = total_value - total_deduction
+        # round_off = round(net) - net
+        # net_pay = net + round_off
+        # logger.debug(f'total deductions: {total_deduction}')
+        # logger.debug(f'total_bonus: {total_bonus}')
+        # logger.debug(f'net: {net}')
+        # logger.debug(f'net_pay: {net_pay}')
 
-def lap_save_bonus(userprofile,lbandls,LBLS):
+# def lap_save_bonus(userprofile,LBLS):
+#    Computes the laptop savings, Laptop Bonusloan payment and loan balance for an employee"""
+    # payslip_config=paymentconfigurations(PayslipConfig,employee)
+    # if userprofile.laptop_status == True:
+
+    #     laptop_saving = Decimal(0)
+    #     if LBLS.exists():
+    #         # lbandls =LBandLS.objects.get(user_id=employee)
+    #         laptop_bonus = LBLS.laptop_bonus
+    #     else:
+    #         laptop_bonus = Decimal(0)
+    # else:
+    #     laptop_bonus = Decimal(0)
+    #     if LBLS.exists():
+    #         laptop_saving = LBLS.laptop_savings
+    #     else:
+    #         laptop_saving = Decimal(0)
+    # return laptop_bonus,laptop_saving
+
+def lap_save_bonus(userprofile,payslip_config):
     """Computes the laptop savings, Laptop Bonusloan payment and loan balance for an employee"""
+    # payslip_config=paymentconfigurations(PayslipConfig,employee)
     if userprofile.laptop_status == True:
-        laptop_saving = Decimal(0)
-        if LBLS.exists():
-            # lbandls =LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
-        else:
-            laptop_bonus = Decimal(0)
+        laptop_saving =Decimal(0.00)
+        laptop_bonus=payslip_config.lb_amount
     else:
-        laptop_bonus = Decimal(0)
-        if LBLS.exists():
-            laptop_saving = lbandls.laptop_service
-        else:
-            laptop_saving = Decimal(0)
+        laptop_bonus=Decimal(0.00)
+        laptop_saving =Decimal(payslip_config.ls_amount)
+
     return laptop_bonus,laptop_saving
     
 def deductions(user_data,payslip_config,total_pay):
@@ -297,15 +392,14 @@ def deductions(user_data,payslip_config,total_pay):
        kra = round(Decimal(total_pay) * Decimal(0.05), 2)
        lap_saving=500
        loan_payment=0
-    total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving
+    total_deductions=food_accomodation+computer_maintenance+health+kra+lap_saving+loan_payment
     return food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions
 
 def bonus(tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
+    # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config,employee)
     month=paytime()[3]
     day=paytime()[5]
-    print(month)
-    print(day)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     if payslip_config:
         # -------------points earning-----------
@@ -314,15 +408,16 @@ def bonus(tasks,total_pay,payslip_config):
                 bonus_points_ammount = Decimal(0)
                 # EOM =payslip_config.eom_bonus   # employee of month
         # -------------Laptop Bonus-----------
-        Lap_Bonus = payslip_config.lb_amount
+        # Lap_Bonus = laptop_bonus #payslip_config.lb_amount
         # -------------holiday earning-----------
         offpay = payslip_config.holiday_pay if month in (12, 1) and day in (24, 25, 26, 31, 1, 2) else Decimal(0.00)
         # -------------late Night earning-----------
         latenight_Bonus =round(total_pay * payslip_config.rp_increment_max_percentage, 2)
+        # print("latenight_Bonus====>",latenight_Bonus)
         yearly = round(payslip_config.rp_starting_amount + (total_pay * payslip_config.rp_increment_percentage), 2)
         # -------------Employee of Award(EOM,EOQ,EOY)-----------
         point_percentage=employee_reward(tasks)
-        EOM = payslip_config.eom_bonus if point_percentage>=0.75 else Decimal(0.00)
+        EOM = payslip_config.eom_bonus if point_percentage>=75 else Decimal(0.00)
         EOQ =  Decimal(0.00)
         EOY =  Decimal(0.00)
     else:
@@ -332,22 +427,73 @@ def bonus(tasks,total_pay,payslip_config):
         latenight_Bonus =round(total_pay * Decimal(0.05), 2)
         bonus_points_ammount= Decimal(0.00)
         yearly = Decimal(12000)
-        Lap_Bonus =  Decimal(0.00)
-    return bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus
+        offpay = Decimal(0.00)
+        # Lap_Bonus =  Decimal(0.00)
+
+    sub_bonus=(Decimal(bonus_points_ammount)+Decimal(latenight_Bonus)+
+              +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)
+              +Decimal(offpay))
+    return bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus#,Lap_Bonus
 
 def additional_earnings(user_data,tasks,total_pay,payslip_config):
     """Computes the loan amount, loan payment and loan balance for an employee"""
     # ================BONUS============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
-    sub_bonus=(Decimal(bonus_points_ammount)+Decimal(latenight_Bonus)+
-              +Decimal(EOM)+Decimal(EOQ)+Decimal(EOY)+
-              Decimal(Lap_Bonus))
+    *_,sub_bonus=bonus(tasks,total_pay,payslip_config)
+
+    # print("Test bonus",Lap_Bonus)
     # ===============DEDUCTIONS=======================
-    # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    # *_,total_deductions=deductions(payslip_config,total_pay)
     total_deduction=deductions(user_data,payslip_config,total_pay)[-1]
-    print(f'LOAN AMOUNT={total_deduction}')
+    # total=sub_bonus-total_deduction
+    print(f'DEDUCTED AMOUNT={total_deduction}')
+    print(f'BONUS AMOUNT={sub_bonus}')
+    # print(f'TOTAL AMOUNT={total}')
     return total_deduction,sub_bonus
+
+def emp_average_earnings(request,TaskHistory,GoalAmount,employee):
+    start_day_of_prev_month2=paytime()[-5]
+    last_day_of_prev_month1=paytime()[-4]
+    last_day_of_prev_month2=paytime()[-3]
+    start_day_of_prev_month3=paytime()[-2]
+    print("last_day_of_prev_month1======>",last_day_of_prev_month1)
+    print("last_day_of_prev_month2======>",last_day_of_prev_month2)
+    print("start_day_of_prev_month3======>",start_day_of_prev_month3)
+    last_day_of_prev_month1=paytime()[-3]
+    start_day_of_prev_month3=paytime()[-2]
+        # print("average_earnings======>",average_earnings)
+    history = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month3),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    last3month_history = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month3),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    last2monthhistory = TaskHistory.objects.filter(
+        Q(submission__lte=last_day_of_prev_month1),
+        Q(submission__gte=start_day_of_prev_month2),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+    lastmonthhistory = TaskHistory.objects.filter(
+        Q(submission__gte=last_day_of_prev_month1),
+        Q(employee=employee)
+        # Q(employee__username=request.user)
+    )
+
+    average_earnings = 0
+    counter = 3
+    for data in history.all():
+        average_earnings += data.get_pay
+        # counter = counter+1 
+        counter = 3
+    average_earnings = round((average_earnings / counter),2)
+    if average_earnings == 0:
+        average_earnings = GoalAmount
+    return average_earnings
 
 # ================================apis for slug==========================
 def random_string_generator(size=10, chars=string.ascii_lowercase + string.digits):
@@ -380,4 +526,25 @@ def email_template(subject, to, html_content):
     msg.attach_alternative(html_content, "text/html")
     msg.send()
 
+def split_num_str(my_str):
+    num = [x for x in my_str if x.isdigit()]
+    num = "".join(num)
+    if not num:
+        num = None
+    return num
 
+def text_num_split(item):
+    for index, letter in enumerate(item, 0):
+        if letter.isdigit():
+            return [item[:index],item[index:]]
+
+def task_assignment_random(employees):
+    # departments=[department.name for department in dept_obj ]
+    departments=['HR','IT','Finance','Health','Marketing','Basics','IT Projects','Field Projects','Security']
+    try:
+        departments_per_worker = len(departments) / len(employees)
+    except ZeroDivisionError:
+        departments_per_worker = len(departments) / 1
+    random.shuffle(departments)
+    rand_departments = zip(*[iter(departments)] * int(departments_per_worker))
+    return employees,rand_departments

@@ -1,7 +1,8 @@
-import datetime
+from datetime import datetime,timedelta
 from decimal import *
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Q
 from django.db.models import Sum
 from django.urls import reverse
 from django.utils import timezone
@@ -14,18 +15,21 @@ from django_countries.fields import CountryField
 # Create your models here.
 class CustomerUser(AbstractUser):
     class Category(models.IntegerChoices):
-        Applicant_or_Job_Applicant = 1
+        Job_Applicant = 1
         Coda_Staff_Member = 2
-        Client_OR_Customer_or_Student = 3
+        Jobsupport = 3
+        Student = 4
+        investor = 5
+        General_User = 6
 
     # added this column here
     class SubCategory(models.IntegerChoices):
         No_selection = 0
-        Job_Support = 1
-        Student = 2
-        Full_time = 3
-        Contractual = 4
-        Agent = 5
+        Full_time = 1
+        Contractual = 2
+        Agent = 3
+        Short_Term = 4
+        Long_Term = 5
         Other = 6
 
     class Score(models.IntegerChoices):
@@ -48,21 +52,28 @@ class CustomerUser(AbstractUser):
     sub_category = models.IntegerField(
         choices=SubCategory.choices, blank=True, null=True
     )
-    # category=models.IntegerField(choices=Category.choices,blank=True,null=False)
-    # applicant=models.BooleanField('Is Job Applicant', default=True)
-    # Changes Made to Model-3/29/2022
     is_admin = models.BooleanField("Is admin", default=False)
-    is_employee = models.BooleanField("Is employee", default=False)
+    is_staff = models.BooleanField("Is employee", default=False)
     is_client = models.BooleanField("Is Client", default=False)
     is_applicant = models.BooleanField("Is applicant", default=False)
+    # is_employee = models.BooleanField("Is employee", default=False)
+    is_employee_contract_signed = models.BooleanField(default=False)
     resume_file = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
 
     # is_active = models.BooleanField('Is applicant', default=True)
     class Meta:
         # ordering = ["-date_joined"]
         ordering = ["username"]
+        verbose_name_plural = "Users"
 
-
+    @property
+    def full_name(self):
+        fullname = f'{self.first_name},{self.last_name}'
+        return fullname
+    
+    def is_recent(self):
+        return self.date_joined >= timezone.now() - timedelta(days=365)
+    
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
 
@@ -203,41 +214,6 @@ def credentialcategory_pre_save_receiver(sender, instance, *args, **kwargs):
 
 pre_save.connect(credentialcategory_pre_save_receiver, sender=CredentialCategory)
 
-""" 
-#Applicant Table
-class applicant(models.Model):
-    applicant = models.ForeignKey('accounts.CustomerUser', on_delete=models.CASCADE)
-    #applicant = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
-    resume=models.FileField(upload_to='resumes/doc/',blank=True,null=True)
-    uploaded = models.BooleanField('uploaded', default=True)
-"""
-
-
-"""
-class Profile(models.Model):
-    user = models.OneToOneField('accounts.CustomerUser', on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
-
-    def __str__(self):
-        return f'{self.user.username} Profile'
-
-    #def save(self, *args, **kwargs):
-       # super().save(*args, **kwargs)
-
-        # img=image.open(self.image.path)
-
-        # if img.height> 300 or img.width>300:
-          #   output_size=(300,300)
-           #  img.thumbnail(output_size)
-           #  img.save(self.image.path)
-
-class UserProfile(models.Model):
-    user = models.OneToOneField('CustomerUser', on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg', upload_to='profile_pics')
-
-    def __str__(self):
-        return f'{self.user.username} Profile'
-"""
 
 class TaskGroups(models.Model):
     id = models.AutoField(primary_key=True)
@@ -297,7 +273,7 @@ class Tracker(models.Model):
         ("database", "database"),
         ("Business Analysis", "Business Analysis"),
         ("Data Cleaning", "Data Cleaning"),
-        ("Other", "Other"),
+        ("Other", "Other"), 
     ]
     category = models.CharField(
         max_length=25,
@@ -320,8 +296,8 @@ class Tracker(models.Model):
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
-        #  limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
-        limit_choices_to={"is_employee": True, "is_active": True},
+        #  limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        limit_choices_to={"is_staff": True, "is_active": True},
     )
 
     author = models.ForeignKey(
@@ -361,7 +337,7 @@ class Tracker(models.Model):
     @property
     def end(self):
         # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
-        date_time = self.login_date + datetime.timedelta(hours=0)
+        date_time = self.login_date + timedelta(hours=0)
         endtime = date_time.strftime("%H:%M")
         return endtime
 

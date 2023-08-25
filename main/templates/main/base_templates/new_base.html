@@ -19,15 +19,18 @@
         type="text/css"
         href="{% static 'main/css/new_main.css' %}"
       />
-
+      {% if title %}
+      <title>CODA - {{ title }}</title>
+      {% else %}
+      <title>CODA</title>
+      {% endif %}
 </head>
 
 <body>
-    {% include 'main/navbar_templates/home_navbar.html' %} 
-    <div>
+        {% include 'main/navbar_templates/home_navbar.html' %} 
+        <div>
         {% block content %}
         
-
         {% endblock %}
     </div>
 

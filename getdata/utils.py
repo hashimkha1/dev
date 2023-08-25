@@ -1,36 +1,221 @@
 from __future__ import print_function
 import os
 import re
+import glob
 from dateutil import parser
 from bs4 import BeautifulSoup
 import psycopg2
-
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+from datetime import date,datetime
+from .models import Editable
+from main.utils import path_values
 # To encode the data
 from base64 import urlsafe_b64decode
 import logging
 logger = logging.getLogger(__name__)
-
-
+import urllib.request
+import requests
 #libraries for Options_play data extraction
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
-from coda_project.settings import dblocal,herokudev,herokuprod
+from coda_project.settings import dba_values ,source_target #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://mail.google.com/']
 
 #DB VARIABLES
-host,dbname,user,password=herokuprod() #herokudev() #dblocal() #,herokuprod()
+# host,dbname,user,password=herokudev() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
+
+#DB VARIABLES
+(source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
+
+
+def load_xel_data_to_postgres(xel_folder_path,table_name):
+    # Create a PostgreSQL connection and cursor
+    conn = psycopg2.connect(
+        host=source_host,
+        dbname=source_dbname,
+        user=source_user,
+        password=source_password
+    )
+    cursor = conn.cursor()
+
+    # Create the table if it doesn't exist
+    create_table_query = '''
+    CREATE TABLE IF NOT EXISTS {} (
+        event_time TIMESTAMP,
+        session_id INTEGER,
+        event_name TEXT,
+        column1 TEXT,
+        column2 TEXT,
+        column3 TEXT
+    );
+    '''.format(table_name)
+    cursor.execute(create_table_query)
+
+    # Get a list of XEL files in the folder
+    xel_files = glob.glob(os.path.join(xel_folder_path, '*.xel'))
+    for xel_file in xel_files:
+        with open(xel_file, 'r') as file:
+            # Read the contents of the XEL file
+            xel_content = file.read()
+
+            # Extract events using regular expressions
+            events = re.findall(r'<Event event_time="(.*?)" session_id="(.*?)" event_name="(.*?)">(.*?)</Event>', xel_content, re.DOTALL)
+
+            # Process each event
+            for event in events:
+                event_time, session_id, event_name, column_data = event
+
+                # Extract column values
+                column_values = {}
+                columns = re.findall(r'<Column name="(.*?)" value="(.*?)"', column_data)
+                for column_name, column_value in columns:
+                    column_values[column_name] = column_value
+
+                # Insert the event data into the database table
+                insert_query = '''
+                INSERT INTO {} (event_time, session_id, event_name, column1, column2, column3)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                '''.format(table_name)
+                cursor.execute(insert_query, (event_time, session_id, event_name, column_values.get('Column1'), column_values.get('Column2'), column_values.get('Column3')))
+
+    # Commit the changes and close the database connection
+    conn.commit()
+    conn.close()
+
+
+def fetch_and_insert_data():
+    (source_host, source_dbname, source_user, source_password, target_db_path) = source_target()
+
+    # Connect to the source database
+    source_conn = psycopg2.connect(
+        host=source_host,
+        dbname=source_dbname,
+        user=source_user,
+        password=source_password
+    )
+    source_cursor = source_conn.cursor()
+
+    # Connect to the target database
+    target_conn = psycopg2.connect(target_db_path)
+    target_cursor = target_conn.cursor()
+
+    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
+    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
+
+    try:
+        # Iterate over source and target tables
+        for source_table, target_table in zip(source_tables, target_tables):
+            # Drop the target table if it exists
+            target_cursor.execute(f"DROP TABLE IF EXISTS {target_table}")
+            print("Target table dropped.")
+
+            # Fetch the structure of the source table
+            source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{source_table}'")
+            columns = source_cursor.fetchall()
+
+            # Get unique column names and their corresponding data types
+            unique_columns = {}
+            for column in columns:
+                column_name = column[0]
+                column_data_type = column[1]
+                if column_name not in unique_columns:
+                    unique_columns[column_name] = column_data_type
+
+            create_table_query = f"CREATE TABLE {target_table} ("
+            column_names = set()  # Track column names to avoid duplicates
+            for column_name, column_data_type in unique_columns.items():
+                if column_name not in column_names:
+                    create_table_query += f"{column_name} {column_data_type}, "
+                    column_names.add(column_name)
+            create_table_query = create_table_query.rstrip(", ") + ")"
+
+            # Create the target table
+            target_cursor.execute(create_table_query)
+            print("Target table created.")
+
+            # Fetch data from the source table
+            source_cursor.execute(f"SELECT * FROM {source_table}")
+            rows = source_cursor.fetchall()
+
+            # Insert data into the target table
+            for row in rows:
+                placeholders = "%s, " * len(row)
+                placeholders = placeholders.rstrip(", ")
+                target_cursor.execute(f"INSERT INTO {target_table} VALUES ({placeholders})", row)
+
+        # Commit the changes in the target database
+        target_conn.commit()
+
+        print("Data transfer successful!")
+    except Exception as e:
+        print(f"Data transfer failed: {str(e)}")
+
+    # Close the database connections
+    source_conn.close()
+    target_conn.close()
+
+
+def compute_stock_values(stockdata):
+    date_today = date.today()
+    row = None  # Initialize row to None
+    iv = rr = ar = sp = num_days = date_expiry = days_to_exp = None  # Initialize variables
+    for current_row in stockdata:
+        try:
+            iv = current_row.Implied_Volatility_Rank
+            rr = current_row.Raw_Return
+            ar = current_row.Annualized_Return
+            sp = current_row.Stock_Price
+            num_days = current_row.Days_To_Expiry
+            date_expiry = current_row.Expiry.date()  # Assign the datetime object directly
+            days_to_exp = (date_expiry - date_today).days
+
+            if isinstance(iv, str):
+                iv = iv.replace('%', '')
+            if isinstance(rr, str):
+                rr = rr.replace('%', '')
+            if isinstance(ar, str):
+                ar = ar.replace('%', '')
+            if isinstance(sp, str):
+                sp = sp[1:]
+
+            row = current_row  # Update row with the current valid row
+        except (ValueError, AttributeError):
+            continue
+
+    return row, iv, rr, ar, sp, num_days, date_expiry, days_to_exp
+
+
+
+
+def row_value():
+    putsrow_value=3
+    callsrow_value=3
+    id_value=3
+#     rows = Editable.objects.all()
+#     if rows:
+#         first_row = rows[0]  # get the first object in the QuerySet
+#         putsrow_value = first_row.putsrow  # get the value of the `putsrow` field
+#         callsrow_value = first_row.callsrow  # get the value of the `callsrow` field
+#         id_value=first_row.id
+#         # print(putsrow_value,callsrow_value,id_value)
+#     else:
+#         print("No objects found with id=1")
+#         putsrow_value=1
+#         callsrow_value=1
+#         id_value=1
+    return putsrow_value,callsrow_value,id_value
 
 def get_gmail_service():
     creds = None
@@ -378,24 +563,29 @@ def dump_data_credit(values):
         print(err)
 
 def main_cread_spread():
-    path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
-    options = webdriver.ChromeOptions()
-    options.add_argument("start-maximized")
-    options.headless = True
+    # path = r"gapi/Chrome_driver/chromedriver.exe" #r"Chrome_driver.exe"
+
     # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    ## might not be needed
+    options.add_argument("window-size=800x600")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
     driver.get('https://www.optionsplay.com/hub/credit-spread-file')
 
-    driver.maximize_window()
     time.sleep(5)
-    driver.implicitly_wait(4)
+    driver.implicitly_wait(5)
     form = driver.find_element(By.TAG_NAME, 'form')
-    # form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
-    # form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
-    form.find_element(By.ID, 'Login').send_keys(os.environ.get('EMAIL_USER'))
-    form.find_element(By.ID, 'Password').send_keys(os.environ.get('EMAIL_PASS'))
-
+    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
+    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
+    # form.find_element(By.ID, 'Login').send_keys(os.environ.get('EMAIL_USER'))
+    # form.find_element(By.ID, 'Password').send_keys(os.environ.get('EMAIL_PASS'))
+    print("Loginned successfully")
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
     time.sleep(4)
@@ -412,9 +602,7 @@ def main_cread_spread():
             path = '//*[@id="CreditSpreadFile"]/tbody/tr[{}]/td[{}]'.format(row,col)
             value = driver.find_element(By.XPATH,path).text
             values.append(value)
-            print(value, end =' ')
         dump_data_credit(tuple(values))
-        print('')
 
 #covered_calls
 def dump_data_covered_calls(values):
@@ -455,18 +643,21 @@ def dump_data_covered_calls(values):
         print(err)
 
 def main_covered_calls():
-    path = r"Chrome_driver.exe"
+        # to supress the error messages/logs
     options = webdriver.ChromeOptions()
-    options.headless = True
-    options.add_argument("start-maximized")
-    # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+    options.add_argument("--headless")
+    options.add_argument("--disable-dev-shm-usage")
+    options.add_argument('--no-sandbox')
+    options.add_argument("--disable-gpu")
+    ## might not be needed
+    options.add_argument("window-size=800x600")
+
+    driver = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+
     driver.get('https://www.optionsplay.com/hub/covered-calls')
 
-    driver.maximize_window()
-    time.sleep(2)
-    driver.implicitly_wait(2)
+    time.sleep(5)
+    driver.implicitly_wait(4)
     form = driver.find_element(By.TAG_NAME, 'form')
     form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
     form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
@@ -530,41 +721,53 @@ def dump_data_short_put(values):
     except Exception as err:
         print(err)
 
-def main_shortput():
-    path = r"Chrome_driver.exe"
-    options = webdriver.ChromeOptions()
-    options.headless = True
-    options.add_argument("start-maximized")
-    # to supress the error messages/logs
-    options.add_experimental_option('excludeSwitches',['enable-logging'])
-    driver = webdriver.Chrome(executable_path = path, options=options)
+
+def main_shortput(request):
+    # path_list,sub_title,pre_sub_title=path_values(request)
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
     driver.get('https://www.optionsplay.com/hub/short-puts')
 
-    driver.maximize_window()
-    time.sleep(2)
-    driver.implicitly_wait(2)
+    time.sleep(15)
+    driver.implicitly_wait(15)
     form = driver.find_element(By.TAG_NAME, 'form')
-    form.find_element(By.ID, 'Login').send_keys('info@codanalytics.net')
-    form.find_element(By.ID, 'Password').send_keys('!ZK123sebe')
-
+    form.find_element(By.ID, 'Login').send_keys(os.environ.get("EMAIL_INFO_USER")) 
+    form.find_element(By.ID, 'Password').send_keys(os.environ.get("EMAIL_INFO_PASS")) 
     btn = driver.find_element(By.XPATH, '//*[@id="applicationHost"]/div/div/div[3]/div/div/div/div[1]/div/div/form/div[4]/button')
     btn.send_keys(Keys.ENTER)
-    time.sleep(3)
+    time.sleep(5)
     table = driver.find_element(By.XPATH, '//*[@id="shortPuts"]')
+    time.sleep(5)
     tbody = table.find_element(By.XPATH,'//*[@id="shortPuts"]/tbody')
+    # time.sleep(5)
     rows = tbody.find_elements(By.TAG_NAME,'tr')
     rows = len(rows)
-    # //*[@id="shortPuts"]/tbody/tr[1]
-    # //*[@id="shortPuts"]/tbody/tr[1]/td[15]
-    time.sleep(4)
-    for row in range(1,rows+1):
+    time.sleep(10)
+    putsrow_value,callsrow_value,id_value=row_value()
+    data=[]
+    # for row in range(1,10):
+    # for row in range(1,rows+1):
+    for row in range(1,putsrow_value+1):
         values = []
         for col in range(1,16):
             path = '//*[@id="shortPuts"]/tbody/tr['+str(row)+']/td['+str(col)+']'
             value = driver.find_element(By.XPATH,path).text.strip()
             values.append(value)
-        
-        value = float(values[14].replace('%',''))
-        if values[11] == 'N' and value < 30:
+
+        if not values[9]:
+            continue  # skip this row if the 10th value is empty
+
+        iv = float(values[8].replace('%',''))
+        Return = float(values[13].replace('%',''))
+        num_days =float(values[3])
+        sp= float(values[11][1:])
+
+        if num_days >= 21 and iv >=15 and iv <= 50 and Return >= 65 and sp>15:
+            # print(f'Days to Expiration==>:{num_days},sp==>:{sp},iv==>{iv},Return==>:{Return}')
             dump_data_short_put(tuple(values))
-    
+            data.append(values)
+    return data

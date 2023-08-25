@@ -1,7 +1,7 @@
 import traceback
 from django.http import Http404
 
-from testing.models import Logs
+from getdata.models import Logs
 
 
 class MailMiddleware:

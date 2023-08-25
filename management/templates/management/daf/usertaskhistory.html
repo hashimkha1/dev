@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{%extends "main/base_templates/new_base.html"%} {% block content %}
 {% load static %}
 {% block title %}
 <!----{% if department %}{{ department.name }}{% else %}activities{% endif %}----->
@@ -11,7 +11,22 @@
 <div class="data_training text-center">
   <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
   <p class="p text-center">We Value Your Time Here at CODA, you have been assigned <b>{{num_tasks}}</b> activities with <b>{{time_remaining}}</b> days left this month</p>
-<div class="container-fluid mr-auto">
+
+    <div class="container-fluid mr-auto">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4">
+                    {{ form.month }}
+                </div>
+                <div class="col-md-4">
+                    {{ form.year }}
+                </div>
+                <div class="col-md-4">
+                    <button type="submit" class="btn btn-md btn-info">Filter</button>
+                </div>
+            </div>
+        </form>
       <div class="row text-center">
                     <div class="col-md-2" id="bada">
                       <div class="card">
@@ -85,7 +100,7 @@
                           <hr/>
                           <i><h6>Benefits & tips on Increasing Your Pay</h6></i>
                           <hr/>
-                          <i><a href="{% url 'management:hr'%}">More</a></i>
+                          <i><a href="{% url 'main:layout'%}">More</a></i>
                         </div>
                       </div>
                     </div>
@@ -118,10 +133,11 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>
-          <th>Check</th>
+          <!-- <th>Check</th> -->
           <th>Task</th>
-          <th>Deadline</th>
+          <!-- <th>Deadline</th> -->
           <th>Submission</th>
+          <!-- <th>Submitted</th> -->
           <th>Points</th>
           <th>Target Points</th>
           <th>Target Amount</th>
@@ -133,7 +149,7 @@
       <tbody>
         {% for task in  tasks  %}
             <tr>
-                <td><input type="checkbox" class="checkthis" /></td>
+                <!-- <td><input type="checkbox" class="checkthis" /></td> -->
                 <td>
                     <a class="text-dark  text-decoration-none" 
                     data-toggle="tooltip" title="{{  task.description  }}"
@@ -143,8 +159,9 @@
                 </td>
                 <!--  <td>{{task.employee}}</td>
                 <!--<td>{{task.group}}</td>-->
-                <td>{{task.deadline|date:"F d, Y"}}</td>
-                <td>{{task.submission|date:"F d, Y"}}</td>
+                <!-- <td>{{task.deadline|date:"F d, Y"}}</td> -->
+                <!-- <td>{{task.submission|date:"F d, Y"}}</td> -->
+                <td>{{task.submitted|date:"F d, Y"}}</td>
                 <td>{{task.point}}</td>
                 <td>{{task.mxpoint}}</td>
                 <td>{{task.mxearning}}</td>

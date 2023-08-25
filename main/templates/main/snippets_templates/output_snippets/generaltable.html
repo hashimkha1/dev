@@ -1,0 +1,49 @@
+<tr>
+    <td>
+        <a class="text-dark  text-decoration-none" 
+        data-toggle="tooltip" title="{{ row.comment }}"
+        href="{{ category.get_absolute_url }}">
+        {{ row.symbol }}
+        </a>
+    </td>
+    
+    {% if subtitle == 'credit_spread' %} 
+        <td>{{ row.strategy }}</td>
+        <td>{{ row.price }}</td>
+        <td>{{ row.type }}</td>
+        <td>{{ row.sell_strike }}</td>
+        <!-- <td>{{ row.buy_strike }}</td> -->
+        <td>{{ row.premium }}</td>
+    {% else %}
+        <td>{{ row.action }}</td>
+        <td>{{ row.stock_price }}</td>
+        <td>{{ row.strike_price }}</td>
+        <td>{{ row.raw_return }}</td>
+        <td>{{ days_to_expiration }}</td>
+        <!-- <td>{{ row.days_to_expiry }}</td> -->
+        <td>{{ row.annualized_return }}</td>
+    {% endif %}
+    <!-- <td>{{ row.implied_volatility_rank }}{{ row.rank }}</td> -->
+    <!-- <td>{{ date_today|date:"n/d/Y" }}</td> -->
+    <td>{{ row.expiry|date:"n/d/Y" }}</td>
+    <td>{{ row.earnings_date }}</td>
+    <td>
+        <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
+    </td>
+    <!-- <td>
+        <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
+    </td> -->
+
+    <!-- {% if pre_sub_title == 'shortputdata' %}
+    <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
+    {% elif pre_sub_title == 'credit_spread' %}
+        <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
+    {% else %}
+        <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
+    {% endif %} -->
+    <td><a class="article-title" href="{{ row.edit_url }}">Edit</a></td>
+
+
+
+
+</tr>

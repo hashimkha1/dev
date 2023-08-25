@@ -1,15 +1,17 @@
-from unicodedata import category
 from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
 from django.urls import reverse, reverse_lazy
-from django.shortcuts import get_object_or_404, redirect, render
 from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
+from django.template.defaultfilters import upper
 from requests import request
 from datetime import datetime,date
+from decimal import *
+from django.db.models import Q
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -17,73 +19,93 @@ from django.views.generic import (
 	DetailView,
 	DeleteView,
 )
+import json
 from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction,PayslipConfig,Supplier,Food
+		Inflow,Transaction,PayslipConfig,Supplier,Food,
+		DC48_Inflow,Field_Expense
 	)
 from .forms import LoanForm,TransactionForm,InflowForm
-# User=settings.AUTH_USER_MODEL
-from management.utils import paymentconfigurations
-from management.views import loan_update_save
-from management.utils import loan_computation
+from mail.custom_email import send_email
+from coda_project.settings import SITEURL,payment_details
+from main.utils import path_values,countdown_in_month,dates_functionality,service_instances,service_plan_instances
 from main.filters import FoodFilter
-from .utils import check_default_fee
+from main.models import Service,ServiceCategory,Pricing
+from investing.models import Investments,Investment_rates,Investor_Information
+from investing.utils import compute_pay,get_over_postions,investment_test,computes_days_expiration,get_user_investment
+from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
+from management.utils import paytime
+from management.models import Requirement
 
-from management.views import pay
+
+
 
 User = get_user_model()
 
-# Create your views here.
+# payment details
+phone_number,email_info,cashapp,venmo,account_no=payment_details(request)
 
-def finance(request):
+
+#Time details
+(remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
+#Exchange Rate details
+usd_to_kes = get_exchange_rate('USD', 'KES')
+rate = round(Decimal(usd_to_kes), 2)
+
+def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
+def investment_report(request):
+    return render(request, "finance/reports/investment_report.html", {"title": "Investment"})
+
 #================================STUDENT AND JOB SUPPORT CONTRACT FORM SUBMISSION================================
-def contract_form_submission(request):
+def contract_data_submission(request):
+	(today,*_)=paytime()
 	try:
 		if request.method == "POST":
 			user_student_data = request.POST.get('usr_data')
+			contract_charge = request.POST.get('contract_charge')
+			contract_duration = request.POST.get('contract_duration')
+			contract_period = request.POST.get('contract_period')
 			student_dict_data = QueryDict(user_student_data)
 			username = student_dict_data.get('username')
 			try:
 				customer=CustomerUser.objects.get(username=username)
 				ss= customer.id
-				payment = Payment_Information.objects.filter(
-            			customer_id=request.user.id
-        			).first()
-				# payment = Payment_Information.objects.get(customer_id_id=customer.id)
 			except:
-				customer = None
-				payment = None
-			if not payment:
-				form=UserForm(student_dict_data)
-				print("form --->",form)
-				if form.cleaned_data.get('category') == 1:
-					form.instance.is_applicant = True
-				elif form.cleaned_data.get('category') == 2:
-					form.instance.is_employee = True 
-				elif form.cleaned_data.get('category') == 3:
-					form.instance.is_client = True 
-				else:
-					form.instance.is_admin = True 
-				if form.is_valid():
-					form.save()
-			customer=CustomerUser.objects.get(username=username)
-			payment_fees = int(request.POST.get('duration'))*1000
-			down_payment = int(request.POST.get('down_payment'))
-			student_bonus_amount = request.POST.get('bonus')
+				customer= request.user
+			payment_fees = float(contract_charge)
+			down_payment = int(payment_fees*0.33)
+			student_bonus_amount = 0
 			fee_balance = payment_fees - down_payment
-			if request.POST.get('student_contract'):
-				fee_balance = payment_fees - (down_payment+int(student_bonus_amount))
-			plan = request.POST.get('duration')
+			plan = int(contract_duration)
 			payment_method = request.POST.get('payment_type')
-			client_signature = request.POST.get('client_sign')
-			company_rep = request.POST.get('rep_name')
-			client_date = request.POST.get('client_date')
-			rep_date = request.POST.get('rep_date')
+			client_signature =username
+			company_rep = "coda"
+			client_date = today
+			rep_date = today
+			print("data",customer,
+					payment_fees,
+					down_payment,
+					student_bonus_amount,
+					fee_balance,
+					plan,
+					payment_method,
+					client_signature,
+					company_rep,
+					client_date,
+					rep_date,)
+			try:
+				# payment = Payment_Information.objects.get(customer_id_id=customer.id)
+				payment = Payment_Information.objects.filter(
+            			customer_id=customer.id
+        			).first()
+				
+			except:
+				payment = None
 			if payment:
 				payment_data=Payment_Information.objects.filter(customer_id_id=int(customer.id)).update(payment_fees=int(payment_fees),
 					down_payment=down_payment,
@@ -96,7 +118,6 @@ def contract_form_submission(request):
 					client_date=client_date,
 					rep_date=rep_date)
 			else:
-
 				payment_data=Payment_Information(payment_fees=int(payment_fees),
 					down_payment=down_payment,
 					student_bonus = student_bonus_amount,
@@ -123,14 +144,72 @@ def contract_form_submission(request):
 				customer_id=int(customer.id)
 				)
 			payment_history_data.save()
-			if payment:
-				messages.success(request, f'Added New Contract For the {username}!')
-				return redirect('accounts:user-list', username=request.user)
+			new_payment_added = Payment_Information.objects.get(customer_id_id=customer.id)
+
+			if new_payment_added:
+				# messages.success(request, f'Added New Contract For the {username}!')
+				return redirect('management:companyagenda')
 			else:
-				messages.success(request, f'Account created for {username}!')
-				return redirect('data:bitraining')
+				# messages.success(request, f'Account created for {username}!')
+				if request.user.category == 3  or request.user.is_superuser: 
+					return redirect('main:job_support')
+				if request.user.category == 4 or request.user.is_superuser: 
+					return redirect('main:full_course')
+				else:
+					return redirect('management:companyagenda')
+			
 	except Exception as e:
-		print("Student Form Creation Error ==>",print(e))
+		# print("Student Form Creation Error ==>",print(e))
+		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
+		context={
+                  "title": "CONTRACT", 
+                  "message": message,
+                }
+		return render(request, "main/errors/generalerrors.html", context)
+	
+
+def contract_investment_submission(request):
+	(today,*_)=paytime()
+	try:
+		if request.method == "POST":
+			user_investor_data = request.POST.get('usr_data')
+			investment_contract = request.POST.get('investment_contract')
+			total_amount = float(request.POST.get('total_amount'))
+			protected_capital = float(request.POST.get('protected_capital'))
+			amount_invested = float(request.POST.get('amount_invested'))
+			contract_duration = request.POST.get('contract_duration')
+			number_positions = int(request.POST.get('number_positions'))
+			bi_weekly_returns = float(request.POST.get('bi_weekly_returns'))
+			investor_dict_data = QueryDict(user_investor_data)
+			username = investor_dict_data.get('username')
+			try:
+				investor=CustomerUser.objects.get(username=username)
+				ss= investor.id
+			except:
+				investor= request.user
+			payment_method = request.POST.get('payment_type')
+			client_signature =username
+			company_rep = "coda"
+
+			investor_data=Investor_Information(
+				total_amount=int(total_amount),
+				protected_capital=int(protected_capital),
+				amount_invested=amount_invested,
+				duration=int(contract_duration),
+				positions=int(number_positions),
+				bi_weekly_returns=int(bi_weekly_returns),
+				payment_method=payment_method,
+				client_signature=client_signature,
+				company_rep=company_rep,
+				investor_id=int(investor.id)
+				)
+			investor_data.save()
+			# new_payment_added = Investor_Information.objects.get(investor_id=investor.id)
+			# print("new_payment====>",new_payment_added)
+			# if new_payment_added:
+			# messages.success(request, f'Added New Contract For the {username}!')
+			return redirect('management:companyagenda')
+	except Exception as e:
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
 		context={
                   "title": "CONTRACT", 
@@ -138,102 +217,128 @@ def contract_form_submission(request):
                 }
 		return render(request, "main/errors/generalerrors.html", context)
 
+@login_required
 def mycontract(request, *args, **kwargs):
 	username = kwargs.get('username')
-	client_data=CustomerUser.objects.get(username=username)
-	check_default_fee = Default_Payment_Fees.objects.all()
-	if check_default_fee:
-		# default_fee = Default_Payment_Fees.objects.get(id=1)
-		default_fee = Default_Payment_Fees.objects.filter(id=1).first()
-		print(default_fee)
-		# default_fee = Default_Payment_Fees.objects.filter().first()
-	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.all().first()
-		print(default_fee)
-		
-	if Payment_Information.objects.filter(customer_id_id=client_data.id).exists():
-		payemnt_details = Payment_Information.objects.get(customer_id_id=client_data.id).first()
-		contract_date = payemnt_details.contract_submitted_date.strftime("%d %B, %Y")
-		if client_data.category == 3 and client_data.sub_category == 1:
-			plan_dict = {"1":40,"2":80,"3":120}
-			selected_plan = plan_dict[str(payemnt_details.plan)]
-			job_support_hours = selected_plan - 30
-			context={
-					'job_support_data': client_data,
-					'contract_date':contract_date,
-					'payment_data':payemnt_details,
-					"selected_plan":selected_plan,
-					"job_support_hours":job_support_hours
-				}
-			return render(request, 'management/contracts/my_supportcontract_form.html',context)
-		if client_data.category == 3 and client_data.sub_category == 2:
-			context={
-				'student_data': client_data,
-				'contract_date':contract_date,
-				'payment_data':payemnt_details
+	client_data = CustomerUser.objects.get(username=username)
+    
+	if client_data.category == 5:
+		try:
+			investor_details = Investor_Information.objects.filter(investor_id=client_data.id).order_by('-contract_date').first()
+			contract_date = investor_details.contract_date.strftime("%d %B, %Y")
+			context = {
+				'client_data': client_data,
+				'contract_date': contract_date,
+				'investor_data': investor_details,
 			}
-			return render(request, 'management/contracts/my_trainingcontract_form.html',context)
-		else:
-			raise Http404("Login/Wrong Page: Are You a Client?")
-	else:
-		context={"title": "CONTRACT", 
-				'username':username}
-		return render(request, 'management/contracts/contract_error.html',context)
-		
-@login_required
-def newcontract(request, *args, **kwargs):
-	username = kwargs.get('username')
-	#Gets client/user information from the custom user table
-	client_data=CustomerUser.objects.get(username=username)
-	print('CLIENTS DATA',client_data)
-	# check_default_fee = Default_Payment_Fees.objects.all().first()
-	# if check_default_fee:
-	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
-	# else:
-	# 	default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-	# 			job_plan_hours_per_month=40,
-	# 			student_down_payment_per_month=500,
-	# 			student_bonus_payment_per_month=100)
-	# 	default_payment_fees.save()
-	# 	default_fee = Default_Payment_Fees.objects.get(id=1)
+			return render(request, 'management/contracts/my_investor_contract.html', context)
 
-	#Gets any payment default values from the Default table
-	check_default_fee = Default_Payment_Fees.objects.all()
-	print(check_default_fee)
-	if check_default_fee:
-		default_fee = Default_Payment_Fees.objects.filter().first()
-		print(default_fee)
+		except Investor_Information.DoesNotExist:
+			return redirect('investing:investments')
 	else:
-		default_payment_fees = Default_Payment_Fees(job_down_payment_per_month=500,
-				job_plan_hours_per_month=40,
-				student_down_payment_per_month=500,
-				student_bonus_payment_per_month=100)
-		default_payment_fees.save()
-		default_fee = Default_Payment_Fees.objects.get(id=default_payment_fees.id)
-		print('new default:',default_fee)
-	# 	default_fee=check_default_fee(Default_Payment_Fees,username)
-	today = date.today()
-	contract_date = today.strftime("%d %B, %Y")
-	context={
-			'job_support_data': client_data,
-			'student_data': client_data,
-			'contract_date':contract_date,
-			'default_fee':default_fee
+		try:
+			payment_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+			contract_date = payment_details.contract_submitted_date.strftime("%d %B, %Y")
+			context = {
+				'job_support_data': client_data,
+				'contract_date': contract_date,
+				'payment_data': payment_details,
 			}
-	if client_data.category == 3 and client_data.sub_category == 1:
-		return render(request, 'management/contracts/supportcontract_form.html',context)
-	if client_data.category == 3 and client_data.sub_category == 2:
-		return render(request, 'management/contracts/trainingcontract_form.html',context)
-	else:
-		message=f'Hi {request.user},this page is only available for clients,kindly contact adminstrator'
-		context={"title": "CONTRACT", 
-				"message": message}
-		return render(request, "management/contracts/contract_error.html", context)
+			if client_data.category == 3 or client_data.category == 4:
+				return render(request, 'management/contracts/my_supportcontract_form.html', context)
+			else:
+				raise Http404("Login/Wrong Page: Are You a Client?")
+		
+		except Payment_Information.DoesNotExist:
+			if client_data.category == 3:
+				return redirect('main:job_support')
+			elif client_data.category == 4:
+				return redirect('main:full_course')
+			else:
+				return redirect('main:bi_services')
+
+
+@login_required
+def new_option_contract(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    username = kwargs.get('username')
+    client_data = CustomerUser.objects.get(username=username)
+    user = get_object_or_404(CustomerUser, username=username)
+    today = date.today()
+    plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    
+    # plan = contract_charge = contract_duration = contract_period = None
+
+    investments = Investments.objects.filter(client=user)
+    latest_investment_rates = Investment_rates.objects.order_by('-created_date').first()
+    
+    (total_amount,protected_capital,amount_invested,
+     bi_weekly_returns,number_positions,minimum_duration
+     )=get_user_investment(investments,latest_investment_rates)
+    print("minimum_duration======>",minimum_duration)
+    context = {
+        'client_data': client_data,
+        'total_amount': total_amount,
+        'protected_capital': protected_capital,
+        'amount_invested': amount_invested,
+        'bi_weekly_returns': bi_weekly_returns,
+        'contract_duration': minimum_duration,
+        'number_positions': number_positions,
+        'contract_date': today.strftime("%d %B, %Y")
+    }
+    return render(request, 'management/contracts/client_investment_contract.html', context)
+
+
+
+@login_required
+def new_contract(request, *args, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    username = kwargs.get('username')
+    client_data = CustomerUser.objects.get(username=username)
+    today = date.today()
+    plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+    plan = contract_charge = contract_duration = contract_period = None
+    try:
+        if pre_sub_title:
+            service_category_instance = ServiceCategory.objects.get(slug=pre_sub_title)
+        else:
+            return redirect('main:display_service')
+    except ServiceCategory.DoesNotExist:
+        return redirect('main:display_service')
+    
+    # Access the service_instance properties
+    service_instance = Service.objects.filter(servicecategory__name=service_category_instance.name).first()
+    if service_instance:
+        service_title = service_instance.title
+        service_title_uppercase = service_title.upper()
+        service_description = service_instance.description
+    else:
+        print("No service found for the given pricing title.")
+	
+    plan = Pricing.objects.filter(category=service_category_instance.id, title__iexact=plan_title).first()
+    if plan:
+        contract_charge = plan.price
+        contract_duration = plan.duration
+        contract_period = plan.contract_length
+        plan_id = plan.id
+    context = {
+        'service_title': service_title,
+        'service_title_uppercase': service_title_uppercase,
+        'client_data': client_data,
+        'contract_data': plan,
+        'contract_charge': contract_charge,
+        'contract_duration': contract_duration,
+        'contract_period': contract_period,
+        'plan_id': plan_id,
+        'contract_date': today.strftime("%d %B, %Y")
+    }
+    # if service_title_uppercase == 'INVESTING':
+    #     return render(request, 'management/contracts/client_investment_contract.html', context)
+    # 	return render(request, 'management/contracts/client_contract.html', context)
+    # else:
+    return render(request, 'management/contracts/client_contract.html', context)
+
+
 
 # ==================PAYMENT CONFIGURATIONS VIEWS=======================
 class PaymentConfigCreateView(LoginRequiredMixin, CreateView):
@@ -288,10 +393,133 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 		form.instance.user = self.request.user
 		return super().form_valid(form)
 
-class PaymentListView(ListView):
-	model = Payment_History
-	template_name = "finance/payments/payments.html"
-	context_object_name = "payments"
+def payments(request):
+	payment_history=Payment_History.objects.all()
+	Payment_Info=Payment_Information.objects.all()
+	context={
+		"title":"Payments",
+		"payment_history":payment_history,
+		"Payment_Info":Payment_Info
+	}
+	return render(request,"finance/payments/payments.html",context)
+
+
+def payment(request,method):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    subject='PAYMENT'
+    url='email/payment/payment_method.html'
+    message=f'Hi,{request.user.first_name}, an email has been sent \
+            with {sub_title} details for your payment.In the unlikely event\
+            that you have not received it, kindly \
+            check your spam folder.'
+    error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
+    context={
+                'subtitle': sub_title,
+                'user': request.user.first_name,
+                'mpesa_number':phone_number,
+                'cashapp':cashapp,
+                'venmo':venmo,
+                'account_no':account_no,
+                'email':email_info,
+                'message':message,
+                'error_message':error_message,
+                'contact_message':'info@codanalytics.net',
+            }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[request.user.email,], 
+                    subject=subject, html_template=url, 
+		    		context=context
+                    )
+        return render(request, "email/payment/payment_method.html",context)
+    except:
+        return render(request, "email/payment/payment_method.html",context)
+    
+
+@login_required
+def pay(request, *args, **kwargs):
+    if not request.user.is_authenticated:
+        return redirect(reverse('accounts:account-login'))
+
+    contract_url = reverse('finance:newcontract', args=[request.user.username])
+    # Getting contract fees based on the submitted value
+    try:
+        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        downpayment = payment_info.down_payment
+    except Payment_Information.DoesNotExist:
+        if request.method == 'POST' and request.POST.get('fees'):
+            total_fee = request.POST.get('fees')
+            downpayment=float(total_fee)*0.30
+            fee_balance=total_fee-downpayment
+            Payment_Information.objects.create(
+                    customer=request.user,
+                    payment_fees=total_fee,
+                    down_payment=downpayment,
+                    student_bonus=0,
+                    plan=2,
+                    fee_balance=fee_balance,
+                    payment_method='mpesa',
+                    contract_submitted_date=date.today(),
+                    client_signature="client",
+                    company_rep="coda",
+                    client_date=date.today(),
+                    rep_date=date.today(),
+                    )
+        else:
+            if request.user.category == 3 or request.user.category == 4:
+                return redirect('main:bi_services')
+            if request.user.category == 5:
+                return redirect('main:layout')
+            else:
+                payment_info = 1
+		
+        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        downpayment = payment_info.down_payment
+
+    paypal_charges = calculate_paypal_charges(downpayment)
+    context = {
+        "title": "PAYMENT",
+        'payments': payment_info,
+        'paypal_charges': paypal_charges,
+        "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+        "link": contract_url,
+    }
+
+    return render(request, "finance/payments/pay.html", context)
+
+
+def paymentComplete(request):
+    payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
+    # print(payments)
+    customer = request.user
+    body = json.loads(request.body)
+    # print("payment_complete:", body)
+    payment_fees = body["payment_fees"]
+    down_payment = payments.down_payment
+    studend_bonus = payments.student_bonus
+    plan = payments.plan
+    fee_balance = payments.fee_balance
+    payment_mothod = payments.payment_method
+    contract_submitted_date = payments.contract_submitted_date
+    client_signature = payments.client_signature
+    company_rep = payments.company_rep
+    client_date = payments.client_date
+    rep_date = payments.rep_date
+    Payment_History.objects.create(
+        customer=customer,
+        payment_fees=payment_fees,
+        down_payment=down_payment,
+        student_bonus=studend_bonus,
+        plan=plan,
+        fee_balance=fee_balance,
+        payment_method=payment_mothod,
+        contract_submitted_date=contract_submitted_date,
+        client_signature=client_signature,
+        company_rep=company_rep,
+        client_date=client_date,
+        rep_date=rep_date,
+    )
+    return JsonResponse("Payment completed!", safe=False)
 
 class DefaultPaymentListView(ListView):
 	model = Default_Payment_Fees
@@ -327,10 +555,11 @@ class DefaultPaymentUpdateView(UpdateView):
 		return False
 
 
+
 # For payment purposes
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
-	success_url = "/pay/"
+	success_url = "/finance/pay/"
 	template_name="main/snippets_templates/generalform.html"
 	
 	# fields ="__all__"
@@ -374,6 +603,77 @@ class TransactionListView(ListView):
 	template_name = "finance/payments/transaction.html"
 	context_object_name = "transactions"
 	# ordering=['-transaction_date']
+
+
+def outflows(request):
+    ytd_duration,current_year=dates_functionality()
+    webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
+    #operations totals
+    operations_obj = Transaction.objects.all()
+    ytd_transactions = Transaction.objects.filter(activity_date__year=current_year)
+    ytd_op_outflow = sum(transact.amount*transact.qty for transact in ytd_transactions)
+    total_op_outflows = sum(transact.amount*transact.qty for transact in operations_obj)
+    total_op_outflows_usd =float(total_op_outflows)/float(rate)
+    ytd_op_outflow_usd=float(ytd_op_outflow)/float(rate)
+    
+    # website_totals
+    web_obj = Requirement.objects.all()
+    web_obj_done = Requirement.objects.filter(is_reviewed=False)
+    ytd_requirements = Requirement.objects.filter(created_at__year=current_year,is_reviewed=False)
+    ytd_web_ouflow = sum(req.duration * delta * webhour for req in ytd_requirements)
+    total_web_ouflow = sum(req.duration * delta * webhour for req in web_obj_done)
+    total_web_duration=(x.duration * delta for x in web_obj_done)
+    
+    # field_totals
+    field_obj = Field_Expense.objects.all()
+    ytd_field_obj = Field_Expense.objects.filter(date__year=current_year)
+    ytd_field_ouflow = sum(transact.transactions_amt for transact in ytd_field_obj)
+    total_field_ouflow = sum(transact.transactions_amt for transact in field_obj)
+    total_field_ouflow_usd =float(total_field_ouflow)/float(rate)
+    ytd_field_ouflow_usd=float(ytd_field_ouflow)/float(rate)
+
+    # print("Amounts",ytd_field_ouflow_usd,total_op_outflows,total_web_ouflow,total_field_ouflow_usd)
+
+    total_outflows = float(total_op_outflows_usd) + float(total_web_ouflow) + float(total_field_ouflow_usd)
+    ytd_outflows = float(ytd_op_outflow_usd) + float(ytd_web_ouflow) + float(ytd_field_ouflow_usd)
+    
+    # print("Amounts",total_outflows,ytd_outflows,total_field_ouflow_usd,total_web_ouflow,total_field_ouflow_usd)
+    
+    avg_daily_expenditure=ytd_outflows/ytd_duration
+    avg_hourly_expenditure=avg_daily_expenditure/12
+    avg_minute_expenditure=avg_hourly_expenditure/60
+    avg_second_expenditure=avg_minute_expenditure/60
+    avg_monthly_expenditure=avg_daily_expenditure*30
+    avg_quarterly_expenditure=avg_monthly_expenditure*3
+    
+    data = [
+        {"title": "Operations", "value": total_op_outflows_usd},
+        {"title": "Web Development", "value": total_web_ouflow},
+        {"title": "Makutano Office", "value": total_field_ouflow_usd},
+        {"title": "Year_To_Date", "value": ytd_outflows},
+        {"title": "Quarterly", "value": avg_quarterly_expenditure},
+        {"title": "Monthly", "value": avg_monthly_expenditure},
+        {"title": "Daily", "value": avg_daily_expenditure},
+        {"title": "Hourly", "value": avg_hourly_expenditure},
+	]
+
+    outflow_context = {
+        "transactions": operations_obj,
+        "web_transactions": web_obj,
+        "field_transactions": field_obj,
+        "total_amt": total_outflows,
+        "data": data,
+        # "balance": balance,
+        "webhour": webhour,
+        "delta": delta,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+        # "receipt_url": receipt_url,
+    }
+    return render(request,"finance/payments/transaction.html",outflow_context)
+
 
 
 @method_decorator(login_required, name="dispatch")
@@ -453,8 +753,6 @@ class InflowDetailView(DetailView):
 
 def inflows(request):
 	inflows = Inflow.objects.all().order_by("-transaction_date")
-	# total_duration=Tracker.objects.all().aggregate(Sum('duration'))
-	# total_communication=Rated.objects.all().aggregate(Sum('communication'))
 	total = Inflow.objects.all().aggregate(Total_Cashinflows=Sum("amount"))
 	revenue = total.get("Total_Cashinflows")
 	context = {"inflows": inflows, "revenue": revenue}
@@ -510,16 +808,6 @@ class InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # ============LOAN VIEWS========================
-# def loan(request):
-# 	if request.method == "POST":
-# 		form = LoanForm(request.POST, request.FILES)
-# 		if form.is_valid():
-# 			form.save()
-# 			return redirect('finance:trainingloans')
-# 	else:
-# 		form=LoanForm()
-# 	return render(request, "finance/payments/payment_form.html", {"form":form})
-	
 class LoanCreateView(LoginRequiredMixin, CreateView):
 	model = PayslipConfig
 	success_url = "/finance/loans"
@@ -660,19 +948,6 @@ class SupplierListView(ListView):
     ordering = ["-created_at"]
     
 
-# class FoodListView(ListView):
-#     model = Food
-#     foodfilter=FoodFilter
-#     template_name = "finance/payments/food.html"
-#     context_object_name = "supplies,foodfilter"
-#     ordering = ["-created_at"]
-
-    # def get_context_data(self,*args, **kwargs):
-    #     context = super(FoodListView, self).get_context_data(*args,**kwargs)
-    #     context['foodfilter'] = Food.objects.all()
-    #     return context
-
-
 def foodlist(request):
     supplies = Food.objects.all().order_by("-id")
     food_filters=FoodFilter(request.GET,queryset=supplies)
@@ -692,4 +967,154 @@ def foodlist(request):
         "food_filters": food_filters
     }
     return render(request,"finance/payments/food.html",context)
+
+# =========================DC 48 KENYA===================================
+@method_decorator(login_required, name="dispatch")
+class DC48InflowCreateView(LoginRequiredMixin, CreateView):
+    model = DC48_Inflow
+    success_url = "/finance/listinflow"
+    template_name="finance/payments/inflow_form.html"
+    # fields =("receiver",
+    #         "phone",
+    #         "category",
+    #         "task",
+    #         "method",
+    #         "period",
+    #         "qty",
+    #         "amount",
+    #         "transaction_cost",
+    #         "description",
+	#    )
+    fields ="__all__"
+    exclude='transaction_date'
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = DC48_Inflow
+    template_name="finance/payments/inflow_form.html"
+    success_url = "/finance/listinflow"
+    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
+    # fields =("receiver",
+    #         "phone",
+    #         "category",
+    #         "task",
+    #         "method",
+    #         "period",
+    #         "qty",
+    #         "amount",
+    #         "transaction_cost",
+    #         "description",
+	#    )
+    fields ="__all__"
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
+        # DC48_Inflow = self.get_object()
+        if self.request.user.is_superuser or self.request.user:
+            return True
+        return redirect("data:training-list")
+
+@method_decorator(login_required, name="dispatch")
+class DC48InflowDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = DC48_Inflow
+    success_url = "/finance/listinflow/"
+    template_name="finance/payments/inflow_confirm_delete.html"
+    def test_func(self):
+        # timer = self.get_object()
+        # if self.request.user == timer.author:
+        # if self.request.user.is_superuser:
+        if self.request.user.is_superuser:
+            return True
+        return False
+    
+@login_required
+def clientinflows(request, user=None, *args, **kwargs):
+	try:
+		client = get_object_or_404(User, username=kwargs.get("username"))
+		transactions = DC48_Inflow.objects.filter(sender=client, is_active=True)
+		total_members = transactions.count()
+		paid_members = transactions.filter(has_paid=True).count()
+		total_amt = 0
+		total_paid = 0
+		for transact in transactions:
+			print("clients_category",transact.clients_category)
+			total_amt += transact.total_payment
+			if transact.has_paid:
+				total_paid += transact.total_paid
+		
+		pledged = total_amt - total_paid
+		amount_ksh = total_amt * rate  # Initialize amount_ksh outside the if block
+		context = {
+			"message":"Kindly contact adminstrator info@codanalytics.net",
+			"transactions": transactions,
+			"total_count": total_members,
+			"paid_count": paid_members,
+			"total_amt": total_amt,
+			"amount_ksh": amount_ksh,
+			"total_paid": total_paid,
+			"pledged": pledged,
+			"rate": rate,
+			"remaining_days": remaining_days,
+			"remaining_seconds ": int(remaining_seconds % 60),
+			"remaining_minutes ": int(remaining_minutes % 60),
+			"remaining_hours": int(remaining_hours % 24),
+		}
+		return render(request, "finance/payments/dcinflows.html", context)
+	except:
+		return render(request, "main/errors/template_error.html",context)
+    
+@login_required
+def dcinflows(request):
+    (remaining_days, remaining_seconds, remaining_minutes, remaining_hours) = countdown_in_month()
+    usd_to_kes = get_exchange_rate('USD', 'KES')
+    rate = round(Decimal(usd_to_kes), 2)
+    
+    if request.user.sub_category == 7 or request.user.is_superuser:
+        transactions = DC48_Inflow.objects.filter(clients_category="DYC")
+        total_members = transactions.filter(clients_category="DYC").count()
+        paid_members = transactions.filter(clients_category="DYC", has_paid=True).count()
+        total_amt = 0
+        total_paid = 0
+    else:
+        transactions = DC48_Inflow.objects.filter(clients_category="DC48KENYA")
+        total_members = transactions.filter(clients_category="DC48KENYA").count()
+        paid_members = transactions.filter(clients_category="DC48KENYA", has_paid=True).count()
+        total_amt = 0
+        total_paid = 0
+        
+    amount_ksh = 0  # Assign a default value of 0
+    
+    for transact in transactions:
+        # print("receipturl",transact.receipturl)
+        total_amt += transact.total_payment
+        if transact.has_paid:
+            total_paid += transact.total_paid
+        if transact.receipturl:
+            receipt_url=transact.receipturl
+        else:
+            return redirect('main:404error')
+    
+    pledged = total_amt - total_paid
+    amount_ksh = total_amt * rate  # Initialize amount_ksh outside the if block
+    
+    context = {
+        "transactions": transactions,
+        "total_count": total_members,
+        "paid_count": paid_members,
+        "total_amt": total_amt,
+        "amount_ksh": amount_ksh,
+        "total_paid": total_paid,
+        "pledged": pledged,
+        "rate": rate,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+        "receipt_url": receipt_url,
+    }
+    return render(request, "finance/payments/dcinflows.html", context)
 

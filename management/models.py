@@ -1,5 +1,6 @@
 import calendar,string
 import itertools
+from dateutil.relativedelta import relativedelta
 from datetime import datetime, date
 from decimal import *
 from django.db import models
@@ -9,7 +10,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save
-from management.utils import unique_slug_generator
+from management.utils import unique_slug_generator,split_num_str
 from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups,Department
 from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
@@ -31,8 +32,8 @@ class Training(models.Model):
         User,
         verbose_name=("presenter name"),
         on_delete=models.CASCADE,
-        # limit_choices_to={"is_employee": True,"is_client": True, "is_active": True},
-        limit_choices_to=Q(is_employee=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        # limit_choices_to={"is_staff": True,"is_client": True, "is_active": True},
+        limit_choices_to=Q(is_staff=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         related_name="employee_name")
     department = models.ForeignKey(
         Department,
@@ -62,341 +63,6 @@ class Training(models.Model):
     description = models.TextField(default='No Comment',null=True, blank=True)
     is_active = models.BooleanField(default=True)
     featured= models.BooleanField(default=True)
-
-
-
-
-class Transaction(models.Model):
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Other = "Other"
-
-    #  Cost Category.
-    Salary = "Salary"
-    Health = "Health"
-    Transport = "Transport"
-    Food_Accomodation = "Food & Accomodation"
-    Internet_Airtime = "Internet & Airtime"
-    Recruitment = "Recruitment"
-    Labour = "Labour"
-    Management = "Management"
-    Electricity = "Electricity"
-    Construction = "Construction"
-    Other = "Other"
-
-    # Department
-    HR = "HR Department"
-    IT = "IT Department"
-    MKT = "Marketing Department"
-    FIN = "Finance Department"
-    SECURITY = "Security Department"
-    MANAGEMENT = "Management Department"
-    HEALTH = "Health Department"
-    Other = "Other"
-    DEPARTMENT_CHOICES = [
-        (HR, "HR Department"),
-        (IT, "IT Department"),
-        (MKT, "Marketing Department"),
-        (FIN, "Finance Department"),
-        (SECURITY, "Security Department"),
-        (MANAGEMENT, "Management Department"),
-        (HEALTH, "Health Department"),
-        (Other, "Other"),
-    ]
-    CAT_CHOICES = [
-        (Salary, "Salary"),
-        (Health, "Health"),
-        (Transport, "Transport"),
-        (Food_Accomodation, "Food & Accomodation"),
-        (Internet_Airtime, "Internet & Airtime"),
-        (Recruitment, "Recruitment"),
-        (Labour, "Labour"),
-        (Management, "Management"),
-        (Electricity, "Electricity"),
-        (Construction, "Construction"),
-        (Other, "Other"),
-    ]
-    PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Other, "Other"),
-    ]
-    # id = models.AutoField(primary_key=True,default=99999999)
-    sender = models.CharField(max_length=100, null=True, default=None)
-    receiver = models.CharField(max_length=100, null=True, default=None)
-    phone = models.CharField(max_length=50, null=True, default=None)
-    department = models.CharField(max_length=100, default=None)
-    type = models.CharField(max_length=100, default=None, null=True)
-    activity_date = models.DateTimeField(default=timezone.now)
-    receipt_link = models.CharField(max_length=100, blank=True, null=True)
-    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
-    amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=None
-    )
-    transaction_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=0
-    )
-    description = models.TextField(max_length=1000, default=None)
-
-    payment_method = models.CharField(
-        max_length=25,
-        choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    department = models.CharField(
-        max_length=100,
-        choices=DEPARTMENT_CHOICES,
-        default=Other,
-    )
-
-    category = models.CharField(
-        max_length=100,
-        choices=CAT_CHOICES,
-        default=Other,
-    )
-
-    def get_absolute_url(self):
-        return reverse("management:transaction-detail", kwargs={"pk": self.pk})
-
-    class Meta:
-        verbose_name_plural = "Transactions"
-
-    def __str__(self):
-        return f"{self.id} Transactions"
-
-
-# -------------------------------------CASH FLOW MODEL---------------------------------------
-class Outflow(models.Model):
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Other = "Other"
-
-    #  Cost Category.
-    Salary = "Salary"
-    Health = "Health"
-    Transport = "Transport"
-    Food_Accomodation = "Food & Accomodation"
-    Internet_Airtime = "Internet & Airtime"
-    Recruitment = "Recruitment"
-    Labour = "Labour"
-    Management = "Management"
-    Electricity = "Electricity"
-    Construction = "Construction"
-    Other = "Other"
-
-    # Department
-    HR = "HR Department"
-    IT = "IT Department"
-    MKT = "Marketing Department"
-    FIN = "Finance Department"
-    SECURITY = "Security Department"
-    MANAGEMENT = "Management Department"
-    HEALTH = "Health Department"
-    Other = "Other"
-    DEPARTMENT_CHOICES = [
-        (HR, "HR Department"),
-        (IT, "IT Department"),
-        (MKT, "Marketing Department"),
-        (FIN, "Finance Department"),
-        (SECURITY, "Security Department"),
-        (MANAGEMENT, "Management Department"),
-        (HEALTH, "Health Department"),
-        (Other, "Other"),
-    ]
-    CAT_CHOICES = [
-        (Salary, "Salary"),
-        (Health, "Health"),
-        (Transport, "Transport"),
-        (Food_Accomodation, "Food & Accomodation"),
-        (Internet_Airtime, "Internet & Airtime"),
-        (Recruitment, "Recruitment"),
-        (Labour, "Labour"),
-        (Management, "Management"),
-        (Electricity, "Electricity"),
-        (Construction, "Construction"),
-        (Other, "Other"),
-    ]
-    PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Other, "Other"),
-    ]
-    employee = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE)
-    sender = models.CharField(max_length=100, null=True, default=None)
-    receiver = models.CharField(max_length=100, null=True, default=None)
-    phone = models.CharField(max_length=50, null=True, default=None)
-    department = models.CharField(max_length=100, default=None)
-    type = models.CharField(max_length=100, default=None, null=True)
-    activity_date = models.DateTimeField(default=timezone.now)
-    # receipt_link=models.CharField(max_length=100,blank=True, null=True)
-    # upload_receipt=models.FileField(default=None,upload_to='Receipt/doc/')
-    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
-    amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=None
-    )
-    transaction_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=0
-    )
-    description = models.TextField(max_length=1000, default=None)
-
-    payment_method = models.CharField(
-        max_length=25,
-        choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    department = models.CharField(
-        max_length=100,
-        choices=DEPARTMENT_CHOICES,
-        default=Other,
-    )
-
-    category = models.CharField(
-        max_length=100,
-        choices=CAT_CHOICES,
-        default=Other,
-    )
-
-    def get_absolute_url(self):
-        return reverse("management:outflow_detail", kwargs={"pk": self.pk})
-
-    class Meta:
-        verbose_name_plural = "Transactions"
-
-    def __str__(self):
-        return f"{self.id} Transactions"
-
-
-# -------------------------------------CASH FLOW MODEL---------------------------------------
-
-
-class Inflow(models.Model):
-    # Period of Payment
-    Weekly = "Weekly"
-    Bi_Weekly = "Bi_Weekly"
-    Monthly = "Monthly"
-    Yearly = "Yearly"
-
-    # Method of Payment
-    Cash = "Cash"
-    Mpesa = "Mpesa"
-    Check = "Check"
-    Cashapp = "Cashapp"
-    Zelle = "Zelle"
-    Venmo = "Venmo"
-    Paypal = "Paypal"
-
-    # Category.
-    Job_Support = "Job_Support"
-    Interview = "Interview"
-    Training = "Training"
-    Stocks = "Stocks"
-    Blockchain = "Blockchain"
-    Mentorship = "Mentorship"
-    Other = "Other"
-    # Task/Activities
-    Reporting = "reporting"
-    Database = "database"
-    Business_Analysis = "Business Analysis"
-    ETL = "Data Cleaning"
-    Options = "Options"
-    Other = "Any Other"
-
-    PERIOD_CHOICES = [
-        (Weekly, "Weekly"),
-        (Bi_Weekly, "Bi_Weekly"),
-        (Monthly, "Monthly"),
-        (Yearly, "Yearly"),
-    ]
-
-    CAT_CHOICES = [
-        (Job_Support, "Job_Support"),
-        (Interview, "Interview"),
-        (Training, "Training"),
-        (Stocks, "Stocks"),
-        (Blockchain, "Blockchain"),
-        (Mentorship, "Mentorship"),
-        (Other, "Other"),
-    ]
-    TASK_CHOICES = [
-        (Reporting, "reporting"),
-        (Database, "database"),
-        (Business_Analysis, "Business Analysis"),
-        (ETL, "Data Cleaning"),
-        (Options, "Options"),
-        (Other, "Other"),
-    ]
-
-    PAY_CHOICES = [
-        (Cash, "Cash"),
-        (Mpesa, "Mpesa"),
-        (Check, "Check"),
-        (Cashapp, "Cashapp"),
-        (Zelle, "Zelle"),
-        (Venmo, "Venmo"),
-        (Paypal, "Paypal"),
-        (Other, "Other"),
-    ]
-
-    category = models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-    )
-    task = models.CharField(
-        max_length=25,
-        choices=TASK_CHOICES,
-    )
-    method = models.CharField(
-        max_length=25,
-        choices=PAY_CHOICES,
-        default=Other,
-    )
-
-    period = models.CharField(
-        max_length=25,
-        choices=PERIOD_CHOICES,
-        default=Other,
-    )
-
-    sender = models.ForeignKey("accounts.CustomerUser", on_delete=models.CASCADE)
-    receiver = models.CharField(max_length=100, null=True, default=None)
-    phone = models.CharField(max_length=50, null=True, default=None)
-    transaction_date = models.DateTimeField(default=timezone.now)
-    receipt_link = models.CharField(max_length=100, blank=True, null=True)
-    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
-    amount = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=None
-    )
-    transaction_cost = models.DecimalField(
-        max_digits=10, decimal_places=2, null=True, default=0
-    )
-    description = models.TextField(max_length=1000, default=None)
-
-    class Meta:
-        ordering = ["transaction_date"]
-
-    def get_absolute_url(self):
-        return reverse("management:inflow-detail", kwargs={"pk": self.pk})
-
-    @property
-    def end(self):
-        # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
-        date_time = self.login_date + datetime.timedelta(hours=0)
-        endtime = date_time.strftime("%H:%M")
-        return endtime
-
-    @property
-    def total_payment(self):
-        total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
-        return total
-
 
 # -------------------------------------COMPANY POLICIES---------------------------------------
 class Policy(models.Model):
@@ -446,11 +112,10 @@ class Policy(models.Model):
     id = models.AutoField(primary_key=True)
     # staff = models.ForeignKey(
     #     User, on_delete=models.RESTRICT, related_name="staff_entry",
-    #     limit_choices_to=Q(is_employee=True)|Q(is_admin=True) | Q(is_superuser=True),
+    #     limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True),
     #     default=1
     # )
     staff = models.CharField(max_length=100, null=True, blank=True, default="admin")
-    # last_name = models.CharField(max_length=100, null=True, blank=True)
     upload_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, blank=True)
     link = models.CharField(max_length=1000, blank=True, null=True)
@@ -469,12 +134,15 @@ class Policy(models.Model):
     is_featured = models.BooleanField(default=False)
     is_internal = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name_plural = "Policies"
+
     def __str__(self):
         return f"{self.id} policy"
 
 
 # ==================================ACTIVITIES====================================
-class Tag(models.Model):
+class TaskCategory(models.Model):
     # Tasks Category.
     Meetings = "Meetings"
     Data_Analyis = "Data Analysis"
@@ -497,12 +165,13 @@ class Tag(models.Model):
         unique=True,
         default=Other,
     )
-    # title=models.CharField(max_length=255)
-    # slug=models.CharField(max_length=255)
-    # thumbnail=models.FileField()
+
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     # active=models.IntegerField(default=1)
+
+    class Meta:
+        verbose_name_plural = "Task Categories"
 
     @classmethod
     def get_default_pk(cls):
@@ -510,6 +179,7 @@ class Tag(models.Model):
             title="Other", defaults=dict(description="this is not an cat")
         )
         return cat.pk
+
 
     def get_absolute_url(self):
         return reverse("category_list")
@@ -584,13 +254,13 @@ class Task(models.Model):
         to=TaskGroups, on_delete=models.CASCADE, default=1
     )
     category = models.ForeignKey(
-        to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk
     )
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
         related_name="user_assiged",
-        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)
+        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
         and Q(is_active=True),
         default=999,
     )
@@ -729,7 +399,6 @@ class Task(models.Model):
     def __str__(self):
         return self.activity_name
 
-
 # Adding the evidence table/model
 class TaskLinks(models.Model):
     # task = models.ManyToManyField(Task, blank=True,related_name='task_featured')
@@ -737,7 +406,7 @@ class TaskLinks(models.Model):
     added_by = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        limit_choices_to=Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),
+        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True),
     )
     link_name = models.CharField(max_length=255, default="General")
     description = models.TextField()
@@ -750,13 +419,23 @@ class TaskLinks(models.Model):
     is_featured = models.BooleanField("Is featured", default=False)
 
     class Meta:
-        verbose_name_plural = "links"
+        verbose_name_plural = "Task Reference"
 
     def get_absolute_url(self):
         return reverse("tasks")
 
-    def __str__(self):
-        return self.link_name
+    @property
+    def video_linkname(self):
+        if self.link_name.startswith("Req"):
+            new_link = self.link_name
+            number_str=int(split_num_str(new_link))
+            return number_str
+
+    @property
+    def lowerlinkname(self):
+        if self.link_name.startswith("Req"):
+            new_link = self.link_name.lower().replace(" ", "")
+            return new_link
 
 
 class TaskHistory(models.Model):
@@ -767,9 +446,9 @@ class TaskHistory(models.Model):
         default="Group A",
     )
     category = models.ForeignKey(
-        to=Tag, on_delete=models.CASCADE, default=Tag.get_default_pk
+        to=TaskCategory, on_delete=models.CASCADE, default=TaskCategory.get_default_pk
     )
-    # category = models.ManyToManyField(Tag, blank=True)
+    # category = models.ManyToManyField(TaskCategory, blank=True)
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
@@ -830,10 +509,15 @@ class TaskHistory(models.Model):
     )
     objects = TaskManager()
 
+    class Meta:
+        verbose_name_plural = "TaskHistory"
+        ordering = ["-submission"]
+
     @property
     def submitted(self):
         submitted = datetime.date(self.submission)
-        return submitted
+        submitted_date=submitted-relativedelta(days=1)
+        return submitted_date
 
     @property
     def deadline(self):
@@ -842,7 +526,8 @@ class TaskHistory(models.Model):
             today.year, today.month, calendar.monthrange(today.year, today.month)[-1]
         )
         deadline = datetime.date(deadline_date)
-        return deadline
+        end_date=deadline-relativedelta(months=1)
+        return end_date
 
     @property
     def time_remaining(self):
@@ -934,14 +619,14 @@ class Requirement(models.Model):
         default=1,
         on_delete=models.SET_NULL,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_staff=True) |Q(is_client=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     assigned_to = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         default=1,
         limit_choices_to=Q(is_active=True)
-        and (Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)),
+        and (Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)),
     )
     company = models.CharField(max_length=255, default="CODA")
     created_by = models.CharField(max_length=255, default="admin")
@@ -959,7 +644,11 @@ class Requirement(models.Model):
     )  # how should it be delivered/Which platform or mode of delivery?
     comments = models.TextField(default='No Comment',null=True, blank=True)  # What is needed?
     doc = models.FileField(upload_to="Uploads/Support_Docs/", null=True, blank=True)
+    pptlink = models.CharField(max_length=1000,null=True, blank=True)
+    videolink = models.CharField(max_length=1000,null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_tested = models.BooleanField(default=True)
+    is_reviewed = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Requirements"
@@ -969,6 +658,13 @@ class Requirement(models.Model):
     def doc_url(self):
         if self.doc and hasattr(self.doc, 'url'):
             return self.doc.url
+        
+    @property
+    def active(self):
+        if self.is_active is False:
+            return "Ready For Testing"
+        else:
+            return "Not Started"
 
     def get_absolute_url(self):
         return reverse("management:requirements")
@@ -976,50 +672,26 @@ class Requirement(models.Model):
     def __str__(self):
         return self.category
 
-class Estimate(models.Model):
-    # Apps
-    CAT_CHOICES = [
-            ("Table","Table"),
-            ("Api_Integration","Api_Integration"),
-            ("View","View"),
-            ("Diagram","Diagram"),
-            ("Templates","Templates"),
-            ("Forms","Forms"),
-            ("Other","Other"),
-       ]
-        # activity
-    TASK_CHOICES = [
-            ("creation","creation"),
-            ("Testing","Testing"),
-            ("dictionary","dictionary"),
-            ("diagram","diagram"),
-            ("Other","Other"),
-       ]
-    requirement = models.ForeignKey(
-         Requirement,
-         on_delete=models.CASCADE,
-         default=1,
-      )
-    category = models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-        default="Other",
-    )
-    task = models.CharField(
-        max_length=25,
-        choices=TASK_CHOICES,
-        default="Other",
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    qty = models.CharField(max_length=50)
-    duration = models.IntegerField(null=False, default=4)
-    comment = models.TextField()
-    is_active = models.BooleanField(default=True)
+class ProcessJustification(models.Model):
+    requirements = models.ForeignKey(Requirement, on_delete=models.CASCADE, related_name="Requirement_in_Process",
+                                     null=True, blank=True)
+    justification = models.CharField(max_length=255, null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
 
-    @property
-    def estimated_time(self):
-        est_time=round(Decimal(self.qty* self.duration), 2)
-        return est_time
+
+class ProcessBreakdown(models.Model):
+    process = models.ForeignKey(ProcessJustification, on_delete=models.CASCADE, related_name="Process_in_breakdown",
+                                null=True, blank=True)
+    breakdown = models.CharField(max_length=255, null=True, blank=True)
+    time = models.PositiveIntegerField(null=True, blank=True)
+    Quantity = models.PositiveIntegerField(null=True, blank=True)
+    total = models.PositiveIntegerField(null=True, blank=True)
+    crated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
+
+
+
 
 def task_pre_save_receiver(sender, instance, *args, **kwargs):
     if not instance.slug:
@@ -1044,63 +716,56 @@ class Advertisement(models.Model):
     image = models.ImageField(upload_to="Uploads/Facebook/", null=True, blank=True)
     author= models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    # whatsapp
+    whatapp_group_name = models.CharField(max_length=100, null=True, blank=True)
+    whatapp_group_id = models.CharField(max_length=100, null=True, blank=True)
+    whatapp_image_url = models.CharField(max_length=500, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.post_description
-
-
-class LBandLS(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    laptop_bonus =  models.FloatField(null=True)
-    laptop_service = models.FloatField(null=True)
+    
+class Whatsapp(models.Model):
+    # whatsapp
+    product_id = models.CharField(max_length=100, null=True, blank=True)
+    token = models.CharField(max_length=100, null=True, blank=True)
+    screen_id = models.CharField(max_length=500, null=True, blank=True)
+    group_name = models.CharField(max_length=100, null=True, blank=True)
+    group_id = models.CharField(max_length=100, null=True, blank=True)
+    image_url = models.CharField(max_length=500, null=True, blank=True)
+    message= models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user.username
+        return self.group_name
+    
 
-class RetirementPackage(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+class Meetings(models.Model):
+    class Frequecy(models.IntegerChoices):
+        Daily = 1,
+        Weekly = 2
+        Bi_Weekly = 3
+        Monthly = 4
+        Yearly = 5
+    department=models.ForeignKey(
+        to=Department, on_delete=models.CASCADE, default=Department.get_default_pk)
+    category = models.ForeignKey(
+        to=TaskCategory, on_delete=models.CASCADE
+    )
+    meeting_topic = models.CharField(max_length=100, null=True, blank=True)
+    meeting_id = models.CharField(max_length=100, null=True, blank=True)
+    meeting_type = models.CharField(max_length=100, null=True, blank=True)
+    meeting_link = models.CharField(max_length=500, null=True, blank=True)
+    meeting_description = models.TextField(null=True, blank=True)
+    meeting_time = models.TimeField(default=timezone.now)
+    frequency = models.IntegerField(choices=Frequecy.choices, default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
 
-class Loan(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    def __str__(self):
+        return self.meeting_topic
 
-
-class LaptopSaving(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-
-class Payslip(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-
-    # month and year of period we are paying
-    period = models.CharField(max_length=10)
-
-    # points based on the work the employee done
-    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # earnings calculated based on points
-    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # benefits
-    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-    # retirement_package is long term benefit and does not affect the net pay
-    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
-
-    # deductions
-    loan = models.OneToOneField(Loan, on_delete=models.CASCADE)
-    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+    

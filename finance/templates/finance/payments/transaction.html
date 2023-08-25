@@ -1,24 +1,88 @@
-  {%extends "main/base_templates/base.html"%}
+  {%extends "main/base_templates/new_base.html"%}
   {% load mathfilters %}
   {% block content %}
   <section id="rating">
     <div class="rating text-center">
-      <h2>Cashflows</h2>
-      <hr>
       <div class="row text-center">
-        <div class="col-md-4" id="gi">
-            <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
-                >Add Transaction
-            </a></p>
-        </div>
-        <div class="col-md-4" id="gi">
-          <p>
-            <a href="{% url 'finance:finance'%}" class="btn btn-secondary btn-sm"
-              >Finance Report
-            </a>
-         </p>
-        </div>
+          <div class="row text-center">
+            <div class="col-md-2 amount_msg" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>WELCOME BACK</b></h5>
+                    <hr/>
+                    <i><h6>{{user.first_name|upper }}</h6></i>
+                    <hr/>
+                    {% if request.user.is_superuser %}
+                    <p>
+                      <i><h6>Exchange Rate :KES.{{rate}}</h6></i>
+                   </p>
+                   {% else %}
+                   <p>
+                    <a href="#" class="btn btn-secondary btn-sm"
+                      >Rate
+                    </a>
+                 </p>
+                    {%endif %}
+                  </div>
+                </div>
+              </div>
+              
+              <div class="col-md-8" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>CASH OUTFLOW PORTAL</b></h5>
+                    <font size="-1"
+                    <a class="btn btn-primary" href="#"  style="background-color: #5b67a2; border-color: #4CAF50;">USD. {{total_amt|floatformat:2}}</a>
+                    <!-- <i><h6>Total Amount : USD. {{total_amt|floatformat:2}}</h6></i> -->
+                  </font> 
+                    <hr/>
+                    <div class="row text-center">
+                      {% for item in data %}
+                          <div class="col-md-3">
+                              <div class="card">
+                                  <div class="card-body">
+                                      <a class="btn btn-primary" href="#" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
+                                      <hr/>
+                                      <i><h6>USD. {{ item.value|floatformat:2 }}</h6></i>
+                                  </div>
+                              </div>
+                          </div>
+                      {% endfor %}
+                  </div>
+
+                    <hr/>
+                    <div class="row text-center">
+
+                  </div>
+                    </b></i>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2" id="bada">
+                <div class="card">
+                  <div class="card-body">
+                    <h5><b>ACTIONS</b></h5>
+                    <hr/>
+                    <i><h6>{{payday}}</h6></i>
+                    <hr/>
+                    <div class="col-md-12" id="gi">
+                      <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
+                          >Add Transaction
+                      </a></p>
+                  </div>
+                  <div class="col-md-12" id="gi">
+                    <p>
+                      <a href="{% url 'main:finance'%}" class="btn btn-secondary btn-sm"
+                        >Finance Landing Page
+                      </a>
+                   </p>
+                  </div>
+                  </div>
+                </div>
+              </div>
+            </div>
     </div>
+
       <table class="table table-borderless" style="width: 100%">
         <thead class="border-bottom font-weight-bold">
           <tr>
@@ -33,7 +97,6 @@
             <th>Quantity</th>
             <th>Amount</th>
             <th>Total</th>
-            <!-- <th>total_score</th>-->
           </tr>
         </thead>
         <tbody>
@@ -64,6 +127,42 @@
           {% endfor %}
         </tbody>
       </table>
+<!-- 
+      <table class="table table-borderless" style="width: 100%">
+        <thead class="border-bottom font-weight-bold">
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Requirement</th>
+            <th>Assigned</th>
+            <th>duration</th>
+            <th>delta</th>
+            <th>Time</th>
+            <th>Per Hour</th>
+            <th>total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for transanction in web_transactions %}
+          <tr>
+            <td>{{transanction.created_at|date:"n/d/Y"}}</td>
+            <td>{{transanction.category}}</td>
+            <td>CODA000{{transanction.id}}</td>
+            <td>{{transanction.assigned_to}}</td>
+            <td>{{transanction.duration}}</td>
+            <td>{{delta}}</td>
+            <td>{{transanction.duration|mul:delta}}</td>
+            <td>{{webhour}}</td>
+            <td>{{total}}</td>
+            {%if user.is_admin or user.is_superuser%}
+            <td> <a class="article-title" href="{% url 'finance:transaction-detail' transanction.id %}">Edit</a></td>
+            <td> <a class="article-title" href="{% url 'finance:transaction-delete' transanction.id %}">Delete</a></td>
+            {%endif%}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table> -->
+
     </div>
   </section>
   {% endblock content %}

@@ -13,20 +13,46 @@ app.conf.beat_schedule = {
         'task': 'task_history',
         'schedule': crontab(0, 0, day_of_month='1'),
     },
+
     'login_no_activity_send_sms': {
         'task': 'SendMsgApplicatUser',
         'schedule': crontab(minute='*'),
     },
-    'loan_amount_detection': {
-        'task': 'TrainingLoanDeduction',
-        # 'schedule': crontab(minute='*/1'),
-        'schedule': crontab(day_of_month=28),
+
+    'LBandLSDeduction': {
+        'task': 'LBandLSDeduction',
+        'schedule': crontab(minute=0, hour=23, day_of_month='1'),
     },
+
+    'TrainingLoanDeduction': {
+        'task': 'TrainingLoanDeduction',
+        'schedule': crontab(minute=0, hour=23, day_of_month='1'),
+    },
+
+    'advertisement': {
+        'task': 'advertisement',
+        # 'schedule': crontab(minute='*/1'),
+        'schedule': crontab(0, 0, day_of_month='1'),
+    },
+
+    # 'run-whatsapp-every-1-minute': {
+    #     'task': 'advertisement_whatsapp',
+    #     'schedule': 60.0,  # in seconds
+    # },
+
+    # 'advertisement_whatsapp': {
+    #     'task': 'advertisement_whatsapp',
+    #     # 'schedule': crontab(minute='*/1'),
+    #     'schedule': crontab(minute='*'),
+    #     # 'schedule': crontab(0, 0, day_of_month='5'),
+    # },
+
 
     'replies_mails': {
         'task': 'replies_job_mail',
         # 'schedule': crontab(minute='*/1'),
-        'schedule': crontab(hour=23),
+        # 'schedule': crontab(hour=23),
+        'schedule': crontab(0, 0, day_of_month='1'),
     },
 
 }

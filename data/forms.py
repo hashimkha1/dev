@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from django.db.models import Q
-from .models import Interviews, DSU, JobRole, Interview_Questions
+from .models import Interviews, DSU, JobRole, Training_Responses,Prep_Questions
 from accounts.models import CustomerUser
 class InterviewForm(forms.ModelForm):
     '''========== Performance ============='''
@@ -72,20 +72,39 @@ class InterviewForm(forms.ModelForm):
         super(InterviewForm, self).__init__(*args, **kwargs)
         self.fields['question_type'].required = False
 
-class InterviewQuestionsForm(forms.ModelForm):
+
+class PrepQuestionsForm(forms.ModelForm):
     class Meta:
-        model = Interview_Questions
+        model = Prep_Questions
+        fields = ["questioner","company",'position', 'category',"question", "response","is_answered"]
+        labels={
+                'questioner':'Client/User', 
+                'company':'company', 
+                'position':'Position/Role',
+                'category':'Topic i.e Methodology,Intro..',
+                'question':'question',
+                'response':'response',
+                }
+
+    def __init__(self, *args, **kwargs):
+        # first call parent's constructor
+        super(PrepQuestionsForm, self).__init__(*args, **kwargs)
+        self.fields['question'].required = False
+
+class TrainingResponseForm(forms.ModelForm):
+    class Meta:
+        model = Training_Responses
         fields =['question', 'score','doc','comment','is_active']
         # fields =['category','question_type','client','doc','link']
         labels={
                # 'first_name':'First Name',
-                'question':'Question',
-                'score':'Score',
+                'question':'',
+                'question1':'Your response',
                 'doc':'Assignment',
-                'comment':'Comment',
+                'comment':'',
                 'is_active':'Is_active',
                 }
-
+        widgets = {"comment": Textarea(attrs={"cols": 175, "rows": 3})}
 
 class RoleForm(forms.ModelForm):
     class Meta:
@@ -106,17 +125,6 @@ class RoleForm(forms.ModelForm):
                     "desc2": Textarea(attrs={"cols": 30, "rows": 6})
                   }
         # widgets = {"desc2": Textarea(attrs={"cols": 15, "rows": 2})}
-'''
-class UploadForm(forms.ModelForm):
-    class Meta:
-        model = DocUpload
-        fields = ['id','doc_type','doc_name','doc','link']
-        labels={
-                'doc_type':'Document Type',
-                'doc_name':'Document Name',
-                'doc':'Document',
-        }
-'''
 
 class DSUForm(forms.ModelForm):
     class Meta:
@@ -134,12 +142,3 @@ class DSUForm(forms.ModelForm):
                 'challenge':'What Challenges are you facing?',
                 'uploaded' : 'Have you uploaded your assignments to Interview Portal?'
                 }
-        
-'''
-    def __init__(self, **kwargs):
-        super(DSUForm, self).__init__(**kwargs)
-        self.fields["trained_by"].queryset = CustomerUser.objects.filter(
-            # Q(is_admin=True) | Q(is_employee=True)| Q(is_client=True)
-            Q(is_client=True)
-        )
-'''

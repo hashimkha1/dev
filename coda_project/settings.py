@@ -18,8 +18,10 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
-DEBUG = True
-# DEBUG = os.environ.get("DEBUG_VALUE") == "True"
+if os.environ.get('ENVIRONMENT') == 'production':
+    DEBUG = True
+else:
+    DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
@@ -32,18 +34,16 @@ AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
 # Application definition
 INSTALLED_APPS = [
     "main.apps.MainConfig",
-    #'users.apps.UsersConfig',
     "accounts.apps.AccountsConfig",
-    "codablog.apps.CodablogConfig",
     "data.apps.DataConfig",
     "application.apps.ApplicationConfig",
     "getdata.apps.GetdataConfig",
     "projectmanagement.apps.ProjectmanagementConfig",
     "investing.apps.InvestingConfig",
     "management.apps.ManagementConfig",
-    "globalsearch.apps.GlobalsearchConfig",
+    # "globalsearch.apps.GlobalsearchConfig",
     "finance.apps.FinanceConfig",
-    "store",
+    "marketing",
     "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -58,10 +58,8 @@ INSTALLED_APPS = [
     "django_filters",
     "django_celery_beat",
     "django_celery_results",
-    #'dbbackup',
-    # "django_extensions",
     "django_crontab",
-    'testing.apps.TestingConfig',
+    # 'testing.apps.TestingConfig',
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -118,34 +116,33 @@ TEMPLATES = [
     },
 ]
 
+
 #  ==============DBFUNCTIONS=====================================
-def dblocal():
-    host = 'localhost'
-    dbname = os.environ.get('POSTGRES_DB_NAME') #'Coda_analytics',
-    user = os.environ.get('POSTGRESDB_USER') #'postgres',
-    password =os.environ.get('POSTGRESSPASS') #'Honnappa001@500',
-    return host,dbname,user,password
-
-def herokudev():
-    # In Heroku/Postgres it is Heroku_UAT
-    host = os.environ.get('HEROKU_DEV_HOST')
-    dbname = os.environ.get('HEROKU_DEV_NAME') 
-    user = os.environ.get('HEROKU_DEV_USER') 
-    password =os.environ.get('HEROKU_DEV_PASS') 
-    # print(f'HOST:{host},DB:{dbname}USER:{user}PASS:{password}')
-    return host,dbname,user,password
-
-def herokuprod():
-    host = os.environ.get('HEROKU_PROD_HOST')
-    dbname = os.environ.get('HEROKU_PROD_NAME') #'Coda_analytics',
-    user = os.environ.get('HEROKU_PROD_USER') #'postgres',
-    password = os.environ.get('HEROKU_PROD_PASS') #'Honnappa001@500',
-    # print(f'HOST:{host},HOST2:{host2},DB:{dbname}USER:{user}PASS:{password}')
-    return host,dbname,user,password
+def dba_values():
+    if os.environ.get('ENVIRONMENT') == 'production':
+        host = os.environ.get('HEROKU_PROD_HOST')
+        dbname = os.environ.get('HEROKU_PROD_NAME')
+        user = os.environ.get('HEROKU_PROD_USER')
+        password = os.environ.get('HEROKU_PROD_PASS')
+    elif os.environ.get('ENVIRONMENT') == 'testing':
+        # In Heroku/Postgres it is Heroku_UAT
+        host = os.environ.get('HEROKU_DEV_HOST')
+        dbname = os.environ.get('HEROKU_DEV_NAME')
+        user = os.environ.get('HEROKU_DEV_USER')
+        password = os.environ.get('HEROKU_DEV_PASS')
+    else:
+        host = 'localhost'
+        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
+        
+    return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
-host,dbname,user,password=herokuprod() #herokudev() #dblocal()  #herokudev(),
+
+host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
@@ -317,9 +314,33 @@ CELERYBEAT_SCHEDULE = {
     },
 }
 
+#==================PAYMENT SETTINGS=================
+# Testing Payment methods
+def payment_details(request):
+    # ================MPESA/CASHAPP/VENMO========================
+    phone_number =os.environ.get('MPESA_PHONE_NUMBER')
+    email_info =os.environ.get('EMAIL_INFO_USER')
+    cashapp = os.environ.get('CASHAPP'),
+    venmo= os.environ.get('VENMO'),
+    account_no = os.environ.get('STANBIC_ACCOUNT_NO'),
+    # print(phone_number,email_info,cashapp,venmo,account_no)
+    return (phone_number,email_info,cashapp,venmo,account_no)
 
-# SITEURL="http://localhost:8000"
-# SITEURL = "https://codadev.herokuapp.com"
-SITEURL = "https://codamakutano.herokuapp.com/"
-#Uncomment for prod purposes
-# SITEURL = "https://www.codanalytics.net"
+
+if os.environ.get('ENVIRONMENT') == 'production':
+    SITEURL = "https://www.codanalytics.net"
+elif os.environ.get('ENVIRONMENT') == 'testing':
+   SITEURL = "https://codamakutano.herokuapp.com"
+else:
+    SITEURL = "http://localhost:8000"
+
+# -----------------------------------------
+def source_target():
+    # Source
+    source_host = os.environ.get('HEROKU_DEV_HOST')
+    source_dbname = os.environ.get('HEROKU_DEV_NAME')
+    source_user = os.environ.get('HEROKU_DEV_USER')
+    source_password = os.environ.get('HEROKU_DEV_PASS')
+    #Target                     
+    target_db_path=os.environ.get('TARGET_PATH_PROD')
+    return (source_host,source_dbname,source_user,source_password,target_db_path)

@@ -1,24 +1,29 @@
-import calendar,string
-import requests
+import math
+import calendar,string,requests
+from django.contrib import messages
 from django import template
 from datetime import date, datetime, timedelta
+from django.db import transaction
 from decimal import Decimal
+from django.utils.text import capfirst
+from django.db.models import Q,Sum,F
 from django.contrib.auth.decorators import login_required
 from django.http import Http404, JsonResponse
 from django.utils.decorators import method_decorator
-from django.db.models import Sum
+from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from mail.custom_email import send_email
-from application.models import UserProfile
-from management.utils import email_template
 from management.forms import (
     DepartmentForm,
     PolicyForm,
     ManagementForm,
     RequirementForm,
     EvidenceForm,
+    EmployeeContractForm,
+    MonthForm,
+    MeetingForm
 )
 from django.views.generic import (
     CreateView,
@@ -27,38 +32,38 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from application.models import UserProfile
 from management.models import (
     Advertisement,
     Policy,
-    Tag,
-    Estimate,
+    TaskCategory,
     Task,
     TaskHistory,
     TaskLinks,
     Requirement,
-    LBandLS,
-    Training
+    Training,
+    ProcessJustification,
+    ProcessBreakdown,
+    Meetings
 )
+
+
 from data.models import DSU
-from finance.models import Default_Payment_Fees, LoanUsers, TrainingLoan
-from main.filters import RequirementFilter
+from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
+from accounts.models import Tracker, Department, TaskGroups
+from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
 from coda_project import settings
-from datetime import date, timedelta
-from django.db.models import Q
 
-from accounts.models import Tracker, Department, TaskGroups
-from finance.models import  PayslipConfig
-from management.utils import (
+from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
-                               deductions,loan_computation,
+                               deductions,loan_computation,emp_average_earnings,
                                bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward
+                               addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus
                         )
-
-from django.contrib import messages
+from main.utils import countdown_in_month,path_values
     
 
 import logging
@@ -70,12 +75,18 @@ register = template.Library()
 
 
 def home(request):
-    return render(
-        request, "main/home_templates/management_home.html", {"title": "home"}
-    )
+    return redirect('main:layout')
+    # return render(
+        # request, "main/home_templates/management_home.html", {"title": "home"}
+        # request, "management/doc_templates/contract.html", {"title": "home"}
+    # )
 
+def dckdashboard(request):
+    # departments = Department.objects.filter(is_active=True)
+    # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
+    return render(request, "management/departments/agenda/user_dashboard.html", {'title': "DCK DASHBOARD"})
 
-# ================================DEPARTMENT SECTION================================
+# ================================ DEPARTMENT SECTION ================================
 def department(request):
     departments = Department.objects.filter(is_active=True)
     return render(request, "management/departments/departments.html", {'departments': departments})
@@ -107,16 +118,143 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+def meetings(request):
+    # sessions=Meetings.objects.all().order_by("created_at")
+    sessions = Meetings.objects.filter(is_active=True).order_by("created_at")
+    categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
+    meeting_categories=sorted(categories_list)
+    context={
+        "meeting_categories":meeting_categories,
+        "sessions":sessions
+
+    }
+    return render(request, "management/departments/hr/meetings.html",context)
+
+def newmeeting(request):
+    if request.method == "POST":
+        form = MeetingForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('management:meetings')
+    else:
+        form = MeetingForm()
+        return render(request, "main/snippets_templates/generalform.html",{"form": form})
+
+
+class MeetingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Meetings
+    success_url = "/management/meetings"
+    fields = "__all__"
+    form = MeetingForm()
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
 
 def contract(request):
-    return render(request, "management/doc_templates/trainingcontract_form.html")
-    # if request.user == employee:
-    #     # return render(request, 'management/daf/paystub.html', context)
-    #     return render(request, "management/doc_templates/studentcontract_form.html")
-    # elif request.user.is_superuser:
-    #     # return render(request, 'management/daf/paystub.html', context)
-    #     return render(request, "management/doc_templates/supportcontract_form.html")
+    return render(request, "management/contracts/trainingcontract_form.html")
 
+def employee_contract(request):
+    submitted = False
+    if request.user.is_employee_contract_signed:
+        return (redirect('accounts:account-profile'))
+    else:
+        context = {}
+        form = None
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+        except:
+            profile = None
+
+        # print(profile)
+        if request.method == 'POST':
+            if profile:
+                profile.national_id_no = request.POST['national_id_no']
+                profile.id_file = request.POST['id_file']
+                profile.emergency_name = request.POST['emergency_name']
+                profile.emergency_address = request.POST['emergency_address']
+                profile.emergency_citizenship = request.POST['emergency_citizenship']
+                profile.emergency_phone = request.POST['emergency_phone']
+                profile.emergency_email = request.POST['emergency_email']
+                profile.emergency_national_id_no = request.POST['emergency_national_id_no']
+                profile.save()
+                submitted = True
+
+        form = EmployeeContractForm()
+        context['user'] = request.user
+        context['profile'] = profile
+        context['form'] = form
+
+        if submitted:
+            return redirect("management:employee_contract")
+        else:
+            return render(request, "management/contracts/employee_contract.html", {'context': context})
+            # return render(request, "main/snippets_templates/modify.html", {'context': context})
+
+def read_employee_contract(request):
+    (today,year,deadline_date,month,last_month,day,
+     target_date,time_remaining_days,time_remaining_hours,
+     time_remaining_minutes,payday,*_)=paytime()
+    user = UserProfile.objects.get(user=request.user)
+    context={
+        "title":"Employee Contract",
+        "today":today,
+        "deadline_date":deadline_date
+    }
+    # if user.national_id_no:
+    return render(request, "management/contracts/read_employee_contract.html",context)
+
+
+
+def confirm_employee_contract(request):
+    user = UserProfile.objects.get(user=request.user)
+
+    # if user.national_id_no:
+    user = request.user
+    user.is_employee_contract_signed = True
+    user.save()
+
+    try:
+        group = TaskGroups.objects.all().first()
+        cat = TaskCategory.objects.all().first()
+        try:
+            max_point = Task.objects.filter(groupname=group, category=cat).first()
+            max_point = max_point.mxpoint
+        except:
+            max_point = 0
+
+        create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+        create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+    except:
+        print("Something wrong in task creation")
+
+    return(redirect('accounts:account-profile'))
+    # else:
+    #     return redirect("management:employee_contract")
+
+
+def create_task(group, groupname, cat, user, activity, description, duration, point, mxpoint, mxearning):
+    x = Task()
+    x.group = group
+    x.groupname = groupname
+    x.category = cat
+    x.employee = user
+    x.activity_name = activity
+    x.description = description
+    x.duration = duration
+    x.point = point
+    x.mxpoint = mxpoint
+    x.mxearning = mxearning
+    x.save()
 
 # ==============================PLACE HOLDER MODELS=======================================
 
@@ -142,16 +280,17 @@ tasksummary = [
 
 import json
 
-
+@login_required
 def companyagenda(request):
-    # f = open(settings.SITE_URL+settings.STATIC_URL+'companyagenda.json')
-    # data = json.load(f)
-    # f.close()
     request.session["siteurl"] = settings.SITEURL
     with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
         data = json.load(file)
-
-    return render(request, "management/companyagenda.html", {"title": "Company Agenda", "data": data})
+    if request.user.is_superuser or (request.user.is_staff):
+        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
+    elif request.user.is_superuser or (request.user.category == 5 and request.user.is_client):
+        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Client dashboard"})
+    else:
+        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
 
 
 def updatelinks_companyagenda(request):
@@ -172,17 +311,6 @@ def updatelinks_companyagenda(request):
         json.dump(data, jsonFile)
 
     return JsonResponse({"success": True})
-
-
-def finance(request):
-    return render(
-        request, "finance\reports\finance.html", {"title": "Finance"}
-
-    )
-
-
-def hr(request):
-    return render(request, "management/companyagenda.html", {"title": "HR"})
 
 
 # ----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
@@ -208,9 +336,6 @@ def policies(request):
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    # if request.user.is_applicant or request.user.is_admin or request.user.is_superuser:
-    #     return render(request, "application/orientation/policies.html", context)
-    # else:
     return render(request, "management/departments/hr/policies.html", context)
 
 
@@ -250,9 +375,9 @@ def benefits(request):
 
 # ===================================ACTIVITY CLASS-BASED VIEWS=========================================
 
-# ======================TAG=======================
-class TagCreateView(LoginRequiredMixin, CreateView):
-    model = Tag
+# ======================TaskCategory=======================
+class TaskCategoryCreateView(LoginRequiredMixin, CreateView):
+    model = TaskCategory
     success_url = "/management/newtask"
     fields = ["title", "description"]
 
@@ -286,25 +411,6 @@ def task(request, slug=None, *args, **kwargs):
     return render(request, "management/daf/task.html", context)
 
 
-class TaskCreateView(LoginRequiredMixin, CreateView):
-    model = Task
-    success_url = "/management/tasks"
-    fields = [
-        "groupname",
-        "category",
-        "employee",
-        "activity_name",
-        "description",
-        "point",
-        "mxpoint",
-        "mxearning",
-    ]
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
 def newtaskcreation(request):
     if request.method == "POST":
         group = request.POST["group"]
@@ -318,8 +424,14 @@ def newtaskcreation(request):
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
+            historytasks = TaskHistory.objects.filter(employee__is_staff=True, employee__is_active=True,
+                                                      employee_id=emp)
+            group=employee_group_level(historytasks,TaskGroups)                                        
+         
             for act in activitys:
-                if Task.objects.filter(category_id=category, activity_name=act).count() > 0:
+                #check if activity exist
+                count=Task.objects.filter(category_id=category, activity_name=act).count()
+                if count > 0:
                     des, po, maxpo, maxear = \
                     Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
                         category_id=category, activity_name=act)[0]
@@ -336,16 +448,14 @@ def newtaskcreation(request):
                 else:
                     Task.objects.create(groupname_id=group, category_id=category, employee_id=emp, activity_name=act,
                                         description=description, point=point, mxpoint=mxpoint, mxearning=mxearning)
-
         # return redirect("management:tasks")
         return JsonResponse({"success": True})
-
     else:
-        tag = Tag.objects.all()
+        task_categories = TaskCategory.objects.all()
         group = TaskGroups.objects.all()
-        employess = User.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
+        employess = User.objects.filter(Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)).all()
 
-    return render(request, "management/tasknew_form.html", {"group": group, "category": tag, "employess": employess})
+    return render(request, "management/tasknew_form.html", {"group": group, "category": task_categories, "employess": employess})
 
 
 def gettasksuggestions(request):
@@ -365,7 +475,7 @@ def verifytaskgroupexists(request):
 
 
 def getaveragetargets(request):
-    print("+++++++++getaveragetargets+++++++++")
+    # print("+++++++++getaveragetargets+++++++++")
     taskname = request.POST["taskname"]
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
@@ -464,72 +574,143 @@ def filterbycategory(request):
         details["get_absolute_url"] = str(data.category.get_absolute_url)
         result.append(details.copy())
 
-    print(result)
+    # print(result)
     return JsonResponse({"result": result}, safe=False)
 
 
 class TaskHistoryView(ListView):
-    queryset = TaskHistory.objects.all()
-    template_name = "management/daf/taskhistory.html"
+    pass
+#     queryset = TaskHistory.objects.all()
+#     myfilter=TaskHistoryFilter(request.GET,queryset=queryset)
+#     template_name = "management/daf/taskhistory.html"
+
+
+def historytasks(request):
+    historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
+    # historytasks=TaskHistory.objects.all().order_by('-submission')
+    myfilter=TaskHistoryFilter(request.GET,queryset=historytask)
+    context={
+        "historytasks":historytask,
+        "TaskHistoryFilter":myfilter
+    }
+    return render(request,"management/daf/taskhistory.html", context)
 
 
 def task_payslip(request, employee=None, *args, **kwargs):
+    date = datetime.now()
+    selected_month = date.month
+    selected_year = date.year
+
+    if selected_month == 1:
+        selected_month = 12
+        selected_year -= selected_year
+    else:
+        selected_month -= 1
+
+    if request.method == "POST":
+        form = MonthForm(request.POST)
+        if form.is_valid():
+            selected_month = int(form.cleaned_data['month'])
+            selected_year = int(form.cleaned_data['year'])
+    else:
+        form = MonthForm()
+
     # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    today,year,deadline_date,month,last_month,*_=paytime()
+    today,year, deadline_date,month,last_month,*_=paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
+    sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
+    num_sessions = sessions.count()
+    userprofile = UserProfile.objects.get(user_id=employee)
+    tasks = Task.objects.all().filter(employee=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     # task_history = TaskHistory.objects.get_by_employee(employee)
     task_history = TaskHistory.objects.all().filter(employee=employee)
-    print(f'OBJECT:{task_history}')
+    # print(f'OBJECT:{task_history}')
     if task_history is None:
         message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    # today = date(date.today().year, date.today().month, date.today().day)
-    # year = task_history.submission.strftime("%Y")
-    # month = task_history.submission.strftime("%b")
-    # day = task_history.submission.strftime("%d")
-    # last_date = calendar.monthrange(
-    #     int(year), int(task_history.submission.strftime("%m"))
-    # )[1]
-    # deadline_date = datetime.strptime(
-    #     year + "-" + task_history.submission.strftime("%m") + "-" + str(last_date),
-    #     "%Y-%m-%d",
-    # ).date()
-    
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    tasks = TaskHistory.objects.all().filter(employee=employee,submission__month=last_month)
-    # tasks = TaskHistory.objects.all().filter(
-    #     employee=employee, submission__month=task_history.submission.strftime("%m")
-    # )
+
+    tasks =TaskHistory.objects.filter(employee=employee,submission__month=selected_month,submission__year=selected_year)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
 
     # Deductions & Bonus
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
+
+    # Deductions & Bonus
+    laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
+    total_deduction, sub_bonus = additional_earnings(user_data, tasks, total_pay, payslip_config)
+    food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment, total_deductions = deductions(
+        user_data, payslip_config, total_pay)
+    loan = Decimal(total_pay) * Decimal("0.2")
+
     # Net Pay
+    total_bonus = sub_bonus + laptop_bonus
     total_value=total_pay + total_bonus
     try:
         net = total_value - total_deduction
     except (TypeError, AttributeError):
         net = total_pay
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
+    bonus_points_ammount, latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
+    net = total_value - total_deduction
+
+    # Total LS
+    tasks = TaskHistory.objects.filter(employee=employee, submission__month__lte=selected_month)
+    month_set = set()
+
+    for task in tasks:
+        month_set.add(str(task.submission.month) + str(task.submission.year))
+
+    total_lap_saving = len(month_set) * lap_saving
+    if total_lap_saving >= 20000:
+        total_lap_saving = 20000
+        lap_saving = 0
+
+
+    # Retirement Yearly Package
+    tasks = TaskHistory.objects.filter(employee=employee, submission__month__lte=selected_month, submission__year=selected_year)
+    month_year = {}
+    for task in tasks:
+        month_year[str(task.submission.month) + str(task.submission.year)] = {'month': str(task.submission.month), 'year': str(task.submission.year)}
+
+    this_year_point = 0
+    for month_year_obj in month_year.values():
+        _tasks = TaskHistory.objects.filter(employee=employee, submission__month=month_year_obj['month'], submission__year=month_year_obj['year'])
+        _total_pay = 0
+        for task in tasks:
+            _total_pay = total_pay + task.get_pay
+
+        _bonus_points_ammount, _latenight_Bonus, _yearly, _offpay, _EOM, _EOQ, _EOY, _sub_bonus = bonus(_tasks, _total_pay, payslip_config)
+
+        this_year_point += (_bonus_points_ammount + num_sessions)
+
     context = {
+        "selected_month":selected_month,
+        "selected_year":selected_year,
+        "form": form,
         # deductions
         "laptop_saving": lap_saving,
+        "total_laptop_saving": total_lap_saving,
         "computer_maintenance": computer_maintenance,
         "food_accomodation": food_accomodation,
         "health": health,
         "loan": loan,
+        "kra": kra,
         "total_deduction": total_deduction,
         # bonus
         "latenight_Bonus": latenight_Bonus,
-        "pointsearning": bonus_points_ammount,
+        "EOM": EOM,
+        # "pointsearning": bonus_points_ammount,
+        "pointsearning": bonus_points_ammount + num_sessions,
         "holidaypay": offpay,
-        "yearly": yearly,
+        "yearly": 12000 + this_year_point,
         # General
         "tasks": tasks,
         "deadline_date": deadline_date,
@@ -537,6 +718,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "total_pay": total_pay,
         "total_value": total_value,
         "net": net,
+        "employee": employee,
     }
 
     if request.user == employee or request.user.is_superuser:
@@ -552,15 +734,21 @@ def task_payslip(request, employee=None, *args, **kwargs):
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    print('================USERTASK===================')
-    print(employee)
+    userprofile = UserProfile.objects.get(user_id=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     tasks = Task.objects.all().filter(employee=employee)
+    (
+                remaining_days,
+                remaining_seconds ,
+                remaining_minutes ,
+                remaining_hours 
+    )=countdown_in_month()
+
     # -----------Time from utils------------------
     deadline_date=paytime()[2]
     payday=paytime()[10]
-    last_day_of_prev_month1=paytime()[-3]
-    start_day_of_prev_month3=paytime()[-2]
+
      # -----------Points/Earnings from utils------------------
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     points_count = Task.objects.filter(
@@ -571,6 +759,7 @@ def usertask(request, user=None, *args, **kwargs):
     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
     point_percentage=employee_reward(tasks)
+    # print("MY % IS :", point_percentage)
     pay = earning.get("Your_Total_Pay")
     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
     pay = earning.get("Your_Total_Pay")
@@ -583,34 +772,20 @@ def usertask(request, user=None, *args, **kwargs):
         paybalance = 0
     loan = Decimal(total_pay) * Decimal("0.2")
     payslip_config=paymentconfigurations(PayslipConfig,employee)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    message=f'VALES ARE :{total_deduction},{total_bonus}'
-    print(message)
-    total_deduction,*_= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    message=f'VALES ARE :{total_deduction},{sub_bonus}'
+    # print(message)
     try:
         net = total_pay - total_deduction
     except (TypeError, AttributeError):
         net = 0.00
-
-    history = TaskHistory.objects.filter(
-        Q(submission__gte=start_day_of_prev_month3),
-        Q(submission__lte=last_day_of_prev_month1),
-        Q(employee__username=request.user)
-    )
-    average_earnings = 0
-    counter = 3
-    for data in history.all():
-        average_earnings += data.get_pay
-        # counter = counter+1 
-        counter = 3
-    average_earnings = average_earnings / counter
-    if average_earnings == 0:
-        average_earnings = GoalAmount
+    # average_earnings=emp_average_earnings(request,TaskHistory,GoalAmount)
+    average_earnings=GoalAmount
 
     activities = ["one one one", "one one one session", "one one one sessions"]
     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
                           activities]
-    print(activitiesmodified)
+    # print(activitiesmodified)
     deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
     context = {
         'activitiesmodified': activitiesmodified,
@@ -629,7 +804,11 @@ def usertask(request, user=None, *args, **kwargs):
         "net": net,
         "point_check": point_check,
         "average_earnings": average_earnings,
-        "enddate": deadline_date_modify
+        "enddate": deadline_date_modify,
+        "remaining_days":remaining_days,
+        "remaining_seconds ":remaining_seconds ,
+        "remaining_minutes ":remaining_minutes ,
+        "remaining_hours":remaining_hours,
     }
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
@@ -643,27 +822,36 @@ def usertask(request, user=None, *args, **kwargs):
         return redirect("main:layout")
 
 
-def usertaskhistory(request, user=None, *args, **kwargs):
-    # task_history = TaskHistory.objects.get(pk=kwargs.get("pk"))
-    # employee = get_object_or_404(User, username=kwargs.get("username"))
-    # task_history = TaskHistory.objects.get_by_employee(employee)
+def usertaskhistory(request, user=None,  *args, **kwargs):
+    date = datetime.now()
+    month = date.month
+    year = date.year
+
+    if month == 1:
+        month = 12
+        year -= year
+    else:
+        month -= 1
+
+    if request.method == "POST":
+        form = MonthForm(request.POST)
+        if form.is_valid():
+            month = int(form.cleaned_data['month'])
+            year = int(form.cleaned_data['year'])
+    else:
+        form = MonthForm()
+
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
-    # ------------TIME----------------------------------
-    # today, *__ = paytime()
-    last_month=paytime()[4]
-    print(f'LAST MONTH:{last_month}')
-    task_history = TaskHistory.objects.all().filter(employee=employee)
-    if task_history is None:
-        message=f'Hi {request.user}, you do not have history information,kindly contact admin!'
+    userprofile = UserProfile.objects.get(user_id=employee)
+    LBLS=LBandLS.objects.filter(user=employee)
+    tasks =TaskHistory.objects.filter(employee=employee, submission__month=str(month+1), submission__year=str(year))
+    if tasks is None:
+        message=f'Hi {request.user}, you do not have history information for last month,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})
-    tasks = task_history.filter(employee=employee,submission__month=last_month)
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
-    # tasks = TaskHistory.objects.all().filter(
-    #         employee=employee, submission__month=task_history.submission.strftime("%m")
-    #     )
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
@@ -673,19 +861,17 @@ def usertaskhistory(request, user=None, *args, **kwargs):
         paybalance = 0
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
     *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
-    # loan = Decimal(total_pay) * Decimal("0.2")
     loan=loan_payment
-    point_percentage=point_percentage*100
+    point_percentage=point_percentage
     try:
-        net = total_pay - total_deduction+total_bonus
+        net = total_pay - total_deduction+sub_bonus
     except (TypeError, AttributeError):
         net = 0.00
     # ==================PRINT=================
-    print(f'Object={task_history}')
-    print(f'Tasks={num_tasks}')
     context = {
+        'form': form,
         'employee':employee,
         "tasksummary": tasksummary,
         "num_tasks": num_tasks,
@@ -712,6 +898,7 @@ def usertaskhistory(request, user=None, *args, **kwargs):
         message=f'Hi {request.user}, You are Prohibited from accessing this Page!'
         return render(request, "main/errors/403.html",{"message":message})
 
+
 def prefix_zero(month:int) -> str:
     return str(month) if month > 9 else '0' + str(month)
 
@@ -731,6 +918,7 @@ def normalize_period(year:int, month:int) -> str:
         month = '0' + str(month)
 
     return str(year) + '-' + str(month)
+
 
 def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
     # loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
@@ -771,77 +959,42 @@ def pay(request, user=None, *args, **kwargs):
         total_pay = total_pay + task.get_pay
     # Deductions
     loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
-    print(loan_amount, loan_payment, balance_amount)
     logger.debug(f'balance_amount: {balance_amount}')
-    loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
-    # total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    # loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
+    # total_deduction,sub_bonus,sub_total= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
     userprofile = UserProfile.objects.get(user_id=employee)
-    if userprofile.laptop_status == True:
-        laptop_saving = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_bonus = lbandls.laptop_bonus
-        else:
-            laptop_bonus = Decimal(0)
-    else:
-        laptop_bonus = Decimal(0)
-        if LBandLS.objects.filter(user=employee).exists():
-            lbandls = LBandLS.objects.get(user_id=employee)
-            laptop_saving = lbandls.laptop_service
-        else:
-            laptop_saving = Decimal(0)
-    laptop_bonus = round(Decimal(laptop_bonus), 2)
-    laptop_saving = round(Decimal(laptop_saving), 2)
-    # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
+    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
     # ====================Bonus Section=============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,Lap_Bonus=bonus(tasks,total_pay,payslip_config)
-    # if month == 12:
-    #     task_obj = Task.objects.filter(submission__contains=year)
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eoy_users = best_employee(task_obj)
-    #     if (employee,) in eoy_users:
-    #         logger.info('this employee is EOY!')
-    #         EOY = payslip_config.eoy_bonus
-    # elif month % 3 == 0:
-    #     task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month-2))
-    #                             | Q(submission__contains=normalize_period(year, month-1))
-    #                             | Q(submission__contains=normalize_period(year, month)))
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eoq_users = best_employee(task_obj)
-    #     user_tuple = (employee.username,)
-    #     logger.debug(f'eoq_users: {eoq_users}')
-    #     logger.debug(f'user_tuple: {user_tuple}')
+    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
 
-    #     if user_tuple in eoq_users:
-    #         logger.info('this employee is EOQ!')
-    #         EOQ = payslip_config.eoq_bonus
-    #         logger.debug(f'EOQ: {EOQ}')
-    # else:
-    #     task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
-    #     logger.debug(f'task_obj: {task_obj}')
-    #     eom_users = best_employee(task_obj)
-    #     if (employee,) in eom_users:
-    #         logger.info('this employee is EOM!')
-    #         EOM = payslip_config.eom_bonus
     # ====================Summary Section=============================
-    total_deduction,total_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    # total_bonus = total_bonus + EOM + EOQ + EOY
+    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+    total_bonus = sub_bonus + laptop_bonus
     # Net Pay
     total_value=total_pay + total_bonus
+    # print(loan_amount, loan_payment, balance_amount)
+    # print("laptop_bonus===>",laptop_bonus,"laptop_saving====>",laptop_saving)
+    # print('======================================')
+    # print('total_bonus=======>',total_bonus)
+    # print('total_deduction=======>',total_deduction)
+    # print('total_pay=======>',total_pay)
+    # print('total_value=====>',total_value)
     net = total_value - total_deduction
+    # print('======================================')
     round_off = round(net) - net
     net_pay = net + round_off
     logger.debug(f'total deductions: {total_deduction}')
     logger.debug(f'total_bonus: {total_bonus}')
     logger.debug(f'net: {net}')
     logger.debug(f'net_pay: {net_pay}')
-    print(f'total deductions: {total_deduction}')
-    print(f'total_bonus: {total_bonus}')
-    print(f'net: {net}')
-    print(f'net_pay: {net_pay}')
+    # print(f'total deductions: {total_deduction}')
+    # print(f'total_bonus: {total_bonus}')
+    # print(f'net: {net}')
+    # print(f'net_pay: {net_pay}')
     context = {
         # bonus
+        # "pointsearning": bonus_points_ammount,
         "pointsearning": bonus_points_ammount,
         "EOM": EOM,
         "EOQ": EOQ,
@@ -911,6 +1064,7 @@ class UserTaskListView(ListView):
 class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
     success_url = "/management/tasks"
+    template_name='main/snippets_templates/generalform.html'
     fields = [
         "groupname",
         "category",
@@ -942,7 +1096,8 @@ class TaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 @method_decorator(login_required, name="dispatch")
 class UsertaskUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Task
-
+    template_name='main/snippets_templates/generalform.html'
+    
     # success_url = "/management/thank"
     def get_success_url(self):
         task = self.get_object()
@@ -988,53 +1143,52 @@ class TaskDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 # =============================EMPLOYEE EVIDENCE========================================
+
+
+JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
+ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
+
 def newevidence(request, taskid):
+    task = get_object_or_404(Task, id=taskid)
+
     if request.method == "POST":
         form = EvidenceForm(request.POST)
-        # Check whether the task exist then only we allow to create evidence
-        try:
-            task = Task.objects.get(id=taskid)
-            activity_name = task.activity_name
-        except:
-            return render(request, "errors/404.html")
-
         if form.is_valid():
-            points, maxpoints, taskname = \
-                Task.objects.values_list("point", "mxpoint", "activity_name").filter(id=taskid)[0]
-            jobsup_list = ["job support", "job_support", "jobsupport"]
-            if points != maxpoints and taskname.lower() not in jobsup_list:
+            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
+            
+            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
                 Task.objects.filter(id=taskid).update(point=points + 1)
 
-            # User will taken from the request
             data = form.cleaned_data
             link = data['link']
+            
             if not link:
-                messages.error(request, "please provide evidence link")
+                messages.error(request, "Please provide evidence link")
                 return render(request, "management/daf/evidence_form.html", {"form": form})
+            
             try:
-                a=requests.get(link)
+                a = requests.get(link)
                 if a.status_code == 200:
-                    user_list=[]
                     check = TaskLinks.objects.filter(link=link)
+                    
                     if check.exists():
-                        users = check.values_list('added_by__username')
-                        for username in users:
-                            user_list.append(username[0])
-                        act_list = ['BOG', 'BI Sessions', 'DAF Sessions']
-                        if activity_name in act_list:
-                            if request.user.username in user_list:
-                                messages.error(request, "you have already uploaded this link")
-                                return render(request, "management/daf/evidence_form.html", {"form": form})
+                        users = check.values_list('added_by__username', flat=True)
+                        
+                        if request.user.username in users:
+                            messages.error(request, "You have already uploaded this link")
+                            return render(request, "management/daf/evidence_form.html", {"form": form})
+                        
+                        if task.activity_name in ACTIVITY_LIST:
                             form.save()
                             return redirect("management:evidence")
                         else:
-                            messages.error(request, "this link is already uploaded")
+                            messages.error(request, "This link is already uploaded")
                             return render(request, "management/daf/evidence_form.html", {"form": form})
-
+                        
                     form.save()
                     return redirect("management:evidence")
                 else:
-                    messages.error(request, "link is not valid,please check again")
+                    messages.error(request, "Link is not valid, please check again")
                     return render(request, "management/daf/evidence_form.html", {"form": form})
 
             except:
@@ -1052,11 +1206,25 @@ def evidence(request):
     return render(request, "management/daf/evidence.html", {"links": links})
 
 
+
 def userevidence(request, user=None, *args, **kwargs):
     # current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
+
+    # Calculate the date range for the last 2 months
+    now = timezone.localtime()
+    print(now)
+    two_months_ago = now - timezone.timedelta(days=60)
+
+    # Filter the TaskLinks based on the created_at field within the date range
+    userlinks = TaskLinks.objects.filter(added_by=employee, created_at__range=[two_months_ago, now]).order_by("-created_at")
     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
+
+# def userevidence(request, user=None, *args, **kwargs):
+#     # current_user = request.user
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+#     userlinks = TaskLinks.objects.all().filter(added_by=employee).order_by("-created_at")
+#     return render(request, "management/daf/userevidence.html", {"userlinks": userlinks})
 
 def evidence_update_view(request, id, *args, **kwargs):
     context = {}
@@ -1082,37 +1250,6 @@ def evidence_update_view(request, id, *args, **kwargs):
     }
     return render(request, "main/snippets_templates/generalform.html", context)
 
-# @method_decorator(login_required, name="dispatch")
-# class EvidenceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-#     model = TaskLinks
-#     success_url = "/management/evidence"
-#     message="Edit Evidence"
-   
-#     fields = [
-#             #    "task",
-#             #    "added_by",
-#                "link_name",
-#                "linkpassword",
-#                "description",
-#                "doc",
-#                "link",
-#                "linkpassword",
-#                "is_active",
-#                "is_featured",
-#            ]
-#     def form_valid(self, form):
-#         # form.instance.author=self.request.user
-#         return super().form_valid(form)
-
-#     def test_func(self):
-#         evidence = self.get_object()
-#         if self.request.user.is_admin or self.request.user.is_superuser:
-#             return True
-#         elif self.request.user == evidence.added_by:
-#             return True
-#         return False
-
-
 
 # =============================EMPLOYEE SESSIONS========================================
 class SessionCreateView(LoginRequiredMixin, CreateView):
@@ -1125,10 +1262,27 @@ class SessionCreateView(LoginRequiredMixin, CreateView):
         form.instance.presenter = self.request.user
         return super().form_valid(form)
 
-class SessionListView(ListView):
-    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-    queryset=Training.objects.all().order_by("-created_date")
-    template_name = "management/departments/hr/sessions.html"
+def sessions(request):
+    # total_sessions=Training.objects.all().count()
+    sessions=Training.objects.all()
+    client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True).order_by("-created_date")
+    employee_sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
+    # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
+    context_a={
+       "object_list":client_sessions,
+        "title":"Client_Sessions"
+    }
+    context_b={
+        "object_list":employee_sessions,
+        "title":"Employee_Sessions"
+    }
+    if request.user.is_client :
+        return render(request,"management/departments/hr/sessions.html", context_a)
+    elif request.user.is_staff :
+        return render(request,"management/departments/hr/sessions.html", context_b)
+    else:
+        return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
+
 
 class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Training
@@ -1149,7 +1303,7 @@ class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 def usersession(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     deadline_date=paytime()[2]
-    print(f'Write Value:{deadline_date}')
+    # print(f'Write Value:{deadline_date}')
     employee = get_object_or_404(User, username=kwargs.get("username"))
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     emp_target_sessions =75
@@ -1171,14 +1325,13 @@ def usersession(request, user=None, *args, **kwargs):
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
 
-    if request.user.is_superuser or request.user.is_employee:
+    if request.user.is_superuser or request.user.is_staff:
         return render(request, "management/departments/hr/usersessions.html", context)
     elif request.user.is_superuser:
         return render(request, "management/departments/hr/sessions.html", context)
     elif request.user.is_superuser or request.user.is_client:
         return render(request, "management/departments/hr/clientsessions.html", context)
     else:
-        # raise Http404("Login/Wrong Page: Contact Admin Please!")
         return redirect("main:layout")
 
 
@@ -1201,32 +1354,43 @@ class AssessListView(ListView):
     template_name = "management/departments/hr/assessment.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
-
-
 def active_requirements(request, Status=None, *args, **kwargs):
     active_requirements = Requirement.objects.all().filter(is_active=True)
     context = {"active_requirements": active_requirements}
     return render(request, "management/doc_templates/active_requirements.html", context)
 
-
 def requirements(request):
-    requirements = Requirement.objects.all().order_by("-id")
+    path_list,subtitle,pre_sub_title=path_values(request)
+    if subtitle == 'dyc_requirements':
+        requirements = Requirement.objects.filter(requestor__iexact='client', company__iexact='dyc').order_by('-id')
+    elif subtitle == 'client_requirements':
+        requirements = Requirement.objects.exclude(company__iexact='dyc').filter(requestor__iexact='client').order_by('-id')
+    elif subtitle == 'coda_requirements':
+        requirements = Requirement.objects.filter(requestor__iexact='management', company__iexact='coda').order_by('-id')
+    elif subtitle == 'reviewed':
+        requirements = Requirement.objects.filter(is_reviewed=True).order_by('-id')
+    elif subtitle == 'tested':
+        requirements = Requirement.objects.filter(is_tested=True).order_by('-id')
+    else:
+        requirements = Requirement.objects.all().order_by("-id")
+
     requirement_filters=RequirementFilter(request.GET,queryset=requirements)
 
     context={
         "requirements": requirements,
         "requirement_filters": requirement_filters
     }
-    return render(request,"management/doc_templates/requirementlist.html",context)
+    return render(request,"management/doc_templates/requirements.html",context)
 
 
 def newrequirement(request):
+    request.session["siteurl"] = settings.SITEURL
     if request.method == "POST":
         form = RequirementForm(request.POST, request.FILES)
         if form.is_valid():
             instance=form.save(commit=False)
             instance.creator=request.user
-            print(instance.creator)
+            # print(instance.creator)
             instance.save()
             # form.save()
             if (
@@ -1239,14 +1403,6 @@ def newrequirement(request):
                     protocol = "https://"
                 else:
                     protocol = "http://"
-                # html_content = f"""
-                #     <span><h3>Requirement: </h3>{request.POST['what']}<br>
-                #     <a href='{protocol+request.get_host()+reverse('management:RequirementDetail',
-                #     kwargs={'pk':form.instance.id})}'>click here</a><br>
-                #     <b>Dead Line: </b><b style='color:red;'>
-                #     {request.POST['delivery_date']}</b><br><b>Created by:
-                #     {request.user}</b></span>"""
-                # email_template(subject, to, html_content)
                 context = {
                     'request_what': request.POST['what'],
                     'url': protocol + request.get_host() + reverse('management:RequirementDetail',
@@ -1254,8 +1410,11 @@ def newrequirement(request):
                     'delivery_date': request.POST['delivery_date'],
                     'user': request.user,
                 }
-                # send_email(category=request.user.category, to_email=[to, ], subject=subject,
-                #            html_template='email/newrequirement.html', context=context)
+                send_email(category=request.user.category,
+                to_email=[request.user.email,],
+                subject=subject,
+                html_template='email/newrequirement.html', 
+                context=context)
             return redirect("management:requirements-active")
     else:
         form = RequirementForm()
@@ -1263,19 +1422,43 @@ def newrequirement(request):
         request, "management/doc_templates/requirement_form.html", {"form": form}
     )
 
+# class RequirementDetailView(DetailView):
+#     template_name = "management/doc_templates/single_requirement.html"
+#     model = Requirement
+#     ordering = ["created_at "]
+
+# def requirementdetail(request,*args,**kwargs):
+
+
 class RequirementDetailView(DetailView):
     template_name = "management/doc_templates/single_requirement.html"
     model = Requirement
-    ordering = ["created_at "]
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        requirement = self.get_object()
+        user = self.request.user
+        is_allowed = (user.is_staff and user.sub_category == 2) or user.is_superuser
+        
+        context = {
+            'object': requirement,  # Add any other context variables you need
+            'is_allowed': is_allowed,
+        }
+        return self.render_to_response(context)
+
 
 class RequirementUpdateView(LoginRequiredMixin, UpdateView):
     model = Requirement
     success_url = "/management/requirements"
     fields = [
-                "status","assigned_to","requestor","company",
-                "category","app","delivery_date","duration","what",
-                "why","how","comments","doc","is_active",
-             ]
+        "status", "assigned_to", "requestor", "company",
+        "category", "app", "delivery_date", "duration", "what",
+        "why", "how", "comments", "doc", "pptlink", "videolink",
+        "is_active", "is_tested", "is_reviewed",
+    ]
     form = RequirementForm
     def form_valid(self, form):
         # form.instance.author=self.request.user
@@ -1330,24 +1513,35 @@ class RequirementDeleteView(LoginRequiredMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
-# ====================ESTIMATEVIEWS===============================
-class EstimateCreateView(LoginRequiredMixin, CreateView):
-    model=Estimate
-    success_url = "/management/activerequirements"
-    fields= "__all__"
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
 
-class EstimateListView(ListView):
-    model = Estimate
-    template_name = "management/doc_templates/estimates.html"
-    context_object_name = "estimates"
-    ordering = ["-created_at"]
+def videolink(request,detail_id):
+    task_links=TaskLinks.objects.all()
+    mylist=[link.lowerlinkname for link in task_links]
+    new_list=[val for val in mylist if val !=None]
+    mylinkname="requirement"+str(detail_id)
+    if mylinkname in new_list:
+        obj=TaskLinks.objects.filter(link_name__icontains=str(detail_id))
+        # print("obj",obj)
+        for link in obj:
+            site=link.link
+            # print(site)
+    else:
+        context = {
+             "title":'Requirement Elaboration',
+             "message":f'There is no video for this requirement'
+            } 
+        return render(request, "main/messages/general.html",context)
+    context = {
+      "title":'Requirement Elaboration',
+      "site":site,
+      "message":f'Access the explanation for this requirement'
+    } 
+    return render(request, "main/messages/general.html",context)
+
 
 def getaveragetargets(request):
-    print("+++++++++getaveragetargets+++++++++")
+    # print("+++++++++getaveragetargets+++++++++")
     taskname = request.POST["taskname"]
     # 1st month
     last_day_of_prev_month1 = date.today().replace(day=1) - timedelta(days=1)
@@ -1381,7 +1575,7 @@ def getaveragetargets(request):
 
 def filterbycategory(request):
     category = request.POST["category"]
-    print("category", category)
+    # print("category", category)
 
     tasks = Task.objects.filter(category__title=category)
     result = []
@@ -1415,18 +1609,24 @@ class AdsContent(ListView):
 
 class AdsCreateView(LoginRequiredMixin, CreateView):
     model = Advertisement
-    template_name = "management/create_advertisement.html"
+    template_name = "main/snippets_templates/generalform.html"
     fields = "__all__"
     success_url = "/management/advertisement"
+    page_title = 'Advertisement Details'
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['page_title'] = capfirst(self.page_title)
+        return context
+
 
 class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Advertisement
-    template_name = "management/create_advertisement.html"
+    template_name = "main/snippets_templates/generalform.html"
     fields = "__all__"
     success_url = "/management/advertisement"
 
@@ -1439,3 +1639,753 @@ class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user == post.author:
             return True
         return False
+    
+
+# ====================ESTIMATEVIEWS===============================
+
+
+
+# def justification(request, *args, **kwargs):
+#     time=20
+#     justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
+#         .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
+#                 time=F("Process_in_breakdown__time"), requirement_id=F("requirements__id"),
+#                 Qty=F("Process_in_breakdown__Quantity"), total=F("Process_in_breakdown__total"))
+#     if justifications:
+#         justofication_dict = {}
+#         justifications_ids = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk')) \
+#             .values_list("id", flat=True)
+#         obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
+#         total_time = obj.aggregate(Sum('total'))
+#         total_qty = obj.aggregate(Sum('Quantity'))
+#         for justification in justifications:
+#             if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
+#                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
+#                                            justification.get('justification') + justification.get('breakdown'):
+#                                                justification.get('breakdown'),
+#                                            justification.get('breakdown') + 'time': justification.get('time'),
+#                                            justification.get('justification') + justification.get('breakdown') +
+#                                            'quantity': justification.get('Qty'),
+#                                            justification.get('justification') + justification.get('breakdown') +
+#                                            'total': justification.get('total'),
+#                                            'requirement_id': justification.get('requirement_id'),
+#                                            })
+#             else:
+#                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
+#                                            justification.get('justification')+justification.get('breakdown'):
+#                                                justification.get('breakdown'),
+#                                            justification.get('breakdown')+'time': justification.get('time'),
+#                                            justification.get('breakdown')+'quantity': justification.get('Qty'),
+#                                            justification.get('breakdown')+'total': justification.get('total'),
+#                                            'requirement_id': justification.get('requirement_id'),
+#                                            })
+#         return render(request, "management/doc_templates/req_justifications.html", {"justifications": justofication_dict,
+#                                                                    "total_time": total_time.get('total__sum'),
+#                                                                     "total_qty": total_qty.get('Quantity__sum')
+#         })
+#     return render(request, "management/doc_templates/req_justifications.html", {"active_requirement": kwargs.get('pk')})
+
+
+def form_submission_view(request):
+    if request.method == 'POST':
+        form = RequirementForm(request.POST)
+        if form.is_valid():
+            # Save the form to create a new object
+            new_object = form.save()
+            # Redirect to the justification view with the new object's ID
+            return redirect(reverse('management:justification', args=[new_object.pk]))
+    else:
+        form = RequirementForm()
+   
+    return render(request, 'management/doc_templates/requirement_form.html', {'form': form})
+
+
+def justification(request, *args, **kwargs):
+    justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
+        .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
+                time=F("Process_in_breakdown__time"), requirement_id=F("requirements__id"),
+                Qty=F("Process_in_breakdown__Quantity"), total=F("Process_in_breakdown__total"))
+    if justifications:
+        justofication_dict = {}
+        justifications_ids = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk')) \
+            .values_list("id", flat=True)
+        obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
+        total_time = obj.aggregate(Sum('total'))
+        total_qty = obj.aggregate(Sum('Quantity'))
+        for justification in justifications:
+            if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
+                justofication_dict.update({justification.get('justification'): justification.get('justification'),
+                                           justification.get('justification') + justification.get('breakdown'):
+                                               justification.get('breakdown'),
+                                           justification.get('breakdown') + 'time': justification.get('time'),
+                                           justification.get('justification') + justification.get('breakdown') +
+                                           'quantity': justification.get('Qty'),
+                                           justification.get('justification') + justification.get('breakdown') +
+                                           'total': justification.get('total'),
+                                           'requirement_id': justification.get('requirement_id'),
+                                           })
+            else:
+                justofication_dict.update({justification.get('justification'): justification.get('justification'),
+                                           justification.get('justification')+justification.get('breakdown'):
+                                               justification.get('breakdown'),
+                                           justification.get('breakdown')+'time': justification.get('time'),
+                                           justification.get('breakdown')+'quantity': justification.get('Qty'),
+                                           justification.get('breakdown')+'total': justification.get('total'),
+                                           'requirement_id': justification.get('requirement_id'),
+                                           })
+            just_context={
+                "justifications": justofication_dict,
+                "total_time": total_time.get('total__sum'),
+                 "total_qty": total_qty.get('Quantity__sum')
+                }
+        return render(request, "management/doc_templates/req_justifications.html", just_context)
+    context={
+        "active_requirement": kwargs.get('pk'),
+        # "total_time":total_time.get('total__sum')
+        "total_time":100
+     }
+    return render(request, "management/doc_templates/req_justifications.html", context)
+
+
+
+# def add_requirement_justification(request):
+#     requirement_id = request.POST.get('requirement_id')
+#     print("ID====>",requirement_id)
+
+#     requirement_obj = Requirement.objects.filter(id=requirement_id).first()
+#     print("requirement_obj:==>",requirement_obj)
+#     if not requirement_obj:
+#         messages.warning(
+#             request, "requirement id is wrong"
+#         )
+#         context={
+#             "message":request.path_info
+#         }
+#         # return  HttpResponseRedirect(request.path_info)
+#         return render (request, "main/messages/general.html",context) 
+        
+#     with transaction.atomic():
+#         table = request.POST.get('Table')
+#         print("table=======>",table)
+#         if table:
+#             justification_obj = None
+#             obj = ProcessJustification.objects.filter(requirements=requirement_obj, justification="table")
+#             if obj:
+#                 justification_obj = obj.first()
+#                 print("obj",justification_obj)
+#             else:
+#                 justification_obj = ProcessJustification.objects.create(requirements=requirement_obj, justification="table")
+#             dictionary = request.POST.get('Dictionary')
+#             if dictionary:
+#                 time = int(request.POST.get('dictionary_time'))
+#                 qty = int(request.POST.get('dictionary_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=justification_obj, breakdown="dictionary")
+#                 if obj:
+#                     dictionary_obj = obj.first()
+#                     dictionary_obj.Quantity = qty
+#                     dictionary_obj.total = time*qty
+#                     dictionary_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=justification_obj, breakdown="dictionary", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             erd = request.POST.get('Erd')
+#             if erd:
+#                 time = int(request.POST.get('Erd_time'))
+#                 qty = int(request.POST.get('Erd_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=justification_obj, breakdown="erd")
+#                 if obj:
+#                     erd_obj = obj.first()
+#                     erd_obj.Quantity = qty
+#                     erd_obj.total = time * qty
+#                     erd_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=justification_obj, breakdown="erd", time=time, Quantity=qty,
+#                                                     total=time*qty)
+#             table_model = request.POST.get('Table_model')
+#             if table_model:
+#                 time = int(request.POST.get('Table_time'))
+#                 qty = int(request.POST.get('Table_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=justification_obj, breakdown="table_model")
+#                 if obj:
+#                     table_model_obj = obj.first()
+#                     table_model_obj.Quantity = qty
+#                     table_model_obj.total = time * qty
+#                     table_model_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=justification_obj, breakdown="table_model", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             testing = request.POST.get('Testing')
+#             if testing:
+#                 time = int(request.POST.get('Testing_time'))
+#                 qty = int(request.POST.get('Testing_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=justification_obj, breakdown="testing")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=justification_obj, breakdown="testing", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#         view_obj = request.POST.get('view')
+#         if view_obj:
+#             view_instance = None
+#             obj = ProcessJustification.objects.filter(requirements=requirement_obj, justification="view")
+#             if obj:
+#                 view_instance = obj.first()
+#             else:
+#                 view_instance = ProcessJustification.objects.create(requirements=requirement_obj, justification="view")
+#             flow_diagram = request.POST.get('flow_diagram')
+#             if flow_diagram:
+#                 time = int(request.POST.get('flow_diagram_time'))
+#                 qty = int(request.POST.get('flow_diagram_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="flow_diagram")
+#                 if obj:
+#                     flow_diagram_obj = obj.first()
+#                     flow_diagram_obj.Quantity = qty
+#                     flow_diagram_obj.total = time * qty
+#                     flow_diagram_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="flow_diagram", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             create = request.POST.get('view_create')
+#             if create:
+#                 time = int(request.POST.get('create_time'))
+#                 qty = int(request.POST.get('create_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="create")
+#                 if obj:
+#                     create_obj = obj.first()
+#                     create_obj.Quantity = qty
+#                     create_obj.total = time * qty
+#                     create_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="create", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             detail = request.POST.get('detail')
+#             if detail:
+#                 time = int(request.POST.get('detail_time'))
+#                 qty = int(request.POST.get('detail_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="detail")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="detail", time=time,
+#                                                 Quantity=qty, total=time*qty)
+#             list_obj = request.POST.get('list')
+#             if list_obj:
+#                 time = int(request.POST.get('list_time'))
+#                 qty = int(request.POST.get('list_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="list")
+#                 if obj:
+#                     list_obj = obj.first()
+#                     list_obj.Quantity = qty
+#                     list_obj.total = time * qty
+#                     list_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="list", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             update_obj = request.POST.get('update')
+#             if update_obj:
+#                 time = int(request.POST.get('update_time'))
+#                 qty = int(request.POST.get('update_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="update")
+#                 if obj:
+#                     update_obj = obj.first()
+#                     update_obj.Quantity = qty
+#                     update_obj.total = time * qty
+#                     update_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="update", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             delete_obj = request.POST.get('delete')
+#             if delete_obj:
+#                 time = int(request.POST.get('delete_time'))
+#                 qty = int(request.POST.get('delete_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="delete")
+#                 if obj:
+#                     delete_obj = obj.first()
+#                     delete_obj.Quantity = qty
+#                     delete_obj.total = time * qty
+#                     delete_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="delete", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             testing_view = request.POST.get('testing_view')
+#             if testing_view:
+#                 time = int(request.POST.get('testing_view_time'))
+#                 qty = int(request.POST.get('testing_view_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=view_instance, breakdown="testing")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=view_instance, breakdown="testing", time=time,
+#                                                     Quantity=qty, total=time*qty)
+
+#         template_obj = request.POST.get('template')
+#         if template_obj:
+#             template_instance = None
+#             obj = ProcessJustification.objects.filter(requirements=requirement_obj, justification="template")
+#             if obj:
+#                 template_instance = obj.first()
+#             else:
+#                 template_instance = ProcessJustification.objects.create(requirements=requirement_obj,
+#                                                                         justification="template")
+#             template_creation = request.POST.get('template_creation')
+#             if template_creation:
+#                 time = int(request.POST.get('template_creation_time'))
+#                 qty = int(request.POST.get('template_creation_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=template_instance, breakdown="creation")
+#                 if obj:
+#                     creation_obj = obj.first()
+#                     creation_obj.Quantity = qty
+#                     creation_obj.total = time * qty
+#                     creation_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=template_instance, breakdown="creation", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             template_testing = request.POST.get('template_testing')
+#             if template_testing:
+#                 time = int(request.POST.get('template_testing_time'))
+#                 qty = int(request.POST.get('template_testing_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=template_instance, breakdown="testing")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=template_instance, breakdown="testing", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#         forms = request.POST.get('forms')
+#         if forms:
+#             forms_instance = None
+#             obj = ProcessJustification.objects.filter(requirements=requirement_obj, justification="forms")
+#             if obj:
+#                 forms_instance = obj.first()
+#             else:
+#                 forms_instance = ProcessJustification.objects.create(requirements=requirement_obj,
+#                                                                      justification="forms")
+#             form_creation = request.POST.get('form_creation')
+#             if form_creation:
+#                 time = int(request.POST.get('form_creation_time'))
+#                 qty = int(request.POST.get('form_creation_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=forms_instance, breakdown="creation")
+#                 if obj:
+#                     creation_obj = obj.first()
+#                     creation_obj.Quantity = qty
+#                     creation_obj.total = time * qty
+#                     creation_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=forms_instance, breakdown="creation", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#             form_testing = request.POST.get('form_testing')
+#             if form_testing:
+#                 time = int(request.POST.get('form_testing_time'))
+#                 qty = int(request.POST.get('form_testing_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=forms_instance, breakdown="testing")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=forms_instance, breakdown="testing", time=time,
+#                                                     Quantity=qty, total=time*qty)
+#         apis = request.POST.get('apis')
+#         if apis:
+#             apis_instance = None
+#             obj = ProcessJustification.objects.filter(requirements=requirement_obj, justification="apis")
+#             if obj:
+#                 apis_instance = obj.first()
+#             else:
+#                 apis_instance = ProcessJustification.objects.create(requirements=requirement_obj,
+#                                                                     justification="apis")
+#             new_api = request.POST.get('new_api')
+#             if new_api:
+#                 time = int(request.POST.get('new_api_time'))
+#                 qty = int(request.POST.get('new_api_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=apis_instance, breakdown="new")
+#                 if obj:
+#                     new_obj = obj.first()
+#                     new_obj.Quantity = qty
+#                     new_obj.total = time * qty
+#                     new_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=apis_instance, breakdown="new", time=time,
+#                                                     Quantity=qty, total=time * qty)
+#             existing_api = request.POST.get('existing_api')
+#             if existing_api:
+#                 time = int(request.POST.get('existing_api_time'))
+#                 qty = int(request.POST.get('existing_api_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=apis_instance, breakdown="existing")
+#                 if obj:
+#                     existing_obj = obj.first()
+#                     existing_obj.Quantity = qty
+#                     existing_obj.total = time * qty
+#                     existing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=apis_instance, breakdown="existing", time=time,
+#                                                     Quantity=qty, total=time * qty)
+#             api_testing = request.POST.get('api_testing')
+#             if api_testing:
+#                 time = int(request.POST.get('api_testing_time'))
+#                 qty = int(request.POST.get('api_testing_quantity'))
+#                 obj = ProcessBreakdown.objects.filter(process=apis_instance, breakdown="testing")
+#                 if obj:
+#                     testing_obj = obj.first()
+#                     testing_obj.Quantity = qty
+#                     testing_obj.total = time * qty
+#                     testing_obj.save()
+
+#                 else:
+#                     ProcessBreakdown.objects.create(process=apis_instance, breakdown="testing", time=time,
+#                                                     Quantity=qty, total=time * qty)
+                    
+#         latest_requirement= ProcessBreakdown.objects.latest('crated_at')
+#         latest_total = latest_requirement.time
+#         print("latest_total=====>",latest_total)
+#         active_requirements = Requirement.objects.all().filter(is_active=True)
+#         print("active_requirements==========>",active_requirements)
+#         context = {
+#                     "active_requirements": active_requirements,
+#                     "total": latest_total
+#                    }
+#         return render(request, "management/doc_templates/active_requirements.html", context)
+
+
+
+# from django.db import transaction
+
+# def add_requirement_justification(request):
+#     requirement_id = request.POST.get('requirement_id')
+#     requirement_obj = get_object_or_404(Requirement, id=requirement_id)
+
+#     justification_mapping = {
+#         'Table': ['Dictionary', 'Erd', 'Table_model', 'Testing'],
+#         'view': ['flow_diagram', 'view_create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+#         'template': ['template_creation', 'template_testing'],
+#         'forms': ['form_creation', 'form_testing'],
+#         'apis': ['new_api', 'existing_api', 'api_testing']
+#     }
+
+#     with transaction.atomic():
+#         for justification_type, breakdowns in justification_mapping.items():
+#             if request.POST.get(justification_type):
+#                 print("here")
+#                 justification_obj, is_created = ProcessJustification.objects.get_or_create(
+#                     requirements=requirement_obj,
+#                     justification=justification_type
+#                 )
+#                 print("justification_obj,is_created",justification_obj,is_created)
+#                 for breakdown in breakdowns:
+#                     lower_breakdown=breakdown.lower()
+#                     if request.POST.get(breakdown):
+#                         print("HERE",lower_breakdown)
+#                         time = int(request.POST.get('dictionary_time'))
+#                         qty = 0
+#                         str_breakdown=f'{lower_breakdown}_time'
+#                         print("str_breakdown====>",str_breakdown)
+#                         time = int(request.POST.get('Erd_time'))
+#                         # qty = int(request.POST.get(f'{lower_breakdown}_quantity'))
+#                         print("qty,time",qty,time)
+#                         breakdown_obj, created = ProcessBreakdown.objects.get_or_create(
+#                             process=justification_obj,
+#                             breakdown=breakdown,
+#                             defaults={'time': time, 'Quantity': qty, 'total': time * qty}
+#                         )
+#                         if not created:
+#                             breakdown_obj.Quantity = qty
+#                             breakdown_obj.total = time * qty
+#                             breakdown_obj.save()
+
+#         latest_requirement = ProcessBreakdown.objects.latest('crated_at')
+#         latest_total = latest_requirement.time
+#         active_requirements = Requirement.objects.filter(is_active=True)
+#         print("latest_total======>",latest_total)
+
+#     context = {
+#         "active_requirements": active_requirements,
+#         "total": latest_total
+#     }
+    
+#     return render(request, "management/doc_templates/active_requirements.html", context)
+
+# from django.shortcuts import get_object_or_404, render
+# from django.db import transaction
+# from django.contrib import messages
+# from .models import Requirement, ProcessJustification, ProcessBreakdown
+
+# def add_requirement_justification(request):
+#     requirement_id = request.POST.get('requirement_id')
+#     requirement_obj = get_object_or_404(Requirement, id=requirement_id)
+
+#     justification_mapping = {
+#         'Table': ['dictionary', 'erd', 'table_model', 'testing'],
+#         'View': ['flow_diagram', 'view_create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+#         'Template': ['template_creation', 'template_testing'],
+#         'Forms': ['form_creation', 'form_testing'],
+#         'Apis': ['new_api', 'existing_api', 'api_testing']
+#     }
+
+#     latest_total = 0
+
+#     with transaction.atomic():
+#         for justification_type, breakdowns in justification_mapping.items():
+#             # print(justification_type, breakdowns)
+#             justification_key = justification_type.lower()
+#             if request.POST.get(justification_type):
+#                 justification_obj, created = ProcessJustification.objects.get_or_create(
+#                     requirements=requirement_obj,
+#                     justification=justification_type
+#                 )
+#                 total_time_for_type = 0
+#                 for breakdown in breakdowns:
+#                     breakdown_key = f'{breakdown}_time'
+#                     breakdown_qty = f'{breakdown}_quantity'
+#                     print("values",request.POST)
+#                     if breakdown_key in request.POST and breakdown_qty in request.POST:
+#                         print(breakdown, breakdown_key,breakdown_qty)
+#                         breakdown_capitalized = breakdown.capitalize()  # Capitalize the first letter
+#                         time = int(request.POST.get(breakdown_key))
+#                         qty = int(request.POST.get(breakdown_qty))
+#                         breakdown_obj, created = ProcessBreakdown.objects.get_or_create(
+#                             process=justification_obj,
+#                             breakdown=breakdown_capitalized,
+#                             defaults={'time': time, 'Quantity': qty, 'total': time * qty}
+#                         )
+#                         if not created:
+#                             breakdown_obj.Quantity = qty
+#                             breakdown_obj.total = time * qty
+#                             breakdown_obj.save()
+#                         total_time_for_type += time * qty
+                
+#                 latest_total = max(latest_total, total_time_for_type)
+
+#         active_requirements = Requirement.objects.filter(is_active=True)
+
+#     context = {
+#         "active_requirements": active_requirements,
+#         "total": latest_total
+#     }
+    
+#     return render(request, "management/doc_templates/active_requirements.html", context)
+
+
+# from django.shortcuts import get_object_or_404, render
+# from django.db import transaction
+# from django.contrib import messages
+# from .models import Requirement, ProcessJustification, ProcessBreakdown
+
+
+
+# def add_requirement_justification(request):
+#     requirement_id = request.POST.get('requirement_id')
+#     requirement_obj = get_object_or_404(Requirement, id=requirement_id)
+
+#     justification_mapping = {
+#         'table': ['dictionary', 'Erd', 'Table', 'Testing'],
+#         'view': ['flow_diagram', 'create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+#         'template': ['template_creation', 'template_testing'],
+#         'forms': ['form_creation', 'form_testing'],
+#         'apis': ['new_api', 'existing_api', 'api_testing']
+#     }
+
+#     latest_total = 0
+
+#     with transaction.atomic():
+#         for justification_type, breakdowns in justification_mapping.items():
+#            justification_key=justification_type.capitalize() if justification_type == 'table' else justification_type  # Capitalize value
+#         #    print("justification_type=====>",justification_type)
+#            if request.POST.get(justification_key):
+#                 justification_obj, created = ProcessJustification.objects.get_or_create(
+#                     requirements=requirement_obj,
+#                     justification=justification_type.capitalize()  # Capitalize value
+#                 )
+#                 total_time_for_type = 0
+#                 for breakdown in breakdowns:
+#                     breakdown_key = f'{breakdown}_time'
+#                     breakdown_qty = f'{breakdown}_quantity'
+#                     print(breakdown_key)
+#                     if breakdown_key in request.POST and breakdown_qty in request.POST:
+#                         # print(request.POST)
+#                         time = int(request.POST.get(breakdown_key))
+#                         qty = int(request.POST.get(breakdown_qty))
+#                         print(time,qty)
+                        
+#                         # breakdown_capitalized = breakdown.capitalize()  # Capitalize value
+                       
+#                         breakdown_obj, created = ProcessBreakdown.objects.get_or_create(
+#                             process=justification_obj,
+#                             breakdown=breakdown,
+#                             defaults={'time': time, 'Quantity': qty, 'total': time * qty}
+#                         )
+                       
+#                         if not created:
+#                             breakdown_obj.Quantity = qty
+#                             breakdown_obj.total = time * qty
+#                             breakdown_obj.save()
+#                         total_time_for_type += time * qty
+                
+#                 latest_total = max(latest_total, total_time_for_type)
+#                 print("latest_total=====>",latest_total)
+
+#         # Update the duration column in Requirements
+#         requirement_time=math.ceil(latest_total / 60)
+#         Requirement.objects.filter(id=requirement_id).update(duration=requirement_time)
+
+#         # Filter and get the updated duration value
+#         updated_duration = Requirement.objects.filter(id=requirement_id).values_list('duration', flat=True).first()
+#         print(updated_duration)
+#         active_requirements = Requirement.objects.filter(is_active=True)
+
+#     context = {
+#         "active_requirements": active_requirements,
+#         "total_duration": updated_duration
+#     }
+#     return render(request, "management/doc_templates/active_requirements.html", context)
+
+
+def add_requirement_justification(request):
+    requirement_id = request.POST.get('requirement_id')
+    requirement_obj = get_object_or_404(Requirement, id=requirement_id)
+
+    justification_mapping = {
+        'table': ['dictionary', 'Erd', 'Table', 'Testing'],
+        'view': ['flow_diagram', 'create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+        'template': ['template_creation', 'template_testing'],
+        'forms': ['form_creation', 'form_testing'],
+        'apis': ['new_api', 'existing_api', 'api_testing']
+    }
+
+    latest_total = 0
+
+    with transaction.atomic():
+        # print(request.POST)
+        for justification_type, breakdowns in justification_mapping.items():
+            justification_key = justification_type.capitalize() if justification_type == 'table' else justification_type
+            print(f'Processing justification type: {justification_type}')
+            print(f'Justification key: {justification_key}')
+            print(f'Is justification key in request.POST: {justification_key in request.POST}')
+            if request.POST.get(justification_key):
+                justification_obj, created = ProcessJustification.objects.get_or_create(
+                    requirements=requirement_obj,
+                    justification=justification_type.capitalize()
+                )
+                total_time_for_type = 0
+                for breakdown in breakdowns:
+                    breakdown_key = f'{breakdown}_time'
+                    breakdown_qty = f'{breakdown}_quantity'
+                    print(f'Processing breakdown: {breakdown}')
+                    print(f'Breakdown key: {breakdown_key}')
+                    print(f'Breakdown qty: {breakdown_qty}')
+                    if breakdown_key in request.POST and breakdown_qty in request.POST:
+                        time = int(request.POST.get(breakdown_key))
+                        qty = int(request.POST.get(breakdown_qty))
+                        print(f'Time: {time}, Qty: {qty}')
+                        breakdown_obj, created = ProcessBreakdown.objects.get_or_create(
+                            process=justification_obj,
+                            breakdown=breakdown,
+                            defaults={'time': time, 'Quantity': qty, 'total': time * qty}
+                        )
+                       
+                        if not created:
+                            breakdown_obj.Quantity = qty
+                            breakdown_obj.total = time * qty
+                            breakdown_obj.save()
+                        total_time_for_type += time * qty
+                
+                latest_total = max(latest_total, total_time_for_type)
+                print(f'Latest total: {latest_total}')
+        # Update the duration column in Requirements
+        requirement_time = math.ceil(latest_total / 60)
+        Requirement.objects.filter(id=requirement_id).update(duration=requirement_time)
+
+        # Filter and get the updated duration value
+        updated_duration = Requirement.objects.filter(id=requirement_id).values_list('duration', flat=True).first()
+        print(updated_duration)
+        active_requirements = Requirement.objects.filter(is_active=True)
+
+    context = {
+        "active_requirements": active_requirements,
+        "total_duration": updated_duration
+    }
+    return render(request, "management/doc_templates/active_requirements.html", context)
+
+
+
+# from django.shortcuts import get_object_or_404, render
+# from django.db import transaction
+# from django.contrib import messages
+# from .models import Requirement, ProcessJustification, ProcessBreakdown
+
+# def add_requirement_justification(request):
+#     requirement_id = request.POST.get('requirement_id')
+#     requirement_obj = get_object_or_404(Requirement, id=requirement_id)
+
+#     justification_mapping = {
+#         'table': ['Dictionary', 'Erd', 'Table_model', 'Testing'],
+#         'view': ['flow_diagram', 'view_create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+#         'template': ['template_creation', 'template_testing'],
+#         'forms': ['form_creation', 'form_testing'],
+#         'apis': ['new_api', 'existing_api', 'api_testing']
+#     }
+
+#     latest_total = 0
+
+#     with transaction.atomic():
+#         for justification_type, breakdowns in justification_mapping.items():
+#             if request.POST.get(justification_type):
+#                 print("here")
+#                 justification_obj, created = ProcessJustification.objects.get_or_create(
+#                     requirements=requirement_obj,
+#                     justification=justification_type
+#                 )
+#                 print(justification_obj, created)
+#                 total_time_for_type = 0
+#                 for breakdown in breakdowns:
+#                     if request.POST.get(breakdown):
+#                         time = int(request.POST.get(f'{breakdown}_time'))
+#                         qty = int(request.POST.get(f'{breakdown}_quantity'))
+#                         breakdown_obj, created = ProcessBreakdown.objects.get_or_create(
+#                             process=justification_obj,
+#                             breakdown=breakdown,
+#                             defaults={'time': time, 'Quantity': qty, 'total': time * qty}
+#                         )
+#                         if not created:
+#                             breakdown_obj.Quantity = qty
+#                             breakdown_obj.total = time * qty
+#                             breakdown_obj.save()
+#                         total_time_for_type += time * qty
+                
+#                 latest_total = max(latest_total, total_time_for_type)
+#                 print("latest_total======>",latest_total)
+#         active_requirements = Requirement.objects.filter(is_active=True)
+#     context = {
+#         "active_requirements": active_requirements,
+#         "total": latest_total
+#     }
+    
+#     return render(request, "management/doc_templates/active_requirements.html", context)

@@ -1,22 +1,21 @@
 from django import forms
 from django.forms import Textarea
 from data.models import DSU
-from management.models import TaskLinks, Policy, Requirement, Task
+from management.models import TaskLinks, Policy, Requirement, Task,Meetings
 from finance.models import Transaction, Inflow
 from accounts.models import Department
+from application.models import UserProfile
 
-"""
-class EmployeeForm(forms.ModelForm):  
-    class Meta:  
-        model = Employee  
-        fields = ['first_name', 'last_name','contact', 'email'] #https://docs.djangoproject.com/en/3.0/ref/forms/widgets/
-        widgets = { 'name': forms.TextInput(attrs={ 'class': 'form-control' }), 
-            'email': forms.EmailInput(attrs={ 'class': 'form-control' }),
-            'contact': forms.TextInput(attrs={ 'class': 'form-control' }),
-      }
 
-"""
+class MeetingForm(forms.ModelForm):
+    class Meta:
+        model = Meetings
+        fields = "__all__"
+        widgets = {"meeting_description": Textarea(attrs={"cols": 40, "rows": 2})}
 
+    def __init__(self, *args, **kwargs):
+        super(MeetingForm, self).__init__(*args, **kwargs)
+        # self.fields["name"].empty_label = "Select"
 
 class DepartmentForm(forms.ModelForm):
     class Meta:
@@ -181,11 +180,14 @@ class RequirementForm(forms.ModelForm):
             "how",
             "comments",
             "doc",
+            "pptlink",
+            "videolink",
             "is_active",
+            "is_tested",
+            "is_reviewed",
         ]
 
         labels = {
-            # "created_by": "oldcreator",
             "creator": "Creator",
             "assigned_to": "assigned_to",
             "requestor ": "Who needs it/beneficiary?",
@@ -198,12 +200,15 @@ class RequirementForm(forms.ModelForm):
             "how": "Mode of delivery(website/Report/database?",
             "duration": "how long will it take to work on this requirement",
             "doc": "Upload Supporting Document",
+            "pptlink": "Add link",
+            "pptlink": "Add Video link",
+            "is_tested": "Need Testing?",
         }
     # def __init__(self, **kwargs):
     #     super(RequirementForm, self).__init__(**kwargs)
     #     self.fields["created_by"].queryset = CustomerUser.objects.filter(
-    #         is_employee=True
-    #         # Q(is_employee=True)
+    #         is_staff=True
+    #         # Q(is_staff=True)
     #     )
 
 
@@ -246,7 +251,7 @@ class EvidenceForm(forms.ModelForm):
 
     # def __init__(self, **kwargs):
     #     super(EvidenceForm, self).__init__(**kwargs)
-    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_employee=True)
+    #     self.fields["added_by"].queryset = CustomerUser.objects.filter(is_staff=True)
 
 
 class TaskForm(forms.ModelForm):
@@ -264,3 +269,43 @@ class TaskForm(forms.ModelForm):
         ]
 
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
+
+class EmployeeContractForm(forms.ModelForm):
+    national_id_no = forms.CharField(required=True)
+    emergency_name = forms.CharField(required=True)
+    emergency_address = forms.CharField(required=True)
+    emergency_citizenship = forms.CharField(required=True)
+    emergency_email = forms.CharField(required=True)
+    emergency_phone = forms.CharField(required=True)
+    emergency_national_id_no = forms.CharField(required=True)
+
+    class Meta:
+        model = UserProfile
+        fields = ('national_id_no', 'id_file', 'emergency_name', 'emergency_address', 'emergency_citizenship', 'emergency_email', 'emergency_phone', 'emergency_national_id_no')
+
+
+class MonthForm(forms.Form):
+    MONTHS = (
+        ('0', 'Month'),
+        ('1', 'January'),
+        ('2', 'February'),
+        ('3', 'March'),
+        ('4', 'April'),
+        ('5', 'May'),
+        ('6', 'June'),
+        ('7', 'July'),
+        ('8', 'August'),
+        ('9', 'September'),
+        ('10', 'October'),
+        ('11', 'November'),
+        ('12', 'December'),
+    )
+
+    YEAR = (
+        ('0', 'Year'),
+        ('2022', '2022'),
+        ('2023', '2023'),
+    )
+    month = forms.ChoiceField(choices=MONTHS)
+    year = forms.ChoiceField(choices=YEAR)

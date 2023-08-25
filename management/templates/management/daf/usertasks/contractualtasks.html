@@ -1,4 +1,4 @@
-{%extends "main/base_templates/base.html"%} {% block content %}
+{%extends "main/base_templates/new_base.html"%} {% block content %}
 {% load static %}
 {% load mathfilters %}
 {% block title %}
@@ -56,7 +56,7 @@
                       <div class="card">
                       <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
                         <div class="card-body">
-                          <h5><b>Hours</b></h5>
+                          <h5><b>Points</b></h5>
                           <hr/>
                           <i><h6>{{Points}}/{{MaxPoints}}</h6></i>
                           <hr/>
@@ -69,22 +69,6 @@
 </div> 
 
 </section>
-<!----
-<section id="career">
-  <div class="career text-center">
-    <!----
-    <div  class="row">
-      <div class="col">
-        <div class="card card-body">
-          <form method="get">
-            {% csrf_token %}
-            {{myFilter.form}}
-            <button class="btn btn-primary" type="submit">Search</button>
-          </form>
-        </div>
-      </div>
-    </div>
----->
     <table class="table table-borderless tasks" style="width: 100%">
       <thead class="border-bottom font-weight-bold">  
         <tr>

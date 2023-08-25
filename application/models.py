@@ -5,8 +5,9 @@ from distutils.command.upload import upload
 from django.db import models
 from django.utils import timezone
 from accounts.models import CustomerUser
+from main.models import Assets
 from django.db.models import Q
-
+# from coda_project.storage import GoogleDriveStorage
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -14,19 +15,51 @@ class UserProfile(models.Model):
     user = models.OneToOneField(
         "accounts.CustomerUser", related_name="profile", on_delete=models.CASCADE
     )
+    position = models.CharField(max_length=255,blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
+    company = models.CharField(max_length=254, null=True, blank=True)
+    linkedin = models.CharField(max_length=500, null=True, blank=True)
     section = models.CharField(max_length=2, default="A", blank=True)
+
     image = models.ImageField(
         default="default.jpg", upload_to="Application_Profile_pics", blank=True
     )
-    upload_a = models.FileField(upload_to="Application_Profile/uploads")
-    upload_b = models.FileField(upload_to="Application_Profile/uploads")
-    upload_c = models.FileField(upload_to="Application_Profile/uploads")
+    image2 = models.ForeignKey(
+        Assets, related_name="profile_image", on_delete=models.CASCADE,default=1
+    )
+
+    upload_a = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+    upload_b = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+    upload_c = models.FileField(upload_to="Application_Profile/uploads", null=True, blank=True)
+
     is_active = models.BooleanField("Is featured", default=True)
     laptop_status= models.BooleanField("Is lap_status", default=True)
+
+    national_id_no = models.CharField(max_length=254, null=True, blank=True)
+    id_file = models.ImageField(upload_to='id_files/', null=True, blank=True)
+
+    emergency_name = models.CharField(max_length=254, null=True, blank=True)
+    emergency_address = models.CharField(max_length=254, null=True, blank=True)
+    emergency_citizenship = models.CharField(max_length=254, null=True, blank=True)
+    emergency_national_id_no = models.CharField(max_length=254, null=True, blank=True)
+    emergency_phone = models.CharField(max_length=254, null=True, blank=True)
+    emergency_email = models.CharField(max_length=254, null=True, blank=True)
+
 
     def __str__(self):
         return f"{self.user.username} Applicant Profile"
 
+    @property
+    def img_url(self):
+        if self.image2:
+            return self.image2.image_url
+        else:
+            return "default_image_url.jpg"
+
+    @property
+    def img_category(self):
+        img_cat=self.image2.category
+        return img_cat
 
 class Application(models.Model):
     class Sex(models.IntegerChoices):
@@ -50,7 +83,6 @@ class Application(models.Model):
     application_date = models.DateTimeField(default=timezone.now)
     country = models.CharField(max_length=100, blank=True, null=True)
     resume = models.FileField(upload_to="resumes/doc/", blank=True, null=True)
-    # cover=models.FileField(default=None,upload_to='cover/doc/')
     type = models.CharField(
         max_length=25,
         choices=APPLICATION_CHOICES,
@@ -129,12 +161,9 @@ class Rated(models.Model):
         ("Other", "Other"),
     ]
     id = models.AutoField(primary_key=True)
-    # first_name = models.CharField(max_length=100)
-    # last_name = models.CharField(max_length=100)
     employeename =  models.ForeignKey(
-                    "accounts.CustomerUser", limit_choices_to=Q(is_employee=True)|Q(is_applicant=True), 
+                    "accounts.CustomerUser", limit_choices_to=Q(is_staff=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="rating_empname",default=1,blank=True)
-    # topic = models.CharField(max_length=100, default=None)
     topic = models.CharField(
         max_length=255,
         choices=TOPIC_CHOICES,
@@ -142,9 +171,6 @@ class Rated(models.Model):
     )
     uploadlinkurl = models.CharField(max_length=1000,blank=True, null=True)
     rating_date = models.DateTimeField(default=timezone.now)
-    # punctuality = models.IntegerField(choices=Score.choices)
-    # communication = models.IntegerField(choices=Score.choices)
-    # understanding = models.IntegerField(choices=Score.choices)
     projectDescription = models.BooleanField(default=False)# 2
     requirementsAnalysis  = models.BooleanField(default=False)# 3
     development = models.BooleanField(default=False)# 5
@@ -156,62 +182,41 @@ class Rated(models.Model):
         return f"{self.id} Rating"
 
 
-"""
-class FirstUpload(models.Model):
-    id = models.AutoField(primary_key=True)
-    username=models.CharField(max_length=100)
-    first_name=models.CharField(max_length=100,null=True,blank=True)
-    last_name=models.CharField(max_length=100,null=True,blank=True)
-    upload_date = models.DateTimeField(default=timezone.now,null=True,blank=True)
-    ppt=models.FileField(upload_to='Powerpoints/doc/')
-    report=models.FileField( upload_to='Reports/doc/',null=True,blank=True)
-    workflow=models.FileField(upload_to='Workflows/doc/',null=True,blank=True)
-    proc=models.FileField(upload_to='Procedures/doc/',null=True,blank=True)
-    other=models.FileField(default="None",upload_to='Others/doc/')
-   # Applicant=models.ManyToManyField(Application)
-
-    def __str__(self):
-        return f'{self.username} upload'
-"""
-
-
 class Reporting(models.Model):
     internal = "Internal Interview"
     first_interview = "First Interview"
     second_interview = "Second Interview"
     third_interview = "Third Interview"
-    male = "Male"
-    female = "Female"
+    Other = "Other"
     direct = "Direct"
     indirect = "Indirect"
+
     INTERVIEW_CHOICES = [
         (internal, "Internal Interview"),
         (first_interview, "First Interview"),
         (second_interview, "Second Interview"),
         (third_interview, "Third Interview"),
-    ]
-    GENDER_CHOICES = [
-        (male, "Male"),
-        (female, "Female"),
+        (Other, "Other"),
     ]
     METHOD_CHOICES = [
         (direct, "Direct"),
         (indirect, "Indirect"),
     ]
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100, null=True, blank=True)
-    last_name = models.CharField(max_length=100, null=True, blank=True)
-    # gender=models.CharField(max_length=50,null=True,blank=True)
-    # method=models.CharField(max_length=50,null=True,blank=True)
+    reporter = models.ForeignKey(
+        "accounts.CustomerUser",
+        related_name="reporting_user",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        #  limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
+        # limit_choices_to={"is_staff": True, "is_active": True},
+    )
+    rate=models.CharField(max_length=50,null=True,blank=True)
     interview_type = models.CharField(
         max_length=25,
         choices=INTERVIEW_CHOICES,
-    )
-    gender = models.CharField(
-        max_length=25,
-        null=True,
-        blank=True,
-        choices=GENDER_CHOICES,
+        default="other"
     )
     method = models.CharField(
         max_length=25,

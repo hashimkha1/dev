@@ -1,9 +1,11 @@
 import os
-import json
 import pickle
-from pprint import pprint
 from base64 import urlsafe_b64decode
+from django.shortcuts import get_object_or_404, redirect, render
 
+import os
+import pandas as pd
+from bs4 import BeautifulSoup
 # Gmail API utils
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -121,3 +123,130 @@ def get_message(service, msg_id):
         'text_mail': decoded_str,
         'received_date': received_date,
     }
+
+    '''Importing the required libraries'''
+
+
+def getdata(file):
+    '''Get the html content'''
+    HTMLFile = open(file, "r")
+  
+    # Reading the file
+    index = HTMLFile.read()
+
+    #parsing into beautifulsoup
+    soup = BeautifulSoup(index, 'html.parser')
+    return soup
+
+def GetProfileName(soup):
+    '''Profile Name'''
+    try:
+        profile = soup.find('div', {'class' : 'text profile-name'}).text
+        return profile.strip()
+    except:
+        pass
+    try:
+        profile = soup.find('div', {'class' : 'text'}).text
+        return profile.strip()
+    except:
+        pass
+
+def gettable_data(soup):
+    '''Table Data which contains the detailed information'''
+    dict_ = {}
+    dict_['Destination'] = 'cashapp'
+    try:
+        parent_tag = soup.find('td', {'class': 'divider-top detail-list-padding'})
+        table_data = parent_tag.find_all('tr', {'class' : 'detail-row'})
+        for i in table_data:
+            label = i.find('div', {'class' : 'label'}).text.strip()
+            value = i.find('div', {'class' : 'value'}).text.strip()
+            try:
+                if label == 'Amount':
+                    dict_[label] = value
+                if label == 'Identifier':
+                    dict_[label] = value
+                if label == 'To':
+                    dict_[label] = value
+                if label == 'From':
+                    dict_[label] = value
+                else:
+                    pass
+            except:
+                dict_['Amount'] = '0'
+
+    except TypeError as e:
+        # If key is not present, will add to dictionary
+        # try:
+        #     keynote = soup.find('div', {'class' : 'text note'}).text.strip()
+        #     dict_['key_note'] = keynote
+        # except:
+        #     pass
+        
+        # #if only description is given
+        # try:
+        #     keynote = soup.find('div', {'class' : 'subtitle text'}).text.strip()
+        #     dict_['key_note'] = keynote
+        # except:
+        #     pass
+
+        # #if only description is given
+        # try:
+        #     keynote = soup.find('td', {'class' : 'mobBodyStandardFontSize mobBodyStandardLineHeight'})
+        #     txt = keynote.find('span').text.strip()
+        #     dict_['key_note'] = txt
+        # except:
+        #     dict_['key_note'] = ''
+        print(f"Error caused {e}")
+
+    return dict_
+
+def cashapp_main(path):
+    # '''Reading and writing the files'''
+    # folderpath = r"gapi\stored_mails"
+    # filepaths  = [os.path.join(folderpath, name) for name in os.listdir(folderpath)]
+    # print("MY CASHAPP FUNCTION")
+    # details = []
+    # for path in filepaths:
+    #     #process only the html files
+    #     try:
+    #         if path.endswith('html'):
+    #             print(path)
+    #             soup = getdata(path)
+    #             name = GetProfileName(soup)
+    #             table_data = gettable_data(soup)
+    #             table_data['name'] = name
+    #             table_data['path'] = path
+    #             if table_data['name'] == 'Uber':
+    #                 table_data['To'] = 'Uber'
+    #                 table_data['From'] = 'CHRISTOPHER C MAGHAS'
+                
+    #             print(table_data)
+    #     except:
+    #         return redirect('main:layout')
+    if path.endswith('html'):
+        dict_ = {
+                'From' : "None",
+                'Amount' : 0,
+                'To' : "None"
+                }
+        try:
+            soup = getdata(path)
+            name = GetProfileName(soup)
+            print(name)
+            table_data = gettable_data(soup)
+            # table_data['name'] = name
+            # table_data['path'] = path
+            # if table_data['name'] == 'Uber':
+            #     table_data['To'] = 'Uber'
+            #     table_data['From'] = 'CHRISTOPHER C MAGHAS'
+            dict_['To'] = table_data['To']
+            dict_['From'] = table_data['From']
+            dict_['Amount'] = table_data['Amount']
+            return dict_
+        except:
+            return dict_
+    else:
+        pass
+
+

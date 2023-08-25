@@ -1,24 +1,34 @@
 from django import forms
+from .models import Investments,Investment_rates,Investor_Information,stockmarket,ShortPut,covered_calls,credit_spread,cryptomarket
+from .models import ShortPut
 
-from .models import Document, Uploads
-
-
-class DocumentForm(forms.ModelForm):
+class InvestmentForm(forms.ModelForm):
     class Meta:
-        model = Document
-        fields = ['id','doc_type','doc_name','doc']
-        labels={
-                'doc_type':'Document Type',
-                'doc_name':'Document Name',
-                'doc':'Document',
-        }
+        model =Investments
+        fields = ['amount','description']
+        # fields = "__all__"
 
-class UploadForm(forms.ModelForm):
+
+class InvestmentRateForm(forms.ModelForm):
     class Meta:
-        model = Uploads
-        fields = ['id','doc_type','doc_name','doc','link']
-        labels={
-                'doc_type':'Document Type',
-                'doc_name':'Document Name',
-                'doc':'Document',
-        }
+        model = Investment_rates
+        fields = "__all__"
+        
+class CoveredCallsForm(forms.ModelForm):
+    class Meta:
+        model = covered_calls
+        # fields = "__all__"
+        fields = ['symbol','comment','is_featured']
+
+
+class ShortPutForm(forms.ModelForm):
+    class Meta:
+        model = ShortPut
+        # fields = '__all__'
+        fields = ['symbol','comment','is_featured']
+
+class CreditSpreadForm(forms.ModelForm):
+    class Meta:
+        model = credit_spread
+        # fields = "__all__"
+        fields = ['symbol','comment','is_featured']

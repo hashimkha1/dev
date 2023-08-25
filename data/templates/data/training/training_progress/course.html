@@ -7,7 +7,7 @@
     <div class="row">
         <div class="col-md-7 top-coloumn">
             <div class="mt-4" style="width: 75px;height: 4px;background-color: #E7AD4A;"></div>
-            <h2 class="font-weight-bold" style="color : #E7AD4A">{{ object.featuredcategory.title|capfirst }}</h2>
+            <!-- <h2 class="font-weight-bold" style="color : #E7AD4A">{{ object.featuredcategory.title|capfirst }}</h2> -->
             <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.title|capfirst }}</h3>
             <p class="font-weight-bold text-white"> {{object.description}}</p>
             <p class="title-para">
@@ -43,31 +43,46 @@
                           <div class="card-body">
                             <h3 class="font-weight-bold" style="color : #E7AD4A">{{ object.title|capfirst }} Upload Section</h3>
                             <hr/>
-                            
                                 <p class="text-dark">
-                                    {{ object.desc2 }} Description Goes Here
+                                    {{ object.desc2 }}
                                 </p>
+                                <p class="text-dark">
+                                  <font size="-1">
+                                  Participate by responding to the following questions?
+                                </font>
+                              </p>
                           </div>
                         </div>
                       </div>
               </div>
-              <!-- <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                      <div class="row">
-                        <div class="col-md-3"><b>Critical:Required Within 24 hours</b> </div>
-                        <div class="col-md-3"><b>High:Within 1-3 days</b></div>
-                        <div class="col-md-3"><b>Medium:Takes 3-10 days</b></div>
-                        <div class="col-md-3"><b>Low : Not urgent</b></div>
-                      </div> -->
               <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                    <div class="row">
-                        <div class="col-md-6 top-coloumn bg-white">
-                            <div class="col-md-12">{{ form.question|as_crispy_field }}</div>
-                            <div class="col-md-12">{{ form.score |as_crispy_field }}</div>
-                            <div class="col-md-3">{{ form.doc|as_crispy_field }}</div>
-                            <div class="col-md-3">{{ form.is_active|as_crispy_field }}</div>
+                    
+              <div class="row">
+                        <div class="col-md-6">
+                          {% for task in  tasks  %}
+                          {% if task.question %}
+                            <font size="1"><i> <b>{{task.activity_name}}</b> :{{task.guiding_question}}</i></font>
+                            <hr>
+                          {% endif %}
+                          {% endfor %}
+                            <!-- <font size="1"><i> <b>{{task_name}}</b> :{{task_question}}</i></font>
+                            <hr> -->
                         </div>
-                        <div class="col-md-6 top-coloumn bg-white">
-                            <div class="col-md-12">{{ form.comment |as_crispy_field }}</div>
+                        <div class="col-md-6 ">
+                        {% for task in  tasks  %}
+                        {% if task.question  %}
+                          <div>{{ form.question|as_crispy_field }}</div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                      <div class="text text-center">
+                        {% for task in  tasks  %}
+                         {% if task.interview_question %}
+                           <font size="2"><i> <b>Sample Interview Question:</b> :{{task.interview_question}}</i></font>
+                            <hr>
+                          {% endif %}
+                          {% endfor %}
+                          {{ form.comment |as_crispy_field }}
                         </div>
                     </div>
                     <hr style="height:3px;border:none;color:#666669;background-color:rgb(106, 106, 155);" />

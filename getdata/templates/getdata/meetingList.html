@@ -36,6 +36,7 @@
         <div>MeetingType</div>
         <div>MeetingID</div>
         <div>Attendance</div>
+        <div>recording</div>
         <div>start</div>
         <div>end</div>
         <div>more details</div>
@@ -46,8 +47,11 @@
         <div id="item">
             <div>{{item.subject}}</div>
             <div>{{item.meetingType}}</div>
-            <div> {{item.meetingId}}  </div>
+            <div>{{item.meetingId}}  </div>
             <div>{{item.numAttendees}}</div>
+            <div>
+                <a href="{{item.recording}}" class="meeting" target="_blank"> Link </a>
+            </div>
             <div>{{item.startTime}}</div>
             <div>{{item.endTime}}</div>
             <div> <a href="{{item.meetingId}}" class="meeting" target="_blank" id={{item.meetingId}}> more </a></div>

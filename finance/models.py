@@ -12,6 +12,8 @@ from django.db.models.signals import pre_save, post_save
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
+
+# from finance.utils import get_exchange_rate
 User = get_user_model()
 
 # Create your models here.
@@ -42,14 +44,14 @@ class Payment_Information(models.Model):
             stu_bal = self.payment_fees - (int(self.down_payment) + int(self.student_bonus))
             return stu_bal
         except:
-            return redirect('main:pay')
+            return redirect('finance:pay')
     @property
     def jobsupport_balance(self):
         try:
             support_bal = self.payment_fees - int(self.down_payment) 
             return support_bal
         except:
-            return redirect('main:pay')
+            return redirect('finance:pay')
 
 
 
@@ -125,8 +127,79 @@ class PayslipConfig(models.Model):
     eoq_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
     eoy_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=1500.00)
 
+    # # website configs
+    web_pay_hour = models.DecimalField(max_digits=10, decimal_places=2, default=30.00)
+    web_delta = models.DecimalField(max_digits=10, decimal_places=2, default=3.00)
+
     def __str__(self):
         return str(self.loan_amount)
+
+class LBandLS(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    laptop_bonus =  models.FloatField(null=True)
+    laptop_savings = models.FloatField(null=True)
+
+    def __str__(self):
+        return self.user.username
+
+class RetirementPackage(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class LaptopSaving(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    period = models.CharField(max_length=10)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+class TrainingLoan(models.Model):
+    LOAN_CHOICES = [
+        ("Debit", "Debit"),
+        ("Credit", "Credit"),
+    ]
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    category = models.CharField(max_length=25, choices=LOAN_CHOICES,)
+    amount = models.BigIntegerField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField('Is complete', default=True)
+    # training_loan_amount = models.ForeignKey('PayslipConfig',on_delete=models.CASCADE,null=True)
+    training_loan_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    deduction_date = models.DateField(auto_now_add=True)
+    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+class Payslip(models.Model):
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+
+    # month and year of period we are paying
+    period = models.CharField(max_length=10)
+
+    # points based on the work the employee done
+    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # earnings calculated based on points
+    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # benefits
+    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+
+    # retirement_package is long term benefit and does not affect the net pay
+    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+
+    # deductions
+    loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
+    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
 
 class Transaction(models.Model):
     # Method of Category
@@ -156,7 +229,7 @@ class Transaction(models.Model):
          related_name="sender", 
          null=True, blank=True,
          on_delete=models.SET_NULL,
-         limit_choices_to={"is_employee": True, "is_active": True},
+         limit_choices_to={"is_staff": True, "is_active": True},
          )
     department = models.ForeignKey(
         to=Department, on_delete=models.CASCADE, default=None
@@ -189,6 +262,11 @@ class Transaction(models.Model):
         default="Other",
     )
 
+    @property
+    def total_transactions_amt(self):
+        total_transactions_amt = self.amount * self.qty
+        return total_transactions_amt
+    
     def get_absolute_url(self):
         return reverse("management:transaction-detail", kwargs={"pk": self.pk})
 
@@ -198,6 +276,7 @@ class Transaction(models.Model):
 
     def __str__(self):
         return f"{self.id} Transactions"
+    
 
 
 # -------------------------------------CASH FLOW MODEL---------------------------------------
@@ -319,27 +398,151 @@ class Inflow(models.Model):
     # Computing total payment
     @property
     def total_payment(self):
-        total = self.amount.objects.aggregate(TOTAL=Sum("amount"))["TOTAL"]
-        return total
+        total_amount = round(Decimal(self.amount), 2)
+        return total_amount
 
+    @property
+    def total_paid(self):
+        if self.has_paid==True:
+            total_amt_paid =  round(Decimal(self.amount), 2)
+            return total_amt_paid
 
-class TrainingLoan(models.Model):
-    LOAN_CHOICES = [
-        ("Debit", "Debit"),
-        ("Credit", "Credit"),
+class DC48_Inflow(models.Model):
+    # Period of Payment
+    # Weekly = "Weekly"
+    # Bi_Weekly = "Bi_Weekly"
+    # Monthly = "Monthly"
+    # Yearly = "Yearly"
+
+    # Method of Payment
+    # Cash = "Cash"
+    # Mpesa = "Mpesa"
+    # Check = "Check"
+    # Cashapp = "Cashapp"
+    # Zelle = "Zelle"
+    # Venmo = "Venmo"
+    # Paypal = "Paypal"
+
+    # Category.
+    # Contributions = "Contributions"
+    # Donations = "Donations"
+    # Business = "Business"
+    # Stocks = "Stocks"
+    # Other = "Other"
+
+    CLIENTS_CHOICES = [
+        ("DYC", "Diaspora Youth Caucus"),
+        ("DC48KENYA", "DC48KENYA"),
+        ("Other", "Other"),
     ]
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    category = models.CharField(max_length=25, choices=LOAN_CHOICES,)
-    amount = models.BigIntegerField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    is_active = models.BooleanField('Is complete', default=True)
-    # training_loan_amount = models.ForeignKey('PayslipConfig',on_delete=models.CASCADE,null=True)
-    training_loan_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    total_earnings_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    deduction_date = models.DateField(auto_now_add=True)
-    deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+
+    PERIOD_CHOICES = [
+        ("Weekly", "Weekly"),
+        ("Bi_Weekly", "Bi_Weekly"),
+        ("Monthly", "Monthly"),
+        ("Yearly", "Yearly"),
+    ]
+    CAT_CHOICES = [
+        ("Registration Fee", "Registration Fee"),
+        ("Contributions", "Contributions"),
+        ("Donations", "Donations"),
+        ("GC Application", "GC Application"),
+        ("Business", "Business"),
+        ("Tourism", "Tourism"),
+        ("Stocks", "Stocks"),
+        ("Other", "Other"),
+    ]
+
+    PAY_CHOICES = [
+        ("Cash", "Cash"),
+        ("Mpesa", "Mpesa"),
+        ("Check", "Check"),
+        ("Cashapp", "Cashapp"),
+        ("Zelle", "Zelle"),
+        ("Venmo", "Venmo"),
+        ("Paypal", "Paypal"),
+        ("Other", "Other"),
+    ]
+
+    clients_category = models.CharField(
+        max_length=25,
+        choices=CLIENTS_CHOICES,
+        default="Other",
+    )
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+        
+    )
+    method = models.CharField(
+        max_length=25,
+        choices=PAY_CHOICES,
+        default="Other",
+    )
+
+    period = models.CharField(
+        max_length=25,
+        choices=PERIOD_CHOICES,
+        default="Other",
+    )
+    sender = models.ForeignKey(
+        "accounts.CustomerUser", 
+        on_delete=models.CASCADE, 
+        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
+        # limit_choices_to={"category": 4, "is_active": True },
+        related_name="dc_inflows")
+    receiver = models.CharField(max_length=100, null=True, default=None)
+    phone = models.CharField(max_length=50, null=True, default=None)
+    transaction_date = models.DateTimeField(default=timezone.now)
+    receipt_link = models.CharField(max_length=100, blank=True, null=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
+    amount = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=None
+    )
+    transaction_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=0
+    )
+    description = models.TextField(max_length=1000, default=None)
+    is_active=models.BooleanField(default=True,null=True,blank=True)
+    has_paid=models.BooleanField(default=False,null=True,blank=True)
+
+    class Meta:
+        ordering = ["transaction_date"]
+
+    def get_absolute_url(self):
+        return reverse("management:inflow-detail", kwargs={"pk": self.pk})
+
+    @property
+    def end(self):
+        # date_time = datetime.datetime.now() + datetime.timedelta(hours=2)
+        date_time = self.login_date + datetime.timedelta(hours=0)
+        endtime = date_time.strftime("%H:%M")
+        return endtime
+    # Computing total payment
+    @property
+    def receipturl(self):
+        if self.receipt_link is not None:
+            urlreceipt = self.receipt_link
+            return urlreceipt
+        else:
+            return redirect('main:layout')
+
+    @property
+    def total_payment(self):
+        total_amount = round(Decimal(self.amount), 2)
+        return total_amount
+
+    @property
+    def total_paid(self):
+        if self.has_paid:
+            try:
+                total_amt_paid =  round(Decimal(self.amount), 2)
+            except:
+                total_amt_paid=0.00
+            return total_amt_paid
+            
 
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
@@ -357,7 +560,7 @@ class Supplier(models.Model):
         null=True,
         blank=True,
         on_delete=models.RESTRICT,
-        limit_choices_to={"is_employee": True, "is_active": True},
+        limit_choices_to={"is_staff": True, "is_active": True},
     )
     supplier = models.CharField(
         max_length=255,
@@ -419,3 +622,36 @@ class Food(models.Model):
         additional_amount=Decimal(self.qty-self.bal_qty)*self.unit_amt
         return additional_amount
 
+
+
+class Field_Expense(models.Model):
+    category = models.CharField(max_length=255, blank=True, default="")
+    subcategory = models.CharField(max_length=255, blank=True, default="")
+    phase = models.CharField(max_length=255, blank=True, default="")
+    sender = models.ForeignKey(
+        User,
+        verbose_name=_("Sender"),
+        related_name="field_expenses", 
+        blank=True,
+        null=True,  # This allows the field to contain NULL values
+        on_delete=models.SET_NULL,
+        limit_choices_to={"is_staff": True, "is_active": True},
+    )
+    cost_type = models.CharField(max_length=100, blank=True, default="")
+    date = models.DateTimeField(default=timezone.now)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    description = models.TextField(max_length=1000, blank=True, default="")
+
+    @property
+    def transactions_amt(self):
+        unit_cost = self.unit_cost if self.unit_cost is not None else 0.0
+        qty = self.qty if self.qty is not None else 0.0
+        return unit_cost * qty
+    
+    class Meta:
+        verbose_name_plural = "Field Expenses"
+        ordering = ["-date"]
+
+    def __str__(self):
+        return f"Expense {self.id} on {self.date}"

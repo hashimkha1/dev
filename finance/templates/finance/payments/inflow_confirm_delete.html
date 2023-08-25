@@ -1,4 +1,4 @@
-{% extends "main/base_templates/base.html"%} {% block content %}
+{% extends "main/base_templates/new_base.html"%} {% block content %}
 <div class="content-section">
   <form method="POST">
     {% csrf_token %}
@@ -10,7 +10,7 @@
       <button class="btn btn-outline-danger" type="submit">Yes, Delete</button>
       <a
         class="btn btn-outline-secondary"
-        href="{% url 'management:inflow-list' %}"
+        href="{% url 'finance:dcklist' %}"
         >Cancel</a
       >
     </div>

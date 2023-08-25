@@ -3,13 +3,13 @@ from django.forms import ModelForm, Textarea
 from django.contrib.auth.forms import UserCreationForm
 from .models import CustomerUser, Tracker,CredentialCategory,Credential
 from django.utils.translation import gettext_lazy as _
-
+from django.core.exceptions import ValidationError
+from django.core.validators import EmailValidator, RegexValidator
 # from django.db import transaction
 
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Repeat Password", widget=forms.PasswordInput)
-
     class Meta:
         model = CustomerUser
         fields = [
@@ -28,20 +28,21 @@ class UserForm(forms.ModelForm):
             "state",
             "country",
             "resume_file",
-            "is_employee",
+            "is_staff",
             "is_applicant",
         ]
         labels = {
-            "first_name": "First Name",
-            "last_name": "Last Name",
-            "username": "User Name",
-            "email": "Email",
-            "gender": "Gender",
-            "phone": "Phone",
-            "address": "Address",
-            "city": "City",
-            "state": "State",
-            "country": "Country",
+            "sub_category": "",
+            "first_name": "",
+            "last_name": "",
+            "username": "",
+            "email": "",
+            "gender": "",
+            "phone": "",
+            "address": "",
+            "city": "",
+            "state": "",
+            "country": "",
         }
 
     def __init__(self, *args, **kwargs):
@@ -67,6 +68,73 @@ class UserForm(forms.ModelForm):
         if commit:
             user.save()
         return user
+
+
+
+# class UserForm(forms.ModelForm):
+#     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
+#     password2 = forms.CharField(label="Confirm Password", widget=forms.PasswordInput)
+
+#     class Meta:
+#         model = CustomerUser
+#         fields = [
+#             "category",
+#             "sub_category",
+#             "first_name",
+#             "last_name",
+#             "username",
+#             "password1",
+#             "password2",
+#             "phone",
+#             "gender",
+#             "email",
+#             "address",
+#             "city",
+#             "state",
+#             "country",
+#             "resume_file",
+#         ]
+#         labels = {
+#             "sub_category": "",
+#             "first_name": "",
+#             "last_name": "",
+#             "username": "",
+#             "password1": "",
+#             "password2": "",
+#             "email": "",
+#             "gender": "",
+#             "phone": "",
+#             "address": "",
+#             "city": "",
+#             "state": "",
+#             "country": "",
+#         }
+#         required = {
+#             "gender": True,
+#             "country": True,
+#         }
+
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         password1 = cleaned_data.get("password1")
+#         password2 = cleaned_data.get("password2")
+#         if password1 and password2 and password1 != password2:
+#             raise ValidationError("Passwords do not match")
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#         self.fields["category"].initial = 1
+#         self.fields["sub_category"].initial = 1
+#         self.fields["gender"].initial = 1
+#         self.fields["email"].validators.append(EmailValidator(message="Enter a valid email address."))
+#         self.fields["phone"].validators.append(RegexValidator(r'^\+?1?\d{9,15}$', message="Enter a valid phone number."))
+#         # self.fields["username"].required = False  # Remove username requirement
+#         # # Set initial value for username field
+#         # first_name = self.initial.get("first_name") or self.instance.first_name
+#         # last_name = self.initial.get("last_name") or self.instance.last_name
+#         # if first_name and last_name:
+#         #     self.fields["username"].initial = (first_name[0] + last_name).lower()
+
 
 #==========================CREDENTIAL FORM================================
 class CredentialCategoryForm(forms.ModelForm):  

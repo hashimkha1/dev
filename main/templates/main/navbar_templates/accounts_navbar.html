@@ -117,7 +117,7 @@
               <hr />
               <div class="dropdown-divider"></div>
 
-              <a class="dropdown-item" href="{% url 'codablog:success' %}"
+              <a class="dropdown-item" href="{% url 'main:success' %}"
                 >Success Stories</a
               >
               <hr />
@@ -134,7 +134,7 @@
           <a class="nav-item nav-link" href="{% url 'account-logout' %}"
             >Logout</a
           >
-          <a class="nav-item nav-link" href="{% url 'main:pay' %}"
+          <a class="nav-item nav-link" href="{% url 'finance:pay' %}"
             >Make a Payment</a
           >
           {% else %}
@@ -144,7 +144,7 @@
           <a class="nav-item nav-link" href="{% url 'account-register' %}"
             >Register</a
           >
-          <a class="nav-item nav-link" href="{% url 'main:pay' %}"
+          <a class="nav-item nav-link" href="{% url 'finance:pay' %}"
             >Make a Payment</a
           >
           {% endif %}

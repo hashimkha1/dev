@@ -1,16 +1,25 @@
 from django.urls import path
 
-from getdata.views import options_play_cread_spread
 from . import views
 
 app_name = 'investing'
 urlpatterns = [
     path('', views.home, name='home'),
-    # path('testing/', views.testing, name='testing'),
     path('covered/', views.coveredcalls, name='covered'),
     path('training/', views.training, name='training'),
-    path('layout/', views.layout, name='layout'),
-    #path('doc/', views.doc, name='main-doc')
-    path('upload/', views.upload, name='upload'),
-    path('uploaded/', views.uploaded, name='uploaded'),
+    path('newinvestment/', views.newinvestment, name='newinvestment'),
+    path('newinvestmentrate/', views.newinvestmentrate, name='newinvestmentrate'),
+    path('investments/', views.investments, name='investments'),
+    path('companyreturns/', views.options_returns, name='companyreturns'),
+    path('costbasis/', views.cost_basis, name='costbasis'),
+    path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
+    path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
+    path('covered_calls/', views.optiondata, name='covered_calls'),
+    path('shortputdata/', views.optiondata, name='shortput'),
+    path('credit_spread/', views.optiondata, name='credit_spread'),
+    path('creditspreadupdate/<int:pk>', views.credit_spread_update.as_view(), name='creditspreadupdate'),
+    path('coveredupdate/<int:pk>', views.covered_calls_update.as_view(), name='coveredupdate'),
+    path('shortputupdate/<int:pk>', views.shortput_update, name='shortputupdate'),
+    path('overboughtsold/', views.oversoldpositions, name='overboughtsold'),
+    path('oversoldupdate/<int:pk>', views.oversold_update.as_view(), name='oversoldupdate'),
 ]

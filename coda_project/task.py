@@ -1,33 +1,37 @@
-from celery import shared_task
-from django.http import HttpResponse
-from django.shortcuts import render
-from mail.custom_email import send_email
-from management.models import Task, TaskHistory,LBandLS
-from accounts.models import CustomerUser
-from datetime import datetime, timedelta
-from decimal import Decimal
-from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees
-from django.contrib.auth import get_user_model
-from django.db.models import Q, Sum
-from application.models import UserProfile
-
-from finance.models import PayslipConfig
-
-from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
-
-
+import json
+import tweepy
+import random
+import string
+import re
+import urllib.request
 import logging
 
+from celery import shared_task
+import http.client
+from django.shortcuts import render
+from mail.custom_email import send_email
+from datetime import datetime, timedelta
+from decimal import Decimal
+from django.contrib.auth import get_user_model
+# importing modules
+from management.models import Task, TaskHistory,Advertisement,Whatsapp
+from accounts.models import CustomerUser
+from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
+from application.models import UserProfile
+from getdata.models import ReplyMail
+
+# importing utils & Views
+from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
+from main.utils import download_image
+# from main.context_processors import image_view
+from management.utils import deductions
 from management.views import loan_update_save, normalize_period
 
-from management.utils import deductions
-
 from gapi.gservices import get_service, search_messages
-from getdata.models import ReplyMail
 from mail.custom_email import send_reply
 
 logger = logging.getLogger(__name__)
-
+from marketing.views import runwhatsapp
 User = get_user_model()
 
 @shared_task(name="task_history")
@@ -61,15 +65,14 @@ def dump_data():
 
 @shared_task(name="SendMsgApplicatUser")
 def SendMsgApplicatUser():
-  """Description: Aplicat user login after not upload section will send msg"""
   applicants = CustomerUser.objects.filter(is_applicant=True,is_active=True,profile__upload_a__exact='',profile__upload_b__exact='',profile__upload_c__exact='')
   for data in applicants:
     date_joined = data.date_joined
     after_10_date = timedelta(days = 10)
     pastdate = date_joined.date() + after_10_date
     presentdate = datetime.now().date()
-    print('pastdate-->',pastdate)
-    print("presentdate-->",presentdate)
+    # print('pastdate-->',pastdate)
+    # print("presentdate-->",presentdate)
     if pastdate == presentdate:
         subject = "No active mail"
         # to = data.email
@@ -144,7 +147,8 @@ def SendMsgApplicatUser():
 #                 TrainingLoan.objects.create(user=emp,total_earnings_amount=total_pay,detection_amount=loan, category="Credit", balance_amount=balance, training_loan_amount=default_payment_fees)
 #                 LBandLSDetection(emp_id)
 
-def LBandLSDetection(emp):
+@shared_task(name="LBandLSDeduction")
+def LBandLSDeduction(emp):
     LBandLsAmount = 1000
     userprofile = UserProfile.objects.get(user_id=emp)
     if userprofile.laptop_status == True:
@@ -158,146 +162,31 @@ def LBandLSDetection(emp):
         if LBandLS.objects.filter(user_id=emp).exists():
             # lbandlsfilter = LBandLS.objects.filter(user_id=emp)
             lbandls = LBandLS.objects.get(user_id=emp)
-            laptop_service_amount = lbandls.laptop_service
-            # laptop_service_amount = lbandlsfilter.aggregate(Sum('laptop_service'))
-            # laptop_service_amount = laptop_service_amount['laptop_service__sum']
-            if float(laptop_service_amount) < 20000:
-                laptop_service_amt = lbandls.laptop_service + float(LBandLsAmount)
-                LBandLS.objects.filter(user_id=emp).update(laptop_service=laptop_service_amt)
+            laptop_saving_amount = lbandls.laptop_savings
+
+            if float(laptop_saving_amount) < 20000:
+                laptop_saving_amt = lbandls.laptop_savings + float(LBandLsAmount)
+                LBandLS.objects.filter(user_id=emp).update(laptop_saving=laptop_saving_amt)
         else:
-            LBandLS.objects.create(user_id=emp,laptop_service=LBandLsAmount)
+            LBandLS.objects.create(user_id=emp,laptop_saving=LBandLsAmount)
 
 
 @shared_task(name="TrainingLoanDeduction")
 def TrainingLoanDeduction():
     from tqdm import tqdm
-
-    employee = CustomerUser.objects.filter(Q(is_employee=True) | Q(is_admin=True) | Q(is_superuser=True),is_active=True)
-    print(employee)
-    for emp in tqdm(employee):
-        print(emp)
-        userprofile = UserProfile.objects.get(user_id=emp)
+    employee = CustomerUser.objects.filter(is_staff=True,is_active=True)
+    for emp in employee:
         tasks = Task.objects.all().filter(employee=emp)
-        LBLS = LBandLS.objects.filter(user=emp)
         user_data = TrainingLoan.objects.filter(user=emp, is_active=True)
         loantable = TrainingLoan
-        # lbandls = LBandLS.objects.get(user_id=employee)
         payslip_config = paymentconfigurations(PayslipConfig, emp)
-        today, year, month, day, deadline_date = paytime()
-        task_obj = Task.objects.filter(submission__contains=year)
-        mxearning, points = payinitial(tasks)
         total_pay = Decimal(0)
         for task in tasks:
             total_pay = total_pay + task.get_pay
         # Deductions
-        # print(loan_amount,loan_payment,balance_amount)
-        # loan_payment = round(total_pay * payslip_config.loan_repayment_percentage, 2)
         loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
-        print(loan_amount, loan_payment, balance_amount)
         logger.debug(f'balance_amount: {balance_amount}')
-        loan_update_save(loantable, user_data, emp, total_pay, payslip_config)
-        food_accomodation, computer_maintenance, health, kra = deductions(payslip_config, total_pay)
-        # print("what is this----->",loan_update_save(loantable,user_data,employee,total_pay,payslip_config))
-        userprofile = UserProfile.objects.get(user_id=emp)
-        if userprofile.laptop_status == True:
-            laptop_saving = Decimal(0)
-            if LBandLS.objects.filter(user=emp).exists():
-                lbandls = LBandLS.objects.get(user_id=emp)
-                laptop_bonus = lbandls.laptop_bonus
-            else:
-                laptop_bonus = Decimal(0)
-        else:
-            laptop_bonus = Decimal(0)
-            if LBandLS.objects.filter(user=emp).exists():
-                lbandls = LBandLS.objects.get(user_id=emp)
-                laptop_saving = lbandls.laptop_service
-            else:
-                laptop_saving = Decimal(0)
-        laptop_bonus = round(Decimal(laptop_bonus), 2)
-        laptop_saving = round(Decimal(laptop_saving), 2)
-        # laptop_bonus,laptop_saving=lap_save_bonus(userprofile,LBLS,lbandls)
-        # ====================Bonus Section=============================
-        pointsearning, Night_Bonus, holidaypay, yearly = bonus(tasks, total_pay, payslip_config)
-        # print(pointsearning,Night_Bonus,holidaypay,yearly)
-
-        EOM = Decimal(0.00)  # employee of month
-        EOQ = Decimal(0.00)  # employee of quarter
-        EOY = Decimal(0.00)  # employee of year
-        if month == 12:
-            task_obj = Task.objects.filter(submission__contains=year)
-            logger.debug(f'task_obj: {task_obj}')
-            eoy_users = best_employee(task_obj)
-            if (emp,) in eoy_users:
-                logger.info('this employee is EOY!')
-                EOY = payslip_config.eoy_bonus
-        elif month % 3 == 0:
-            task_obj = Task.objects.filter(Q(submission__contains=normalize_period(year, month - 2))
-                                           | Q(submission__contains=normalize_period(year, month - 1))
-                                           | Q(submission__contains=normalize_period(year, month)))
-            logger.debug(f'task_obj: {task_obj}')
-            eoq_users = best_employee(task_obj)
-            user_tuple = (emp.username,)
-            logger.debug(f'eoq_users: {eoq_users}')
-            logger.debug(f'user_tuple: {user_tuple}')
-
-            if user_tuple in eoq_users:
-                logger.info('this employee is EOQ!')
-                EOQ = payslip_config.eoq_bonus
-                logger.debug(f'EOQ: {EOQ}')
-        else:
-            task_obj = Task.objects.filter(submission__contains=normalize_period(year, month))
-            logger.debug(f'task_obj: {task_obj}')
-            eom_users = best_employee(task_obj)
-            if (employee,) in eom_users:
-                logger.info('this employee is EOM!')
-                EOM = payslip_config.eom_bonus
-        # ====================Summary Section=============================
-        total_deduction, total_bonus = additional_earnings(user_data, tasks, total_pay, payslip_config)
-        total_bonus = total_bonus + EOM + EOQ + EOY
-        # print("total is---->", total_deduction,total_bonus)
-        # Net Pay
-        total_value = total_pay + total_bonus
-        net = total_value - total_deduction
-        round_off = round(net) - net
-        net_pay = net + round_off
-        logger.debug(f'total deductions: {total_deduction}')
-        logger.debug(f'total_bonus: {total_bonus}')
-        logger.debug(f'net: {net}')
-        logger.debug(f'net_pay: {net_pay}')
-        # context = {
-        #     # bonus
-        #     "pointsearning": pointsearning,
-        #     "EOM": EOM,
-        #     "EOQ": EOQ,
-        #     "EOY": EOY,
-        #     "laptop_bonus": laptop_bonus,
-        #     "holidaypay": holidaypay,
-        #     "Night_Bonus": Night_Bonus,
-        #     "yearly": yearly,
-        #     # deductions
-        #     "loan": loan_payment,
-        #     "food_accomodation": food_accomodation,
-        #     "computer_maintenance": computer_maintenance,
-        #     "health": health,
-        #     "laptop_saving": laptop_saving,
-        #     "kra": kra,
-        # 
-        #     # General
-        #     "total_pay": total_pay,
-        #     'total_value': total_value,
-        #     "total_deduction": total_deduction,
-        #     'net': net,
-        #     'net_pay': net_pay,
-        #     "balance_amount": balance_amount,
-        #     "tasks": tasks,
-        #     "deadline_date": deadline_date,
-        #     "today": today,
-        # }
-        # if request.user == employee or request.user.is_superuser:
-        #     return render(request, "management/daf/payslip.html", context)
-        # else:
-        #     message = "Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
-        #     return render(request, "main/errors/404.html", {"message": message})
+        
 
 @shared_task(name="replies_job_mail")
 def search_job_mail():
@@ -310,9 +199,6 @@ def search_job_mail():
     for search in search_query:
         se=search+" is:unread"
         search_results += search_messages(service, se)
-
-    # search_results += search_messages(service, search_query)
-    # search_results_len = len(search_results)
 
     if not search_results:
         logger.error('NO SEARCH RESULTS FOUND !')
@@ -338,3 +224,130 @@ def search_job_mail():
                         logger.error(f'msg id is: msg_dict.get("id")')
             except Exception as e:
                 logger.error('error msg is ' + str(e))
+
+                # from django.core.management import call_command
+import tweepy
+import requests
+from management.models import Advertisement
+
+"""
+
+Twitter and Facebook AD management Scripts below
+
+"""
+
+@shared_task(name="advertisement")
+def advertisement():
+    #This function will post the latest tweet
+    print("TWIITER TWESTING FUNCT")
+    context = Advertisement.objects.all().first()
+    apiKey = context.twitter_api_key 
+    apiSecret = context.twitter_api_key_secret
+    accessToken = context.twitter_access_token
+    accessTokenSecret = context.twitter_access_token_secret
+    # 3. Create Oauth client and set authentication and create API object
+    oauth = tweepy.OAuthHandler(apiKey, apiSecret)
+    oauth.set_access_token(accessToken, accessTokenSecret)
+
+    api = tweepy.API(oauth)
+
+    # 4. upload media
+    value=None
+    url = "https://www.codanalytics.net/static/main/img/service-3.jpg"
+    image_path=download_image(url)
+    print(image_path)
+
+    # upload media
+    media = api.media_upload(image_path)
+
+    # post tweet with media_id
+    description = context.post_description #'This is my tweet with an image'
+    api.update_status(status=description, media_ids=[media.media_id])
+
+# This function will post the latest Facebook Ad
+@shared_task(name="advertisement_facebook")
+
+def advertisement_facebook():
+    pass
+    # facebook_page_id = context.facebook_page_id
+    # access_token = context.facebook_access_token
+    # url = "https://graph.facebook.com/{}/photos".format(facebook_page_id)
+    # msg = context.post_description
+    # image_location = context.image
+    # payload = {
+    #     "url": image_location,
+    #     "access_token": access_token,
+    #     "message": msg,
+    # }
+
+    # # Send the POST request
+    # requests.post(url, data=payload)
+
+
+# @shared_task(name="advertisement_whatsapp")
+# def advertisement_whatsapp(request):
+#     runwhatsapp(request)
+
+# def advertisement_whatsapp(request):
+#     whatsapp_items = Whatsapp.objects.all()
+#     image_url = None
+#     # Get a list of all group IDs from the Whatsapp model
+#     # group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+#     group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+#     # group_ids = ["120363047226624982@g.us"]
+
+#     # Get the image URL and message from the first item in the Whatsapp model
+#     if whatsapp_items:
+#         image_url = whatsapp_items[0].image_url
+#         message = whatsapp_items[0].message
+#     else:
+#         message = "local testing"
+#     product_id = whatsapp_items[0].product_id
+#     screen_id = whatsapp_items[0].screen_id
+#     token = whatsapp_items[0].token
+#     # product_id = os.environ.get('MYAPI_PRODUCT_ID')
+#     # screen_id = os.environ.get('MYAPI_SCREEN_ID')
+#     # token = os.environ.get('MYAPI_TOKEN_ID')
+#     # Loop through all group IDs and send the message to each group
+#     for group_id in group_ids:
+#         print("Sending message to group", group_id)
+
+#         # Set the message type to "text" or "media" depending on whether an image URL is provided
+#         conn = http.client.HTTPSConnection("api.maytapi.com")
+#         if image_url:
+#             # Set the length of the random string
+#             length = 10
+#             # Generate a random string of lowercase letters and digits
+#             random_string = ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
+#             payload = json.dumps({
+#                 "to_number": group_id,
+#                 "type": "media",
+#                 "message": image_url,
+#                 "filename": random_string
+#             })
+#         else:
+#             payload = json.dumps({
+#                 "to_number": group_id,
+#                 "type": "text",
+#                 "message": message
+#             })
+
+#         headers = {
+#             'accept': 'application/json',
+#             'x-maytapi-key': token,
+#             'Content-Type': 'application/json'
+#         }
+#         conn.request("POST", f"/api/{product_id}/{screen_id}/sendMessage", payload, headers)
+#         res = conn.getresponse()
+#         data = res.read()
+#         print(data.decode("utf-8"))
+#         # if response.status_code == 200:
+#         if json.loads(data).get('success') is True:
+#             print("Message sent successfully!")
+#             message = f"Hi, {request.user}, your messages have been sent to your groups."
+#         else:
+#             # print("Error sending message:", response.text)
+#             message = data
+#     # Display a success message on the page
+#     context = {"title": "WHATSAPP", "message": message}
+#     return render(request, "main/errors/generalerrors.html", context)
