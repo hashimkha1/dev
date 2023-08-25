@@ -14,7 +14,7 @@ class InterviewForm(forms.ModelForm):
     test_types = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
     process = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
     '''========== Introduction ============='''
-    domain_industry = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
+    domain_industry = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}),label='Domain/Industry',required=False)
     role = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
     system_security = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
     project_management = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), required=False)
