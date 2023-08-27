@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path,include
+from django.contrib.auth import views as auth_views
 from . import views
 from .views import (
                     UserUpdateView,UserDeleteView,SuperuserUpdateView,
@@ -12,6 +13,7 @@ urlpatterns = [
     #=============================USERS VIEWS=====================================
     path('', views.home, name='home'),
     path('join/', views.join, name='join'),
+    path('social/', include('allauth.socialaccount.urls')), 
     path('login/', views.login_view, name='account-login'),
     #path('changepassword/',PasswordsChangeView.as_view(template_name='accounts/registration/password_Change_Form.html'), name='password_Change_Form'),
     path('profile/', views.profile, name='account-profile'),
