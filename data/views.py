@@ -177,7 +177,7 @@ def iuploads(request):
     return render(request, "data/interview/interviewuploads.html", context)
     
 def useruploads(request, pk=None, *args, **kwargs):
-    useruploads = Interviews.objects.filter(user=request.user).order_by("-upload_date")
+    useruploads = Interviews.objects.filter(client=request.user).order_by("-upload_date")
     context = {
         "useruploads": useruploads,
     }
@@ -373,9 +373,23 @@ def courseview(request, question_type=None, *args, **kwargs):
 
 
 def questionview(request, question_type=None, *args, **kwargs):
+    question_mapping = {
+        'performance': ['tableau', 'alteryx', 'sql', 'python'],
+        'testing': ['project', 'test_types', 'process'],
+        'introduction': ['domain_industry', 'role', 'system_security', 'project_management', 'data_tools', 'communication'],
+        'sdlc': ['initiation', 'planning', 'design', 'development', 'testing', 'deployment', 'maintenance'],
+        'Project Story': ['description', 'deliverables', 'challenges', 'solutions'],
+        'resume': ['summary', 'skills', 'responsibilities'],
+        'methodology': ['projects', 'releases', 'sprints', 'stories'],
+    }
     if request.method == 'GET':
+        print('question_typ==============e',question_type)
         instance = JobRole.objects.get_by_question(question_type)
         form= InterviewForm()
+        required_fields = question_mapping.get(question_type, [])
+        for field_name in required_fields:
+            form.fields[field_name].required = True
+            
         # questiontopic=['resume','methodology','testing']
         # value=request.path.split("/")
         # pathvalues = [i for i in value if i.strip()]
@@ -397,6 +411,9 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'POST':
         try:
             form = InterviewForm(request.POST, request.FILES)
+            required_fields = question_mapping.get(question_type, [])
+            for field_name in required_fields:
+                form.fields[field_name].required = True
             if form.is_valid():
                 form_data = form.cleaned_data
                 data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=question_type, link=form_data['link'], comment=form_data['comment'] )
@@ -406,6 +423,11 @@ def questionview(request, question_type=None, *args, **kwargs):
                 instance = form.save(commit=False)
                 instance.client = request.user
                 instance.question_type = question_type
+                dynamic_fields = {field: form_data[field] for field in required_fields}
+                # Convert the dynamic_fields dictionary to a JSON string
+                dynamic_fields_json = json.dumps(dynamic_fields)
+                # Save the JSON string to the instance's dynamic_fields field
+                instance.dynamic_fields = dynamic_fields_json
                 instance.save()
                 # data = form.cleaned_data
         except Exception as e:

@@ -92,6 +92,45 @@
                         <div class="col-md-6 top-coloumn bg-white">
                             <div>{{ form.comment|as_crispy_field}}</div>
                         </div>
+                        {% if object.question_type == 'performance' %}
+                            <div class="col-md-6 ">{{ form.tableau|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.alteryx|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.sql|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.python|as_crispy_field }}</div>
+                            {% elif object.question_type == 'testing' %}
+                            <div class="col-md-6">{{ form.project|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.test_types|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.process|as_crispy_field }}</div>
+                            {% elif object.question_type == 'introduction' %}
+                            <div class="col-md-6">{{ form.domain_industry|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.role|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.system_security|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.project_management|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.data_tools|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.communication|as_crispy_field }}</div> 
+                            {% elif object.question_type == 'sdlc' %}
+                            <div class="col-md-6">{{ form.initiation|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.planning|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.design|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.development|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.testing|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.deployment|as_crispy_field }}</div>                                                      
+                            <div class="col-md-6">{{ form.maintenance|as_crispy_field }}</div> 
+                            {% elif object.question_type == 'Project Story' %}
+                            <div class="col-md-6">{{ form.description|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.deliverables|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.challenges|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.solutions|as_crispy_field }}</div>
+                            {% elif object.question_type == 'resume' %}
+                            <div class="col-md-6">{{ form.summary|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.skills|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.responsibilities|as_crispy_field }}</div>  
+                            {% elif object.question_type == 'methodology' %}
+                            <div class="col-md-6">{{ form.projects|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.releases|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.sprints|as_crispy_field }}</div>
+                            <div class="col-md-6">{{ form.stories|as_crispy_field }}</div>                                              
+                          {% endif %}
                     </div>
                     <hr style="height:3px;border:none;color:#666669;background-color:rgb(106, 106, 155);" />
                   </fieldset>

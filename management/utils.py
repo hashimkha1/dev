@@ -125,7 +125,8 @@ def paymentconfigurations(PayslipConfig,employee):
     except:
         payslip_config=PayslipConfig.objects.filter(
              Q(user__username="admin")| 
-             Q(user__username="coda_info") 
+             Q(user__username="coda_info")|
+             Q(user__username="test_user") 
              ).latest('id')
     return payslip_config
   
