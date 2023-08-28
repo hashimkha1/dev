@@ -28,7 +28,7 @@ from .models import (
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
 		DC48_Inflow,Field_Expense
 	)
-from .forms import LoanForm,TransactionForm,InflowForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality,service_instances,service_plan_instances
@@ -604,13 +604,34 @@ class TransactionListView(ListView):
 	context_object_name = "transactions"
 	# ordering=['-transaction_date']
 
+def filteroutflowsbydepartment(request):
+    all_outflows = Transaction.objects.all().order_by('-id')
+    if request.method == "POST":
+        form = DepartmentFilterForm(request.POST)
+        if form.is_valid():
+            department = form.cleaned_data['name']
+            # print("department=====>",department)
+            filtered_outflows = Transaction.objects.filter(department__name=department).order_by('-id')
+            count_filtered_outflows = Transaction.objects.filter(department__name=department).count()
+            # print("filtered_outflows=====>",count_filtered_outflows)
+	    
+            outflows=filtered_outflows
+        return outflows,form
+    else:
+        form = DepartmentFilterForm()
+        outflows=all_outflows
+        return outflows,form
+
+
 
 def outflows(request):
+    outflows,form=filteroutflowsbydepartment(request)
+    # print("values========>",outflows,form)
     ytd_duration,current_year=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
     #operations totals
-    operations_obj = Transaction.objects.all()
-    ytd_transactions = Transaction.objects.filter(activity_date__year=current_year)
+    operations_obj = outflows
+    ytd_transactions = operations_obj.filter(activity_date__year=current_year)
     ytd_op_outflow = sum(transact.amount*transact.qty for transact in ytd_transactions)
     total_op_outflows = sum(transact.amount*transact.qty for transact in operations_obj)
     total_op_outflows_usd =float(total_op_outflows)/float(rate)
@@ -631,8 +652,6 @@ def outflows(request):
     total_field_ouflow = sum(transact.transactions_amt for transact in field_obj)
     total_field_ouflow_usd =float(total_field_ouflow)/float(rate)
     ytd_field_ouflow_usd=float(ytd_field_ouflow)/float(rate)
-
-    # print("Amounts",ytd_field_ouflow_usd,total_op_outflows,total_web_ouflow,total_field_ouflow_usd)
 
     total_outflows = float(total_op_outflows_usd) + float(total_web_ouflow) + float(total_field_ouflow_usd)
     ytd_outflows = float(ytd_op_outflow_usd) + float(ytd_web_ouflow) + float(ytd_field_ouflow_usd)
@@ -670,7 +689,7 @@ def outflows(request):
         "remaining_seconds ": int(remaining_seconds % 60),
         "remaining_minutes ": int(remaining_minutes % 60),
         "remaining_hours": int(remaining_hours % 24),
-        # "receipt_url": receipt_url,
+        "form": form,
     }
     return render(request,"finance/payments/transaction.html",outflow_context)
 

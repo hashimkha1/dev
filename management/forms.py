@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from data.models import DSU
-from management.models import TaskLinks, Policy, Requirement, Task,Meetings
+from management.models import TaskLinks, Policy, Requirement, Task,Meetings,TaskCategory
 from finance.models import Transaction, Inflow
 from accounts.models import Department
 from application.models import UserProfile
@@ -284,6 +284,12 @@ class EmployeeContractForm(forms.ModelForm):
         model = UserProfile
         fields = ('national_id_no', 'id_file', 'emergency_name', 'emergency_address', 'emergency_citizenship', 'emergency_email', 'emergency_phone', 'emergency_national_id_no')
 
+
+class TagFilterForm(forms.Form):
+    category = forms.ModelChoiceField(
+        queryset=TaskCategory.objects.all(),
+        label='Select a Category Tag'
+    )
 
 class MonthForm(forms.Form):
     MONTHS = (

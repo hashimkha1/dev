@@ -157,28 +157,28 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # }
 
 '''=========== Heroku DB ================'''
-# DATABASES = {
-#     'default': {
-#         "ENGINE": 'django.db.backends.postgresql',
-#         "NAME": 'd8liqmn44tm61v',
-#         "USER": 'ylzxqlnsngttgn',
-#         "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-#         "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
-#     }
-# }
+DATABASES = {
+    'default': {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'd8liqmn44tm61v',
+        "USER": 'ylzxqlnsngttgn',
+        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+    }
+}
 
 
 '''=========== Local DB ================'''
-DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'Coda_Dev',
-       'USER': 'postgres',
-       'PASSWORD': 'Amit@esfera',
-       'HOST': 'localhost',  
-       'PORT': '5432',
-   }
-}
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'Coda_Dev',
+#        'USER': 'postgres',
+#        'PASSWORD': 'Amit@esfera',
+#        'HOST': 'localhost',  
+#        'PORT': '5432',
+#    }
+# }
 
 
 # DATABASES = {

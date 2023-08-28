@@ -25,6 +25,23 @@
                     {%endif %}
                   </div>
                 </div>
+                <!-- <div class="col-md-2"> -->
+                  <form method="POST"  class="form-group">
+                      {% csrf_token %}
+                      <div class="col-12">
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <label for="department_filter">To filter by Department</label>
+                              </div>
+                          </div>
+                          <div class="row">
+                              <div class="col-md-12">
+                                  <p>{{ form.name }} <button class="btn btn-outline-info" type="submit">Search</button></p>
+                              </div>
+                          </div>
+                      </div>
+                  </form>
+              <!-- </div> -->
               </div>
               
               <div class="col-md-8" id="bada">
@@ -35,8 +52,10 @@
                     <a class="btn btn-primary" href="#"  style="background-color: #5b67a2; border-color: #4CAF50;">USD. {{total_amt|floatformat:2}}</a>
                     <!-- <i><h6>Total Amount : USD. {{total_amt|floatformat:2}}</h6></i> -->
                   </font> 
+
                     <hr/>
                     <div class="row text-center">
+          
                       {% for item in data %}
                           <div class="col-md-3">
                               <div class="card">

@@ -384,6 +384,11 @@ Automation = [
         "link":"https://chat.openai.com/chat",
         "linkname":"CHATGPT",
     },
+    {
+        "title": "Stocks & Options",
+        "link":SITEURL+"/investing/optionlist/",
+        "linkname":"options",
+    },
 ]
 
 Stocks = [

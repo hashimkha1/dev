@@ -2,13 +2,19 @@ from django import forms
 from django.forms import Textarea
 from django.db.models import Q
 from pyexpat import model
-from accounts.models import CustomerUser
+from accounts.models import CustomerUser,Department
 
 from .models import (
     TrainingLoan,
     Transaction,
     Inflow
 )
+
+class DepartmentFilterForm(forms.Form):
+    name = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
+        label='Select a Deparment Tag'
+    )
 
 class TransactionForm(forms.ModelForm):
     class Meta:

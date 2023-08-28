@@ -23,7 +23,8 @@ from management.forms import (
     EvidenceForm,
     EmployeeContractForm,
     MonthForm,
-    MeetingForm
+    MeetingForm,
+    TagFilterForm
 )
 from django.views.generic import (
     CreateView,
@@ -507,9 +508,34 @@ def getaveragetargets(request):
     return JsonResponse(results)
 
 
-class TaskListView(ListView):
-    queryset = Task.objects.all()
-    template_name = "management/daf/tasklist.html"
+# class TaskListView(ListView):
+#     queryset = Task.objects.all()
+#     template_name = "management/daf/tasklist.html"
+
+
+def tasklist(request):
+    context={}
+    tasks = Task.objects.all().order_by('-id')
+    if request.method == "POST":
+        form = TagFilterForm(request.POST)
+        if form.is_valid():
+            category = form.cleaned_data['category']
+            # print("category=====>",category)
+            # filtered_tasks = Task.objects.filter(category=category).order_by('-id')
+            filtered_tasks = Task.objects.filter(category__title=category)
+            # print("filtered_tasks=====>",filtered_tasks)
+        context = {
+            "tasks":filtered_tasks,
+            "form": form
+        }
+        return render(request,"management/daf/tasklist.html", context)
+    else:
+        form = TagFilterForm()
+        context = {
+            "tasks":tasks,
+            "form": form
+        }
+        return render(request,"management/daf/tasklist.html",context)
 
 
 def FilterUsersByLoan(request):
@@ -576,14 +602,6 @@ def filterbycategory(request):
 
     # print(result)
     return JsonResponse({"result": result}, safe=False)
-
-
-class TaskHistoryView(ListView):
-    pass
-#     queryset = TaskHistory.objects.all()
-#     myfilter=TaskHistoryFilter(request.GET,queryset=queryset)
-#     template_name = "management/daf/taskhistory.html"
-
 
 def historytasks(request):
     historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
