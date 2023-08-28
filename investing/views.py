@@ -14,9 +14,7 @@ from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
 
 from .forms import (
-    CoveredCallsForm,
-    ShortPutForm,
-    CreditSpreadForm,
+    OptionsForm,
     InvestmentForm,
     InvestmentRateForm
 )
@@ -101,9 +99,6 @@ def investments(request):
 
 @login_required
 def user_investments(request, username=None, *args, **kwargs):
-    print("My name is Chris")
-    print("I am with Edwin")
-    print("I am with Sylivia")
     user = get_object_or_404(CustomerUser, username=username)
     investments = Investments.objects.filter(client=user)
     latest_investment_rates = Investment_rates.objects.order_by('-created_date').first()
@@ -172,53 +167,166 @@ def options_play_shortput(request):
     return redirect ('getdata:shortputdata')
 
 
+# def optiondata(request):
 
-def optiondata(request):
-    path_list,sub_title,pre_sub_title = path_values(request)
-    # Get current datetime with UTC timezone
-    date_today = datetime.now(timezone.utc)
-    if sub_title == 'covered_calls':
-        title = 'COVERED CALLS'
-        stockdata = covered_calls.objects.all().filter(is_featured=True)
-    elif sub_title == 'shortputdata':
-        title = 'SHORT PUT'
-        stockdata = ShortPut.objects.all().filter(is_featured=True)
-    else:
-        title = 'CREDIT SPREAD'
-        stockdata = credit_spread.objects.all().filter(is_featured=True)
+#     path_list,sub_title,pre_sub_title = path_values(request)
+#     all_returns = Options_Returns.objects.all()
+#     all_return_symbols = set(Options_Returns.objects.values_list('symbol', flat=True))
 
-    url_mapping = {
-    'shortputdata': 'investing:shortputupdate',
-    'credit_spread': 'investing:creditspreadupdate',
-    'covered_calls': 'investing:coveredupdate',
+#     symbols = []
+#     for obj in all_returns:
+#         if obj.wash_days >= 40:
+#             symbols.append(obj.symbol)
+#     distinct_returns_symbols = list(set(symbols))
+
+#     date_today = datetime.now(timezone.utc)
+#     if sub_title == 'covered_calls':
+#         title = 'COVERED CALLS'
+#         stockdata = covered_calls.objects.all().filter(is_featured=True)
+#     elif sub_title == 'shortputdata':
+#         title = 'SHORT PUT'
+#         stockdata = ShortPut.objects.all().filter(is_featured=True)
+#     else:
+#         title = 'CREDIT SPREAD'
+#         stockdata = credit_spread.objects.all().filter(is_featured=True)
+
+#     url_mapping = {
+#     'shortputdata': 'investing:shortputupdate',
+#     'credit_spread': 'investing:creditspreadupdate',
+#     'covered_calls': 'investing:coveredupdate',
+#     }
+#     url_name = url_mapping[sub_title]
+
+#     def get_edit_url(row_id):
+#         return reverse(url_name, args=[row_id])
+    
+#     expiry_date,days_to_expiration=computes_days_expiration(stockdata)
+
+#     filtered_stockdata = []
+
+#     for x in stockdata:
+#         if x.symbol not in all_return_symbols or x.symbol in distinct_returns_symbols:
+#             if days_to_expiration >= 21:
+#                 url = reverse(url_name, args=[x.id])  
+#                 filtered_stockdata.append(x)
+    
+#     context = { 
+#         "data": filtered_stockdata,
+#         "days_to_expiration": days_to_expiration,
+#         "subtitle": sub_title,
+#         "pre_sub_title": pre_sub_title,
+#         'title': title,
+#         "get_edit_url": get_edit_url,
+#         "url_name": url_name,
+#     }
+#     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+def optionlist(request):
+    title="creditspread"
+    return render(request, "main/snippets_templates/output_snippets/option_data.html")
+
+
+# def optiondata(request,title=None,*arg,**kwargs):
+#     print("title=======>",title)
+#     path_list,sub_title,pre_sub_title = path_values(request)
+#     all_returns = Options_Returns.objects.all()
+#     all_return_symbols = set(Options_Returns.objects.values_list('symbol', flat=True))
+
+#     symbols = []
+#     for obj in all_returns:
+#         if obj.wash_days >= 40:
+#             symbols.append(obj.symbol)
+#     distinct_returns_symbols = list(set(symbols))
+
+#     date_today = datetime.now(timezone.utc)
+#     if sub_title == 'covered_calls':
+#         title = 'COVERED CALLS'
+#         stockdata = covered_calls.objects.all().filter(is_featured=True)
+#     elif sub_title == 'shortputdata':
+#         title = 'SHORT PUT'
+#         stockdata = ShortPut.objects.all().filter(is_featured=True)
+#     else:
+#         title = 'CREDIT SPREAD'
+#         stockdata = credit_spread.objects.all().filter(is_featured=True)
+
+#     url_mapping = {
+#     'shortputdata': 'investing:shortputupdate',
+#     'credit_spread': 'investing:creditspreadupdate',
+#     'covered_calls': 'investing:coveredupdate',
+#     }
+#     url_name = url_mapping[sub_title]
+
+#     def get_edit_url(row_id):
+#         return reverse(url_name, args=[row_id])
+    
+#     expiry_date,days_to_expiration=computes_days_expiration(stockdata)
+
+#     filtered_stockdata = []
+
+#     for x in stockdata:
+#         if x.symbol not in all_return_symbols or x.symbol in distinct_returns_symbols:
+#             if days_to_expiration >= 21:
+#                 url = reverse(url_name, args=[x.id])  
+#                 filtered_stockdata.append(x)
+    
+#     context = { 
+#         "data": filtered_stockdata,
+#         "days_to_expiration": days_to_expiration,
+#         "subtitle": sub_title,
+#         "pre_sub_title": pre_sub_title,
+#         'title': title,
+#         "get_edit_url": get_edit_url,
+#         "url_name": url_name,
+#     }
+#     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+
+def optiondata(request, title=None, *arg, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+
+    # Get symbols with wash_days >= 40 directly using list comprehension
+    distinct_returns_symbols = list(set([
+        obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
+    ]))
+
+    model_mapping = {
+        'covered_calls': {
+            'model': covered_calls,
+            'title': 'COVERED CALLS'
+        },
+        'shortputdata': {
+            'model': ShortPut,
+            'title': 'SHORT PUT'
+        },
+        'credit_spread': {
+            'model': credit_spread,
+            'title': 'CREDIT SPREAD'
+        }
     }
-    # url_name = url_mapping.get(pre_sub_title, 'investing:coveredupdate')
+
+    stock_model = model_mapping[sub_title]['model']
+    title = model_mapping[sub_title]['title']
+
+    stockdata = stock_model.objects.filter(is_featured=True)
+    
+    url_mapping = {
+        'shortputdata': 'investing:shortputupdate',
+        'credit_spread': 'investing:creditspreadupdate',
+        'covered_calls': 'investing:coveredupdate',
+    }
     url_name = url_mapping[sub_title]
 
     def get_edit_url(row_id):
         return reverse(url_name, args=[row_id])
     
-    expiry_date,days_to_expiration=computes_days_expiration(stockdata)
-
-    filtered_stockdata = []
-
-    for x in stockdata:
-        if days_to_expiration >= 21:
-            url= reverse(url_name, args=[x.id])
-            filtered_stockdata.append(x)
-
-    # for x in stockdata:
-    #     if isinstance(x.expiry, str):
-    #         expiry_str = x.expiry
-    #         expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
-    #         expiry_date = expirydate.astimezone(timezone.utc)
-    #     elif isinstance(x.expiry, datetime):
-    #         expiry_date = x.expiry.astimezone(timezone.utc)
-    #     else:
-    #         continue
-        
-    #     days_to_exp = expiry_date - date_today
-    #     days_to_expiration = days_to_exp.days
+    expiry_date, days_to_expiration = computes_days_expiration(stockdata)
+    
+    filtered_stockdata = [
+        x for x in stockdata if (
+            not Options_Returns.objects.filter(symbol=x.symbol).exists() or
+            x.symbol in distinct_returns_symbols
+        ) and days_to_expiration >= 21
+    ]
     
     context = { 
         "data": filtered_stockdata,
@@ -231,7 +339,6 @@ def optiondata(request):
     }
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
 
-
 class OptionList(ListView):
     model=stockmarket
     template_name="getdata/options.html"
@@ -243,15 +350,15 @@ class OptionList(ListView):
 def shortput_update(request, pk):
     path_list,subtitle,pre_sub_title=path_values(request)
     shortput = get_object_or_404(ShortPut, pk=pk)
-    success_url = reverse('investing:shortput')
+    success_url = reverse('investing:option_list', kwargs={'title': 'shortputdata'})
 
     if request.method == 'POST':
-        form = ShortPutForm(request.POST, instance=shortput)
+        form = OptionsForm(request.POST, instance=shortput)
         if form.is_valid():
             form.save()
             return redirect(success_url)
     else:
-        form = ShortPutForm(instance=shortput)
+        form = OptionsForm(instance=shortput)
 
     context = {
         'form': form,
@@ -259,33 +366,77 @@ def shortput_update(request, pk):
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
 
-class covered_calls_update(UpdateView):
-    model = covered_calls
-    success_url = "/investing/covered_calls"
-    # fields = "__all__"
-    fields = ['symbol','comment','is_featured']
-    template_name="main/snippets_templates/generalform.html"
-    def form_valid(self, form):
-        # form.instance.author=self.request.user
-        return super().form_valid(form)
-    def test_func(self):
-        if self.request.user.is_superuser:
-            return True
-        return False
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def covered_update(request, pk):
+    path_list,subtitle,pre_sub_title=path_values(request)
+    covered = get_object_or_404(covered_calls, pk=pk)
+    success_url = reverse('investing:option_list', kwargs={'title': 'covered_calls'})
+
+    if request.method == 'POST':
+        form = OptionsForm(request.POST, instance=covered)
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    else:
+        form = OptionsForm(instance=covered)
+
+    context = {
+        'form': form,
+        'title': 'Update covered Calls',
+    }
+    return render(request, 'main/snippets_templates/generalform.html', context)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def credit_spread_update(request, pk):
+    spread = get_object_or_404(credit_spread, pk=pk)
+    success_url = reverse('investing:option_list', kwargs={'title': 'credit_spread'})
+
+    if request.method == 'POST':
+        form = OptionsForm(request.POST, instance=spread)
+        if form.is_valid():
+            form.save()
+            return redirect(success_url)
+    else:
+        form = OptionsForm(instance=spread)
+
+    context = {
+        'form': form,
+        'title': 'Update Credit spread',
+    }
+    return render(request, 'main/snippets_templates/generalform.html', context)
+
+
+
+# class covered_calls_update(UpdateView):
+#     model = covered_calls
+#     success_url = reverse('investing:option_list', kwargs={'title': 'covered_calls'})
+#     # fields = "__all__"
+#     fields = ['symbol','comment','is_featured']
+#     template_name="main/snippets_templates/generalform.html"
+#     def form_valid(self, form):
+#         # form.instance.author=self.request.user
+#         return super().form_valid(form)
+#     def test_func(self):
+#         if self.request.user.is_superuser:
+#             return True
+#         return False
     
-class credit_spread_update(UpdateView):
-    model = credit_spread
-    success_url = "/investing/credit_spread"
-    # fields = "__all__"
-    fields = ['symbol','comment','is_featured']
-    template_name="main/snippets_templates/generalform.html"
-    def form_valid(self, form):
-        return super().form_valid(form)
-    def test_func(self):
-        # interview = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        return False
+# class credit_spread_update(UpdateView):
+#     model = credit_spread
+#     success_url = "/investing/credit_spread"
+#     # fields = "__all__"
+#     fields = ['symbol','comment','is_featured']
+#     template_name="main/snippets_templates/generalform.html"
+#     def form_valid(self, form):
+#         return super().form_valid(form)
+#     def test_func(self):
+#         # interview = self.get_object()
+#         if self.request.user.is_superuser:
+#             return True
+#         return False
 
 @login_required
 def oversoldpositions(request):
@@ -295,8 +446,8 @@ def oversoldpositions(request):
     get_over_postions(table_name)
     overboughtsold_records = Oversold.objects.all()
     # expiry_date,days_to_expiration=computes_days_expiration(stockdata)
-    for record in overboughtsold_records:
-        print("record========>",record)
+    # for record in overboughtsold_records:
+        # print("record========>",record)
 
     context = { 
         "overboughtsold": overboughtsold_records,
@@ -386,8 +537,9 @@ def options_returns(request):
 
 @login_required
 def cost_basis(request):
+    ytd_duration,current_year = dates_functionality()
     date_today = datetime.now(timezone.utc)
-    ytd_days = year_to_date()
+    ytd_days =ytd_duration
     ytd_weeks=int(ytd_days/7)
     ytd_bi_weekly=int(ytd_days/14)
     ytd_month=int(ytd_days/30)

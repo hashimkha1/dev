@@ -34,16 +34,13 @@
         <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
     </td> -->
 
-    <!-- {% if pre_sub_title == 'shortputdata' %}
+    {% if subtitle == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
-    {% elif pre_sub_title == 'credit_spread' %}
+    {% elif subtitle == 'credit_spread' %}
         <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
     {% else %}
         <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
-    {% endif %} -->
-    <td><a class="article-title" href="{{ row.edit_url }}">Edit</a></td>
-
-
-
+    {% endif %}
+    <!-- <td><a class="article-title" href="{{ row.edit_url }}">Edit</a></td> -->
 
 </tr>
