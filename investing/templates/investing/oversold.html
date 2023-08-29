@@ -10,7 +10,6 @@
                   <hr/>
                   <i><h6>{{user.first_name|upper }}</h6></i>
                   <hr/>
-  
                       <p>
                         <a href="{% url 'getdata:fetch_and_insert_data' %}" class="btn btn-secondary btn-sm"
                           >Refresh
@@ -18,7 +17,7 @@
                      </p>
                 </div>
                 <div class="card-body">
-                 {% include 'main\snippets_templates\output_snippets\yfinancial.html' %} 
+                 {% include 'main/snippets_templates/output_snippets/yfinancial.html' %} 
                 </div>
               </div>
             </div>
@@ -50,7 +49,7 @@
                   <hr/>
                   <div class="row text-center">
                     <div class="col-md-12">
-                      {% include "main\snippets_templates\table\key_value_loop.html" %}
+                      {% include "main/snippets_templates/table/key_value_loop.html" %}
                       <!-- <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">{{financial_data}}</br> </a> -->
                   </div>
                 </div>

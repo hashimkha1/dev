@@ -559,18 +559,18 @@ def oversoldpositions(request,symbol=None):
     table_name = "investing_oversold"
     get_over_postions(table_name)
     overboughtsold_records = Oversold.objects.all()
-    print("symbol=====>",symbol)
+    # print("symbol=====>",symbol)
     if request.method == "POST":
         ticker_symbol = request.POST['ticker']
         category = request.POST['category']
-        print("category====>",category)
+        # print("category====>",category)
         if category == 'financials':
             url = f'https://finance.yahoo.com/quote/{ ticker_symbol }/{category}?p={ticker_symbol}'
             return redirect(url)
         # Assuming the utility function can handle the category. fetch_financial_data
         # If not, you'll need to modify the utility function or handle the category differently.
         financial_data = fetch_data_util(category,ticker_symbol)
-        print("data=====>",financial_data)
+        # print("data=====>",financial_data)
 
         context = { 
             "overboughtsold": overboughtsold_records,
