@@ -17,12 +17,15 @@
                         </a>
                      </p>
                 </div>
+                <div class="card-body">
+                 {% include 'main\snippets_templates\output_snippets\yfinancial.html' %} 
+                </div>
               </div>
             </div>
             <div class="col-md-8" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>{{title}} OPTIONS RESULTS</b></h5>
+                  <h5><b>OPTIONS RESULTS</b></h5>
                   <hr/>
                   <div class="row text-center">
                     <div class="col-md-4">
@@ -39,27 +42,35 @@
                   </div>
                 </div>
                   <hr/> 
-                  <i><h6>New Rows:{{new_rows}} | Duplicates: {{duplicates_rows}}|Sample:{{putsrow_value}}
-                    <a href="#" class="btn btn-secondary btn-sm"
-                    >Edit
-                  </a>
-                  </b></i>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>{{title}}</b></h5>
+                  <hr/>
+                  <div class="row text-center">
+                    <div class="col-md-12">
+                      {% include "main\snippets_templates\table\key_value_loop.html" %}
+                      <!-- <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">{{financial_data}}</br> </a> -->
+                  </div>
+                </div>
                 </div>
               </div>
             </div>
             <div class="col-md-2" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>PAY DAY</b></h5>
-                  <hr/>
-                  <i><h6>{{payday}}</h6></i>
+                  <h5><b>DESCRIPTION</b></h5>
                   <hr/>
                   <div class="col-md-12" id="gi">
-                    <p>
-                      <a href="{% url 'investing:overboughtsold' %}" class="btn btn-secondary btn-sm"
-                        >Over_Bought/Over_sold
-                      </a>
-                   </p>
+                    {% if category == 'risk' %}
+                    <div class="text-left">
+                                {% for ratio in risk_ratios %}
+                                    <b>{{ ratio.title }}:</b>{{ ratio.description }} <br>
+                                {% endfor %}
+                                <hr>
+                    </div>
+                    {% endif %}
                   </div>
                 </div>
               </div>
@@ -77,6 +88,7 @@
                   <!-- <th>Days_To_Expiry</th> -->
                   <th>Expiry</th>
                   <th>Earnings_Date</th>
+                  <th>More Info</th>
                   <th>Edit</th>
                   
             </tr>
@@ -84,12 +96,19 @@
           <tbody>
             {% for row in overboughtsold %}
             <tr>
-                <td>
-                    <a class="text-dark  text-decoration-none" 
+                <!-- <td>
+                    <a class=" article-title target="_blank" 
                     data-toggle="tooltip" title="{{ row.comment }}"
-                    href="{{ category.get_absolute_url }}">
+                    href="{% url 'investing:sigleoverboughtsold' row.symbol %}">
                     {{ row.symbol }}
                     </a>
+                </td> -->
+                <td>
+                  <a class="article-title target="_blank" 
+                  data-toggle="tooltip" title="{{ row.comment }}"
+                  href="javascript:void(0);" onclick="submitForm('{{ row.symbol }}');">
+                  {{ row.symbol }}
+               </a>
                 </td>
                 <td>{{ row.action }}{{ row.strategy }}</td>
                 <td>{{ row.stock_price }}{{ row.price }}</td>
@@ -97,6 +116,13 @@
                 <!-- <td>{{ row.expiry|date:"n/d/Y" }}</td> -->
                 <td>{{ row.expiry}}</td>
                 <td>{{ row.earnings_date }}</td>
+                <td>
+                  <a class=" article-title target="_blank" 
+                  data-toggle="tooltip" title="{{ row.comment }}"
+                  href="https://finance.yahoo.com/quote/{{ row.symbol }}/financials?p={{ row.symbol }}">
+                  More 
+                  </a>
+              </td>
                 <td><a class="article-title" href="{% url 'investing:oversoldupdate' row.id %}">Edit</a></td>
             </tr>
             {% endfor %}
@@ -104,6 +130,17 @@
         </table>
       </div>
       </div>
+      <script>
+        function submitForm(symbol) {
+            var form = document.getElementById('yahooForm');
+            var input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'ticker';
+            input.value = symbol;
+            form.appendChild(input);
+            form.submit();
+        }
+        </script>
     </section>
 
     {% endblock content %}

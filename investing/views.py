@@ -7,8 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, DetailView, UpdateView
 from datetime import date,datetime,time,timezone
-from .utils import (compute_pay,get_over_postions,investment_test,
-                    computes_days_expiration,get_user_investment)
+from .utils import (compute_pay,get_over_postions,investment_test,risk_ratios,
+                    computes_days_expiration,get_user_investment,financial_categories)
 
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
@@ -32,11 +32,8 @@ from .models import (
 from django.db.models import Q
 from accounts.models import CustomerUser
 from getdata.utils import (
-    main_shortput,
+    main_shortput,fetch_data_util
 )
-
-
-
 User=get_user_model
 
 # Create your views here.
@@ -553,3 +550,66 @@ def cost_basis(request):
 
     }
     return render(request, "investing/cost_basis.html", context)
+
+
+
+def oversoldpositions(request,symbol=None):
+    path_list,sub_title,pre_sub_title = path_values(request)
+    # Get current datetime with UTC timezone
+    table_name = "investing_oversold"
+    get_over_postions(table_name)
+    overboughtsold_records = Oversold.objects.all()
+    print("symbol=====>",symbol)
+    if request.method == "POST":
+        ticker_symbol = request.POST['ticker']
+        category = request.POST['category']
+        print("category====>",category)
+        if category == 'financials':
+            url = f'https://finance.yahoo.com/quote/{ ticker_symbol }/{category}?p={ticker_symbol}'
+            return redirect(url)
+        # Assuming the utility function can handle the category. fetch_financial_data
+        # If not, you'll need to modify the utility function or handle the category differently.
+        financial_data = fetch_data_util(category,ticker_symbol)
+        print("data=====>",financial_data)
+
+        context = { 
+            "overboughtsold": overboughtsold_records,
+            "financial_data": financial_data,
+            "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
+            "financial_categories": financial_categories,
+            "category": category,
+            "risk_ratios": risk_ratios,
+        }
+    else:
+        # Handle GET requests (for first-time loading)
+        context = {
+            "overboughtsold": overboughtsold_records,
+            "title": "Click On a Symbol",
+            "financial_categories": financial_categories,
+        }
+    return render(request, "investing/oversold.html", context)
+
+# def fetch_financial_data(request):
+#     if request.method == "POST":
+#         ticker_symbol = request.POST['ticker']
+#         number_years = request.POST['years']
+#         category = request.POST['category']  
+#         # Assuming the utility function can handle the category. fetch_financial_data
+#         # If not, you'll need to modify the utility function or handle the category differently.
+#         data = fetch_data_util(category,ticker_symbol, number_years)
+#         print("data=====>",data)
+
+#         context = {
+#             "title": "Yahoo Finance",
+#             "financial_categories": financial_categories,
+#             "financial_data": data,
+#         }
+
+#         return redirect('investing:oversoldpositions')
+#     else:
+#         # Handle GET requests (for first-time loading)
+#         context = {
+#             "title": "Yahoo Finance",
+#             "financial_categories": financial_categories,
+#         }
+#         return redirect('investing:oversoldpositions')

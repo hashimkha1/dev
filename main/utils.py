@@ -367,29 +367,26 @@ Automation = [
     {
         "title": "Social Media",
         "link":SITEURL+"/marketing/",
-        "linkname":"Pics&Messages-Whatsapp",
+        "description":"Posting ads to social media",
     },
     {
         "title": "Cash App",
         "link":SITEURL+"/getdata/cashappdata/",
-        "linkname":"Cash app",
+        "description":"Fetching data from Cashapp and updating records",
     },
     {
         "title": "Job Application",
         "link":SITEURL+"/getdata/replies/",
-        "linkname":"Reply",
+        "description":"Automating Job applications",
     },
-    {
-        "title": "ChatGPT",
-        "link":"https://chat.openai.com/chat",
-        "linkname":"CHATGPT",
-    },
+
     {
         "title": "Stocks & Options",
         "link":SITEURL+"/investing/optionlist/",
-        "linkname":"options",
+        "description":"Fetching information from options play",
     },
 ]
+
 
 Stocks = [
     {
@@ -413,16 +410,28 @@ Stocks = [
         "linkname":"covered Calls",
     },
 ]
+
+
 General = [
+    {
+        "title": "ChatGPT",
+        "link":"https://chat.openai.com/chat",
+        "description":"CHATGPT",
+    },
     {
         "title": "Images/Assets",
         "link":SITEURL+"/images/",
-        "linkname":"Add Images/Assets",
+        "description":"Images and assets",
     },
     {
         "title": "Open Urls",
         "link":SITEURL+"/plan_urls/",
-        "linkname":"Planning Urls",
+        "description":"Script to automate simple tasks",
+    },
+    {
+        "title": "Testimonials",
+        "link":SITEURL+"/post/new/",
+        "description":"Using AI to aid Clients to leave feedback",
     },
   
 ]
@@ -466,6 +475,7 @@ url_mapping = {
         ],
         'job': [
             "https://www.codanalytics.net/accounts/credentials/",
+            "https://myapp.tcs.com/logon/LogonPoint/tmindex.html",
             "https://auth.ultimatix.net/utxLogin/login",
             "https://myapp.tcs.com/logon/LogonPoint/tmindex.html",
 
@@ -492,10 +502,13 @@ url_mapping = {
         'interview': [
             "https://chat.openai.com/",
             "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/data/start_training/interview/",
+            "https://drive.google.com/drive/u/0/folders/1LCK0emfU4ytpZ05Dg-ZoGFOraGc0hZ4u",
             "https://drive.google.com/drive/u/0/folders/1X-3TDBkN3-FJMYHjnaA_g-P76Yy6BgCj",
             "https://www.codanalytics.net/data/updatelist/",
             "https://app.box.com/file/345111367782",
             "https://www.codanalytics.net/finance/finance_report/",
+            "https://www.codanalytics.net/getdata/bigdata/",
             "https://www.optionsplay.com/hub/short-puts",
             "https://docs.google.com/spreadsheets/d/1Ra8Kf2U80wK_Mj9hXfp9B2y2egYlG0Js/edit#gid=855436689",
 
@@ -579,6 +592,20 @@ Finance = [
     },
     {
         "title": "Payment History",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+]
+Data = [
+    {
+        "title": " Categrory",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "title": " SubCategory",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "title": "Links",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]

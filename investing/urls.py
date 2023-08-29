@@ -12,6 +12,7 @@ urlpatterns = [
     path('investments/', views.investments, name='investments'),
     path('companyreturns/', views.options_returns, name='companyreturns'),
     path('costbasis/', views.cost_basis, name='costbasis'),
+    # path('fetch_data/', views.fetch_financial_data, name='financial-data'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
     path('stockmarket/', views.OptionList.as_view(), name='stockmarket'),
     path('optionlist/', views.optionlist, name='optionlist'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('creditspreadupdate/<int:pk>', views.credit_spread_update, name='creditspreadupdate'),
     path('coveredupdate/<int:pk>', views.covered_update, name='coveredupdate'),
     path('shortputupdate/<int:pk>', views.shortput_update, name='shortputupdate'),
+    path('overboughtsold/<str:symbol>', views.oversoldpositions, name='sigleoverboughtsold'),
     path('overboughtsold/', views.oversoldpositions, name='overboughtsold'),
     path('oversoldupdate/<int:pk>', views.oversold_update.as_view(), name='oversoldupdate'),
 ]

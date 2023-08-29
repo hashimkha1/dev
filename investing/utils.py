@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from datetime import date,datetime,time,timezone
 from .models import (ShortPut,covered_calls)
 from django.db.models import Q
-
+from coda_project.settings import SITEURL
 from django.contrib.auth import get_user_model
 from coda_project.settings import dba_values ,source_target
 User=get_user_model
@@ -204,3 +204,55 @@ def get_over_postions(table_name):
     except Exception as e:
         # Handle the exception here (e.g., log the error, display an error message)
         print(f"An error occurred: {str(e)}")
+
+
+financial_categories = [
+    {
+        "title": "statistics",
+        "description":"accesses the yahoo valuation Measures",
+    },
+    {
+        "title": "risk",
+        "description":"accesses the yahoo yahoo risk informatio",
+    },
+    {
+        "title": "financials",
+        "description":"Income(net income),Balance*(Total debt/Equity),Cashflow(Free Cashflow)",
+    },
+]
+
+risk_ratios = [
+        # {
+        #         "title":"Alpha (α)",
+        #         "description":"performance of an investment against a benchmark. +-->outperformed the benchmark,(-)underperformance.",
+
+        # },
+        {
+                "title":"Beta (β)",
+                "description":"volatility of investment.> 1 more volatile,beta < 1 less volatile.",
+
+        },
+        # {
+        #         "title":"Mean Annual Return",
+        #         "description":"average return over a year.",
+        # },
+        # {
+        #         "title":"R-squared",
+        #         "description":"Measures how closely the investment's performance correlates with the benchmark. Values range from 0 to 100. 50->100, the more the investment's performance is explained by the benchmark. below 50 low correlation with the benchmark.",
+
+        # },
+        {
+                 "title":"std",
+                "description":"Represents the volatility or risk of an investment. Higher values more risk.",
+        },
+        {
+                "title":"Sharpe Ratio",
+                "description":"Measures risk-adjusted performance. A higher=better risk-adjusted returns. ",
+        },
+
+        # {
+        #                 "title":"Treynor Ratio",
+        #                 "description":"Another measure of risk-adjusted performance. A higher indicates better risk-adjusted performance relative to the market.",
+        # }
+
+]

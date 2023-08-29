@@ -1,12 +1,9 @@
 # imports added below
 import os
-import time
 import json
 import requests
-import threading
 from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
-from datetime import datetime,date
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
 from django.views import View
 from django.utils.dateformat import format
@@ -50,11 +47,12 @@ __smtp_user = EMAIL_INFO
 
 # top level variables declaration
 # views on ratings data.
+def index(request):
+    return render(request, 'getdata/index.html', {'title': 'index'})
+
 def getrating(request):
     return render(request, 'getdata/getrating.html', {'title': 'getrating'})
 
-def index(request):
-    return render(request, 'getdata/index.html', {'title': 'index'})
 
 def uploaddata(request):  
     # context = {"posts": posts}

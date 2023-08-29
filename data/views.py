@@ -383,7 +383,7 @@ def questionview(request, question_type=None, *args, **kwargs):
         'methodology': ['projects', 'releases', 'sprints', 'stories'],
     }
     if request.method == 'GET':
-        print('question_typ==============e',question_type)
+        # print('question_typ==============e',question_type)
         instance = JobRole.objects.get_by_question(question_type)
         form= InterviewForm()
         required_fields = question_mapping.get(question_type, [])
