@@ -24,6 +24,7 @@
     <!-- <p class="gi">
       This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
   </p> -->
+    {%if useruploads%}
     <div class="row text-center">
       {% for useruploads in  useruploads  %}
         <div class="col-md-6" id="gi">
@@ -55,6 +56,9 @@
            </div>
           {%endfor%}
     </div>
+    {%else%}
+    <p>No any record</p>
+    {%endif%}
 </div>
 </section>
 {% endblock content %}
