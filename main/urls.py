@@ -79,12 +79,6 @@ urlpatterns = [
 
    #==============URLS==============================================
     path('open_urls/<str:url_type>', views.open_urls, name='open_urls'),
-    # path('dev_urls/', views.open_urls, name='dev_urls'),
-    # path('company_urls/', views.open_urls, name='company_urls'),
-    # path('family_urls/', views.open_urls, name='family_urls'),
-    # path('investment_urls/', views.open_urls, name='investment_urls'),
-    # path('banking_urls/', views.open_urls, name='banking_urls'),
-    # path('health_urls/', views.open_urls, name='health_urls'),
 
    #==============ERRORS==============================================
     path('400Error/', views.error400, name='400error'),

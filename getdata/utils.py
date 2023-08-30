@@ -45,38 +45,78 @@ import yfinance as yf
 #     historical_data = ticker_data.history(period=f"{number_years}y")  # Fetching data for 1 year
     
 #     return historical_data
-
+import pandas as pd
 import numpy as np
+
+
+# accessing YAHOO Finance information
+
+# def fetch_or_compute_risk_statistics(ticker_symbol):
+#     ticker_data = yf.Ticker(ticker_symbol)
+    
+#     try:
+#         risk_data = ticker_data.sustainability
+#         if not risk_data.empty:
+#             return risk_data
+#     except Exception as e:
+#         print("Error fetching risk statistics:", str(e))
+    
+#     # If risk statistics are not directly available, compute them
+#     historical_data = ticker_data.history(period="10y")
+    
+#     # Beta Calculation (Here, we're taking SPY as the benchmark):
+#     benchmark = yf.Ticker('SPY').history(period="10y")['Close'].pct_change().dropna()
+#     stock_returns = historical_data['Close'].pct_change().dropna()
+#     beta = stock_returns.cov(benchmark) / benchmark.var()
+    
+#     # Mean Annual Return
+#     annual_return = (stock_returns.mean() + 1) ** 252 - 1
+
+#     # Standard Deviation
+#     annual_std_dev = stock_returns.std() * np.sqrt(252)
+    
+#     # Here, we're using a 0.03 risk-free rate for the Sharpe Ratio (can be adjusted based on your local risk-free rate)
+#     sharpe_ratio = (annual_return - 0.03) / annual_std_dev
+
+#     return beta,annual_return,annual_std_dev,sharpe_ratio
+   
 
 def fetch_or_compute_risk_statistics(ticker_symbol):
     ticker_data = yf.Ticker(ticker_symbol)
     
     try:
-        risk_data = ticker_data.sustainability
-        if not risk_data.empty:
-            return risk_data
+        # Fetching the historical data for the ticker symbol
+        historical_data = ticker_data.history(period="10y")
+        
+        # Ensure the index is a DatetimeIndex and then localize the timezone
+        if not isinstance(historical_data.index, pd.DatetimeIndex):
+            historical_data.index = pd.to_datetime(historical_data.index)
+        historical_data.index = historical_data.index.tz_localize("UTC")
+
+        # Beta Calculation (Here, we're taking SPY as the benchmark):
+        benchmark = yf.Ticker('SPY').history(period="10y")['Close'].pct_change().dropna()
+        benchmark.index = pd.to_datetime(benchmark.index)  # Ensure the date index is in datetime format
+        
+        stock_returns = historical_data['Close'].pct_change().dropna()
+        
+        beta = stock_returns.cov(benchmark) / benchmark.var()
+        
+        # Mean Annual Return
+        annual_return = (stock_returns.mean() + 1) ** 252 - 1
+
+        # Annual Standard Deviation
+        annual_std_dev = stock_returns.std() * np.sqrt(252)
+        
+        # Sharpe Ratio (using a 0.03 risk-free rate for illustration; adjust as needed)
+        sharpe_ratio = (annual_return - 0.03) / annual_std_dev
+
+        return beta, annual_return, annual_std_dev, sharpe_ratio
+    
     except Exception as e:
-        print("Error fetching risk statistics:", str(e))
-
-    # If risk statistics are not directly available, compute them
-    historical_data = ticker_data.history(period="10y")
-    
-    # Beta Calculation (Here, we're taking SPY as the benchmark):
-    benchmark = yf.Ticker('SPY').history(period="10y")['Close'].pct_change().dropna()
-    stock_returns = historical_data['Close'].pct_change().dropna()
-    beta = stock_returns.cov(benchmark) / benchmark.var()
-    
-    # Mean Annual Return
-    annual_return = (stock_returns.mean() + 1) ** 252 - 1
-
-    # Standard Deviation
-    annual_std_dev = stock_returns.std() * np.sqrt(252)
-    
-    # Here, we're using a 0.03 risk-free rate for the Sharpe Ratio (can be adjusted based on your local risk-free rate)
-    sharpe_ratio = (annual_return - 0.03) / annual_std_dev
-
-    return beta,annual_return,annual_std_dev,sharpe_ratio
-   
+        # Logging or printing the error can help with debugging
+        print(f"Error fetching data for {ticker_symbol}: {str(e)}")
+        # Return default values
+        return 0, 0, 0, 0  # or any other default values you'd like
 
 
 
@@ -107,6 +147,7 @@ def fetch_data_util(category,ticker_symbol,number_years=None):
         data = "Category not recognized"
     
     return data
+
 
 
 def load_xel_data_to_postgres(xel_folder_path,table_name):
