@@ -25,6 +25,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 import psycopg2
 import time
 
+import yfinance as yf
+import pandas as pd
+import numpy as np
+
 from coda_project.settings import dba_values ,source_target #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
 # If modifying these scopes, delete the file token.json.
@@ -37,49 +41,10 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 #DB VARIABLES
 (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
 
-import yfinance as yf
-
-# def fetch_data_util(ticker_symbol,number_years):
-#     # Fetch data
-#     ticker_data = yf.Ticker(ticker_symbol)
-#     historical_data = ticker_data.history(period=f"{number_years}y")  # Fetching data for 1 year
-    
-#     return historical_data
-import pandas as pd
-import numpy as np
 
 
 # accessing YAHOO Finance information
 
-# def fetch_or_compute_risk_statistics(ticker_symbol):
-#     ticker_data = yf.Ticker(ticker_symbol)
-    
-#     try:
-#         risk_data = ticker_data.sustainability
-#         if not risk_data.empty:
-#             return risk_data
-#     except Exception as e:
-#         print("Error fetching risk statistics:", str(e))
-    
-#     # If risk statistics are not directly available, compute them
-#     historical_data = ticker_data.history(period="10y")
-    
-#     # Beta Calculation (Here, we're taking SPY as the benchmark):
-#     benchmark = yf.Ticker('SPY').history(period="10y")['Close'].pct_change().dropna()
-#     stock_returns = historical_data['Close'].pct_change().dropna()
-#     beta = stock_returns.cov(benchmark) / benchmark.var()
-    
-#     # Mean Annual Return
-#     annual_return = (stock_returns.mean() + 1) ** 252 - 1
-
-#     # Standard Deviation
-#     annual_std_dev = stock_returns.std() * np.sqrt(252)
-    
-#     # Here, we're using a 0.03 risk-free rate for the Sharpe Ratio (can be adjusted based on your local risk-free rate)
-#     sharpe_ratio = (annual_return - 0.03) / annual_std_dev
-
-#     return beta,annual_return,annual_std_dev,sharpe_ratio
-   
 
 def fetch_or_compute_risk_statistics(ticker_symbol):
     ticker_data = yf.Ticker(ticker_symbol)
@@ -88,9 +53,14 @@ def fetch_or_compute_risk_statistics(ticker_symbol):
         # Fetching the historical data for the ticker symbol
         historical_data = ticker_data.history(period="10y")
         
+        # Check if the fetched data is empty or not
+        if historical_data.empty:
+            raise ValueError(f"No historical data available for {ticker_symbol}")
+        
         # Ensure the index is a DatetimeIndex and then localize the timezone
         if not isinstance(historical_data.index, pd.DatetimeIndex):
             historical_data.index = pd.to_datetime(historical_data.index)
+        
         historical_data.index = historical_data.index.tz_localize("UTC")
 
         # Beta Calculation (Here, we're taking SPY as the benchmark):
@@ -111,44 +81,48 @@ def fetch_or_compute_risk_statistics(ticker_symbol):
         sharpe_ratio = (annual_return - 0.03) / annual_std_dev
 
         return beta, annual_return, annual_std_dev, sharpe_ratio
-    
     except Exception as e:
         # Logging or printing the error can help with debugging
         print(f"Error fetching data for {ticker_symbol}: {str(e)}")
-        # Return default values
-        return 0, 0, 0, 0  # or any other default values you'd like
-
-
+        return None, None, None, None  # Return a tuple of Nones
 
 def fetch_data_util(category,ticker_symbol,number_years=None):
     ticker_data = yf.Ticker(ticker_symbol)
-    beta,annual_return,annual_std_dev,sharpe_ratio=fetch_or_compute_risk_statistics(ticker_symbol)
+    # beta,annual_return,annual_std_dev,sharpe_ratio=fetch_or_compute_risk_statistics(ticker_symbol)
     if category == 'history':
         # If you want historical data:
         data = ticker_data.history(period=f"{number_years}y")
     elif category == 'financials':
         # If you want financial statements:
         data = ticker_data.financials
+     
     elif category == 'risk':
-        beta,annual_return,annual_std_dev,sharpe_ratio
-        data = {
-            'beta': beta,
-            'annual_return': annual_return,
-            'annual_std_dev': annual_std_dev,
-            'sharpe_ratio': sharpe_ratio,
+        # Check if Yahoo provides the required risk information directly
+        full_data = ticker_data.info
+        if 'beta' in full_data:
+            # Fetch risk details directly from Yahoo's info if available
+            data = {
+                'beta': full_data.get('beta', None),
+                'annual_return': full_data.get('annualReturn', None),  # Update the key if different
+                'annual_std_dev': full_data.get('annualStdDev', None), # Update the key if different
+                'sharpe_ratio': full_data.get('sharpeRatio', None),    # Update the key if different
             }
+        else:
+            print(f"Failed to fetch or compute risk statistics for {ticker_symbol}")
+            data = {}
+
     elif category == 'statistics':
         # Fetch key statistics and then extract only valuation measures
         full_data = ticker_data.info
+        print(full_data)
         valuation_keys = ['marketCap', 'enterpriseValue', 'trailingPE', 'forwardPE', 'priceToSalesTrailing12Months', 
                           'enterpriseToRevenue', 'enterpriseToEbitda', 'priceToBook']
         data = {key: full_data.get(key, None) for key in valuation_keys}
+        print(data)
     else:
         data = "Category not recognized"
     
     return data
-
-
 
 def load_xel_data_to_postgres(xel_folder_path,table_name):
     # Create a PostgreSQL connection and cursor

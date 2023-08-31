@@ -1,0 +1,47 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="rating">
+  <div class="rating text-center">
+    <h2>{{title}}</h2>
+    <a
+    href="{% url 'application:enter_score' %}"
+    class="btn text-secondary px-0"
+  >
+  <button>
+    Add Score
+  </button>
+  </a>
+
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Date</th>
+          <th>Employee Name</th>
+          <th>Topic</th>
+          <th>Total points</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          {% for rating in user_ratings %}
+          <td>{{rating.rating_date|date:"F d, Y"}}</td>
+          <td>{{rating.employeename}}</td>
+          <td>{{rating.topic}}</td>
+          <td>{{rating.totalpoints}}</td>
+          <td>
+            <a
+              href="{% url 'application:score-update' rating.id %}"
+              class="btn text-secondary px-0"
+            >
+              edit
+            </a>
+          </td>
+
+        </tr>
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

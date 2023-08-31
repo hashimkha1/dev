@@ -3,8 +3,9 @@ import string
 import boto3
 from datetime import date, timedelta
 from multiprocessing import context
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404,render, redirect
 from django.db.models import Q
 from accounts.models import CustomerUser
 from django.conf import settings
@@ -385,6 +386,15 @@ def ratewid(request,pk):
     return render(request, "application/orientation/rate.html", {"form": form})
 
 
+def enter_score(request):
+    if request.method == "POST":
+        form = RatingForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("application:userscores", request.user )
+    else:
+        form = RatingForm()
+    return render(request, "main/snippets_templates/generalform.html", {"form": form})
 
 def rating(request):
     ratings = Rated.objects.all().order_by("-rating_date")
@@ -393,6 +403,44 @@ def rating(request):
         "ratings": ratings,
     }
     return render(request, "application/orientation/rating.html", context)
+
+
+@login_required
+def userscores(request, user=None, *args, **kwargs):
+    request.session["siteurl"] = settings.SITEURL
+    # employee=request.user
+    employee = get_object_or_404(User, username=kwargs.get("username"))
+    user_ratings=Rated.objects.filter(employeename=employee)
+    # print(user_ratings)
+    context = {
+        'user_ratings': user_ratings,
+        "title": "Student Scores",
+    }
+    # setting  up session
+    request.session["employee_name"] = kwargs.get("username")
+    return render(request, "application/orientation/intermediary_training.html", context)
+
+
+class ScoresUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Rated
+    template_name = 'main/snippets_templates/generalform.html'
+    form_class = RatingForm  # Assuming you have a RatingForm in forms.py
+
+    # verify the user's permissions.
+    def test_func(self):
+        # Assuming every logged in user can update the score. 
+        # Change this condition as per your requirement.
+        return self.request.user.is_authenticated
+
+    def get_success_url(self):
+        # Adjust the reverse URL as per your URL configuration
+        return reverse("application:userscores", args=[str(self.request.user)])
+
+    def form_valid(self, form):
+        # Any logic you want to apply when the form is valid
+        # Example: Set some fields, log something, etc.
+        return super().form_valid(form)
+
 
 
 # -------------------------rating Section-------------------------------------#
@@ -438,6 +486,8 @@ class TraineeUpdateView(LoginRequiredMixin, UpdateView):
         if self.request.firstname == employee.name:
             return True
         return False
+
+
 
 class TraineeDeleteView(LoginRequiredMixin, DeleteView):
     model = Reporting

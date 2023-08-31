@@ -158,6 +158,17 @@ class Rated(models.Model):
         ("Alteryx", "Alteryx"),
         ("Tableau", "Tableau"),
         ("Database", "Database"),
+        ("Python", "Python"),
+        ("SAS", "SAS"),
+        ("English", "English"),
+        ("Kiswahili", "Kiswahili"),
+        ("Math", "Math"),
+        ("Business", "Business"),
+        ("Physics", "Physics"),
+        ("Chemistry", "Chemistry"),
+        ("Biology", "Biology"),
+        ("GHC", "GHC"),
+        ("CRE", "CRE"),
         ("Other", "Other"),
     ]
     id = models.AutoField(primary_key=True)

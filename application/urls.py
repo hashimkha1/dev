@@ -43,7 +43,12 @@ urlpatterns = [
     path(
         "trainee/<int:pk>/delete/", TraineeDeleteView.as_view(), name="trainee-delete"
     ),
+    path("enter_score/", views.enter_score, name="enter_score"),
+    path(
+        "score/<int:pk>/update/", views.ScoresUpdateView.as_view(), name="score-update"
+    ),
     path("rating/", views.rating, name="rating"),
+    path("rating/<str:username>", views.userscores, name="userscores"),
     path("rate/", views.rate, name="rate"),
     path("rate/<str:pk>", views.ratewid, name="ratewid"),
 

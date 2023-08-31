@@ -1,7 +1,7 @@
 {%extends "main/base_templates/new_base.html"%} {% block content %}
 <section id="rating">
   <div class="rating text-center">
-    <h2>Rating Results For All Applicants</h2>
+    <h2>Rating Scores For All</h2>
 
     <!--------
     
@@ -52,7 +52,10 @@
         <tr>
           {% for rating in ratings %}
           <td>{{rating.rating_date|date:"F d, Y"}}</td>
-          <td>{{rating.employeename}}</td>
+          <td>
+            <a class="article-title" href="{% url 'application:userscores' rating.employeename %}">
+              {{rating.employeename}}
+          </td>
           <td>{{rating.topic}}</td>
         
           <td>
