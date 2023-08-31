@@ -91,7 +91,7 @@ def fetch_or_compute_risk_statistics(ticker_symbol):
         # Ensure the index is a DatetimeIndex and then localize the timezone
         if not isinstance(historical_data.index, pd.DatetimeIndex):
             historical_data.index = pd.to_datetime(historical_data.index)
-        historical_data.index = historical_data.index.tz_localize("UTC")
+        historical_data.index = historical_data.index.tz_convert("UTC")
 
         # Beta Calculation (Here, we're taking SPY as the benchmark):
         benchmark = yf.Ticker('SPY').history(period="10y")['Close'].pct_change().dropna()
@@ -140,8 +140,16 @@ def fetch_data_util(category,ticker_symbol,number_years=None):
     elif category == 'statistics':
         # Fetch key statistics and then extract only valuation measures
         full_data = ticker_data.info
-        valuation_keys = ['marketCap', 'enterpriseValue', 'trailingPE', 'forwardPE', 'priceToSalesTrailing12Months', 
-                          'enterpriseToRevenue', 'enterpriseToEbitda', 'priceToBook']
+        ''' ============== All finacial terms =============   '''
+        ''' financial_terms = ["shareHolderRightsRisk", "overallRisk", "payoutRatio", "beta", "forwardPE", 
+            "profitMargins", "sharesShort", "shortRatio", "bookValue", "trailingEps", "forwardEps", "pegRatio", 
+            "enterpriseToRevenue", "enterpriseToEbitda", "totalCashPerShare", "ebitda", "totalDebt", 
+            "quickRatio", "currentRatio", "revenuePerShare", "returnOnAssets", "operatingCashflow", 
+            "revenueGrowth", "grossMargins", "ebitdaMargins", "operatingMargins"] '''
+        ''' ====== old data show when click on symbol ========='''
+        ''' valuation_keys = ['marketCap', 'enterpriseValue', 'trailingPE', 'forwardPE', 'priceToSalesTrailing12Months', 
+                          'enterpriseToRevenue', 'enterpriseToEbitda', 'priceToBook'] ''' 
+        valuation_keys = ["overallRisk", "sharesShort", "enterpriseToEbitda", "ebitda", "quickRatio", "currentRatio", "revenueGrowth"]
         data = {key: full_data.get(key, None) for key in valuation_keys}
     else:
         data = "Category not recognized"

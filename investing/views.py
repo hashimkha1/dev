@@ -31,6 +31,7 @@ from .models import (
 )
 from django.db.models import Q
 from accounts.models import CustomerUser
+from django.utils import timezone
 from getdata.utils import (
     main_shortput,fetch_data_util
 )
@@ -441,13 +442,16 @@ def oversoldpositions(request):
     # Get current datetime with UTC timezone
     table_name = "investing_oversold"
     get_over_postions(table_name)
-    overboughtsold_records = Oversold.objects.all()
+    current_date_str = timezone.now().strftime('%Y-%m-%d')
+    overboughtsold_records = Oversold.objects.filter(
+        Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
+    )
+    # overboughtsold_records = Oversold.objects.all()
     # expiry_date,days_to_expiration=computes_days_expiration(stockdata)
     # for record in overboughtsold_records:
         # print("record========>",record)
 
     context = { 
-        "overboughtsold": overboughtsold_records,
         "overboughtsold": overboughtsold_records,
         # "expiry_date": expiry_date,
         # "days_to_expiration": days_to_expiration,
@@ -558,7 +562,11 @@ def oversoldpositions(request,symbol=None):
     # Get current datetime with UTC timezone
     table_name = "investing_oversold"
     get_over_postions(table_name)
-    overboughtsold_records = Oversold.objects.all()
+    current_date_str = timezone.now().strftime('%Y-%m-%d')
+    overboughtsold_records = Oversold.objects.filter(
+        Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
+    )
+    # overboughtsold_records = Oversold.objects.all()
     # print("symbol=====>",symbol)
     if request.method == "POST":
         ticker_symbol = request.POST['ticker']
@@ -571,6 +579,9 @@ def oversoldpositions(request,symbol=None):
         # If not, you'll need to modify the utility function or handle the category differently.
         financial_data = fetch_data_util(category,ticker_symbol)
         # print("data=====>",financial_data)
+        if category == 'risk':
+            if financial_data['beta'] > 1:
+                Oversold.objects.filter(symbol=ticker_symbol).update(is_featured=False)
 
         context = { 
             "overboughtsold": overboughtsold_records,

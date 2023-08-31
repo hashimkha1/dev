@@ -114,6 +114,7 @@ class credit_spread(models.Model):
     rank = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
+    on_date = models.CharField(max_length=255,blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
@@ -140,6 +141,7 @@ class ShortPut(models.Model):
     annualized_return = models.CharField(max_length=255, blank=True, null=True)
     distance_to_strike = models.CharField(max_length=255, blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
+    on_date = models.CharField(max_length=255,blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
@@ -166,6 +168,7 @@ class covered_calls(models.Model):
     annualized_return = models.CharField(max_length=255,blank=True, null=True)
     distance_to_strike = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255,blank=True, null=True)
+    on_date = models.CharField(max_length=255,blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
@@ -185,6 +188,7 @@ class Oversold(models.Model):
     expiry = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
+    on_date = models.CharField(max_length=255,blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
