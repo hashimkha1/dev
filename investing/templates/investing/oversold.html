@@ -82,11 +82,12 @@
             <tr>
                   <th>Symbol</th>
                   <th>Action</th>
-                  <th>Stock_Price</th>
+                  <!-- <th>Stock_Price</th> -->
                   <th>Strike_Price</th>
                   <!-- <th>Days_To_Expiry</th> -->
                   <th>Expiry</th>
                   <th>Earnings_Date</th>
+                  <th>Date</th>
                   <th>More Info</th>
                   <th>Edit</th>
                   
@@ -110,11 +111,12 @@
                </a>
                 </td>
                 <td>{{ row.action }}{{ row.strategy }}</td>
-                <td>{{ row.stock_price }}{{ row.price }}</td>
+                <!-- <td>{{ row.stock_price }}{{ row.price }}</td> -->
                 <td>{{ row.strike_price }}</td>
                 <!-- <td>{{ row.expiry|date:"n/d/Y" }}</td> -->
                 <td>{{ row.expiry}}</td>
                 <td>{{ row.earnings_date }}</td>
+                <td>{{ row.on_date }}</td>
                 <td>
                   <a class=" article-title target="_blank" 
                   data-toggle="tooltip" title="{{ row.comment }}"

@@ -14,7 +14,8 @@ class InvestmentRateForm(forms.ModelForm):
         fields = "__all__"
         
 class OptionsForm(forms.ModelForm):
+    on_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
     class Meta:
         model = ShortPut
         # fields = '__all__'
-        fields = ['symbol','comment','is_featured']
+        fields = ['symbol','comment','on_date','is_featured']

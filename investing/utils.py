@@ -3,7 +3,7 @@ import math
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import date,datetime,time,timezone
-from .models import (ShortPut,covered_calls)
+from .models import (ShortPut,covered_calls,credit_spread)
 from django.db.models import Q
 from coda_project.settings import SITEURL
 from django.contrib.auth import get_user_model
@@ -124,6 +124,7 @@ def get_over_postions(table_name):
                 expiry VARCHAR(255),
                 earnings_date VARCHAR(255),
                 comment VARCHAR(255),
+                on_date VARCHAR(255),
                 is_active BOOLEAN,
                 is_featured BOOLEAN
             )
@@ -138,6 +139,9 @@ def get_over_postions(table_name):
 
         # Query the ShortPut table to exclude records with an empty comment field
         over_bought_sold_short_puts = ShortPut.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
+
+        # Query the credit_spread table to exclude records with an empty comment field
+        over_bought_sold_credit_spread = credit_spread.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
        
         # Check if each record already exists in the oversold table before appending
         existing_records = set()
@@ -157,6 +161,7 @@ def get_over_postions(table_name):
                 record.expiry,
                 record.earnings_date,
                 record.comment,
+                record.on_date,
                 record.is_active,
                 record.is_featured
             )
@@ -173,6 +178,24 @@ def get_over_postions(table_name):
                 record.expiry,
                 record.earnings_date,
                 record.comment,
+                record.on_date,
+                record.is_active,
+                record.is_featured
+            )
+            if record_tuple[:3] not in existing_records:
+                oversold_records.append(record_tuple)
+            
+        for record in over_bought_sold_credit_spread:
+            record_tuple = (
+                record.symbol,
+                record.type,
+                record.sell_strike,
+                record.rank,
+                record.price,
+                record.expiry,
+                record.earnings_date,
+                record.comment,
+                record.on_date,
                 record.is_active,
                 record.is_featured
             )
@@ -191,11 +214,13 @@ def get_over_postions(table_name):
                     expiry,
                     earnings_date,
                     comment,
+                    on_date,
                     is_active,
                     is_featured
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             ''', oversold_records)
+            conn.commit()
 
         # Close the cursor and the connection
         cursor.close()
