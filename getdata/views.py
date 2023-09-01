@@ -5,29 +5,17 @@ import requests
 from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
-from django.views import View
-from django.utils.dateformat import format
 from django.contrib import admin, messages
-from django.urls import path, reverse, reverse_lazy
+from django.urls import path, reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic import (
 	ListView,
     DetailView,
-    UpdateView
 )
 from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
-                    get_gmail_service,
-                    search_messages,
-                    get_message,
-                    getdata,
-                    GetSubject,
-                    get_crypto_price,
-                    get_stock_price,
-                    row_value,
                     fetch_and_insert_data,
                     load_xel_data_to_postgres
-
 )
 from finance.models import (Transaction)
 
@@ -37,8 +25,6 @@ from .models import CashappMail,ReplyMail,Editable,Logs
 from django.contrib.auth import get_user_model
 from .forms import CsvImportForm
 from coda_project.settings import EMAIL_INFO,source_target
-
-putsrow_value,callsrow_value,id_value=row_value()
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -480,40 +466,6 @@ def LogsViewSet(request):
     else:
         return redirect("main:layout")
     
-
-
-def options(request):
-    service = get_gmail_service()
-    messages = search_messages(service= service, query= 'Robinhood')
-    for message in messages:
-        msg_id = message['id']
-        print(msg_id)
-        data = get_message(service=service, msg_id=msg_id)
-        soup = getdata(data)
-        if soup == 0:
-            os.remove(data)
-            continue
-        try:
-            subjectname = GetSubject(soup)
-            if subjectname == None:
-                os.remove(data)
-                continue
-        except:
-            continue
-        print(f'Order executed : {subjectname}')
-        #This is for stock price
-        if subjectname == 'Option Order Executed':
-            get_stock_price(soup, subjectname)
-            os.remove(data)
-        #This is for crypto currency
-        elif subjectname == 'Order Executed':
-            get_crypto_price(soup, subjectname)
-            os.remove(data)
-        else:
-            os.remove(data)
-        # return render(request, "getdata/options.html")
-        return redirect("getdata:stockmarket")
-
 
 def refetch_data(request):
     fetch_and_insert_data()

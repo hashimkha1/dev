@@ -4,8 +4,7 @@ from .views import *
 from mail.search_mail import parse_mail, search_job_mail
 from finance.utils import upload_csv
 from django.urls import re_path
-from gapi.gservices import cashapp_main
-from getdata.utils import main_cread_spread
+
 app_name = 'getdata'
 urlpatterns = [
     path('getrating/', views.getrating, name='data-getrating'),

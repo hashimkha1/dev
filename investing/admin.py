@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
-	stockmarket,
-	cryptomarket,
+	Liquidity,
+	Unusual_Volume,
 	credit_spread,
 	ShortPut,
 	covered_calls,
@@ -11,8 +11,8 @@ from .models import (
 )
 
 # Register your models here.
-admin.site.register(stockmarket)
-admin.site.register(cryptomarket)
+admin.site.register(Liquidity)
+admin.site.register(Unusual_Volume)
 admin.site.register(credit_spread)
 admin.site.register(ShortPut)
 admin.site.register(covered_calls)

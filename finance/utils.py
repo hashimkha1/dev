@@ -1,14 +1,11 @@
 import os
 import requests
 from datetime import datetime
-import dateutil.relativedelta
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Max
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .models import TrainingLoan, Transaction
-from management.models import TaskHistory
-from getdata.views import uploaddata
 from main.utils import Finance,Data,Management
 from accounts.models import Department
 

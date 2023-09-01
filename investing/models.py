@@ -75,31 +75,30 @@ class Investment_rates(models.Model):
         return self.name
 
 
-class stockmarket(models.Model):
+class Liquidity(models.Model):
 	symbol = models.CharField(max_length=255)
-	action = models.CharField(max_length=255)
-	qty=models.PositiveIntegerField()
-	unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-	total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-	date = models.DateTimeField()
+	liquidity = models.CharField(max_length=255)
+	rank = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
 	class Meta:
-		verbose_name_plural = "stockmarket"
+		verbose_name_plural = "Liquidity"
 
-class cryptomarket(models.Model):
-	symbol = models.CharField(max_length=255)
-	action = models.CharField(max_length=255)
-	unit_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-	total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-	date = models.DateTimeField()
+class Unusual_Volume(models.Model):
+	symbol = models.CharField(max_length=255,blank=True, null=True)
+	price = models.CharField(max_length=255,blank=True, null=True)
+	average_volume = models.CharField(max_length=255,blank=True, null=True)
+	expiry = models.CharField(max_length=255,blank=True, null=True)
+	strike_price = models.CharField(max_length=255,blank=True, null=True)
+	type = models.CharField(max_length=255,blank=True, null=True)
+	volume = models.CharField(max_length=255,blank=True, null=True)
+	option_sizzle = models.CharField(max_length=255,blank=True, null=True)
 
 	class Meta:
-		verbose_name_plural = "cryptomarket"
+		verbose_name_plural = "Sizzling Options"
 
 	def __str__(self):
 		return self.symbol
 	
-
 class credit_spread(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
     strategy = models.CharField(max_length=255,blank=True, null=True)

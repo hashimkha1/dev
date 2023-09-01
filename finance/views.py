@@ -623,7 +623,6 @@ def filteroutflowsbydepartment(request):
         return outflows,form
 
 
-
 def outflows(request):
     outflows,form=filteroutflowsbydepartment(request)
     # print("values========>",outflows,form)
