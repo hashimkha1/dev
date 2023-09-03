@@ -76,6 +76,8 @@ def fetch_or_compute_risk_statistics(ticker_symbol):
         print(f"Error fetching data for {ticker_symbol}: {str(e)}")
         return None, None, None, None  # Return a tuple of Nones
 
+
+
 def fetch_data_util(category,ticker_symbol,number_years=None):
     ticker_data = yf.Ticker(ticker_symbol)
     # beta,annual_return,annual_std_dev,sharpe_ratio=fetch_or_compute_risk_statistics(ticker_symbol)
@@ -120,6 +122,8 @@ def fetch_data_util(category,ticker_symbol,number_years=None):
         data = "Category not recognized"
     
     return data
+
+
 
 def load_xel_data_to_postgres(xel_folder_path,table_name):
     # Create a PostgreSQL connection and cursor

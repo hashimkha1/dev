@@ -98,6 +98,23 @@ class Unusual_Volume(models.Model):
 
 	def __str__(self):
 		return self.symbol
+     
+class Ticker_Data(models.Model):
+    symbol = models.CharField(max_length=255,blank=True, null=True)
+    overallrisk =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    sharesshort =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    enterprisetoebitda =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    ebitda =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    quickratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    currentratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    revenuegrowth =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    fetched_date =models.DateField(auto_now_add=True,blank=True,null=True)
+
+    class Meta:
+        verbose_name_plural = "Option Measures"
+
+    def __str__(self):
+        return self.symbol
 	
 class credit_spread(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
