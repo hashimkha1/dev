@@ -49,6 +49,11 @@ class ServiceCategory(models.Model):
 
     def __str__(self):
         return self.name
+    # model for chatgpt
+class ChatMessage(models.Model):
+    user_message = models.TextField()
+    bot_response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)    
 
 
 class Pricing(models.Model):
