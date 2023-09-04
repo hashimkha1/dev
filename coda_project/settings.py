@@ -19,7 +19,7 @@ SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 # SECRET_KEY = os.environ.get('SECRET_KEY')
 
 if os.environ.get('ENVIRONMENT') == 'production':
-    DEBUG = False
+    DEBUG = True
 else:
     DEBUG = True
 
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     "django_countries",
     "mathfilters",
     "mptt",
+    'corsheaders',
     "django_filters",
     "django_celery_beat",
     "django_celery_results",
@@ -81,6 +82,7 @@ CRONJOBS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -160,15 +162,40 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": dbname,
+#         "USER":user,
+#         "PASSWORD":password,
+#         "HOST": host
+#     }
+# }
+
+'''=========== Heroku DB ================'''
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": dbname,
-        "USER":user,
-        "PASSWORD":password,
-        "HOST": host
+    'default': {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'd8liqmn44tm61v',
+        "USER": 'ylzxqlnsngttgn',
+        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
     }
 }
+
+
+'''=========== Local DB ================'''
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'Coda_Dev',
+#        'USER': 'postgres',
+#        'PASSWORD': 'Amit@esfera',
+#        'HOST': 'localhost',  
+#        'PORT': '5432',
+#    }
+# }
+
 
 # DATABASES = {
 #     "default": {

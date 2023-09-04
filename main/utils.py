@@ -81,9 +81,8 @@ def buildmodel(question):
     #fetching api key 
     # https://platform.openai.com/account/api-keys
     # 
-    openai.api_key = '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'
-
-    # openai.api_key = os.environ.get('OPENAI_API_KEY')
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+   
     # print(openai.api_key)
 
     #Building engine
@@ -384,6 +383,11 @@ Automation = [
         "title": "ChatGPT",
         "link":"https://chat.openai.com/chat",
         "linkname":"CHATGPT",
+    },
+    {
+        "title": "Stocks & Options",
+        "link":SITEURL+"/investing/optionlist/",
+        "linkname":"options",
     },
 ]
 

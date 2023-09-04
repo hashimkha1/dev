@@ -3,6 +3,8 @@ import json
 import webbrowser
 import datetime
 import time
+import openai
+from django.views.decorators.csrf import csrf_exempt
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
@@ -19,7 +21,8 @@ from .models import Testimonials
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
-from management.models import Whatsapp
+from management.models import Whatsapp 
+from main.models import ChatMessage
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
@@ -93,7 +96,54 @@ def layout(request):
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
+    # for chatbot
+    OPENAI_API_KEY = ''    #api keys
+    openai.api_key =  OPENAI_API_KEY
+    
+    if request.method == 'POST':
+        try:
+            user_message = request.POST['user_message']
 
+            # Store the user's message
+            chat_message = ChatMessage(user_message=user_message)
+            chat_message.save()
+
+            # Call ChatGPT for a response
+            api_key = openai.api_key
+            headers = {
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json',
+            }
+            data = {
+                'prompt': user_message,
+                'max_tokens': 50,
+            }
+            response = requests.post(
+                'https://api.openai.com/v1/engines/davinci-codex/completions',
+                headers=headers,
+                json=data,
+            )
+
+            if response.status_code == 200:
+                bot_response = response.json().get('choices', [{}])[0].get('text', '')
+                chat_message.bot_response = bot_response
+                chat_message.save()
+                return JsonResponse({'response': bot_response})
+
+            # Handle API response errors gracefully
+            return JsonResponse({'response': 'Sorry, the chat service is currently unavailable.'})
+
+        except requests.exceptions.RequestException as e:
+            # Handle network errors gracefully
+            return JsonResponse({'response': 'Sorry, there was an issue with the chat service. Please try again later.'})
+
+    # Handle GET requests and render the chatbot interface
+    chat_history = ChatMessage.objects.all()  # Get chat history for display
+    context = {
+        'chat_history': chat_history,
+    }
+    
+    return render(request, "main/home_templates/newlayout.html", context)
 # =====================SERVICES  VIEWS=======================================
 class ServiceCreateView(LoginRequiredMixin, CreateView):
     model = Service

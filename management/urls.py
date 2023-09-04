@@ -1,7 +1,8 @@
 from django.urls import path
 from management import views
 from management.views import (
-                        TaskListView,TaskDetailView,
+                        # TaskListView,
+                        TaskDetailView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
                         AssessListView,TaskCategoryCreateView,TaskGroupCreateView,
                         DepartmentUpdateView, add_requirement_justification,
@@ -27,8 +28,9 @@ urlpatterns = [
     path("employee_contract/", views.employee_contract, name="employee_contract"),
     path("read_employee_contract/", views.read_employee_contract, name="read_employee_contract"),
     path("confirm_employee_contract/", views.confirm_employee_contract, name="confirm_employee_contract"),
-    path('tasks/', TaskListView.as_view(), name='tasks'),
-    path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
+    path('tasks/', views.tasklist, name='tasks'),
+    # path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
+    # path('filterbycategorytag', views.filterbycategorytag, name='filterbycategorytag'),
     # path('newlink/', TaskCreateView.as_view(), name='newlink'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
@@ -75,6 +77,7 @@ urlpatterns = [
 
     #========================REQUIREMENTS SECTION=====================================================
     path('requirement/new', views.newrequirement, name='new_requirement'),
+    path('form_submission_view/', views.form_submission_view, name='form_submission_view'),
     path('requirements/', views.requirements, name='requirements'),
     path('activerequirements/', views.active_requirements, name='requirements-active'),
     path('client_requirements/', views.requirements, name='client_requirements'),

@@ -1,25 +1,16 @@
 import psycopg2
 import math
-from django.urls import reverse
-from django.db import connection
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
 from datetime import date,datetime,time,timezone
-from .models import (
-    ShortPut,
-    covered_calls,
-    credit_spread,
-    Oversold
-)
+from .models import (ShortPut,covered_calls)
 from django.db.models import Q
-from accounts.models import CustomerUser
-from main.utils import path_values
 
 from django.contrib.auth import get_user_model
 from coda_project.settings import dba_values ,source_target
 User=get_user_model
 
-host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
+host,dbname,user,password=dba_values()
 
 
 def compute_pay(amount,minimum_amount= 2000, base_return=10, inc_rate=7, increment_threshold_amt=2000, decrease_threshold_amt=3000):
@@ -68,9 +59,7 @@ def get_user_investment(investments, latest_investment_rates):
         amount_invested = 0.0
         number_positions = 0
         minimum_duration = 0
-        print("No investments found for the user.")
 
-    print("Details====>", total_amount, protected_capital, amount_invested, returns, number_positions,minimum_duration)
     return total_amount, protected_capital, amount_invested, returns, number_positions, minimum_duration
 
 
@@ -86,13 +75,12 @@ def investment_test():
     return_amount_3 = compute_pay(investment_amount_3)
     return_amount_4 = compute_pay(investment_amount_4)
 
-    print("Return for $5000 investment:", return_amount_1)
-    print("Return for $8000 investment:", return_amount_2)
-    print("Return for $11000 investment:", return_amount_3)
-    print("Return for $14000 investment:", return_amount_4)
+    # print("Return for $5000 investment:", return_amount_1)
+    # print("Return for $8000 investment:", return_amount_2)
+    # print("Return for $11000 investment:", return_amount_3)
+    # print("Return for $14000 investment:", return_amount_4)
 
     return return_amount_1,return_amount_2,return_amount_3,return_amount_4
-
 
 
 def computes_days_expiration(stockdata):
@@ -146,11 +134,11 @@ def get_over_postions(table_name):
         conn.commit()
 
         # Query the covered_calls table to exclude records with an empty comment field
-        over_bought_sold_calls = covered_calls.objects.exclude(comment='')
+        over_bought_sold_calls = covered_calls.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
 
         # Query the ShortPut table to exclude records with an empty comment field
-        over_bought_sold_short_puts = ShortPut.objects.exclude(comment='')
-
+        over_bought_sold_short_puts = ShortPut.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
+       
         # Check if each record already exists in the oversold table before appending
         existing_records = set()
         cursor.execute(f'SELECT symbol, action, strike_price FROM {table_name}')
