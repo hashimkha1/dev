@@ -1224,7 +1224,6 @@ def evidence(request):
     return render(request, "management/daf/evidence.html", {"links": links})
 
 
-
 def userevidence(request, user=None, *args, **kwargs):
     # current_user = request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))

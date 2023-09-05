@@ -83,9 +83,29 @@ def investment_test():
     return return_amount_1,return_amount_2,return_amount_3,return_amount_4
 
 
+# def computes_days_expiration(stockdata):
+#     date_today = datetime.now(timezone.utc)
+#     days_to_expiration = 0
+#     for x in stockdata:
+#         if isinstance(x.expiry, str):
+#             expiry_str = x.expiry
+#             expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
+#             expiry_date = expirydate.astimezone(timezone.utc)
+#         elif isinstance(x.expiry, datetime):
+#             expiry_date = x.expiry.astimezone(timezone.utc)
+#         else:
+#             continue
+        
+#         days_to_exp = expiry_date - date_today
+#         days_to_expiration = days_to_exp.days
+        
+#     return expiry_date,days_to_expiration
+
 def computes_days_expiration(stockdata):
     date_today = datetime.now(timezone.utc)
     days_to_expiration = 0
+    expiry_date = None  # initializing expiry_date here
+    
     for x in stockdata:
         if isinstance(x.expiry, str):
             expiry_str = x.expiry
@@ -95,11 +115,21 @@ def computes_days_expiration(stockdata):
             expiry_date = x.expiry.astimezone(timezone.utc)
         else:
             continue
-        
+
         days_to_exp = expiry_date - date_today
         days_to_expiration = days_to_exp.days
         
-    return expiry_date,days_to_expiration
+        
+    return expiry_date, days_to_expiration
+
+def delete_duplicates_based_on_symbol(stock_model, duplicate_symbols):
+    for entry in duplicate_symbols:
+        symbol = entry['symbol']
+        # Here, we're keeping the latest record. If you wish to keep the earliest, replace 'last()' with 'first()'
+        record_to_keep = stock_model.objects.filter(symbol=symbol).last()
+        
+        # Deleting other records
+        stock_model.objects.filter(symbol=symbol).exclude(id=record_to_keep.id).delete()
 
 
 def get_over_postions(table_name):
@@ -135,14 +165,24 @@ def get_over_postions(table_name):
         conn.commit()
 
         # Query the covered_calls table to exclude records with an empty comment field
-        over_bought_sold_calls = covered_calls.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
 
+        # over_bought_sold_calls = covered_calls.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
+        over_bought_sold_calls = covered_calls.objects.exclude(
+                Q(comment =' ')|Q(comment ='comment') | Q(comment='') | Q(comment__isnull=True))
         # Query the ShortPut table to exclude records with an empty comment field
         over_bought_sold_short_puts = ShortPut.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
 
         # Query the credit_spread table to exclude records with an empty comment field
         over_bought_sold_credit_spread = credit_spread.objects.exclude(Q(comment =' ')|Q(comment ='comment'))
-       
+        credit_count_all = credit_spread.objects.all().count()
+        credit_comments= credit_spread.objects.exclude(Q(comment =' ')|Q(comment ='comment')).count()
+        over_bought_sold_credit_count = covered_calls.objects.exclude(
+                Q(comment =' ')|Q(comment ='comment') | Q(comment='') | Q(comment__isnull=True)).count()
+        
+        print("calls_count_all========>",credit_count_all)
+        print("calls_comments========>",credit_comments)
+        print("over_bought_sold_calls========>",over_bought_sold_credit_count)
+
         # Check if each record already exists in the oversold table before appending
         existing_records = set()
         cursor.execute(f'SELECT symbol, action, strike_price FROM {table_name}')

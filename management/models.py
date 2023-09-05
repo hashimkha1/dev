@@ -409,7 +409,7 @@ class TaskLinks(models.Model):
         limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True),
     )
     link_name = models.CharField(max_length=255, default="General")
-    description = models.TextField()
+    description = models.TextField(blank=True,null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     doc = models.FileField(default="None", upload_to="evidence/docs/")

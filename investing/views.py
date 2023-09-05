@@ -6,11 +6,12 @@ from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.views.generic import CreateView,ListView, DetailView, UpdateView
-
+from django import template
 from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,get_over_postions,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories)
-
+                    computes_days_expiration,get_user_investment,financial_categories,
+                    delete_duplicates_based_on_symbol)
+from django.db.models import Count
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
 
@@ -20,10 +21,7 @@ from .forms import (
     InvestmentRateForm
 )
 
-
 from .models import (
-    Unusual_Volume,
-    Liquidity,
     ShortPut,
     covered_calls,
     credit_spread,
@@ -31,13 +29,16 @@ from .models import (
     Investment_rates,
     Oversold,
     Options_Returns,
-    Cost_Basis
+    Cost_Basis,
+    Ticker_Data
 )
 from django.db.models import Q
 from accounts.models import CustomerUser
 from django.utils import timezone
-from getdata.utils import fetch_data_util
+# from getdata.utils import fetch_data_util
 
+
+register = template.Library()
 User=get_user_model
 
 # Create your views here.
@@ -127,14 +128,13 @@ def optionlist(request):
     return render(request, "main/snippets_templates/output_snippets/option_data.html")
 
 
+@login_required
 def optiondata(request, title=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
 
-    # Get symbols with wash_days >= 40 directly using list comprehension
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
-
     model_mapping = {
         'covered_calls': {
             'model': covered_calls,
@@ -151,83 +151,54 @@ def optiondata(request, title=None, *arg, **kwargs):
     }
 
     stock_model = model_mapping[sub_title]['model']
-    title = model_mapping[sub_title]['title']
+    page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
+
+    # Dealing with duplicate symbols
+    duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
+    delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
 
     stockdata = stock_model.objects.filter(is_featured=True)
-    
-    url_mapping = {
-        'shortputdata': 'investing:shortputupdate',
-        'credit_spread': 'investing:creditspreadupdate',
-        'covered_calls': 'investing:coveredupdate',
-    }
-    url_name = url_mapping[sub_title]
+    if stockdata.exists():  # Using exists() for clarity
+        url_mapping = {
+            'shortputdata': 'investing:shortputupdate',
+            'credit_spread': 'investing:creditspreadupdate',
+            'covered_calls': 'investing:coveredupdate',
+        }
+        url_name = url_mapping.get(sub_title, '')
 
-    def get_edit_url(row_id):
-        return reverse(url_name, args=[row_id])
-    
-    expiry_date, days_to_expiration = computes_days_expiration(stockdata)
-    
-    filtered_stockdata = [
-        x for x in stockdata if (
-            not Options_Returns.objects.filter(symbol=x.symbol).exists() or
-            x.symbol in distinct_returns_symbols
-        ) and days_to_expiration >= 21
-    ]
-    
-    context = { 
-        "data": filtered_stockdata,
-        "days_to_expiration": days_to_expiration,
-        "subtitle": sub_title,
-        "pre_sub_title": pre_sub_title,
-        'title': title,
-        "get_edit_url": get_edit_url,
-        "url_name": url_name,
-    }
-    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+        def get_edit_url(row_id):
+            return reverse(url_name, args=[row_id])
 
-class VolumeCreateView(LoginRequiredMixin, CreateView):
-    model = Unusual_Volume
-    template_name='main/snippets_templates/generalform.html'
-    success_url = "/investing/volume"
-    fields = "__all__"
+        days_to_expiration = computes_days_expiration(stockdata)[1]
 
-    def form_valid(self, form):
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return reverse(
-                        "investing:unusual_volume", 
-                        # kwargs={
-                        #     'taskid':  self.idval
-                        # }
-                    )
-    
-class LiquidityCreateView(LoginRequiredMixin, CreateView):
-    model = Liquidity
-    template_name='main/snippets_templates/generalform.html'
-    success_url = "/investing/liquidity"
-    fields = "__all__"
+        # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
+        all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
-    def form_valid(self, form):
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return reverse(
-                        "investing:liquidity", 
-                        # kwargs={
-                        #     'taskid':  self.idval
-                        # }
-                    )
-    
-class LiquidityList(ListView):
-    model=Liquidity
-    template_name="getdata/options.html"
-    context_object_name = "stocks"
+        filtered_stockdata = [
+            x for x in stockdata if x.symbol not in all_return_symbols or
+            (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
+        ]
 
-class VolumeList(ListView):
-    model=Unusual_Volume
-    template_name="getdata/options.html"
-    context_object_name = "stocks"
+        context = {
+            "data": filtered_stockdata,
+            "days_to_expiration": days_to_expiration,
+            "subtitle": sub_title,
+            "pre_sub_title": pre_sub_title,
+            'title': page_title,  # Using renamed title
+            "get_edit_url": get_edit_url,
+            "url_name": url_name,
+        }
+        return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+
+    else:
+        context = {
+            "title": "STOCKS ERROR",
+            "message": 'Hi, No valid expiry dates found in stockdata..'
+        }
+        return render(request, "main/errors/generalerrors.html", context)
+
+
+
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
@@ -253,15 +224,23 @@ def shortput_update(request, pk):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def covered_update(request, pk):
-    path_list,subtitle,pre_sub_title=path_values(request)
+    path_list, subtitle, pre_sub_title = path_values(request)
     covered = get_object_or_404(covered_calls, pk=pk)
-    success_url = reverse('investing:option_list', kwargs={'title': 'covered_calls'})
 
+    # Check if the object exists
+    if not covered:
+        context = {
+            "title": "STOCKS ERROR",
+            "message": 'Hi, No covered_calls matches the given query.'
+        }
+        return render(request, "main/errors/generalerrors.html", context)
+    
+    success_url = reverse('investing:option_list', kwargs={'title': 'covered_calls'})
+    
     if request.method == 'POST':
         form = OptionsForm(request.POST, instance=covered)
         if form.is_valid():
             form.save()
-            return redirect(success_url)
     else:
         form = OptionsForm(instance=covered)
 
@@ -271,11 +250,10 @@ def covered_update(request, pk):
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
 
-
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def credit_spread_update(request, pk):
-    spread = get_object_or_404(credit_spread, pk=pk)
+    # spread = get_object_or_404(credit_spread, pk=pk)
     success_url = reverse('investing:option_list', kwargs={'title': 'credit_spread'})
 
     if request.method == 'POST':
@@ -293,31 +271,9 @@ def credit_spread_update(request, pk):
     return render(request, 'main/snippets_templates/generalform.html', context)
 
 
-@login_required
-def oversoldpositions(request):
-    path_list,sub_title,pre_sub_title = path_values(request)
-    # Get current datetime with UTC timezone
-    table_name = "investing_oversold"
-    get_over_postions(table_name)
-    current_date_str = timezone.now().strftime('%Y-%m-%d')
-    overboughtsold_records = Oversold.objects.filter(
-        Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
-    )
-    # overboughtsold_records = Oversold.objects.all()
-    # expiry_date,days_to_expiration=computes_days_expiration(stockdata)
-    # for record in overboughtsold_records:
-        # print("record========>",record)
-
-    context = { 
-        "overboughtsold": overboughtsold_records,
-        # "expiry_date": expiry_date,
-        # "days_to_expiration": days_to_expiration,
-    }
-    return render(request, "investing/oversold.html", context)
-
 class oversold_update(UpdateView):
     model = Oversold
-    success_url = "/investing/overboughtsold"
+    success_url = "/investing/overboughtsold/None"
     fields ="__all__"
     # fields = ['symbol','comment','is_featured']
     template_name="main/snippets_templates/generalform.html"
@@ -329,11 +285,6 @@ class oversold_update(UpdateView):
             return True
         return False
     
-
-
-from django import template
-
-register = template.Library()
 
 @register.filter
 def subtract_dates(date1, date2):
@@ -412,45 +363,61 @@ def cost_basis(request):
     }
     return render(request, "investing/cost_basis.html", context)
 
-def oversoldpositions(request,symbol=None):
-    path_list,sub_title,pre_sub_title = path_values(request)
+
+# def all_oversoldpositions(request):
+#     # Get current datetime with UTC timezone
+#     table_name = "investing_oversold"
+#     get_over_postions(table_name)
+#     current_date_str = timezone.now().strftime('%Y-%m-%d')
+#     overboughtsold_records = Oversold.objects.filter(
+#         Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
+#     )
+#     context = { 
+#         "overboughtsold": overboughtsold_records,
+#     }
+#     return render(request, "investing/oversold.html", context)
+
+def ticker_measures(request):
     # Get current datetime with UTC timezone
+    ticker_data = Ticker_Data.objects.all()
+    context = { 
+        "ticker_data": ticker_data,
+    }
+    # return render(request, "investing/oversold.html", context)
+    return render(request, "investing/ticker_data.html", context)
+
+@login_required
+def oversoldpositions(request,symbol=None):
+   
     table_name = "investing_oversold"
     get_over_postions(table_name)
     current_date_str = timezone.now().strftime('%Y-%m-%d')
     overboughtsold_records = Oversold.objects.filter(
-        Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
+        (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
     )
-    # overboughtsold_records = Oversold.objects.all()
-    # print("symbol=====>",symbol)
-    if request.method == "POST":
-        ticker_symbol = request.POST['ticker']
-        category = request.POST['category']
-        # print("category====>",category)
-        if category == 'financials':
-            url = f'https://finance.yahoo.com/quote/{ ticker_symbol }/{category}?p={ticker_symbol}'
-            return redirect(url)
-        # Assuming the utility function can handle the category. fetch_financial_data
-        # If not, you'll need to modify the utility function or handle the category differently.
-        financial_data = fetch_data_util(category,ticker_symbol)
-        # print("data=====>",financial_data)
-        if category == 'risk':
-            if financial_data['beta'] > 1:
-                Oversold.objects.filter(symbol=ticker_symbol).update(is_featured=False)
-
-        context = { 
-            "overboughtsold": overboughtsold_records,
-            "financial_data": financial_data,
-            "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
-            "financial_categories": financial_categories,
-            "category": category,
-            "risk_ratios": risk_ratios,
-        }
-    else:
+    if symbol is None:
+        print("symbol======>",symbol)
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
+    else:
+        # ticker_symbol = request.POST['ticker']
+        ticker_symbol = symbol
+        print("symbol=====>",symbol)
+        ticker_measures = Ticker_Data.objects.filter(symbol=ticker_symbol)
+        print("ticker_measures=====XXXXXXX=====>",ticker_measures)
+    
+        context = { 
+            "overboughtsold": overboughtsold_records,
+            # "financial_data": financial_data,
+            "ticker_data": ticker_measures,
+            "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
+            "financial_categories": financial_categories,
+            # "category": category,
+            "risk_ratios": risk_ratios,
+        }
+
     return render(request, "investing/oversold.html", context)

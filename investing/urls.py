@@ -13,17 +13,13 @@ urlpatterns = [
     path('companyreturns/', views.options_returns, name='companyreturns'),
     path('costbasis/', views.cost_basis, name='costbasis'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
-    
-    path('newvolume/', views.VolumeCreateView.as_view(), name='newvolume'),
-    path('newliquidity/', views.LiquidityCreateView.as_view(), name='newliquidity'),
-    path('volume/', views.VolumeList.as_view(), name='unusual_volume'),
-    path('liquidity/', views.LiquidityList.as_view(), name='liquidity'),
+
     path('optionlist/', views.optionlist, name='optionlist'),
     path('options/<str:title>', views.optiondata, name='option_list'),
     path('creditspreadupdate/<int:pk>', views.credit_spread_update, name='creditspreadupdate'),
     path('coveredupdate/<int:pk>', views.covered_update, name='coveredupdate'),
     path('shortputupdate/<int:pk>', views.shortput_update, name='shortputupdate'),
-    path('overboughtsold/<str:symbol>', views.oversoldpositions, name='sigleoverboughtsold'),
-    path('overboughtsold/', views.oversoldpositions, name='overboughtsold'),
+    path('overboughtsold/<str:symbol>', views.oversoldpositions, name='overboughtsold'),
+    path('measures/', views.ticker_measures, name='ticker_measures'),
     path('oversoldupdate/<int:pk>', views.oversold_update.as_view(), name='oversoldupdate'),
 ]
