@@ -1,7 +1,6 @@
 from django.contrib import admin
 from .models import (
-	Liquidity,
-	Unusual_Volume,
+	Ticker_Data,
 	credit_spread,
 	ShortPut,
 	covered_calls,
@@ -11,8 +10,7 @@ from .models import (
 )
 
 # Register your models here.
-admin.site.register(Liquidity)
-admin.site.register(Unusual_Volume)
+admin.site.register(Ticker_Data)
 admin.site.register(credit_spread)
 admin.site.register(ShortPut)
 admin.site.register(covered_calls)

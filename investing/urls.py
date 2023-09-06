@@ -5,7 +5,7 @@ from . import views
 app_name = 'investing'
 urlpatterns = [
     path('', views.home, name='home'),
-    path('covered/', views.coveredcalls, name='covered'),
+    # path('covered/', views.coveredcalls, name='covered'),
     path('training/', views.training, name='training'),
     path('newinvestment/', views.newinvestment, name='newinvestment'),
     path('newinvestmentrate/', views.newinvestmentrate, name='newinvestmentrate'),
@@ -13,7 +13,6 @@ urlpatterns = [
     path('companyreturns/', views.options_returns, name='companyreturns'),
     path('costbasis/', views.cost_basis, name='costbasis'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
-
     path('optionlist/', views.optionlist, name='optionlist'),
     path('options/<str:title>', views.optiondata, name='option_list'),
     path('creditspreadupdate/<int:pk>', views.credit_spread_update, name='creditspreadupdate'),

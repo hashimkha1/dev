@@ -45,8 +45,8 @@ User=get_user_model
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
 
-def coveredcalls(request):
-    return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
+# def coveredcalls(request):
+#     return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def training(request):
     return render(request, 'investing/training.html', {'title': 'training'})
@@ -131,10 +131,10 @@ def optionlist(request):
 @login_required
 def optiondata(request, title=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
-
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
+
     model_mapping = {
         'covered_calls': {
             'model': covered_calls,
@@ -196,8 +196,6 @@ def optiondata(request, title=None, *arg, **kwargs):
             "message": 'Hi, No valid expiry dates found in stockdata..'
         }
         return render(request, "main/errors/generalerrors.html", context)
-
-
 
 
 @login_required
@@ -363,32 +361,16 @@ def cost_basis(request):
     }
     return render(request, "investing/cost_basis.html", context)
 
-
-# def all_oversoldpositions(request):
-#     # Get current datetime with UTC timezone
-#     table_name = "investing_oversold"
-#     get_over_postions(table_name)
-#     current_date_str = timezone.now().strftime('%Y-%m-%d')
-#     overboughtsold_records = Oversold.objects.filter(
-#         Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)
-#     )
-#     context = { 
-#         "overboughtsold": overboughtsold_records,
-#     }
-#     return render(request, "investing/oversold.html", context)
-
 def ticker_measures(request):
     # Get current datetime with UTC timezone
     ticker_data = Ticker_Data.objects.all()
     context = { 
         "ticker_data": ticker_data,
     }
-    # return render(request, "investing/oversold.html", context)
     return render(request, "investing/ticker_data.html", context)
 
 @login_required
 def oversoldpositions(request,symbol=None):
-   
     table_name = "investing_oversold"
     get_over_postions(table_name)
     current_date_str = timezone.now().strftime('%Y-%m-%d')

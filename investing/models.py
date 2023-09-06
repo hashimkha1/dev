@@ -75,30 +75,6 @@ class Investment_rates(models.Model):
         return self.name
 
 
-class Liquidity(models.Model):
-	symbol = models.CharField(max_length=255)
-	liquidity = models.CharField(max_length=255)
-	rank = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-
-	class Meta:
-		verbose_name_plural = "Liquidity"
-
-class Unusual_Volume(models.Model):
-	symbol = models.CharField(max_length=255,blank=True, null=True)
-	price = models.CharField(max_length=255,blank=True, null=True)
-	average_volume = models.CharField(max_length=255,blank=True, null=True)
-	expiry = models.CharField(max_length=255,blank=True, null=True)
-	strike_price = models.CharField(max_length=255,blank=True, null=True)
-	type = models.CharField(max_length=255,blank=True, null=True)
-	volume = models.CharField(max_length=255,blank=True, null=True)
-	option_sizzle = models.CharField(max_length=255,blank=True, null=True)
-
-	class Meta:
-		verbose_name_plural = "Sizzling Options"
-
-	def __str__(self):
-		return self.symbol
-     
 class Ticker_Data(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
     overallrisk =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)

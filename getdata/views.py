@@ -4,7 +4,7 @@ import json
 import requests
 from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
-from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
+from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse,HttpResponseBadRequest
 from django.contrib import admin, messages
 from django.urls import path, reverse
 from django.contrib.auth.decorators import login_required
@@ -108,12 +108,84 @@ class CashappMailDetailSlugView(DetailView):
 
 # # -----
 
+from django.shortcuts import redirect
+
+
+# def initiate_oauth(request):
+#     # Your application's configuration
+#     CLIENT_ID = os.environ.get('GOTO_CLIENT_ID')
+#     REDIRECT_URI = "https://www.codanalytics.net/"
+
+#     # Generate the authorization URL dynamically
+#     auth_url = f"https://api.getgo.com/oauth/v2/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={REDIRECT_URI}"
+
+#     # Redirect the user to the GoToMeeting's OAuth2 page
+#     return redirect(auth_url)
+
+def initiate_oauth(request):
+    # Your application's configuration
+    CLIENT_ID = 'a75f876d-cb58-404c-b5c0-4e91d9bc4052' # os.environ.get('GOTO_CLIENT_ID')
+    REDIRECT_URI =  "http://localhost:8000/getdata/obtain_tokens/"
+
+    # Generate the authorization URL dynamically
+    auth_url = f"https://api.getgo.com/oauth/v2/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={REDIRECT_URI}"
+
+    # Redirect the user to the GoToMeeting's OAuth2 page
+    return redirect(auth_url)
+
+
+def obtain_tokens(request):
+    # Obtain the authorization code from the request parameters
+    code = request.GET.get('code')
+    # code='eyJraWQiOiI2MjAiLCJhbGciOiJSUzUxMiJ9.eyJzYyI6ImNhbGwtY29udHJvbC52MS5jYWxscy5jb250cm9sIGNhbGxzLnYyLmluaXRpYXRlIGNvbGxhYjogY3IudjEucmVhZCBmYXgudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgZmF4LnYxLnJlYWQgZmF4LnYxLndyaXRlIGlkZW50aXR5OiBpZGVudGl0eTpzY2ltLm9yZyBtZXNzYWdpbmcudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgbWVzc2FnaW5nLnYxLnJlYWQgbWVzc2FnaW5nLnYxLnNlbmQgbWVzc2FnaW5nLnYxLndyaXRlIHJlYWx0aW1lLnYyLm5vdGlmaWNhdGlvbnMubWFuYWdlIHN1cHBvcnQ6IHVzZXJzLnYxLmxpbmVzLnJlYWQgd2VicnRjLnYxLnJlYWQgd2VicnRjLnYxLndyaXRlIiwic3ViIjoiMTA1MzgxODUyNTQ4NTQ2NDU5MCIsImF1ZCI6ImE3NWY4NzZkLWNiNTgtNDA0Yy1iNWMwLTRlOTFkOWJjNDA1MiIsIm9nbiI6InB3ZCIsImxzIjoiMTA3NjgwNDItYzI2Ny00NjcxLWE2MGMtZmVhYTk1ODcyYTAxIiwidHlwIjoiYyIsImV4cCI6MTY5Mzg4OTU0MSwiaWF0IjoxNjkzODg4OTQxLCJ1cmkiOiJodHRwczpcL1wvd3d3LmNvZGFuYWx5dGljcy5uZXRcLyIsImp0aSI6IjNjYTEzMDZjLTQ4YmEtNGE4My1hODNlLTY3ZDc3ZTIxODMxMyJ9.a7I6bRkafGA7cfr4Del0tc4IHErFCUp2D2E_zjd9aq-9sEek8GIiK0FH2W7eDg0SB5sL-Tet-KlEutK7Jw1zWTXKHZgGHeURfx3JNXdvmpYGI1XBZiNEALbXC8X-kB1njfMdpnSJbUonQ0qYRcbqzlIfIeaCFm3tnSujn0QvK9DbzGUDWfZDT5_xxRRQEl-B06VKU9CZ_hrsh2GEyEVVQ5SuUZlq8Nxivkp7phSt5ErMpYBjvd1POZ8JTCkucylQA3tWo7531AYES4ZpQM5BJ51S2XtmTLYqr1o5mS-xVdxI27LwLeBBHJeHA3xp39DvW5C2rbmygCOHAMCPY3UHew'
+    # code = os.environ.get('GOTO_CLIENT_CODE')
+    print("code======>",code)
+    
+    if not code:
+        return HttpResponseBadRequest("Missing code parameter")
+
+    # Your application's configuration
+    CLIENT_ID = 'a75f876d-cb58-404c-b5c0-4e91d9bc4052' #os.environ.get('GOTO_CLIENT_ID')
+    CLIENT_SECRET ='ykEQJ5Rd8xx8sPOD1W5KTJnO' #os.environ.get('GOTO_SECRET_KEY')
+    REDIRECT_URI = "http://localhost:8000/getdata/obtain_tokens/" #os.environ.get('CODA_REDIRECT_URI')
+
+    # print(CLIENT_ID)
+    # print(CLIENT_SECRET)
+    # print(REDIRECT_URI)
+
+    # Payload for the token request
+    payload = {
+        'grant_type': 'authorization_code',
+        'client_id': CLIENT_ID,
+        'client_secret': CLIENT_SECRET,
+        'code': code,
+        'redirect_uri': REDIRECT_URI
+    }
+
+    # Make the token request
+    response = requests.post('https://api.getgo.com/oauth/v2/token', data=payload)
+    print("status======>",response.status_code)
+    # Error handling for the HTTP request
+
+    if response.status_code != 200:
+        return HttpResponseBadRequest(f"Error obtaining tokens: {response.text}")
+
+
+    tokens = response.json()
+    refresh_token = tokens.get('refresh_token')
+
+    # Return the refresh token as a JsonResponse, or you can save it, etc.
+    return JsonResponse({"refresh_token": refresh_token})
+
+
+
+
+
 def refresh_token_function(request):
     global refresh_token , client_code
 
     # myRefreshJSON =None
     # print('1. reading client code and refresh token')
-
 
     # to get the current working directory
     dir_path = str(os.getcwd())
@@ -163,7 +235,11 @@ def getmeetingresponse(startDate , endDate):
     # print("1. getting access tokens")
     with open(dir_path+'/getdata/gotomeeting/refresh_tokens.json','r') as f:
         myJson = json.load(f)
-        access_token = myJson['access_token']
+        access_token = myJson.get('access_token', None)
+        if not access_token:
+            # Handle the error: log it, raise an exception, or return an error response.
+            print("Error: Missing access_token in refresh_tokens.json")
+            return redirect('main:hendler500')
     response = None
     headers = {
     'Authorization': 'Bearer '+access_token

@@ -279,18 +279,13 @@ def users(request):
     paginator = Paginator(userfilters.qs, 10) # Show 10 objects per page
     page = request.GET.get('page')
     objects = paginator.get_page(page)
-
     context={
         # "users": queryset,
         "userfilters": userfilters,
         "objects":objects
     }
-
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", context)
-
-    # if request.user.is_admin:
-    #     return render(request, "accounts/admin/adminpage.html", {"users": users})
     else:
         return redirect("main:layout")
 
