@@ -24,6 +24,7 @@ from .forms import (
     ApplicantProfileFormC,
 )
 from .models import UserProfile, Application,Rated, Reporting
+from data.models import ActivityLinks
 from management.models import Policy,Task
 from .utils import alteryx_list, dba_list, posts, tableau_list,rewardpoints
 from datetime import datetime, timedelta
@@ -112,10 +113,18 @@ def firstinterview(request):
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
+    print('HERE')
     form = ApplicantProfileFormA(
         request.POST, request.FILES, instance=request.user.profile
     )
-
+    datalink=ActivityLinks.objects.filter(link_name='Data').first()
+    print("datalink====>",datalink)
+    if datalink:
+        link_url = datalink.link
+        print("datalink====>",link_url)
+    else:
+        # Handle the case where no matching row was found.
+        link_url = None 
     if request.method == "POST":
         form = ApplicantProfileFormA(
             request.POST, request.FILES, instance=request.user.profile
@@ -129,11 +138,12 @@ def FI_sectionA(request):
             form.save()
             subject = "Interview Message"
         return redirect("application:ratewid", pk="Alteryx")
-
+    
+    context={"title": "First Section", "form": form,"link_url":link_url}
     return render(
         request,
-        "application/interview_process/firstinterview/sectionA.html",
-        {"title": "First Section", "form": form},
+        "application/interview_process/firstinterview/sectionA.html",context
+        ,
     )
 
 

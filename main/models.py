@@ -123,6 +123,7 @@ class Plan(models.Model):
         ("Health", "Health"),
         ("Family", "Family"),
         ("Work", "Work"),
+        ("Meetings", "Meetings"),
         ("Other", "Other"),
     ]
     GOAL_CHOICES = [

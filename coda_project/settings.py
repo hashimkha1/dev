@@ -131,10 +131,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = 'localhost'
-        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
-        user = "postgres" #os.environ.get('POSTGRESDB_USER')
-        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
+        host = os.environ.get('POSTGRES_DB_NAME')
+        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
+        user = os.environ.get('POSTGRESDB_USER')
+        password = os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -146,26 +146,26 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": dbname,
-#         "USER":user,
-#         "PASSWORD":password,
-#         "HOST": host
-#     }
-# }
-
-'''=========== Heroku DB ================'''
 DATABASES = {
-    'default': {
-        "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'd8liqmn44tm61v',
-        "USER": 'ylzxqlnsngttgn',
-        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": dbname,
+        "USER":user,
+        "PASSWORD":password,
+        "HOST": host
     }
 }
+
+'''=========== Heroku DB ================'''
+# DATABASES = {
+#     'default': {
+#         "ENGINE": 'django.db.backends.postgresql',
+#         "NAME": 'd8liqmn44tm61v',
+#         "USER": 'ylzxqlnsngttgn',
+#         "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+#         "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+#     }
+# }
 
 
 '''=========== Local DB ================'''
@@ -329,10 +329,15 @@ def payment_details(request):
 
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
+    DEBUG = True
+    SECURE_SSL_REDIRECT = True
 elif os.environ.get('ENVIRONMENT') == 'testing':
-   SITEURL = "https://codamakutano.herokuapp.com"
+    DEBUG = True
+    SECURE_SSL_REDIRECT = True
+    SITEURL = "https://codamakutano.herokuapp.com"
 else:
     SITEURL = "http://localhost:8000"
+    DEBUG = True
 
 # -----------------------------------------
 def source_target():
