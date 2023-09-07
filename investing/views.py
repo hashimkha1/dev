@@ -251,7 +251,7 @@ def covered_update(request, pk):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def credit_spread_update(request, pk):
-    # spread = get_object_or_404(credit_spread, pk=pk)
+    spread = get_object_or_404(credit_spread, pk=pk)
     success_url = reverse('investing:option_list', kwargs={'title': 'credit_spread'})
 
     if request.method == 'POST':
