@@ -129,7 +129,7 @@ def delete_duplicates_based_on_symbol(stock_model, duplicate_symbols):
         record_to_keep = stock_model.objects.filter(symbol=symbol).last()
         
         # Deleting other records
-        stock_model.objects.filter(symbol=symbol).exclude(id=record_to_keep.id).delete()
+        data = stock_model.objects.filter(symbol=symbol).exclude(id=record_to_keep.id).delete()
 
 
 def get_over_postions(table_name):

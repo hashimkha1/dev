@@ -5,11 +5,17 @@ from .models import CustomerUser, Tracker,CredentialCategory,Credential
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.core.validators import EmailValidator, RegexValidator
+import re
 # from django.db import transaction
+
+phone_regex = r'^\d{10}$'
 
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Repeat Password", widget=forms.PasswordInput)
+    phone = forms.CharField(label="Phone",max_length=10,validators=[RegexValidator(
+                regex=phone_regex,
+                message="Phone number must be 10 digits (e.g., 5551234567).",),],)
     class Meta:
         model = CustomerUser
         fields = [
@@ -61,6 +67,22 @@ class UserForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        first_name = cleaned_data.get("first_name")
+        last_name = cleaned_data.get("last_name")
+        username = cleaned_data.get("username")
+
+        # List of disallowed usernames
+        disallowed_usernames = ["test", "testing"]
+
+        if first_name in disallowed_usernames:
+            self.add_error("first_name", "This first name is not allowed.")
+        if last_name in disallowed_usernames:
+            self.add_error("last_name", "This last name is not allowed.")
+        if username in disallowed_usernames:
+            self.add_error("username", "This username is not allowed.")
 
     def save(self, commit=True):
         user = super(UserForm, self).save(commit=False)
