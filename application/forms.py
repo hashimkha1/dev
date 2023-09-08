@@ -79,6 +79,8 @@ class RatingForm(forms.ModelForm):
         model = Rated
         fields = [
             "employeename",
+            "rating_date",
+            "type",
             "topic",
             "uploadlinkurl",
             "projectDescription",
@@ -90,6 +92,8 @@ class RatingForm(forms.ModelForm):
         ]
         labels = {
             "employeename":"Employee Name",
+            "rating_date": "Date",
+            "type": "type",
             "topic": "Topic",
             "uploadlinkurl": "Upload link url",
             "projectDescription": "Project Description",
