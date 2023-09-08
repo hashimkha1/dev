@@ -154,10 +154,11 @@ def optiondata(request, title=None, *arg, **kwargs):
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
 
     # Dealing with duplicate symbols
-    duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
-    delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
+    # duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
+    # print('duplicate_symbols=========',duplicate_symbols)
+    # delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
 
-    stockdata = stock_model.objects.filter(is_featured=True)
+    stockdata = stock_model.objects.filter(is_featured=True).distinct()
     if stockdata.exists():  # Using exists() for clarity
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
@@ -239,6 +240,7 @@ def covered_update(request, pk):
         form = OptionsForm(request.POST, instance=covered)
         if form.is_valid():
             form.save()
+            return redirect(success_url)
     else:
         form = OptionsForm(instance=covered)
 
@@ -251,7 +253,7 @@ def covered_update(request, pk):
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def credit_spread_update(request, pk):
-    # spread = get_object_or_404(credit_spread, pk=pk)
+    spread = get_object_or_404(credit_spread, pk=pk)
     success_url = reverse('investing:option_list', kwargs={'title': 'credit_spread'})
 
     if request.method == 'POST':

@@ -191,7 +191,7 @@
           </div>
           <div class="form-group row">
             <div class="col-md-6">
-              <button class="btn btn-outline-info" type="submit">Sign Up</button>
+              <button class="btn btn-outline-info" type="submit" id="signupBtn">Sign Up</button>
             </div>
             <div class="col-md-6">
               <small class="text-muted text-center">
@@ -204,6 +204,26 @@
     </fieldset>
   </div>
   </form>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="testModal" tabindex="-1" role="dialog" aria-labelledby="testModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="testModalLabel">Invalid Input</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>If you want to proceed with testing, please click on the "Proceed with Testing" button below.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="closeModalBtn" data-dismiss="modal">Close</button>
+        <a href="https://codamakutano.herokuapp.com/accounts/join/" class="btn btn-primary">Proceed with Testing</a>
+      </div>
+    </div>
+  </div>
 </div>
 <script>
   function checkCategoryValidity() {
@@ -300,5 +320,22 @@
   }
   document.getElementById("category_disabled").selected = true;
   document.getElementById("subcategoryoption0").selected = true;
+
+
+
+  document.getElementById("signupBtn").addEventListener("click", function (e) {
+    const firstName = document.querySelector("#id_first_name").value.toLowerCase();
+    const lastName = document.querySelector("#id_last_name").value.toLowerCase();
+    const username = document.querySelector("#id_username").value.toLowerCase();
+
+    if (firstName.includes("test") || lastName.includes("test") || username.includes("test")) {
+      e.preventDefault(); 
+      $("#testModal").modal("show");
+
+      // document.getElementById("closeModalBtn").addEventListener("click", function () {
+      // document.querySelector("form").submit();
+      // });
+    }
+  });
 </script>
 {% endblock content%}
