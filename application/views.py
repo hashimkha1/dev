@@ -271,13 +271,15 @@ def policies(request):
     return render(request, "application/orientation/policies.html", context)
 
 # -------------------------rating Section-------------------------------------#
-
 def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES, request=request)
         if request.user.is_staff or request.user.is_applicant:
+            reporting_date = date.today()
             form.instance.employeename = request.user
-        
+            form.instance.rating_date = reporting_date
+            form.instance.type = 'Other'
+
         if form.is_valid():
             total_points=rewardpoints(form)
             form.instance.topic = "Other"
@@ -307,7 +309,6 @@ def rate(request):
                 return redirect("management:new_evidence", taskid=task.id)
             except Task.DoesNotExist:
                 print("Task does not exist")
-        
     else:
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})

@@ -124,12 +124,13 @@ def user_investments(request, username=None, *args, **kwargs):
 
 
 def optionlist(request):
+    print("optionlist=====>")
     title="creditspread"
     return render(request, "main/snippets_templates/output_snippets/option_data.html")
 
 
 @login_required
-def optiondata(request, title=None, *arg, **kwargs):
+def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
@@ -153,12 +154,9 @@ def optiondata(request, title=None, *arg, **kwargs):
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
 
-    # Dealing with duplicate symbols
-    # duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
-    # print('duplicate_symbols=========',duplicate_symbols)
-    # delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
-
+    # print('symbols=========>',stock_model)
     stockdata = stock_model.objects.filter(is_featured=True).distinct()
+    
     if stockdata.exists():  # Using exists() for clarity
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
