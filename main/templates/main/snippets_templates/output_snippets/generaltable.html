@@ -1,18 +1,16 @@
 <tr>
     <td>
-        <a class="text-dark  text-decoration-none" 
+        <a class=" article-title target="_blank" 
         data-toggle="tooltip" title="{{ row.comment }}"
-        href="{{ category.get_absolute_url }}">
+        href="{% url 'investing:overboughtsold' row.symbol %}">
         {{ row.symbol }}
         </a>
     </td>
-    
     {% if subtitle == 'credit_spread' %} 
         <td>{{ row.strategy }}</td>
         <td>{{ row.price }}</td>
         <td>{{ row.type }}</td>
         <td>{{ row.sell_strike }}</td>
-        <!-- <td>{{ row.buy_strike }}</td> -->
         <td>{{ row.premium }}</td>
     {% else %}
         <td>{{ row.action }}</td>
@@ -20,19 +18,20 @@
         <td>{{ row.strike_price }}</td>
         <td>{{ row.raw_return }}</td>
         <td>{{ days_to_expiration }}</td>
-        <!-- <td>{{ row.days_to_expiry }}</td> -->
         <td>{{ row.annualized_return }}</td>
     {% endif %}
-   
-    <!-- <td>{{ date_today|date:"n/d/Y" }}</td> -->
     <td>{{ row.expiry|date:"n/d/Y" }}</td>
     <td>{{ row.earnings_date }}</td>
-    <td>
-        <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
-    </td>
     <!-- <td>
-        <input type="checkbox" {% if row.is_featured %}unchecked{% endif %}>
+        <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
     </td> -->
+    <td>
+        <a class=" article-title target="_blank" 
+        data-toggle="tooltip" title="{{ row.comment }}"
+        href="https://finance.yahoo.com/quote/{{ row.symbol }}/financials?p={{ row.symbol }}">
+        More 
+        </a>
+    </td>
 
     {% if subtitle == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>

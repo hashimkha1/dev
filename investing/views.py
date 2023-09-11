@@ -1,17 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse
 from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
-from django.views.generic import CreateView,ListView, DetailView, UpdateView
+from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-from .utils import (compute_pay,get_over_postions,risk_ratios,
+from .utils import (compute_pay,risk_ratios,
                     computes_days_expiration,get_user_investment,financial_categories,
-                    delete_duplicates_based_on_symbol)
-from django.db.models import Count
+                    )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
 
@@ -124,8 +122,6 @@ def user_investments(request, username=None, *args, **kwargs):
 
 
 def optionlist(request):
-    print("optionlist=====>")
-    title="creditspread"
     return render(request, "main/snippets_templates/output_snippets/option_data.html")
 
 
@@ -371,12 +367,11 @@ def ticker_measures(request):
 
 @login_required
 def oversoldpositions(request,symbol=None):
-    table_name = "investing_oversold"
-    get_over_postions(table_name)
     current_date_str = timezone.now().strftime('%Y-%m-%d')
-    overboughtsold_records = Oversold.objects.filter(
-        (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
-    )
+    # overboughtsold_records = Oversold.objects.filter(
+    #     (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
+    # )
+    overboughtsold_records = Oversold.objects.all()
     if symbol is None:
         print("symbol======>",symbol)
         # Handle GET requests (for first-time loading)
@@ -388,9 +383,7 @@ def oversoldpositions(request,symbol=None):
     else:
         # ticker_symbol = request.POST['ticker']
         ticker_symbol = symbol
-        print("symbol=====>",symbol)
         ticker_measures = Ticker_Data.objects.filter(symbol=ticker_symbol)
-        print("ticker_measures=====XXXXXXX=====>",ticker_measures)
     
         context = { 
             "overboughtsold": overboughtsold_records,

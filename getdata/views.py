@@ -15,7 +15,6 @@ from django.views.generic import (
 from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
                     fetch_and_insert_data,
-                    load_xel_data_to_postgres
 )
 from finance.models import (Transaction)
 
@@ -545,14 +544,5 @@ def LogsViewSet(request):
 
 def refetch_data(request):
     fetch_and_insert_data()
-    previous_path = request.META.get('HTTP_REFERER', '')
-    return redirect(previous_path)
-
-    
-def load_files_data(request):
-    xel_folder_path = r"C:\Users\CHRIS\OneDrive\Desktop\SISTER LAPTOP\COMPANIES\CODA\PROJECTS\Testing\files"
-    table_name = "getdata_event"
-    load_xel_data_to_postgres(xel_folder_path, table_name)
-    print("Process Done")
     previous_path = request.META.get('HTTP_REFERER', '')
     return redirect(previous_path)
