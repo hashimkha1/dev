@@ -12,11 +12,13 @@ from django.views.generic import (
 	ListView,
     DetailView,
 )
-from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values,convert_date
+from main.utils import Finance,Data,Management,Investing,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
                     fetch_and_insert_data,
 )
 from finance.models import (Transaction)
+
+from investing.models import OverBoughtSold
 
 #importing Options play funcationality
 
@@ -479,8 +481,8 @@ def get_urls(self):
     ]
     return new_urls + urls
 
-def upload_csv(request):
 
+def upload_csv(request):
     if request.method == "POST":
         csv_file = request.FILES["csv_upload"]
 
@@ -517,6 +519,113 @@ def upload_csv(request):
     form = CsvImportForm()
     data = {"form": form}
     return render(request, "getdata/uploaddata.html", data)
+
+
+# def stocks_upload_csv(request):
+#     context = {
+#         "Finance": Finance,
+#         "Data": Data,
+#         "Management": Management,
+#         "investing": Investing,
+#     }
+
+#     if request.method == "POST":
+#         print(f"Request Method: {request.method}")
+#         csv_file = request.FILES.get("csv_upload")
+#         print(f"CSV File: {csv_file}")
+#         # Rest of your view code
+#         if not csv_file.name.endswith(".csv"):
+#             # return HttpResponseRedirect(request.path_info)
+#             messages.warning(request, "Not a CSV file")
+#             return render(request, "getdata/uploaddata.html", context)
+#         # file= csv_file.read().decode("utf-8")
+#         try:
+#             file = csv_file.read().decode("ISO-8859-1")
+#             file_data = file.split("\n")
+#             csv_data = [line for line in file_data if line.strip() != ""]
+#             # print('csv_data====>',csv_data)
+#             for x in csv_data:
+#                 fields = x.split(",")
+#                 # date = datetime.strptime(str(fields[0]), '%m/%d/%Y').date()
+#                 created = OverBoughtSold.objects.update_or_create(
+#                     # activity_date=date,
+#                     # sender=CustomUser.objects.filter(first_name=fields[0]).first(),
+#                     # department=Department.objects.filter(id=fields[7]).first(),
+#                     symbol=fields[0],
+#                     description=fields[1],
+#                     last=fields[2],
+#                     change=fields[3],
+#                     condition=fields[4],
+#                     # ['symbol', 'description', 'last', 'net change', 'condition\r']
+#                 )
+#             # url = reverse("admin:index")
+#             message=messages.info(request, "data populated successsfully")
+#             return render(request, "getdata/uploaddata.html", context)
+#         except Exception as e:
+#             print('csv_data====>',e)
+#             messages.warning(request, e)
+#             return render(request, "getdata/uploaddata.html", context)
+#     if request.method == 'GET':
+#         return render(request, "getdata/uploaddata.html", context)
+
+
+# from django.contrib import messages
+
+def stocks_upload_csv(request):
+    context = {
+        "Finance": Finance,
+        "Data": Data,
+        "Management": Management,
+        "investing": Investing,
+    }
+
+    if request.method == "POST":
+        # Retrieve the uploaded CSV file
+        csv_file = request.FILES.get("csv_upload")
+
+        # Check if it's a CSV file
+        if not csv_file.name.endswith(".csv"):
+            messages.warning(request, "Not a CSV file")
+            return render(request, "getdata/uploaddata.html", context)
+
+        try:
+            # Read the CSV file
+            file = csv_file.read().decode("ISO-8859-1")
+            file_data = file.split("\n")
+            csv_data = [line for line in file_data if line.strip() != ""]
+
+            # Create a set to store unique symbols
+            unique_symbols = set()
+
+            for x in csv_data:
+                fields = x.split(",")
+                symbol = fields[0]
+
+                # Check if the symbol is unique
+                if symbol not in unique_symbols:
+                    unique_symbols.add(symbol)
+
+                    # Create or update the record
+                    created = OverBoughtSold.objects.update_or_create(
+                            symbol=fields[0],
+                            description=fields[1],
+                            last=fields[2],
+                            volume=fields[3],
+                            RSI=fields[4],
+                            EPS=fields[5],
+                            PE=fields[6],
+                            rank=fields[7],
+                            profit_margins=fields[8],
+                    )
+
+            messages.success(request, "Data populated successfully")
+            return render(request, "getdata/uploaddata.html", context)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return render(request, "getdata/uploaddata.html", context)
+
+    if request.method == 'GET':
+        return render(request, "getdata/uploaddata.html", context)
 
 def selinum_test(request):
     # to test on server

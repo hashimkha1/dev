@@ -14,57 +14,55 @@
             Upload only a CSV File, Check field formats to minimize errors during upload.
         </p>
         <div class="row text-center">
-            <div class="col-md-4" id="gi">
+            <div class="col-md-3" id="gi">
                 <h3 class="title">Finance App</h3>
-                {% for finance_app in Finance %}
+            {% for app in Finance %}
                 <div class="card">
                 <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{finance_app.title}}</b></h4></a>
+                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
                     <p><a href="{% url 'getdata:upload'%}" class="btn btn-secondary btn-sm"
                         >Upload File
                     </a>
-<!--                        <p> {{finance_app.title}}</p>-->
-                    {%if finance_app.title == " Transaction"%}
-                        <form method="post" enctype="multipart/form-data" action="/getdata/datauploadcsv/">
-                            {%csrf_token%}
-                            &nbsp <input type="file" id="myfile" name="csv_upload"> <br>
-                            <button type="submit">upload csv</button>
-                        </form>
-                    {% endif %}
+                        {% include 'main/snippets_templates/forms/uploadform.html' %}
                     </p>
             </div>
             </div>
             {% endfor %}
         </div>
-            <div class="col-md-4" id="gi">
+            <div class="col-md-3" id="gi">
                 <h3 class="title">Management App</h3>
-                {% for management_app in Management %}
+            {% for app in Management %}
                 <div class="card">
                 <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{management_app.title}}</b></h4></a>
+                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
                     <div>
-                        <form action="." method="POST" enctype="multipart/form-data">
-                            {{ form.as_p }}
-                            {% csrf_token %}
-                            <button type="submit">Upload File</button>
-                        </form>
+                        {% include 'main/snippets_templates/forms/uploadform.html' %}
                     </div>
-            </div>
+                </div>
             </div>
             {% endfor %}
         </div>
-            <div class="col-md-4" id="gi">
+            <div class="col-md-3" id="gi">
                 <h3 class="title">Data App</h3>
-                {% for data_app in Data %}
+                {% for app in Data %}
                 <div class="card">
                 <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{data_app.title}}</b></h4></a>
+                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
                     <div>
-                        <form action="." method="POST" enctype="multipart/form-data">
-                            {{ form.as_p }}
-                            {% csrf_token %}
-                            <button type="submit">Upload File</button>
-                        </form>
+                        {% include 'main/snippets_templates/forms/uploadform.html' %}
+                    </div>
+                </div>
+                </div>
+            {% endfor %}
+            </div>
+            <div class="col-md-3" id="gi">
+                <h3 class="title">Investment App</h3>
+                {% for app in investing %}
+                <div class="card">
+                <div class="card-body">
+                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
+                    <div>
+                        {% include 'main/snippets_templates/forms/uploadform.html' %}
                     </div>
                 </div>
                 </div>
@@ -73,7 +71,7 @@
             <div class="data_training text-center">
                 <h3 class="title">DATA MIGRATIONS</h3>
                   <h4>XEL</h4>
-                  <a href="{% url 'getdata:load_files_data' %}" target="">
+                  <a href="#" target="">
                     <button type="button" class="btn btn-primary">Load</button>
                   </a>
             </div>

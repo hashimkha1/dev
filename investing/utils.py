@@ -82,16 +82,6 @@ def investment_test():
 
     return return_amount_1,return_amount_2,return_amount_3,return_amount_4
 
-def ticker(ticker_measures,symbol=None):
-    if symbol is None:
-        ticker_measures=[]
-        title = f"No Measures(Yahoo)-{symbol}",
-    else:
-        ticker_symbol = symbol
-        ticker_measures= ticker_measures
-        title = f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
-    return ticker_measures,title
-
 
 def computes_days_expiration(stockdata):
     date_today = datetime.now(timezone.utc)

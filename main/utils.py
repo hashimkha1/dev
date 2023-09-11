@@ -597,57 +597,71 @@ Meetings = [
 # ==============================Apps and Models===============================
 Finance = [
     {
-        "title": " Transaction",
+        "table_name": " Transaction",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": " Payment Information",
+        "table_name": " Payment Information",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": "Payment History",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Data = [
-    {
-        "title": " Categrory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " SubCategory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Links",
+        "table_name": "Payment History",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]
 Data = [
     {
-        "title": " Categrory",
+        "table_name": " Categrory",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": " SubCategory",
+        "table_name": " SubCategory",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": "Links",
+        "table_name": "Links",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+]
+Data = [
+    {
+        "table_name": " Categrory",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "table_name": " SubCategory",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "table_name": "Links",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]
 Management = [
     {
-        "title": " Task",
+        "table_name": " Task",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": " Task History",
+        "table_name": " Task History",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
     {
-        "title": "Other",
+        "table_name": "Other",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+]
+Investing = [
+    {
+        "table_name": " Returns",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "table_name": " OverBoughtSold",
+        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
+    },
+    {
+        "table_name": "Other",
         "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
     },
 ]
