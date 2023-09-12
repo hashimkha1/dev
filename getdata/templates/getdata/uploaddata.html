@@ -5,8 +5,42 @@
     {% endblock %}
     {% block content %}
     <!--------------------------Slider Section--------------------------------->
+    <div class="data_training text-center">
+        <h3 class="title">DATA MIGRATIONS</h3>
+          <h4>XEL</h4>
+          <a href="#" target="">
+            <button type="button" class="btn btn-primary">Load</button>
+          </a>
+    </div>
     <!-------------------Our home services Section------------------------->
     <!-------------------1. Our  Job Report Section------------------------->
+    <section id="data_training">
+        <div class="data_training text-center">
+            <h3 class="title">Applications-Upload Data</h3>
+            <p>
+                Upload only a CSV File, Check field formats to minimize errors during upload.
+            </p>
+            <div class="row text-center">
+                {% for category, apps in categories.items %}
+                    <div class="col-md-3" id="gi">
+                        <h3 class="title">{{ category }} App</h3>
+                        {% for app in apps %}
+                            <div class="card">
+                                <div class="card-body">
+                                    <a class="dropdown-item" target="_blank" href="">{{ app.table_name }}</a>
+                                    <div>
+                                        {% include 'main/snippets_templates/forms/uploadform.html' %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    
+<!--     
     <section id="data_training">
     <div class="data_training text-center">
         <h3 class="title">Applications-Upload Data</h3>
@@ -21,7 +55,7 @@
                 <div class="card-body">
                     <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
                     <p><a href="{% url 'getdata:upload'%}" class="btn btn-secondary btn-sm"
-                        >Upload File
+                        >Upload File 
                     </a>
                         {% include 'main/snippets_templates/forms/uploadform.html' %}
                     </p>
@@ -68,12 +102,8 @@
                 </div>
             {% endfor %}
             </div>
-            <div class="data_training text-center">
-                <h3 class="title">DATA MIGRATIONS</h3>
-                  <h4>XEL</h4>
-                  <a href="#" target="">
-                    <button type="button" class="btn btn-primary">Load</button>
-                  </a>
-            </div>
-    </section>
+
+    </section> -->
+
+
     {% endblock content %}

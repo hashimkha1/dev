@@ -12,7 +12,7 @@ from django.views.generic import (
 	ListView,
     DetailView,
 )
-from main.utils import Finance,Data,Management,Investing,Automation,Stocks,General,path_values,convert_date
+from main.utils import App_Categories,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
                     fetch_and_insert_data,
 )
@@ -44,9 +44,7 @@ def getrating(request):
 def uploaddata(request):  
     # context = {"posts": posts}
     context = {
-        "Finance": Finance,
-        "Data": Data,
-        "Management": Management,
+        "App_Categories": App_Categories,
     }
     return render(request,"getdata/uploaddata.html", context) 
 
@@ -521,62 +519,14 @@ def upload_csv(request):
     return render(request, "getdata/uploaddata.html", data)
 
 
-# def stocks_upload_csv(request):
-#     context = {
-#         "Finance": Finance,
-#         "Data": Data,
-#         "Management": Management,
-#         "investing": Investing,
-#     }
-
-#     if request.method == "POST":
-#         print(f"Request Method: {request.method}")
-#         csv_file = request.FILES.get("csv_upload")
-#         print(f"CSV File: {csv_file}")
-#         # Rest of your view code
-#         if not csv_file.name.endswith(".csv"):
-#             # return HttpResponseRedirect(request.path_info)
-#             messages.warning(request, "Not a CSV file")
-#             return render(request, "getdata/uploaddata.html", context)
-#         # file= csv_file.read().decode("utf-8")
-#         try:
-#             file = csv_file.read().decode("ISO-8859-1")
-#             file_data = file.split("\n")
-#             csv_data = [line for line in file_data if line.strip() != ""]
-#             # print('csv_data====>',csv_data)
-#             for x in csv_data:
-#                 fields = x.split(",")
-#                 # date = datetime.strptime(str(fields[0]), '%m/%d/%Y').date()
-#                 created = OverBoughtSold.objects.update_or_create(
-#                     # activity_date=date,
-#                     # sender=CustomUser.objects.filter(first_name=fields[0]).first(),
-#                     # department=Department.objects.filter(id=fields[7]).first(),
-#                     symbol=fields[0],
-#                     description=fields[1],
-#                     last=fields[2],
-#                     change=fields[3],
-#                     condition=fields[4],
-#                     # ['symbol', 'description', 'last', 'net change', 'condition\r']
-#                 )
-#             # url = reverse("admin:index")
-#             message=messages.info(request, "data populated successsfully")
-#             return render(request, "getdata/uploaddata.html", context)
-#         except Exception as e:
-#             print('csv_data====>',e)
-#             messages.warning(request, e)
-#             return render(request, "getdata/uploaddata.html", context)
-#     if request.method == 'GET':
-#         return render(request, "getdata/uploaddata.html", context)
-
-
 # from django.contrib import messages
 
 def stocks_upload_csv(request):
     context = {
-        "Finance": Finance,
-        "Data": Data,
-        "Management": Management,
-        "investing": Investing,
+        "categories": App_Categories,
+        # "Data": Data,
+        # "Management": Management,
+        # "investing": Investing,
     }
 
     if request.method == "POST":

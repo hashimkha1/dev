@@ -7,12 +7,14 @@ from .models import (
     Investments,
     Investment_rates,
     Investor_Information,
-    Oversold
+    Oversold,
+    OverBoughtSold
 )
 
 # Register your models here.
 admin.site.register(Ticker_Data)
 admin.site.register(Oversold)
+admin.site.register(OverBoughtSold)
 admin.site.register(credit_spread)
 admin.site.register(ShortPut)
 admin.site.register(covered_calls)

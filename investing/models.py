@@ -207,13 +207,15 @@ class OverBoughtSold(models.Model):
     @property
     def condition_integer(self):
         try:
-            rsi_value = int(self.RSI)
+            # Convert to float, round, and then convert to int
+            rsi_value = int(round(float(self.RSI)))  
             if rsi_value >= 30:
                 return 1  # 'oversold'
             else:
                 return 0  # 'overbought'
         except ValueError:
-            return -1
+            # Handle any exceptions gracefully
+            return -1  
 
     
     class Meta:
