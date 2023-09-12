@@ -79,13 +79,14 @@
           <thead class="border-bottom font-weight-bold">
             <tr>
                   <th>Symbol</th>
-                  <th>Action</th>
-                  <!-- <th>Stock_Price</th> -->
-                  <th>Strike_Price</th>
-                  <!-- <th>Days_To_Expiry</th> -->
-                  <th>Expiry</th>
-                  <th>Earnings_Date</th>
-                  <th>Date</th>
+                  <th>Name</th>
+                  <th>volume</th>
+                  <th>Last Price</th>
+                  <th>RSI</th>
+                  <th>EPS</th>
+                  <th>PE</th>
+                  <th>rank</th>
+                  <th>profit_margins</th>
                   <th>More Info</th>
                   <th>Edit</th>
                   
@@ -101,20 +102,15 @@
                     {{ row.symbol }}
                     </a>
                 </td>
-                <!-- <td>
-                  <a class="article-title target="_blank" 
-                  data-toggle="tooltip" title="{{ row.comment }}"
-                  href="javascript:void(0);" onclick="submitForm('{{ row.symbol }}');">
-                  {{ row.symbol }}
-               </a>
-                </td> -->
-                <td>{{ row.action }}{{ row.strategy }}</td>
-                <!-- <td>{{ row.stock_price }}{{ row.price }}</td> -->
-                <td>{{ row.strike_price }}</td>
-                <!-- <td>{{ row.expiry|date:"n/d/Y" }}</td> -->
-                <td>{{ row.expiry}}</td>
-                <td>{{ row.earnings_date }}</td>
-                <td>{{ row.on_date }}</td>
+                <td>{{ row.description }}</td>
+                <td>{{ row.volume}}</td>
+                <td>{{ row.last}}</td>
+                <td>{{ row.RSI }}</td>
+                <td>{{ row.EPS }}</td>
+                <td>{{ row.PE }}</td>
+                <td>{{ row.rank }}</td>
+                <td>{{ row.profit_margins }}</td>
+                <!-- <td>{{ row.on_date }}</td> -->
                 <td>
                   <a class=" article-title target="_blank" 
                   data-toggle="tooltip" title="{{ row.comment }}"
@@ -129,17 +125,6 @@
         </table>
       </div>
       </div>
-      <!-- <script>
-        function submitForm(symbol) {
-            var form = document.getElementById('yahooForm');
-            var input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'ticker';
-            input.value = symbol;
-            form.appendChild(input);
-            form.submit();
-        }
-        </script> -->
     </section>
 
     {% endblock content %}

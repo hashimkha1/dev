@@ -26,6 +26,7 @@ from .models import (
     Investments,
     Investment_rates,
     Oversold,
+    OverBoughtSold,
     Options_Returns,
     Cost_Basis,
     Ticker_Data
@@ -266,7 +267,8 @@ def credit_spread_update(request, pk):
 
 
 class oversold_update(UpdateView):
-    model = Oversold
+    # model = Oversold
+    model = OverBoughtSold
     success_url = "/investing/overboughtsold/None"
     fields ="__all__"
     # fields = ['symbol','comment','is_featured']
@@ -371,7 +373,10 @@ def oversoldpositions(request,symbol=None):
     # overboughtsold_records = Oversold.objects.filter(
     #     (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
     # )
-    overboughtsold_records = Oversold.objects.all()
+    # overboughtsold_records = Oversold.objects.all()
+    overboughtsold_records = OverBoughtSold.objects.all()
+    for record in overboughtsold_records:
+        print(record.condition_integer)
     if symbol is None:
         print("symbol======>",symbol)
         # Handle GET requests (for first-time loading)
