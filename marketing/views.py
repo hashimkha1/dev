@@ -2,36 +2,21 @@ from django.shortcuts import render
 
 # Create your views here.
 import requests
-import urllib.request
 import json
-from datetime import datetime,date,timedelta
-from django.db.models import Min,Max
-from django.http import JsonResponse,Http404
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
 from django.db.models import Q
-from django.contrib.messages.views import SuccessMessageMixin, messages
-from django.core.files.storage import FileSystemStorage
-from django.http import HttpResponse, HttpResponseRedirect
-from django.views.decorators.csrf import csrf_exempt
-from django.shortcuts import redirect, render,get_object_or_404
-from dateutil.relativedelta import relativedelta
-from coda_project import settings
-from management.models import Whatsapp,Advertisement
-# from .utils import runwhatsapp
+from django.shortcuts import redirect, render
+from management.models import Whatsapp
 from .forms import WhatsappForm
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
         CreateView,
-        DeleteView,
-        ListView,
-        DetailView,
         UpdateView,
     )
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
+#====================General===========================
 def marketing(request):
     return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
 #====================Social Media===========================
@@ -215,9 +200,6 @@ class SubCategoriesUpdate(SuccessMessageMixin,UpdateView):
     success_message="Sub Category Updated!"
     fields="__all__"
     template_name="store/products/sub_category_update.html"
-
-
-
 
 #====================ecomerce old===========================
 

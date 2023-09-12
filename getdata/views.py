@@ -524,20 +524,14 @@ def upload_csv(request):
 def stocks_upload_csv(request):
     context = {
         "categories": App_Categories,
-        # "Data": Data,
-        # "Management": Management,
-        # "investing": Investing,
     }
-
     if request.method == "POST":
         # Retrieve the uploaded CSV file
         csv_file = request.FILES.get("csv_upload")
-
         # Check if it's a CSV file
         if not csv_file.name.endswith(".csv"):
             messages.warning(request, "Not a CSV file")
             return render(request, "getdata/uploaddata.html", context)
-
         try:
             # Read the CSV file
             file = csv_file.read().decode("ISO-8859-1")
@@ -546,7 +540,6 @@ def stocks_upload_csv(request):
 
             # Create a set to store unique symbols
             unique_symbols = set()
-
             for x in csv_data:
                 fields = x.split(",")
                 symbol = fields[0]

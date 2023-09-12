@@ -26,18 +26,14 @@ app_name = "data"
 urlpatterns = [
     path("", views.analysis, name="home"),
     path("training_services/", views.training_services, name="training_services"),
-    path("report/", views.report, name="report"),
-    path("database/", views.database, name="database"),
     path("financialsystem/", views.financialsystem, name="finance"),
     path("payroll/", views.payroll, name="payroll"),
-    path("project/", views.project, name="project"),
     path("employetraining/", views.employetraining, name="employeetraining"),
     path("employetrainig/updatelinks", views.updatelinks_employetraining, name="updatelinks_employetraining"),
     # Training SEction Urls starts
     path("training/", views.training, name="training"),
     path("train/", views.TrainingView.as_view(), name="train"),
     path("course/", views.CourseView.as_view(), name="course"),
-    path("training_v2/", views.training_v2, name="training_v2"),
     path("bitraining/", views.activity_view, name="bitraining"),
     path("updatelist/", views.table_activity_view, name="training-list"),
     path("links/", views.LinksListView.as_view(), name="listlinks"),
@@ -54,8 +50,7 @@ urlpatterns = [
     path("interview/<str:question_type>/", views.questionview, name="question-detail"),
     # Interview section urls ends
     path("deliverable/", views.deliverable, name="deliverable"),
-    path("getdata/", views.getdata, name="getdata"),
-    # path("pay/", views.pay, name="pay"),
+    
     # Interview/Assignment Section
     # ----------------------CREATION----------------------------------------------------
     path(

@@ -65,16 +65,13 @@ urlpatterns = [
 
     path('coach_profile/', views.coach_profile, name='coach_profile'),
     path('contact/', views.contact, name='contact'),
-    path('report/', views.report, name='report'),
     path('project/', views.project, name='project'),
     path('training/', views.training, name='training'),
-    #path('documents/', views.codadocuments, name='documents'),
     path('checkout/', views.checkout, name='checkout'),
     
     path('image/', views.ImageCreateView.as_view(template_name='main/form.html'), name='image'),
     path('image/<int:pk>/', views.ImageUpdateView.as_view(template_name='main/form.html'), name='updateimage'),
     path('images/', views.images, name='images'),
-    path('testing/', views.testing, name='testing'),
     path('interview/', views.interview, name='interview'),
 
    #==============URLS==============================================

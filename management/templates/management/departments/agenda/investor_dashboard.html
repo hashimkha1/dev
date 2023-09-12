@@ -19,7 +19,7 @@
         {%endwith%}
       </div>
       <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'investing:overboughtsold' %}" target="__blank" >My Positions</a>
+        <a class="btn btn-secondary" href="{% url 'investing:overboughtsold' symbol=None %}" target="__blank" >My Positions</a>
       </div>
       <!-- <div class="col-md-2">
         <a class="btn btn-secondary" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>

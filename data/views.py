@@ -58,10 +58,10 @@ def training(request):
 
 
 
-@login_required
-def training_v2(request):
-    print("I am with Sylivia")
-    return render(request, "data/training/training_v2.html", {"title": "training_v2"})
+# @login_required
+# def training_v2(request):
+#     print("I am with Sylivia")
+#     return render(request, "data/training/training_v2.html", {"title": "training_v2"})
     
 
 @login_required
@@ -119,30 +119,6 @@ def financialsystem(request):
         request, "data/deliverable/financialsystem.html", {"title": "financialsystem"}
     )
 
-def project(request):
-    return render(request, "data/deliverable/project.html", {"title": "project"})
-
-# views on samples reports.
-def report(request):
-    return render(request, "data/documents/report.html", {"title": "report"})
-
-def database(request):
-    return render(request, "data/database.html", {"title": "report"})
-
-def etl(request):
-    return render(request, "data/etl.html", {"title": "etl"})
-
-def getdata(request):
-    return render(request, "data/getdata.html", {"title": "getdata"})
-
-
-  
-def database(request):
-    return render(request, "data/database.html", {"title": "report"})
-def etl(request):
-    return render(request, "data/etl.html", {"title": "etl"})
-def getdata(request):
-    return render(request, "data/getdata.html", {"title": "getdata"})
 # Views on interview Section
 @login_required
 def uploadinterview(request):
@@ -192,26 +168,11 @@ def prepquestions(request):
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
 
 def prep_responses(request):
-    # company2=Prep_Questions.objects.values('company').distinct()
     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
     responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-updated_at")
     client_responses = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).order_by("-updated_at")
-    responses_count = Prep_Questions.objects.filter(Q(is_answered=True)).count()
-    client_responses_count = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).count()
     ResFilter = ResponseFilter(request.GET, queryset=responses)
-    # responses = myFilter.qs
-    # for company in companies:
-    #     for response in responses:
-    #         print("response:",response)
-    # for response in responses:
-    #     company=response.company
-    #     response=response.response
-    #     # question=response.question
-    #     # category=response.category
-    #     print("Company:",company)
-    #     # print("category:",category)
-    #     print("Reponse:",response)
-    #     # print("question:",question)
+
     context_a = {                
             "companies": companies, 
             "responses": responses, 
@@ -234,13 +195,13 @@ def prep_responses(request):
             "message":f'Hi,{request.user}, you are currently not authorized to access this page.'
         }
         return render(request, "main/errors/generalerrors.html", context)
+    
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
     template_name="data/interview/interview_progress/prep_questions_form.html"
     form_class=PrepQuestionsForm
-    # fields = ["company",'position', 'category',"question", "response"]
-    # fields = "__all__"
+
     def form_valid(self, form):
         form.instance.questioner = self.request.user
         return super().form_valid(form)
@@ -257,17 +218,6 @@ class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateVie
             return True
         return False
 # ==================================TRAINING VIEWS====================================
-# class CourseView(LoginRequiredMixin, CreateView):
-#     model = Interviews
-#     form_class = InterviewForm
-#     template_name = "data/training/training_progress/main.html"
-#     success_url = "/data/project_story"
-#     # fields = ["category", "doc", "link", "answer_to_question"]
-#     def form_valid(self, form):
-#         form.instance.client = self.request.user
-#         form.instance.question_type = "project story"
-#         print("form.instance.question_type")
-#         return super().form_valid(form)
 def courseoverivew(request): #, question_type=None, *args, **kwargs):
     instance = request.path
     value=request.path.split("/")
@@ -315,7 +265,6 @@ class InterviewCreateView(LoginRequiredMixin, CreateView):
 @method_decorator(login_required, name="dispatch")
 class InterviewListView(ListView):
     queryset = Interviews.objects.all()
-    # template_name = "data/interview/iuploads.html"
     template_name = "data/interview/interviewuploads.html"
     ordering = ["-upload_date"]
 
@@ -331,23 +280,14 @@ class ClientInterviewListView(ListView):
     template_name = "data/interview/user_interviews.html"
     # paginate_by = 5
     def get_queryset(self):
-        # request=self.request
-        # user=self.kwargs.get('user')
         user = get_object_or_404(User, username=self.kwargs.get("username"))
         # tasks=Task.objects.all().filter(client=client)
         return Interviews.objects.all().filter(user=user)
 
 @method_decorator(login_required, name="dispatch")
-
-
 class InterviewDetailView(DetailView):
     model = Interviews
     ordering = ["-upload_date"]
-# @method_decorator(login_required, name="dispatch")
-# class QuestionDetailView(DetailView):
-#     model = Interviews
-#     ordering = ["-upload_date"]
-
 
 def courseview(request, question_type=None, *args, **kwargs):
     instance = JobRole.objects.get_by_question(question_type)
@@ -357,9 +297,7 @@ def courseview(request, question_type=None, *args, **kwargs):
     pathvalues = [i for i in value if i.strip()]
     path=pathvalues[-1]
     print(path)
-    # url=f'data/interview/interview_progress/{question_type}s.html'
     url=f'data/interview/interview_progress/questions.html'
-    # url="data/interview/interview_progress/" + str(instance) + ".html"
     print(url)
     context = {
         "form":form,
@@ -370,7 +308,6 @@ def courseview(request, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
-
 
 def questionview(request, question_type=None, *args, **kwargs):
     question_mapping = {
@@ -390,12 +327,6 @@ def questionview(request, question_type=None, *args, **kwargs):
         for field_name in required_fields:
             form.fields[field_name].required = True
             
-        # questiontopic=['resume','methodology','testing']
-        # value=request.path.split("/")
-        # pathvalues = [i for i in value if i.strip()]
-        # path=pathvalues[-1]
-        # print(path)
-        # url=f'data/interview/interview_progress/{question_type}s.html'
         url=f'data/interview/interview_progress/questions.html'
         # url="data/interview/interview_progress/" + str(instance) + ".html"
         print(url)
