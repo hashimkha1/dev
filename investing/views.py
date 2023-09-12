@@ -375,15 +375,17 @@ def oversoldpositions(request,symbol=None):
     # )
     # overboughtsold_records = Oversold.objects.all()
     overboughtsold_records = OverBoughtSold.objects.all()
+    
+    condition = None
     for record in overboughtsold_records:
         condition='oversold' if record.condition_integer == 1 else 'overbought'
-        # print(record.RSI,record.condition_integer,condition)
+        print(record.RSI,record.condition_integer,condition)
 
     if symbol is None:
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
-            "condition": condition,
+            "condition":condition,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
@@ -398,7 +400,6 @@ def oversoldpositions(request,symbol=None):
             "ticker_data": ticker_measures,
             "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
             "financial_categories": financial_categories,
-            # "category": category,
             "risk_ratios": risk_ratios,
         }
 
