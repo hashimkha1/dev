@@ -429,7 +429,7 @@ Automation = [
 
     {
         "title": "Stocks & Options",
-        "link":SITEURL+"/investing/optionlist/",
+        "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
     },
 ]
@@ -546,6 +546,20 @@ url_mapping = {
             "https://www.codanalytics.net/getdata/bigdata/",
             "https://drive.google.com/drive/u/0/folders/1eetZ2UnptBQnEcPMVtWaXbOvxNoZKBHJ",
         ],
+        'projects': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/management/dyc_requirements/",
+            "https://drive.google.com/drive/u/0/folders/1LQOenMtdEjRcja5A6QZjj88Zm8zwt62X",
+            "https://drive.google.com/file/d/1z59h0xa7afd895f69V_ICzqdLg8wSJr1/view?usp=drive_link",
+            "https://docs.google.com/document/d/10QZcGATLPU7QrOMUl-dlHb-McJ6NIvL9/edit?usp=drive_link&ouid=115037154650831613074&rtpof=true&sd=true",
+            "https://docs.google.com/document/d/1kt_9tFQ267bXCf2-VdObyAoyQEnj1How/edit?rtpof=true",
+            "https://drive.google.com/drive/u/0/folders/1dEhB6kaQvCsefdNa63Z2F4vOG96c1dk5",
+        ],
+        'training': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/data/start_training/interview/",
+            "https://docs.google.com/presentation/d/1uhGV-1FQZgKkOdUhG5dSFt-5c-u8rTans5xyGYtvIrg/edit#slide=id.g1",
+        ],
         'interview': [
             "https://chat.openai.com/",
             "https://www.codanalytics.net/accounts/credentials/",
@@ -628,62 +642,66 @@ Meetings = [
 #     }
 # ]
 # ==============================Apps and Models===============================
-Finance = [
-    {
-        "title": " Transaction",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " Payment Information",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Payment History",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Data = [
-    {
-        "title": " Categrory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " SubCategory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Links",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Data = [
-    {
-        "title": " Categrory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " SubCategory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Links",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Management = [
-    {
-        "title": " Task",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " Task History",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Other",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
+
+App_Categories = {
+    "Finance": [
+        {
+            "table_name": "Transaction",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Payment Information",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Payment History",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        }
+    ],
+    "Data": [
+        {
+            "table_name": "Category",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "SubCategory",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Links",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        }
+    ],
+    "Management": [
+        {
+            "table_name": "Task",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Task History",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Other",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        }
+    ],
+    "Investing": [
+        {
+            "table_name": "Returns",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "OverBoughtSold",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        },
+        {
+            "table_name": "Other",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+        }
+    ]
+}
+
 
 team_members = [
     {

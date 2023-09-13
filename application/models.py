@@ -147,13 +147,19 @@ class Policy(models.Model):
 
 
 class Rated(models.Model):
-    class Score(models.IntegerChoices):
-        very_Poor = 1
-        Poor = 2
-        Good = 3
-        Very_good = 4
-        Excellent = 5
+    # class Score(models.IntegerChoices):
+    #     very_Poor = 1
+    #     Poor = 2
+    #     Good = 3
+    #     Very_good = 4
+    #     Excellent = 5
 
+    Type = [
+        ("Exam", "Exam"),
+        ("Symbosium", "Symbosium"),
+        ("Exam_ChatGPT", "Exam_ChatGPT"),
+        ("Other", "Other"),
+    ]
     TOPIC_CHOICES = [
         ("Alteryx", "Alteryx"),
         ("Tableau", "Tableau"),
@@ -169,12 +175,18 @@ class Rated(models.Model):
         ("Biology", "Biology"),
         ("GHC", "GHC"),
         ("CRE", "CRE"),
+        ("Agriculture", "Agriculture"),
         ("Other", "Other"),
     ]
     id = models.AutoField(primary_key=True)
     employeename =  models.ForeignKey(
                     "accounts.CustomerUser", limit_choices_to=Q(is_staff=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="rating_empname",default=1,blank=True)
+    type = models.CharField(
+        max_length=255,
+        choices=Type,
+        default='Other'
+    )
     topic = models.CharField(
         max_length=255,
         choices=TOPIC_CHOICES,

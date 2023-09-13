@@ -5,17 +5,7 @@
 {% block content %}
 
 <div class="container-fluid">
-    <div>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <div class="alert alert-dismissible alert-danger">
-                <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
-            </div>
-        {% endfor %}
-    </ul>
-        </div>
-{% endif %}
+    {% include "main\messages\django_messages.html" %}
     <div class="row">
         <div class="col-md-7 top-coloumn">
             <div class="mt-4" style="width: 75px;height: 4px;background-color: #E7AD4A;"></div>
@@ -27,13 +17,6 @@
             </p>
         </div>
         <div class="col-md-5 top-left-coloumn" style="padding-left: 0px !important;padding-right: 0px !important;">
-            <!-- <img class="w-100" style="height: 100%;"
-            {%for image in images%}
-                {% if image.name == "bg_ceo_10222022_v1"%}
-                    src="{{googledriveurl}}={{image.image_url}}"
-                {%endif%}
-            {% endfor %}
-            > -->
             <img class="w-100" style="height: 100%;" 
             src="{% static 'data/img/project1.jpg' %}" 
             />

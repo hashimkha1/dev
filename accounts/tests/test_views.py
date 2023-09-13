@@ -3,16 +3,6 @@ from django.shortcuts import redirect
 from accounts.models import CustomerUser, Tracker
 from accounts.views import *
 
-# class TestHomeView(TestCase):
-
-#     def setUp(self):
-#         self.client = Client()
-#         self.home_url = redirect('')
-
-#     def test_home_view(self):
-#         response = self.client.get(self.home_url)
-#         self.assertEqual(response.status_code, 200)
-#         self.assertTemplateUsed(response, 'main/home_templates/layout.html')
 
 class TestTrackView(TestCase):
 

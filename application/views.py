@@ -271,13 +271,15 @@ def policies(request):
     return render(request, "application/orientation/policies.html", context)
 
 # -------------------------rating Section-------------------------------------#
-
 def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES, request=request)
         if request.user.is_staff or request.user.is_applicant:
+            reporting_date = date.today()
             form.instance.employeename = request.user
-        
+            form.instance.rating_date = reporting_date
+            form.instance.type = 'Other'
+
         if form.is_valid():
             total_points=rewardpoints(form)
             form.instance.topic = "Other"
@@ -307,7 +309,6 @@ def rate(request):
                 return redirect("management:new_evidence", taskid=task.id)
             except Task.DoesNotExist:
                 print("Task does not exist")
-        
     else:
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
@@ -418,15 +419,41 @@ def rating(request):
 @login_required
 def userscores(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
-    # employee=request.user
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    user_ratings=Rated.objects.filter(employeename=employee)
-    # print(user_ratings)
+    user_ratings = Rated.objects.filter(employeename=employee)
+
+    scores_by_subject = {}
+
+    total_scores = {}
+    for rating in user_ratings:
+        employeename = rating.employeename.username
+        type = rating.type
+        topic = rating.topic
+        totalpoints = rating.totalpoints
+
+        # Check if the employeename is already in the dictionary, if not, initialize it with the totalpoints
+        if employeename not in total_scores:
+            total_scores[employeename] = totalpoints
+        else:
+        # If the employeename is already in the dictionary, add the totalpoints to the existing score
+            total_scores[employeename] += totalpoints
+
+        if employeename not in scores_by_subject:
+            scores_by_subject[employeename] = {}
+
+        if type not in scores_by_subject[employeename]:
+            scores_by_subject[employeename][type] = {}
+
+        scores_by_subject[employeename][type][topic] = totalpoints
+
     context = {
+        'scores_by_subject': scores_by_subject,
+        'total_score': total_scores,
+        'employeename': employee,
         'user_ratings': user_ratings,
         "title": "Student Scores",
     }
-    # setting  up session
+
     request.session["employee_name"] = kwargs.get("username")
     return render(request, "application/orientation/intermediary_training.html", context)
 

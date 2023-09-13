@@ -13,7 +13,6 @@ urlpatterns = [
     
     path('team_profiles/', views.team, name='team_profiles'),
     path('client_profiles/', views.team, name='client_profiles'),
-    # path('profiles/', views.profiles, name='profiles'),
     path('letter/', views.letters, name='letter'),
     path('appointment_letter/', views.letters, name='appointment_letter'),
     # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
@@ -31,8 +30,6 @@ urlpatterns = [
     #=======================SERVICES=====================================
     path('posts/', views.PostListView.as_view(), name='success'),
     path('post/new/', views.newpost, name='post-create'),
-    # path('post/new/', PostCreateView.as_view(), name='post-create'),
-    # path('post/<str:slug>/', views.PostDetailSlugView.as_view(), name='post-detail'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
     path('post/<int:pk>/update/', views.PostUpdateView.as_view(template_name='main/snippets_templates/generalform.html'), name='post-update'),
     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
@@ -66,16 +63,13 @@ urlpatterns = [
 
     path('coach_profile/', views.coach_profile, name='coach_profile'),
     path('contact/', views.contact, name='contact'),
-    path('report/', views.report, name='report'),
     path('project/', views.project, name='project'),
     path('training/', views.training, name='training'),
-    #path('documents/', views.codadocuments, name='documents'),
     path('checkout/', views.checkout, name='checkout'),
     
     path('image/', views.ImageCreateView.as_view(template_name='main/form.html'), name='image'),
     path('image/<int:pk>/', views.ImageUpdateView.as_view(template_name='main/form.html'), name='updateimage'),
     path('images/', views.images, name='images'),
-    path('testing/', views.testing, name='testing'),
     path('interview/', views.interview, name='interview'),
 
    #==============URLS==============================================

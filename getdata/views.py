@@ -12,12 +12,13 @@ from django.views.generic import (
 	ListView,
     DetailView,
 )
-from main.utils import Finance,Data,Management,Automation,Stocks,General,path_values,convert_date
+from main.utils import App_Categories,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
                     fetch_and_insert_data,
-                    load_xel_data_to_postgres
 )
 from finance.models import (Transaction)
+
+from investing.models import OverBoughtSold
 
 #importing Options play funcationality
 
@@ -43,9 +44,7 @@ def getrating(request):
 def uploaddata(request):  
     # context = {"posts": posts}
     context = {
-        "Finance": Finance,
-        "Data": Data,
-        "Management": Management,
+        "App_Categories": App_Categories,
     }
     return render(request,"getdata/uploaddata.html", context) 
 
@@ -480,8 +479,8 @@ def get_urls(self):
     ]
     return new_urls + urls
 
-def upload_csv(request):
 
+def upload_csv(request):
     if request.method == "POST":
         csv_file = request.FILES["csv_upload"]
 
@@ -519,6 +518,58 @@ def upload_csv(request):
     data = {"form": form}
     return render(request, "getdata/uploaddata.html", data)
 
+
+# from django.contrib import messages
+
+def stocks_upload_csv(request):
+    context = {
+        "categories": App_Categories,
+    }
+    if request.method == "POST":
+        # Retrieve the uploaded CSV file
+        csv_file = request.FILES.get("csv_upload")
+        # Check if it's a CSV file
+        if not csv_file.name.endswith(".csv"):
+            messages.warning(request, "Not a CSV file")
+            return render(request, "getdata/uploaddata.html", context)
+        try:
+            # Read the CSV file
+            file = csv_file.read().decode("ISO-8859-1")
+            file_data = file.split("\n")
+            csv_data = [line for line in file_data if line.strip() != ""]
+
+            # Create a set to store unique symbols
+            unique_symbols = set()
+            for x in csv_data:
+                fields = x.split(",")
+                symbol = fields[0]
+
+                # Check if the symbol is unique
+                if symbol not in unique_symbols:
+                    unique_symbols.add(symbol)
+
+                    # Create or update the record
+                    created = OverBoughtSold.objects.update_or_create(
+                            symbol=fields[0],
+                            description=fields[1],
+                            last=fields[2],
+                            volume=fields[3],
+                            RSI=fields[4],
+                            EPS=fields[5],
+                            PE=fields[6],
+                            rank=fields[7],
+                            profit_margins=fields[8],
+                    )
+
+            messages.success(request, "Data populated successfully")
+            return render(request, "getdata/uploaddata.html", context)
+        except Exception as e:
+            messages.warning(request, str(e))
+            return render(request, "getdata/uploaddata.html", context)
+
+    if request.method == 'GET':
+        return render(request, "getdata/uploaddata.html", context)
+
 def selinum_test(request):
     # to test on server
     chrome_options = webdriver.ChromeOptions()
@@ -545,14 +596,5 @@ def LogsViewSet(request):
 
 def refetch_data(request):
     fetch_and_insert_data()
-    previous_path = request.META.get('HTTP_REFERER', '')
-    return redirect(previous_path)
-
-    
-def load_files_data(request):
-    xel_folder_path = r"C:\Users\CHRIS\OneDrive\Desktop\SISTER LAPTOP\COMPANIES\CODA\PROJECTS\Testing\files"
-    table_name = "getdata_event"
-    load_xel_data_to_postgres(xel_folder_path, table_name)
-    print("Process Done")
     previous_path = request.META.get('HTTP_REFERER', '')
     return redirect(previous_path)

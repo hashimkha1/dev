@@ -171,7 +171,7 @@ class covered_calls(models.Model):
     # def __str__(self):
     #     return self.symbol
 
-
+# symbol,description,last,net change,condition
 class Oversold(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)
     action = models.CharField(max_length=255,blank=True, null=True)
@@ -180,13 +180,46 @@ class Oversold(models.Model):
     stock_price = models.CharField(max_length=255,blank=True, null=True)
     expiry = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
+    description = models.CharField(max_length=255,blank=True, null=True)
+    condition = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
     on_date = models.CharField(max_length=255,blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=True,blank=True, null=True)
+    is_featured = models.BooleanField(default=True,blank=True, null=True)
 
     class Meta:
-        verbose_name_plural = "ShortPut"
+        verbose_name_plural = "Oversold"
+
+    def __str__(self):
+        return self.symbol
+    
+class OverBoughtSold(models.Model):
+    symbol = models.CharField(max_length=255,blank=True, null=True)
+    description = models.CharField(max_length=255,blank=True, null=True)
+    last = models.CharField(max_length=255,blank=True, null=True)
+    volume = models.CharField(max_length=255,blank=True, null=True)
+    RSI = models.CharField(max_length=255,blank=True, null=True)
+    EPS = models.CharField(max_length=255,blank=True, null=True)
+    PE = models.CharField(max_length=255,blank=True, null=True)
+    rank = models.CharField(max_length=255,blank=True, null=True)
+    profit_margins = models.CharField(max_length=255,blank=True, null=True)
+
+    @property
+    def condition_integer(self):
+        try:
+            # Convert to float, round, and then convert to int
+            rsi_value = int(round(float(self.RSI)))  
+            if rsi_value >= 30:
+                return 1  # 'oversold'
+            else:
+                return 0  # 'overbought'
+        except ValueError:
+            # Handle any exceptions gracefully
+            return -1  
+
+    
+    class Meta:
+        verbose_name_plural = "Oversold"
 
     def __str__(self):
         return self.symbol

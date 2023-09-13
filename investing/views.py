@@ -1,17 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse
 from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
-from django.views.generic import CreateView,ListView, DetailView, UpdateView
+from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-from .utils import (compute_pay,get_over_postions,risk_ratios,
+from .utils import (compute_pay,risk_ratios,
                     computes_days_expiration,get_user_investment,financial_categories,
-                    delete_duplicates_based_on_symbol)
-from django.db.models import Count
+                    )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
 
@@ -28,6 +26,7 @@ from .models import (
     Investments,
     Investment_rates,
     Oversold,
+    OverBoughtSold,
     Options_Returns,
     Cost_Basis,
     Ticker_Data
@@ -124,17 +123,25 @@ def user_investments(request, username=None, *args, **kwargs):
 
 
 def optionlist(request):
-    title="creditspread"
     return render(request, "main/snippets_templates/output_snippets/option_data.html")
 
 
 @login_required
-def optiondata(request, title=None, *arg, **kwargs):
+def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
-
+    # Query to count distinct symbols for each model
+    covered_calls_count=covered_calls.objects.all().count()
+    shortputdata_count=ShortPut.objects.all().count()
+    credit_spread_count=credit_spread.objects.all().count()
+    print(covered_calls_count,shortputdata_count,credit_spread_count)
+    context_b={
+            "covered_calls_count":covered_calls_count,
+            "shortputdata_count":shortputdata_count,
+            "credit_spread_count":credit_spread_count
+    }
     model_mapping = {
         'covered_calls': {
             'model': covered_calls,
@@ -149,14 +156,8 @@ def optiondata(request, title=None, *arg, **kwargs):
             'title': 'CREDIT SPREAD'
         }
     }
-
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
-
-    # Dealing with duplicate symbols
-    # duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
-    # print('duplicate_symbols=========',duplicate_symbols)
-    # delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
 
     stockdata = stock_model.objects.filter(is_featured=True).distinct()
     if stockdata.exists():  # Using exists() for clarity
@@ -179,9 +180,11 @@ def optiondata(request, title=None, *arg, **kwargs):
             x for x in stockdata if x.symbol not in all_return_symbols or
             (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
         ]
-
         context = {
             "data": filtered_stockdata,
+            "covered_calls_count":covered_calls_count,
+            "shortputdata_count":shortputdata_count,
+            "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
@@ -272,7 +275,8 @@ def credit_spread_update(request, pk):
 
 
 class oversold_update(UpdateView):
-    model = Oversold
+    # model = Oversold
+    model = OverBoughtSold
     success_url = "/investing/overboughtsold/None"
     fields ="__all__"
     # fields = ['symbol','comment','is_featured']
@@ -373,34 +377,37 @@ def ticker_measures(request):
 
 @login_required
 def oversoldpositions(request,symbol=None):
-    table_name = "investing_oversold"
-    get_over_postions(table_name)
     current_date_str = timezone.now().strftime('%Y-%m-%d')
-    overboughtsold_records = Oversold.objects.filter(
-        (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
-    )
+    # overboughtsold_records = Oversold.objects.filter(
+    #     (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
+    # )
+    # overboughtsold_records = Oversold.objects.all()
+    overboughtsold_records = OverBoughtSold.objects.all()
+    
+    condition = None
+    for record in overboughtsold_records:
+        condition='oversold' if record.condition_integer == 1 else 'overbought'
+        print(record.RSI,record.condition_integer,condition)
+
     if symbol is None:
-        print("symbol======>",symbol)
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
+            "condition":condition,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
     else:
         # ticker_symbol = request.POST['ticker']
         ticker_symbol = symbol
-        print("symbol=====>",symbol)
         ticker_measures = Ticker_Data.objects.filter(symbol=ticker_symbol)
-        print("ticker_measures=====XXXXXXX=====>",ticker_measures)
     
         context = { 
             "overboughtsold": overboughtsold_records,
-            # "financial_data": financial_data,
+            "condition": condition,
             "ticker_data": ticker_measures,
             "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
             "financial_categories": financial_categories,
-            # "category": category,
             "risk_ratios": risk_ratios,
         }
 

@@ -639,9 +639,6 @@ class MeetingsUpdateView(LoginRequiredMixin,UpdateView):
     def get_success_url(self):
         return reverse('main:meetings') 
 
-def testing(request):
-    return render(request, "main/testing.html", {"title": "testing"})
-    
 def interview(request):
     return redirect('data:interview')
 
@@ -670,9 +667,6 @@ def contact(request):
     else:
         form = ContactForm()
     return render(request, "main/contact/contact_message.html", {"form": form})
-
-def report(request):
-    return render(request, "main/report.html", {"title": "report"})
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
     model = Assets

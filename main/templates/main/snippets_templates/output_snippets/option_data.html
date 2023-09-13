@@ -26,14 +26,18 @@
                   <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD</br></a>
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD</br>
+                        <p>{{ credit_spread_count  }}</p>
+                      </a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS</a></br> </a>
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
+                      <p>{{ covered_calls_count }}</p></a></br> </a>
                   </div>
                   <div class="col-md-4">
                     <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
                       SHORTPUT<br>
+                      <p>{{ shortputdata_count }}</p>
                     </a>
                   </div>
                 </div>
@@ -52,8 +56,7 @@
                     </a>
                   </div>
                  </div>
-                  <hr/> 
-
+                 <hr/> 
                 </div>
               </div>
             </div>
@@ -93,7 +96,8 @@
                   <!-- <th>Rank</th> -->
                   <th>Expiry</th>
                   <th>Earnings_Date</th>
-                  <th>Uncheck if added?</th>
+                  <!-- <th>Uncheck if added?</th> -->
+                  <th>More</th>
                   <th>Edit</th>
                   
             </tr>

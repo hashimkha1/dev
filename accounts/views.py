@@ -32,7 +32,7 @@ import string, random
 
 # @allowed_users(allowed_roles=['admin'])
 def home(request):
-    return render(request, "main/home_templates/layout.html")
+    return render(request, "main/home_templates/newlayout.html")
 
 
 # @allowed_users(allowed_roles=['admin'])

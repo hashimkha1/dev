@@ -31,12 +31,12 @@ from .models import (
 from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
-from main.utils import path_values,countdown_in_month,dates_functionality,service_instances,service_plan_instances
+from main.utils import path_values,countdown_in_month,dates_functionality
 from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
 from investing.models import Investments,Investment_rates,Investor_Information
-from investing.utils import compute_pay,get_over_postions,investment_test,computes_days_expiration,get_user_investment
-from .utils import check_default_fee,get_exchange_rate,calculate_paypal_charges
+from investing.utils import get_user_investment
+from .utils import get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 from management.models import Requirement
 

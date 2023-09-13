@@ -1,7 +1,6 @@
 from __future__ import print_function
 import os
 import re
-import glob
 from dateutil import parser
 from bs4 import BeautifulSoup
 import psycopg2
@@ -15,8 +14,6 @@ from datetime import date,datetime
 from base64 import urlsafe_b64decode
 import logging
 logger = logging.getLogger(__name__)
-import urllib.request
-import requests
 #libraries for Options_play data extraction
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -37,62 +34,6 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 #DB VARIABLES
 (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
 
-
-def load_xel_data_to_postgres(xel_folder_path,table_name):
-    # Create a PostgreSQL connection and cursor
-    conn = psycopg2.connect(
-        host=source_host,
-        dbname=source_dbname,
-        user=source_user,
-        password=source_password
-    )
-    cursor = conn.cursor()
-
-    # Create the table if it doesn't exist
-    create_table_query = '''
-    CREATE TABLE IF NOT EXISTS {} (
-        event_time TIMESTAMP,
-        session_id INTEGER,
-        event_name TEXT,
-        column1 TEXT,
-        column2 TEXT,
-        column3 TEXT
-    );
-    '''.format(table_name)
-    cursor.execute(create_table_query)
-
-    # Get a list of XEL files in the folder
-    xel_files = glob.glob(os.path.join(xel_folder_path, '*.xel'))
-    for xel_file in xel_files:
-        with open(xel_file, 'r') as file:
-            # Read the contents of the XEL file
-            xel_content = file.read()
-
-            # Extract events using regular expressions
-            events = re.findall(r'<Event event_time="(.*?)" session_id="(.*?)" event_name="(.*?)">(.*?)</Event>', xel_content, re.DOTALL)
-
-            # Process each event
-            for event in events:
-                event_time, session_id, event_name, column_data = event
-
-                # Extract column values
-                column_values = {}
-                columns = re.findall(r'<Column name="(.*?)" value="(.*?)"', column_data)
-                for column_name, column_value in columns:
-                    column_values[column_name] = column_value
-
-                # Insert the event data into the database table
-                insert_query = '''
-                INSERT INTO {} (event_time, session_id, event_name, column1, column2, column3)
-                VALUES (%s, %s, %s, %s, %s, %s)
-                '''.format(table_name)
-                cursor.execute(insert_query, (event_time, session_id, event_name, column_values.get('Column1'), column_values.get('Column2'), column_values.get('Column3')))
-
-    # Commit the changes and close the database connection
-    conn.commit()
-    conn.close()
-
-
 def fetch_and_insert_data():
     (source_host, source_dbname, source_user, source_password, target_db_path) = source_target()
 
@@ -109,8 +50,8 @@ def fetch_and_insert_data():
     target_conn = psycopg2.connect(target_db_path)
     target_cursor = target_conn.cursor()
 
-    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
-    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls']
+    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold']
+    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold']
 
     try:
         # Iterate over source and target tables

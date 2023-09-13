@@ -6,7 +6,7 @@ from django.db.models import Sum, Max
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
 from .models import TrainingLoan, Transaction
-from main.utils import Finance,Data,Management
+from main.utils import App_Categories
 from accounts.models import Department
 
 
@@ -48,9 +48,7 @@ def balance_loan(user):
 
 def upload_csv(request):
     context = {
-        "Finance": Finance,
-        "Data": Data,
-        "Management": Management,
+        "categories": App_Categories,
     }
     if request.method == "POST":
         csv_file = request.FILES.get("csv_upload")
