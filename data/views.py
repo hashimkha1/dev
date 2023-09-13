@@ -47,6 +47,14 @@ def analysis(request):
     )
 
 
+def payroll(request):
+    return render(request, "data/deliverable/payroll.html", {"title": "payroll"})
+
+def financialsystem(request):
+    return render(
+        request, "data/deliverable/financialsystem.html", {"title": "financialsystem"}
+    )
+
 def deliverable(request):
     return render(
         request, "data/deliverable/deliverable.html", {"title": "deliverable"}
@@ -55,14 +63,6 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, "data/training/training.html", {"title": "training"})
-
-
-
-# @login_required
-# def training_v2(request):
-#     print("I am with Sylivia")
-#     return render(request, "data/training/training_v2.html", {"title": "training_v2"})
-    
 
 @login_required
 def start_training(request, slug=None, *args, **kwargs):
@@ -104,20 +104,13 @@ def start_training(request, slug=None, *args, **kwargs):
 
 
 # interview starts
-@login_required
-def interview(request):
-    context={
-        "data_interview":data_interview
-    }
-    return render(request, "data/interview/interview_progress/start_interview.html",context)
+# @login_required
+# def interview(request):
+#     context={
+#         "data_items":data_interview
+#     }
+#     return render(request, "data/interview/interview_progress/start_interview.html",context)
 
-def payroll(request):
-    return render(request, "data/deliverable/payroll.html", {"title": "payroll"})
-
-def financialsystem(request):
-    return render(
-        request, "data/deliverable/financialsystem.html", {"title": "financialsystem"}
-    )
 
 # Views on interview Section
 @login_required
@@ -152,12 +145,7 @@ def iuploads(request):
     context = {"uploads": uploads, "myFilter": myFilter}
     return render(request, "data/interview/interviewuploads.html", context)
     
-def useruploads(request, pk=None, *args, **kwargs):
-    useruploads = Interviews.objects.filter(client=request.user).order_by("-upload_date")
-    context = {
-        "useruploads": useruploads,
-    }
-    return render(request, "data/interview/useruploads.html", context)
+
     
 @login_required
 def prepquestions(request):
@@ -166,6 +154,14 @@ def prepquestions(request):
     questions = QuestionFilter.qs
     context = {"questions": questions, "myFilter": QuestionsFilter}
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
+
+def useruploads(request, pk=None, *args, **kwargs):
+    useruploads = Interviews.objects.filter(client=request.user).order_by("-upload_date")
+    context = {
+        "useruploads": useruploads,
+    }
+    # return render(request, "data/interview/interview_progress/prepresponses.html", context_b)
+    return render(request, "data/interview/useruploads.html", context)
 
 def prep_responses(request):
     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
@@ -349,7 +345,7 @@ def questionview(request, question_type=None, *args, **kwargs):
                 form_data = form.cleaned_data
                 data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=question_type, link=form_data['link'], comment=form_data['comment'] )
                 if data.exists():
-                    messages.error(request, "you have already asked this question before")
+                    messages.error(request, "you have already responded this question")
                     return redirect('data:question-detail', question_type=question_type)
                 instance = form.save(commit=False)
                 instance.client = request.user
