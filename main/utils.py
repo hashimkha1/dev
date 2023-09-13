@@ -13,6 +13,8 @@ from django.utils.text import slugify
 # from yourapp.utils import random_string_generator
 
 from django import template
+from django.apps import apps
+from django.db.models import Q
 
 register = template.Library()
 
@@ -76,6 +78,51 @@ def unique_slug_generator(instance, new_slug=None):
     return slug
 
 
+
+""" =============open_ai chat bot===========   """
+def generate_chatbot_response(user_message):
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    response = openai.Completion.create(
+            model="text-davinci-001",
+            prompt=user_message,
+            temperature=0.4,
+            max_tokens=100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+    )
+    if response:
+        res = response["choices"][0]
+        result=res['text']
+    else:
+        result = None
+    return result
+    # return response.choices[0].text
+
+def generate_database_response(user_message):
+    try:
+        all_models = apps.get_models()
+        response_data = []
+
+        for model in all_models:
+            model_name = model.__name__
+            fields = model._meta.get_fields()
+            model_data = []
+
+            for field in fields:
+                if field.get_internal_type() == 'CharField':
+                    query = Q(**{f"{field.name}__icontains": user_message})
+                    results = model.objects.filter(query)
+                    model_data.extend(results.values())
+
+            if model_data:
+                response_data.append({model_name: model_data})
+
+        return response_data
+    except Exception as e:
+        return None
+
+""" ===========End of code============ """
 
 def buildmodel(question):
     #fetching api key 

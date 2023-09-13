@@ -147,7 +147,7 @@ class CredentialCategory(models.Model):
     )
     description = models.TextField(max_length=1000, default=None)
     entry_date = models.DateTimeField(_("entered on"), auto_now_add=True, editable=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=True)
 
     def get_absolute_url(self):

@@ -13,7 +13,8 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews
+                    client_categories,service_instances,service_plan_instances,reviews,
+                    generate_database_response,generate_chatbot_response
 )
 from .models import Testimonials
 from coda_project import settings
@@ -38,7 +39,6 @@ from .forms import *
 from PIL import Image
 from django.contrib.auth import get_user_model
 User=get_user_model()
-
 
 #  ===================================================================================   
 def checkout(request):
@@ -93,7 +93,30 @@ def layout(request):
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
-
+def get_respos(request):
+    user_message = request.GET.get('userMessage')  # Get the user's message from the form data
+    if user_message:
+        database_response = generate_database_response(user_message)
+        chatbot_response = generate_chatbot_response(user_message)
+        if database_response:
+            return JsonResponse({'response': database_response})
+        elif chatbot_response:
+            return JsonResponse({'response': chatbot_response})
+        else:
+            contact_model = DSU.objects.filter(challenge=user_message).first()
+            if not contact_model:
+                form = ContactForm(request.POST, request.FILES)
+                dsu_instance = form.save(commit=False)
+                dsu_instance.trained_by=request.user
+                dsu_instance.task='NA',
+                dsu_instance.plan='NA',
+                dsu_instance.challenge = user_message
+                dsu_instance.save()
+                return JsonResponse({'response': "Oops! It seems I haven't learned that one yet, but not to worry. Our team will get back to you shortly with the information you need. Thanks for your patience!"})
+            else:
+                return JsonResponse({'response': str(contact_model.task)})
+    else:
+        return JsonResponse({'response': 'Invalid user message'})
 # =====================SERVICES  VIEWS=======================================
 class ServiceCreateView(LoginRequiredMixin, CreateView):
     model = Service

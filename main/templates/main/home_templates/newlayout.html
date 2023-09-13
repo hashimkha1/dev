@@ -7,7 +7,10 @@
       <h1>Get help with career, business, and personal projects.</h1>
   </div>
 </div>
-
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/chatbot.css' %}">
+<div style="position: relative; z-index: 9999;">
+{% include 'main/home_templates/chatbot.html'%}
+</div>
 <div class="strip-div">
   <div class="container">
       <p>Whether it’s learning a new skill, landing a high paying job, or managing your project where you can’t
