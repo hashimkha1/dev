@@ -132,7 +132,16 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
-
+    # Query to count distinct symbols for each model
+    covered_calls_count=covered_calls.objects.all().count()
+    shortputdata_count=ShortPut.objects.all().count()
+    credit_spread_count=credit_spread.objects.all().count()
+    print(covered_calls_count,shortputdata_count,credit_spread_count)
+    context_b={
+            "covered_calls_count":covered_calls_count,
+            "shortputdata_count":shortputdata_count,
+            "credit_spread_count":credit_spread_count
+    }
     model_mapping = {
         'covered_calls': {
             'model': covered_calls,
@@ -147,13 +156,10 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             'title': 'CREDIT SPREAD'
         }
     }
-
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
 
-    # print('symbols=========>',stock_model)
     stockdata = stock_model.objects.filter(is_featured=True).distinct()
-    
     if stockdata.exists():  # Using exists() for clarity
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
@@ -174,9 +180,11 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             x for x in stockdata if x.symbol not in all_return_symbols or
             (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
         ]
-
         context = {
             "data": filtered_stockdata,
+            "covered_calls_count":covered_calls_count,
+            "shortputdata_count":shortputdata_count,
+            "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,

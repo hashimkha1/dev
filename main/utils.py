@@ -382,7 +382,7 @@ Automation = [
 
     {
         "title": "Stocks & Options",
-        "link":SITEURL+"/investing/optionlist/",
+        "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
     },
 ]
