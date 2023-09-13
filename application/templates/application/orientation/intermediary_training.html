@@ -73,15 +73,45 @@
             </tr>
           </thead>
           <tbody>
-            {% for rating in user_ratings %}
-              <tr>
-                <td>{{rating.rating_date|date:"F d, Y"}}</td>
-                <td>{{rating.employeename}}</td>
-                <td>{{rating.type}}</td>
-                <td>{{rating.topic}}</td>
-                <td>{{rating.totalpoints}}</td>
-              </tr>
-            {% endfor %}
+            {% if request.user.is_superuser or request.user.is_admin%}
+                  {% for rating in ratings %}
+                    <tr>
+                      <td>{{rating.rating_date|date:"F d, Y"}}</td>
+                      <td>{{rating.employeename}}</td>
+                      <td>{{rating.type}}</td>
+                      <td>{{rating.topic}}</td>
+                      <td>{{rating.totalpoints}}</td>
+                      <td>
+                        <a href="{%url 'application:score-update' rating.id %}" 
+                          class="btn text-secondary px-0"
+                        ><h4><b>☑</b></h4> 
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+            {% else %}
+                  {% for rating in user_ratings %}
+                    <tr>
+                      <td>{{rating.rating_date|date:"F d, Y"}}</td>
+                      <td>
+                        <a href="{%url 'application:userscores' rating.employeename %}" 
+                          class="btn text-secondary px-0"
+                        ><h4><b>{{rating.employeename}}</b></h4> 
+                        </a>
+                      </td>
+                      <td>{{rating.employeename}}</td>
+                      <td>{{rating.type}}</td>
+                      <td>{{rating.topic}}</td>
+                      <td>{{rating.totalpoints}}</td>
+                      <td>
+                        <a href="{%url 'application:score-update' rating.id %}" 
+                          class="btn text-secondary px-0"
+                        ><h4><b>☑</b></h4> 
+                        </a>
+                      </td>
+                    </tr>
+                  {% endfor %}
+            {% endif %}
           </tbody>
           
         </table>

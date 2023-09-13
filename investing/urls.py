@@ -13,7 +13,6 @@ urlpatterns = [
     path('companyreturns/', views.options_returns, name='companyreturns'),
     path('costbasis/', views.cost_basis, name='costbasis'),
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
-    path('optionlist/', views.optionlist, name='optionlist'),
     path('options/<str:title>', views.optiondata, name='option_list'),
     path('creditspreadupdate/<int:pk>', views.credit_spread_update, name='creditspreadupdate'),
     path('coveredupdate/<int:pk>', views.covered_update, name='coveredupdate'),

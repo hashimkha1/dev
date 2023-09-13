@@ -421,6 +421,7 @@ def userscores(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     employee = get_object_or_404(User, username=kwargs.get("username"))
     user_ratings = Rated.objects.filter(employeename=employee)
+    ratings = Rated.objects.all()
 
     scores_by_subject = {}
 
@@ -451,6 +452,7 @@ def userscores(request, user=None, *args, **kwargs):
         'total_score': total_scores,
         'employeename': employee,
         'user_ratings': user_ratings,
+        'ratings': ratings,
         "title": "Student Scores",
     }
 

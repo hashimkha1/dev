@@ -83,11 +83,9 @@ def investments(request):
     total_amt=0
     for amt  in investments:
         total_amt=total_amt+amt.amount
-        print(total_amt)
     amount_invested=float(total_amt)*float(0.33)
     amount = float(total_amt)
     returns=compute_pay(amount)
-    print(amount,amount_invested,returns)
     context={
         "investments":investments,
         "latest_investment":latest_investment,
@@ -121,11 +119,6 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
-
-def optionlist(request):
-    return render(request, "main/snippets_templates/output_snippets/option_data.html")
-
-
 @login_required
 def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -136,12 +129,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     covered_calls_count=covered_calls.objects.all().count()
     shortputdata_count=ShortPut.objects.all().count()
     credit_spread_count=credit_spread.objects.all().count()
-    print(covered_calls_count,shortputdata_count,credit_spread_count)
-    context_b={
-            "covered_calls_count":covered_calls_count,
-            "shortputdata_count":shortputdata_count,
-            "credit_spread_count":credit_spread_count
-    }
+
     model_mapping = {
         'covered_calls': {
             'model': covered_calls,
@@ -387,7 +375,7 @@ def oversoldpositions(request,symbol=None):
     condition = None
     for record in overboughtsold_records:
         condition='oversold' if record.condition_integer == 1 else 'overbought'
-        print(record.RSI,record.condition_integer,condition)
+        # print(record.RSI,record.condition_integer,condition)
 
     if symbol is None:
         # Handle GET requests (for first-time loading)
