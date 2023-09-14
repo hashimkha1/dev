@@ -5,8 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import (
     UserProfile,
     Application,
-    InteviewUploads,
-    Policy,
+    # InteviewUploads,
+    # Policy,
     Rated,
     Reporting,
 )
@@ -118,17 +118,17 @@ class RatingForm(forms.ModelForm):
             self.fields["uploadlinkurl"].required = True
 
 
-class InterviewForm(forms.ModelForm):
-    class Meta:
-        model = InteviewUploads
-        fields = ["username", "ppt", "report", "workflow", "proc", "other"]
-        labels = {
-            "ppt": "Powerpoint",
-            "report": "Tableau Reports",
-            "workflow": "Alteryx Workflow",
-            "proc": "SQL Script",
-            "other": "Other Documents",
-        }
+# class InterviewForm(forms.ModelForm):
+#     class Meta:
+#         model = InteviewUploads
+#         fields = ["username", "ppt", "report", "workflow", "proc", "other"]
+#         labels = {
+#             "ppt": "Powerpoint",
+#             "report": "Tableau Reports",
+#             "workflow": "Alteryx Workflow",
+#             "proc": "SQL Script",
+#             "other": "Other Documents",
+#         }
 
 
 class ReportingForm(forms.ModelForm):

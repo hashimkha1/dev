@@ -142,16 +142,16 @@ class LBandLS(models.Model):
     def __str__(self):
         return self.user.username
 
-class RetirementPackage(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+# class RetirementPackage(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+#     period = models.CharField(max_length=10)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
-class LaptopSaving(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+# class LaptopSaving(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+#     period = models.CharField(max_length=10)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 class TrainingLoan(models.Model):
     LOAN_CHOICES = [
@@ -171,35 +171,37 @@ class TrainingLoan(models.Model):
     deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
-class Payslip(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
-    # month and year of period we are paying
-    period = models.CharField(max_length=10)
+# class Payslip(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
-    # points based on the work the employee done
-    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # month and year of period we are paying
+#     period = models.CharField(max_length=10)
 
-    # earnings calculated based on points
-    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # points based on the work the employee done
+#     points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # benefits
-    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # earnings calculated based on points
+#     earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # retirement_package is long term benefit and does not affect the net pay
-    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+#     # benefits
+#     EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # deductions
-    loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
-    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+#     # retirement_package is long term benefit and does not affect the net pay
+#     # retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+
+#     # deductions
+#     loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
+#     FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+
 
 class Transaction(models.Model):
     # Method of Category
