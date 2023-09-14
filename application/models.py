@@ -98,19 +98,19 @@ class Application(models.Model):
         return f"{self.username} application"
 
 
-class InteviewUploads(models.Model):
-    Id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=30, null=True)
-    upload_date = models.DateTimeField(default=timezone.now)
-    ppt = models.FileField(default=None, upload_to="Powerpoints/doc/")
-    report = models.FileField(default=None, upload_to="Reports/doc/")
-    workflow = models.FileField(default=None, upload_to="Workflows/doc/")
-    proc = models.FileField(default=None, upload_to="Procedures/doc/")
-    other = models.FileField(default=None, upload_to="Others/doc/")
-    Applicant = models.ManyToManyField(Application)
+# class InteviewUploads(models.Model):
+#     Id = models.AutoField(primary_key=True)
+#     username = models.CharField(max_length=30, null=True)
+#     upload_date = models.DateTimeField(default=timezone.now)
+#     ppt = models.FileField(default=None, upload_to="Powerpoints/doc/")
+#     report = models.FileField(default=None, upload_to="Reports/doc/")
+#     workflow = models.FileField(default=None, upload_to="Workflows/doc/")
+#     proc = models.FileField(default=None, upload_to="Procedures/doc/")
+#     other = models.FileField(default=None, upload_to="Others/doc/")
+#     Applicant = models.ManyToManyField(Application)
 
-    def __str__(self):
-        return f"{self.username} InteviewUploads"
+#     def __str__(self):
+#         return f"{self.username} InteviewUploads"
 
 
 class Policy(models.Model):
