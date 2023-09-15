@@ -1,14 +1,10 @@
-import requests
-import json
 import webbrowser
 import datetime
-import time
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
 from django.db.models import Q
 from django.shortcuts import redirect, render,get_object_or_404
-from django.contrib import messages
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
@@ -20,12 +16,10 @@ from .models import Testimonials
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
-from management.models import Whatsapp
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
@@ -36,7 +30,6 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
-from PIL import Image
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -122,8 +115,6 @@ def get_respos(request):
                 return JsonResponse({'response': str(contact_model.task)})
          
     except Exception as e:
-        print("results============>", database_response)
-        # Handle the case where no results were found
         # Handle exceptions and return an appropriate JSON response
         return JsonResponse({'error': str(e)})
 
@@ -215,59 +206,19 @@ def display_service(request,*args, **kwargs):
     return render(request, "main/services/show_service.html", context)
 
 
-# def service_plans(request, *args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
-#     print("sub_title====>",sub_title)
-#     print("pre_sub_title====>",pre_sub_title)
-#     try:
-#         if sub_title.lower() in ["job-support","interview","full-course"]:
-#             # service_shown = Data Analysis
-#             service_shown = Service.objects.get(slug="data_analysis")
-#             print("service_shown====>",service_shown)
-#         elif sub_title.lower() =='access_options':
-#             service_shown = Service.objects.get(slug="investing")
-#             print("service_shown====>",service_shown)
-
-#         elif sub_title.lower() in ["field-projects","It_projects"]:
-#             service_shown = Service.objects.get(slug="consultancy")
-#             print("service_shown====>",service_shown)
-#         else:
-#             return redirect('main:services' )
-        
-#     except Service.DoesNotExist:
-#         return redirect('main:display_service')
-    
-#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
-#     plans = Pricing.objects.filter(category=category_id)
-
-#     context = {}
-#     context = {
-#         "SITEURL": settings.SITEURL,
-#         "title": category_name,
-#         "category_slug": category_slug,
-#         "services": plans
-#     }
-#     if payment_details:
-#         return render(request, "data/interview/interview_progress/start_interview.html",context)
-#     else:
-#         return render(request, "main/services/service_plan.html", context)
-
-
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
-    print("pre_sub_title==========>",pre_sub_title)
+    # print("pre_sub_title==========>",pre_sub_title)
     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
     try:
         if pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
-            print("service_shown====>",service_shown)
+            # print("service_shown====>",service_shown)
 
         elif sub_title.lower() in ["job-support","interview","full-course"]:
             # service_shown = Data Analysis
             service_shown = Service.objects.get(slug="data_analysis")
-            print("service_shown====>",service_shown)
+            # print("service_shown====>",service_shown)
         else:
             return redirect('main:layout')
         
@@ -284,7 +235,7 @@ def service_plans(request, *args, **kwargs):
         "category_slug": category_slug,
         "services": plans
     }
-    print(request.user.category)
+    # print(request.user.category)
     if payment_details and request.user.category==3:
         return render(request, "data/interview/interview_progress/start_interview.html",context)
     else:
@@ -427,7 +378,6 @@ class PlanUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def form_valid(self, form):
         form.instance.username = self.request.user
-        print("HERE")
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -505,7 +455,6 @@ def team(request):
     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
     clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
     number_of_staff = len(team_members_staff)-1
-    print(number_of_staff)
     selected_class = count_to_class.get(number_of_staff, "default-class")
     if sub_title == 'team_profiles':
         team_categories = {
@@ -692,7 +641,6 @@ class ImageCreateView(LoginRequiredMixin, CreateView):
 def images(request):
     # images = Assets.objects.all().first()
     images = Assets.objects.all()
-    # print(images)
     return render(request, "main/snippets_templates/static/images.html", {"title": "pay", "images": images})
 
 class ImageUpdateView(LoginRequiredMixin,UpdateView):
@@ -758,8 +706,6 @@ def my_availability(request):
             day_dif = abs(today.weekday()-int(obj.day))
             date = today.replace(day=(today.day+day_dif))
             day = date.strftime("%A")
-            print(day)
-            print(date)
 
             dist[obj] = {'date': date, 'day': day}
     except:
