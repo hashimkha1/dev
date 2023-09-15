@@ -25,7 +25,7 @@
                   <hr/>
                   <div class="row text-center">
                     <div class="col-md-12">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Score</br> <i>{{total_score}}</i></a>
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Total Score</br> <i>{{user_total_score}}</i></a>
                   </div>
                     <!-- <div class="col-md-3">
                       <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Exam</br> <i>{{transactions|floatformat:2}}</i></a>
@@ -65,23 +65,38 @@
           <thead class="border-bottom font-weight-bold">
             <tr>
               <th>Date</th>
-              <th>Employee Name</th>
+              <th>username</th>
               <th>type</th>
               <th>Topic</th>
               <th>Score</th>
-              <th></th>
+              <th>Edit</th>
             </tr>
           </thead>
-          <tbody>
-            {% for rating in user_ratings %}
-              <tr>
-                <td>{{rating.rating_date|date:"F d, Y"}}</td>
-                <td>{{rating.employeename}}</td>
-                <td>{{rating.type}}</td>
-                <td>{{rating.topic}}</td>
-                <td>{{rating.totalpoints}}</td>
-              </tr>
-            {% endfor %}
+                  {% for rating in user_ratings %}
+                    <tr>
+                      <td>{{rating.rating_date|date:"F d, Y"}}</td>
+                      <td>
+                        <a href="{%url 'application:userscores' rating.employeename %}" 
+                          class="px-0"
+                        >{{rating.employeename}}
+                        </a>
+                      </td>
+                      <td>{{rating.type}}</td>
+                      <td>
+                        <a href="{{rating.uploadlinkurl}}" 
+                          class=""
+                        >{{rating.topic}}
+                        </a>
+                      </td>
+                      <td>{{rating.totalpoints}}</td>
+                      <td>
+                        <a href="{%url 'application:score-update' rating.id %}" 
+                          class="btn text-secondary px-0"
+                        ><h4><b>☑</b></h4> 
+                        </a>
+                      </td>
+                    </tr>
+                    {% endfor %}
           </tbody>
           
         </table>
