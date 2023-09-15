@@ -222,7 +222,6 @@ def refresh_token_function(request):
     return HttpResponse("token saved successfully")
 
 
-
 # def getmeetingresponse(startDate , endDate):
 def getmeetingresponse(startDate , endDate):
     access_token = None
@@ -258,8 +257,18 @@ def getmeetingresponse(startDate , endDate):
     print('-'*50)
     jsonResponse = json.loads(response.text)
     myCleanResponse = []
+    attendees1 = []
     for meeting in jsonResponse:
         # print("meetings============>",meeting)
+        """ ======== Code For Get attendeeName ========="""
+        meeting_id = meeting['meetingId']
+        start_time = meeting['startTime']
+        urlGotoOneMeetingDetail = f"https://api.getgo.com/G2M/rest/meetings/{meeting_id}/attendees"
+        meetingresponse = requests.request("GET" , url=urlGotoOneMeetingDetail , headers=headers)
+        attendees_response = json.loads(meetingresponse.text)
+        attendee_names = [attendee.get("attendeeName") for attendee in attendees_response]
+        
+        """ =========== End of Code ============="""
         temp = {}
         meetingItems = meeting.items()
         temp.update(meetingItems)
@@ -274,6 +283,9 @@ def getmeetingresponse(startDate , endDate):
 
         temp['startTime'] = temp.get('startTime').replace('.+0000','')
         temp['endTime'] = temp.get('endTime').replace('.+0000','')
+        temp['attendeeNames'] = [attendee.get('attendeeName') for attendee in attendees_response 
+                                if attendee.get('startTime') == start_time[:19]] or None
+        
         myCleanResponse.append(temp)
     # return HttpResponse(myCleanResponse)
     return myCleanResponse
