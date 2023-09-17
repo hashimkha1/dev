@@ -257,7 +257,11 @@ def newpost(request):
             return redirect('main:layout')
     else:
         form = PostForm()
-        quest = "write 3 full paragraphs each on how good my data analyst coach was" # pick a question bunch of questions
+        topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
+
+        # Randomly select a title from the list
+        selected_title = random.choice(topics)
+        quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
         result = buildmodel(question=quest)
 
         if result is None:

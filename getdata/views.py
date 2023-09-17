@@ -138,7 +138,7 @@ def obtain_tokens(request):
     code = request.GET.get('code')
     # code='eyJraWQiOiI2MjAiLCJhbGciOiJSUzUxMiJ9.eyJzYyI6ImNhbGwtY29udHJvbC52MS5jYWxscy5jb250cm9sIGNhbGxzLnYyLmluaXRpYXRlIGNvbGxhYjogY3IudjEucmVhZCBmYXgudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgZmF4LnYxLnJlYWQgZmF4LnYxLndyaXRlIGlkZW50aXR5OiBpZGVudGl0eTpzY2ltLm9yZyBtZXNzYWdpbmcudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgbWVzc2FnaW5nLnYxLnJlYWQgbWVzc2FnaW5nLnYxLnNlbmQgbWVzc2FnaW5nLnYxLndyaXRlIHJlYWx0aW1lLnYyLm5vdGlmaWNhdGlvbnMubWFuYWdlIHN1cHBvcnQ6IHVzZXJzLnYxLmxpbmVzLnJlYWQgd2VicnRjLnYxLnJlYWQgd2VicnRjLnYxLndyaXRlIiwic3ViIjoiMTA1MzgxODUyNTQ4NTQ2NDU5MCIsImF1ZCI6ImE3NWY4NzZkLWNiNTgtNDA0Yy1iNWMwLTRlOTFkOWJjNDA1MiIsIm9nbiI6InB3ZCIsImxzIjoiMTA3NjgwNDItYzI2Ny00NjcxLWE2MGMtZmVhYTk1ODcyYTAxIiwidHlwIjoiYyIsImV4cCI6MTY5Mzg4OTU0MSwiaWF0IjoxNjkzODg4OTQxLCJ1cmkiOiJodHRwczpcL1wvd3d3LmNvZGFuYWx5dGljcy5uZXRcLyIsImp0aSI6IjNjYTEzMDZjLTQ4YmEtNGE4My1hODNlLTY3ZDc3ZTIxODMxMyJ9.a7I6bRkafGA7cfr4Del0tc4IHErFCUp2D2E_zjd9aq-9sEek8GIiK0FH2W7eDg0SB5sL-Tet-KlEutK7Jw1zWTXKHZgGHeURfx3JNXdvmpYGI1XBZiNEALbXC8X-kB1njfMdpnSJbUonQ0qYRcbqzlIfIeaCFm3tnSujn0QvK9DbzGUDWfZDT5_xxRRQEl-B06VKU9CZ_hrsh2GEyEVVQ5SuUZlq8Nxivkp7phSt5ErMpYBjvd1POZ8JTCkucylQA3tWo7531AYES4ZpQM5BJ51S2XtmTLYqr1o5mS-xVdxI27LwLeBBHJeHA3xp39DvW5C2rbmygCOHAMCPY3UHew'
     # code = os.environ.get('GOTO_CLIENT_CODE')
-    print("code======>",code)
+    # print("code======>",code)
     
     if not code:
         return HttpResponseBadRequest("Missing code parameter")
@@ -175,10 +175,6 @@ def obtain_tokens(request):
 
     # Return the refresh token as a JsonResponse, or you can save it, etc.
     return JsonResponse({"refresh_token": refresh_token})
-
-
-
-
 
 def refresh_token_function(request):
     global refresh_token , client_code
