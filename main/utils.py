@@ -97,9 +97,9 @@ def generate_chatbot_response(user_message):
     # return response.choices[0].text
 
 
-def generate_database_response(user_message, table='investing'):
+def generate_database_response(user_message, app='investing'):
     # Get all the models from the specified app
-    app_config = apps.get_app_config(table)
+    app_config = apps.get_app_config(app)
     models = app_config.get_models()
 
     response_data = []

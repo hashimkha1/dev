@@ -163,7 +163,7 @@ def obtain_tokens(request):
 
     # Make the token request
     response = requests.post('https://api.getgo.com/oauth/v2/token', data=payload)
-    print("status======>",response.status_code)
+    # print("status======>",response.status_code)
     # Error handling for the HTTP request
 
     if response.status_code != 200:
