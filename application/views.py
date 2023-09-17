@@ -261,19 +261,18 @@ def policies(request):
     context = {"policies": policies, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
 
+
 # -------------------------rating Section-------------------------------------#
+
 def rate(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES, request=request)
         if request.user.is_staff or request.user.is_applicant:
-            reporting_date = date.today()
             form.instance.employeename = request.user
-            form.instance.rating_date = reporting_date
+            form.instance.rating_date = date.today()
             form.instance.type = 'Other'
-
         if form.is_valid():
             total_points=rewardpoints(form)
-            form.instance.topic = "Other"
             form.instance.totalpoints = total_points
             
             # Saving form data to rating table only if the user is applicant
@@ -291,7 +290,7 @@ def rate(request):
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
             try:
                 task = Task.objects.filter(
-                    Q(activity_name__icontains="one on one")
+                    Q(activity_name__icontains="one on")
                 ).get(employee__username=form.instance.employeename)
                 task.point += total_points
                 if task.point >= task.mxpoint or task.point + 15 >= task.mxpoint:
