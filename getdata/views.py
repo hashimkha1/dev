@@ -524,6 +524,7 @@ def stocks_upload_csv(request):
     if request.method == "POST":
         # Retrieve the uploaded CSV file
         csv_file = request.FILES.get("csv_upload")
+
         # Check if it's a CSV file
         if not csv_file.name.endswith(".csv"):
             messages.warning(request, "Not a CSV file")
@@ -533,7 +534,7 @@ def stocks_upload_csv(request):
             file = csv_file.read().decode("ISO-8859-1")
             file_data = file.split("\n")
             csv_data = [line for line in file_data if line.strip() != ""]
-
+           
             # Create a set to store unique symbols
             unique_symbols = set()
             for x in csv_data:
@@ -558,7 +559,9 @@ def stocks_upload_csv(request):
                     )
 
             messages.success(request, "Data populated successfully")
-            return render(request, "getdata/uploaddata.html", context)
+            # return render(request, "investing/oversold.html", context)
+            return redirect('investing:overboughtsold',symbol=None )
+        
         except Exception as e:
             messages.warning(request, str(e))
             return render(request, "getdata/uploaddata.html", context)
