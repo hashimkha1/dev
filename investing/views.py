@@ -8,7 +8,7 @@ from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories,
+                    computes_days_expiration,get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
@@ -43,9 +43,6 @@ User=get_user_model
 # Create your views here.
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
-
-# def coveredcalls(request):
-#     return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def training(request):
     return render(request, 'investing/training.html', {'title': 'training'})
@@ -184,6 +181,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             "shortputdata_count":shortputdata_count,
             "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
+            "categories": investment_rules,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
             'title': page_title,  # Using renamed title
