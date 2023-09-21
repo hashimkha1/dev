@@ -209,7 +209,10 @@ def display_service(request,*args, **kwargs):
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     # print("pre_sub_title==========>",pre_sub_title)
-    payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+    try:
+        payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+    except:
+        payment_details=[]
     try:
         if pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
@@ -369,6 +372,8 @@ def plans(request):
         "plan_categories": plan_categories,
         "delivery_date": delivery_date,
         "day_name": day_name,
+        "message": "You are not a super user",
+
     }
     if request.user.is_superuser:
         return render(request, "main/plans.html", context)
