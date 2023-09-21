@@ -350,7 +350,6 @@ class PostDeleteView(LoginRequiredMixin,UserPassesTestMixin,DeleteView):
 
 # =====================PLAN=======================================
 class PlanCreateView(LoginRequiredMixin, CreateView):
-    # This is a view for creating a plan
     model = Plan
     success_url = "/plans/"
     fields = "__all__"
