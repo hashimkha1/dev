@@ -45,13 +45,14 @@ from management.models import (
     Training,
     ProcessJustification,
     ProcessBreakdown,
-    Meetings
+    Meetings,
+    GotoMeetings
 )
 
 
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
-from accounts.models import Tracker, Department, TaskGroups
+from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -1170,14 +1171,22 @@ def newevidence(request, taskid):
     task = get_object_or_404(Task, id=taskid)
 
     if request.method == "POST":
-        form = EvidenceForm(request.POST)
+        form = EvidenceForm(data=request.POST,request=request)
         if form.is_valid():
+            data = form.cleaned_data
+            
             points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
             
-            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
+            selected_requirement = data.get('requirement')
+            if selected_requirement:
+              
+                duration = Requirement.objects.get(id=selected_requirement).duration
+                points += duration
+                Task.objects.filter(id=taskid).update(point=points)
+
+            elif points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
                 Task.objects.filter(id=taskid).update(point=points + 1)
 
-            data = form.cleaned_data
             link = data['link']
             
             if not link:
@@ -1214,13 +1223,41 @@ def newevidence(request, taskid):
                 return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
-        form = EvidenceForm()
+        form = EvidenceForm(request=request)
 
     return render(request, "management/daf/evidence_form.html", {"form": form})
 
 
+def auto_uplaod_evidence(request):
+    try:
+        links = TaskLinks.objects.last()
+        goto_data = GotoMeetings.objects.filter(created_at__gte=links.created_at)
+        user_data = CustomerUser.objects.filter(is_active=True)
+        for goto_meet in goto_data:
+            if goto_meet.recording:
+                for user in user_data:
+                    print('====================',user)
+                    if user.username.casefold() == goto_meet.attendee_name.casefold():
+                        # task_obj = Task.objects.create(employee=user,activity_name=goto_meet.meeting_topic)
+                        task_obj = Task.objects.filter(employee= user).first()
+                        if task_obj:
+                            task_activity = Task.objects.filter(activity_name= goto_meet.meeting_topic).first()
+                            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=task_obj.id)
+                            if points != maxpoints and task_obj.activity_name.lower() not in JOB_SUPPORTS:
+                                Task.objects.filter(id=task_obj.id).update(point=points + 1)
+                            # elif requirements:
+                            #     Task.objects.filter(id=task_obj).update(point=points + 1)
+                            # else:
+                            #     redirect()
+                            if not task_activity:
+                                task_activity = Task.objects.filter(activity_name= 'General Meeting').first()
+                            task_links = TaskLinks.objects.create(task=task_activity,added_by=user,link_name=goto_meet.meeting_topic,
+                                                link=goto_meet.recording)
+        return JsonResponse({"success": True})
+    except Exception as e:
+        print("error",str(e))
 def evidence(request):
-    links = TaskLinks.objects.all().order_by("-created_at")
+    links = TaskLinks.objects.all().order_by("-created_at")[:50]
     return render(request, "management/daf/evidence.html", {"links": links})
 
 
