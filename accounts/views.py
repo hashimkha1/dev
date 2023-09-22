@@ -1,12 +1,9 @@
 import math
-from datetime import date, timedelta
 from django.core.paginator import Paginator
-from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
-from django.db.models.aggregates import Avg, Sum
 from .forms import UserForm, LoginForm, CredentialCategoryForm, CredentialForm
 from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -24,8 +21,7 @@ from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import CredentialFilter,UserFilter
 from management.models import Task
 from application.models import UserProfile,Assets
-from finance.models import Default_Payment_Fees,Payment_History,Payment_Information
-from finance.utils import DYCDefaultPayments
+from finance.models import Payment_History,Payment_Information
 from mail.custom_email import send_email
 import string, random
 # Create your views here..
