@@ -1,0 +1,81 @@
+{% extends "main/base_templates/new_base.html"%}
+{% block content %}
+
+<div class="container-fluid">
+  <div class="row jumbotron">
+    <div id="j-section" class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-10">
+      <div class="col-12 text-center">
+        <h2 class="display-5 text-center">{{title}}</h2>
+      </div>
+      <p class="lead text-center">
+        Select a plan that based addresses your needs that best suits your needs.
+      </p>
+      <!--<p class="lead">-->
+        <!--Our goal is to empower individuals and organizations by training Stocks and Options to use proven techniques and market fundamentals to optimize their return on investment.-->
+      <!--</p>-->
+    </div>
+
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
+    <a href="/register" target="_blank">
+      <!--<button type="button" class="btn btn-primary btn-lg">Get Started</button>-->
+    </a>
+  </div>
+  </div>
+
+<!-------------------Our Services Section---------------------->
+<!-------------------WHAT WE DO Section------------------------->
+<!-- <div class="container-fluid padding">
+  <div class="row welcome text-center">
+    <div class="col-12">
+      <h2 class="display-4">{{title}}</h2>
+    </div>
+    <hr/>
+    <div class="col-12">
+      <p class="lead">
+        Select a plan that based addresses your needs that best suits your needs.
+      </p>
+    </div> 
+  </div> 
+</div> -->
+    <!-------------------Cards-Category Section----------------------->
+<div class="container-fluid padding">
+  <div class="row padding">
+    {% for service in services %}
+    <div class="row">
+      <div class="col-md-12">
+        <p class="display-5 text-center"><b>{{ service.name }}{{ service.title }}</b></p>
+      </div>
+      </div>
+    <div class="col-md-12 " id="bada">
+      <div class="card-group">
+        <div class="card">
+            <div class="row">
+              <hr>
+              <div class="col-md-10"><p>{{ service.description|safe }}</p></div>
+              <div class="col-md-2 text-center">
+                <b>${{ service.price|floatformat:2 }}</b>
+                {% if service.slug %}
+                <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
+                {% else %}
+                <form action="{% url 'finance:newcontract' request.user %}" method="POST">
+                  {% csrf_token %}
+                  <!-- <input type="hidden" name="contract_length" value="{{ service.contract_length }}"> -->
+                  <input type="hidden" name="service_title" value="{{ service.name }}{{ service.title }}">
+                  <button type="submit" class="btn btn-primary">Proceed</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+     
+        </div>
+      </div>
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+{% endfor %}
+  </div>
+</div>
+<br>
+<br>
+<!-------------------WHAT WE DO Section------------------------->
+
+{% endblock content %}

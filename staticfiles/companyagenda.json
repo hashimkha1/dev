@@ -1,0 +1,28 @@
+
+{
+    "BASICS": {
+        "MEETINGS": {
+            "Sessions": "https://www.codanalytics.net/meetings/"
+        }
+    },
+
+    "IT": {
+        "GOALS": {
+            "Report": "#",
+            "Goals": ""
+        }
+    },
+    "MARKETING": {
+            "REPORT": {
+                "MKT Report": "https://www.codanalytics.net/#/"
+            }
+        },
+    "PROJECTS": {
+        "CODA-CLIENTS": {
+            "Clients": "https://www.codanalytics.net/#/",
+            "Client Tracker": "https://www.codanalytics.net/#/",
+            "Investors": "https://www.codanalytics.net/#/"
+        }
+         
+        }
+}
