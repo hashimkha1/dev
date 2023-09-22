@@ -120,6 +120,50 @@ financial_categories = [
     },
 ]
 
+investment_rules = {
+    "general_rules" : [
+                {
+                    "rule": "IV(Implied Volatility)",
+                    "description":"20-55%",
+                },
+                {
+                    "rule":"Days To Expiration",
+                    "description":">21 days",
+                },
+                {
+                    "rule": "Annualized Returns",
+                    "description":">65%",
+                },
+            ],
+    "yahoo": [
+                {
+                    "rule":"EBIDTA",
+                    "description":">=0",
+                },
+                {
+                    "rule":"Overall Risk",
+                    "description":"<7",
+                },
+                
+    ],
+    "thinkorswim": [
+                {
+                    "rule":"RSI-Scans",
+                    "description":"<30 and >80",
+                },
+    ],
+    "reports": [
+                {
+                    "rule":"Unusual_volume",
+                    "description":"",
+                },
+                {
+                    "rule":"liquidity",
+                    "description":"",
+                },
+]
+}
+
 risk_ratios = [
         # {
         #         "title":"Alpha (α)",

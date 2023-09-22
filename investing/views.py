@@ -8,7 +8,7 @@ from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories,
+                    computes_days_expiration,get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
@@ -43,9 +43,6 @@ User=get_user_model
 # Create your views here.
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
-
-# def coveredcalls(request):
-#     return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def training(request):
     return render(request, 'investing/training.html', {'title': 'training'})
@@ -122,9 +119,15 @@ def user_investments(request, username=None, *args, **kwargs):
 @login_required
 def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
+    # Taking distinct symbols which meets wash sale rule.
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
+    # Taking distinct symbols which in oversold/overbought.
+    distinct_overboughtsold_symbols = list(set([
+        obj.symbol for obj in OverBoughtSold.objects.all()]))
+    for symbol in distinct_overboughtsold_symbols:
+        print(symbol)
     # Query to count distinct symbols for each model
     covered_calls_count=covered_calls.objects.all().count()
     shortputdata_count=ShortPut.objects.all().count()
@@ -164,16 +167,21 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
         all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
-        filtered_stockdata = [
+        filtered_stockdata_by_returns = [
             x for x in stockdata if x.symbol not in all_return_symbols or
             (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
         ]
+        filtered_stockdata_by_oversold = [
+            x for x in filtered_stockdata_by_returns if x.symbol in distinct_overboughtsold_symbols
+        ]
+
         context = {
-            "data": filtered_stockdata,
+            "data": filtered_stockdata_by_oversold,
             "covered_calls_count":covered_calls_count,
             "shortputdata_count":shortputdata_count,
             "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
+            "categories": investment_rules,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
             'title': page_title,  # Using renamed title
@@ -363,6 +371,7 @@ def ticker_measures(request):
     }
     return render(request, "investing/ticker_data.html", context)
 
+
 @login_required
 def oversoldpositions(request,symbol=None):
     current_date_str = timezone.now().strftime('%Y-%m-%d')
@@ -372,16 +381,12 @@ def oversoldpositions(request,symbol=None):
     # overboughtsold_records = Oversold.objects.all()
     overboughtsold_records = OverBoughtSold.objects.all()
     
-    condition = None
-    for record in overboughtsold_records:
-        condition='oversold' if record.condition_integer == 1 else 'overbought'
-        # print(record.RSI,record.condition_integer,condition)
 
     if symbol is None:
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
-            "condition":condition,
+            # "condition":condition,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
@@ -392,7 +397,7 @@ def oversoldpositions(request,symbol=None):
     
         context = { 
             "overboughtsold": overboughtsold_records,
-            "condition": condition,
+            # "condition": condition,
             "ticker_data": ticker_measures,
             "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
             "financial_categories": financial_categories,

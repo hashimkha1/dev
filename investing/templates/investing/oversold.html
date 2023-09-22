@@ -81,14 +81,14 @@
                   <th>Symbol</th>
                   <th>Name</th>
                   <th>volume</th>
-                  <th>Last Price</th>
+                  <th>Price</th>
                   <th>RSI</th>
                   <th>EPS</th>
                   <th>PE</th>
                   <th>rank</th>
                   <th>profit_margins</th>
                   <th>condition</th>
-                  <th>More Info</th>
+                  <th>More</th>
                   <th>Edit</th>
                   
             </tr>
@@ -111,7 +111,7 @@
                 <td>{{ row.PE }}</td>
                 <td>{{ row.rank }}</td>
                 <td>{{ row.profit_margins }}</td>
-                <td>{{condition}}</td>
+                <td>{{row.condition_integer}}</td>
                 <!-- <td>{{ row.on_date }}</td> -->
                 <td>
                   <a class=" article-title target="_blank" 

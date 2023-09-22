@@ -135,14 +135,14 @@ def initiate_oauth(request):
 
 
 def obtain_tokens(request):
-	# Obtain the authorization code from the request parameters
-	code = request.GET.get('code')
-	# code='eyJraWQiOiI2MjAiLCJhbGciOiJSUzUxMiJ9.eyJzYyI6ImNhbGwtY29udHJvbC52MS5jYWxscy5jb250cm9sIGNhbGxzLnYyLmluaXRpYXRlIGNvbGxhYjogY3IudjEucmVhZCBmYXgudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgZmF4LnYxLnJlYWQgZmF4LnYxLndyaXRlIGlkZW50aXR5OiBpZGVudGl0eTpzY2ltLm9yZyBtZXNzYWdpbmcudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgbWVzc2FnaW5nLnYxLnJlYWQgbWVzc2FnaW5nLnYxLnNlbmQgbWVzc2FnaW5nLnYxLndyaXRlIHJlYWx0aW1lLnYyLm5vdGlmaWNhdGlvbnMubWFuYWdlIHN1cHBvcnQ6IHVzZXJzLnYxLmxpbmVzLnJlYWQgd2VicnRjLnYxLnJlYWQgd2VicnRjLnYxLndyaXRlIiwic3ViIjoiMTA1MzgxODUyNTQ4NTQ2NDU5MCIsImF1ZCI6ImE3NWY4NzZkLWNiNTgtNDA0Yy1iNWMwLTRlOTFkOWJjNDA1MiIsIm9nbiI6InB3ZCIsImxzIjoiMTA3NjgwNDItYzI2Ny00NjcxLWE2MGMtZmVhYTk1ODcyYTAxIiwidHlwIjoiYyIsImV4cCI6MTY5Mzg4OTU0MSwiaWF0IjoxNjkzODg4OTQxLCJ1cmkiOiJodHRwczpcL1wvd3d3LmNvZGFuYWx5dGljcy5uZXRcLyIsImp0aSI6IjNjYTEzMDZjLTQ4YmEtNGE4My1hODNlLTY3ZDc3ZTIxODMxMyJ9.a7I6bRkafGA7cfr4Del0tc4IHErFCUp2D2E_zjd9aq-9sEek8GIiK0FH2W7eDg0SB5sL-Tet-KlEutK7Jw1zWTXKHZgGHeURfx3JNXdvmpYGI1XBZiNEALbXC8X-kB1njfMdpnSJbUonQ0qYRcbqzlIfIeaCFm3tnSujn0QvK9DbzGUDWfZDT5_xxRRQEl-B06VKU9CZ_hrsh2GEyEVVQ5SuUZlq8Nxivkp7phSt5ErMpYBjvd1POZ8JTCkucylQA3tWo7531AYES4ZpQM5BJ51S2XtmTLYqr1o5mS-xVdxI27LwLeBBHJeHA3xp39DvW5C2rbmygCOHAMCPY3UHew'
-	# code = os.environ.get('GOTO_CLIENT_CODE')
-	print("code======>",code)
-	
-	if not code:
-		return HttpResponseBadRequest("Missing code parameter")
+    # Obtain the authorization code from the request parameters
+    code = request.GET.get('code')
+    # code='eyJraWQiOiI2MjAiLCJhbGciOiJSUzUxMiJ9.eyJzYyI6ImNhbGwtY29udHJvbC52MS5jYWxscy5jb250cm9sIGNhbGxzLnYyLmluaXRpYXRlIGNvbGxhYjogY3IudjEucmVhZCBmYXgudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgZmF4LnYxLnJlYWQgZmF4LnYxLndyaXRlIGlkZW50aXR5OiBpZGVudGl0eTpzY2ltLm9yZyBtZXNzYWdpbmcudjEubm90aWZpY2F0aW9ucy5tYW5hZ2UgbWVzc2FnaW5nLnYxLnJlYWQgbWVzc2FnaW5nLnYxLnNlbmQgbWVzc2FnaW5nLnYxLndyaXRlIHJlYWx0aW1lLnYyLm5vdGlmaWNhdGlvbnMubWFuYWdlIHN1cHBvcnQ6IHVzZXJzLnYxLmxpbmVzLnJlYWQgd2VicnRjLnYxLnJlYWQgd2VicnRjLnYxLndyaXRlIiwic3ViIjoiMTA1MzgxODUyNTQ4NTQ2NDU5MCIsImF1ZCI6ImE3NWY4NzZkLWNiNTgtNDA0Yy1iNWMwLTRlOTFkOWJjNDA1MiIsIm9nbiI6InB3ZCIsImxzIjoiMTA3NjgwNDItYzI2Ny00NjcxLWE2MGMtZmVhYTk1ODcyYTAxIiwidHlwIjoiYyIsImV4cCI6MTY5Mzg4OTU0MSwiaWF0IjoxNjkzODg4OTQxLCJ1cmkiOiJodHRwczpcL1wvd3d3LmNvZGFuYWx5dGljcy5uZXRcLyIsImp0aSI6IjNjYTEzMDZjLTQ4YmEtNGE4My1hODNlLTY3ZDc3ZTIxODMxMyJ9.a7I6bRkafGA7cfr4Del0tc4IHErFCUp2D2E_zjd9aq-9sEek8GIiK0FH2W7eDg0SB5sL-Tet-KlEutK7Jw1zWTXKHZgGHeURfx3JNXdvmpYGI1XBZiNEALbXC8X-kB1njfMdpnSJbUonQ0qYRcbqzlIfIeaCFm3tnSujn0QvK9DbzGUDWfZDT5_xxRRQEl-B06VKU9CZ_hrsh2GEyEVVQ5SuUZlq8Nxivkp7phSt5ErMpYBjvd1POZ8JTCkucylQA3tWo7531AYES4ZpQM5BJ51S2XtmTLYqr1o5mS-xVdxI27LwLeBBHJeHA3xp39DvW5C2rbmygCOHAMCPY3UHew'
+    # code = os.environ.get('GOTO_CLIENT_CODE')
+    # print("code======>",code)
+    
+    if not code:
+        return HttpResponseBadRequest("Missing code parameter")
 
 	# Your application's configuration
 	CLIENT_ID = 'a75f876d-cb58-404c-b5c0-4e91d9bc4052' #os.environ.get('GOTO_CLIENT_ID')
@@ -162,10 +162,10 @@ def obtain_tokens(request):
 		'redirect_uri': REDIRECT_URI
 	}
 
-	# Make the token request
-	response = requests.post('https://api.getgo.com/oauth/v2/token', data=payload)
-	print("status======>",response.status_code)
-	# Error handling for the HTTP request
+    # Make the token request
+    response = requests.post('https://api.getgo.com/oauth/v2/token', data=payload)
+    # print("status======>",response.status_code)
+    # Error handling for the HTTP request
 
 	if response.status_code != 200:
 		return HttpResponseBadRequest(f"Error obtaining tokens: {response.text}")
@@ -176,10 +176,6 @@ def obtain_tokens(request):
 
 	# Return the refresh token as a JsonResponse, or you can save it, etc.
 	return JsonResponse({"refresh_token": refresh_token})
-
-
-
-
 
 def refresh_token_function(request):
 	global refresh_token , client_code
@@ -581,27 +577,28 @@ def upload_csv(request):
 # from django.contrib import messages
 
 def stocks_upload_csv(request):
-	context = {
-		"categories": App_Categories,
-	}
-	if request.method == "POST":
-		# Retrieve the uploaded CSV file
-		csv_file = request.FILES.get("csv_upload")
-		# Check if it's a CSV file
-		if not csv_file.name.endswith(".csv"):
-			messages.warning(request, "Not a CSV file")
-			return render(request, "getdata/uploaddata.html", context)
-		try:
-			# Read the CSV file
-			file = csv_file.read().decode("ISO-8859-1")
-			file_data = file.split("\n")
-			csv_data = [line for line in file_data if line.strip() != ""]
+    context = {
+        "categories": App_Categories,
+    }
+    if request.method == "POST":
+        # Retrieve the uploaded CSV file
+        csv_file = request.FILES.get("csv_upload")
 
-			# Create a set to store unique symbols
-			unique_symbols = set()
-			for x in csv_data:
-				fields = x.split(",")
-				symbol = fields[0]
+        # Check if it's a CSV file
+        if not csv_file.name.endswith(".csv"):
+            messages.warning(request, "Not a CSV file")
+            return render(request, "getdata/uploaddata.html", context)
+        try:
+            # Read the CSV file
+            file = csv_file.read().decode("ISO-8859-1")
+            file_data = file.split("\n")
+            csv_data = [line for line in file_data if line.strip() != ""]
+           
+            # Create a set to store unique symbols
+            unique_symbols = set()
+            for x in csv_data:
+                fields = x.split(",")
+                symbol = fields[0]
 
 				# Check if the symbol is unique
 				if symbol not in unique_symbols:
@@ -620,11 +617,13 @@ def stocks_upload_csv(request):
 							profit_margins=fields[8],
 					)
 
-			messages.success(request, "Data populated successfully")
-			return render(request, "getdata/uploaddata.html", context)
-		except Exception as e:
-			messages.warning(request, str(e))
-			return render(request, "getdata/uploaddata.html", context)
+            messages.success(request, "Data populated successfully")
+            # return render(request, "investing/oversold.html", context)
+            return redirect('investing:overboughtsold',symbol=None )
+        
+        except Exception as e:
+            messages.warning(request, str(e))
+            return render(request, "getdata/uploaddata.html", context)
 
 	if request.method == 'GET':
 		return render(request, "getdata/uploaddata.html", context)

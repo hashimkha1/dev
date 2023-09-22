@@ -7,6 +7,7 @@ app_name = 'main'
 urlpatterns = [
     path('', views.layout, name='layout'),
     path('get_respos', views.get_respos, name='get_respos'),
+    # path('get_respos/<str:table>', views.get_respos, name='get_respos'),
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
     path('contact/', views.contact, name='contact'),

@@ -37,8 +37,6 @@ def dates_functionality():
 
 
 
-
-
 # def tableau_refresh():
 #     # Set Tableau Server credentials and site
 #     tableau_auth = TSC.TableauAuth('USERNAME', 'PASSWORD', site_id='SITE_NAME')
@@ -78,7 +76,6 @@ def unique_slug_generator(instance, new_slug=None):
     return slug
 
 
-
 """ =============open_ai chat bot===========   """
 def generate_chatbot_response(user_message):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
@@ -99,28 +96,54 @@ def generate_chatbot_response(user_message):
     return result
     # return response.choices[0].text
 
-def generate_database_response(user_message):
-    try:
-        all_models = apps.get_models()
-        response_data = []
 
-        for model in all_models:
-            model_name = model.__name__
-            fields = model._meta.get_fields()
-            model_data = []
+def generate_database_response(user_message, app='investing'):
+    # Get all the models from the specified app
+    app_config = apps.get_app_config(app)
+    models = app_config.get_models()
 
-            for field in fields:
-                if field.get_internal_type() == 'CharField':
-                    query = Q(**{f"{field.name}__icontains": user_message})
-                    results = model.objects.filter(query)
-                    model_data.extend(results.values())
+    response_data = []
 
-            if model_data:
-                response_data.append({model_name: model_data})
+    # Iterate over models from the specified app
+    for model in models:
+        model_name = model.__name__
 
-        return response_data
-    except Exception as e:
-        return None
+        fields = model._meta.get_fields()
+        model_data = []
+
+        for field in fields:
+            if field.get_internal_type() == 'CharField':
+                query = Q(**{f"{field.name}__icontains": user_message})
+                results = model.objects.filter(query)
+                model_data.extend(results.values())
+
+        # Check if the model_data list is not empty
+        if any(model_data):
+            response_data.append({model_name: model_data})
+    return response_data
+
+# def generate_database_response(user_message):
+#     try:
+#         all_models = apps.get_models()
+#         response_data = []
+
+#         for model in all_models:
+#             model_name = model.__name__
+#             fields = model._meta.get_fields()
+#             model_data = []
+
+#             for field in fields:
+#                 if field.get_internal_type() == 'CharField':
+#                     query = Q(**{f"{field.name}__icontains": user_message})
+#                     results = model.objects.filter(query)
+#                     model_data.extend(results.values())
+
+#             if model_data:
+#                 response_data.append({model_name: model_data})
+
+#         return response_data
+#     except Exception as e:
+#         return None
 
 """ ===========End of code============ """
 
@@ -195,119 +218,9 @@ def download_image(url):
         print("Image Couldn't be retrieved")
     return image_path
 
-
-# Interview description data
-posts = [
-    {
-        "Inteview": "First   Interview",
-        "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Second Interview",
-        "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Final Interview",
-        "Concentration": "Data Analysis 1-1 Sessions",
-        "Description": "Measuring,assessing Time sensitivity.",
-        "Duration": "7 Days",
-        "Lead": "Scrum Master",
-    },
-]
-
-alteryx_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing Alteryx",
-        "link": "https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p1",
-    },
-    {
-        "topic": "DAF DATA CLEANING",
-        "description": "DAF data cleaning workflow",
-        "link": "https://transcripts.gotomeeting.com/#/s/ff2b23e11fadead1e6b4265b043f75ec8300a82d9576d7e6f79ae22568733740",
-    },
-    {
-        "topic": "WHATSAAP MESSAGES",
-        "description": "Cleaning Messages",
-        "link": "https://transcripts.gotomeeting.com/#/s/8085611d7f07db4434d786635018273ad915c01230fd33202f660fe4c1fd62d5",
-    },
-    {
-        "topic": "ALTERYX PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/1v68aYsEXskx0Ze6CEbM9k8HLjMlgHY5ZOOScsGO7j54/edit#slide=id.p1",
-    },
-]
-
-dba_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing SQL Database",
-        "link": "https://drive.google.com/file/d/148J8xhikG5CqroObDjUtNC3r7vk9HmxF/view?usp=drivesdk",
-    },
-    {
-        "topic": "End to End-SQL",
-        "description": "Normalization, Creation and Retrieval of Data",
-        "link": "https://transcripts.gotomeeting.com/#/s/ee09457a8bec84b6e27fd0a24bb8e2bdf9186c30b88a1ef48171b2f443e61635",
-    },
-    {
-        "topic": "SQL PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/13IQKwFjkkxJckPQWG-Q1ydZPv6tDfhpWUOt6j9mNgvQ/edit",
-    },
-]
-
-tableau_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing Tableau",
-        "link": "https://www.youtube.com/watch?v=QYnkudCxbmE",
-    },
-    {
-        "topic": "Reporting",
-        "description": "Developing an Executive Overview Report",
-        "link": "https://drive.google.com/file/d/1yQBiDgt3y1faTfglDtVITEEnyyYIewui/view",
-    },
-    {
-        "topic": "Tableau PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/1ASZkzSJBSoOqH6R83ZznChL6ISi5SC5_YI5N2XTZD1w/edit?usp=sharing",
-    },
-]
-
-
 # ==============================INTERVIEW DESCRIPTION MODELS=======================================
 
 # Interview description data
-
-TaskInfos = [
-    {
-        "Inteview": "First   Interview",
-        "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Second Interview",
-        "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Final Interview",
-        "Concentration": "Data Analysis 1-1 Sessions",
-        "Description": "Measuring,assessing Time sensitivity.",
-        "Duration": "7 Days",
-        "Lead": "Scrum Master",
-    },
-]
 reviews = [
     {
         "topic": "data analyst",
@@ -629,75 +542,77 @@ Meetings = [
     },
 ]
 
-# Big_data = [
-#     {
-#      "Automation":{
-#         "title": "1. Transcripts",
-#        "link": "SITEURL+"/data/iuploads/",
-#     },
-#     "Stocks&Options":{
-#         "title": "1. Transcripts",
-#        "link": "SITEURL+"/data/iuploads/",
-#     },
-#     }
-# ]
+
 # ==============================Apps and Models===============================
 
 App_Categories = {
     "Finance": [
         {
             "table_name": "Transaction",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Payment Information",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Payment History",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
     ],
     "Data": [
         {
             "table_name": "Category",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "SubCategory",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Links",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
     ],
     "Management": [
         {
             "table_name": "Task",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Task History",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Other",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
     ],
     "Investing": [
         {
             "table_name": "Returns",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+            
         },
         {
             "table_name": "OverBoughtSold",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Other",
-            "description": "Upload only a CSV File, Check field formats to minimize errors during upload."
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
     ]
 }
