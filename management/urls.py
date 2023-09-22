@@ -35,7 +35,6 @@ urlpatterns = [
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
     path('newevidence/<int:taskid>', views.newevidence, name='new_evidence'),
     path('evidence/',views.evidence, name='evidence'),
-    path('auto_uplaod_evidence/',views.auto_uplaod_evidence, name='auto_uplaod_evidence'),
     path('userevidence/<str:username>/',views.userevidence, name='user_evidence'),
     path('<id>/update', views.evidence_update_view ,name='evidence_update'),
     # path('<int:pk>/update', views.EvidenceUpdateView.as_view(template_name='management/daf/evidence_form.html') ,name='evidence_update'),
