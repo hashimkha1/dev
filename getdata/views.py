@@ -22,11 +22,10 @@ from investing.models import OverBoughtSold
 
 #importing Options play funcationality
 
-from .models import CashappMail,ReplyMail,Editable,Logs
+from .models import CashappMail,ReplyMail,GotoMeetings,Logs
 from django.contrib.auth import get_user_model
 from .forms import CsvImportForm
 from coda_project.settings import EMAIL_INFO,source_target
-from management.models import GotoMeetings
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()

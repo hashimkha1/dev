@@ -18,8 +18,6 @@
                             <p>Kindly,select an item to proceed</p>
                     </div>
                     <div style="border: 1px solid black;padding:20px;">
-                        <a class="dropdown-item" href="{% url 'finance:finance_report'%}" target="__blank" >Finance Report</a>
-                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:companyreturns' %}" target="__blank" >CODA Investments</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:investments' %}" target="__blank" >Run Test Investments</a>
@@ -29,10 +27,6 @@
                         <a class="dropdown-item" href="{% url 'finance:transaction-list' %}" target="__blank" >Cash Outflows Report</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:option_list' title='shortputdata' %}" target="__blank" >Options</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'finance:pay'%}" target="__blank" >Make Payment</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     </div>
                 </div>
                 <div class="col-md-6 hover">

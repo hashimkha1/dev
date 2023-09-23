@@ -126,8 +126,6 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     # Taking distinct symbols which in oversold/overbought.
     distinct_overboughtsold_symbols = list(set([
         obj.symbol for obj in OverBoughtSold.objects.all()]))
-    for symbol in distinct_overboughtsold_symbols:
-        print(symbol)
     # Query to count distinct symbols for each model
     covered_calls_count=covered_calls.objects.all().count()
     shortputdata_count=ShortPut.objects.all().count()

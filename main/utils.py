@@ -378,10 +378,11 @@ General = [
         "link":"https://chat.openai.com/chat",
         "description":"CHATGPT",
     },
+
     {
-        "title": "Images/Assets",
-        "link":SITEURL+"/images/",
-        "description":"Images and assets",
+        "title": "Goto/Zoom meetings",
+        "link":SITEURL+"/refresh_token_goto/",
+        "description":"Fetching Meeting info using APIs",
     },
     {
         "title": "Open Urls",
