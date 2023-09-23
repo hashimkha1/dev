@@ -34,6 +34,7 @@ from django.views.generic import (
     UpdateView,
 )
 from application.models import UserProfile
+from getdata.models import GotoMeetings
 from management.models import (
     Advertisement,
     Policy,
@@ -46,7 +47,6 @@ from management.models import (
     ProcessJustification,
     ProcessBreakdown,
     Meetings,
-    GotoMeetings
 )
 
 
