@@ -59,7 +59,26 @@ class Editable(models.Model):
 	def __str__(self):
 		return self.name
 
+class GotoMeetings(models.Model):
 
+    meeting_topic = models.CharField(max_length=250, null=True, blank=True)
+    meeting_id = models.CharField(max_length=100, null=True, blank=True)
+    meeting_type = models.CharField(max_length=100, null=True, blank=True)
+    recording = models.CharField(max_length=500, null=True, blank=True)
+    meeting_start_time = models.CharField(max_length=250, null=True, blank=True)
+    meeting_end_time = models.CharField(max_length=250, null=True, blank=True)
+    meeting_duration = models.CharField(max_length=100, null=True, blank=True)
+    meeting_email = models.CharField(max_length=150, null=True, blank=True)
+    attendee_name = models.CharField(max_length=150, null=True, blank=True)
+    attendee_email = models.CharField(max_length=150, null=True, blank=True)
+    attendee_duration = models.CharField(max_length=150, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.meeting_topic
 
 class Logs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_in_logs", null=True, blank=True)

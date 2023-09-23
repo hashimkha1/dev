@@ -14,11 +14,12 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
-from management.models import Task, TaskHistory,Advertisement,Whatsapp
+from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks,GotoMeetings
 from accounts.models import CustomerUser
 from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
 from application.models import UserProfile
 from getdata.models import ReplyMail
+
 
 # importing utils & Views
 from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
@@ -33,6 +34,9 @@ from mail.custom_email import send_reply
 logger = logging.getLogger(__name__)
 from marketing.views import runwhatsapp
 User = get_user_model()
+
+JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
+ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
 
 @shared_task(name="task_history")
 def dump_data():
@@ -264,9 +268,34 @@ def advertisement():
     description = context.post_description #'This is my tweet with an image'
     api.update_status(status=description, media_ids=[media.media_id])
 
+# This function will auto upload the eviedence
+
+@shared_task(name="auto_uplaod_evidence")
+def auto_uplaod_evidence():
+    try:
+        links = TaskLinks.objects.last()
+        goto_data = GotoMeetings.objects.filter(created_at__gte=links.created_at)
+        user_data = CustomerUser.objects.filter(is_active=True)
+        for goto_meet in goto_data:
+            if goto_meet.recording:
+                for user in user_data:
+                    if user.username.casefold() == goto_meet.attendee_name.casefold():
+                        task_obj = Task.objects.filter(employee= user,activity_name= goto_meet.meeting_topic).first()
+                        if not task_obj:
+                            task_obj = Task.objects.filter(activity_name= 'General Meeting').first()
+                        # task_activity = Task.objects.filter(activity_name= goto_meet.meeting_topic).first()
+                        points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=task_obj.id)
+                        # if task_obj.activity_name in ACTIVITY_LIST:
+                        if points != maxpoints and task_obj.activity_name.lower() not in JOB_SUPPORTS:
+                            Task.objects.filter(id=task_obj.id).update(point=points + 1)
+                        task_links = TaskLinks.objects.create(task=task_obj,added_by=user,link_name=goto_meet.meeting_topic,
+                                            link=goto_meet.recording)
+    except Exception as e:
+        print("error",str(e))
+
+
 # This function will post the latest Facebook Ad
 @shared_task(name="advertisement_facebook")
-
 def advertisement_facebook():
     pass
     # facebook_page_id = context.facebook_page_id

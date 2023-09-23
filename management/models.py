@@ -767,5 +767,3 @@ class Meetings(models.Model):
 
     def __str__(self):
         return self.meeting_topic
-
-    

@@ -34,6 +34,7 @@ from django.views.generic import (
     UpdateView,
 )
 from application.models import UserProfile
+from getdata.models import GotoMeetings
 from management.models import (
     Advertisement,
     Policy,
@@ -45,13 +46,13 @@ from management.models import (
     Training,
     ProcessJustification,
     ProcessBreakdown,
-    Meetings
+    Meetings,
 )
 
 
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
-from accounts.models import Tracker, Department, TaskGroups
+from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -1170,14 +1171,12 @@ def newevidence(request, taskid):
     task = get_object_or_404(Task, id=taskid)
 
     if request.method == "POST":
-        form = EvidenceForm(request.POST)
+        form = EvidenceForm(data=request.POST,request=request)
         if form.is_valid():
-            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
-            
-            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
-                Task.objects.filter(id=taskid).update(point=points + 1)
-
             data = form.cleaned_data
+            
+            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
+
             link = data['link']
             
             if not link:
@@ -1198,12 +1197,24 @@ def newevidence(request, taskid):
                         
                         if task.activity_name in ACTIVITY_LIST:
                             form.save()
+                            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
+                                Task.objects.filter(id=taskid).update(point=points + 1)
                             return redirect("management:evidence")
                         else:
                             messages.error(request, "This link is already uploaded")
                             return render(request, "management/daf/evidence_form.html", {"form": form})
                         
                     form.save()
+                    selected_requirement = data.get('requirement')
+                    if selected_requirement:
+                        duration = Requirement.objects.get(id=selected_requirement).duration
+                        points += duration
+                        if points >= maxpoints:
+                            maxpoints += 5 
+                        Task.objects.filter(id=taskid).update(point=points,mxpoint=maxpoints)
+
+                    elif points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
+                        Task.objects.filter(id=taskid).update(point=points + 1)
                     return redirect("management:evidence")
                 else:
                     messages.error(request, "Link is not valid, please check again")
@@ -1214,10 +1225,9 @@ def newevidence(request, taskid):
                 return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
-        form = EvidenceForm()
+        form = EvidenceForm(request=request)
 
     return render(request, "management/daf/evidence_form.html", {"form": form})
-
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
