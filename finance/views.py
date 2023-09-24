@@ -1,17 +1,13 @@
-from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
-from django.urls import reverse, reverse_lazy
 from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
-from django.template.defaultfilters import upper
 from requests import request
 from datetime import datetime,date
 from decimal import *
-from django.db.models import Q
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -20,13 +16,12 @@ from django.views.generic import (
 	DeleteView,
 )
 import json
-from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense
+		DC48_Inflow,Field_Expense,Budget
 	)
 from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
 from mail.custom_email import send_email
@@ -57,6 +52,15 @@ rate = round(Decimal(usd_to_kes), 2)
 
 def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
+
+
+
+def budget(request):
+	budget=Budget.objects.all()
+	context = {
+				'budget': budget
+			}
+	return render(request, "finance/budgets/budget.html", context)
 
 def investment_report(request):
     return render(request, "finance/reports/investment_report.html", {"title": "Investment"})

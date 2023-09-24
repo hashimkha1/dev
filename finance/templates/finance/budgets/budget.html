@@ -1,0 +1,142 @@
+{%extends "main/base_templates/new_base.html"%}
+{% load mathfilters %}
+{% block content %}
+<section id="rating">
+  <div class="rating text-center">
+    <h2>BUDGET</h2>
+    <!-- <hr> -->
+    <!-- <h5><b class="remaining-time">{{remaining_days}},{{remaining_hours}},{{remaining_minutes}},{{remaining_seconds}}</b></h5> -->
+    <hr>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
+    <div class="row text-center">
+      <div class="col-md-2 amount_msg" id="bada">
+        <div class="card">
+          <div class="card-body">
+            <font size="-1"><h5><b>Prospective</b></h5></font>
+            <hr/>
+            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+            <i><h6>{{total_count}}</h6></i>
+            <hr/>
+            <font size="-1"
+            <i><p>Kindly add your name on the list</p></i>
+            </font>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 amount_msg" id="bada">
+        <div class="card">
+          <div class="card-body">
+            <h5><b>Paid Up Members</b></h5>
+            <hr/>
+            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+            <i><h6>{{paid_count}}</h6></i>
+            <hr/>
+            <font size="-1"
+            <i><p>Congrats & Thanks</p></i>
+            </font>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 amount_msg" id="bada">
+        <div class="card">
+          <div class="card-body">
+            <h5><b>Total Amount</b></h5>
+            <hr/>
+            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+            <i><h6>Ksh{{total_amt}}</h6></i>
+            <hr/>
+            <font size="-1"
+            <i><p>Total amount(paid+pledged)</p></i>
+            </font>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 amount_msg" id="bada">
+        <div class="card">
+          <div class="card-body">
+            <h5><b>Amount Paid</b></h5>
+            <hr/>
+            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+            <i><h6>Ksh{{total_paid}}</h6></i>
+            <hr/>
+            <i><p>Amount Paid</p></i>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2 amount_msg" id="bada">
+        <div class="card">
+          <div class="card-body">
+            <p><a href="{% url 'finance:dcinflow'%}" class="btn btn-secondary btn-sm"
+              >Add Revenue
+            </a></p>
+            <hr/>
+            <a href="{% url 'finance:dcklist'%}" class="btn btn-secondary btn-sm"
+            >Budget
+          </a>
+          <hr/>
+            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
+            <i><h6>Exchange Rate :KES.{{rate}}</h6></i>
+          </div>
+          </div>
+        </div>
+      </div>
+
+
+  </div>
+  <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Lead</th>
+          <th>Client_Category</th>
+          <th>Category</th>
+            <th>Item</th>
+            <th>qty</th>
+            <th>Unit Price</th>
+            <th>start_date</th>
+            <th>end_date</th>
+            <th>Days</th>
+            <th>Amount(Ksh)</th>
+            <th>Amount(usd)</th>
+            <th>Receipt</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in budget %}
+        <tr>
+            <td>
+            <a class="article-title" href="#">
+              {{item.sender.first_name}},{{item.sender.last_name}}
+            </td>
+          <td>
+            {{item.clients_category}}
+        </td>
+          <td>
+            {{item.category}}
+        </td>
+          <td>
+            <a class="text-dark  text-decoration-none" 
+            data-toggle="tooltip" title="{{  item.description  }}"
+            href="{{ category.get_absolute_url }}">
+            {{item.item}}
+            </a>
+        </td>
+        <td>{{item.qty}}</td>
+        <td>{{item.unit_price}}</td>
+        <td>{{item.start_date|date:"n/d/Y"}}</td>
+        <td>{{item.end_date|date:"n/d/Y"}}</td>
+        <td>{{item.days}}</td>
+        <td>{{item.ksh_amount|mul:2}}</td>
+        <td>{{item.usd_amount}}</td>
+        <td> <a class="article-title" href="{{receipt_url}}">View Receipt</a></td>
+          {%if user.is_admin or user.is_superuser%}
+          <td> <a class="article-title" href="#">Edit</a></td>
+          <td> <a class="article-title" href="#">Delete</a></td>
+          {%endif%}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}
