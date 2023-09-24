@@ -1,11 +1,11 @@
 {% load static %}
 {% block content %}
 {% csrf_token %}
-<body>
-<div class="container">
-    
-    <div class="chatbox">
-        <div class="chatbox__support">
+
+<body>  
+<div class="chatbot-wrapper">
+    <div class="chatbox" >
+        <div class="chatbox__support" style="height: 500px;">
             <div class="chatbox__header">
                 <div class="chatbox__image--header">
                     <img src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" alt="image">
@@ -13,29 +13,185 @@
                 <div class="chatbox__content--header">
                     <h4 class="chatbox__heading--header">Chat with CODA</h4>
                     <p class="chatbox__description--header">Hi. How can I help you?</p>
+                    <div class="chatbox__close">
+                        <div class="close-button" onclick="closeChatbox()">
+                            X
+                        </div>
+                    </div>  
                 </div>
             </div>
             <div class="chatbox__messages">
                 <div>
+                    <div class="topics">
+                        <!-- Topics list -->
+                        <ul>
+                            <li><a href="#" onclick="showTopic('investing')">investing </a></li>
+                            <li><a href="#" onclick="showTopic('finance')">finance </a></li>
+                            <li><a href="#" onclick="showTopic('topic3')">Topic </a></li>
+                            <li><a href="#" onclick="showTopic('topic3')">I am ready </a></li>
+                        </ul>
+                    </div>
+                   
+                    <!-- style for the topics -->
+                    <style>
+                        .topics {
+                            background-color: white;
+                            display: block;
+                            justify-content: space-between;
+                            padding: 13px;
+                            box-sizing: border-box;
+                            border-radius: 16px;
+                            width: 100%;
+                            font-size: 12px;
+                            animation: slide-up 0.3s ease;
+                        }
+                        
+                        .topics ul {
+                            list-style: none;
+                            padding: 0;
+                            display: flex;
+                            margin: 0;
+                        }
+                        
+                        .topics li {
+                            margin: 0 3px;
+                            
+                        }
+                        
+                        .topics a {
+                            text-decoration: none;
+                            color: rgb(172, 125, 38);
+                            border: 1px solid #E6E6E6;
+                            padding: 3px 7px;
+                            border-radius: 16px;
+                            transition: background-color 0.3s ease;
+                        }
+                        
+                        .topics a:hover {
+                            background-color:  #3c3f30;
+                        }</style>
+                    <script>
+                        // Define chat content for each topic
+                        const topicChat = {
+                            topic1: [
+                                { name: "User", message: "Hello, I have a question about Topic 1." },
+                                { name: "Operator", message: "Sure, how can I help you with Topic 1? lets start" },
+                            ],
+                            topic2: [
+                                { name: "User", message: "I'd like to know more about Topic 2." },
+                                { name: "Operator", message: "Certainly, I can provide information about Topic 2." },
+                            ],
+                            topic3: [
+                                { name: "User", message: "What can you tell me about Topic 3?" },
+                                { name: "Operator", message: "Topic 3 is related to..." },
+                            ],
+                        };
+                    
+                        // Function to display chat content for a specific topic
+                        function showTopic(topic) {
+                            const chatbox = document.querySelector('.chatbox');
+                            const chatMessages = chatbox.querySelector('.chatbox__messages');
+                            chatMessages.innerHTML = ''; // Clear existing messages
+                    
+                            const messages = topicChat[topic];
+                            if (messages) {
+                                messages.forEach((message) => {
+                                    const messageClass = message.name === "User" ? 'messages__item messages__item--visitor' : 'messages__item messages__item--operator';
+                                    const messageDiv = document.createElement('div');
+                                    messageDiv.className = messageClass;
+                                    messageDiv.textContent = message.message;
+                                    chatMessages.appendChild(messageDiv);
+                                });
+                            }
+                        }
+                    </script>
 
                 </div>
             </div>
                 <div class="chatbox__footer">
+                    <button class="clear-chat-button" onclick="clearChat()">Clear</button>
+            <style>/* Add this to your existing CSS or customize as needed */
+                .clear-chat-button {
+                    background-color: #9C1DE7 ;
+                    color: white; 
+                    border: none;
+                    padding: 5px;
+                    border-radius: 100%;
+                    /* font-size: 10px; */
+                    width: 20%;
+                    cursor: pointer;
+                    margin-left: 2px; /* Adjust the spacing */
+                }
+                
+                
+            </style>
+            <script>function clearChat() {
+                const chatMessages = document.querySelector('.chatbox__messages');
+                chatMessages.innerHTML = ''; // Clear all chat messages
+            }
+            </script>
                     <input type="text" id="userMessage" name="userMessage" placeholder="Write a message..." aria-label="Type your message">
                     <button class="chatbox__send--footer send__button" id="sendButton">Send</button>
                 </div>
         </div>
         <div class="chatbox__button">
-            <button id="animationButton"><img src="{% static 'main/image/chatbox-icon.svg' %}" /></button>
+            <button id="animationButton"  onclick="toggleState()"><img src="{% static 'main/image/chatbox-icon.svg' %}" /></button>
         </div>
+        <script>
+            var chatBox = document.querySelector(".chatbox__support");
+        
+            function toggleChatboxState() {
+                chatBox.classList.toggle('chatbox--active');
+            }
+        
+            function closeChatbox() {
+                chatBox.classList.remove('chatbox--active');
+            }
+        
+            function toggleState() {
+                chatBox.classList.toggle('chatbox--active');
+            }
+            
+        </script>
     </div>
     <script>
         const csrftoken = "{{ csrf_token }}";
     </script>
     
-    
+    <style>/* Chatbot wrapper styles */
+        .chatbot-wrapper {
+          position: fixed; /* Fixed position */
+          bottom: 20px; /* Adjust the vertical position as needed */
+          right: 20px; /* Adjust the horizontal position as needed */
+          transition: transform 0.3s; /* Add a smooth transition effect for scrolling */
+        }
+        </style>
     </div>
 </div>
+<!-- FOr scroll -->
+<script>// JavaScript to scroll the chatbot along with the page
+    const chatbotWrapper = document.querySelector('.chatbot-wrapper');
+    let lastScrollY = window.scrollY;
+    
+    function scrollChatbotWithPage() {
+      const scrollY = window.scrollY;
+    
+      // Calculate the difference in scroll position
+      const scrollDiff = scrollY - lastScrollY;
+    
+      // Update the chatbot's position based on the scroll
+      chatbotWrapper.style.transform = `translateY(${scrollDiff}px)`;
+    
+      // Store the current scroll position
+      lastScrollY = scrollY;
+    
+      // Request animation frame for smoother performance
+      requestAnimationFrame(scrollChatbotWithPage);
+    }
+    
+    // Start scrolling the chatbot with the page
+    scrollChatbotWithPage();
+    </script>
 <script>
     class Chatbox {
         constructor() {
@@ -46,6 +202,7 @@
             this.sendButton = document.querySelector('.send__button');
             this.messageInput = this.chatBox.querySelector('input');
             this.chatMessages = this.chatBox.querySelector('.chatbox__messages');
+             this.chatboxContent = document.querySelector(".chatbox__support");
     
             this.openButton.addEventListener('click', () => this.toggleState());
             this.sendButton.addEventListener('click', () => this.onSendButton());
@@ -55,6 +212,20 @@
                 }
             });
         }
+
+
+        toggleState() {
+        this.state = !this.state;
+        if (this.state) {
+            this.chatBox.classList.add('chatbox--active');
+            // Remove the negative z-index when chatbox is open
+            this.chatBox.style.zIndex = 'initial';
+        } else {
+            this.chatBox.classList.remove('chatbox--active');
+            // Set the negative z-index when chatbox is closed
+            this.chatBox.style.zIndex = '-123456';
+        }
+    }
     
         toggleState() {
             this.state = !this.state;
@@ -103,14 +274,16 @@
                 return response.json();
             })
             .then(data => {
+                console.log('API Response:', data);
                 const botMsg = { name: "Sam", message: data.response };
-                console.log(botMsg);
-
+                console.log(botMsg); // Add this line
                 this.messages.push(botMsg);
                 this.updateChatText();
             })
             .catch(error => {
                 console.log('Errorr:', error);
+               
+                console.error('API Request Error:', error);
                 console.error('Errorr:', error);
                 const errorMessage = { name: "Error", message: "An error occurred while processing your request." };
                 this.messages.push(errorMessage);

@@ -15,6 +15,11 @@ from django.utils.text import slugify
 from django import template
 from django.apps import apps
 from django.db.models import Q
+from langchain.agents import create_sql_agent
+from langchain.agents.agent_toolkits import SQLDatabaseToolkit
+from langchain.sql_database import SQLDatabase
+from langchain.llms.openai import OpenAI
+from langchain.agents import AgentExecutor
 
 register = template.Library()
 
@@ -79,28 +84,44 @@ def unique_slug_generator(instance, new_slug=None):
 """ =============open_ai chat bot===========   """
 def generate_chatbot_response(user_message):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
-    response = openai.Completion.create(
-            model="text-davinci-001",
-            prompt=user_message,
-            temperature=0.4,
-            max_tokens=100,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
+    db = SQLDatabase.from_uri("postgresql://ylzxqlnsngttgn:1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311@ec2-52-86-115-245.compute-1.amazonaws.com/d8liqmn44tm61v")
+   
+
+    toolkit = SQLDatabaseToolkit(db=db)
+
+    agent_executor = create_sql_agent(
+        llm=OpenAI(temperature=0),
+        toolkit=toolkit,
+        verbose=True
     )
-    if response:
-        res = response["choices"][0]
-        result=res['text']
-    else:
-        result = None
-    return result
-    # return response.choices[0].text
+    
+    database_response = agent_executor.run(user_message)
+    
+    # ChatGPT Interaction
+    chatgpt_response = openai.Completion.create(
+        model="text-davinci-001",
+        prompt=user_message,
+        temperature=0.4,
+        max_tokens=200,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+
+    # Format the final response to include both database and ChatGPT responses
+    final_response = {
+        "database_response": database_response,
+        "chatgpt_response": chatgpt_response.choices[0].text if chatgpt_response else None
+    }
+
+    return final_response
 
 
 def generate_database_response(user_message, app='investing'):
     # Get all the models from the specified app
     app_config = apps.get_app_config(app)
     models = app_config.get_models()
+    
 
     response_data = []
 
@@ -120,6 +141,7 @@ def generate_database_response(user_message, app='investing'):
         # Check if the model_data list is not empty
         if any(model_data):
             response_data.append({model_name: model_data})
+            print(response_data)
     return response_data
 
 # def generate_database_response(user_message):

@@ -30,6 +30,7 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
+import logging
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -86,6 +87,7 @@ def layout(request):
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
+logger = logging.getLogger(__name__)
 
 def get_respos(request):
     user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
@@ -96,6 +98,7 @@ def get_respos(request):
         database_response = generate_database_response(user_message)
         chatbot_response = generate_chatbot_response(user_message)
         # Handle the case where no results were found
+        logger.info(f'SQL Query: {str( database_response)}')
         if database_response:
             return JsonResponse({'response': database_response})
         elif chatbot_response:
@@ -112,10 +115,11 @@ def get_respos(request):
                 dsu_instance.save()
                 return JsonResponse({'response': "Oops! It seems I haven't learned that one yet, but don't worry. Our team will get back to you shortly with the information you need. Thanks for your patience!"})
             else:
-                return JsonResponse({'response': str(contact_model.task)})
-         
+                return JsonResponse({'response': str(contact_model.task)})          
     except Exception as e:
         # Handle exceptions and return an appropriate JSON response
+        logger.error(str(e))
+
         return JsonResponse({'error': str(e)})
 
 
