@@ -18,13 +18,15 @@
                             <p>Kindly,select an item to proceed</p>
                     </div>
                     <div style="border: 1px solid black;padding:20px;">
+                        <a class="dropdown-item" href="{% url 'finance:transaction-list' %}" target="__blank" >Cash Outflows Report</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'finance:budget' %}" target="__blank" >Budgeting</a>
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:companyreturns' %}" target="__blank" >CODA Investments</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:investments' %}" target="__blank" >Run Test Investments</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:costbasis'%}" target="__blank" >Cost Basis</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="{% url 'finance:transaction-list' %}" target="__blank" >Cash Outflows Report</a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'investing:option_list' title='shortputdata' %}" target="__blank" >Options</a>
                     </div>

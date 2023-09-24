@@ -599,7 +599,7 @@ class Budget(models.Model):
 
     @property
     def days(self):
-        days = self.end_date - self.start_date
+        days = (self.end_date - self.start_date).days
         return days
     
     @property
@@ -613,9 +613,9 @@ class Budget(models.Model):
     @property
     def ksh_amount(self):
         try:
-            total_amount = round(Decimal(self.unit_price*self.qty), 2)
+            total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
         except:
-            total_amount=0
+            total_amount = 0
         return total_amount
     
 

@@ -62,6 +62,27 @@ def budget(request):
 			}
 	return render(request, "finance/budgets/budget.html", context)
 
+class BudgetUpdateView(UpdateView):
+	model = Budget
+	success_url = "/finance/budget/"
+	template_name="main/snippets_templates/generalform.html"
+	fields ="__all__"
+
+	def form_valid(self, form):
+		if self.request.user.is_superuser or self.request.user:
+			return super().form_valid(form)
+		else:
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		# task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		if self.request.user:
+		    return True
+
+
+
 def investment_report(request):
     return render(request, "finance/reports/investment_report.html", {"title": "Investment"})
 
