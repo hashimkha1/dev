@@ -30,6 +30,12 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
+
+from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage
+import os
+
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -82,7 +88,7 @@ def layout(request):
         "services": services,
         "posts": testimonials,
         "title": "layout",
-         "selected_class": selected_class,
+        "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
@@ -94,11 +100,16 @@ def get_respos(request):
         return JsonResponse({'response': 'Invalid user message'})
     try:
         database_response = generate_database_response(user_message)
-        chatbot_response = generate_chatbot_response(user_message)
-        # Handle the case where no results were found
         if database_response:
-            return JsonResponse({'response': database_response})
-        elif chatbot_response:
+            # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+            messages = [HumanMessage(content=str(database_response))]
+            response_llm = llm.predict_messages(messages)
+            # chat_model_result = chat_model.predict_messages(messages)
+            return JsonResponse({'response': response_llm.content})
+        
+        chatbot_response = generate_chatbot_response(user_message)
+        if chatbot_response:
             return JsonResponse({'response': chatbot_response})
         else:
             contact_model = DSU.objects.filter(challenge=user_message).first()
