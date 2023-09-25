@@ -92,7 +92,8 @@
             const requestData = {
                 userMessage: userMessage,
             };
-            const baseUrl = 'http://127.0.0.1:8000/get_respos';
+            // const baseUrl = 'http://127.0.0.1:8000/get_respos';
+            const baseUrl = 'https://www.codanalytics.net/get_respos';
             const queryString = new URLSearchParams(requestData).toString();
             const apiUrl = `${baseUrl}?${queryString}`;
             fetch(apiUrl) 
