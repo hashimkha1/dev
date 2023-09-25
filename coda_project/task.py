@@ -14,11 +14,11 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
-from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks,GotoMeetings
+from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks
 from accounts.models import CustomerUser
 from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
 from application.models import UserProfile
-from getdata.models import ReplyMail
+from getdata.models import ReplyMail,GotoMeetings
 
 
 # importing utils & Views
