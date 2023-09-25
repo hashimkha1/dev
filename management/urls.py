@@ -44,7 +44,8 @@ urlpatterns = [
     path('task_employee/<str:username>/',views.usertaskhistory, name='user_task_history'),
     # path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
 
-    path('payslip/<str:username>/',views.pay, name='user_payslip'),
+    path('payslip/<str:username>/',views.usertask, name='user_payslip'),
+    # path('payslip/<str:username>/',views.pay, name='user_payslip'),
     # path('payslip/<str:username>/',views.payslip, name='user_payslip'),
 
     path('task_payslip/<str:username>/',views.task_payslip, name='task_payslip'),
