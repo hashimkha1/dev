@@ -55,12 +55,40 @@ def finance_report(request):
 
 
 
+# def budget(request):
+# 	budget=Budget.objects.all()
+# 	context = {
+# 				'budget': budget
+# 			}
+# 	return render(request, "finance/budgets/budget.html", context)
+
+
 def budget(request):
-	budget=Budget.objects.all()
-	context = {
-				'budget': budget
-			}
-	return render(request, "finance/budgets/budget.html", context)
+    budget_obj=Budget.objects.all()
+    ytd_duration,current_year=dates_functionality()
+    webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
+    total_amt = sum(transact.ksh_amount for transact in budget_obj)
+    total_usd_amt =float(total_amt)/float(rate)
+    # print("Amounts",total_outflows,ytd_outflows,total_field_ouflow_usd,total_web_ouflow,total_field_ouflow_usd)
+    data = [
+        {"title": "Amount(Ksh)", "value": total_amt},
+        {"title": "Amount(usd)", "value": total_usd_amt},
+	]
+
+    context = {
+        "budget_obj": budget_obj,
+        "data": data,
+        "webhour": webhour,
+        "delta": delta,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+    }
+    return render(request, "finance/budgets/budget.html", context)
+
+
+
 
 class BudgetUpdateView(UpdateView):
 	model = Budget

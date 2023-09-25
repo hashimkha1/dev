@@ -3,58 +3,97 @@
 {% block content %}
 <section id="rating">
   <div class="rating text-center">
-    <h2>BUDGET</h2>
-    <!-- <hr> -->
-    <!-- <h5><b class="remaining-time">{{remaining_days}},{{remaining_hours}},{{remaining_minutes}},{{remaining_seconds}}</b></h5> -->
-    <hr>
-    <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
-    <div class="row text-center">
-      <div class="col-md-2 amount_msg" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <h5><b>Total Amount</b></h5>
-            <hr/>
-            <!-- <i><h6>{{GoalAmount}}</h6></i> -->
-            <i><h6>Ksh{{total_amt}}</h6></i>
-            <hr/>
-            <font size="-1"
-            <i><p>Total amount</p></i>
-            </font>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 amount_msg" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <h5><b>Total Contributions</b></h5>
-            <hr/>
-            <i><h6>Ksh{{total_contributions}}</h6></i>
-            <hr/>
-            <i><p>Contributions</p></i>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-2 amount_msg" id="bada">
-        <div class="card">
-          <div class="card-body">
-            <p><a href="{% url 'finance:dcinflow'%}" class="btn btn-secondary btn-sm"
-              >Add Revenue
-            </a></p>
-            <hr/>
-            <a href="{% url 'finance:dcklist'%}" class="btn btn-secondary btn-sm"
-            >Budget
-          </a>
-          <hr/>
-            <i><h6>Exchange Rate :KES.{{rate}}</h6></i>
-          </div>
-          </div>
-        </div>
-      </div>
+        <div class="row text-center">
+          <div class="col-md-3 amount_msg" id="bada">
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>WELCOME BACK</b></h5>
+                  <hr/>
+                  <i><h6>{{user.first_name|upper }}</h6></i>
+                  <hr/>
+                  {% if request.user.is_superuser %}
+                  <p>
+                    <i><h6>Exchange Rate :KES.{{rate}}</h6></i>
+                </p>
+                {% else %}
+                <p>
+                  <a href="#" class="btn btn-secondary btn-sm"
+                    >Rate
+                  </a>
+              </p>
+                  {%endif %}
+                </div>
+              </div>
+              <!-- <div class="col-md-2"> -->
+                <form method="POST"  class="form-group">
+                    {% csrf_token %}
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="department_filter">To filter by Department</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p>{{ form.name }} <button class="btn btn-outline-info" type="submit">Search</button></p>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            <!-- </div> -->
+            </div>
+            <div class="col-md-6" id="bada">
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>BUDGETINT</b></h5>
+                  <hr/>
+                  <div class="row text-center">
+        
+                    {% for item in data %}
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <a class="btn btn-primary" href="#" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
+                                    <hr/>
+                                    <i><h6>{{ item.value|floatformat:2 }}</h6></i>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
 
+                  <hr/>
+                  <div class="row text-center">
 
-  </div>
-  <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
-    <table class="table table-borderless" style="width: 100%">
+                </div>
+                  </b></i>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3" id="bada">
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>ACTIONS</b></h5>
+                  <hr/>
+                  <i><h6>{{payday}}</h6></i>
+                  <hr/>
+                  <div class="col-md-12" id="gi">
+                    <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
+                        >Add item
+                    </a></p>
+                </div>
+                <div class="col-md-12" id="gi">
+                  <p>
+                    <a href="#" class="btn btn-secondary btn-sm"
+                      >Finance Landing Page
+                    </a>
+                </p>
+                </div>
+                </div>
+              </div>
+            </div>
+      </div>
+      <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
           <!-- <th>Client_Category</th> -->
@@ -71,7 +110,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for item in budget %}
+        {% for item in budget_obj %}
         <tr>
           <!-- <td>
             {{item.clients_category}}
@@ -91,8 +130,8 @@
         <td>{{item.start_date|date:"n/d/Y"}}</td>
         <td>{{item.end_date|date:"n/d/Y"}}</td>
         <td>{{item.days}}</td>
-        <td>{{item.ksh_amount}}</td>
-        <td>{{item.ksh_amount|mul:0.006}}</td>
+        <td>{{item.ksh_amount|floatformat:2}}</td>
+        <td>{{item.ksh_amount|mul:0.006|floatformat:2}}</td>
         <td> <a class="article-title" href="{{receipt_url}}">View</a></td>
           {%if user.is_admin or user.is_superuser%}
           <td> <a class="article-title" href="{% url 'finance:budget-update' item.id %}">Edit</a></td>
@@ -101,7 +140,7 @@
         </tr>
         {% endfor %}
       </tbody>
-    </table>
+      </table>
   </div>
 </section>
 {% endblock content %}
