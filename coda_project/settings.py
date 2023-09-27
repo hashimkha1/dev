@@ -1,3 +1,5 @@
+# settings
+
 """
 Django settings for coda_project project.
 
@@ -146,39 +148,15 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "NAME": dbname,
-#         "USER":user,
-#         "PASSWORD":password,
-#         "HOST": host
-#     }
-# }
-
-'''=========== Heroku DB ================'''
 DATABASES = {
-    'default': {
-        "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'd8liqmn44tm61v',
-        "USER": 'ylzxqlnsngttgn',
-        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": dbname,
+        "USER":user,
+        "PASSWORD":password,
+        "HOST": host
     }
 }
-
-
-'''=========== Local DB ================'''
-# DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'Coda_Dev',
-#        'USER': 'postgres',
-#        'PASSWORD': 'Amit@esfera',
-#        'HOST': 'localhost',  
-#        'PORT': '5432',
-#    }
-# }
 
 
 # DATABASES = {
@@ -237,7 +215,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_ROOT = os.path.join(BASE_DIR, '..', "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_DIR = os.path.join(BASE_DIR, "static")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
@@ -329,14 +307,16 @@ def payment_details(request):
 
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
-    DEBUG = True
     SECURE_SSL_REDIRECT = True
+    DEBUG = False
 elif os.environ.get('ENVIRONMENT') == 'testing':
-    DEBUG = True
     SECURE_SSL_REDIRECT = True
     SITEURL = "https://codamakutano.herokuapp.com"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    DEBUG = True
 else:
     SITEURL = "http://localhost:8000"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 
 # -----------------------------------------

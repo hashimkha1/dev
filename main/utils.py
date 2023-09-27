@@ -122,28 +122,6 @@ def generate_database_response(user_message, app='investing'):
             response_data.append({model_name: model_data})
     return response_data
 
-# def generate_database_response(user_message):
-#     try:
-#         all_models = apps.get_models()
-#         response_data = []
-
-#         for model in all_models:
-#             model_name = model.__name__
-#             fields = model._meta.get_fields()
-#             model_data = []
-
-#             for field in fields:
-#                 if field.get_internal_type() == 'CharField':
-#                     query = Q(**{f"{field.name}__icontains": user_message})
-#                     results = model.objects.filter(query)
-#                     model_data.extend(results.values())
-
-#             if model_data:
-#                 response_data.append({model_name: model_data})
-
-#         return response_data
-#     except Exception as e:
-#         return None
 
 """ ===========End of code============ """
 
@@ -243,6 +221,25 @@ reviews = [
         "description": "My data analyst coach has been nothing short of exceptional throughout my learning journey. Their expertise and dedication have been instrumental in shaping my understanding of data analysis. They have a remarkable ability to simplify complex concepts, making even the most intricate aspects of data analysis accessible and understandable. Their teaching style is engaging and interactive, ensuring that I remain engaged and motivated. The coach's real-world experience in data analysis brings an added dimension to their teaching, as they are able to provide practical insights and share valuable industry examples that enrich my learning experience. Their consistent availability for questions and feedback has created a supportive learning environment where I feel comfortable seeking clarification and guidance. I can confidently say that their guidance has been pivotal in my growth as a data analyst.",
     },
 ]
+instructions = [
+    {
+        "topic": "Review",
+        "description": "Write Review Title.",
+    },
+    {
+        "topic": "Sample",
+        "description": "Generate Sample Review",
+    },
+    {
+        "topic": "copy",
+        "description": "Copy Sample Review and Paste in content",
+    },
+    {
+        "topic": "Submit",
+        "description": "Click on Submit Review!",
+    },
+    
+]
 
 
 # Interview description data
@@ -325,19 +322,20 @@ job_support = [
 
 Automation = [
     {
-        "title": "Social Media",
-        "link":SITEURL+"/marketing/",
-        "description":"Posting ads to social media",
+        "title": "OPENAI",
+        "link":"https://chat.openai.com/chat",
+        "description":"CHATGPT/Gemini:The super power of modern day analytics ",
     },
     {
-        "title": "Cash App",
-        "link":SITEURL+"/getdata/cashappdata/",
-        "description":"Fetching data from Cashapp and updating records",
+        "title": "Testimonials",
+        "link":SITEURL+"/post/new/",
+        "description":"Using AI to aid Clients to leave feedback",
     },
+
     {
-        "title": "Job Application",
-        "link":SITEURL+"/getdata/replies/",
-        "description":"Automating Job applications",
+        "title": "Search Data",
+        "link":SITEURL+"/search/",
+        "description":"Giving You the power to search your own data",
     },
 
     {
@@ -373,12 +371,17 @@ Stocks = [
 
 
 General = [
-    {
-        "title": "ChatGPT",
-        "link":"https://chat.openai.com/chat",
-        "description":"CHATGPT",
-    },
 
+    {
+        "title": "Social Media",
+        "link":SITEURL+"/marketing/",
+        "description":"Posting ads to social media",
+    },
+    {
+        "title": "Cash App",
+        "link":SITEURL+"/getdata/cashappdata/",
+        "description":"Fetching data from Cashapp and updating records",
+    },
     {
         "title": "Goto/Zoom meetings",
         "link":SITEURL+"/refresh_token_goto/",
@@ -390,9 +393,9 @@ General = [
         "description":"Script to automate simple tasks",
     },
     {
-        "title": "Testimonials",
-        "link":SITEURL+"/post/new/",
-        "description":"Using AI to aid Clients to leave feedback",
+        "title": "Job Application",
+        "link":SITEURL+"/getdata/replies/",
+        "description":"Automating Job applications",
     },
   
 ]
@@ -642,6 +645,26 @@ client_categories = [
     {
         "title": "Job Support",
         "description":"This is a group of experienced IT Experts whom CODA has assisted in finding employment in the job market. These professionals possess diverse technical skills and contribute to various domains such as software development, systems administration, database management, and cybersecurity. Through the collaborative efforts of CODA and these experts, job seekers receive support in navigating the job market and securing rewarding career opportunities."
+    },
+
+]
+
+packages = [
+    {
+        "title": "ETL-Alteryx",
+        "description1":"Project Based Training",
+        "description2":"Hands on experience",
+        "description2":"Learn how to create this workflow",
+    },
+    {
+        "title": "Database |SQL or Snowflake",
+        "description1":"Project Based Training",
+        "description2":"Review of complex store procedures",
+    },
+    {
+        "title": "Reporting",
+        "description1":"Project Based Training",
+        "description2":"Learn how to create High level Detail Reports",
     },
 
 ]
