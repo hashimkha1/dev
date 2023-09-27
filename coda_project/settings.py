@@ -329,15 +329,15 @@ def payment_details(request):
 
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
-    DEBUG = False
+    DEBUG = True
     SECURE_SSL_REDIRECT = True
 elif os.environ.get('ENVIRONMENT') == 'testing':
-    DEBUG = False
+    DEBUG = True
     SECURE_SSL_REDIRECT = True
     SITEURL = "https://codamakutano.herokuapp.com"
 else:
     SITEURL = "http://localhost:8000"
-    DEBUG = False
+    DEBUG = True
 
 # -----------------------------------------
 def source_target():
