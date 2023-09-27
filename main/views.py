@@ -102,7 +102,7 @@ def get_respos(request):
         database_response = generate_database_response(user_message)
         if database_response:
             # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+            llm = OpenAI(openai_api_key='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')
             messages = [HumanMessage(content=str(database_response))]
             response_llm = llm.predict_messages(messages)
             # chat_model_result = chat_model.predict_messages(messages)

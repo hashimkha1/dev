@@ -14,11 +14,11 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
-from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks,GotoMeetings
+from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks
 from accounts.models import CustomerUser
 from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
 from application.models import UserProfile
-from getdata.models import ReplyMail
+from getdata.models import ReplyMail, GotoMeetings
 
 
 # importing utils & Views
@@ -276,7 +276,7 @@ def auto_uplaod_evidence():
         links = TaskLinks.objects.last()
         goto_data = GotoMeetings.objects.filter(created_at__gte=links.created_at)
         user_data = CustomerUser.objects.filter(is_active=True)
-        for goto_meet in goto_data:
+        for goto_meet in goto_data and goto_meet.attendee_duration > 5:
             if goto_meet.recording:
                 for user in user_data:
                     if user.username.casefold() == goto_meet.attendee_name.casefold():
@@ -289,7 +289,7 @@ def auto_uplaod_evidence():
                         if points != maxpoints and task_obj.activity_name.lower() not in JOB_SUPPORTS:
                             Task.objects.filter(id=task_obj.id).update(point=points + 1)
                         task_links = TaskLinks.objects.create(task=task_obj,added_by=user,link_name=goto_meet.meeting_topic,
-                                            link=goto_meet.recording)
+                                            description=goto_meet.meeting_topic,link=goto_meet.recording)
     except Exception as e:
         print("error",str(e))
 

@@ -237,7 +237,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 STATIC_ROOT = os.path.join(BASE_DIR, '..', "staticfiles")
 STATIC_URL = "/static/"
 STATICFILES_DIR = os.path.join(BASE_DIR, "static")
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
@@ -337,7 +337,7 @@ elif os.environ.get('ENVIRONMENT') == 'testing':
     SITEURL = "https://codamakutano.herokuapp.com"
 else:
     SITEURL = "http://localhost:8000"
-    DEBUG = True
+    DEBUG = False
 
 # -----------------------------------------
 def source_target():
