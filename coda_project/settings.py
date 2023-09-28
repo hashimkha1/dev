@@ -308,14 +308,14 @@ def payment_details(request):
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
     SECURE_SSL_REDIRECT = True
-    DEBUG = False
+    DEBUG = True
 elif os.environ.get('ENVIRONMENT') == 'testing':
     SECURE_SSL_REDIRECT = True
     SITEURL = "https://codamakutano.herokuapp.com"
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 else:
-    SITEURL = "http://localhost:8000"
+    SITEURL = "http://127.0.0.1:8000/"
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 
