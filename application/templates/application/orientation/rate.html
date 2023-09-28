@@ -16,9 +16,6 @@
         <div class="col-md-6">{{ form.employeename|as_crispy_field }}</div>
       </div>
     {% endif %}
-    <!-- <div class="row">
-      <div class="col-md-6">{{ form.topic|as_crispy_field }}</div>
-    </div> -->
     {% if request.user.is_applicant %}
       {% if applicant_error %}
         <p style="color: red"> {{applicant_error}} </p>

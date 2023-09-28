@@ -142,16 +142,16 @@ class LBandLS(models.Model):
     def __str__(self):
         return self.user.username
 
-class RetirementPackage(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+# class RetirementPackage(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+#     period = models.CharField(max_length=10)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 
-class LaptopSaving(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    period = models.CharField(max_length=10)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+# class LaptopSaving(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+#     period = models.CharField(max_length=10)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
 
 class TrainingLoan(models.Model):
     LOAN_CHOICES = [
@@ -171,35 +171,37 @@ class TrainingLoan(models.Model):
     deduction_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     balance_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
 
-class Payslip(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
-    # month and year of period we are paying
-    period = models.CharField(max_length=10)
+# class Payslip(models.Model):
+#     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
 
-    # points based on the work the employee done
-    points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # month and year of period we are paying
+#     period = models.CharField(max_length=10)
 
-    # earnings calculated based on points
-    earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # points based on the work the employee done
+#     points = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # benefits
-    EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # earnings calculated based on points
+#     earned_pay = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # retirement_package is long term benefit and does not affect the net pay
-    retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+#     # benefits
+#     EOM = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     EOQ = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     EOY = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     laptop_bonus = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     holiday_wages = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     night_allowance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
-    # deductions
-    loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
-    FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+#     # retirement_package is long term benefit and does not affect the net pay
+#     # retirement_package = models.OneToOneField(RetirementPackage, on_delete=models.CASCADE)
+
+#     # deductions
+#     loan = models.OneToOneField(TrainingLoan, on_delete=models.CASCADE)
+#     FA = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     computer_maintenance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     health_care = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+#     # laptop_saving = models.OneToOneField(LaptopSaving, on_delete=models.CASCADE)
+
 
 class Transaction(models.Model):
     # Method of Category
@@ -543,6 +545,79 @@ class DC48_Inflow(models.Model):
                 total_amt_paid=0.00
             return total_amt_paid
             
+
+class Budget(models.Model):
+    CLIENTS_CHOICES = [
+        ("DYC", "Diaspora Youth Caucus"),
+        ("DC48KENYA", "DC48KENYA"),
+        ("Other", "Other"),
+    ]
+    CAT_CHOICES = [
+        ("Conference Facilities","Conference Facilities"),
+        ("Food","Food"),
+        ("Entertainment","Entertainment"),
+        ("Travel","Travel"),
+        ("Accomodation","Accomodation"),
+        ("Awards","Awards"),
+        ("Media Coverage","Media Coverage"),
+        ("Other", "Other"),
+    ]
+
+    clients_category = models.CharField(
+        max_length=25,
+        choices=CLIENTS_CHOICES,
+        default="Other",
+    )
+    budget_lead = models.ForeignKey(
+        "accounts.CustomerUser", 
+        on_delete=models.CASCADE, 
+        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
+        related_name="budget_lead")
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+        
+    )
+    item = models.CharField(max_length=100, null=True, default=None)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(default=timezone.now)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
+    unit_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=None
+    )
+    description = models.TextField(max_length=1000, default=None)
+    is_active=models.BooleanField(default=True,null=True,blank=True)
+    receipt_link = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        ordering = ["category"]
+
+    def get_absolute_url(self):
+        return reverse("management:inflow-detail", kwargs={"pk": self.pk})
+
+    @property
+    def days(self):
+        days = (self.end_date - self.start_date).days
+        return days
+    
+    @property
+    def receipturl(self):
+        if self.receipt_link is not None:
+            urlreceipt = self.receipt_link
+            return urlreceipt
+        else:
+            return redirect('main:layout')
+
+    @property
+    def ksh_amount(self):
+        try:
+            total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
+        except:
+            total_amount = 0
+        return total_amount
+    
 
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)

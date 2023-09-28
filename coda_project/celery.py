@@ -54,5 +54,11 @@ app.conf.beat_schedule = {
         # 'schedule': crontab(hour=23),
         'schedule': crontab(0, 0, day_of_month='1'),
     },
+    'auto_upload_evidence': {
+        'task': 'auto_uplaod_evidence',
+        # 'schedule': crontab(minute='*/1'),
+        # 'schedule': crontab(hour=23),
+        'schedule': crontab(minute=0, hour=1),  # Run at 1:00 AM every day
+    },
 
 }

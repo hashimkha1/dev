@@ -26,12 +26,16 @@ def image_view(request):
     }
 
 def images(request):
-    # images,image_names=image_view(request)
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
+    default_url = Assets.objects.filter(name='default_emp_v1').values_list('image_url', flat=True).first()
+    banner_url = Assets.objects.filter(name='banner_v1').values_list('image_url', flat=True).first()
+    print(banner_url)
     return {
         'images': images,
-        "image_names":image_names
+        "image_names":image_names,
+        "default_url":default_url,
+        "banner_url":banner_url
     }
 
 

@@ -3,7 +3,7 @@
     <section id="career">
       <div class="career text-center">
         <div class="row text-center">
-          <div class="col-md-2 amount_msg" id="bada">
+          <div class="col-md-3 amount_msg" id="bada">
               <div class="card">
                 <div class="card-body">
                   <h5><b>WELCOME BACK</b></h5>
@@ -16,77 +16,90 @@
                           >Refresh
                         </a>
                      </p>
-                     <hr>
-                     <div class="text-center">
-                      <form method="get" action="{% if title %}{% url 'investing:option_list' title=title %}{% endif %}" id="symbolForm">
-                        {% csrf_token %}  
-                        <label for="symbol" class="btn btn-secondary btn-sm">Select a Symbol:</label>
-
-                          <select id="category" name="symbol">
-                              {% if symbols %}
-                                  {% for symbol in symbols %}
-                                  <option value="{{ symbol }}" {% if symbol == selected_symbol %}selected{% endif %}>{{ symbol }}</option>
-
-                                  {% endfor %}
-                              {% else %}
-                                  <option value="">No symbols available</option>
-                              {% endif %}
-                          </select>
-                          <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
-                      </form>
-                  </div>
-                  <hr>
                 </div>
               </div>
             </div>
-            <div class="col-md-8" id="bada">
+            <div class="col-md-6" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>{{title}} OPTIONS RESULTS</b></h5>
+                  <h5><b>EST. OF ORIGINAL COUNT OF OPTIONS RESULTS</b></h5>
                   <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD</br></a>
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:200
+                      </a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS</a></br> </a>
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
+                      :1200</a> 
                   </div>
                   <div class="col-md-4">
                     <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
-                      SHORTPUT<br>
+                      SHORTPUT:300
                     </a>
                   </div>
                 </div>
-                <hr/> 
+                <h5><b>Results after rules application</b></h5>
+                  <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Implied Volatility(IV)</br> <i>15% to 40%</i></a>
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:{{ credit_spread_count  }}
+                      </a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Days To Expiration(DTE)</br> <i>More than 21 days</i></a>
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
+                      :{{ covered_calls_count }}</a> 
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">
-                      Annualized Returns (AR)<br>
-                      <small style="font-size: 80%;">Greater than 65%</small>
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
+                      SHORTPUT:{{ shortputdata_count }}
                     </a>
                   </div>
-                 </div>
-                  <hr/> 
-
+                </div>
+                <h5><b>Final Results after {{second_title}}</b></h5>
+                  <hr/>
+                  <div class="row text-center mb-4">
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD
+                      </a>
+                  </div>
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
+                      </a> 
+                  </div>
+                  <div class="col-md-4">
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
+                      SHORTPUT
+                    </a>
+                  </div>
+                </div>
+                 <hr/> 
                 </div>
               </div>
             </div>
-            <div class="col-md-2" id="bada">
+            <div class="col-md-3" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>Priority Positions</b></h5>
+                  <h5>Info</h5>
                   <hr/>
                   <div class="col-md-12" id="gi">
                     <p>
                       <a href="{% url 'investing:overboughtsold' symbol=None %}" class="btn btn-secondary btn-sm">Over_Bought/Over_sold</a>
                    </p>
                   </div>
+                  {% for category, subcats in categories.items %}
+                  {% if category == 'yahoo' or category == 'thinkorswim' %}
+                  <!-- <h6>{{category|upper}}</h6> -->
+                        {% for subcat in subcats %}
+                            <hr/>
+                              <div class="col-md-12">
+                                <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">{{ subcat.rule }}:<i>{{ subcat.description }}</i></a>
+                            </div>
+                        {% endfor %}
+                  {% else%}
+                  <!-- <h6>{{category|upper}}</h6> -->
+                  {% endif %}
+            {% endfor %}
                 </div>
               </div>
             </div>
@@ -113,7 +126,8 @@
                   <!-- <th>Rank</th> -->
                   <th>Expiry</th>
                   <th>Earnings_Date</th>
-                  <th>Uncheck if added?</th>
+                  <!-- <th>Uncheck if added?</th> -->
+                  <th>More</th>
                   <th>Edit</th>
                   
             </tr>

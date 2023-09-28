@@ -12,8 +12,8 @@ urlpatterns = [
     path('upload/', views.upload_csv, name='upload'),
     path('dataupload/', views.uploaddata, name='upload-data'),
     path('bigdata/', views.bigdata, name='generate-data'),
-    path('load_files_data/', views.load_files_data, name='load_files_data'),
-    path('datauploadcsv/', upload_csv, name='upload-data'),
+    # path('datauploadcsv/', views.upload_csv, name='upload-data'),
+    path('datauploadcsv/', views.stocks_upload_csv, name='upload-data'),
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('cashappdetail/',views.CashappMailDetailSlugView.as_view(), name='cashappdetail'),
@@ -24,13 +24,6 @@ urlpatterns = [
     path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),
     path('getmeetingresponse/', getmeetingresponse, name='getmeetingresponse'),
     path('meetingFormView/', meetingFormView, name='meetingFormView'),
-
-    # path('gotomeeting/',views.meetingFormView,name='meetingform1'),
-    # # trying a url pattern for dates
-    # # gotomeetingresult
-    # path('gotomeetingresult/',views.gotomeetingresult,name='gotomeetingresult'),
-    # #meeting detail
-    # re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
     path('testselinum/', views.selinum_test, name='testselinum'),
     path('all_logs/', views.LogsViewSet, name='all_logs'),
 ]

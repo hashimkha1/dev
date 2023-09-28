@@ -51,7 +51,18 @@
         <div class="card">
             <div class="row">
               <hr>
-              <div class="col-md-10"><p>{{ service.description|safe }}</p></div>
+              <div class="col-md-10">
+                <p>
+                  <a class="text-dark  text-decoration-none" 
+                  {% if service.name == description_title %}
+                  data-toggle="tooltip" title="description"
+                  href="#"> 
+                  {% endif %}
+                  {{ service.description|safe }}
+                    </a>
+                </p>
+                <!-- {% include 'main/snippets_templates/chatbot.html'%} -->
+              </div>
               <div class="col-md-2 text-center">
                 <b>${{ service.price|floatformat:2 }}</b>
                 {% if service.slug %}

@@ -31,13 +31,15 @@
             </p>
 
             <div>
+                {% for instruction in instructions %}
                 <div class="d-flex align-items-center mb-3">
-                    <div class="background-count-bullet">1</div>
-                    <a class="text-white" target="_blank" href="#">
-                        <p class="text-white ml-4 mb-0">Write Review Title</p>
+                    <div class="background-count-bullet">{{ forloop.counter }}</div>
+                    <a class="text-white" target="_blank" href="{{ instruction.link }}">
+                        <p class="text-white ml-4 mb-0">{{ instruction.description }}</p>
                     </a>
                 </div>
-                <div class="d-flex align-items-center mb-3">
+                {% endfor %}
+                <!-- <div class="d-flex align-items-center mb-3">
                     <div class="background-count-bullet">2</div>
                     <a class="text-white" target="_blank" href="#">
                         <p class="text-white ml-4 mb-0">Generate Sample Review</p>
@@ -54,9 +56,10 @@
                     <a class="text-white" target="_blank" href="#">
                         <p class="text-white ml-4 mb-0">Click on Submit Review!</p>
                     </a>
-                </div>
+                </div> -->
             </div>
         </div>
+        
         <div class="col-md-7 top-left-coloumn" style="padding-left: 15px !important;padding-right: 0px !important;">
             <div class="content-section">
                 <form method="POST">

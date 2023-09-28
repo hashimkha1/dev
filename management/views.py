@@ -45,27 +45,24 @@ from management.models import (
     Training,
     ProcessJustification,
     ProcessBreakdown,
-    Meetings
+    Meetings,
 )
-
-
 from data.models import DSU
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
-from accounts.models import Tracker, Department, TaskGroups
+from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
-
 from coda_project import settings
 
 from management.utils import (email_template,text_num_split,
                                paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,emp_average_earnings,
-                               bonus,additional_earnings,best_employee,updateloantable,
-                               addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus
+                               bonus,best_employee,updateloantable,
+                               addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus,
+                               calculate_total_pay,get_bonus_and_summary
                         )
 from main.utils import countdown_in_month,path_values
-    
 
 import logging
 logger = logging.getLogger(__name__)
@@ -73,7 +70,6 @@ logger = logging.getLogger(__name__)
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 register = template.Library()
-
 
 def home(request):
     return redirect('main:layout')
@@ -86,6 +82,11 @@ def dckdashboard(request):
     # departments = Department.objects.filter(is_active=True)
     # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
     return render(request, "management/departments/agenda/user_dashboard.html", {'title': "DCK DASHBOARD"})
+
+def score_report(request):
+    # departments = Department.objects.filter(is_active=True)
+    # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
+    return render(request, "management/departments/reports.html", {'title': "SCORE REPORT"})
 
 # ================================ DEPARTMENT SECTION ================================
 def department(request):
@@ -658,13 +659,14 @@ def task_payslip(request, employee=None, *args, **kwargs):
 
     # Deductions & Bonus
     laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
-    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
+    total_deduction=deductions(employee,user_data,payslip_config,total_pay)[-1]
+    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(employee,user_data,payslip_config,total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
 
     # Deductions & Bonus
     laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
-    total_deduction, sub_bonus = additional_earnings(user_data, tasks, total_pay, payslip_config)
+    # ================BONUS============================
+    *_,sub_bonus=bonus(tasks,total_pay,payslip_config)
     food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment, total_deductions = deductions(
         user_data, payslip_config, total_pay)
     loan = Decimal(total_pay) * Decimal("0.2")
@@ -749,65 +751,162 @@ def task_payslip(request, employee=None, *args, **kwargs):
         raise Http404("Login/Wrong Page: Contact Admin Please!")
 
 
+# def usertask(request, user=None, *args, **kwargs):
+#     request.session["siteurl"] = settings.SITEURL
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+#     userprofile = UserProfile.objects.get(user_id=employee)
+#     LBLS=LBandLS.objects.filter(user=employee)
+#     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
+#     tasks = Task.objects.all().filter(employee=employee)
+#     (
+#                 remaining_days,
+#                 remaining_seconds ,
+#                 remaining_minutes ,
+#                 remaining_hours 
+#     )=countdown_in_month()
+
+#     # -----------Time from utils------------------
+#     deadline_date=paytime()[2]
+#     payday=paytime()[10]
+
+#      # -----------Points/Earnings from utils------------------
+#     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
+#     points_count = Task.objects.filter(
+#         description__in=['Meetings', 'General', 'Sprint', 'DAF', 'Recruitment', 'Job Support', 'BI Support'],
+#         employee=employee)
+#     point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
+#     num_tasks = tasks.count()
+#     earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
+#     mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
+#     point_percentage=employee_reward(tasks)
+#     # print("MY % IS :", point_percentage)
+#     pay = earning.get("Your_Total_Pay")
+#     GoalAmount = mxearning.get("Your_Total_AssignedAmt")
+#     pay = earning.get("Your_Total_Pay")
+#     total_pay = 0
+#     for task in tasks:
+#         total_pay = total_pay + task.get_pay
+#     try:
+#         paybalance = Decimal(GoalAmount) - Decimal(total_pay)
+#     except (TypeError, AttributeError):
+#         paybalance = 0
+#     loan = Decimal(total_pay) * Decimal("0.2")
+#     payslip_config=paymentconfigurations(PayslipConfig,employee)
+#     total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+#     message=f'VALES ARE :{total_deduction},{sub_bonus}'
+#     # print(message)
+#     try:
+#         net = total_pay - total_deduction
+#     except (TypeError, AttributeError):
+#         net = 0.00
+#     # average_earnings=emp_average_earnings(request,TaskHistory,GoalAmount)
+#     average_earnings=GoalAmount
+
+#     activities = ["one one one", "one one one session", "one one one sessions"]
+#     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
+#                           activities]
+#     # print(activitiesmodified)
+#     deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
+#     context = {
+#         'activitiesmodified': activitiesmodified,
+#         "payday": payday,
+#         "num_tasks": num_tasks,
+#         "tasks": tasks,
+#         "Points": points,
+#         "MaxPoints": mxpoints,
+#         "point_percentage": point_percentage,
+#         "pay": pay,
+#         "GoalAmount": GoalAmount,
+#         "paybalance": paybalance,
+#         "pointsbalance": pointsbalance,
+#         "total_pay": total_pay,
+#         "loan": loan,
+#         "net": net,
+#         "point_check": point_check,
+#         "average_earnings": average_earnings,
+#         "enddate": deadline_date_modify,
+#         "remaining_days":remaining_days,
+#         "remaining_seconds ":remaining_seconds ,
+#         "remaining_minutes ":remaining_minutes ,
+#         "remaining_hours":remaining_hours,
+#     }
+#     # setting  up session
+#     request.session["employee_name"] = kwargs.get("username")
+
+#     if request.user.is_superuser or request.user == employee:
+#         return render(request, "management/daf/usertasks.html", context)
+#     elif request.user.is_superuser:
+#         return render(request, "management/daf/tasklist.html", context)
+#     else:
+#         # raise Http404("Login/Wrong Page: Contact Admin Please!")
+#         return redirect("main:layout")
+
+
+def get_user_data(employee):
+    """Retrieve user-related data."""
+    userprofile = UserProfile.objects.get(user_id=employee)
+    user_data = TrainingLoan.objects.filter(user=employee, is_active=True)
+    payslip_config = paymentconfigurations(PayslipConfig, employee)
+    return userprofile, user_data, payslip_config
+
+
 def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
+    path_list,subtitle,pre_sub_title=path_values(request)
+    second_title=path_list[-2]
+    print(second_title)
+    today, year, deadline_date, *_ = paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
-    userprofile = UserProfile.objects.get(user_id=employee)
-    LBLS=LBandLS.objects.filter(user=employee)
-    user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
+    
+    # Retrieve user-related data
+    userprofile, user_data, payslip_config = get_user_data(employee)
+    
+    # Retrieve and calculate task-related data
     tasks = Task.objects.all().filter(employee=employee)
-    (
-                remaining_days,
-                remaining_seconds ,
-                remaining_minutes ,
-                remaining_hours 
-    )=countdown_in_month()
+    task_obj = Task.objects.filter(submission__contains=year)
+    total_pay = calculate_total_pay(tasks)
 
-    # -----------Time from utils------------------
-    deadline_date=paytime()[2]
-    payday=paytime()[10]
+    # Calculate points and earnings
+    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance,point_percentage)=payinitial(tasks)
 
-     # -----------Points/Earnings from utils------------------
-    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
-    points_count = Task.objects.filter(
-        description__in=['Meetings', 'General', 'Sprint', 'DAF', 'Recruitment', 'Job Support', 'BI Support'],
-        employee=employee)
-    point_check = points_count.aggregate(Your_Total_Points=Sum("point"))
-    num_tasks = tasks.count()
-    earning = tasks.aggregate(Your_Total_Pay=Sum("mxearning"))
-    mxearning = tasks.aggregate(Your_Total_AssignedAmt=Sum("mxearning"))
-    point_percentage=employee_reward(tasks)
-    # print("MY % IS :", point_percentage)
-    pay = earning.get("Your_Total_Pay")
-    GoalAmount = mxearning.get("Your_Total_AssignedAmt")
-    pay = earning.get("Your_Total_Pay")
-    total_pay = 0
-    for task in tasks:
-        total_pay = total_pay + task.get_pay
+    # Calculate remaining time
+    remaining_days, remaining_seconds, remaining_minutes, remaining_hours = countdown_in_month()
+
+    # Deductions and other calculations
+    loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
+    food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment, total_deductions = deductions(employee,user_data, payslip_config, total_pay)
+    laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
+    
+    # Calculate bonus and summary values
+    bonus_points_ammount, latenight_Bonus, yearly, offpay, EOM, EOQ, EOY, sub_bonus, total_deduction, total_bonus = get_bonus_and_summary(
+        employee,tasks, total_pay,user_data, payslip_config)
+
     try:
         paybalance = Decimal(GoalAmount) - Decimal(total_pay)
     except (TypeError, AttributeError):
         paybalance = 0
+
     loan = Decimal(total_pay) * Decimal("0.2")
-    payslip_config=paymentconfigurations(PayslipConfig,employee)
-    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    message=f'VALES ARE :{total_deduction},{sub_bonus}'
-    # print(message)
+    
     try:
         net = total_pay - total_deduction
     except (TypeError, AttributeError):
         net = 0.00
-    # average_earnings=emp_average_earnings(request,TaskHistory,GoalAmount)
-    average_earnings=GoalAmount
+
+    average_earnings = GoalAmount
+    total_value = total_pay + total_bonus
+    net = total_value - total_deduction
+    round_off = round(net) - net
+    net_pay = net + round_off
 
     activities = ["one one one", "one one one session", "one one one sessions"]
     activitiesmodified = [activity.lower().translate({ord(c): None for c in string.whitespace}) for activity in
                           activities]
-    # print(activitiesmodified)
     deadline_date_modify = deadline_date.strftime("%Y/%m/%d")
+
     context = {
         'activitiesmodified': activitiesmodified,
-        "payday": payday,
+        "payday": deadline_date,
         "num_tasks": num_tasks,
         "tasks": tasks,
         "Points": points,
@@ -820,24 +919,58 @@ def usertask(request, user=None, *args, **kwargs):
         "total_pay": total_pay,
         "loan": loan,
         "net": net,
-        "point_check": point_check,
+        # "point_check": point_check,
         "average_earnings": average_earnings,
         "enddate": deadline_date_modify,
-        "remaining_days":remaining_days,
-        "remaining_seconds ":remaining_seconds ,
-        "remaining_minutes ":remaining_minutes ,
-        "remaining_hours":remaining_hours,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": remaining_seconds,
+        "remaining_minutes ": remaining_minutes,
+        "remaining_hours": remaining_hours,
+        # ----------------Payslip----------
+        "pointsearning": bonus_points_ammount,
+        "EOM": EOM,
+        "EOQ": EOQ,
+        "EOY": EOY,
+        "laptop_bonus": laptop_bonus,
+        "holidaypay": offpay,
+        "Night_Bonus": latenight_Bonus,
+        "yearly": yearly,
+        "loan": loan_payment,
+        "food_accomodation": food_accomodation,
+        "computer_maintenance": computer_maintenance,
+        "health": health,
+        "laptop_saving": lap_saving,
+        "kra": kra,
+        "total_value": total_value,
+        "total_deduction": total_deduction,
+        'net': net,
+        'net_pay': net_pay,
+        "balance_amount": balance_amount,
+        "tasks": tasks,
+        "deadline_date": deadline_date,
+        "today": today,
     }
-    # setting  up session
+
+    # Log important information
+    logger.debug(f'balance_amount: {balance_amount}')
+    logger.debug(f'total deductions: {total_deduction}')
+    logger.debug(f'total_bonus: {total_bonus}')
+    logger.debug(f'net: {net}')
+    logger.debug(f'net_pay: {net_pay}')
+
+    # Set session
     request.session["employee_name"] = kwargs.get("username")
 
-    if request.user.is_superuser or request.user == employee:
-        return render(request, "management/daf/usertasks.html", context)
-    elif request.user.is_superuser:
-        return render(request, "management/daf/tasklist.html", context)
+    if second_title == 'payslip':
+        return render(request, "management/daf/payslip.html", context)
     else:
-        # raise Http404("Login/Wrong Page: Contact Admin Please!")
-        return redirect("main:layout")
+       if request.user.is_superuser or request.user == employee:
+          return render(request, "management/daf/usertasks.html", context)
+       elif request.user.is_superuser:
+          return render(request, "management/daf/tasklist.html", context)
+       else:
+        # Redirect to an appropriate page or show an error message
+          return redirect("main:layout")
 
 
 def usertaskhistory(request, user=None,  *args, **kwargs):
@@ -869,7 +1002,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         return render(request, "main/errors/404.html",{"message":message})
     # ------------POINTS AND EARNINGS--------------------
     point_percentage=employee_reward(tasks)
-    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
+    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance,point_percentage)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
@@ -879,8 +1012,11 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         paybalance = 0
     payslip_config=paymentconfigurations(PayslipConfig,employee)
     loan_amount,loan_payment,balance_amount=loan_computation(total_pay,user_data,payslip_config)
-    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    *_,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
+    # ================BONUS============================
+    *_,sub_bonus=bonus(tasks,total_pay,payslip_config)
+    # ===============DEDUCTIONS=======================
+    total_deduction=deductions(employee,user_data,payslip_config,total_pay)[-1]
+    *_,loan_payment,total_deduction=deductions(employee,user_data,payslip_config,total_pay)
     loan=loan_payment
     point_percentage=point_percentage
     try:
@@ -958,93 +1094,95 @@ def loan_update_save(loantable,user_data,employee,total_pay,payslip_config):
             loan_data = updateloantable(user_data, employee, total_pay, payslip_config)
             # loan_data=addloantable(loantable,employee,total_pay,payslip_config,user_data)
 
-def pay(request, user=None, *args, **kwargs):
-    employee = get_object_or_404(User, username=kwargs.get("username"))
-    userprofile = UserProfile.objects.get(user_id=employee)
-    tasks = Task.objects.all().filter(employee=employee)
-    LBLS=LBandLS.objects.filter(user=employee)
-    user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
-    loantable=TrainingLoan
-    # lbandls = LBandLS.objects.get(user_id=employee)
-    payslip_config=paymentconfigurations(PayslipConfig,employee)
-    #  ===========Time==============
-    today,year,deadline_date,*_=paytime()
-    #  ===========Points and Pay==============
-    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
-    task_obj=Task.objects.filter(submission__contains=year)
-    total_pay = Decimal(0)
-    for task in tasks:
-        total_pay = total_pay + task.get_pay
-    # Deductions
-    loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
-    logger.debug(f'balance_amount: {balance_amount}')
-    # loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
-    # total_deduction,sub_bonus,sub_total= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
-    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
-    userprofile = UserProfile.objects.get(user_id=employee)
-    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
-    # ====================Bonus Section=============================
-    bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
 
-    # ====================Summary Section=============================
-    total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
-    total_bonus = sub_bonus + laptop_bonus
-    # Net Pay
-    total_value=total_pay + total_bonus
-    # print(loan_amount, loan_payment, balance_amount)
-    # print("laptop_bonus===>",laptop_bonus,"laptop_saving====>",laptop_saving)
-    # print('======================================')
-    # print('total_bonus=======>',total_bonus)
-    # print('total_deduction=======>',total_deduction)
-    # print('total_pay=======>',total_pay)
-    # print('total_value=====>',total_value)
-    net = total_value - total_deduction
-    # print('======================================')
-    round_off = round(net) - net
-    net_pay = net + round_off
-    logger.debug(f'total deductions: {total_deduction}')
-    logger.debug(f'total_bonus: {total_bonus}')
-    logger.debug(f'net: {net}')
-    logger.debug(f'net_pay: {net_pay}')
-    # print(f'total deductions: {total_deduction}')
-    # print(f'total_bonus: {total_bonus}')
-    # print(f'net: {net}')
-    # print(f'net_pay: {net_pay}')
-    context = {
-        # bonus
-        # "pointsearning": bonus_points_ammount,
-        "pointsearning": bonus_points_ammount,
-        "EOM": EOM,
-        "EOQ": EOQ,
-        "EOY": EOY,
-        "laptop_bonus": laptop_bonus,
-        "holidaypay": offpay,
-        "Night_Bonus": latenight_Bonus,
-        "yearly": yearly,
-            # deductions
-            "loan": loan_payment,
-            "food_accomodation": food_accomodation,
-            "computer_maintenance": computer_maintenance,
-            "health": health,
-            "laptop_saving": laptop_saving,
-            "kra": kra,
+# def pay(request, user=None, *args, **kwargs):
+#     employee = get_object_or_404(User, username=kwargs.get("username"))
+#     userprofile = UserProfile.objects.get(user_id=employee)
+#     tasks = Task.objects.all().filter(employee=employee)
+#     LBLS=LBandLS.objects.filter(user=employee)
+#     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
+#     loantable=TrainingLoan
+#     # lbandls = LBandLS.objects.get(user_id=employee)
+#     payslip_config=paymentconfigurations(PayslipConfig,employee)
+#     #  ===========Time==============
+#     today,year,deadline_date,*_=paytime()
+#     #  ===========Points and Pay==============
+#     (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance,point_percentage)=payinitial(tasks)
+#     task_obj=Task.objects.filter(submission__contains=year)
+#     total_pay = Decimal(0)
+#     for task in tasks:
+#         total_pay = total_pay + task.get_pay
+#     # Deductions
+#     loan_amount, loan_payment, balance_amount = loan_computation(total_pay, user_data, payslip_config)
+#     logger.debug(f'balance_amount: {balance_amount}')
+#     # loan_update_save(loantable,user_data,employee,total_pay,payslip_config)
+#     # total_deduction,sub_bonus,sub_total= additional_earnings(user_data,tasks,total_pay,payslip_config,userprofile,LBLS)
+#     food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(user_data,payslip_config,total_pay)
+#     userprofile = UserProfile.objects.get(user_id=employee)
+#     laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
+#     # ====================Bonus Section=============================
+#     bonus_points_ammount,latenight_Bonus,yearly,offpay,EOM,EOQ,EOY,sub_bonus=bonus(tasks,total_pay,payslip_config)
+
+#     # ====================Summary Section=============================
+#     total_deduction,sub_bonus= additional_earnings(user_data,tasks,total_pay,payslip_config)
+#     total_bonus = sub_bonus + laptop_bonus
+#     # Net Pay
+#     total_value=total_pay + total_bonus
+#     # print(loan_amount, loan_payment, balance_amount)
+#     # print("laptop_bonus===>",laptop_bonus,"laptop_saving====>",laptop_saving)
+#     # print('======================================')
+#     # print('total_bonus=======>',total_bonus)
+#     # print('total_deduction=======>',total_deduction)
+#     # print('total_pay=======>',total_pay)
+#     # print('total_value=====>',total_value)
+#     net = total_value - total_deduction
+#     # print('======================================')
+#     round_off = round(net) - net
+#     net_pay = net + round_off
+#     logger.debug(f'total deductions: {total_deduction}')
+#     logger.debug(f'total_bonus: {total_bonus}')
+#     logger.debug(f'net: {net}')
+#     logger.debug(f'net_pay: {net_pay}')
+#     # print(f'total deductions: {total_deduction}')
+#     # print(f'total_bonus: {total_bonus}')
+#     # print(f'net: {net}')
+#     # print(f'net_pay: {net_pay}')
+#     context = {
+#         # bonus
+#         # "pointsearning": bonus_points_ammount,
+#         "pointsearning": bonus_points_ammount,
+#         "EOM": EOM,
+#         "EOQ": EOQ,
+#         "EOY": EOY,
+#         "laptop_bonus": laptop_bonus,
+#         "holidaypay": offpay,
+#         "Night_Bonus": latenight_Bonus,
+#         "yearly": yearly,
+#             # deductions
+#             "loan": loan_payment,
+#             "food_accomodation": food_accomodation,
+#             "computer_maintenance": computer_maintenance,
+#             "health": health,
+#             "laptop_saving": laptop_saving,
+#             "kra": kra,
     
-            # General
-            "total_pay": total_pay,
-            'total_value': total_value,
-            "total_deduction": total_deduction,
-            'net': net,
-            'net_pay': net_pay,
-            "balance_amount": balance_amount,
-            "tasks": tasks,
-            "deadline_date": deadline_date,
-            "today": today,
-        }
-    if request.user == employee or request.user.is_superuser:
-        return render(request, "management/daf/payslip.html", context)
-    else:
-        message="Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
-        return render(request, "main/errors/404.html",{"message":message})
+#             # General
+#             "total_pay": total_pay,
+#             'total_value': total_value,
+#             "total_deduction": total_deduction,
+#             'net': net,
+#             'net_pay': net_pay,
+#             "balance_amount": balance_amount,
+#             "tasks": tasks,
+#             "deadline_date": deadline_date,
+#             "today": today,
+#         }
+#     if request.user == employee or request.user.is_superuser:
+#         return render(request, "management/daf/payslip.html", context)
+#     else:
+#         message="Either you are not Login or You are forbidden from visiting this page-contact admin at info@codanalytics.net"
+#         return render(request, "main/errors/404.html",{"message":message})
+
 
 class TaskDetailView(DetailView):
     queryset = Task.objects.all()
@@ -1170,14 +1308,12 @@ def newevidence(request, taskid):
     task = get_object_or_404(Task, id=taskid)
 
     if request.method == "POST":
-        form = EvidenceForm(request.POST)
+        form = EvidenceForm(data=request.POST,request=request)
         if form.is_valid():
-            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
-            
-            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
-                Task.objects.filter(id=taskid).update(point=points + 1)
-
             data = form.cleaned_data
+            
+            points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=taskid)
+
             link = data['link']
             
             if not link:
@@ -1198,12 +1334,24 @@ def newevidence(request, taskid):
                         
                         if task.activity_name in ACTIVITY_LIST:
                             form.save()
+                            if points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
+                                Task.objects.filter(id=taskid).update(point=points + 1)
                             return redirect("management:evidence")
                         else:
                             messages.error(request, "This link is already uploaded")
                             return render(request, "management/daf/evidence_form.html", {"form": form})
                         
                     form.save()
+                    selected_requirement = data.get('requirement')
+                    if selected_requirement:
+                        duration = Requirement.objects.get(id=selected_requirement).duration
+                        points += duration
+                        if points >= maxpoints:
+                            maxpoints += 5 
+                        Task.objects.filter(id=taskid).update(point=points,mxpoint=maxpoints)
+
+                    elif points != maxpoints and task.activity_name.lower() not in JOB_SUPPORTS:
+                        Task.objects.filter(id=taskid).update(point=points + 1)
                     return redirect("management:evidence")
                 else:
                     messages.error(request, "Link is not valid, please check again")
@@ -1214,10 +1362,9 @@ def newevidence(request, taskid):
                 return render(request, "management/daf/evidence_form.html", {"form": form})
 
     else:
-        form = EvidenceForm()
+        form = EvidenceForm(request=request)
 
     return render(request, "management/daf/evidence_form.html", {"form": form})
-
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")

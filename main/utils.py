@@ -13,6 +13,8 @@ from django.utils.text import slugify
 # from yourapp.utils import random_string_generator
 
 from django import template
+from django.apps import apps
+from django.db.models import Q
 
 register = template.Library()
 
@@ -32,8 +34,6 @@ def dates_functionality():
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
     return ytd_duration,current_year
-
-
 
 
 
@@ -76,6 +76,54 @@ def unique_slug_generator(instance, new_slug=None):
     return slug
 
 
+""" =============open_ai chat bot===========   """
+def generate_chatbot_response(user_message):
+    openai.api_key = os.environ.get('OPENAI_API_KEY')
+    response = openai.Completion.create(
+            model="text-davinci-001",
+            prompt=user_message,
+            temperature=0.4,
+            max_tokens=100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+    )
+    if response:
+        res = response["choices"][0]
+        result=res['text']
+    else:
+        result = None
+    return result
+    # return response.choices[0].text
+
+
+def generate_database_response(user_message, app='investing'):
+    # Get all the models from the specified app
+    app_config = apps.get_app_config(app)
+    models = app_config.get_models()
+
+    response_data = []
+
+    # Iterate over models from the specified app
+    for model in models:
+        model_name = model.__name__
+
+        fields = model._meta.get_fields()
+        model_data = []
+
+        for field in fields:
+            if field.get_internal_type() == 'CharField':
+                query = Q(**{f"{field.name}__icontains": user_message})
+                results = model.objects.filter(query)
+                model_data.extend(results.values())
+
+        # Check if the model_data list is not empty
+        if any(model_data):
+            response_data.append({model_name: model_data})
+    return response_data
+
+
+""" ===========End of code============ """
 
 def buildmodel(question):
     #fetching api key 
@@ -148,119 +196,9 @@ def download_image(url):
         print("Image Couldn't be retrieved")
     return image_path
 
-
-# Interview description data
-posts = [
-    {
-        "Inteview": "First   Interview",
-        "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Second Interview",
-        "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Final Interview",
-        "Concentration": "Data Analysis 1-1 Sessions",
-        "Description": "Measuring,assessing Time sensitivity.",
-        "Duration": "7 Days",
-        "Lead": "Scrum Master",
-    },
-]
-
-alteryx_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing Alteryx",
-        "link": "https://docs.google.com/presentation/d/1sTflaF0yS8nYS4Trm9gx0H4HPH0zN7qBu9O27-vMN7A/edit#slide=id.p1",
-    },
-    {
-        "topic": "DAF DATA CLEANING",
-        "description": "DAF data cleaning workflow",
-        "link": "https://transcripts.gotomeeting.com/#/s/ff2b23e11fadead1e6b4265b043f75ec8300a82d9576d7e6f79ae22568733740",
-    },
-    {
-        "topic": "WHATSAAP MESSAGES",
-        "description": "Cleaning Messages",
-        "link": "https://transcripts.gotomeeting.com/#/s/8085611d7f07db4434d786635018273ad915c01230fd33202f660fe4c1fd62d5",
-    },
-    {
-        "topic": "ALTERYX PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/1v68aYsEXskx0Ze6CEbM9k8HLjMlgHY5ZOOScsGO7j54/edit#slide=id.p1",
-    },
-]
-
-dba_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing SQL Database",
-        "link": "https://drive.google.com/file/d/148J8xhikG5CqroObDjUtNC3r7vk9HmxF/view?usp=drivesdk",
-    },
-    {
-        "topic": "End to End-SQL",
-        "description": "Normalization, Creation and Retrieval of Data",
-        "link": "https://transcripts.gotomeeting.com/#/s/ee09457a8bec84b6e27fd0a24bb8e2bdf9186c30b88a1ef48171b2f443e61635",
-    },
-    {
-        "topic": "SQL PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/13IQKwFjkkxJckPQWG-Q1ydZPv6tDfhpWUOt6j9mNgvQ/edit",
-    },
-]
-
-tableau_list = [
-    {
-        "topic": "INSTALLATION",
-        "description": "Installing Tableau",
-        "link": "https://www.youtube.com/watch?v=QYnkudCxbmE",
-    },
-    {
-        "topic": "Reporting",
-        "description": "Developing an Executive Overview Report",
-        "link": "https://drive.google.com/file/d/1yQBiDgt3y1faTfglDtVITEEnyyYIewui/view",
-    },
-    {
-        "topic": "Tableau PPT",
-        "description": "Use the powerpoint to follow along, you will use the same ppt in presenting your work",
-        "link": "https://docs.google.com/presentation/d/1ASZkzSJBSoOqH6R83ZznChL6ISi5SC5_YI5N2XTZD1w/edit?usp=sharing",
-    },
-]
-
-
 # ==============================INTERVIEW DESCRIPTION MODELS=======================================
 
 # Interview description data
-
-TaskInfos = [
-    {
-        "Inteview": "First   Interview",
-        "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Second Interview",
-        "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
-        "Lead": "HR Manager",
-    },
-    {
-        "Inteview": "Final Interview",
-        "Concentration": "Data Analysis 1-1 Sessions",
-        "Description": "Measuring,assessing Time sensitivity.",
-        "Duration": "7 Days",
-        "Lead": "Scrum Master",
-    },
-]
 reviews = [
     {
         "topic": "data analyst",
@@ -282,6 +220,25 @@ reviews = [
         "topic": "data analyst",
         "description": "My data analyst coach has been nothing short of exceptional throughout my learning journey. Their expertise and dedication have been instrumental in shaping my understanding of data analysis. They have a remarkable ability to simplify complex concepts, making even the most intricate aspects of data analysis accessible and understandable. Their teaching style is engaging and interactive, ensuring that I remain engaged and motivated. The coach's real-world experience in data analysis brings an added dimension to their teaching, as they are able to provide practical insights and share valuable industry examples that enrich my learning experience. Their consistent availability for questions and feedback has created a supportive learning environment where I feel comfortable seeking clarification and guidance. I can confidently say that their guidance has been pivotal in my growth as a data analyst.",
     },
+]
+instructions = [
+    {
+        "topic": "Review",
+        "description": "Write Review Title.",
+    },
+    {
+        "topic": "Sample",
+        "description": "Generate Sample Review",
+    },
+    {
+        "topic": "copy",
+        "description": "Copy Sample Review and Paste in content",
+    },
+    {
+        "topic": "Submit",
+        "description": "Click on Submit Review!",
+    },
+    
 ]
 
 
@@ -365,24 +322,25 @@ job_support = [
 
 Automation = [
     {
-        "title": "Social Media",
-        "link":SITEURL+"/marketing/",
-        "description":"Posting ads to social media",
+        "title": "OPENAI",
+        "link":"https://chat.openai.com/chat",
+        "description":"CHATGPT/Gemini:The super power of modern day analytics ",
     },
     {
-        "title": "Cash App",
-        "link":SITEURL+"/getdata/cashappdata/",
-        "description":"Fetching data from Cashapp and updating records",
+        "title": "Testimonials",
+        "link":SITEURL+"/post/new/",
+        "description":"Using AI to aid Clients to leave feedback",
     },
+
     {
-        "title": "Job Application",
-        "link":SITEURL+"/getdata/replies/",
-        "description":"Automating Job applications",
+        "title": "Search Data",
+        "link":SITEURL+"/search/",
+        "description":"Giving You the power to search your own data",
     },
 
     {
         "title": "Stocks & Options",
-        "link":SITEURL+"/investing/optionlist/",
+        "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
     },
 ]
@@ -413,15 +371,21 @@ Stocks = [
 
 
 General = [
+
     {
-        "title": "ChatGPT",
-        "link":"https://chat.openai.com/chat",
-        "description":"CHATGPT",
+        "title": "Social Media",
+        "link":SITEURL+"/marketing/",
+        "description":"Posting ads to social media",
     },
     {
-        "title": "Images/Assets",
-        "link":SITEURL+"/images/",
-        "description":"Images and assets",
+        "title": "Cash App",
+        "link":SITEURL+"/getdata/cashappdata/",
+        "description":"Fetching data from Cashapp and updating records",
+    },
+    {
+        "title": "Goto/Zoom meetings",
+        "link":SITEURL+"/refresh_token_goto/",
+        "description":"Fetching Meeting info using APIs",
     },
     {
         "title": "Open Urls",
@@ -429,9 +393,9 @@ General = [
         "description":"Script to automate simple tasks",
     },
     {
-        "title": "Testimonials",
-        "link":SITEURL+"/post/new/",
-        "description":"Using AI to aid Clients to leave feedback",
+        "title": "Job Application",
+        "link":SITEURL+"/getdata/replies/",
+        "description":"Automating Job applications",
     },
   
 ]
@@ -498,6 +462,20 @@ url_mapping = {
             "https://www.codanalytics.net/investing/companyreturns/",
             "https://www.codanalytics.net/getdata/bigdata/",
             "https://drive.google.com/drive/u/0/folders/1eetZ2UnptBQnEcPMVtWaXbOvxNoZKBHJ",
+        ],
+        'projects': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/management/dyc_requirements/",
+            "https://drive.google.com/drive/u/0/folders/1LQOenMtdEjRcja5A6QZjj88Zm8zwt62X",
+            "https://drive.google.com/file/d/1z59h0xa7afd895f69V_ICzqdLg8wSJr1/view?usp=drive_link",
+            "https://docs.google.com/document/d/10QZcGATLPU7QrOMUl-dlHb-McJ6NIvL9/edit?usp=drive_link&ouid=115037154650831613074&rtpof=true&sd=true",
+            "https://docs.google.com/document/d/1kt_9tFQ267bXCf2-VdObyAoyQEnj1How/edit?rtpof=true",
+            "https://drive.google.com/drive/u/0/folders/1dEhB6kaQvCsefdNa63Z2F4vOG96c1dk5",
+        ],
+        'training': [
+            "https://www.codanalytics.net/accounts/credentials/",
+            "https://www.codanalytics.net/data/start_training/interview/",
+            "https://docs.google.com/presentation/d/1uhGV-1FQZgKkOdUhG5dSFt-5c-u8rTans5xyGYtvIrg/edit#slide=id.g1",
         ],
         'interview': [
             "https://chat.openai.com/",
@@ -568,75 +546,81 @@ Meetings = [
     },
 ]
 
-# Big_data = [
-#     {
-#      "Automation":{
-#         "title": "1. Transcripts",
-#        "link": "SITEURL+"/data/iuploads/",
-#     },
-#     "Stocks&Options":{
-#         "title": "1. Transcripts",
-#        "link": "SITEURL+"/data/iuploads/",
-#     },
-#     }
-# ]
+
 # ==============================Apps and Models===============================
-Finance = [
-    {
-        "title": " Transaction",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " Payment Information",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Payment History",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Data = [
-    {
-        "title": " Categrory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " SubCategory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Links",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Data = [
-    {
-        "title": " Categrory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " SubCategory",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Links",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
-Management = [
-    {
-        "title": " Task",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": " Task History",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-    {
-        "title": "Other",
-        "description": " Upload only a CSV File, Check field formats to minimize errors during upload.",
-    },
-]
+
+App_Categories = {
+    "Finance": [
+        {
+            "table_name": "Transaction",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Payment Information",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Payment History",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
+    ],
+    "Data": [
+        {
+            "table_name": "Category",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "SubCategory",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Links",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
+    ],
+    "Management": [
+        {
+            "table_name": "Task",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Task History",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Other",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
+    ],
+    "Investing": [
+        {
+            "table_name": "Returns",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+            
+        },
+        {
+            "table_name": "OverBoughtSold",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Other",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
+    ]
+}
+
 
 team_members = [
     {
@@ -661,6 +645,26 @@ client_categories = [
     {
         "title": "Job Support",
         "description":"This is a group of experienced IT Experts whom CODA has assisted in finding employment in the job market. These professionals possess diverse technical skills and contribute to various domains such as software development, systems administration, database management, and cybersecurity. Through the collaborative efforts of CODA and these experts, job seekers receive support in navigating the job market and securing rewarding career opportunities."
+    },
+
+]
+
+packages = [
+    {
+        "title": "ETL-Alteryx",
+        "description1":"Project Based Training",
+        "description2":"Hands on experience",
+        "description2":"Learn how to create this workflow",
+    },
+    {
+        "title": "Database |SQL or Snowflake",
+        "description1":"Project Based Training",
+        "description2":"Review of complex store procedures",
+    },
+    {
+        "title": "Reporting",
+        "description1":"Project Based Training",
+        "description2":"Learn how to create High level Detail Reports",
     },
 
 ]

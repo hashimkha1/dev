@@ -1,3 +1,5 @@
+# settings
+
 """
 Django settings for coda_project project.
 
@@ -146,6 +148,7 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+<<<<<<< HEAD
 # DATABASES = {
 #     "default": {
 #         "ENGINE": "django.db.backends.postgresql",
@@ -180,6 +183,18 @@ DATABASES = {
 #    }
 # }
 
+=======
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": dbname,
+        "USER":user,
+        "PASSWORD":password,
+        "HOST": host
+    }
+}
+
+>>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
 
 # DATABASES = {
 #     "default": {
@@ -236,8 +251,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 STATIC_ROOT = os.path.join(BASE_DIR, '..', "staticfiles")
 STATIC_URL = "/static/"
+<<<<<<< HEAD
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static"), ]  
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+=======
+STATICFILES_DIR = os.path.join(BASE_DIR, "static")
+
+>>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
 
 
 CRISPY_TEMPLATE_PACK = "bootstrap4"
@@ -330,10 +350,24 @@ def payment_details(request):
 
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
+<<<<<<< HEAD
 elif os.environ.get('ENVIRONMENT') == 'testing':
    SITEURL = "https://codamakutano.herokuapp.com"
 else:
     SITEURL = "http://localhost:8000"
+=======
+    SECURE_SSL_REDIRECT = True
+    DEBUG = True
+elif os.environ.get('ENVIRONMENT') == 'testing':
+    SECURE_SSL_REDIRECT = True
+    SITEURL = "https://codamakutano.herokuapp.com"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    DEBUG = True
+else:
+    SITEURL = "http://127.0.0.1:8000/"
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    DEBUG = True
+>>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
 
 # -----------------------------------------
 def source_target():

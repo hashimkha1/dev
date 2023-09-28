@@ -1,17 +1,15 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse
 from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
-from django.views.generic import CreateView,ListView, DetailView, UpdateView
+from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-from .utils import (compute_pay,get_over_postions,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories,
-                    delete_duplicates_based_on_symbol)
-from django.db.models import Count
+from .utils import (compute_pay,risk_ratios,
+                    computes_days_expiration,get_user_investment,financial_categories,investment_rules
+                    )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
 
@@ -28,6 +26,7 @@ from .models import (
     Investments,
     Investment_rates,
     Oversold,
+    OverBoughtSold,
     Options_Returns,
     Cost_Basis,
     Ticker_Data
@@ -44,9 +43,6 @@ User=get_user_model
 # Create your views here.
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
-
-# def coveredcalls(request):
-#     return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def training(request):
     return render(request, 'investing/training.html', {'title': 'training'})
@@ -84,11 +80,9 @@ def investments(request):
     total_amt=0
     for amt  in investments:
         total_amt=total_amt+amt.amount
-        print(total_amt)
     amount_invested=float(total_amt)*float(0.33)
     amount = float(total_amt)
     returns=compute_pay(amount)
-    print(amount,amount_invested,returns)
     context={
         "investments":investments,
         "latest_investment":latest_investment,
@@ -122,6 +116,7 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
+<<<<<<< HEAD
 def optionlist(request):
     default_title = "creditspread"
     title = request.GET.get('title', default_title)
@@ -133,9 +128,22 @@ def optionlist(request):
 def optiondata(request, title=None, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
 
+=======
+@login_required
+def optiondata(request, title=None,symbol=None, *arg, **kwargs):
+    path_list, sub_title, pre_sub_title = path_values(request)
+    # Taking distinct symbols which meets wash sale rule.
+>>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
+    # Taking distinct symbols which in oversold/overbought.
+    distinct_overboughtsold_symbols = list(set([
+        obj.symbol for obj in OverBoughtSold.objects.all()]))
+    # Query to count distinct symbols for each model
+    covered_calls_count=covered_calls.objects.all().count()
+    shortputdata_count=ShortPut.objects.all().count()
+    credit_spread_count=credit_spread.objects.all().count()
 
     model_mapping = {
         'covered_calls': {
@@ -151,6 +159,7 @@ def optiondata(request, title=None, *args, **kwargs):
             'title': 'CREDIT SPREAD'
         }
     }
+<<<<<<< HEAD
     sub_title_lower = sub_title.lower()
     stock_model = model_mapping.get(sub_title_lower, {}).get('model')
     page_title = model_mapping.get(sub_title_lower, {}).get('title', '')
@@ -167,6 +176,13 @@ def optiondata(request, title=None, *args, **kwargs):
         stockdata = stock_model.objects.filter(is_featured=True)
 
     if stockdata is not None and len(stockdata) > 0:  # Check if stockdata is not None and not empty
+=======
+    stock_model = model_mapping[sub_title]['model']
+    page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
+
+    stockdata = stock_model.objects.filter(is_featured=True).distinct()
+    if stockdata.exists():  # Using exists() for clarity
+>>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
             'credit_spread': 'investing:creditspreadupdate',
@@ -183,14 +199,21 @@ def optiondata(request, title=None, *args, **kwargs):
 
         all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
-        filtered_stockdata = [
+        filtered_stockdata_by_returns = [
             x for x in stockdata if x.symbol not in all_return_symbols or
             (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
         ]
+        filtered_stockdata_by_oversold = [
+            x for x in filtered_stockdata_by_returns if x.symbol in distinct_overboughtsold_symbols
+        ]
 
         context = {
-            "data": filtered_stockdata,
+            "data": filtered_stockdata_by_oversold,
+            "covered_calls_count":covered_calls_count,
+            "shortputdata_count":shortputdata_count,
+            "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
+            "categories": investment_rules,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
             'title': page_title,
@@ -312,6 +335,7 @@ def covered_update(request, pk):
         form = OptionsForm(request.POST, instance=covered)
         if form.is_valid():
             form.save()
+            return redirect(success_url)
     else:
         form = OptionsForm(instance=covered)
 
@@ -343,7 +367,8 @@ def credit_spread_update(request, pk):
 
 
 class oversold_update(UpdateView):
-    model = Oversold
+    # model = Oversold
+    model = OverBoughtSold
     success_url = "/investing/overboughtsold/None"
     fields ="__all__"
     # fields = ['symbol','comment','is_featured']
@@ -442,36 +467,36 @@ def ticker_measures(request):
     }
     return render(request, "investing/ticker_data.html", context)
 
+
 @login_required
 def oversoldpositions(request,symbol=None):
-    table_name = "investing_oversold"
-    get_over_postions(table_name)
     current_date_str = timezone.now().strftime('%Y-%m-%d')
-    overboughtsold_records = Oversold.objects.filter(
-        (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
-    )
+    # overboughtsold_records = Oversold.objects.filter(
+    #     (Q(expiry__gte=current_date_str) | Q(expiry__isnull=True)) & ~Q(comment='') & ~Q(comment__isnull=True)
+    # )
+    # overboughtsold_records = Oversold.objects.all()
+    overboughtsold_records = OverBoughtSold.objects.all()
+    
+
     if symbol is None:
-        print("symbol======>",symbol)
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
+            # "condition":condition,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
     else:
         # ticker_symbol = request.POST['ticker']
         ticker_symbol = symbol
-        print("symbol=====>",symbol)
         ticker_measures = Ticker_Data.objects.filter(symbol=ticker_symbol)
-        print("ticker_measures=====XXXXXXX=====>",ticker_measures)
     
         context = { 
             "overboughtsold": overboughtsold_records,
-            # "financial_data": financial_data,
+            # "condition": condition,
             "ticker_data": ticker_measures,
             "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
             "financial_categories": financial_categories,
-            # "category": category,
             "risk_ratios": risk_ratios,
         }
 
