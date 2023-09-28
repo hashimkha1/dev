@@ -122,15 +122,17 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
-
 def optionlist(request):
-    title="creditspread"
-    return render(request, "main/snippets_templates/output_snippets/option_data.html")
+    default_title = "creditspread"
+    title = request.GET.get('title', default_title)
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", {"title": title})
+
 
 
 @login_required
-def optiondata(request, title=None, *arg, **kwargs):
+def optiondata(request, title=None, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
+
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
@@ -149,29 +151,36 @@ def optiondata(request, title=None, *arg, **kwargs):
             'title': 'CREDIT SPREAD'
         }
     }
-
-    stock_model = model_mapping[sub_title]['model']
-    page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
+    sub_title_lower = sub_title.lower()
+    stock_model = model_mapping.get(sub_title_lower, {}).get('model')
+    page_title = model_mapping.get(sub_title_lower, {}).get('title', '')
 
     # Dealing with duplicate symbols
-    duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
-    delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
+    stockdata = None  # Initialize stockdata with None
+    url_name = ''
 
-    stockdata = stock_model.objects.filter(is_featured=True)
-    if stockdata.exists():  # Using exists() for clarity
+    if sub_title_lower in model_mapping:
+        duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
+        delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
+
+        # Update stockdata only if the conditions are met
+        stockdata = stock_model.objects.filter(is_featured=True)
+
+    if stockdata is not None and len(stockdata) > 0:  # Check if stockdata is not None and not empty
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
             'credit_spread': 'investing:creditspreadupdate',
             'covered_calls': 'investing:coveredupdate',
         }
-        url_name = url_mapping.get(sub_title, '')
+
+        url_name = url_mapping.get(sub_title_lower, '')
+
 
         def get_edit_url(row_id):
             return reverse(url_name, args=[row_id])
 
         days_to_expiration = computes_days_expiration(stockdata)[1]
 
-        # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
         all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
         filtered_stockdata = [
@@ -184,18 +193,82 @@ def optiondata(request, title=None, *arg, **kwargs):
             "days_to_expiration": days_to_expiration,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
-            'title': page_title,  # Using renamed title
+            'title': page_title,
             "get_edit_url": get_edit_url,
             "url_name": url_name,
         }
-        return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
     else:
         context = {
-            "title": "STOCKS ERROR",
-            "message": 'Hi, No valid expiry dates found in stockdata..'
+            "data": [],  # Empty data when stockdata does not exist
+            "days_to_expiration": 0,
+            "subtitle": sub_title,
+            "pre_sub_title": pre_sub_title,
+            'title': page_title,
+            "get_edit_url": "",
+            "url_name": url_name,
         }
-        return render(request, "main/errors/generalerrors.html", context)
+
+    if request.method == 'GET':
+        selected_symbol = request.GET.get('symbol')
+       
+        # Filter data from each model based on the selected symbol
+        credit_spread_data = credit_spread.objects.filter(symbol=selected_symbol)
+        short_put_data = ShortPut.objects.filter(symbol=selected_symbol)
+        covered_calls_data = covered_calls.objects.filter(symbol=selected_symbol)
+
+            # Fetch distinct symbols from all three models
+        symbols_from_credit_spread = list(credit_spread.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_short_put = list(ShortPut.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_covered_calls = list(covered_calls.objects.values_list('symbol', flat=True).distinct())
+
+            # Consolidate the unique symbols
+        all_symbols = list(set(
+                symbols_from_credit_spread + symbols_from_short_put + symbols_from_covered_calls
+            ))
+        selected_symbol_action = None
+        selected_symbol_stock_price = None
+        selected_symbol_strike_price = None
+        selected_symbol_days_to_expiry = None
+        selected_symbol_annualized_return = None
+        selected_symbol_raw_return  = None
+        selected_symbol_expiry  = None
+        selected_symbol_earnings_date  = None
+        if covered_calls_data.exists():
+            selected_symbol_action = covered_calls_data.first().action
+            selected_symbol_stock_price  = covered_calls_data.first().stock_price
+            selected_symbol_strike_price = covered_calls_data.first().strike_price 
+            selected_symbol_days_to_expiry = covered_calls_data.first().days_to_expiry
+            selected_symbol_annualized_return = covered_calls_data.first().annualized_return
+            selected_symbol_earnings_date  = covered_calls_data.first().earnings_date 
+            selected_symbol_expiry = covered_calls_data.first().expiry 
+            selected_symbol_raw_return = covered_calls_data.first().raw_return
+            
+            # Update the context with the filtered data and symbols
+        context.update({
+                'credit_spread_data': credit_spread_data,
+                'short_put_data': short_put_data,
+                'covered_calls_data': covered_calls_data,
+                'symbols': all_symbols,
+                'selected_symbol':selected_symbol,
+                'selected_symbol_action':selected_symbol_action,
+                'selected_symbol_stock_price':selected_symbol_stock_price,
+                'selected_symbol_strike_price':selected_symbol_strike_price,
+                'selected_symbol_days_to_expiry':selected_symbol_days_to_expiry,
+                'selected_symbol_annualized_return':selected_symbol_annualized_return,
+                'selected_symbol_earnings_date ':selected_symbol_earnings_date ,
+                'selected_symbol_expiry ':selected_symbol_expiry ,
+                'selected_symbol_raw_return':selected_symbol_raw_return,
+                
+            })
+
+
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+    # else:
+    #     context = {
+    #         "title": "STOCKS ERROR",
+    #         "message": 'Hi, No valid expiry dates found in stockdata..'
+    #     }
+    # return render(request, "main/errors/generalerrors.html", context)
 
 
 @login_required

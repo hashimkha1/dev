@@ -189,7 +189,7 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-            create_profile()
+            # create_profile()
             
             # If Category is Staff/employee
             if account is not None and account.category == 2:
