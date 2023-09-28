@@ -83,6 +83,11 @@ def dckdashboard(request):
     # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
     return render(request, "management/departments/agenda/user_dashboard.html", {'title': "DCK DASHBOARD"})
 
+def score_report(request):
+    # departments = Department.objects.filter(is_active=True)
+    # return render(request, "management/departments/agenda/dck_dashboard.html", {'title': "DCK DASHBOARD"})
+    return render(request, "management/departments/reports.html", {'title': "SCORE REPORT"})
+
 # ================================ DEPARTMENT SECTION ================================
 def department(request):
     departments = Department.objects.filter(is_active=True)

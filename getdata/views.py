@@ -617,7 +617,6 @@ def stocks_upload_csv(request):
 					)
 
 			messages.success(request, "Data populated successfully")
-			# return render(request, "investing/oversold.html", context)
 			return redirect('investing:overboughtsold',symbol=None )
 		
 		except Exception as e:

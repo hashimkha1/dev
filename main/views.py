@@ -126,12 +126,12 @@ def search(request):
                response_llm = llm.predict_messages(messages)
                response = response_llm.content.split(':', 1)[-1].strip()
                print(response)
-            else:
-                message=f'Please try again'
-                print(message)
+            # else:
+            #     message=f'Please try again'
+            #     print(message)
             context={
                "values" : values,
-               "message" : message,
+            #    "message" : message,
                "instructions" : instructions,
                "response" : response,
                "form": form
