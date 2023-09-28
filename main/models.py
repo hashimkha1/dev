@@ -40,7 +40,7 @@ class Service(models.Model):
 
 class ServiceCategory(models.Model):
     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
-    name = models.CharField(max_length=254)
+    name = models.CharField(max_length=1000)
     slug = models.SlugField(null=True, blank=True,unique=True)
     description = models.TextField(null=True, blank=True)
 
@@ -49,6 +49,11 @@ class ServiceCategory(models.Model):
 
     def __str__(self):
         return self.name
+    # model for chatgpt
+class ChatMessage(models.Model):
+    user_message = models.TextField()
+    bot_response = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)    
 
 
 class Pricing(models.Model):

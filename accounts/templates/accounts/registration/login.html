@@ -1,4 +1,4 @@
-
+{% load socialaccount %}
 {%extends "main/base_templates/new_base.html"%}
 {%load crispy_forms_tags%}{% block content %}
 <div class="login-div">
@@ -39,6 +39,12 @@
 					</div>
 					<button type="submit" class="btn btn-primary">LOG IN</button>
 				</form>
+				<div class="text-center mt-4">
+					<p>Or log in with:</p>
+					<a href="{% provider_login_url 'google' %}" class="btn btn-danger">Google</a>
+					<a href="{% provider_login_url 'facebook' %}" class="btn btn-primary">Facebook</a>
+				</div>
+				
 				</div>
 			</div>
 			<div class="col-md-6 other-detail">

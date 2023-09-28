@@ -1,5 +1,6 @@
 import webbrowser
 import datetime
+import time
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
@@ -16,6 +17,7 @@ from .models import Testimonials
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
+from management.models import Whatsapp
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 # from langchain.agents import create_sql_agent
@@ -91,41 +93,6 @@ def layout(request):
          "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
-
-logger = logging.getLogger(__name__)
-
-def get_respos(request):
-    user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
-    
-    if not user_message:
-        return JsonResponse({'response': 'Invalid user message'})
-    try:
-        database_response = generate_database_response(user_message)
-        chatbot_response = generate_chatbot_response(user_message)
-        # Handle the case where no results were found
-        logger.info(f'SQL Query: {str( database_response)}')
-        if database_response:
-            return JsonResponse({'response': database_response})
-        elif chatbot_response:
-            return JsonResponse({'response': chatbot_response})
-        else:
-            contact_model = DSU.objects.filter(challenge=user_message).first()
-            if not contact_model:
-                form = ContactForm(request.POST, request.FILES)
-                dsu_instance = form.save(commit=False)
-                dsu_instance.trained_by=request.user
-                dsu_instance.task='NA',
-                dsu_instance.plan='NA',
-                dsu_instance.challenge = user_message
-                dsu_instance.save()
-                return JsonResponse({'response': "Oops! It seems I haven't learned that one yet, but don't worry. Our team will get back to you shortly with the information you need. Thanks for your patience!"})
-            else:
-                return JsonResponse({'response': str(contact_model.task)})          
-    except Exception as e:
-        # Handle exceptions and return an appropriate JSON response
-        logger.error(str(e))
-
-        return JsonResponse({'error': str(e)})
 
 
 # =====================SERVICES  VIEWS=======================================
