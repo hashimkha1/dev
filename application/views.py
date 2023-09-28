@@ -19,7 +19,8 @@ from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from .forms import (
     RatingForm,
     ReportingForm,
-    ApplicantProfileFormA,
+    # ApplicantProfileFormA,
+    UserProfileForm,
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )

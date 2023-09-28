@@ -26,6 +26,7 @@ else:
 ALLOWED_HOSTS = ["*"]
 # ALLOWED_HOSTS = ['127.0.0.1','localhost','codatrainingapp.herokuapp.com','www.codanalytics.net','codanalytics.net']
 # ALLOWED_HOSTS = []
+# from accounts.models import CustomerUser
 
 AUTH_USER_MODEL = "accounts.CustomerUser"
 
@@ -55,10 +56,18 @@ INSTALLED_APPS = [
     "django_countries",
     "mathfilters",
     "mptt",
+    'corsheaders',
     "django_filters",
     "django_celery_beat",
     "django_celery_results",
     "django_crontab",
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    
+   
     # 'testing.apps.TestingConfig',
 ]
 
@@ -73,13 +82,15 @@ CRONJOBS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'Middleware.MiddlewareFile.MailMiddleware'
+    'Middleware.MiddlewareFile.MailMiddleware',
+    # 'social_django.middleware.SocialAuthExceptionMiddleware',
 
 ]
 
@@ -108,6 +119,7 @@ TEMPLATES = [
                 "data.context_processors.roles",
                 "data.context_processors.categories",
                 "data.context_processors.subcategories",
+                
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',
@@ -131,10 +143,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('POSTGRES_DB_NAME')
-        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
-        user = os.environ.get('POSTGRESDB_USER')
-        password = os.environ.get('POSTGRESSPASS') 
+        host = 'localhost'
+        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -349,3 +361,39 @@ def source_target():
     #Target                     
     target_db_path=os.environ.get('TARGET_PATH_PROD')
     return (source_host,source_dbname,source_user,source_password,target_db_path)
+
+
+
+SITE_ID = 2
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'APP': {
+            'client_id': '1072390440788015',
+            'secret': '9398953c5e64fc9b2b7e299445760b82',
+            'key': '',
+            'SCOPE': ['email', 'public_profile'],
+            # 'fields': ['name', 'email'],
+        }
+    },
+    'google': {
+        'SCOPE':[
+            'profile',
+            'email'
+        ],
+        'AUTH_PARAMS':{'access_type':'online'},
+        'APP': {
+            'client_id': '811369216890-trts5t8ncdre4h7o9muqari9q374pto9.apps.googleusercontent.com',
+            'secret': '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',
+        }
+    },
+}
+
+
+

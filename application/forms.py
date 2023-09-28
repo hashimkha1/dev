@@ -10,16 +10,34 @@ from .models import (
     Rated,
     Reporting,
 )
-
-
-class ApplicantProfileFormA(forms.ModelForm):
+class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        # fields = ["section", "upload_a"]
-        fields = ["section"]
+        fields = [
+            'section',
+            'account_number',
+            'account_holder_name',
+            'bank_name',
+            'administration_letter',
+            'handwritten_letter',
+            'academic_credentials',   
+        ]
+        labels ={
+            'account_number': 'Account number',
+            'account_holder_name': 'Account Holder Name',
+            'bank_name': 'Bank Name',
+            'administration_letter': 'Administration Letter',
+            'handwritten_letter': 'Handwritten Letter',
+            'academic_credentials': 'Academic Credentials',
+        }
+# class ApplicantProfileFormA(forms.ModelForm):
+#     class Meta:
+#         model = UserProfile
+#         # fields = ["section", "upload_a"]
+#         fields = ["section"]
 
     def __init__(self, *args, **kwargs):
-        super(ApplicantProfileFormA, self).__init__(*args, **kwargs)
+        super(UserProfileForm, self).__init__(*args, **kwargs)
         # self.fields["upload_a"].label = ""
 
 
@@ -60,6 +78,12 @@ class ApplicantForm(forms.ModelForm):
             "email",
             "country",
             "resume",
+            # 'account_number ',
+            # 'account_holder_name',
+            # 'bank_name',
+            # 'administration_letter',
+            # 'handwritten_letter',
+            # 'academic_credentials',
         ]
         labels = {
             "first_name": "First Name",
@@ -68,6 +92,12 @@ class ApplicantForm(forms.ModelForm):
             "email": "Email",
             "gender": "gender",
             "type": "type",
+            # 'account_number': 'Account number',
+            # 'account_holder_name': 'Account Holder Name',
+            # 'bank_name': 'Bank Name',
+            # 'administration_letter': 'Administration Letter',
+            # 'handwritten_letter': 'Handwritten Letter',
+            # 'academic_credentials': 'Academic Credentials',
         }
 
     def __init__(self, *args, **kwargs):
