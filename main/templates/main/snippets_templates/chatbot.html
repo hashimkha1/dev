@@ -19,6 +19,7 @@
                         </div>
                     </div>  
                 </div>
+                
             </div>
             <div class="chatbox__messages">
                 <div>
@@ -28,7 +29,6 @@
                             <li><a href="#" onclick="showTopic('investing')">investing </a></li>
                             <li><a href="#" onclick="showTopic('finance')">finance </a></li>
                             <li><a href="#" onclick="showTopic('topic3')">Topic </a></li>
-                            <li><a href="#" onclick="showTopic('topic3')">I am ready </a></li>
                         </ul>
                     </div>
                    
@@ -125,6 +125,7 @@
                 
                 
             </style>
+            <!--javascript For clear chat -->
             <script>function clearChat() {
                 const chatMessages = document.querySelector('.chatbox__messages');
                 chatMessages.innerHTML = ''; // Clear all chat messages
@@ -137,6 +138,7 @@
         <div class="chatbox__button">
             <button id="animationButton"  onclick="toggleState()"><img src="{% static 'main/image/chatbox-icon.svg' %}" /></button>
         </div>
+        <!-- javascript for X -->
         <script>
             var chatBox = document.querySelector(".chatbox__support");
         
@@ -165,7 +167,7 @@
           right: 20px; /* Adjust the horizontal position as needed */
           transition: transform 0.3s; /* Add a smooth transition effect for scrolling */
         }
-        </style>
+    </style>
     </div>
 </div>
 <!-- FOr scroll -->
