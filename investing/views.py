@@ -1,3 +1,5 @@
+from collections import Counter
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
@@ -116,7 +118,6 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
-<<<<<<< HEAD
 def optionlist(request):
     default_title = "creditspread"
     title = request.GET.get('title', default_title)
@@ -125,15 +126,9 @@ def optionlist(request):
 
 
 @login_required
-def optiondata(request, title=None, *args, **kwargs):
-    path_list, sub_title, pre_sub_title = path_values(request)
-
-=======
-@login_required
 def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     # Taking distinct symbols which meets wash sale rule.
->>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
@@ -159,44 +154,24 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             'title': 'CREDIT SPREAD'
         }
     }
-<<<<<<< HEAD
-    sub_title_lower = sub_title.lower()
-    stock_model = model_mapping.get(sub_title_lower, {}).get('model')
-    page_title = model_mapping.get(sub_title_lower, {}).get('title', '')
-
-    # Dealing with duplicate symbols
-    stockdata = None  # Initialize stockdata with None
-    url_name = ''
-
-    if sub_title_lower in model_mapping:
-        duplicate_symbols = stock_model.objects.values('symbol').annotate(Count('id')).filter(id__count__gt=1)
-        delete_duplicates_based_on_symbol(stock_model, duplicate_symbols)
-
-        # Update stockdata only if the conditions are met
-        stockdata = stock_model.objects.filter(is_featured=True)
-
-    if stockdata is not None and len(stockdata) > 0:  # Check if stockdata is not None and not empty
-=======
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
 
     stockdata = stock_model.objects.filter(is_featured=True).distinct()
     if stockdata.exists():  # Using exists() for clarity
->>>>>>> 71cefa4f2035c88159392db077f1c43bfe0f7b7d
         url_mapping = {
             'shortputdata': 'investing:shortputupdate',
             'credit_spread': 'investing:creditspreadupdate',
             'covered_calls': 'investing:coveredupdate',
         }
-
-        url_name = url_mapping.get(sub_title_lower, '')
-
+        url_name = url_mapping.get(sub_title, '')
 
         def get_edit_url(row_id):
             return reverse(url_name, args=[row_id])
 
         days_to_expiration = computes_days_expiration(stockdata)[1]
 
+        # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
         all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
         filtered_stockdata_by_returns = [
@@ -216,7 +191,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             "categories": investment_rules,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
-            'title': page_title,
+            'title': page_title,  # Using renamed title
             "get_edit_url": get_edit_url,
             "url_name": url_name,
         }

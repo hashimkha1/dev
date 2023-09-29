@@ -5,8 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from .models import (
     UserProfile,
     Application,
-    InteviewUploads,
-    Policy,
+    # InteviewUploads,
+    # Policy,
     Rated,
     Reporting,
 )
@@ -79,6 +79,8 @@ class RatingForm(forms.ModelForm):
         model = Rated
         fields = [
             "employeename",
+            "rating_date",
+            "type",
             "topic",
             "uploadlinkurl",
             "projectDescription",
@@ -90,6 +92,8 @@ class RatingForm(forms.ModelForm):
         ]
         labels = {
             "employeename":"Employee Name",
+            "rating_date": "Date",
+            "type": "type",
             "topic": "Topic",
             "uploadlinkurl": "Upload link url",
             "projectDescription": "Project Description",
@@ -103,6 +107,8 @@ class RatingForm(forms.ModelForm):
         self.request = kwargs.pop('request', None)
         super(RatingForm, self).__init__(*args, **kwargs)
         self.fields["topic"].required = False
+        self.fields["type"].required = False
+        self.fields["rating_date"].required = False
         if self.request and self.request.user:
             is_employee = self.request.user.is_staff
             if is_employee:
@@ -114,17 +120,17 @@ class RatingForm(forms.ModelForm):
             self.fields["uploadlinkurl"].required = True
 
 
-class InterviewForm(forms.ModelForm):
-    class Meta:
-        model = InteviewUploads
-        fields = ["username", "ppt", "report", "workflow", "proc", "other"]
-        labels = {
-            "ppt": "Powerpoint",
-            "report": "Tableau Reports",
-            "workflow": "Alteryx Workflow",
-            "proc": "SQL Script",
-            "other": "Other Documents",
-        }
+# class InterviewForm(forms.ModelForm):
+#     class Meta:
+#         model = InteviewUploads
+#         fields = ["username", "ppt", "report", "workflow", "proc", "other"]
+#         labels = {
+#             "ppt": "Powerpoint",
+#             "report": "Tableau Reports",
+#             "workflow": "Alteryx Workflow",
+#             "proc": "SQL Script",
+#             "other": "Other Documents",
+#         }
 
 
 class ReportingForm(forms.ModelForm):

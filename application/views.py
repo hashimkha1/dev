@@ -51,7 +51,6 @@ class ApplicantListView(ListView):
 class application(TemplateView):
     template_name = "application.html"
 
-
 class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
     model = Application
     template_name = "application/applications/applicants.html"
@@ -59,11 +58,9 @@ class ApplicantDeleteView(LoginRequiredMixin, DeleteView):
     def get_success_url(self):
         return reverse("applicant-list")
 
-
 def applicantlist(request):
     path_list,sub_title,pre_sub_title=path_values(request)
     subcategory = CustomerUser.objects.values_list("sub_category",flat=True).filter(sub_category=None)
-    print(subcategory)
     coda_applicants = CustomerUser.objects.filter(
         category=1,
         sub_category=None,
@@ -109,19 +106,15 @@ def firstinterview(request):
         {"title": "first_interview"},
     )
 
-
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
-    print('HERE')
     form = ApplicantProfileFormA(
         request.POST, request.FILES, instance=request.user.profile
     )
     datalink=ActivityLinks.objects.filter(link_name='Data').first()
-    print("datalink====>",datalink)
     if datalink:
         link_url = datalink.link
-        print("datalink====>",link_url)
     else:
         # Handle the case where no matching row was found.
         link_url = None 
@@ -217,7 +210,6 @@ def first_interview(request):
 
 
 def uploadinterviewworks(request):
-    print(request.user, request.user.id)
     myfile = request.FILES["myfile"]
     section = request.POST["section"]
     profilename = myfile.name
@@ -245,8 +237,6 @@ def uploadinterviewworks(request):
     response = s3.Bucket(settings.AWS_STORAGE_BUCKET_NAME).put_object(
         Key=des_path, Body=myfile
     )
-    print("response", response)
-    print("section", section)
     UserProfile.objects.filter(applicant=request.user).update(section=section)
     return JsonResponse({"success": True})
 
@@ -270,6 +260,7 @@ def policies(request):
     context = {"policies": policies, "reporting_date": reporting_date}
     return render(request, "application/orientation/policies.html", context)
 
+
 # -------------------------rating Section-------------------------------------#
 
 def rate(request):
@@ -277,10 +268,10 @@ def rate(request):
         form = RatingForm(request.POST, request.FILES, request=request)
         if request.user.is_staff or request.user.is_applicant:
             form.instance.employeename = request.user
-        
+            form.instance.rating_date = date.today()
+            form.instance.type = 'Other'
         if form.is_valid():
             total_points=rewardpoints(form)
-            form.instance.topic = "Other"
             form.instance.totalpoints = total_points
             
             # Saving form data to rating table only if the user is applicant
@@ -298,7 +289,7 @@ def rate(request):
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
             try:
                 task = Task.objects.filter(
-                    Q(activity_name__icontains="one on one")
+                    Q(activity_name__icontains="one on")
                 ).get(employee__username=form.instance.employeename)
                 task.point += total_points
                 if task.point >= task.mxpoint or task.point + 15 >= task.mxpoint:
@@ -307,13 +298,9 @@ def rate(request):
                 return redirect("management:new_evidence", taskid=task.id)
             except Task.DoesNotExist:
                 print("Task does not exist")
-        
     else:
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
-
-
-
 
 def ratewid(request,pk):
     if request.method == "POST":
@@ -418,15 +405,56 @@ def rating(request):
 @login_required
 def userscores(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
-    # employee=request.user
-    employee = get_object_or_404(User, username=kwargs.get("username"))
-    user_ratings=Rated.objects.filter(employeename=employee)
-    # print(user_ratings)
+    try:
+        employee = get_object_or_404(User, username=kwargs.get("username"))
+    except:
+        context={
+            "message":"User not allowed to access this page"
+        }
+        return render(request, "main/errors/generalerrors.html",context)
+    
+    user_ratings = Rated.objects.filter(employeename=employee)
+    ratings = Rated.objects.all().order_by('-rating_date')
+
+    scores_by_subject = {}
+
+    total_scores = {}
+    user_total_score=0
+    for rating in user_ratings:
+        employeename = rating.employeename.username
+        type = rating.type
+        topic = rating.topic
+        totalpoints = rating.totalpoints
+
+        # Check if the employeename is already in the dictionary, if not, initialize it with the totalpoints
+        if employeename not in total_scores:
+            total_scores[employeename] = totalpoints
+        else:
+        # If the employeename is already in the dictionary, add the totalpoints to the existing score
+            total_scores[employeename] += totalpoints
+
+        if employeename not in scores_by_subject:
+            scores_by_subject[employeename] = {}
+
+        if type not in scores_by_subject[employeename]:
+            scores_by_subject[employeename][type] = {}
+
+        scores_by_subject[employeename][type][topic] = totalpoints
+        # Retrieve the total score for the specified user
+
+        # Use 0 as the default value if the user doesn't exist
+        user_total_score = total_scores.get(employeename, 0)  
+
     context = {
+        'scores_by_subject': scores_by_subject,
+        'total_score': total_scores,
+        'user_total_score': user_total_score,
+        'employeename': employee,
         'user_ratings': user_ratings,
+        'ratings': ratings,
         "title": "Student Scores",
     }
-    # setting  up session
+
     request.session["employee_name"] = kwargs.get("username")
     return render(request, "application/orientation/intermediary_training.html", context)
 
