@@ -9,7 +9,7 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews,packages,
+                    client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response
 )
 from .models import Testimonials
@@ -300,6 +300,7 @@ def service_plans(request, *args, **kwargs):
         "title": category_name,
         "packages": packages,
         "category_slug": category_slug,
+        "courses": courses,
         "services": plans
     }
     # print(request.user.category)

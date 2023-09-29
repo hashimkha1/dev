@@ -118,13 +118,19 @@
             </div>
         </div>
       </div>
+      {% for course, infos in courses.items %}
+      {% if course ==  service.title %}
+      {% for info in infos %}
       <div class="popover__content">
-        <p class="popover__message">{{ service.name }}{{ service.title }}</p>
+        <p class="popover__message"></p>
         <div class="popover__box"> <!-- Add a div for the square box -->
-          <p>Description: {{ service.description|safe }}</p>
-          <p>Price: ${{ service.price|floatformat:2 }}</p>
+          <p>{{ info.title }}</p>
+          <p>{{ info.description|safe }}</p>
         </div>
       </div>
+      {% endfor %} 
+      {% endif %}
+      {% endfor %} 
     </div>
     </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
