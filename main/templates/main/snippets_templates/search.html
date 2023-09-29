@@ -46,18 +46,12 @@
                   {% csrf_token %}
                   <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Write Review</legend>
-                    {{form.client_name.as_hidden}}
-                    {{form.type|as_crispy_field}}
-                    {{form.subcategory|as_crispy_field}}
-                    {{form.challenge|as_crispy_field}}
+                    {{form.category|as_crispy_field}}
+                    {{form.topic|as_crispy_field}}
+                    {{form.question|as_crispy_field}}
                   </fieldset>
                   <div class="col-md-10">
-                    <a href="{% url 'main:post-create' %}">
-                        Generate Another Review
-                    </a>  
-                  </div>
-                  <div class="col-md-10">
-                    Sample :{{response}}
+                    Response :{{response}}
                   </div>
                   <div class="form-group">
                     <button class="btn btn-outline-info" type="submit">Submit Review

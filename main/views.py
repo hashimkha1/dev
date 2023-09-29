@@ -97,54 +97,50 @@ def layout(request):
 # =====================TESTIMONIALS  VIEWS=======================================
 @login_required
 def search(request):
-    # distinct_api_values = Logs.objects.values_list('api', flat=True).distinct()
     instructions = [
-         {"topic": "Review","description": "Select Your User Category."},
-         {"topic": "Sample","description": "Select Topic Category"},
-         {"topic": "copy","description": "Enter topic related question"},
-         {"topic": "Submit","description": "Click on Submit Review!"},
-         ]
-    values=["management","investing","main","getdata","data","projectmanagement"]
+        {"topic": "Review", "description": "Select Your User Category."},
+        {"topic": "Sample", "description": "Select Topic Category"},
+        {"topic": "copy", "description": "Enter topic-related question"},
+        {"topic": "Submit", "description": "Click on Submit Review!"},
+    ]
+    values = ["management", "investing", "main", "getdata", "data", "projectmanagement"]
+
     if request.method == "POST":
         form = SearchForm(request.POST, request.FILES)
-        print(form.errors)
         if form.is_valid():
-            print('postdoemvalid')
-            instance=form.save(commit=False)
-            instance.task='NA',
-            instance.plan='NA',
-            instance.category='Other',
-            instance.trained_by=request.user
-            question = form.instance.challenge
-            app=form.instance.subcategory
-            print(app,question)
-            instance.save()
-            result = generate_database_response(user_message=question,app=app)
+            instance = form.save(commit=False)
+            instance.searched_by = request.user
+            category = form.instance.category
+            table = form.instance.topic
+            question = form.instance.question
+            app = category
+            result, = generate_database_response(user_message=question, app=app,table=table)
             if result:
-               llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-               messages = [HumanMessage(content=str(result))]
-               response_llm = llm.predict_messages(messages)
-               response = response_llm.content.split(':', 1)[-1].strip()
-               print(response)
-            # else:
-            #     message=f'Please try again'
-            #     print(message)
-            context={
-               "values" : values,
-            #    "message" : message,
-               "instructions" : instructions,
-               "response" : response,
-               "form": form
-             }
-            return render(request, "main/snippets_templates/search.html", context)
+                llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                messages = [HumanMessage(content=str(result))]
+                response_llm = llm.predict_messages(messages)
+                response = response_llm.content.split(':', 1)[-1].strip()
+                print(response)
+            else:
+                response = None
+
+            context = {
+                "values": values,
+                "instructions": instructions,
+                "response": response,
+                "form": form
+            }
+
+        return render(request, "main/snippets_templates/search.html", context)
     else:
         form = SearchForm()
-        context={
-            "values" : values,
-            "instructions" : instructions,
+        context = {
+            "values": values,
+            "instructions": instructions,
             "form": form
         }
         return render(request, "main/snippets_templates/search.html", context)
+
 
 def get_respos(request):
     user_message = request.GET.get('userMessage', '')  # Get the user's message from the request

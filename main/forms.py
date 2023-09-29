@@ -49,55 +49,28 @@ class ContactForm(forms.ModelForm):
 
 class SearchForm(forms.ModelForm):
     # Define the choices for the category field
-    SUBCATEGORY_CHOICES = [
-        ("management", "Management"),
-        ("investing", "Investing"),
-        # ("main", "Main"),
-        # ("getdata", "Get Data"),
-        ("data", "Data"),
-        # ("projectmanagement", "Project Management"),
-    ]
     class Meta:
-        model = DSU
+        model = Search
         fields = [
-            "trained_by",
-            "client_name",
-            "type",
+            "searched_by",
             "category",
-            "subcategory",
-            "task",
-            "plan",
-            "challenge",
+            "topic",
+            "question",
             "uploaded",
         ]
-            # Modify the category field to use predefined choices
         labels = {
-            "type": "user category",
-            "client_name": "Manager",
-            "trained_by": "Staff/Employee",
+            "searched_by": "Staff/Employee",
             "category": "Pick your Category",
-            "subcategory": "select topic",
-            "task": "What Did You Work On?",
-            "plan": "What is your next plan of action on areas that you have not touched on?",
-            "challenge": "Type a question related to the topic",
+            "topic": "Type a topic",
+            "question": "Type a question related to the topic",
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
         }
-    subcategory = forms.ChoiceField(
-        choices=SUBCATEGORY_CHOICES,
-        widget=forms.Select(attrs={'class': 'your-css-class'}),
-        required=False,  
-         )
-
     def __init__(self, *args, **kwargs):
         super(SearchForm, self).__init__(*args, **kwargs)
-        self.fields['trained_by'].required=False
-        self.fields['client_name'].required=False
-        self.fields['type'].required=False
+        self.fields['searched_by'].required=False
         self.fields['category'].required=False
-        self.fields['task'].required=False
-        self.fields['plan'].required=False
-        self.fields['challenge'].required=False
-
+        self.fields['topic'].required=False
+        self.fields['question'].required=False
 
 class PostForm(forms.ModelForm):
     class Meta:  
