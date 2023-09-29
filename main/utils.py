@@ -97,30 +97,75 @@ def generate_chatbot_response(user_message):
     # return response.choices[0].text
 
 
-def generate_database_response(user_message, app='investing'):
+def generate_database_response(user_message, app='investing', table='investments'):
     # Get all the models from the specified app
     app_config = apps.get_app_config(app)
     models = app_config.get_models()
-
     response_data = []
+    # Flag to check if any matching records were found
+    records_found = False
+
+    # Define fields outside the loop
+    fields = None
 
     # Iterate over models from the specified app
     for model in models:
         model_name = model.__name__
+        print(model_name)
+        # Check if the model name matches the specified table
+        if model_name.lower() == table.lower():
+            fields = model._meta.get_fields()
+            print(model_name)
+            # Process the fields for the matched model here
+            model_data = []
+            for field in fields:
+                if field.get_internal_type() == 'CharField':
+                    query = Q(**{f"{field.name}__icontains": user_message})
+                    if query:
+                        results = model.objects.filter(query)
+                        model_data.extend(results.values())
 
-        fields = model._meta.get_fields()
-        model_data = []
+            # Append the model data if it's not empty
+            if model_data:
+                response_data.append({model_name: model_data})
+                records_found = True
 
-        for field in fields:
-            if field.get_internal_type() == 'CharField':
-                query = Q(**{f"{field.name}__icontains": user_message})
-                results = model.objects.filter(query)
-                model_data.extend(results.values())
-
-        # Check if the model_data list is not empty
-        if any(model_data):
-            response_data.append({model_name: model_data})
+    # Add a message if no matching records were found
+    if not records_found:
+        table_description = {
+            "Table": table,
+            "Description": "This table contains information about...",
+            "Fields": [field.name for field in fields if field.get_internal_type() == 'CharField']
+        }
+        response_data.append(table_description)
     return response_data
+
+
+
+# def generate_database_response(user_message, app='investing'):
+#     # Get all the models from the specified app
+#     app_config = apps.get_app_config(app)
+#     models = app_config.get_models()
+
+#     response_data = []
+
+#     # Iterate over models from the specified app
+#     for model in models:
+#         model_name = model.__name__
+
+#         fields = model._meta.get_fields()
+#         model_data = []
+
+#         for field in fields:
+#             if field.get_internal_type() == 'CharField':
+#                 query = Q(**{f"{field.name}__icontains": user_message})
+#                 results = model.objects.filter(query)
+#                 model_data.extend(results.values())
+
+#         # Check if the model_data list is not empty
+#         if any(model_data):
+#             response_data.append({model_name: model_data})
+#     return response_data
 
 
 """ ===========End of code============ """
