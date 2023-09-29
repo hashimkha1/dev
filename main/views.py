@@ -116,11 +116,14 @@ def search(request):
             app = category
             result, = generate_database_response(user_message=question, app=app,table=table)
             if result:
-                llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                # This one is simple hu
+                # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
                 messages = [HumanMessage(content=str(result))]
-                response_llm = llm.predict_messages(messages)
-                response = response_llm.content.split(':', 1)[-1].strip()
-                print(response)
+                # response_llm = llm.predict_messages(messages)
+                chat_model_result = chat_model.predict_messages(messages)
+                # response1 = response_llm.content.split(':', 1)[-1].strip()
+                response = chat_model_result.content
             else:
                 response = None
 

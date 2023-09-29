@@ -97,7 +97,16 @@ def generate_chatbot_response(user_message):
     # return response.choices[0].text
 
 
+def parse_user_query(user_query):
+    words = user_query.split()
+    keywords = words
+    return keywords
+
+
 def generate_database_response(user_message, app='investing', table='investments'):
+
+    # Parse the user query to extract the table and keywords
+    keywords = parse_user_query(user_message)
     # Get all the models from the specified app
     app_config = apps.get_app_config(app)
     models = app_config.get_models()
@@ -115,15 +124,23 @@ def generate_database_response(user_message, app='investing', table='investments
         # Check if the model name matches the specified table
         if model_name.lower() == table.lower():
             fields = model._meta.get_fields()
-            print(model_name)
+            print("======",model_name)
             # Process the fields for the matched model here
             model_data = []
-            for field in fields:
-                if field.get_internal_type() == 'CharField':
-                    query = Q(**{f"{field.name}__icontains": user_message})
-                    if query:
-                        results = model.objects.filter(query)
-                        model_data.extend(results.values())
+            # for field in fields:
+            #     if field.get_internal_type() == 'CharField':
+            #         query = Q(**{f"{field.name}__icontains": user_message})
+            #         if query:
+            #             results = model.objects.filter(query)
+            #             model_data.extend(results.values())
+
+            for keyword in keywords:
+                for field in fields:
+                    if field.get_internal_type() == 'CharField':
+                        query = Q(**{f"{field.name}__icontains": keyword})
+                        if query:
+                            results = model.objects.filter(query)
+                            model_data.extend(results.values())
 
             # Append the model data if it's not empty
             if model_data:
