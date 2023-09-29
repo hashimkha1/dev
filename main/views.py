@@ -9,10 +9,11 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews,
+                    client_categories,service_instances,service_plan_instances,reviews,packages,
                     generate_database_response,generate_chatbot_response
 )
 from .models import Testimonials
+from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
@@ -91,6 +92,54 @@ def layout(request):
         "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
+
+
+# =====================TESTIMONIALS  VIEWS=======================================
+@login_required
+def search(request):
+    instructions = [
+        {"topic": "Review", "description": "Select Your User Category."},
+        {"topic": "Sample", "description": "Select Topic Category"},
+        {"topic": "copy", "description": "Enter topic-related question"},
+        {"topic": "Submit", "description": "Click on Submit Review!"},
+    ]
+    values = ["management", "investing", "main", "getdata", "data", "projectmanagement"]
+
+    if request.method == "POST":
+        form = SearchForm(request.POST, request.FILES)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.searched_by = request.user
+            category = form.instance.category
+            table = form.instance.topic
+            question = form.instance.question
+            app = category
+            result, = generate_database_response(user_message=question, app=app,table=table)
+            if result:
+                llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                messages = [HumanMessage(content=str(result))]
+                response_llm = llm.predict_messages(messages)
+                response = response_llm.content.split(':', 1)[-1].strip()
+                print(response)
+            else:
+                response = None
+
+            context = {
+                "values": values,
+                "instructions": instructions,
+                "response": response,
+                "form": form
+            }
+
+        return render(request, "main/snippets_templates/search.html", context)
+    else:
+        form = SearchForm()
+        context = {
+            "values": values,
+            "instructions": instructions,
+            "form": form
+        }
+        return render(request, "main/snippets_templates/search.html", context)
 
 
 def get_respos(request):
@@ -246,6 +295,7 @@ def service_plans(request, *args, **kwargs):
     context = {
         "SITEURL": settings.SITEURL,
         "title": category_name,
+        "packages": packages,
         "category_slug": category_slug,
         "services": plans
     }
@@ -284,7 +334,6 @@ def newpost(request):
             response=selected_description
         else:
             response=result
-        # form.instance.content = response
         context={
             "response" : response,
             "form": form

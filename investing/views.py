@@ -1,3 +1,5 @@
+from collections import Counter
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
@@ -116,6 +118,13 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
+def optionlist(request):
+    default_title = "creditspread"
+    title = request.GET.get('title', default_title)
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", {"title": title})
+
+
+
 @login_required
 def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -186,14 +195,78 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             "get_edit_url": get_edit_url,
             "url_name": url_name,
         }
-        return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
     else:
         context = {
-            "title": "STOCKS ERROR",
-            "message": 'Hi, No valid expiry dates found in stockdata..'
+            "data": [],  # Empty data when stockdata does not exist
+            "days_to_expiration": 0,
+            "subtitle": sub_title,
+            "pre_sub_title": pre_sub_title,
+            'title': page_title,
+            "get_edit_url": "",
+            "url_name": url_name,
         }
-        return render(request, "main/errors/generalerrors.html", context)
+
+    if request.method == 'GET':
+        selected_symbol = request.GET.get('symbol')
+       
+        # Filter data from each model based on the selected symbol
+        credit_spread_data = credit_spread.objects.filter(symbol=selected_symbol)
+        short_put_data = ShortPut.objects.filter(symbol=selected_symbol)
+        covered_calls_data = covered_calls.objects.filter(symbol=selected_symbol)
+
+            # Fetch distinct symbols from all three models
+        symbols_from_credit_spread = list(credit_spread.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_short_put = list(ShortPut.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_covered_calls = list(covered_calls.objects.values_list('symbol', flat=True).distinct())
+
+            # Consolidate the unique symbols
+        all_symbols = list(set(
+                symbols_from_credit_spread + symbols_from_short_put + symbols_from_covered_calls
+            ))
+        selected_symbol_action = None
+        selected_symbol_stock_price = None
+        selected_symbol_strike_price = None
+        selected_symbol_days_to_expiry = None
+        selected_symbol_annualized_return = None
+        selected_symbol_raw_return  = None
+        selected_symbol_expiry  = None
+        selected_symbol_earnings_date  = None
+        if covered_calls_data.exists():
+            selected_symbol_action = covered_calls_data.first().action
+            selected_symbol_stock_price  = covered_calls_data.first().stock_price
+            selected_symbol_strike_price = covered_calls_data.first().strike_price 
+            selected_symbol_days_to_expiry = covered_calls_data.first().days_to_expiry
+            selected_symbol_annualized_return = covered_calls_data.first().annualized_return
+            selected_symbol_earnings_date  = covered_calls_data.first().earnings_date 
+            selected_symbol_expiry = covered_calls_data.first().expiry 
+            selected_symbol_raw_return = covered_calls_data.first().raw_return
+            
+            # Update the context with the filtered data and symbols
+        context.update({
+                'credit_spread_data': credit_spread_data,
+                'short_put_data': short_put_data,
+                'covered_calls_data': covered_calls_data,
+                'symbols': all_symbols,
+                'selected_symbol':selected_symbol,
+                'selected_symbol_action':selected_symbol_action,
+                'selected_symbol_stock_price':selected_symbol_stock_price,
+                'selected_symbol_strike_price':selected_symbol_strike_price,
+                'selected_symbol_days_to_expiry':selected_symbol_days_to_expiry,
+                'selected_symbol_annualized_return':selected_symbol_annualized_return,
+                'selected_symbol_earnings_date ':selected_symbol_earnings_date ,
+                'selected_symbol_expiry ':selected_symbol_expiry ,
+                'selected_symbol_raw_return':selected_symbol_raw_return,
+                
+            })
+
+
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+    # else:
+    #     context = {
+    #         "title": "STOCKS ERROR",
+    #         "message": 'Hi, No valid expiry dates found in stockdata..'
+    #     }
+    # return render(request, "main/errors/generalerrors.html", context)
 
 
 @login_required

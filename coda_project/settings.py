@@ -1,3 +1,5 @@
+# settings
+
 """
 Django settings for coda_project project.
 
@@ -131,10 +133,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('POSTGRES_DB_NAME')
-        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
-        user = os.environ.get('POSTGRESDB_USER')
-        password = os.environ.get('POSTGRESSPASS') 
+        host = 'localhost'
+        dbname = "CODA_DEV" #os.environ.get('POSTGRES_DB_NAME') 
+        user = "postgres" #os.environ.get('POSTGRESDB_USER')
+        password ="MANAGER2030" #os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -239,6 +241,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIR = os.path.join(BASE_DIR, "static")
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
+
 CRISPY_TEMPLATE_PACK = "bootstrap4"
 
 LOGIN_REDIRECT_URL = "main:layout"
@@ -329,6 +332,7 @@ def payment_details(request):
 
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
+<<<<<<< HEAD
     DEBUG = False
     SECURE_SSL_REDIRECT = True
 elif os.environ.get('ENVIRONMENT') == 'testing':
@@ -338,6 +342,12 @@ elif os.environ.get('ENVIRONMENT') == 'testing':
 else:
     SITEURL = "http://localhost:8000"
     DEBUG = False
+=======
+elif os.environ.get('ENVIRONMENT') == 'testing':
+   SITEURL = "https://codamakutano.herokuapp.com"
+else:
+    SITEURL = "http://localhost:8000"
+>>>>>>> c825d5d220b38b52f3b5d56c435df9a3c05f9619
 
 # -----------------------------------------
 def source_target():

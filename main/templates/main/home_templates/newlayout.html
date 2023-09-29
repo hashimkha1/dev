@@ -1,12 +1,18 @@
 {%extends "main/base_templates/new_base.html"%} 
 {% load static %}
 {% block content %}
-<div class="banner-div">
+<div class="banner-div" style="background-image: url('{{googledriveurl}}{{banner_url}}'); background-repeat: no-repeat; background-size: cover;">
   <div class="container-md">
       <h2>services</h2>
       <h1>Get help with career, business, and personal projects.</h1>
   </div>
 </div>
+<!-- <div class="banner-div">
+  <div class="container-md">
+      <h2>services</h2>
+      <h1>Get help with career, business, and personal projects.</h1>
+  </div>
+</div> -->
 <div style="position: relative; z-index: 9999;">
 {% include 'main/snippets_templates/chatbot.html'%}
 </div>
@@ -21,72 +27,64 @@
 
 <div class="services-div">
   <div class="container-lg">
+    {% for service in services %}
       <div class="row flex-column-reverse flex-md-row">
           <div class="col-md-6 pe-lg-5">
-              <h2 class="mt-4 mt-md-0">DATA ANALYSIS TRAINING</h2>
-              <p class="me-lg-5">CODA provides comprehensive data analysis training programs that offer project-based training, 
-                requirement analysis, reporting, ETL, and database management. This training is designed to equip 
-                individuals and organizations with the skills, knowledge, and tools they need to succeed in the field of data analysis. 
-                Additionally, CODA offers interview and job application training to help participants prepare for job interviews and succeed in their job search.
+              <h2 class="mt-4 mt-md-0">{{service.title}}</h2>
+              <p class="me-lg-5">
+                {{service.description}}
               </p>
-              <!-- <p class="me-lg-5">Are you tired of working two to three jobs and living
-                  paycheck to paycheck? You need to land a high
-                  paying job that will give you freedom and wealth.
-                  It's not too late to find a solution. Our BI Training is
-                  the fastest career path that can position you to
-                  start making a five figures salary from any career
-                  background and level of education. Our training is
-                  a 3 months Project Based Program. Your future
-                  career starts here..
-              </p> -->
               <a href= "{% url 'main:display_service' slug="data_analysis" %}" >read more</a>
-              
           </div>
           <div class="col-md-6">
-              <img class="img-fluid ps-lg-5" src="{% static 'main/img/service-1.jpg' %}" alt="">
+              <img class="img-fluid ps-lg-5" 
+              {% for image in images %}
+                 {% if image.name == service.slug %}
+                      src="{{googledriveurl}}{{image.image_url}}"
+                 {% endif %}
+                 {% endfor %}
+              alt="">
           </div>
       </div>
-
-      <div class="row flex-md-row-reverse flex-column-reverse">
-          <div class="col-md-6">
-              <div class="ps-lg-5">
-                  <h2 class="mt-4 mt-md-0">STOCKS & OPTIONS TRAINING</h2>
-                  <p>Apart from entrepreneurship and career path,
-                      financial markets are another method of building
-                      wealth. Whether you are a beginner or an expert,
-                      this program will teach you how to grow your
-                      wealth through stocks and options. <br>
-                      Learn how to make your capital grow with low risk
-                      and high return.
-                  </p>
-                  <a href="{% url 'main:display_service' slug="investing" %}">read more</a>
-              </div>
-          </div>
-          <div class="col-md-6">
-              <img class="img-fluid" src="{% static 'main/img/service-2.jpg' %}" alt="">
-          </div>
-      </div>
-
-      <div class="row flex-column-reverse flex-md-row">
-          <div class="col-md-6 pe-lg-5">
-              <h2 class="mt-4 mt-md-0">CONSULTANCY • FIELD PROJECT • PROJECT MANAGEMENT</h2>
-              <p class="me-lg-5">Are you a diaspora entrepreneur or professional
-                  searching for an effective, honest, and trusted
-                  management team that can take care of your
-                  business or personal project back in your home
-                  country? You're in the right place. Among our
-                  services are managing construction projects,
-                  running errands, and writing business plans,
-                  payroll management and more.
-              </p>
-              <a href="{% url 'main:display_service' slug="consultancy" %}">read more</a>
-          </div>
-          <div class="col-md-6">
-              <img class="img-fluid ps-lg-5" src="{% static 'main/img/service-3.jpg' %}" alt="">
-          </div>
-      </div>
-  </div>
+      {% endfor %}
 </div>
+</div>
+<!-- 
+  <div class="container-lg">
+    {% for service in services %}
+    <div class="row flex-column-reverse flex-md-row">
+        {% if forloop.counter|divisibleby:2 %}
+        <div class="col-md-6">
+            <img class="img-fluid ps-lg-5" src="{% static 'main/img/{{ service.image }}' %}" alt="">
+        </div>
+        <div class="col-md-6 pe-lg-5">
+        {% else %}
+        <div class="col-md-6 pe-lg-5">
+        {% endif %}
+            <h2 class="mt-4 mt-md-0">{{ service.title }}</h2>
+            <p class="me-lg-5">
+                {{ service.description }}
+            </p>
+            <a href="{% url 'main:display_service' slug=service.slug %}">read more</a>
+        </div>
+        {% if not forloop.counter|divisibleby:2 %}
+        <div class="col-md-6">
+          <img 
+          {%for image in images%}
+          {% if image.name == service.slug %}
+              src="{{googledriveurl}}{{image.image_url}}"
+          {% endif %}
+          {% endfor %}
+          class="d-block img-fluid"
+          alt="home2"
+          >
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+</div> -->
+
 <div class="testimonials-div">
   <div class="container">
       <h1>CLIENT SUCCESS STORIES</h1>

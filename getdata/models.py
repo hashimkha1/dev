@@ -60,7 +60,6 @@ class Editable(models.Model):
 		return self.name
 
 class GotoMeetings(models.Model):
-
     meeting_topic = models.CharField(max_length=250, null=True, blank=True)
     meeting_id = models.CharField(max_length=100, null=True, blank=True)
     meeting_type = models.CharField(max_length=100, null=True, blank=True)
