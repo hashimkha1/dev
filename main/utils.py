@@ -687,25 +687,25 @@ courses = {
     "ETL-Alteryx" : [
                 {
                     "title": "Discover ETL Mastery with Alteryx.",
-                    "description":" <ol><li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Troubleshooting and Debugging</li><li>Course Recap and Certification</li></ol>"
+                    "description":" <ol><li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Course Recap and Certification</li></ol>"
                 },
             ],
     "Database |SQL or Snowflake": [
                 {
                     "title":"Mastering Databases: From Data Storage to Advanced SQL Mastery",
-                    "description":"<ol><li>Introduction to Databases</li><li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Working with Relational Databases</li><li>NoSQL Databases and Data Warehousing</li><li>Database Administration and Security</li><li>Performance Tuning and Optimization</li><li>Real-World Database Projects</li><li>Integration with Python and Data Analysis</li><li>Final Exam and Certification</li></ol>",
+                    "description":"<ol><li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Working with Relational Databases</li><li>Database Administration and Security</li><li>Performance Tuning and Optimization</li><li>Real-World Database Projects</li><li>Integration with Python and Data Analysis</li><li>Certification</li></ol>",
                 },
     ],
     "Reporting": [
                 {
                     "title":"Tableau Unleashed|PowerBI Pro",
-                    "description":"<ol><li>Introduction to Reporting Tools</li><li>Data Visualization Fundamentals</li><li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Introduction to Tableau</li><li>Mastering Tableau for Reporting</li><li>Introduction to Power BI</li><li>Advanced Power BI Reporting</li><li>Real-World Reporting Projects</li><li>Integration with Business Intelligence</li><li>Final Exam and Certification</li></ol>",
+                    "description":"<ol><li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Mastering Tableau for Reporting</li><li>Introduction to Power BI</li><li>Advanced Power BI Reporting</li><li>Real-World Reporting Projects</li><li>Certification</li></ol>",
                 },
     ],
     "AI": [
                 {
                     "title":"In the Age of AI:Project Based",
-                    "description":"<li>Introduction to Artificial Intelligence</li><li>Machine Learning Fundamentals</li><li>Supervised Learning</li><li>Unsupervised Learning</li><li>Deep Learning and Neural Networks</li><li>Natural Language Processing (NLP)</li><li>Computer Vision</li><li>Reinforcement Learning</li><li>AI Ethics and Bias</li><li>AI in Industry and Applications</li><li>AI Model Deployment</li><li>Advanced AI Topics</li><li>Hands-on AI Projects</li><li>AI and Future Technologies</li><li>Final Exam and Certification</li>",
+                    "description":"<li>Introduction to Artificial Intelligence</li><li>Machine Learning Fundamentals</li><li>Supervised Learning</li><li>Unsupervised Learning</li><li>Deep Learning and Neural Networks</li><li>Natural Language Processing (NLP)</li><li>Reinforcement Learning</li><li>AI in Industry and Applications</li><li>AI Model Deployment</li><li>Advanced AI Topics</li><li>Hands-on AI Projects</li><li>AI and Future Technologies</li><li>Certification</li>",
                 },
     ],
     "Full Course": [
