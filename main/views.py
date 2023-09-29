@@ -31,9 +31,9 @@ from django.views.generic import (
     )
 from .forms import *
 
-# from langchain.llms import OpenAI
-# from langchain.chat_models import ChatOpenAI
-# from langchain.schema import HumanMessage
+from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage
 import os
 
 from django.contrib.auth import get_user_model
