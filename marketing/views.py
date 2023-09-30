@@ -8,6 +8,9 @@ from django.shortcuts import redirect, render
 from management.models import Whatsapp
 from .forms import WhatsappForm
 from django.urls import reverse
+from mail.custom_email import send_email
+from main.utils import path_values,courses
+from main.context_processors import services
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
         CreateView,
@@ -124,105 +127,34 @@ def whatsapp_status(request):
     return render(request, "main/errors/generalerrors.html", context)
 
 
-'''
-@login_required(login_url="/admin/")
-def store_home(request):
-    return render(request,"store/home.html")
 
+def send_email_ads(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    subject='NEXT CLASSES!SIGN UP!'
+    url='email/marketing/marketing_ads.html'
+    message=''
+    error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
+    context_data = services(request)
 
-
-class CategoriesListView(ListView):
-    model=Categories
-    template_name="store/products/category_list.html"
-    paginate_by=3
-
-    def get_queryset(self):
-        filter_val=self.request.GET.get("filter","")
-        order_by=self.request.GET.get("orderby","id")
-        if filter_val!="":
-            cat=Categories.objects.filter(Q(title__contains=filter_val) | Q(description__contains=filter_val)).order_by(order_by)
-        else:
-            cat=Categories.objects.all().order_by(order_by)
-
-        return cat
-
-    def get_context_data(self,**kwargs):
-        context=super(CategoriesListView,self).get_context_data(**kwargs)
-        context["filter"]=self.request.GET.get("filter","")
-        context["orderby"]=self.request.GET.get("orderby","id")
-        context["all_table_fields"]=Categories._meta.get_fields()
-        return context
-
-
-class CategoriesCreate(SuccessMessageMixin,CreateView):
-    model=Categories
-    success_message="Category Added!"
-    fields="__all__"
-    template_name="store/products/category_create.html"
-
-class CategoriesUpdate(SuccessMessageMixin,UpdateView):
-    model=Categories
-    success_message="Category Updated!"
-    fields="__all__"
-    template_name="store/products/category_update.html"
-
-
-class SubCategoriesListView(ListView):
-    model=SubCategories
-    template_name="store/products/sub_category_list.html"
-    paginate_by=3
-
-    def get_queryset(self):
-        filter_val=self.request.GET.get("filter","")
-        order_by=self.request.GET.get("orderby","id")
-        if filter_val!="":
-            cat=SubCategories.objects.filter(Q(title__contains=filter_val) | Q(description__contains=filter_val)).order_by(order_by)
-        else:
-            cat=SubCategories.objects.all().order_by(order_by)
-
-        return cat
-
-    def get_context_data(self,**kwargs):
-        context=super(SubCategoriesListView,self).get_context_data(**kwargs)
-        context["filter"]=self.request.GET.get("filter","")
-        context["orderby"]=self.request.GET.get("orderby","id")
-        context["all_table_fields"]=SubCategories._meta.get_fields()
-        return context
-
-class SubCategoriesCreate(SuccessMessageMixin,CreateView):
-    model=SubCategories
-    success_message="Sub Category Added!"
-    fields="__all__"
-    template_name="store/products/sub_category_create.html"
-
-class SubCategoriesUpdate(SuccessMessageMixin,UpdateView):
-    model=SubCategories
-    success_message="Sub Category Updated!"
-    fields="__all__"
-    template_name="store/products/sub_category_update.html"
-
-#====================ecomerce old===========================
-
-from django.shortcuts import get_object_or_404, render
-from .models import Category, Product
-
-def categories(request):
-    return {
-        'categories': Category.objects.all()
-    }
-
-def all_products(request):
-    products = Product.products.all()
-    return render(request, 'store/home.html', {'products': products})
-
-def category_list(request, category_slug=None):
-    category = get_object_or_404(Category, slug=category_slug)
-    products = Product.objects.filter(category=category)
-    return render(request, 'store/products/category.html', {'category': category, 'products': products})
-
-def product_detail(request, slug):
-    product = get_object_or_404(Product, slug=slug, in_stock=True)
-    return render(request, 'store/products/subcategory.html', {'product': product})
-'''
-
-
+    # Access the 'plans' variable from the context data
+    plans = context_data.get('plans')
+    print("plans---->",plans)
+    context={
+                'subtitle': sub_title,
+                'user': request.user.first_name,
+                'services':plans,
+                'courses':courses,
+                'message':message,
+                'error_message':error_message,
+                'contact_message':'info@codanalytics.net',
+            }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[request.user.email,], 
+                    subject=subject, html_template=url, 
+		    		context=context
+                    )
+        return render(request, "email/marketing/marketing_ads.html",context)
+    except:
+        return render(request, "email/marketing/marketing_ads.html",context)
+    

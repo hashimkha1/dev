@@ -1,0 +1,90 @@
+{%extends "main/base_templates/new_base.html"%} 
+{% block content %}
+<div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 top-coloumn">
+                <tr>
+                    <td style="background-color: #E7AD4A; padding: 20px;">
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <p style="font-size: 24px; font-weight: bold; color: #fff;">CODA-CROWN DATA ANALYSIS AND CONSULTANCY LLC</p>
+                                    <p style="font-style: italic; color: #fff;">New Courses at CODA.</p>
+                                </td>
+                                <td style="text-align: right;">
+                                    <div style="padding: 20px;">
+                                        <a href="{% url 'accounts:account-login' %}" style="background-color: #E7AD4A; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Sign In</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+            </div>
+        </div>
+
+        <div class="row bottom-coloumn">
+            <div class="col-md-12 top-coloumn bottom-coloumn">
+                <p class="title-sub-pay text-center">
+                    COURSES
+                </p>
+                <div class="row">
+                    <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
+                        <h3 style="margin-top:0;">Hi {{ user }},</h3>
+                        <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
+                        <ul style="list-style:none; padding-left:0;">
+                            {% for service in services %}
+                            {% for course, infos in courses.items %}
+                            {% if course ==  service.title %}
+                            <p>{{ service.title}}: $ {{service.price }}</p>
+                            {% for info in infos %}
+                            <div class="course__content">
+                              <div class="course__box"> <!-- Add a div for the square box -->
+                                <p>{{ info.title }}</p>
+                                <p>{{ info.description|safe }}</p>
+                              </div>
+                            </div>
+                            {% endfor %} 
+                            {% endif %} 
+                            {% endfor %} 
+                            {% endfor %} 
+                        </ul>
+                        <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                        <p>Thank you,</p>
+                        <p>The Finance Team</p>
+                    </div>
+                    <div class="col-md-5">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <p class="font-weight-bold text-uppercase follow-text">
+                            say hello :
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex" style="align-items: center;
+                        margin-top: 1%;">
+                            <i class="fa fa-linkedin" aria-hidden="true" style="font-size: 22px;
+                            color: #C5702F;"></i>
+                            <span class="ml-2" style="margin-left: 6px;
+                            font-size: 15px;
+                            margin-top: 2%;">LinkedIn</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex" style="align-items: center;
+                        margin-top: 1%;">
+                            <div class="fb-circle">
+                                <i class="fa fa-facebook-f" aria-hidden="true" style="font-size: 19px;
+                                color: #ffffff;"></i>
+                            </div>
+                            <span class="ml-2" style="margin-left: 6px;
+                            font-size: 15px;
+                            margin-top: 2%;">facebook</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endblock content %}

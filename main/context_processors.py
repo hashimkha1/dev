@@ -38,13 +38,17 @@ def images(request):
         "banner_url":banner_url
     }
 
-
 def services(request):
+    services = Service.objects.all()
+    analysis_service = Service.objects.get(slug='data_analysis')
+    service_categories = ServiceCategory.objects.filter(service=analysis_service.id)
+    plans = Pricing.objects.filter(category__in=service_categories)
     return {
-            "services": Service.objects.all(),
-            "data_analysis": Service.objects.get(slug='data_analysis')
-         }
-
+        'services': services,
+        "analysis_service": analysis_service,
+        "service_categories": service_categories,
+        "plans": plans
+    }
 # def googledriveurl(request):
 #     return {
 #         'googledriveurl':'http://drive.google.com/uc?export=view&id'
