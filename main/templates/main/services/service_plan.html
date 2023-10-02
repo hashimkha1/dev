@@ -1,5 +1,6 @@
 {% extends "main/base_templates/new_base.html"%}
 {% block content %}
+
 <style>
   .popover__wrapper {
     position: relative;
@@ -39,6 +40,7 @@
   }
   
   </style>
+
 <div class="container-fluid">
   <div class="row jumbotron">
     <div id="j-section" class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-xl-10">
@@ -48,33 +50,16 @@
       <p class="lead text-center">
         Select a plan that based addresses your needs that best suits your needs.
       </p>
-      <!--<p class="lead">-->
-        <!--Our goal is to empower individuals and organizations by training Stocks and Options to use proven techniques and market fundamentals to optimize their return on investment.-->
-      <!--</p>-->
     </div>
 
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 col-xl-2">
     <a href="/register" target="_blank">
-      <!--<button type="button" class="btn btn-primary btn-lg">Get Started</button>-->
     </a>
   </div>
   </div>
 
 <!-------------------Our Services Section---------------------->
 <!-------------------WHAT WE DO Section------------------------->
-<!-- <div class="container-fluid padding">
-  <div class="row welcome text-center">
-    <div class="col-12">
-      <h2 class="display-4">{{title}}</h2>
-    </div>
-    <hr/>
-    <div class="col-12">
-      <p class="lead">
-        Select a plan that based addresses your needs that best suits your needs.
-      </p>
-    </div> 
-  </div> 
-</div> -->
     <!-------------------Cards-Category Section----------------------->
 <div class="container-fluid padding">
   <div class="row padding">
@@ -92,15 +77,8 @@
               <hr>
               <div class="col-md-10">
                 <p>
-                  <a class="text-dark  text-decoration-none" 
-                  {% if service.name == description_title %}
-                  data-toggle="tooltip" title="description"
-                  href="#"> 
-                  {% endif %}
                   {{ service.description|safe }}
-                    </a>
                 </p>
-                <!-- {% include 'main/snippets_templates/chatbot.html'%} -->
               </div>
               <div class="col-md-2 text-center">
                 <b>${{ service.price|floatformat:2 }}</b>
@@ -109,7 +87,6 @@
                 {% else %}
                 <form action="{% url 'finance:newcontract' request.user %}" method="POST">
                   {% csrf_token %}
-                  <!-- <input type="hidden" name="contract_length" value="{{ service.contract_length }}"> -->
                   <input type="hidden" name="service_title" value="{{ service.name }}{{ service.title }}">
                   <button type="submit" class="btn btn-primary">Proceed</button>
                 </form>
@@ -123,7 +100,7 @@
       {% for info in infos %}
       <div class="popover__content">
         <p class="popover__message"></p>
-        <div class="popover__box"> <!-- Add a div for the square box -->
+        <div class="popover__box"> 
           <p>{{ info.title }}</p>
           <p>{{ info.description|safe }}</p>
         </div>
