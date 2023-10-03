@@ -1,38 +1,28 @@
-import json
 import tweepy
-import random
-import string
-import re
-import urllib.request
 import logging
 
 from celery import shared_task
-import http.client
-from django.shortcuts import render
 from mail.custom_email import send_email
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
-from management.models import Task, TaskHistory,Advertisement,Whatsapp,TaskLinks
+from management.models import Task, TaskHistory,Advertisement,TaskLinks
 from accounts.models import CustomerUser
-from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
+from finance.models import TrainingLoan,LBandLS,PayslipConfig
 from application.models import UserProfile
 from getdata.models import ReplyMail, GotoMeetings
 
 
 # importing utils & Views
-from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
+from management.utils import loan_computation, paymentconfigurations
 from main.utils import download_image
 # from main.context_processors import image_view
-from management.utils import deductions
-from management.views import loan_update_save, normalize_period
 
 from gapi.gservices import get_service, search_messages
 from mail.custom_email import send_reply
 
 logger = logging.getLogger(__name__)
-from marketing.views import runwhatsapp
 User = get_user_model()
 
 JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
@@ -75,14 +65,8 @@ def SendMsgApplicatUser():
     after_10_date = timedelta(days = 10)
     pastdate = date_joined.date() + after_10_date
     presentdate = datetime.now().date()
-    # print('pastdate-->',pastdate)
-    # print("presentdate-->",presentdate)
     if pastdate == presentdate:
         subject = "No active mail"
-        # to = data.email
-        # content = f"""
-        #         <span><h3>Hi {data.username},</h3>you applied for a position in CODA, kindly let us know of your progress, you can login at the following link to proceed with your interview </span>"""
-        # email_template(subject,to,content)
         send_email(
             category=data.category,
             to_email=(data.email,),
@@ -243,7 +227,6 @@ Twitter and Facebook AD management Scripts below
 @shared_task(name="advertisement")
 def advertisement():
     #This function will post the latest tweet
-    print("TWIITER TWESTING FUNCT")
     context = Advertisement.objects.all().first()
     apiKey = context.twitter_api_key 
     apiSecret = context.twitter_api_key_secret

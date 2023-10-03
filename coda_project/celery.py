@@ -11,8 +11,7 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'run_on_every_1st': {
         'task': 'task_history',
-        # 'schedule': crontab(0, 0, day_of_month='3'),
-        'schedule': crontab(minute=0, hour=01, day_of_month='2'),
+        'schedule': crontab(0, 0, day_of_month='1'),
     },
 
     'login_no_activity_send_sms': {
