@@ -39,7 +39,7 @@ JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
 ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
 
 @shared_task(name="task_history")
-def dump_data():
+def dump_data(request):
     try:
         bulk_object = []
         get_data = Task.objects.all()
@@ -62,10 +62,14 @@ def dump_data():
                 )
             )
         TaskHistory.objects.bulk_create(bulk_object)
-        get_data.update(point=0)
-        return True
-    except Exception:
-        return False
+        # get_data.update(point=0)
+        for task in get_data:
+            task.point = 0
+            task.save()
+        # return True
+    except Exception as e:
+        print("error",str(e))
+        # return False
 
 @shared_task(name="SendMsgApplicatUser")
 def SendMsgApplicatUser():
