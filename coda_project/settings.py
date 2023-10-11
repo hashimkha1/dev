@@ -301,3 +301,11 @@ def source_target():
     #Target                     
     target_db_path=os.environ.get('TARGET_PATH_PROD')
     return (source_host,source_dbname,source_user,source_password,target_db_path)
+
+
+# import json
+
+# # Load Google Drive API credentials
+# with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
+#     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
+

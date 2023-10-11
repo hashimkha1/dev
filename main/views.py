@@ -31,7 +31,8 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
-
+from django.http import JsonResponse
+from django.apps import apps
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
@@ -94,6 +95,16 @@ def layout(request):
     return render(request, "main/home_templates/newlayout.html", context)
 
 
+
+def fetch_model_table_names(request):
+    app_name = request.GET.get('category', None)  # Replace with the actual app name
+    app_models = apps.get_app_config(app_name).get_models()
+    # Get the actual model table names based on the application
+    # table_names = [model.__name__ for model in app_models]
+    table_names = [{'value': model.__name__, 'display_text': model._meta.verbose_name.replace('_', ' ').capitalize()} for model in app_models]
+    return JsonResponse({'model_table_names': table_names})
+
+
 # =====================TESTIMONIALS  VIEWS=======================================
 @login_required
 def search(request):
@@ -108,17 +119,19 @@ def search(request):
     if request.method == "POST":
         form = SearchForm(request.POST, request.FILES)
         if form.is_valid():
+            data = form.cleaned_data
             instance = form.save(commit=False)
             instance.searched_by = request.user
             category = form.instance.category
             table = form.instance.topic
+            print('table============',table)
             question = form.instance.question
             app = category
             result, = generate_database_response(user_message=question, app=app,table=table)
             if result:
                 # This one is simple hu
                 # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-                chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                chat_model = ChatOpenAI(openai_api_key='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')
                 messages = [HumanMessage(content=str(result))]
                 # response_llm = llm.predict_messages(messages)
                 chat_model_result = chat_model.predict_messages(messages)
@@ -154,7 +167,7 @@ def get_respos(request):
         database_response = generate_database_response(user_message)
         if database_response:
             # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            llm = OpenAI(openai_api_key='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')
+            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
             messages = [HumanMessage(content=str(database_response))]
             response_llm = llm.predict_messages(messages)
             # chat_model_result = chat_model.predict_messages(messages)

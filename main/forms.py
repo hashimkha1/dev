@@ -49,6 +49,8 @@ class ContactForm(forms.ModelForm):
 
 class SearchForm(forms.ModelForm):
     # Define the choices for the category field
+    category = forms.ChoiceField(choices=[("", "Select a category")] + Search.CAT_CHOICES)
+    topic = forms.CharField(required=False,label='Pick a topic')
     class Meta:
         model = Search
         fields = [
@@ -68,9 +70,9 @@ class SearchForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(SearchForm, self).__init__(*args, **kwargs)
         self.fields['searched_by'].required=False
-        self.fields['category'].required=False
+        self.fields['category'].required=True
         self.fields['topic'].required=False
-        self.fields['question'].required=False
+        self.fields['question'].required=True
 
 class PostForm(forms.ModelForm):
     class Meta:  

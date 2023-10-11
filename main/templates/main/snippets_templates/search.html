@@ -47,8 +47,13 @@
                   <fieldset class="form-group">
                     <legend class="border-bottom mb-4">Write Review</legend>
                     {{form.category|as_crispy_field}}
-                    {{form.topic|as_crispy_field}}
+                    <!-- {{form.topic|as_crispy_field}} -->
+                    <label for="topic">Pick a topic</label>
+                    <select id="topic" name="topic" class="form-control">
+                        <!-- Options will be dynamically populated based on the selected category -->
+                    </select>
                     {{form.question|as_crispy_field}}
+                    
                   </fieldset>
                   <div class="col-md-10">
                     Response :{{response}}
@@ -63,6 +68,44 @@
         </div>
     </div>
 </div>
+<!-- Load jQuery from a reliable CDN -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    // Ensure that jQuery is properly loaded before using $
+    jQuery(document).ready(function($) {
+        $('#id_category').change(function() {
+            updateFieldsBasedOnCategory();
+        });
+
+        function updateFieldsBasedOnCategory() {
+            const selectedCategory = $('#id_category').val();
+            console.log('Selected Category:', selectedCategory);
+
+            // Perform an AJAX request to fetch model names for the selected category
+            $.ajax({
+                url: '/fetch_model_table_names/',  // Replace with your actual URL
+                type: 'GET',
+                data: { category: selectedCategory },
+                success: function(data) {
+                    const taskDropdown = $('#topic');
+                    taskDropdown.empty();  // Clear existing options
+                    taskDropdown.append($('<option>', { value: '', text: 'Select a table' }));  // Add default option
+                    data.model_table_names.forEach(function(model) {
+                        taskDropdown.append($('<option>', {
+                            value: model.value,
+                            text: model.display_text
+                        }));
+                    });
+                },
+                error: function(error) {
+                    console.error('Error fetching model names:', error);
+                }
+            });
+        }
+    });
+</script>
+
 
 {% endblock %}
 
