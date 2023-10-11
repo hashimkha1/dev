@@ -135,6 +135,15 @@ class Plan(models.Model):
         ("Trips", "Trips"),
         ("Other", "Other"),
     ]
+    DAY_CHOICES = [
+        ("Sunday", "Sunday"),
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+    ]
     STATUS_CHOICES = [
         ("Critical", "Critical"),
         ("High", "High"),
@@ -155,6 +164,11 @@ class Plan(models.Model):
         max_length=25,
         choices=STATUS_CHOICES,
         default="Low",
+    )
+    day = models.CharField(
+        max_length=25,
+        choices=DAY_CHOICES,
+        default="Sunday",
     )
     planner = models.ForeignKey(
         User,

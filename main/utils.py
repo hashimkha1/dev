@@ -466,6 +466,7 @@ General = [
 url_mapping = {
         "development": [
             "https://chat.openai.com/",
+            "file:///C:/Users/CHRIS/web/Testing/gitpush/",
             "https://www.codanalytics.net/accounts/credentials/",
             "https://www.codanalytics.net",
             "https://github.com/coachofanalytics/coda",

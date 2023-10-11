@@ -259,9 +259,10 @@ class Task(models.Model):
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
-        related_name="user_assiged",
-        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
-        and Q(is_active=True),
+        related_name="assigned_user",
+        limit_choices_to=Q(is_staff=True) & Q(is_active=True),
+        # limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
+        # and Q(is_active=True),
         default=999,
     )
     activity_name = models.CharField(

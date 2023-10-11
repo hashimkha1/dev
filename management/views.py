@@ -54,12 +54,11 @@ from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from coda_project import settings
+from coda_project.task import dump_data
 
-from management.utils import (email_template,text_num_split,
-                               paytime,payinitial,paymentconfigurations,
-                               deductions,loan_computation,emp_average_earnings,
-                               bonus,best_employee,updateloantable,
-                               addloantable,employee_reward,split_num_str,employee_group_level,lap_save_bonus,
+from management.utils import (email_template,paytime,payinitial,paymentconfigurations,
+                               deductions,loan_computation,bonus,updateloantable,
+                               addloantable,employee_reward,employee_group_level,lap_save_bonus,
                                calculate_total_pay,get_bonus_and_summary
                         )
 from main.utils import countdown_in_month,path_values
@@ -399,18 +398,26 @@ class TaskGroupCreateView(LoginRequiredMixin, CreateView):
 
 
 # ======================TASKS=======================
-def task(request, slug=None, *args, **kwargs):
-    # qs=Info.objects.filter(id=pk)
-    # if qs.exists and qs.count()==1:
-    #     instance=qs.first()
-    # else:
-    #     raise Http404("User does not exist")
-    instance = Task.objects.get_by_slug(slug)
-    if instance is None:
-        raise Http404("Task does not exist")
+def reset_task(request):
+    dump_data()
+    context={
+        "message":f'We are done transfering your tasks to history and resetting the points to zero',
+    }
+    return render(request, "main/errors/generalerrors.html", context)
 
-    context = {"object": instance}
-    return render(request, "management/daf/task.html", context)
+
+# def task(request, slug=None, *args, **kwargs):
+#     # qs=Info.objects.filter(id=pk)
+#     # if qs.exists and qs.count()==1:
+#     #     instance=qs.first()
+#     # else:
+#     #     raise Http404("User does not exist")
+#     instance = Task.objects.get_by_slug(slug)
+#     if instance is None:
+#         raise Http404("Task does not exist")
+
+#     context = {"object": instance}
+#     return render(request, "management/daf/task.html", context)
 
 
 def newtaskcreation(request):
