@@ -120,7 +120,7 @@ def generate_database_response(user_message, app='investing', table='investments
     # Iterate over models from the specified app
     for model in models:
         model_name = model.__name__
-        print(model_name)
+        # print(model_name)
         # Check if the model name matches the specified table
         if model_name.lower() == table.lower():
             fields = model._meta.get_fields()
