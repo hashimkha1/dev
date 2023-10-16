@@ -99,11 +99,14 @@
                     });
                 },
                 error: function(error) {
+                    const taskDropdown = $('#topic');
+                    taskDropdown.empty();  // Clear existing options
                     console.error('Error fetching model names:', error);
                 }
             });
         }
     });
+    
 </script>
 
 

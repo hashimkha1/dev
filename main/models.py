@@ -256,8 +256,8 @@ class ClientAvailability(models.Model):
 class Search(models.Model):
     CAT_CHOICES = [
         ("accounts", "Registration"),
-        ("Application", "application"),
-        ("Finance", "Financial Information"),
+        ("application", "Application"),
+        ("finance", "Financial Information"),
         ("management", "Employees Activities"),
         ("data", "Data Analysis"),
         ("getdata", "Automation"),
