@@ -124,7 +124,7 @@ def search(request):
             instance.searched_by = request.user
             category = form.instance.category
             table = form.instance.topic
-            print('table============',table)
+            # print('table============',table)
             question = form.instance.question
             app = category
             result, = generate_database_response(user_message=question, app=app,table=table)
