@@ -364,7 +364,6 @@ job_support = [
         "Duration": "Ongoing",
         "Lead": "Self/Coach",
         "Link": "https://app.box.com/s/oee1wn85sk2slbc0fkzs2sahe8ob8qhi",
-        # https://app.box.com/s/oee1wn85sk2slbc0fkzs2sahe8ob8qhi
     },
 
     {
@@ -704,21 +703,78 @@ courses = {
                     "description":"<li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Mastering Tableau for Reporting</li><li>Introduction to Power BI</li><li>Advanced Power BI Reporting</li><li>Real-World Reporting Projects</li><li>Certification</li>",
                 },
     ],
+
     "AI": [
                 {
-                    "title":"In the Age of AI:Project Based",
-                    "description":"<li>Introduction to Artificial Intelligence</li><li>Machine Learning Fundamentals</li><li>Supervised/Unsupervised Learning</li><li>Deep Learning and Neural Networks</li><li>Natural Language Processing (NLP)</li><li>Reinforcement Learning</li><li>AI in Industry and Applications</li><li>AI Model Deployment</li><li>Advanced AI Topics</li><li>Hands-on AI Projects</li><li>AI and Future Technologies</li><li>Certification</li>",
+                    "title": "Module 1:CHATGPT|BARD",
+                    "description":"<li>Introduction to AI</li>\
+                                   <li>NLP|Machine Learning</li>\
+                                   <li>Deep Learning|Neural Networks</li>"
+                },
+                {
+                    "title": "Project 1: Job Related Prompting",
+                    "description":"<li>Introduction to Prompting</li>\
+                                   <li>BA|DEV Prompting</li>\
+                                   <li>Image Prompting</li>"
+                },
+                {
+                    "title": "Module 2: Project Description",
+                    "description":"<li>Defining a Problem to Solve With AI\
+                                   <li>Diving Deeper into AI & Machine Learning",
+                },
+                {
+                    "title": "Project 2: Testimonials",
+                    "description":"<li>Use case Definition</li>\
+                                   <li>Requirements and implementation</li>"
+                },
+                {
+                    "title": "Module 3: CODA Data Models",
+                    "description":"<li>CODA Data Structure</li>\
+                                   <li>Data Modelling</li>\
+                                   <li>Role of Data in AI</li>"
+                },
+                {
+                    "title": "Project 3: Search documents & Database",
+                    "description":"<li>Use case Definition</li>\
+                                   <li>Requirements and implementation</li>"
                 },
     ],
-    # "Full Course": [
-    #             {
-    #                 "title":"End to End",
-    #                 "description":"All of the above",
-    #             },
 
-# ]
-
+    "Full Course": [
+                {
+                    "title": "Introduction: Project Defition",
+                    "description":"<li>CODA Employee Productivity  Project\
+                                   <li>Tools|Organization and Installations",
+                },
+                {
+                    "title": "Project A:ETL-Data Cleaning",
+                    "description":"<li>Using Alteryx to create a workflow</li>\
+                                   <li>Advanced Workflow to automate ETL Process</li>"
+                },
+                {
+                    "title": "Project B:Database Management",
+                    "description":"<li>Data Modelling</li>\
+                                   <li>Data Retrieval</li>"
+                },
+                {
+                    "title": "Project C:Reporting",
+                    "description":"<li>Creating Highly Scalable Reports</li>\
+                                   <li>Reporting deployment</li>"
+                },
+                {
+                    "title": "Interview",
+                    "description":"<li>Transcripts</li>\
+                                   <li>Practice Sessions</li>\
+                                   <li>Mock Interviews</li>"
+                },
+                {
+                    "title": "Course Summary",
+                    "description":"<li>Review</li>\
+                                   <li>Certification</li>"
+                },
+    ],
 }
+
 team_members = [
     {
         "title": "Lead Team",
@@ -734,6 +790,7 @@ team_members = [
     },
 
 ]
+
 client_categories = [
     {
         "title": "Job Seekers",

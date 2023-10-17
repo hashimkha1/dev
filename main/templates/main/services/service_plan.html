@@ -101,8 +101,50 @@
       <div class="popover__content">
         <p class="popover__message"></p>
         <div class="popover__box"> 
+          {% if course ==  'AI' %}
+          <h2 class="display-5 text-center">In the Age of AI:Project Based</h2>
+          <hr>
+              <div class="row">
+                {% for info in infos %}
+                    {% if forloop.counter|divisibleby:2 %}
+                        <div class="col-md-6">
+                            <p>{{ info.title }}</p>
+                            <p>{{ info.description|safe }}</p>
+                            <p>{{ info.description1|safe }}</p>
+                        </div>
+                    {% else %}
+                        <div class="col-md-6">
+                            <p>{{ info.title }}</p>
+                            <p>{{ info.description|safe }}</p>
+                            <p>{{ info.description1|safe }}</p>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            {% elif course ==  'Full Course' %}
+            <h2 class="display-5 text-center">End to End: Project Based Training</h2>
+            <hr>
+                <div class="row">
+                  {% for info in infos %}
+                      {% if forloop.counter|divisibleby:2 %}
+                          <div class="col-md-6">
+                              <p>{{ info.title }}</p>
+                              <p>{{ info.description|safe }}</p>
+                              <p>{{ info.description1|safe }}</p>
+                          </div>
+                      {% else %}
+                          <div class="col-md-6">
+                              <p>{{ info.title }}</p>
+                              <p>{{ info.description|safe }}</p>
+                              <p>{{ info.description1|safe }}</p>
+                          </div>
+                      {% endif %}
+                  {% endfor %}
+              </div>
+          {% else %}
           <p>{{ info.title }}</p>
           <p>{{ info.description|safe }}</p>
+          {% endif %}
         </div>
       </div>
       {% endfor %} 
