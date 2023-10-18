@@ -119,10 +119,7 @@ def dba_values():
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')
         # password = os.environ.get('POSTGRESSPASS')
-        host = 'ec2-52-86-115-245.compute-1.amazonaws.com'
-        dbname = 'd8liqmn44tm61v'
-        user = 'ylzxqlnsngttgn'
-        password = '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311'
+        
         
     return host,dbname,user,password  
 
