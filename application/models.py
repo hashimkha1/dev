@@ -235,6 +235,7 @@ class Reporting(models.Model):
         #  limit_choices_to=Q(is_staff=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         # limit_choices_to={"is_staff": True, "is_active": True},
     )
+    name=models.CharField(max_length=50,null=True,blank=True)
     rate=models.CharField(max_length=50,null=True,blank=True)
     interview_type = models.CharField(
         max_length=25,
@@ -256,6 +257,7 @@ class Reporting(models.Model):
     )
     update_date = models.DateTimeField(default=timezone.now, null=True, blank=True)
     comment = models.TextField()
+    link=models.CharField(max_length=500,null=True,blank=True)
 
     def __str__(self):
         return f"{self.id} Reporting"
