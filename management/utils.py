@@ -120,15 +120,13 @@ def payinitial(tasks):
         pointsbalance=0.00
     return (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance,point_percentage)
 
-def paymentconfigurations(PayslipConfig,employee):
+def paymentconfigurations(PayslipConfig, employee):
     try:
-        payslip_config = get_object_or_404(PayslipConfig, user=employee)
+        payslip_config = PayslipConfig.objects.get(user=employee)
     except:
-        payslip_config=PayslipConfig.objects.filter(
-             Q(user__username="admin")| 
-             Q(user__username="coda_info")|
-             Q(user__username="test_user") 
-             ).latest('id')
+        # If the employee does not have a PayslipConfig object, then use a default PayslipConfig object.
+        payslip_config = PayslipConfig.objects.latest('id')
+
     return payslip_config
   
 
