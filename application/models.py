@@ -145,27 +145,21 @@ class Policy(models.Model):
     def __str__(self):
         return f"{self.id} policy"
 
-
 class Rated(models.Model):
-    # class Score(models.IntegerChoices):
-    #     very_Poor = 1
-    #     Poor = 2
-    #     Good = 3
-    #     Very_good = 4
-    #     Excellent = 5
-
     Type = [
         ("Exam", "Exam"),
         ("Symbosium", "Symbosium"),
         ("Exam_ChatGPT", "Exam_ChatGPT"),
         ("Other", "Other"),
     ]
+    TOOL_CHOICES = [
+            ("Alteryx", "Alteryx"),
+            ("Tableau", "Tableau"),
+            ("Database", "Database"),
+            ("Python", "Python"),
+            ("SAS", "SAS"),
+        ]
     TOPIC_CHOICES = [
-        ("Alteryx", "Alteryx"),
-        ("Tableau", "Tableau"),
-        ("Database", "Database"),
-        ("Python", "Python"),
-        ("SAS", "SAS"),
         ("English", "English"),
         ("Kiswahili", "Kiswahili"),
         ("Math", "Math"),
@@ -174,6 +168,7 @@ class Rated(models.Model):
         ("Chemistry", "Chemistry"),
         ("Biology", "Biology"),
         ("GHC", "GHC"),
+        ("History", "History"),
         ("CRE", "CRE"),
         ("Agriculture", "Agriculture"),
         ("Other", "Other"),
@@ -190,6 +185,11 @@ class Rated(models.Model):
     topic = models.CharField(
         max_length=255,
         choices=TOPIC_CHOICES,
+        default='Other'
+    )
+    data_tools = models.CharField(
+        max_length=255,
+        choices=TOOL_CHOICES,
         default='Other'
     )
     uploadlinkurl = models.CharField(max_length=1000,blank=True, null=True)

@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import Textarea
-from data.models import DSU
+from data.models import DSU,ClientAssessment
 from management.models import TaskLinks, Policy, Requirement, Task,Meetings,TaskCategory
 from finance.models import Transaction, Inflow
 from accounts.models import Department
@@ -158,6 +158,41 @@ class ManagementForm(forms.ModelForm):
             "plan": "What is your next plan of action on areas that you have not touched on?",
             "challenge": "What specific questions/Challenges are you facing?",
             "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
+        }
+
+
+
+class ClientAssessmentForm(forms.ModelForm):
+    class Meta:
+        model = ClientAssessment
+        fields = [
+            # "clientname",
+            "first_name",
+            "last_name",
+            "email",
+            "education" ,
+            # "rating_date",
+            "skills",
+            "experience",
+            "projectcharter",
+            "requirementsAnalysis",
+            "reporting",
+            "etl",
+            "database",
+            "testing",
+            "deployment",
+            # "totalpoints"
+        ]
+        labels = {
+            "category": "Category",
+            "type": "Client/Staff?",
+            "first_name":"First Name",
+            "last_name":"Last Name",
+            "email":"Email",
+            # "rating_date":"Date",
+            "education" : "Select your highest educational level?",
+            "skills":"What computer skills|Packages|certications do you have? ",
+            "experience":"Tell us about your past experience, if any",
         }
 
 

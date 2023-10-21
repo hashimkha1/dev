@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.core.validators import MinValueValidator, MaxValueValidator
 from decimal import *
 from django.utils.translation import gettext_lazy as _
 from django.db import models
@@ -506,7 +507,7 @@ class DSU(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     uploaded = models.BooleanField(default=False)
     cohort = models.PositiveIntegerField(default=1)
-
+    
     class Meta:
         verbose_name_plural = "DSU"
 
@@ -516,6 +517,76 @@ class DSU(models.Model):
     def __str__(self):
         return self.category
 
+class ClientAssessment(models.Model):
+    # Job Category.
+    CAT_CHOICES = [
+        ("Interview", "Interview"),
+        ("BI Training", "BI Training"),
+        ("Job Support", "Job Support"),
+        ("Other", "Other"),
+    ]
+    # Education Level .
+    EDU_CHOICES = [
+        ("Degree", "Degree"),
+        ("Some College", "Some College"),
+        ("High School", "High School"),
+        ("Other", "Other"),
+    ]
+    TYPE_CHOICES = [
+        ("client", "client"),
+        ("Staff", "Staff"),
+        ("Other", "Other"),
+    ]
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+    )
+    type = models.CharField(
+        max_length=25,
+        choices=TYPE_CHOICES,
+        default="Other",
+    )
+    education = models.CharField(
+        max_length=25,
+        choices=EDU_CHOICES,
+        default="Other",
+    )
+    first_name = models.CharField(max_length=100, blank=True, null=True)
+    last_name = models.CharField(max_length=100, blank=True, null=True)
+    email = models.CharField(max_length=100, blank=True, null=True)
+    # clientname = models.ForeignKey(
+    #     User,
+    #     on_delete=models.CASCADE,
+    #     limit_choices_to=Q(is_staff=True)
+    #     | Q(is_client=True)
+    #     | Q(is_admin=True)
+    #     | Q(is_superuser=True),
+    #      related_name="rating_clientname",
+    #      default=1,blank=True
+    # )
+    # clientname =  models.ForeignKey(
+    #                 "accounts.CustomerUser", limit_choices_to=Q(is_staff=True)|Q(is_client=True), 
+    #                 on_delete=models.CASCADE, related_name="rating_clientname",default=1,blank=True)
+    education = models.CharField(
+        max_length=25,
+        choices=EDU_CHOICES,
+        default="Other",
+    )
+    rating_date = models.DateTimeField(auto_now_add=True,blank=True,null=True)
+    skills = models.TextField(default="word,excel,powerpoints and data tools etc")
+    experience = models.TextField(default="Tell us more on your experience(internships,projects,current work etc)")
+    projectcharter = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
+    requirementsAnalysis  = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 3
+    reporting = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 5
+    etl = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 5
+    database = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 5
+    testing = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 3
+    deployment = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
+    totalpoints = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.id} ClientAsessment"
 
 class Job_Tracker(models.Model):
     # Job Status.
