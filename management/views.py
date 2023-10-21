@@ -19,6 +19,7 @@ from management.forms import (
     DepartmentForm,
     PolicyForm,
     ManagementForm,
+    ClientAssessmentForm,
     RequirementForm,
     EvidenceForm,
     EmployeeContractForm,
@@ -59,7 +60,7 @@ from coda_project.task import dump_data
 from management.utils import (email_template,paytime,payinitial,paymentconfigurations,
                                deductions,loan_computation,bonus,updateloantable,
                                addloantable,employee_reward,employee_group_level,lap_save_bonus,
-                               calculate_total_pay,get_bonus_and_summary
+                               calculate_total_pay,get_bonus_and_summary,compute_total_points
                         )
 from main.utils import countdown_in_month,path_values
 
@@ -1522,15 +1523,48 @@ def usersession(request, user=None, *args, **kwargs):
 # =============================EMPLOYEE ASSESSMENTS========================================
 @login_required
 def assess(request):
-    if request.method == "POST":
-        form = ManagementForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect("management:assessment")
+    path_list,subtitle,pre_sub_title=path_values(request)
+    if subtitle == 'client_assessment':
+        if request.method == "POST":
+                form = ManagementForm(request.POST, request.FILES)
+                if form.is_valid():
+                    form.save()
+                    return redirect("management:assessment")
+        else:
+            form = ManagementForm()
     else:
-        form = ManagementForm()
+        if request.method == "POST":
+                form = ManagementForm(request.POST, request.FILES)
+                if form.is_valid():
+                    form.save()
+                    return redirect("management:assessment")
+        else:
+            form = ManagementForm()
     return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
+def clientassessment(request):
+    if request.method == "POST":
+        print('hello')
+        form = ClientAssessmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            totalpoints=compute_total_points(form)
+            form.instance.totalpoints = totalpoints
+            form.save()
+            if totalpoints <= 40:
+                message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
+                return redirect("main:service_plans",slug='full-course')
+            else:
+                return redirect('main:layout')
+        else:
+            # Form is not valid, print errors
+            print("Form is not valid. Errors:")
+            for field, errors in form.errors.items():
+                print(f"Field: {field}")
+                for error in errors:
+                    print(f"- {error}")
+    else:
+        form = ClientAssessmentForm()
+    return render(request, "management/departments/hr/clientassessment_form.html", {"form": form})
 
 class AssessListView(ListView):
     # queryset = DSU.objects.all(type="Staff").order_by("-created_at")

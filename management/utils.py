@@ -14,6 +14,41 @@ logger = logging.getLogger(__name__)
 
 # from .models import Task
 
+# ================================client assessment==========================
+def compute_total_points(form):
+    delta=2
+    totalpoints = 0
+    try:
+        pc=form.instance.projectcharter-delta
+    except:
+        pass
+    try:
+        ra=form.instance.requirementsAnalysis-delta
+    except:
+        pass
+    try:
+        rpt=form.instance.reporting-delta
+    except:
+        pass
+    try:
+        etl=form.instance.etl-delta
+    except:
+        pass
+    try:
+        db=form.instance.database-delta
+    except:
+        pass
+    try:
+        test=form.instance.testing-delta
+    except:
+        pass
+    try:
+        dep=form.instance.deployment-delta
+    except:
+        pass
+    totalpoints=pc+ra+rpt+etl+db+test+dep
+    print("totalpoints=====>",totalpoints)
+    return totalpoints
 # ================================apis for payslip==========================
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))
@@ -49,7 +84,6 @@ def employee_reward(tasks):
     return point_percentage
 
 # Usint the number of points to assign employees to different groups 
-
 def employee_group_level(historytasks,TaskGroups):                                          
     if historytasks.exists():
         count = historytasks.aggregate(total_point=Sum('point'))

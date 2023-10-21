@@ -282,6 +282,7 @@ def display_service(request,*args, **kwargs):
     return render(request, "main/services/show_service.html", context)
 
 
+
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     # print("pre_sub_title==========>",pre_sub_title)
@@ -302,7 +303,7 @@ def service_plans(request, *args, **kwargs):
             return redirect('main:layout')
         
     except Service.DoesNotExist:
-        return redirect('main:display_service')
+        return redirect('main:display_service', slug ='data_analysis')
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
@@ -322,6 +323,29 @@ def service_plans(request, *args, **kwargs):
     else:
         return render(request, "main/services/service_plan.html", context)
 
+
+# def full_course(request, *args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     # print("pre_sub_title==========>",pre_sub_title)
+#     try:
+#         service_shown = Service.objects.get(slug="data_analysis")
+#     except Service.DoesNotExist:
+#         return redirect('main:display_service', slug ='data_analysis')
+#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
+#     plans = Pricing.objects.filter(category=category_id)
+
+#     context = {}
+#     context = {
+#         "SITEURL": settings.SITEURL,
+#         "title": category_name,
+#         "packages": packages,
+#         "category_slug": category_slug,
+#         "courses": courses,
+#         "services": plans
+#     }
+#     # print(request.user.category)
+#     return render(request, "main/services/full_course.html", context)
 
 @login_required
 def job_market(request):
