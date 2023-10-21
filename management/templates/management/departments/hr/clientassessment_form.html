@@ -1,0 +1,83 @@
+{%extends "main/base_templates/new_base.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<div class="content-section">
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom  text-center">
+        <p class="lead font-italic mt-4  text-center">
+            CLIENT ASSESSMENT
+        </p>
+      </legend>
+      <div class="row text-center">
+        <div class="col-md-6" id="bada">
+          <div class="card">
+          <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+              <h5><b>Client</b></h5>
+              <hr/>
+              <i><h6>1. Education  &#160 2. Projects </h6></i>
+              <i><p>3. Computer Skills &nbsp 4. Data Tools</p></i>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6" id="bada">
+          <div class="card">
+          <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+              <h5><b>Experience</b></h5>
+              <hr/>
+              <i><h6>1. Project Experience</h6></i>
+              <i><h6> 2. Internshipts</h6></i>
+              <i><h6> 3. Work Experience</h6></i>
+            </div>
+        </div>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-2">{{form.first_name|as_crispy_field }}</div>
+    <div class="col-md-2">{{form.last_name|as_crispy_field }}</div>
+    <div class="col-md-3">{{form.email|as_crispy_field }}</div>
+    <div class="col-md-3">{{form.education|as_crispy_field }}</div>
+    <div class="col-md-1"></div>
+    
+</div>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-5">{{form.skills|as_crispy_field }}</div>
+    <div class="col-md-5">{{form.experience|as_crispy_field }}</div>
+    <div class="col-md-1"></div>
+</div>
+<hr>
+<div class="description text-center">
+    <i><h6> <b>On a scale of 0-10 enter your level of understanding on the following topics</b></h6></i>
+</div">
+<hr>
+<div class="row">
+    <div class="col-md-12">
+            <div class="row">
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5">
+                            {{form.projectcharter|as_crispy_field }}
+                            {{form.requirementsAnalysis|as_crispy_field }}
+                            {{form.reporting|as_crispy_field }}
+                            {{form.etl|as_crispy_field }}
+                        </div>
+                        <div class="col-md-5">
+                            {{form.database|as_crispy_field }}
+                            {{form.testing|as_crispy_field }}
+                            {{form.deployment|as_crispy_field }}
+                        </div>
+                        <div class="col-md-1"></div>
+                </div>
+          </div>
+    </div>
+    </fieldset>
+    <div class="form-group">
+      <button class="btn btn-outline-info" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+{% endblock content%}
