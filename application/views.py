@@ -504,10 +504,12 @@ class TraineeUpdateView(LoginRequiredMixin, UpdateView):
     model = Reporting
     fields = [
             "reporter",
+            "name",
             "rate",
             "reporting_date",
             "method",
             "interview_type",
+            "link",
             "comment",
     ]
     form = ReportingForm()

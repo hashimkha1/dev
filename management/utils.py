@@ -14,6 +14,41 @@ logger = logging.getLogger(__name__)
 
 # from .models import Task
 
+# ================================client assessment==========================
+def compute_total_points(form):
+    delta=2
+    totalpoints = 0
+    try:
+        pc=form.instance.projectcharter-delta
+    except:
+        pass
+    try:
+        ra=form.instance.requirementsAnalysis-delta
+    except:
+        pass
+    try:
+        rpt=form.instance.reporting-delta
+    except:
+        pass
+    try:
+        etl=form.instance.etl-delta
+    except:
+        pass
+    try:
+        db=form.instance.database-delta
+    except:
+        pass
+    try:
+        test=form.instance.testing-delta
+    except:
+        pass
+    try:
+        dep=form.instance.deployment-delta
+    except:
+        pass
+    totalpoints=pc+ra+rpt+etl+db+test+dep
+    print("totalpoints=====>",totalpoints)
+    return totalpoints
 # ================================apis for payslip==========================
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))
@@ -49,7 +84,6 @@ def employee_reward(tasks):
     return point_percentage
 
 # Usint the number of points to assign employees to different groups 
-
 def employee_group_level(historytasks,TaskGroups):                                          
     if historytasks.exists():
         count = historytasks.aggregate(total_point=Sum('point'))
@@ -120,15 +154,13 @@ def payinitial(tasks):
         pointsbalance=0.00
     return (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance,point_percentage)
 
-def paymentconfigurations(PayslipConfig,employee):
+def paymentconfigurations(PayslipConfig, employee):
     try:
-        payslip_config = get_object_or_404(PayslipConfig, user=employee)
+        payslip_config = PayslipConfig.objects.get(user=employee)
     except:
-        payslip_config=PayslipConfig.objects.filter(
-             Q(user__username="admin")| 
-             Q(user__username="coda_info")|
-             Q(user__username="test_user") 
-             ).latest('id')
+        # If the employee does not have a PayslipConfig object, then use a default PayslipConfig object.
+        payslip_config = PayslipConfig.objects.latest('id')
+
     return payslip_config
   
 

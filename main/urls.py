@@ -26,6 +26,7 @@ urlpatterns = [
     # path('services/<str:slug>/', views.bi_services, name='service'),
     path("display_service/<str:slug>/", views.display_service, name="display_service"),
     path("display_plans/<str:slug>/", views.service_plans, name="service_plans"),
+    # path("full_course", views.full_course, name="full_course"),
     path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
     path('price_update/<int:pk>/', views.PriceUpdateView.as_view(template_name='main/form.html'), name='update_price'),
     path('delete/<int:id>/', views.delete_service, name='delete_service'),

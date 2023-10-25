@@ -35,7 +35,7 @@
       </thead>
       {% for upload in  object_list   %}
       <tr>
-      <td><a class="mr-2" href="{% url 'data:questionlist' %}">{{upload.user}}</a></td>
+      <td><a class="mr-2" href="#">{{upload.user}}</a></td>
         {% if upload.user.first_name == "" or  upload.user.last_name == "" %}
              <td>{{upload.user}}</td>
         {% else %}
