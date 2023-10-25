@@ -118,8 +118,7 @@ def dba_values():
         # host = os.environ.get('POSTGRES_DB_NAME')
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')
-        # password = os.environ.get('POSTGRESSPASS')
-        
+        # password = os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -133,25 +132,25 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": dbname,
-        "USER":user,
-        "PASSWORD":password,
-        "HOST": host
-    }
-}
-'''=========== Heroku DB ================'''
 # DATABASES = {
-#     'default': {
-#         "ENGINE": 'django.db.backends.postgresql',
-#         "NAME": 'd8liqmn44tm61v',
-#         "USER": 'ylzxqlnsngttgn',
-#         "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-#         "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": dbname,
+#         "USER":user,
+#         "PASSWORD":password,
+#         "HOST": host
 #     }
 # }
+'''=========== Heroku DB ================'''
+DATABASES = {
+    'default': {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'd8liqmn44tm61v',
+        "USER": 'ylzxqlnsngttgn',
+        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+    }
+}
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
@@ -309,4 +308,3 @@ def source_target():
 # # Load Google Drive API credentials
 # with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
 #     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
-
