@@ -47,19 +47,19 @@ def dates_functionality():
 
 
 """======= Google Drive Code ========"""
-SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-SERVICE_ACCOUNT_FILE = '/home/ip-d/Desktop/Amit/Chris_Uat/uat_main/coda-401009-f39d11116371.json'
 
-credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
-
-drive_service = build('drive', 'v3', credentials=credentials)
-http = httplib2.Http(timeout=30) 
-
-# Retry handling can also be added for robustness
-http = httplib2.Http(timeout=30)
 
 def upload_image_to_drive(image_path, folder_id,image_name):
+    
+    SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+    SERVICE_ACCOUNT_FILE = '/home/ip-d/Desktop/Amit/Chris_Uat/coda-401009-f39d11116371.json'
+
+    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+    http = httplib2.Http(timeout=30) 
+
     file_metadata = {
         'name': image_name,
         'parents': [folder_id],  # Optional: To save the image in a specific folder.
