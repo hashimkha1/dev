@@ -10,7 +10,7 @@ from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
-                    generate_database_response,generate_chatbot_response
+                    generate_database_response,generate_chatbot_response,upload_image_to_drive
 )
 from .models import Testimonials
 from getdata.models import Logs
@@ -525,6 +525,9 @@ def plan_urls(request):
     else:
         return render(request, "main/errors/404.html", context)
 
+
+
+
 #========================Internal Team & Clients==============================
 
 def team(request):
@@ -632,6 +635,12 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
         # form.instance.username = self.request.user
+        # Replace 'folder_id' with the ID of the folder where you want to save the image.
+        image_name = form.cleaned_data.get('image').name
+        folder_id = '19-2AdMGwlQ8Lo5iyzZA-3pTTTis9d6fO'
+        image_path = form.cleaned_data.get('image').path
+        print('image_name',image_name,"---------------------","image_path",image_path)
+        upload_image_to_drive(image_path, folder_id,image_name)
         return super().form_valid(form)
 
     def get_success_url(self):
