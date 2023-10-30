@@ -663,24 +663,37 @@ def task_payslip(request, employee=None, *args, **kwargs):
     payslip_config=paymentconfigurations(PayslipConfig,employee)
 
     tasks =TaskHistory.objects.filter(employee=employee,submission__month=selected_month,submission__year=selected_year)
-    (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
+       # Check if the tasks object is None. If it is, then set the variables to 0.
+    if tasks is not None and len(tasks) == 6:
+                (num_tasks, points, mxpoints, pay, GoalAmount, pointsbalance) = tasks
+    else:
+        num_tasks = 0
+        points = 0
+        mxpoints = 0
+        pay = 0
+        GoalAmount = 0
+        pointsbalance = 0
+
+    # (num_tasks,points,mxpoints,pay,GoalAmount,pointsbalance)=payinitial(tasks)
     total_pay = 0
     for task in tasks:
         total_pay = total_pay + task.get_pay
 
-    # Deductions & Bonus
-    laptop_bonus,laptop_saving=lap_save_bonus(userprofile,payslip_config)
-    total_deduction=deductions(employee,user_data,payslip_config,total_pay)[-1]
-    food_accomodation,computer_maintenance,health,kra,lap_saving,loan_payment,total_deductions=deductions(employee,user_data,payslip_config,total_pay)
+   # Deductions & Bonus
+    laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
+    total_deduction = deductions(employee, user_data, payslip_config, total_pay)[-1]
+
+    food_accomodation, computer_maintenance, health, kra, laptop_saving, loan, total_deduction  = deductions(employee, user_data, payslip_config, total_pay)
+
     loan = Decimal(total_pay) * Decimal("0.2")
 
     # Deductions & Bonus
     laptop_bonus, laptop_saving = lap_save_bonus(userprofile, payslip_config)
     # ================BONUS============================
     *_,sub_bonus=bonus(tasks,total_pay,payslip_config)
-    food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment, total_deductions = deductions(
-        user_data, payslip_config, total_pay)
-    loan = Decimal(total_pay) * Decimal("0.2")
+    # food_accomodation, computer_maintenance, health, kra, lap_saving, loan_payment = deductions(
+    #     user_data, payslip_config, total_pay)
+    # loan = Decimal(total_pay) * Decimal("0.2")
 
     # Net Pay
     total_bonus = sub_bonus + laptop_bonus
@@ -699,7 +712,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
     for task in tasks:
         month_set.add(str(task.submission.month) + str(task.submission.year))
 
-    total_lap_saving = len(month_set) * lap_saving
+    total_lap_saving = len(month_set) 
     if total_lap_saving >= 20000:
         total_lap_saving = 20000
         lap_saving = 0
@@ -727,7 +740,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
         "selected_year":selected_year,
         "form": form,
         # deductions
-        "laptop_saving": lap_saving,
+        # "laptop_saving": lap_saving,
         "total_laptop_saving": total_lap_saving,
         "computer_maintenance": computer_maintenance,
         "food_accomodation": food_accomodation,
