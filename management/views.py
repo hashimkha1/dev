@@ -121,8 +121,11 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
 def meetings(request):
-    # sessions=Meetings.objects.all().order_by("created_at")
-    sessions = Meetings.objects.filter(is_active=True).order_by("created_at")
+    if request.user.is_client:
+        sessions = Meetings.objects.filter(is_active=True,group="client").order_by("created_at")
+    else:
+        sessions=Meetings.objects.all().order_by("created_at")
+
     categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
     meeting_categories=sorted(categories_list)
     context={
@@ -1531,7 +1534,6 @@ def assess(request):
 
 def clientassessment(request):
     if request.method == "POST":
-        print('hello')
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             totalpoints=compute_total_points(form)

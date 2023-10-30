@@ -307,7 +307,7 @@ def mycontract(request, *args, **kwargs):
 			if client_data.category == 3:
 				return redirect('main:job_support')
 			elif client_data.category == 4:
-				return redirect('main:full_course')
+				return redirect('main:service_plans',slug="full-course")
 			else:
 				return redirect('main:bi_services')
 
