@@ -658,11 +658,12 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     # fields ="__all__"
     fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
+        instance = form.save()
         # form.instance.username = self.request.user
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
         image_name = form.cleaned_data.get('image').name
-        folder_id = '19-2AdMGwlQ8Lo5iyzZA-3pTTTis9d6fO'
-        image_path = form.cleaned_data.get('image').path
+        folder_id = '1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+        image_path = instance.image.path
         print('image_name',image_name,"---------------------","image_path",image_path)
         upload_image_to_drive(image_path, folder_id,image_name)
         return super().form_valid(form)

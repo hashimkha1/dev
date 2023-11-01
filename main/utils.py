@@ -52,7 +52,7 @@ def dates_functionality():
 def upload_image_to_drive(image_path, folder_id,image_name):
     
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-    SERVICE_ACCOUNT_FILE = '/home/ip-d/Desktop/Amit/Chris_Uat/coda-401009-f39d11116371.json'
+    SERVICE_ACCOUNT_FILE = '/home/ip-d/Desktop/Amit/Chris_Uat/uat_main/main/google_drive_credetials/google_credentials.json'
 
     credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
