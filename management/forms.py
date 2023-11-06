@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import Textarea
-from data.models import DSU
+from data.models import DSU,ClientAssessment
 from management.models import TaskLinks, Policy, Requirement, Task,Meetings,TaskCategory
 from finance.models import Transaction, Inflow
 from accounts.models import Department
@@ -161,6 +161,41 @@ class ManagementForm(forms.ModelForm):
         }
 
 
+
+class ClientAssessmentForm(forms.ModelForm):
+    class Meta:
+        model = ClientAssessment
+        fields = [
+            # "clientname",
+            "first_name",
+            "last_name",
+            "email",
+            "education" ,
+            # "rating_date",
+            "skills",
+            "experience",
+            "projectcharter",
+            "requirementsAnalysis",
+            "reporting",
+            "etl",
+            "database",
+            "testing",
+            "deployment",
+            # "totalpoints"
+        ]
+        labels = {
+            "category": "Category",
+            "type": "Client/Staff?",
+            "first_name":"First Name",
+            "last_name":"Last Name",
+            "email":"Email",
+            # "rating_date":"Date",
+            "education" : "Select your highest educational level?",
+            "skills":"What computer skills|Packages|certications do you have? ",
+            "experience":"Tell us about your past experience, if any",
+        }
+
+
 class RequirementForm(forms.ModelForm):
     class Meta:
         model = Requirement
@@ -213,6 +248,11 @@ class RequirementForm(forms.ModelForm):
 
 
 class EvidenceForm(forms.ModelForm):
+    requirement = forms.ChoiceField(
+        choices=[],  # Initialize with an empty list, will be populated dynamically
+        required=False,
+        label="Select Requirement"
+    )
     class Meta:
         model = TaskLinks
         fields = [
@@ -226,20 +266,35 @@ class EvidenceForm(forms.ModelForm):
             "linkpassword",
             "is_active",
             "is_featured",
+            "requirement",
         ]
 
         labels = {
             "task ": "Task Name",
             "added_by": "Your Username",
-            "link_name": "Enter link name",
+            "link_name": "Enter Topic name",
             "linkpassword": "If Links Needs Password Enter Password here:",
             "description": "What is this link/Evidence about",
             "doc": "Upload file/document if possible",
             "link": "Upload link/paste your link below",
             "linkpassword": "Provide Password if necessary",
+            "requirement":"Select Requirement",
             # "is_active ":"Is this link still active "
         }
         widgets = {"description": Textarea(attrs={"cols": 60, "rows": 2})}
+
+    def __init__(self, *args, **kwargs):
+        request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+    
+        if request and request.user.is_authenticated:
+            # self.fields['requirement'].queryset = Requirement.objects.filter(assigned_to=request.user)
+
+            requirements = Requirement.objects.filter(assigned_to=request.user)
+            requirement_choices = [(req.id, f"CODA000{req.id}") for req in requirements]
+            requirement_choices.insert(0, ('', 'Select Requirement ID'))
+            self.fields['requirement'].choices = requirement_choices
+
 
         #  If you have to exclude some features you put them here
         # exclude = (

@@ -10,10 +10,11 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews,
+                    client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response
 )
 from .models import Testimonials
+from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
@@ -37,7 +38,17 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
+<<<<<<< HEAD
 import logging
+=======
+from django.http import JsonResponse
+from django.apps import apps
+from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
+from langchain.schema import HumanMessage
+import os
+
+>>>>>>> origin/main_prod
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -90,11 +101,114 @@ def layout(request):
         "services": services,
         "posts": testimonials,
         "title": "layout",
-         "selected_class": selected_class,
+        "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
 
 
+<<<<<<< HEAD
+=======
+
+def fetch_model_table_names(request):
+    app_name = request.GET.get('category', None)  # Replace with the actual app name
+    app_models = apps.get_app_config(app_name).get_models()
+    # Get the actual model table names based on the application
+    # table_names = [model.__name__ for model in app_models]
+    table_names = [{'value': model.__name__, 'display_text': model._meta.verbose_name.replace('_', ' ').capitalize()} for model in app_models]
+    return JsonResponse({'model_table_names': table_names})
+
+
+# =====================TESTIMONIALS  VIEWS=======================================
+@login_required
+def search(request):
+    instructions = [
+        {"topic": "Review", "description": "Select Your User Category."},
+        {"topic": "Sample", "description": "Select Topic Category"},
+        {"topic": "copy", "description": "Enter topic-related question"},
+        {"topic": "Submit", "description": "Click on Submit Review!"},
+    ]
+    values = ["management", "investing", "main", "getdata", "data", "projectmanagement"]
+
+    if request.method == "POST":
+        form = SearchForm(request.POST, request.FILES)
+        if form.is_valid():
+            data = form.cleaned_data
+            instance = form.save(commit=False)
+            instance.searched_by = request.user
+            category = form.instance.category
+            table = form.instance.topic
+            # print('table============',table)
+            question = form.instance.question
+            app = category
+            result, = generate_database_response(user_message=question, app=app,table=table)
+            if result:
+                # This one is simple hu
+                # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                chat_model = ChatOpenAI(openai_api_key='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')
+                messages = [HumanMessage(content=str(result))]
+                # response_llm = llm.predict_messages(messages)
+                chat_model_result = chat_model.predict_messages(messages)
+                # response1 = response_llm.content.split(':', 1)[-1].strip()
+                response = chat_model_result.content
+            else:
+                response = None
+
+            context = {
+                "values": values,
+                "instructions": instructions,
+                "response": response,
+                "form": form
+            }
+
+        return render(request, "main/snippets_templates/search.html", context)
+    else:
+        form = SearchForm()
+        context = {
+            "values": values,
+            "instructions": instructions,
+            "form": form
+        }
+        return render(request, "main/snippets_templates/search.html", context)
+
+
+def get_respos(request):
+    user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
+    
+    if not user_message:
+        return JsonResponse({'response': 'Invalid user message'})
+    try:
+        database_response = generate_database_response(user_message)
+        if database_response:
+            # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+            messages = [HumanMessage(content=str(database_response))]
+            response_llm = llm.predict_messages(messages)
+            # chat_model_result = chat_model.predict_messages(messages)
+            return JsonResponse({'response': response_llm.content})
+        
+        chatbot_response = generate_chatbot_response(user_message)
+        if chatbot_response:
+            return JsonResponse({'response': chatbot_response})
+        else:
+            contact_model = DSU.objects.filter(challenge=user_message).first()
+            if not contact_model:
+                form = ContactForm(request.POST, request.FILES)
+                dsu_instance = form.save(commit=False)
+                dsu_instance.trained_by=request.user
+                dsu_instance.task='NA',
+                dsu_instance.plan='NA',
+                dsu_instance.challenge = user_message
+                dsu_instance.save()
+                return JsonResponse({'response': "Oops! It seems I haven't learned that one yet, but don't worry. Our team will get back to you shortly with the information you need. Thanks for your patience!"})
+            else:
+                return JsonResponse({'response': str(contact_model.task)})
+         
+    except Exception as e:
+        # Handle exceptions and return an appropriate JSON response
+        return JsonResponse({'error': str(e)})
+
+
+>>>>>>> origin/main_prod
 # =====================SERVICES  VIEWS=======================================
 class ServiceCreateView(LoginRequiredMixin, CreateView):
     model = Service
@@ -182,10 +296,14 @@ def display_service(request,*args, **kwargs):
     return render(request, "main/services/show_service.html", context)
 
 
+
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     # print("pre_sub_title==========>",pre_sub_title)
-    payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+    try:
+        payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+    except:
+        payment_details=[]
     try:
         if pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
@@ -199,7 +317,7 @@ def service_plans(request, *args, **kwargs):
             return redirect('main:layout')
         
     except Service.DoesNotExist:
-        return redirect('main:display_service')
+        return redirect('main:display_service', slug ='data_analysis')
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
@@ -208,7 +326,9 @@ def service_plans(request, *args, **kwargs):
     context = {
         "SITEURL": settings.SITEURL,
         "title": category_name,
+        "packages": packages,
         "category_slug": category_slug,
+        "courses": courses,
         "services": plans
     }
     # print(request.user.category)
@@ -217,6 +337,29 @@ def service_plans(request, *args, **kwargs):
     else:
         return render(request, "main/services/service_plan.html", context)
 
+
+# def full_course(request, *args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     # print("pre_sub_title==========>",pre_sub_title)
+#     try:
+#         service_shown = Service.objects.get(slug="data_analysis")
+#     except Service.DoesNotExist:
+#         return redirect('main:display_service', slug ='data_analysis')
+#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
+#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
+#     plans = Pricing.objects.filter(category=category_id)
+
+#     context = {}
+#     context = {
+#         "SITEURL": settings.SITEURL,
+#         "title": category_name,
+#         "packages": packages,
+#         "category_slug": category_slug,
+#         "courses": courses,
+#         "services": plans
+#     }
+#     # print(request.user.category)
+#     return render(request, "main/services/full_course.html", context)
 
 @login_required
 def job_market(request):
@@ -233,7 +376,11 @@ def newpost(request):
             return redirect('main:layout')
     else:
         form = PostForm()
-        quest = "write 3 full paragraphs each on how good my data analyst coach was" # pick a question bunch of questions
+        topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
+
+        # Randomly select a title from the list
+        selected_title = random.choice(topics)
+        quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
         result = buildmodel(question=quest)
 
         if result is None:
@@ -242,7 +389,6 @@ def newpost(request):
             response=selected_description
         else:
             response=result
-        # form.instance.content = response
         context={
             "response" : response,
             "form": form
@@ -341,6 +487,8 @@ def plans(request):
         "plan_categories": plan_categories,
         "delivery_date": delivery_date,
         "day_name": day_name,
+        "message": "You are not a super user",
+
     }
     if request.user.is_superuser:
         return render(request, "main/plans.html", context)

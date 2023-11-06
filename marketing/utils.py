@@ -7,6 +7,7 @@ import datetime
 from management.models import Whatsapp
 
 
+
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))
     # logger.debug(f'sum_of_tasks: {sum_of_tasks}')
@@ -15,7 +16,6 @@ def best_employee(task_obj):
     best_users = tuple(sum_of_tasks.filter(sum=max_point).values_list('employee__username'))
     # logger.debug(f'best_users: {best_users}')
     return best_users
-
 
 
 # def runwhatsapp(whatsapp):

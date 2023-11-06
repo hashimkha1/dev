@@ -25,6 +25,8 @@ from django.contrib.auth import views as auth_views
 from accounts import views as account_views
 from coda_project import settings
 
+
+
 from mail.search_mail import parse_mail
 from . import views
 
@@ -48,6 +50,7 @@ urlpatterns = [
         ),
         name="account-logout",
     ),
+    
     path(
         "password-reset/",
         auth_views.PasswordResetView.as_view(

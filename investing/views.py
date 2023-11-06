@@ -1,3 +1,5 @@
+from collections import Counter
+from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
@@ -8,7 +10,7 @@ from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
 from .utils import (compute_pay,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories,
+                    computes_days_expiration,get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
@@ -43,9 +45,6 @@ User=get_user_model
 # Create your views here.
 def home(request):
     return render(request, 'main/home_templates/investing_home.html', {'title': 'home'})
-
-# def coveredcalls(request):
-#     return render(request, 'investing/covered_call.html', {'title': 'covered Calls'})
 
 def training(request):
     return render(request, 'investing/training.html', {'title': 'training'})
@@ -119,12 +118,23 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
+def optionlist(request):
+    default_title = "creditspread"
+    title = request.GET.get('title', default_title)
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", {"title": title})
+
+
+
 @login_required
 def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
+    # Taking distinct symbols which meets wash sale rule.
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
+    # Taking distinct symbols which in oversold/overbought.
+    distinct_overboughtsold_symbols = list(set([
+        obj.symbol for obj in OverBoughtSold.objects.all()]))
     # Query to count distinct symbols for each model
     covered_calls_count=covered_calls.objects.all().count()
     shortputdata_count=ShortPut.objects.all().count()
@@ -164,30 +174,99 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
         all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
 
-        filtered_stockdata = [
+        filtered_stockdata_by_returns = [
             x for x in stockdata if x.symbol not in all_return_symbols or
             (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
         ]
+        filtered_stockdata_by_oversold = [
+            x for x in filtered_stockdata_by_returns if x.symbol in distinct_overboughtsold_symbols
+        ]
+
         context = {
-            "data": filtered_stockdata,
+            "data": filtered_stockdata_by_oversold,
             "covered_calls_count":covered_calls_count,
             "shortputdata_count":shortputdata_count,
             "credit_spread_count":credit_spread_count,
             "days_to_expiration": days_to_expiration,
+            "categories": investment_rules,
             "subtitle": sub_title,
             "pre_sub_title": pre_sub_title,
             'title': page_title,  # Using renamed title
             "get_edit_url": get_edit_url,
             "url_name": url_name,
         }
-        return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
-
     else:
         context = {
-            "title": "STOCKS ERROR",
-            "message": 'Hi, No valid expiry dates found in stockdata..'
+            "data": [],  # Empty data when stockdata does not exist
+            "days_to_expiration": 0,
+            "subtitle": sub_title,
+            "pre_sub_title": pre_sub_title,
+            'title': page_title,
+            "get_edit_url": "",
+            "url_name": url_name,
         }
-        return render(request, "main/errors/generalerrors.html", context)
+
+    if request.method == 'GET':
+        selected_symbol = request.GET.get('symbol')
+       
+        # Filter data from each model based on the selected symbol
+        credit_spread_data = credit_spread.objects.filter(symbol=selected_symbol)
+        short_put_data = ShortPut.objects.filter(symbol=selected_symbol)
+        covered_calls_data = covered_calls.objects.filter(symbol=selected_symbol)
+
+            # Fetch distinct symbols from all three models
+        symbols_from_credit_spread = list(credit_spread.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_short_put = list(ShortPut.objects.values_list('symbol', flat=True).distinct())
+        symbols_from_covered_calls = list(covered_calls.objects.values_list('symbol', flat=True).distinct())
+
+            # Consolidate the unique symbols
+        all_symbols = list(set(
+                symbols_from_credit_spread + symbols_from_short_put + symbols_from_covered_calls
+            ))
+        selected_symbol_action = None
+        selected_symbol_stock_price = None
+        selected_symbol_strike_price = None
+        selected_symbol_days_to_expiry = None
+        selected_symbol_annualized_return = None
+        selected_symbol_raw_return  = None
+        selected_symbol_expiry  = None
+        selected_symbol_earnings_date  = None
+        if covered_calls_data.exists():
+            selected_symbol_action = covered_calls_data.first().action
+            selected_symbol_stock_price  = covered_calls_data.first().stock_price
+            selected_symbol_strike_price = covered_calls_data.first().strike_price 
+            selected_symbol_days_to_expiry = covered_calls_data.first().days_to_expiry
+            selected_symbol_annualized_return = covered_calls_data.first().annualized_return
+            selected_symbol_earnings_date  = covered_calls_data.first().earnings_date 
+            selected_symbol_expiry = covered_calls_data.first().expiry 
+            selected_symbol_raw_return = covered_calls_data.first().raw_return
+            
+            # Update the context with the filtered data and symbols
+        context.update({
+                'credit_spread_data': credit_spread_data,
+                'short_put_data': short_put_data,
+                'covered_calls_data': covered_calls_data,
+                'symbols': all_symbols,
+                'selected_symbol':selected_symbol,
+                'selected_symbol_action':selected_symbol_action,
+                'selected_symbol_stock_price':selected_symbol_stock_price,
+                'selected_symbol_strike_price':selected_symbol_strike_price,
+                'selected_symbol_days_to_expiry':selected_symbol_days_to_expiry,
+                'selected_symbol_annualized_return':selected_symbol_annualized_return,
+                'selected_symbol_earnings_date ':selected_symbol_earnings_date ,
+                'selected_symbol_expiry ':selected_symbol_expiry ,
+                'selected_symbol_raw_return':selected_symbol_raw_return,
+                
+            })
+
+
+    return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
+    # else:
+    #     context = {
+    #         "title": "STOCKS ERROR",
+    #         "message": 'Hi, No valid expiry dates found in stockdata..'
+    #     }
+    # return render(request, "main/errors/generalerrors.html", context)
 
 
 @login_required
@@ -363,6 +442,7 @@ def ticker_measures(request):
     }
     return render(request, "investing/ticker_data.html", context)
 
+
 @login_required
 def oversoldpositions(request,symbol=None):
     current_date_str = timezone.now().strftime('%Y-%m-%d')
@@ -372,16 +452,12 @@ def oversoldpositions(request,symbol=None):
     # overboughtsold_records = Oversold.objects.all()
     overboughtsold_records = OverBoughtSold.objects.all()
     
-    condition = None
-    for record in overboughtsold_records:
-        condition='oversold' if record.condition_integer == 1 else 'overbought'
-        # print(record.RSI,record.condition_integer,condition)
 
     if symbol is None:
         # Handle GET requests (for first-time loading)
         context = {
             "overboughtsold": overboughtsold_records,
-            "condition":condition,
+            # "condition":condition,
             "title": "Click On a Symbol",
             "financial_categories": financial_categories,
         }
@@ -392,7 +468,7 @@ def oversoldpositions(request,symbol=None):
     
         context = { 
             "overboughtsold": overboughtsold_records,
-            "condition": condition,
+            # "condition": condition,
             "ticker_data": ticker_measures,
             "title":  f"Fetched Financial Data(Yahoo)-{ticker_symbol}",
             "financial_categories": financial_categories,

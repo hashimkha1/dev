@@ -24,13 +24,6 @@ urlpatterns = [
     path('refresh_token_goto/', refresh_token_function, name='refresh_token_function'),
     path('getmeetingresponse/', getmeetingresponse, name='getmeetingresponse'),
     path('meetingFormView/', meetingFormView, name='meetingFormView'),
-
-    # path('gotomeeting/',views.meetingFormView,name='meetingform1'),
-    # # trying a url pattern for dates
-    # # gotomeetingresult
-    # path('gotomeetingresult/',views.gotomeetingresult,name='gotomeetingresult'),
-    # #meeting detail
-    # re_path(r'^gotomeeting/(?P<meeting_id>[0-9]+)$', views.meetingView6, name='gotomeetingmeeting')
     path('testselinum/', views.selinum_test, name='testselinum'),
     path('all_logs/', views.LogsViewSet, name='all_logs'),
 ]

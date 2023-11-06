@@ -1,8 +1,5 @@
-from django.urls import reverse, reverse_lazy
 from django.db.models import Q
-from django.db.models.aggregates import Avg, Sum
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
+from django.db.models.aggregates import  Sum
 from datetime import date
 from accounts.models import CustomerUser
 

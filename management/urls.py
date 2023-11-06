@@ -29,7 +29,8 @@ urlpatterns = [
     path("read_employee_contract/", views.read_employee_contract, name="read_employee_contract"),
     path("confirm_employee_contract/", views.confirm_employee_contract, name="confirm_employee_contract"),
     path('tasks/', views.tasklist, name='tasks'),
-    # path('tasks/filterbycategory', views.filterbycategory, name='filterbycategory'),
+    path("reset_tasks/",views.reset_task,name="reset_tasks"),
+    path('score_report/', views.score_report, name='score_report'),
     # path('filterbycategorytag', views.filterbycategorytag, name='filterbycategorytag'),
     # path('newlink/', TaskCreateView.as_view(), name='newlink'),
     path('tasks/<int:pk>/', TaskDetailView.as_view(), name='taskdetail'),
@@ -44,15 +45,12 @@ urlpatterns = [
     path('task_employee/<str:username>/',views.usertaskhistory, name='user_task_history'),
     # path('task_employee/<int:pk>/',views.usertaskhistory, name='user_task_history'),
 
-    path('payslip/<str:username>/',views.pay, name='user_payslip'),
-    # path('payslip/<str:username>/',views.payslip, name='user_payslip'),
-
+    path('payslip/<str:username>/',views.usertask, name='user_payslip'),
     path('task_payslip/<str:username>/',views.task_payslip, name='task_payslip'),
     path('newtask/', views.newtaskcreation, name='newtask'),
     path('gettasksuggestions/', views.gettasksuggestions, name='gettasksuggestions'),
     path('verifytaskgroupexists/', views.verifytaskgroupexists, name='verifytaskgroupexists'),
 
-    #path('tasks/<str:username>/', UserTaskListView.as_view(), name='user-tasks'),
     path('task/<int:pk>/update/', TaskUpdateView.as_view(), name='updatetask'),
     path('usertask/<int:pk>/update/', UsertaskUpdateView.as_view(), name='userupdatetask'),
     path('gettotalduration/', views.gettotalduration, name='gettotalduration'),
@@ -62,6 +60,7 @@ urlpatterns = [
     path('contract/',views.contract, name='contract'),
 
     path('assess/', views.assess, name='assess'),
+    path('clientassessment/', views.clientassessment, name='clientassessment'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),
     path('session/<int:pk>/', views.SessionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='updatesession'),
@@ -94,7 +93,6 @@ urlpatterns = [
     path('add_justification/', views.add_requirement_justification, name='addjustification'),
 
 
-    # path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("create_advertisement/", views.AdsCreateView.as_view(), name="create_advertisement"),
     path("advertisement/", views.AdsContent.as_view(), name="advertisement"),
     path("update_advertisement/<int:pk>/", views.AdsUpdateView.as_view(), name="update_advertisement"),

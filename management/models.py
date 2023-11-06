@@ -259,9 +259,10 @@ class Task(models.Model):
     employee = models.ForeignKey(
         User,
         on_delete=models.RESTRICT,
-        related_name="user_assiged",
-        limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
-        and Q(is_active=True),
+        related_name="assigned_user",
+        limit_choices_to=Q(is_staff=True) & Q(is_active=True),
+        # limit_choices_to=Q(is_staff=True) | Q(is_admin=True) | Q(is_superuser=True)
+        # and Q(is_active=True),
         default=999,
     )
     activity_name = models.CharField(
@@ -743,6 +744,12 @@ class Whatsapp(models.Model):
     
 
 class Meetings(models.Model):
+    Group = [
+        ("clients", "clients"),
+        ("internal", "internal"),
+        ("external", "external"),
+        ("Other", "Other"),
+    ]
     class Frequecy(models.IntegerChoices):
         Daily = 1,
         Weekly = 2
@@ -753,6 +760,11 @@ class Meetings(models.Model):
         to=Department, on_delete=models.CASCADE, default=Department.get_default_pk)
     category = models.ForeignKey(
         to=TaskCategory, on_delete=models.CASCADE
+    )
+    group = models.CharField(
+        max_length=255,
+        choices=Group,
+        default='Other'
     )
     meeting_topic = models.CharField(max_length=100, null=True, blank=True)
     meeting_id = models.CharField(max_length=100, null=True, blank=True)
@@ -767,5 +779,3 @@ class Meetings(models.Model):
 
     def __str__(self):
         return self.meeting_topic
-
-    

@@ -101,3 +101,4 @@ wikipedia==1.4.0
 wrapt==1.12.1
 zope.interface==5.4.0
 yfinance==0.1.63
+langchain

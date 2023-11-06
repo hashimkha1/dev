@@ -546,6 +546,79 @@ class DC48_Inflow(models.Model):
             return total_amt_paid
             
 
+class Budget(models.Model):
+    CLIENTS_CHOICES = [
+        ("DYC", "Diaspora Youth Caucus"),
+        ("DC48KENYA", "DC48KENYA"),
+        ("Other", "Other"),
+    ]
+    CAT_CHOICES = [
+        ("Conference Facilities","Conference Facilities"),
+        ("Food","Food"),
+        ("Entertainment","Entertainment"),
+        ("Travel","Travel"),
+        ("Accomodation","Accomodation"),
+        ("Awards","Awards"),
+        ("Media Coverage","Media Coverage"),
+        ("Other", "Other"),
+    ]
+
+    clients_category = models.CharField(
+        max_length=25,
+        choices=CLIENTS_CHOICES,
+        default="Other",
+    )
+    budget_lead = models.ForeignKey(
+        "accounts.CustomerUser", 
+        on_delete=models.CASCADE, 
+        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
+        related_name="budget_lead")
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+        
+    )
+    item = models.CharField(max_length=100, null=True, default=None)
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(default=timezone.now)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
+    unit_price = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=None
+    )
+    description = models.TextField(max_length=1000, default=None)
+    is_active=models.BooleanField(default=True,null=True,blank=True)
+    receipt_link = models.CharField(max_length=100, blank=True, null=True)
+
+    class Meta:
+        ordering = ["category"]
+
+    def get_absolute_url(self):
+        return reverse("management:inflow-detail", kwargs={"pk": self.pk})
+
+    @property
+    def days(self):
+        days = (self.end_date - self.start_date).days
+        return days
+    
+    @property
+    def receipturl(self):
+        if self.receipt_link is not None:
+            urlreceipt = self.receipt_link
+            return urlreceipt
+        else:
+            return redirect('main:layout')
+
+    @property
+    def ksh_amount(self):
+        try:
+            total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
+        except:
+            total_amount = 0
+        return total_amount
+    
+
 class LoanUsers(models.Model):
     user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     is_loan = models.BooleanField(default=True)

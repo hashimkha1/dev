@@ -1,11 +1,20 @@
-{% load static %}
+<!-- {% load static %}
 {% block content %}
 {% csrf_token %}
+<<<<<<< HEAD
 
 <body>  
 <div class="chatbot-wrapper">
     <div class="chatbox" >
         <div class="chatbox__support" style="height: 500px;">
+=======
+<link rel="stylesheet" type="text/css" href="{% static 'main/css/chatbot.css' %}">
+<body>
+<div class="container">
+    
+    <div class="chatbox">
+        <div class="chatbox__support">
+>>>>>>> origin/main_prod
             <div class="chatbox__header">
                 <div class="chatbox__image--header">
                     <img src="https://img.icons8.com/color/48/000000/circled-user-female-skin-type-5--v1.png" alt="image">
@@ -264,7 +273,8 @@
             const requestData = {
                 userMessage: userMessage,
             };
-            const baseUrl = 'http://127.0.0.1:8000/get_respos';
+            // const baseUrl = 'http://127.0.0.1:8000/get_respos';
+            const baseUrl = 'https://www.codanalytics.net/get_respos';
             const queryString = new URLSearchParams(requestData).toString();
             const apiUrl = `${baseUrl}?${queryString}`;
             fetch(apiUrl) 
@@ -309,4 +319,4 @@
 </script>
 </body>
 
-{% endblock %}
+{% endblock %} -->

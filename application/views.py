@@ -107,7 +107,6 @@ def firstinterview(request):
         {"title": "first_interview"},
     )
 
-
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
@@ -304,9 +303,6 @@ def rate(request):
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
 
-
-
-
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
@@ -391,7 +387,10 @@ def ratewid(request,pk):
 def enter_score(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
+        print(form.errors)
         if form.is_valid():
+            print("hello")
+            print(form.instance.data_tools)
             form.save()
             return redirect("application:userscores", request.user )
     else:
@@ -424,6 +423,7 @@ def userscores(request, user=None, *args, **kwargs):
     scores_by_subject = {}
 
     total_scores = {}
+    user_total_score=0
     for rating in user_ratings:
         employeename = rating.employeename.username
         type = rating.type
@@ -508,10 +508,12 @@ class TraineeUpdateView(LoginRequiredMixin, UpdateView):
     model = Reporting
     fields = [
             "reporter",
+            "name",
             "rate",
             "reporting_date",
             "method",
             "interview_type",
+            "link",
             "comment",
     ]
     form = ReportingForm()

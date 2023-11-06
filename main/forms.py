@@ -45,8 +45,34 @@ class ContactForm(forms.ModelForm):
         self.fields['task'].required=False
         self.fields['plan'].required=False
         self.fields['challenge'].required=False
-        # self.fields['uploaded'].required=False
 
+
+class SearchForm(forms.ModelForm):
+    # Define the choices for the category field
+    category = forms.ChoiceField(choices=[("", "Select a category")] + Search.CAT_CHOICES)
+    topic = forms.CharField(required=False,label='Pick a topic')
+    class Meta:
+        model = Search
+        fields = [
+            "searched_by",
+            "category",
+            "topic",
+            "question",
+            "uploaded",
+        ]
+        labels = {
+            "searched_by": "Staff/Employee",
+            "category": "Pick your Category",
+            "topic": "Type a topic",
+            "question": "Type a question related to the topic",
+            "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
+        }
+    def __init__(self, *args, **kwargs):
+        super(SearchForm, self).__init__(*args, **kwargs)
+        self.fields['searched_by'].required=False
+        self.fields['category'].required=True
+        self.fields['topic'].required=False
+        self.fields['question'].required=True
 
 class PostForm(forms.ModelForm):
     class Meta:  
@@ -65,10 +91,6 @@ class ClientAvailabilityForm(forms.ModelForm):
         model = ClientAvailability
         fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
 
-
-# class ClientNameForm(forms.Form):
-#     client = forms.ModelChoiceField(queryset=CustomerUser.objects.filter(is_client=True))
-#     fields = ['client']
 
 class ClientNameForm(forms.Form):
     client = forms.ModelChoiceField(

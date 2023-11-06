@@ -5,13 +5,7 @@
     {% endblock %}
     {% block content %}
     <!--------------------------Slider Section--------------------------------->
-    <div class="data_training text-center">
-        <h3 class="title">DATA MIGRATIONS</h3>
-          <h4>XEL</h4>
-          <a href="#" target="">
-            <button type="button" class="btn btn-primary">Load</button>
-          </a>
-    </div>
+
     <!-------------------Our home services Section------------------------->
     <!-------------------1. Our  Job Report Section------------------------->
     <section id="data_training">
@@ -28,6 +22,7 @@
                             <div class="card">
                                 <div class="card-body">
                                     <a class="dropdown-item" target="_blank" href="">{{ app.table_name }}</a>
+                                    <a class="dropdown-item" target="_blank" href="{{ app.sample_file }}">Sample_file</a>
                                     <div>
                                         {% include 'main/snippets_templates/forms/uploadform.html' %}
                                     </div>
@@ -39,71 +34,28 @@
             </div>
         </div>
     </section>
-    
-<!--     
-    <section id="data_training">
-    <div class="data_training text-center">
-        <h3 class="title">Applications-Upload Data</h3>
-        <p>
-            Upload only a CSV File, Check field formats to minimize errors during upload.
-        </p>
-        <div class="row text-center">
-            <div class="col-md-3" id="gi">
-                <h3 class="title">Finance App</h3>
-            {% for app in Finance %}
+    <div class="row text-center">
+        <div class="col-md-6" id="gi">
+            <h3 class="title">DATA MIGRATIONS</h3>
                 <div class="card">
-                <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
-                    <p><a href="{% url 'getdata:upload'%}" class="btn btn-secondary btn-sm"
-                        >Upload File 
-                    </a>
-                        {% include 'main/snippets_templates/forms/uploadform.html' %}
-                    </p>
-            </div>
-            </div>
-            {% endfor %}
+                    <div class="card-body">
+                        <a class="dropdown-item" target="_blank" href="">XEL</a>
+                        <a href="#" target="">
+                            <button type="button" class="btn btn-primary">Load</button>
+                          </a>
+                    </div>
+                </div>
         </div>
-            <div class="col-md-3" id="gi">
-                <h3 class="title">Management App</h3>
-            {% for app in Management %}
+        <div class="col-md-6" id="gi">
+            <h3 class="title">Images/Assets</h3>
                 <div class="card">
-                <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
-                    <div>
-                        {% include 'main/snippets_templates/forms/uploadform.html' %}
+                    <div class="card-body">
+                        <a class="dropdown-item" target="_blank" href="">Images</a>
+                        <a href="{% url 'main:images' %}" target="">
+                            <button type="button" class="btn btn-primary">Proceed</button>
+                          </a>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
         </div>
-            <div class="col-md-3" id="gi">
-                <h3 class="title">Data App</h3>
-                {% for app in Data %}
-                <div class="card">
-                <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
-                    <div>
-                        {% include 'main/snippets_templates/forms/uploadform.html' %}
-                    </div>
-                </div>
-                </div>
-            {% endfor %}
-            </div>
-            <div class="col-md-3" id="gi">
-                <h3 class="title">Investment App</h3>
-                {% for app in investing %}
-                <div class="card">
-                <div class="card-body">
-                    <a class="dropdown-item" target="_blank" href="">{{app.table_name}}</b></h4></a>
-                    <div>
-                        {% include 'main/snippets_templates/forms/uploadform.html' %}
-                    </div>
-                </div>
-                </div>
-            {% endfor %}
-            </div>
-
-    </section> -->
-
-
+</div>
     {% endblock content %}

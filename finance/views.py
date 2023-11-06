@@ -1,17 +1,14 @@
-from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import get_user_model
 from django.utils.decorators import method_decorator
-from django.urls import reverse, reverse_lazy
 from django.db.models import Sum
 from django.http import QueryDict, Http404,JsonResponse
-from django.template.defaultfilters import upper
 from requests import request
 from datetime import datetime,date
 from decimal import *
-from django.db.models import Q
+from django.urls import reverse
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -20,13 +17,12 @@ from django.views.generic import (
 	DeleteView,
 )
 import json
-from accounts.forms import UserForm
 from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense
+		DC48_Inflow,Field_Expense,Budget
 	)
 from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
 from mail.custom_email import send_email
@@ -57,6 +53,64 @@ rate = round(Decimal(usd_to_kes), 2)
 
 def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
+
+
+
+# def budget(request):
+# 	budget=Budget.objects.all()
+# 	context = {
+# 				'budget': budget
+# 			}
+# 	return render(request, "finance/budgets/budget.html", context)
+
+
+def budget(request):
+    budget_obj=Budget.objects.all()
+    ytd_duration,current_year=dates_functionality()
+    webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
+    total_amt = sum(transact.ksh_amount for transact in budget_obj)
+    total_usd_amt =float(total_amt)/float(rate)
+    # print("Amounts",total_outflows,ytd_outflows,total_field_ouflow_usd,total_web_ouflow,total_field_ouflow_usd)
+    data = [
+        {"title": "Amount(Ksh)", "value": total_amt},
+        {"title": "Amount(usd)", "value": total_usd_amt},
+	]
+
+    context = {
+        "budget_obj": budget_obj,
+        "data": data,
+        "webhour": webhour,
+        "delta": delta,
+        "remaining_days": remaining_days,
+        "remaining_seconds ": int(remaining_seconds % 60),
+        "remaining_minutes ": int(remaining_minutes % 60),
+        "remaining_hours": int(remaining_hours % 24),
+    }
+    return render(request, "finance/budgets/budget.html", context)
+
+
+
+
+class BudgetUpdateView(UpdateView):
+	model = Budget
+	success_url = "/finance/budget/"
+	template_name="main/snippets_templates/generalform.html"
+	fields ="__all__"
+
+	def form_valid(self, form):
+		if self.request.user.is_superuser or self.request.user:
+			return super().form_valid(form)
+		else:
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		# task = self.get_object()
+		if self.request.user.is_superuser:
+			return True
+		if self.request.user:
+		    return True
+
+
 
 def investment_report(request):
     return render(request, "finance/reports/investment_report.html", {"title": "Investment"})
@@ -253,7 +307,7 @@ def mycontract(request, *args, **kwargs):
 			if client_data.category == 3:
 				return redirect('main:job_support')
 			elif client_data.category == 4:
-				return redirect('main:full_course')
+				return redirect('main:service_plans',slug="full-course")
 			else:
 				return redirect('main:bi_services')
 

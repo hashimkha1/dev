@@ -140,6 +140,15 @@ class Plan(models.Model):
         ("Trips", "Trips"),
         ("Other", "Other"),
     ]
+    DAY_CHOICES = [
+        ("Sunday", "Sunday"),
+        ("Monday", "Monday"),
+        ("Tuesday", "Tuesday"),
+        ("Wednesday", "Wednesday"),
+        ("Thursday", "Thursday"),
+        ("Friday", "Friday"),
+        ("Saturday", "Saturday"),
+    ]
     STATUS_CHOICES = [
         ("Critical", "Critical"),
         ("High", "High"),
@@ -160,6 +169,11 @@ class Plan(models.Model):
         max_length=25,
         choices=STATUS_CHOICES,
         default="Low",
+    )
+    day = models.CharField(
+        max_length=25,
+        choices=DAY_CHOICES,
+        default="Sunday",
     )
     planner = models.ForeignKey(
         User,
@@ -243,6 +257,55 @@ class ClientAvailability(models.Model):
     def __str__(self):
         return str(self.client)
     
+
+class Search(models.Model):
+    CAT_CHOICES = [
+        ("accounts", "Registration"),
+        ("application", "Application"),
+        ("finance", "Financial Information"),
+        ("management", "Employees Activities"),
+        ("data", "Data Analysis"),
+        ("getdata", "Automation"),
+        ("investing", "Investments"),
+        ("main", "General Information"),
+        ("projectmanagement", "Field Projects"),
+    ]
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+    )
+
+    # subcategories = models.ForeignKey(
+    #     ServiceCategory,
+    #     on_delete=models.CASCADE,
+	# 	default=1
+    # )
+    searched_by = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        limit_choices_to=Q(is_staff=True)
+        | Q(is_client=True)
+        | Q(is_admin=True)
+        | Q(is_superuser=True),
+    )
+    # subcategory = models.CharField(max_length=255, default="training")
+    topic = models.CharField(max_length=255, default="Task")
+    question = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    uploaded = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Search"
+
+    def get_absolute_url(self):
+        return reverse("main:layout")
+
+    def __str__(self):
+        return self.question
+
 
 # ===================PRESAVE FUNCTIONALITIES=====================
 def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):

@@ -13,6 +13,8 @@ urlpatterns = [
     #=============================FINANCES=====================================
     
     path('finance_report/', views.finance_report, name='finance_report'),
+    path('budget/', views.budget, name='budget'),
+    path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
     path('investment_report/', views.investment_report, name='investment_report'),
     path('transact/', views.transact, name='finance-transact'),
     # path('transaction/', TransactionListView.as_view(), name='transaction-list'),

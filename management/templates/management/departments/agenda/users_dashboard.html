@@ -59,6 +59,9 @@
       <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
       <div class="row text-center">
         <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'management:clientassessment'%}" target="__blank" >Assessment</a>
+        </div>
+        <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'data:train'%}" target="__blank" >My Training</a>
       </div>
       <div class="col-md-2">
@@ -66,9 +69,9 @@
         <a class="btn btn-secondary" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>
         {%endwith%}
       </div>
-      <div class="col-md-2">
+      <!-- <div class="col-md-2">
         <a class="btn btn-secondary" href="{% url 'data:start_training' slug='job-support' %}" target="__blank" >Job Support</a>
-      </div>
+      </div> -->
       <div class="col-md-2">
         <a class="btn btn-secondary" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>
       </div>
@@ -81,6 +84,9 @@
     </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
     <div class="row text-center">
+      <div class="col-md-2">
+        <a href="{% url 'management:meetings' %}" class="btn btn-secondary">My Meetings</a>
+      </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>
         </div>
@@ -100,11 +106,9 @@
         <a class="btn btn-secondary" href="{% url 'main:update_profile' request.user.id %}" target="__blank" >Update My Profile</a>
       </div>
       <div class="col-md-2">
-        <a href="{% url 'main:contact'%}" class="btn btn-secondary">Help?</a>
+        <a class="btn btn-secondary" href="{% url 'main:contact' %}" target="__blank" >Help?</a>
       </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'account-logout'%}" target="__blank" >Logout</a>
-      </div>
+
       </div>
       {% endif %}
       <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />

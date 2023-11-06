@@ -26,21 +26,29 @@ def image_view(request):
     }
 
 def images(request):
-    # images,image_names=image_view(request)
     images= Assets.objects.all()
     image_names=Assets.objects.values_list('name',flat=True)
+    default_url = Assets.objects.filter(name='default_emp_v1').values_list('image_url', flat=True).first()
+    banner_url = Assets.objects.filter(name='banner_v1').values_list('image_url', flat=True).first()
+    print(banner_url)
     return {
         'images': images,
-        "image_names":image_names
+        "image_names":image_names,
+        "default_url":default_url,
+        "banner_url":banner_url
     }
 
-
 def services(request):
+    services = Service.objects.all()
+    analysis_service = Service.objects.get(slug='data_analysis')
+    service_categories = ServiceCategory.objects.filter(service=analysis_service.id)
+    plans = Pricing.objects.filter(category__in=service_categories)
     return {
-            "services": Service.objects.all(),
-            "data_analysis": Service.objects.get(slug='data_analysis')
-         }
-
+        'services': services,
+        "analysis_service": analysis_service,
+        "service_categories": service_categories,
+        "plans": plans
+    }
 # def googledriveurl(request):
 #     return {
 #         'googledriveurl':'http://drive.google.com/uc?export=view&id'

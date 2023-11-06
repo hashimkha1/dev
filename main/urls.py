@@ -7,9 +7,11 @@ app_name = 'main'
 urlpatterns = [
     path('', views.layout, name='layout'),
     path('get_respos', views.get_respos, name='get_respos'),
+    path('fetch_model_table_names/', views.fetch_model_table_names, name='fetch_model_table_names'),
     # path('get_respos/<str:table>', views.get_respos, name='get_respos'),
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
+    path('search/', views.search, name='search'),
     path('contact/', views.contact, name='contact'),
     
     path('team_profiles/', views.team, name='team_profiles'),
@@ -24,6 +26,7 @@ urlpatterns = [
     # path('services/<str:slug>/', views.bi_services, name='service'),
     path("display_service/<str:slug>/", views.display_service, name="display_service"),
     path("display_plans/<str:slug>/", views.service_plans, name="service_plans"),
+    # path("full_course", views.full_course, name="full_course"),
     path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
     path('price_update/<int:pk>/', views.PriceUpdateView.as_view(template_name='main/form.html'), name='update_price'),
     path('delete/<int:id>/', views.delete_service, name='delete_service'),

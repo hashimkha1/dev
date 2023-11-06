@@ -1,9 +1,3 @@
-from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-from .forms import ApplicantForm, RatingForm, ReportingForm
-from accounts.forms import UserForm
-from .models import Application, Policy, Rated, Reporting
-
-
 # Interview description data
 posts = [
     {

@@ -1,41 +1,35 @@
-import json
 import tweepy
-import random
-import string
-import re
-import urllib.request
 import logging
 
 from celery import shared_task
-import http.client
-from django.shortcuts import render
 from mail.custom_email import send_email
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
-from management.models import Task, TaskHistory,Advertisement,Whatsapp
+from management.models import Task, TaskHistory,Advertisement,TaskLinks
 from accounts.models import CustomerUser
-from finance.models import LoanUsers, TrainingLoan, Default_Payment_Fees,LBandLS,PayslipConfig
+from finance.models import TrainingLoan,LBandLS,PayslipConfig
 from application.models import UserProfile
-from getdata.models import ReplyMail
+from getdata.models import ReplyMail, GotoMeetings
+
 
 # importing utils & Views
-from management.utils import paytime, payinitial, loan_computation, bonus, best_employee, additional_earnings, paymentconfigurations
+from management.utils import loan_computation, paymentconfigurations
 from main.utils import download_image
 # from main.context_processors import image_view
-from management.utils import deductions
-from management.views import loan_update_save, normalize_period
 
 from gapi.gservices import get_service, search_messages
 from mail.custom_email import send_reply
 
 logger = logging.getLogger(__name__)
-from marketing.views import runwhatsapp
 User = get_user_model()
 
+JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
+ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
+
 @shared_task(name="task_history")
-def dump_data():
+def dump_data(request):
     try:
         bulk_object = []
         get_data = Task.objects.all()
@@ -58,10 +52,14 @@ def dump_data():
                 )
             )
         TaskHistory.objects.bulk_create(bulk_object)
-        get_data.update(point=0)
-        return True
-    except Exception:
-        return False
+        # get_data.update(point=0)
+        for task in get_data:
+            task.point = 0
+            task.save()
+        # return True
+    except Exception as e:
+        print("error",str(e))
+        # return False
 
 @shared_task(name="SendMsgApplicatUser")
 def SendMsgApplicatUser():
@@ -71,14 +69,8 @@ def SendMsgApplicatUser():
     after_10_date = timedelta(days = 10)
     pastdate = date_joined.date() + after_10_date
     presentdate = datetime.now().date()
-    # print('pastdate-->',pastdate)
-    # print("presentdate-->",presentdate)
     if pastdate == presentdate:
         subject = "No active mail"
-        # to = data.email
-        # content = f"""
-        #         <span><h3>Hi {data.username},</h3>you applied for a position in CODA, kindly let us know of your progress, you can login at the following link to proceed with your interview </span>"""
-        # email_template(subject,to,content)
         send_email(
             category=data.category,
             to_email=(data.email,),
@@ -239,7 +231,6 @@ Twitter and Facebook AD management Scripts below
 @shared_task(name="advertisement")
 def advertisement():
     #This function will post the latest tweet
-    print("TWIITER TWESTING FUNCT")
     context = Advertisement.objects.all().first()
     apiKey = context.twitter_api_key 
     apiSecret = context.twitter_api_key_secret
@@ -264,9 +255,34 @@ def advertisement():
     description = context.post_description #'This is my tweet with an image'
     api.update_status(status=description, media_ids=[media.media_id])
 
+# This function will auto upload the eviedence
+
+@shared_task(name="auto_uplaod_evidence")
+def auto_uplaod_evidence():
+    try:
+        links = TaskLinks.objects.last()
+        goto_data = GotoMeetings.objects.filter(created_at__gte=links.created_at)
+        user_data = CustomerUser.objects.filter(is_active=True)
+        for goto_meet in goto_data and goto_meet.attendee_duration > 5:
+            if goto_meet.recording:
+                for user in user_data:
+                    if user.username.casefold() == goto_meet.attendee_name.casefold():
+                        task_obj = Task.objects.filter(employee= user,activity_name= goto_meet.meeting_topic).first()
+                        if not task_obj:
+                            task_obj = Task.objects.filter(activity_name= 'General Meeting').first()
+                        # task_activity = Task.objects.filter(activity_name= goto_meet.meeting_topic).first()
+                        points, maxpoints = Task.objects.values_list("point", "mxpoint").get(id=task_obj.id)
+                        # if task_obj.activity_name in ACTIVITY_LIST:
+                        if points != maxpoints and task_obj.activity_name.lower() not in JOB_SUPPORTS:
+                            Task.objects.filter(id=task_obj.id).update(point=points + 1)
+                        task_links = TaskLinks.objects.create(task=task_obj,added_by=user,link_name=goto_meet.meeting_topic,
+                                            description=goto_meet.meeting_topic,link=goto_meet.recording)
+    except Exception as e:
+        print("error",str(e))
+
+
 # This function will post the latest Facebook Ad
 @shared_task(name="advertisement_facebook")
-
 def advertisement_facebook():
     pass
     # facebook_page_id = context.facebook_page_id
