@@ -24,6 +24,8 @@ from application.models import UserProfile,Assets
 from finance.models import Payment_History,Payment_Information
 from mail.custom_email import send_email
 import string, random
+from .utils import generate_random_password
+
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -49,6 +51,15 @@ def join(request):
             contract_data, contract_date = agreement_data(request)
             form = UserForm(request.POST)  # Assign form with request.POST data
             if form.is_valid():
+                if form.cleaned_data.get('category') in [3,4,5,6]:
+
+                    random_password = generate_random_password(8)
+                    form.instance.username = form.cleaned_data.get('email')
+                    form.instance.password1 = random_password
+                    form.instance.password2 = random_password
+                    form.instance.gender = None
+                    # form.instance.phone = "0000000000"
+
                 if form.cleaned_data.get("category") == 2:
                     form.instance.is_staff = True
                 elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4:
@@ -57,6 +68,16 @@ def join(request):
                     form.instance.is_applicant = True
 
                 form.save()
+
+                if form.cleaned_data.get('category') in [3,4,5,6]:
+
+                    subject = "Coda Credential"
+                    send_email( category=2,
+                    to_email=form.instance.email, #[request.user.email,],
+                    subject=subject, 
+                    html_template='email/user_credential.html',
+                    context={'user': form.instance, 'password': random_password})
+
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"
@@ -179,6 +200,14 @@ def create_profile():
 def login_view(request):
     form = LoginForm(request.POST or None)
     msg = None
+
+    #when error occur while login/signup with social account, we are redirecting it to login page of website
+    if request.method == 'GET':
+        sociallogin = request.session.pop("socialaccount_sociallogin", None)
+        
+        if sociallogin is not None:
+            msg = 'Error with social login. check your credential or try to sing up manually.'
+    
     if request.method == "POST":
         if form.is_valid():
             request.session["siteurl"] = settings.SITEURL
@@ -839,3 +868,13 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+    
+
+# #experiment
+# import firebase_admin
+# from firebase_admin import credentials
+
+# cred = credentials.Certificate("django-social-login-404405-firebase-adminsdk-2f0cn-8f01b76608.json")
+# firebase_admin.initialize_app(cred)
+# def firebase_login(request, firebase_token):
+#     import pdb; pdb.set_trace()

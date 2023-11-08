@@ -91,6 +91,9 @@ urlpatterns = [
     # path("globalsearch/", include("globalsearch.urls"), name="search"),
     path("finance/", include("finance.urls"), name="finance"),
     # path('testing/', include("testing.urls"))
+    path('social_accounts/social/signup/', account_views.login_view),
+    path('social_accounts/', include('allauth.urls')),
+
 ]
 
 if settings.DEBUG:
