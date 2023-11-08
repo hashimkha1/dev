@@ -349,17 +349,19 @@ data_interview = [
         "Link": SITEURL+"/data/job_market/",
     },
 ]
+
+
 job_support = [
     {
         "Inteview": "1. onboarding",
-        "Description": "Organization,Working PPT",
+        "Description": "Organization,Working PPT,Tools Access",
         "Duration": "4 hours",
         "Lead": "Self/Coach",
-        "Link": SITEURL+"/data/iuploads/",
+        "Link": SITEURL+"data/Course%20Overview/",
     },
     
     {
-        "Inteview": "2. Requirements",
+        "Inteview": "2. Requirements Review",
         "Description": "Elicitation  Questions",
         "Duration": "Ongoing",
         "Lead": "Self/Coach",
@@ -367,7 +369,7 @@ job_support = [
     },
 
     {
-        "Inteview": "2. Project Definition",
+        "Inteview": "2. Project Scope & Definition",
         "Description": "SDLC Process in Box",
         "Duration": "Ongoing",
         "Lead": "Self/Coach",
@@ -381,6 +383,7 @@ job_support = [
         "Link": SITEURL+"/data/Development/",
     },
 ]
+
 
 Automation = [
     {

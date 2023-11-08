@@ -64,6 +64,7 @@ def deliverable(request):
 def training(request):
     return render(request, "data/training/training.html", {"title": "training"})
 
+
 @login_required
 def start_training(request, slug=None, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
@@ -101,15 +102,6 @@ def start_training(request, slug=None, *args, **kwargs):
         "troubleshooting_description": troubleshooting_description
     }
     return render(request, "data/interview/interview_progress/start_interview.html",context)
-
-
-# interview starts
-# @login_required
-# def interview(request):
-#     context={
-#         "data_items":data_interview
-#     }
-#     return render(request, "data/interview/interview_progress/start_interview.html",context)
 
 
 # Views on interview Section
