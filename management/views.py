@@ -1932,6 +1932,8 @@ def justification(request, *args, **kwargs):
         obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
         total_time = obj.aggregate(Sum('total'))
         total_qty = obj.aggregate(Sum('Quantity'))
+        print('total_time',total_time)
+        print('total_qty',total_qty)
         for justification in justifications:
             if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
@@ -1953,11 +1955,12 @@ def justification(request, *args, **kwargs):
                                            justification.get('breakdown')+'total': justification.get('total'),
                                            'requirement_id': justification.get('requirement_id'),
                                            })
-            just_context={
-                "justifications": justofication_dict,
-                "total_time": total_time.get('total__sum'),
-                 "total_qty": total_qty.get('Quantity__sum')
-                }
+        print('justofication_dict==============',justofication_dict)
+        just_context={
+            "justifications": justofication_dict,
+            "total_time": total_time.get('total__sum'),
+                "total_qty": total_qty.get('Quantity__sum')
+            }
         return render(request, "management/doc_templates/req_justifications.html", just_context)
     context={
         "active_requirement": kwargs.get('pk'),

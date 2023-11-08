@@ -308,4 +308,3 @@ def source_target():
 # # Load Google Drive API credentials
 # with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
 #     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
-

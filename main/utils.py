@@ -15,6 +15,16 @@ from django.utils.text import slugify
 from django import template
 from django.apps import apps
 from django.db.models import Q
+""" ========This code is for save images in google drive======= """
+from google.oauth2 import service_account
+from googleapiclient.http import MediaFileUpload 
+from googleapiclient.discovery import build
+import httplib2  # Import the httplib2 library for setting the timeout
+from google.auth import exceptions
+
+""" ========End of Code======== """
+
+
 
 register = template.Library()
 
@@ -34,6 +44,36 @@ def dates_functionality():
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
     return ytd_duration,current_year
+
+
+"""======= Google Drive Code ========"""
+
+
+def upload_image_to_drive(image_path, folder_id,image_name):
+    
+    SCOPES = ["https://www.googleapis.com/auth/drive.file"]
+    SERVICE_ACCOUNT_FILE = '/home/ip-d/Desktop/Amit/Chris_Uat/uat_main/main/google_drive_credetials/google_credentials.json'
+
+    credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+    http = httplib2.Http(timeout=30) 
+
+    file_metadata = {
+        'name': image_name,
+        'parents': [folder_id],  # Optional: To save the image in a specific folder.
+    }
+
+    media = MediaFileUpload(image_path, mimetype='image/jpeg')
+
+    file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
+    print(f'Image ID: {file.get("id")}')
+
+"""========End of Code======="""
+
+
 
 
 
