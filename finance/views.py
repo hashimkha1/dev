@@ -307,7 +307,7 @@ def mycontract(request, *args, **kwargs):
 			if client_data.category == 3:
 				return redirect('main:job_support')
 			elif client_data.category == 4:
-				return redirect('main:full_course')
+				return redirect('main:service_plans',slug="full-course")
 			else:
 				return redirect('main:bi_services')
 
@@ -343,10 +343,56 @@ def new_option_contract(request, *args, **kwargs):
     return render(request, 'management/contracts/client_investment_contract.html', context)
 
 
+# @login_required
+# def new_contract(request, *args, **kwargs):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     print("subtile--->",pre_sub_title)
+#     username = kwargs.get('username')
+#     client_data = CustomerUser.objects.get(username=username)
+#     print(client_data)
+#     today = date.today()
+#     plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
+#     plan = contract_charge = contract_duration = contract_period = None
+#     try:
+#         if request.user.category == 3:
+#             service_category_instance = ServiceCategory.objects.get(slug='data_analysis')
+#         else:
+#             return redirect('main:display_service')
+#     except ServiceCategory.DoesNotExist:
+#         return redirect('main:display_service')
+    
+#     # Access the service_instance properties
+#     service_instance = Service.objects.filter(servicecategory__name=service_category_instance.name).first()
+#     if service_instance:
+#         service_title = service_instance.title
+#         service_title_uppercase = service_title.upper()
+#         service_description = service_instance.description
+#     else:
+#         print("No service found for the given pricing title.")
+	
+#     plan = Pricing.objects.filter(category=service_category_instance.id, title__iexact=plan_title).first()
+#     if plan:
+#         contract_charge = plan.price
+#         contract_duration = plan.duration
+#         contract_period = plan.contract_length
+#         plan_id = plan.id
+#     context = {
+#         'service_title': service_title,
+#         'service_title_uppercase': service_title_uppercase,
+#         'client_data': client_data,
+#         'contract_data': plan,
+#         'contract_charge': contract_charge,
+#         'contract_duration': contract_duration,
+#         'contract_period': contract_period,
+#         'plan_id': plan_id,
+#         'contract_date': today.strftime("%d %B, %Y")
+#     }
+#     return render(request, 'management/contracts/client_contract.html', context)
 
 @login_required
 def new_contract(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
+    # print("subtile--->",pre_sub_title)
     username = kwargs.get('username')
     client_data = CustomerUser.objects.get(username=username)
     today = date.today()
@@ -544,10 +590,8 @@ def pay(request, *args, **kwargs):
 
 def paymentComplete(request):
     payments = Payment_Information.objects.filter(customer_id=request.user.id).first()
-    # print(payments)
     customer = request.user
     body = json.loads(request.body)
-    # print("payment_complete:", body)
     payment_fees = body["payment_fees"]
     down_payment = payments.down_payment
     studend_bonus = payments.student_bonus

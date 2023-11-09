@@ -386,7 +386,10 @@ def ratewid(request,pk):
 def enter_score(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
+        print(form.errors)
         if form.is_valid():
+            print("hello")
+            print(form.instance.data_tools)
             form.save()
             return redirect("application:userscores", request.user )
     else:

@@ -744,6 +744,12 @@ class Whatsapp(models.Model):
     
 
 class Meetings(models.Model):
+    Group = [
+        ("clients", "clients"),
+        ("internal", "internal"),
+        ("external", "external"),
+        ("Other", "Other"),
+    ]
     class Frequecy(models.IntegerChoices):
         Daily = 1,
         Weekly = 2
@@ -754,6 +760,11 @@ class Meetings(models.Model):
         to=Department, on_delete=models.CASCADE, default=Department.get_default_pk)
     category = models.ForeignKey(
         to=TaskCategory, on_delete=models.CASCADE
+    )
+    group = models.CharField(
+        max_length=255,
+        choices=Group,
+        default='Other'
     )
     meeting_topic = models.CharField(max_length=100, null=True, blank=True)
     meeting_id = models.CharField(max_length=100, null=True, blank=True)
