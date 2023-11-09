@@ -277,10 +277,10 @@ crossorigin="anonymous">
           </div>
           <div class="row" style="display: flex; justify-content: center; align-items: center;">
             <div class="col-md-3 d-flex justify-content-center">
-              <a id="google-signin-link" href="{% provider_login_url 'google' %}" type='button' class="loginBtn loginBtn--google">
+              <a id="google-signin-link" href="{% url 'custom_social_login' %}" onclick="return enableSocialSignInLink(event, this, 'google_login')" type='button' class="loginBtn loginBtn--google">
                 Login with Google
               </a>
-              <a id="facebook-signin-link" href="{% provider_login_url 'facebook' %}" type='button' class="loginBtn loginBtn--facebook">
+              <a id="facebook-signin-link" href="{% url 'custom_social_login' %}" onclick="return enableSocialSignInLink(event, this, 'facebook_login')" type='button' class="loginBtn loginBtn--facebook">
                 Login with Facebook
               </a>
             </div>
@@ -533,26 +533,31 @@ crossorigin="anonymous">
     }
   });
 
-  // function enableGoogleSignInLink() {
-  //     // Get the selected category value
-  //     var selectedCategory = document.getElementById("id_category").value;
-  //     console.log(selectedCategory)
-  //     // Check if a category is selected
-  //     if (selectedCategory == "0") {
-  //       alert("Please select a category before signing in with Google.");
-  //     } else {
-  //       // Enable the Google Sign-In link
-  //       var googleSignInLink = document.getElementById("google-signin-link");
-  //       var currentHref = googleSignInLink.getAttribute('href');
-  //       console.log(currentHref)
-  //       // Add a query parameter (e.g., "?param=value") to the href
-  //       var newHref = currentHref + '?name=prachi';
+  function enableSocialSignInLink(event, doc, value) {
+      
+      // Get the selected category value
 
-  //       // Update the href attribute with the new value
-  //       googleSignInLink.setAttribute('href', newHref);        
+      var selectedSubcategory = document.getElementById("id_sub_category");
+      var selectedCategory = document.getElementById("id_category");      
+      
+      if(selectedCategory.value == "0" || selectedSubcategory.value == "0" ) {
         
-  //     }
-  // }
+        alert("Please select a category and subcategory");
+        
+        return false;
+      }
+
+      // Check if a category is selected
+      // Enable the Google Sign-In link
+      var currentHref = doc.getAttribute('href');
+      
+      // Add a query parameter (e.g., "?param=value") to the href
+      var newHref = currentHref + '?category='+ selectedCategory.value + '&subcategory='+ selectedSubcategory.value + '&socialPlatform=' + value;
+      
+      // Update the href attribute with the new value
+      doc.setAttribute('href', newHref);        
+      
+  }
 
 </script>
 {% endblock content%}

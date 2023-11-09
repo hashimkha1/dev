@@ -316,8 +316,8 @@ def source_target():
 
 
 SITE_ID = 1
-
 SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = 'accounts.views.CustomSocialAccountAdapter'
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": [

@@ -26,6 +26,9 @@ from mail.custom_email import send_email
 import string, random
 from .utils import generate_random_password
 
+from django.urls import reverse
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -870,11 +873,62 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         return False
     
 
-# #experiment
-# import firebase_admin
-# from firebase_admin import credentials
+#custom adaptor for updating user object for category and subcategory field  
+class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
 
-# cred = credentials.Certificate("django-social-login-404405-firebase-adminsdk-2f0cn-8f01b76608.json")
-# firebase_admin.initialize_app(cred)
-# def firebase_login(request, firebase_token):
-#     import pdb; pdb.set_trace()
+    def save_user(self, request, sociallogin, form=None):
+        """
+        This method is called after the user is created during social login.
+        You can perform additional actions or data storage here.
+        """
+    
+        user = sociallogin.user
+        user.category = request.session.pop('category', default=None)
+        user.sub_category = request.session.get('subcategory', default=None)
+        if user.category == '2':
+            user.is_staff = True
+        elif user.category == '3' or user.category == '4':
+            user.is_client = True
+        else:
+            user.is_applicant = True
+
+        user.save()
+
+        return super(CustomSocialAccountAdapter, self).save_user(
+            request, sociallogin, form
+        )
+    
+    def is_open_for_signup(self, request, sociallogin):
+        category = request.session.get('category')
+        # if category is there , then only new user can create otherwise user is not allow to create
+        if category is None:
+            return False
+        
+        # Implement your custom logic here to determine if registration is open.
+        # For example, you can check if a certain condition is met, like a configuration setting.
+        # If registration is open, return True; if not, return False.
+        return True
+
+
+def custom_social_login(request):   
+
+    try:
+        category = request.GET.get('category')
+        subcategory = request.GET.get('subcategory')
+
+        if category is not None and subcategory is not None:
+            request.session['category'] = request.GET.get('category')
+            request.session['subcategory'] = request.GET.get('subcategory')
+
+        # Redirect to the built-in Google login view with the state parameter
+        social_login_url = reverse('google_login')  # Use the name of the built-in Google login view
+        
+        if request.GET.get('socialPlatform'):
+       
+            social_login_url = reverse(request.GET.get('socialPlatform'))  # Use the name of the built-in Google login view
+
+        return redirect(social_login_url)
+    
+    except:
+    
+        return render(request, "accounts/registration/coda/join.html", {"form": UserForm()})
