@@ -885,6 +885,9 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         user = sociallogin.user
         user.category = request.session.pop('category', default=None)
         user.sub_category = request.session.get('subcategory', default=None)
+        if user.email:
+            user.username = user.email
+            
         if user.category == '2':
             user.is_staff = True
         elif user.category == '3' or user.category == '4':
