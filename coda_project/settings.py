@@ -326,6 +326,13 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
         "AUTH_PARAMS": {"access_type": "online"}
     },
+    "facebook": {
+        "SCOPE": [
+            "public_profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    },
 }
 # import json
 
