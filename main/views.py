@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
-                    generate_database_response,generate_chatbot_response
+                    generate_database_response,generate_chatbot_response,upload_image_to_drive
 )
 from .models import Testimonials
 from getdata.models import Logs
@@ -300,10 +300,10 @@ def display_service(request,*args, **kwargs):
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     # print("pre_sub_title==========>",pre_sub_title)
-    try:
-        payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
-    except:
-        payment_details=[]
+    # try:
+    #     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
+    # except:
+    #     payment_details=[]
     try:
         if pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
@@ -332,10 +332,10 @@ def service_plans(request, *args, **kwargs):
         "services": plans
     }
     # print(request.user.category)
-    if payment_details and request.user.category==3:
-        return render(request, "data/interview/interview_progress/start_interview.html",context)
-    else:
-        return render(request, "main/services/service_plan.html", context)
+    # if payment_details and request.user.category==3:
+    #     return render(request, "data/interview/interview_progress/start_interview.html",context)
+    # else:
+    return render(request, "main/services/service_plan.html", context)
 
 
 # def full_course(request, *args, **kwargs):
@@ -563,6 +563,9 @@ def plan_urls(request):
     else:
         return render(request, "main/errors/404.html", context)
 
+
+
+
 #========================Internal Team & Clients==============================
 
 def team(request):
@@ -669,7 +672,14 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
     # fields ="__all__"
     fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
+        instance = form.save()
         # form.instance.username = self.request.user
+        # Replace 'folder_id' with the ID of the folder where you want to save the image.
+        image_name = form.cleaned_data.get('image').name
+        folder_id = '1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+        image_path = instance.image.path
+        print('image_name',image_name,"---------------------","image_path",image_path)
+        upload_image_to_drive(image_path, folder_id,image_name)
         return super().form_valid(form)
 
     def get_success_url(self):

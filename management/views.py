@@ -878,7 +878,7 @@ def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     path_list,subtitle,pre_sub_title=path_values(request)
     second_title=path_list[-2]
-    print(second_title)
+    # print(second_title)
     today, year, deadline_date, *_ = paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
     
@@ -1387,8 +1387,7 @@ def newevidence(request, taskid):
 
     else:
         form = EvidenceForm(request=request)
-
-    return render(request, "management/daf/evidence_form.html", {"form": form})
+        return render(request, "management/daf/evidence_form.html", {"form": form})
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
@@ -1401,7 +1400,7 @@ def userevidence(request, user=None, *args, **kwargs):
 
     # Calculate the date range for the last 2 months
     now = timezone.localtime()
-    print(now)
+    # print(now)
     two_months_ago = now - timezone.timedelta(days=60)
 
     # Filter the TaskLinks based on the created_at field within the date range
@@ -1910,6 +1909,8 @@ def justification(request, *args, **kwargs):
         obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
         total_time = obj.aggregate(Sum('total'))
         total_qty = obj.aggregate(Sum('Quantity'))
+        # print('total_time',total_time)
+        # print('total_qty',total_qty)
         for justification in justifications:
             if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
                 justofication_dict.update({justification.get('justification'): justification.get('justification'),
@@ -1931,11 +1932,12 @@ def justification(request, *args, **kwargs):
                                            justification.get('breakdown')+'total': justification.get('total'),
                                            'requirement_id': justification.get('requirement_id'),
                                            })
-            just_context={
-                "justifications": justofication_dict,
-                "total_time": total_time.get('total__sum'),
-                 "total_qty": total_qty.get('Quantity__sum')
-                }
+        # print('justofication_dict==============',justofication_dict)
+        just_context={
+            "justifications": justofication_dict,
+            "total_time": total_time.get('total__sum'),
+                "total_qty": total_qty.get('Quantity__sum')
+            }
         return render(request, "management/doc_templates/req_justifications.html", just_context)
     context={
         "active_requirement": kwargs.get('pk'),

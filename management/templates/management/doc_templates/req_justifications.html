@@ -105,17 +105,21 @@
                     <td>
                         {% if justifications.dictionaryquantity %}
                             <input type="number" id="dictionary_quantity" name="dictionary_quantity"
-                                   value={{ justifications.dictionaryquantity }}>
+                                   value={{ justifications.dictionaryquantity }}
+                                   oninput="calculateTotal('dictionary')">
 
                         {% else %}
-                            <input type="number" id="dictionary_quantity" name="dictionary_quantity" value="0">
+                            <input type="number" id="dictionary_quantity" name="dictionary_quantity" value="0"
+                            oninput="calculateTotal('dictionary')">
                         {% endif %}
 
                     </td>
                     <td>
 
                         {% if justifications.dictionarytotal %}
-                            <label>{{ justifications.dictionarytotal }} </label>
+                            <label id="dictionary_total">{{ justifications.dictionarytotal }} </label>
+                        {% else %}
+                            <label id="dictionary_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -140,15 +144,18 @@
                     <td>
                         {% if justifications.erdquantity %}
                             <input type="number" id="erd_quantity" name="erd_quantity"
-                                   value={{ justifications.erdquantity }}>
+                                   value={{ justifications.erdquantity }} oninput="calculateTotal('erd')">
                         {% else %}
-                            <input type="number" id="erd_quantity" name="erd_quantity" value="0">
+                            <input type="number" id="erd_quantity" name="erd_quantity" value="0" 
+                            oninput="calculateTotal('erd')">
                         {% endif %}
 
                     </td>
                     <td>
                         {% if justifications.erdtotal %}
-                            <label>{{ justifications.erdtotal }} </label>
+                            <label id="erd_total">{{ justifications.erdtotal }} </label>
+                        {% else %}
+                            <label id="erd_total"></label>
                         {% endif %}
 
                     </td>
@@ -171,18 +178,21 @@
                         <input type="number" id="Table_time" name="Table_time" value="25" readonly>
                     </td>
                     <td>
-                        {% if justifications.table_modelquantity %}
+                        {% if justifications.Tablequantity %}
                             <input type="number" id="Table_quantity" name="Table_quantity"
-                                   value={{ justifications.table_modelquantity }}>
+                                   value={{ justifications.Tablequantity }} oninput="calculateTotal('Table')">
 
                         {% else %}
-                            <input type="number" id="Table_quantity" name="Table_quantity" value="0">
+                            <input type="number" id="Table_quantity" name="Table_quantity" value="0"
+                            oninput="calculateTotal('Table')">
                         {% endif %}
 
                     </td>
                     <td>
-                        {% if justifications.table_modeltotal %}
-                            <label>{{ justifications.table_modeltotal }} </label>
+                        {% if justifications.Tabletotal %}
+                            <label  id="Table_total">{{ justifications.Tabletotal }} </label>
+                        {% else %}
+                            <label id="Table_total"></label>
                         {% endif %}
 
                     </td>
@@ -205,17 +215,20 @@
                         <input type="number" id="Testing_time" name="Testing_time" value="30" readonly>
                     </td>
                     <td>
-                        {% if justifications.tabletestingquantity %}
+                        {% if justifications.Testingquantity %}
                             <input type="number" id="Testing_quantity" name="Testing_quantity"
-                                   value={{ justifications.tabletestingquantity }}>
+                                   value={{ justifications.Testingquantity }} oninput="calculateTotal('Testing')">
 
                         {% else %}
-                            <input type="number" id="Testing_quantity" name="Testing_quantity" value="0">
+                            <input type="number" id="Testing_quantity" name="Testing_quantity" value="0"
+                            oninput="calculateTotal('Testing')">
                         {% endif %}
                     </td>
                     <td>
-                        {% if justifications.tabletestingtotal %}
-                            <label>{{ justifications.tabletestingtotal }} </label>
+                        {% if justifications.Testingtotal %}
+                            <label id="Testing_total">{{ justifications.Testingtotal }} </label>
+                        {% else %}
+                            <label id="Testing_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -263,17 +276,21 @@
                     <td>
                         {% if justifications.flow_diagramquantity %}
                             <input type="number" id="flow_diagram_quantity" name="flow_diagram_quantity"
-                                   value={{ justifications.flow_diagramquantity }}>
+                                   value={{ justifications.flow_diagramquantity }}
+                                   oninput="calculateTotal('flow_diagram')">
 
                         {% else %}
-                            <input type="number" id="flow_diagram_quantity" name="flow_diagram_quantity" value="0">
+                            <input type="number" id="flow_diagram_quantity" name="flow_diagram_quantity" value="0"
+                            oninput="calculateTotal('flow_diagram')">
 
                         {% endif %}
 
                     </td>
                     <td>
                         {% if justifications.flow_diagramtotal %}
-                            <label>{{ justifications.flow_diagramtotal }} </label>
+                            <label id="flow_diagram_total">{{ justifications.flow_diagramtotal }} </label>
+                        {% else %}
+                            <label id="flow_diagram_total"></label>
                         {% endif %}
 
                     </td>
@@ -299,18 +316,21 @@
                     <td>
                         {% if justifications.createquantity %}
                             <input type="number" id="create_quantity" name="create_quantity"
-                                   value={{ justifications.createquantity }}>
+                                   value={{ justifications.createquantity }} oninput="calculateTotal('create')">
 
                         {% else %}
 
-                            <input type="number" id="create_quantity" name="create_quantity" value="0">
+                            <input type="number" id="create_quantity" name="create_quantity" value="0" 
+                            oninput="calculateTotal('create')">
 
                         {% endif %}
 
                     </td>
                     <td>
                         {% if justifications.createtotal %}
-                            <label>{{ justifications.createtotal }} </label>
+                            <label id="create_total">{{ justifications.createtotal }} </label>
+                        {% else %}
+                        <label id="create_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -337,10 +357,11 @@
                         {% if justifications.detailquantity %}
                             <label> </label>
                             <input type="number" id="detail_quantity" name="detail_quantity"
-                                   value={{ justifications.detailquantity }}>
+                                   value={{ justifications.detailquantity }} oninput="calculateTotal('detail')">
 
                         {% else %}
-                            <input type="number" id="detail_quantity" name="detail_quantity" value="0">
+                            <input type="number" id="detail_quantity" name="detail_quantity" value="0"
+                            oninput="calculateTotal('detail')">
 
                         {% endif %}
 
@@ -348,7 +369,9 @@
                     <td>
 
                         {% if justifications.detailtotal %}
-                            <label>{{ justifications.detailtotal }} </label>
+                            <label id="detail_total">{{ justifications.detailtotal }} </label>
+                        {% else %}
+                        <label id="detail_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -375,10 +398,11 @@
 
                         {% if justifications.listquantity %}
                             <input type="number" id="list_quantity" name="list_quantity"
-                                   value={{ justifications.listquantity }}>
+                                   value={{ justifications.listquantity }} oninput="calculateTotal('list')">
 
                         {% else %}
-                            <input type="number" id="list_quantity" name="list_quantity" value="0">
+                            <input type="number" id="list_quantity" name="list_quantity" value="0" 
+                            oninput="calculateTotal('list')">
 
                         {% endif %}
 
@@ -387,8 +411,11 @@
 
 
                         {% if justifications.listtotal %}
-                            <label>{{ justifications.listtotal }} </label>
-                        {% endif %}                    </td>
+                            <label id="list_total">{{ justifications.listtotal }} </label>
+                        {% else %}
+                        <label id="list_total"></label>
+                        {% endif %}                    
+                    </td>
                 </tr>
                 <tr>
 
@@ -410,11 +437,12 @@
 
                         {% if justifications.updatequantity %}
                             <input type="number" id="update_quantity" name="update_quantity"
-                                   value={{ justifications.updatequantity }}>
+                                   value={{ justifications.updatequantity }}  oninput="calculateTotal('update')">
 
                         {% else %}
 
-                            <input type="number" id="update_quantity" name="update_quantity" value="0">
+                            <input type="number" id="update_quantity" name="update_quantity" value="0"
+                            oninput="calculateTotal('update')">
 
                         {% endif %}
 
@@ -423,7 +451,9 @@
                     <td>
 
                         {% if justifications.updatetotal %}
-                            <label>{{ justifications.updatetotal }} </label>
+                            <label id="update_total">{{ justifications.updatetotal }} </label>
+                        {% else %}
+                            <label id="update_total"></label>
                         {% endif %}                    </td>
                 </tr>
                 <tr>
@@ -449,17 +479,20 @@
                         {% if justifications.deletequantity %}
                             <label> </label>
                             <input type="number" id="delete_quantity" name="delete_quantity"
-                                   value={{ justifications.deletequantity }}>
+                                   value={{ justifications.deletequantity }} oninput="calculateTotal('delete')">
 
                         {% else %}
-                            <input type="number" id="delete_quantity" name="delete_quantity" value="0">
+                            <input type="number" id="delete_quantity" name="delete_quantity" value="0"
+                            oninput="calculateTotal('delete')">
 
                         {% endif %}
 
                     </td>
                     <td>
                         {% if justifications.deletetotal %}
-                            <label>{{ justifications.deletetotal }} </label>
+                            <label id="delete_total">{{ justifications.deletetotal }} </label>
+                        {% else %}
+                            <label id="delete_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -485,10 +518,11 @@
 
                         {% if justifications.viewtestingquantity %}
                             <input type="number" id="testing_view_quantity" name="testing_view_quantity"
-                                   value={{ justifications.viewtestingquantity }}>
+                                   value={{ justifications.viewtestingquantity }}  oninput="calculateTotal('testing_view')">
 
                         {% else %}
-                            <input type="number" id="testing_view_quantity" name="testing_view_quantity" value="0">
+                            <input type="number" id="testing_view_quantity" name="testing_view_quantity" value="0"
+                            oninput="calculateTotal('testing_view')">
 
                         {% endif %}
 
@@ -496,7 +530,9 @@
                     </td>
                     <td>
                         {% if justifications.viewtestingtotal %}
-                            <label>{{ justifications.viewtestingtotal }} </label>
+                            <label id="testing_view_total">{{ justifications.viewtestingtotal }} </label>
+                        {% else %}
+                            <label id="testing_view_total"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -548,10 +584,10 @@
                     <td>
                         {% if justifications.templatecreationquantity %}
                             <input type="number" id="template_creation_quantity" name="template_creation_quantity"
-                                   value={{ justifications.templatecreationquantity }}>
+                                   value={{ justifications.templatecreationquantity }} oninput="calculateTotal('template_creation')"> 
                         {% else %}
                             <input type="number" id="template_creation_quantity" name="template_creation_quantity"
-                                   value="0">
+                                   value="0" oninput="calculateTotal('template_creation')">
 
 
                         {% endif %}
@@ -559,7 +595,9 @@
                     <td>
 
                         {% if justifications.templatecreationtotal %}
-                            <label>{{ justifications.templatecreationtotal }} </label>
+                            <label id="template_creation_total">{{ justifications.templatecreationtotal }} </label>
+                        {% else %}
+                            <label id="template_creation_total"></label>
                         {% endif %}
 
 
@@ -590,10 +628,10 @@
 
                         {% if justifications.templatetestingquantity %}
                             <input type="number" id="template_testing_quantity" name="template_testing_quantity"
-                                   value={{ justifications.templatetestingquantity }}>
+                                   value={{ justifications.templatetestingquantity }} oninput="calculateTotal('template_testing')"> 
                         {% else %}
                             <input type="number" id="template_testing_quantity" name="template_testing_quantity"
-                                   value="0">
+                                   value="0" oninput="calculateTotal('template_testing')">
 
 
                         {% endif %}
@@ -601,7 +639,9 @@
                     <td>
 
                         {% if justifications.templatetestingtotal %}
-                            <label>{{ justifications.templatetestingtotal }} </label>
+                            <label id="template_testing_total">{{ justifications.templatetestingtotal }} </label>
+                        {% else %}
+                            <label id="template_testing_total"></label>
                         {% endif %}                    </td>
                 </tr>
 
@@ -654,11 +694,12 @@
 
                         {% if justifications.formscreationquantity %}
                             <input type="number" id="form_creation_quantity" name="form_creation_quantity"
-                                   value={{ justifications.formscreationquantity }}>
+                                   value={{ justifications.formscreationquantity }} oninput="calculateTotal('form_creation')">
 
                         {% else %}
 
-                            <input type="number" id="form_creation_quantity" name="form_creation_quantity" value="0">
+                            <input type="number" id="form_creation_quantity" name="form_creation_quantity" value="0"
+                            oninput="calculateTotal('form_creation')">
 
                         {% endif %}
 
@@ -666,7 +707,9 @@
                     </td>
                     <td>
                         {% if justifications.formscreationtotal %}
-                            <label>{{ justifications.formscreationtotal }} </label>
+                            <label id="form_creation_total">{{ justifications.formscreationtotal }} </label>
+                        {% else %}
+                            <label id="form_creation_total"></label>
                         {% endif %}
 
                     </td>
@@ -692,10 +735,11 @@
 
                         {% if justifications.formstestingquantity %}
                             <input type="number" id="form_testing_quantity" name="form_testing_quantity"
-                                   value={{ justifications.formstestingquantity }} >
+                                   value={{ justifications.formstestingquantity }} oninput="calculateTotal('form_testing')" >
 
                         {% else %}
-                            <input type="number" id="form_testing_quantity" name="form_testing_quantity" value="0">
+                            <input type="number" id="form_testing_quantity" name="form_testing_quantity" value="0" 
+                            oninput="calculateTotal('form_testing')">
 
 
                         {% endif %}
@@ -705,7 +749,9 @@
                     <td>
 
                         {% if justifications.formstestingtotal %}
-                            <label>{{ justifications.formstestingtotal }} </label>
+                            <label id="form_testing_total">{{ justifications.formstestingtotal }} </label>
+                        {% else %}
+                            <label id="form_testing_total"></label>
                         {% endif %}                    </td>
                 </tr>
 
@@ -755,10 +801,11 @@
 
                         {% if justifications.newquantity %}
                             <input type="number" id="new_api_quantity" name="new_api_quantity"
-                                   value={{ justifications.newquantity }}>
+                                   value={{ justifications.newquantity }}  oninput="calculateTotal('new_api')">
 
                         {% else %}
-                            <input type="number" id="new_api_quantity" name="new_api_quantity" value="0">
+                            <input type="number" id="new_api_quantity" name="new_api_quantity" value="0" 
+                            oninput="calculateTotal('new_api')">
 
                         {% endif %}
 
@@ -767,7 +814,9 @@
                     <td>
 
                         {% if justifications.newtotal %}
-                            <label>{{ justifications.newtotal }} </label>
+                            <label id="new_api_total" >{{ justifications.newtotal }} </label>
+                        {% else %}
+                            <label id="new_api_total" ></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -791,11 +840,12 @@
 
                         {% if justifications.existingquantity %}
                             <input type="number" id="existing_api_quantity" name="existing_api_quantity"
-                                   value={{ justifications.existingquantity }}>
+                                   value={{ justifications.existingquantity }}  oninput="calculateTotal('existing_api')">
 
                         {% else %}
 
-                            <input type="number" id="existing_api_quantity" name="existing_api_quantity" value="0">
+                            <input type="number" id="existing_api_quantity" name="existing_api_quantity" value="0" 
+                            oninput="calculateTotal('existing_api')">
 
                         {% endif %}
 
@@ -804,7 +854,9 @@
 
 
                         {% if justifications.existingtotal %}
-                            <label>{{ justifications.existingtotal }} </label>
+                            <label id="existing_api_total">{{ justifications.existingtotal }} </label>
+                        {% else %}
+                            <label id="existing_api_total"></label>
                         {% endif %}                    </td>
                 </tr>
                 <tr>
@@ -827,11 +879,12 @@
 
                         {% if justifications.apistestingquantity %}
                             <input type="number" id="api_testing_quantity" name="api_testing_quantity"
-                                   value={{ justifications.apistestingquantity }}>
+                                   value={{ justifications.apistestingquantity }}  oninput="calculateTotal('api_testing')">
 
                         {% else %}
 
-                            <input type="number" id="api_testing_quantity" name="api_testing_quantity" value="0">
+                            <input type="number" id="api_testing_quantity" name="api_testing_quantity" value="0"
+                            oninput="calculateTotal('api_testing')">
 
                         {% endif %}
                     </td>
@@ -839,7 +892,9 @@
 
 
                         {% if justifications.apistestingtotal %}
-                            <label>{{ justifications.apistestingtotal }} </label>
+                            <label id="api_testing_total">{{ justifications.apistestingtotal }} </label>
+                        {% else %}
+                            <label id="api_testing_total"></label>
                         {% endif %}                    </td>
                 </tr>
                 <tr>
@@ -849,12 +904,16 @@
                     <td></td>
                     <td>
                         {% if total_qty %}
-                            <label>{{ total_qty }} </label>
+                            <label id="total_quantity">{{ total_qty }} </label>
+                        {% else %}
+                            <label id="total_quantity"></label>
                         {% endif %}
                     </td>
                     <td>
                         {% if total_time %}
-                            <label>{{ total_time }} </label>
+                            <label id="total_time">{{ total_time }} </label>
+                        {% else %}
+                            <label id="total_time"></label>
                         {% endif %}
                     </td>
                 </tr>
@@ -887,6 +946,53 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
+
+<script>
+
+let totalQuantity = 0;
+let totalTime = 0;
+
+    function calculateTotal(justificationType) {
+        console.log(`Calculating total for ${justificationType}...`);
+
+        const timeField = document.getElementById(`${justificationType}_time`);
+        const quantityField = document.getElementById(`${justificationType}_quantity`);
+        const totalField = document.getElementById(`${justificationType}_total`);
+        const time = parseInt(timeField.value, 10);
+        const oldQuantity = parseInt(quantityField.getAttribute('data-old-quantity'), 10) || 0;
+        const newQuantity = parseInt(quantityField.value, 10) || 0;
+
+        if (newQuantity !== oldQuantity) {
+            // Update the total label
+            const total = time * newQuantity;
+            totalField.innerText = total;
+
+            // Update overall totals
+            totalQuantity += newQuantity - oldQuantity;
+            totalTime += time * (newQuantity - oldQuantity);
+
+            // Save the new quantity as the old quantity for future comparisons
+            quantityField.setAttribute('data-old-quantity', newQuantity);
+
+            // Update the overall totals display
+            updateOverallTotals();
+        }
+            
+    }
+
+    function updateOverallTotals() {
+    const overallTotalQuantityLabel = document.getElementById('total_quantity');
+    const overallTotalTimeLabel = document.getElementById('total_time');
+
+    if (overallTotalQuantityLabel) {
+        overallTotalQuantityLabel.innerText = totalQuantity;
+    }
+
+    if (overallTotalTimeLabel) {
+        overallTotalTimeLabel.innerText = totalTime;
+    }
+}
+</script>
 
 
 </body>
