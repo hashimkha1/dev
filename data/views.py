@@ -309,9 +309,11 @@ def questionview(request, question_type=None, *args, **kwargs):
 
     def handle_next_topic():
         next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
-        if next_topic.exists():
-            return redirect('data:question-detail', question_type=next_topic.first().question_type)
-        return HttpResponse('interview filled correctly')
+        if not next_topic.exists():
+            # return redirect('data:question-detail', question_type=question_type)
+            return HttpResponse('interview filled correctly')
+        return redirect('data:question-detail', question_type=next_topic.first().question_type)
+    
 
     if request.method == 'GET':
         data = Interviews.objects.filter(client=request.user, question_type=question_type)
