@@ -311,23 +311,24 @@ def questionview(request, question_type=None, *args, **kwargs):
         next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
         if not next_topic.exists():
             # return redirect('data:question-detail', question_type=question_type)
-            return HttpResponse('interview filled correctly')
+            return redirect('data:user-list')
         return redirect('data:question-detail', question_type=next_topic.first().question_type)
     
-
+    
+    data = Interviews.objects.filter(client=request.user, question_type=question_type).first()
     if request.method == 'GET':
-        data = Interviews.objects.filter(client=request.user, question_type=question_type)
-        if data.exists():
-            return handle_next_topic()
+        if data:
+            dynamic_data = json.loads(data.dynamic_fields)
+            form = InterviewForm(instance=data)
+            for field in form.fields:
+                if field in dynamic_data:
+                    form.fields[field].initial = dynamic_data[field]
+        else:
+            form = InterviewForm()
 
         instance = JobRole.objects.get_by_question(question_type)
         if instance is None:
             return render(request, "main/errors/404.html")
-
-        form = InterviewForm()
-        required_fields = question_mapping.get(question_type, [])
-        for field_name in required_fields:
-            form.fields[field_name].required = True
 
         context = {
             "form": form,
@@ -337,16 +338,12 @@ def questionview(request, question_type=None, *args, **kwargs):
         return render(request, f'data/interview/interview_progress/questions.html', context)
 
     if request.method == 'POST':
-        form = InterviewForm(request.POST, request.FILES)
+        form = InterviewForm(request.POST, request.FILES, instance=data)
         required_fields = question_mapping.get(question_type, [])
         for field_name in required_fields:
             form.fields[field_name].required = True
 
         if form.is_valid():
-            data = Interviews.objects.filter(client=request.user, question_type=question_type)
-            if data.exists():
-                return handle_next_topic()
-
             instance = form.save(commit=False)
             instance.client = request.user
             instance.question_type = question_type
@@ -356,11 +353,12 @@ def questionview(request, question_type=None, *args, **kwargs):
             instance.save()
 
             return handle_next_topic()
+        
 
         # If form is not valid, handle the error
         return render(request, "main/errors/404.html", {"message": "Form is not valid"})
-
     # If neither GET nor POST, handle the error
+
     return render(request, "main/errors/404.html", {"message": "Invalid request method"})
 
 @method_decorator(login_required, name="dispatch")

@@ -54,7 +54,10 @@
               </div>
            </div>
           {%endfor%}
-    </div>
+    </div><br>
+    <a class="btn btn-primary" href="{% url 'data:question-detail' question_type='resume' %}" target="__blank">Edit</a>
+    <br>
+    <br>
     {%else%}
     <p>No any record</p>
     {%endif%}
