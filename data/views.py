@@ -306,6 +306,8 @@ def questionview(request, question_type=None, *args, **kwargs):
         'resume': ['summary', 'skills', 'responsibilities'],
         'methodology': ['projects', 'releases', 'sprints', 'stories'],
     }
+    source = request.GET.get('source', False)
+
 
     def handle_next_topic():
         next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
@@ -317,12 +319,15 @@ def questionview(request, question_type=None, *args, **kwargs):
     
     data = Interviews.objects.filter(client=request.user, question_type=question_type).first()
     if request.method == 'GET':
-        if data:
+        if data and source:
             dynamic_data = json.loads(data.dynamic_fields)
             form = InterviewForm(instance=data)
             for field in form.fields:
                 if field in dynamic_data:
                     form.fields[field].initial = dynamic_data[field]
+        elif data:
+            return handle_next_topic()
+
         else:
             form = InterviewForm()
 
@@ -351,7 +356,8 @@ def questionview(request, question_type=None, *args, **kwargs):
             dynamic_fields = {field: form.cleaned_data[field] for field in required_fields}
             instance.dynamic_fields = json.dumps(dynamic_fields)
             instance.save()
-
+            if source:
+               return redirect('data:user-list')
             return handle_next_topic()
         
 
