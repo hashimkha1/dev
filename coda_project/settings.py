@@ -300,15 +300,4 @@ def source_target():
     source_password = os.environ.get('HEROKU_DEV_PASS')
     #Target                     
     target_db_path=os.environ.get('TARGET_PATH_PROD')
-<<<<<<< HEAD
     return (source_host,source_dbname,source_user,source_password,target_db_path)
-=======
-    return (source_host,source_dbname,source_user,source_password,target_db_path)
-
-
-# import json
-
-# # Load Google Drive API credentials
-# with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
-#     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
->>>>>>> 719d3e4067142300a878889cc9cbdc1fa690eba2
