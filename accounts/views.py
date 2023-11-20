@@ -28,6 +28,9 @@ from .utils import generate_random_password
 
 from django.urls import reverse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.account.signals import user_logged_in
+from django.dispatch import receiver
+# from allauth.core.exceptions import ImmediateHttpResponse
 
 # Create your views here..
 
@@ -217,7 +220,7 @@ def login_view(request):
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-            # create_profile()
+            create_profile()
             
             # If Category is Staff/employee
             if account is not None and account.category == 2:
@@ -911,6 +914,24 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         # For example, you can check if a certain condition is met, like a configuration setting.
         # If registration is open, return True; if not, return False.
         return True
+
+    # def pre_social_login(self, request, sociallogin):
+    #     # This isn't tested, but should work
+    #     try:
+    #         import pdb; pdb.set_trace()
+    #         user = CustomerUser.objects.get(email=sociallogin.email)
+    #         sociallogin.connect(request, user)
+
+    #     except CustomerUser.DoesNotExist:
+    #         pass
+
+
+###########################################
+# create profile for social login account
+###########################################
+@receiver(user_logged_in)
+def user_logged_in_callback(request, user, **kwargs):
+    create_profile()
 
 
 def custom_social_login(request):   
