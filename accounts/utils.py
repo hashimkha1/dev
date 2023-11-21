@@ -2,7 +2,13 @@ from django.db.models import Q
 from django.db.models.aggregates import  Sum
 from datetime import date
 from accounts.models import CustomerUser
+import string
+import secrets
 
+def generate_random_password(length=12):
+    characters = string.ascii_letters + string.digits + "!@#$%&"
+    password = ''.join(secrets.choice(characters) for _ in range(length))
+    return password
 
 def agreement_data(request):
     contract_data = {}

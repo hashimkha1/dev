@@ -14,6 +14,8 @@ class UserForm(forms.ModelForm):
     phone = forms.CharField(label="Phone",max_length=10,validators=[RegexValidator(
                 regex=phone_regex,
                 message="Phone number must be 10 digits (e.g., 5551234567).",),],)
+    email = forms.EmailField()
+
     class Meta:
         model = CustomerUser
         fields = [
@@ -57,6 +59,14 @@ class UserForm(forms.ModelForm):
         self.fields["sub_category"].initial = 1
         self.fields["gender"].required = True
         self.fields["country"].required = True
+        if self.data.get('category') in ['3', '4', '5', '6']:
+
+            self.fields['username'].required = False
+            self.fields['password1'].required = False
+            self.fields['password2'].required = False
+            self.fields['gender'].required = False
+            self.fields['phone'].required = False
+        
 
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
@@ -65,8 +75,8 @@ class UserForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
-    
-    def clean(self):
+
+    def clean(self):        
         cleaned_data = super().clean()
         first_name = cleaned_data.get("first_name")
         last_name = cleaned_data.get("last_name")
@@ -83,8 +93,13 @@ class UserForm(forms.ModelForm):
             self.add_error("username", "This username is not allowed.")
 
     def save(self, commit=True):
+        
         user = super(UserForm, self).save(commit=False)
-        user.set_password(self.cleaned_data["password2"])
+        
+        if self.cleaned_data.get('password2'):
+            user.set_password(self.cleaned_data["password2"])
+        else:
+            user.set_password(user.password2)
         if commit:
             user.save()
         return user

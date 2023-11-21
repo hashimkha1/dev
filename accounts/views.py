@@ -16,6 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django.urls import reverse
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import CredentialFilter,UserFilter
@@ -24,6 +25,14 @@ from application.models import UserProfile,Assets
 from finance.models import Payment_History,Payment_Information
 from mail.custom_email import send_email
 import string, random
+from .utils import generate_random_password
+
+from django.urls import reverse
+from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.account.signals import user_logged_in
+from django.dispatch import receiver
+# from allauth.core.exceptions import ImmediateHttpResponse
+
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -49,6 +58,15 @@ def join(request):
             contract_data, contract_date = agreement_data(request)
             form = UserForm(request.POST)  # Assign form with request.POST data
             if form.is_valid():
+                if form.cleaned_data.get('category') in [3,4,5,6]:
+
+                    random_password = generate_random_password(8)
+                    form.instance.username = form.cleaned_data.get('email')
+                    form.instance.password1 = random_password
+                    form.instance.password2 = random_password
+                    form.instance.gender = None
+                    # form.instance.phone = "0000000000"
+
                 if form.cleaned_data.get("category") == 2:
                     form.instance.is_staff = True
                 elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4:
@@ -57,6 +75,16 @@ def join(request):
                     form.instance.is_applicant = True
 
                 form.save()
+
+                if form.cleaned_data.get('category') in [3,4,5,6]:
+
+                    subject = "Coda Credential"
+                    send_email( category=2,
+                    to_email=form.instance.email, #[request.user.email,],
+                    subject=subject, 
+                    html_template='email/user_credential.html',
+                    context={'user': form.instance, 'password': random_password})
+
                 return redirect('accounts:account-login')
     else:
         msg = "error validating form"
@@ -179,13 +207,21 @@ def create_profile():
 def login_view(request):
     form = LoginForm(request.POST or None)
     msg = None
+
+    #when error occur while login/signup with social account, we are redirecting it to login page of website
+    if request.method == 'GET':
+        sociallogin = request.session.pop("socialaccount_sociallogin", None)
+        
+        if sociallogin is not None:
+            msg = 'Error with social login. check your credential or try to sing up manually.'
+    
     if request.method == "POST":
         if form.is_valid():
             request.session["siteurl"] = settings.SITEURL
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
-            # create_profile()
+            create_profile()
             
             # If Category is Staff/employee
             if account is not None and account.category == 2:
@@ -715,23 +751,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
     success_url = "/accounts/tracker"
     # success_url="usertime"
-    # fields=['category','task','duration']
-    fields = [
-        "empname",
-        "employee",
-        "author",
-        "category",
-        "sub_category",
-        "task",
-        "duration",
-        "plan",
-    ]
-
+    fields = ["empname","employee","author","category","sub_category","task","duration","plan"]   
     def form_valid(self, form):
         user = self.request.user
         form.instance.author = self.request.user
         try:
-
             if form.instance.category == "Job_Support":
                 # print(form.instance.empname)
                 idval, points, targetpoints = Task.objects.values_list(
@@ -746,9 +770,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
                     employee__username=form.instance.empname,
-                )[
-                    0
-                ]
+                )[0]
                 self.idval = idval
                 if (
                     form.instance.sub_category == "Development"  
@@ -760,7 +782,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 
                 if points >= targetpoints:
                     targetpoints += 10
-                
                 Task.objects.filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")
@@ -774,7 +795,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
-
         return super().form_valid(form)
     
     def get_success_url(self):
@@ -839,3 +859,85 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
         if self.request.user.is_superuser:
             return True
         return False
+    
+
+#custom adaptor for updating user object for category and subcategory field  
+class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
+
+    def save_user(self, request, sociallogin, form=None):
+        """
+        This method is called after the user is created during social login.
+        You can perform additional actions or data storage here.
+        """
+    
+        user = sociallogin.user
+        user.category = request.session.pop('category', default=None)
+        user.sub_category = request.session.get('subcategory', default=None)
+        if user.email:
+            user.username = user.email
+            
+        if user.category == '2':
+            user.is_staff = True
+        elif user.category == '3' or user.category == '4':
+            user.is_client = True
+        else:
+            user.is_applicant = True
+
+        user.save()
+
+        return super(CustomSocialAccountAdapter, self).save_user(
+            request, sociallogin, form
+        )
+    
+    def is_open_for_signup(self, request, sociallogin):
+        category = request.session.get('category')
+        # if category is there , then only new user can create otherwise user is not allow to create
+        if category is None:
+            return False
+        
+        # Implement your custom logic here to determine if registration is open.
+        # For example, you can check if a certain condition is met, like a configuration setting.
+        # If registration is open, return True; if not, return False.
+        return True
+
+    # def pre_social_login(self, request, sociallogin):
+    #     # This isn't tested, but should work
+    #     try:
+    #         import pdb; pdb.set_trace()
+    #         user = CustomerUser.objects.get(email=sociallogin.email)
+    #         sociallogin.connect(request, user)
+
+    #     except CustomerUser.DoesNotExist:
+    #         pass
+
+
+###########################################
+# create profile for social login account
+###########################################
+@receiver(user_logged_in)
+def user_logged_in_callback(request, user, **kwargs):
+    create_profile()
+
+
+def custom_social_login(request):   
+
+    try:
+        category = request.GET.get('category')
+        subcategory = request.GET.get('subcategory')
+
+        if category is not None and subcategory is not None:
+            request.session['category'] = request.GET.get('category')
+            request.session['subcategory'] = request.GET.get('subcategory')
+
+        # Redirect to the built-in Google login view with the state parameter
+        social_login_url = reverse('google_login')  # Use the name of the built-in Google login view
+        
+        if request.GET.get('socialPlatform'):
+       
+            social_login_url = reverse(request.GET.get('socialPlatform'))  # Use the name of the built-in Google login view
+
+        return redirect(social_login_url)
+    
+    except:
+    
+        return render(request, "accounts/registration/coda/join.html", {"form": UserForm()})

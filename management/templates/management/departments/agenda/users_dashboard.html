@@ -10,30 +10,30 @@
 <main>
       {% if user.category == 1 or user.is_applicant %}
       <div class="row text-center">
-      <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
-        <div class="dropdown-divider"></div>
-    </div>
-    <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
-        <div class="dropdown-divider"></div>
-    </div>
-    <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Internship</a>
-        <div class="dropdown-divider"></div>
-    </div>
-    <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Training</a>
-        <div class="dropdown-divider"></div>
-    </div>
-    <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >Company Policies</a>
-        <div class="dropdown-divider"></div>
-    </div>
-    <div class="col-md-2">
-        <a  class="btn btn-secondary" href="{% url 'main:update_profile' request.user.id %}" target="__blank" >Edit Profile</a>
-        <div class="dropdown-divider"></div>
-    </div>
+        <div class="col-md-2">
+          <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >My Application</a>
+          <div class="dropdown-divider"></div>
+        </div>
+        <div class="col-md-2">
+            <a  class="btn btn-secondary" href="{% url 'application:interview'%}" target="__blank" >My Interview</a>
+            <div class="dropdown-divider"></div>
+        </div>
+        <div class="col-md-2">
+            <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Internship</a>
+            <div class="dropdown-divider"></div>
+        </div>
+        <div class="col-md-2">
+            <a  class="btn btn-secondary" href="{% url 'main:contact'%}" target="__blank" >Apply for Training</a>
+            <div class="dropdown-divider"></div>
+        </div>
+        <div class="col-md-2">
+            <a  class="btn btn-secondary" href="{% url 'application:policies' %}" target="__blank" >Company Policies</a>
+            <div class="dropdown-divider"></div>
+        </div>
+        <div class="col-md-2">
+            <a  class="btn btn-secondary" href="{% url 'main:update_profile' request.user.profile.id %}" target="__blank" >Edit Profile</a>
+            <div class="dropdown-divider"></div>
+        </div>
       </div>
       
       {% elif user.category == 2 and user.sub_category == 2  %}
@@ -41,20 +41,20 @@
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'management:user_task' request.user %}" target="" >My DAF</a>
           <div class="dropdown-divider"></div>
-      </div>
+        </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'management:user_task_history' request.user %}" target="" >Last DAF</a>
           <div class="dropdown-divider"></div>
-      </div>
+        </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'management:user_evidence' request.user %}" target="__blank" >My Evidence</a>
           <div class="dropdown-divider"></div>
-      </div>
+        </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'management:evidence'%}" target="__blank" >Evidence</a>
           <div class="dropdown-divider"></div>
+        </div>
       </div>
-    </div>
       {% elif user.is_client %}
       <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
       <div class="row text-center">
@@ -63,28 +63,27 @@
         </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'data:train'%}" target="__blank" >My Training</a>
+        </div>
+        <div class="col-md-2">
+          {% with 'resume' as resume %}
+          <a class="btn btn-secondary" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>
+          {%endwith%}
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'data:start_training' slug='job-support' %}" target="__blank" >Job Support</a>
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'main:my_availability' %}" target="__blank" >My Schedule</a>
+        </div>
       </div>
-      <div class="col-md-2">
-        {% with 'resume' as resume %}
-        <a class="btn btn-secondary" href="{% url 'data:question-detail' resume %}" target="__blank" >My Interview</a>
-        {%endwith%}
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'data:start_training' slug='job-support' %}" target="__blank" >Job Support</a>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'accounts:user-list' request.user %}" target="__blank" >My Time</a>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'main:my_availability' %}" target="__blank" >My Schedule</a>
-      </div>
-
-    </div>
-    <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
-    <div class="row text-center">
-      <div class="col-md-2">
-        <a href="{% url 'management:meetings' %}" class="btn btn-secondary">My Meetings</a>
-      </div>
+      <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
+      <div class="row text-center">
+        <div class="col-md-2">
+          <a href="{% url 'management:meetings' %}" class="btn btn-secondary">My Meetings</a>
+        </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>
         </div>
@@ -95,22 +94,23 @@
           {% elif user.category == 5 %}
           <a href="{% url 'main:display_service' slug="investing" %}" class="btn btn-secondary">New Contract</a>
           {%else%}
-          <a href="{% url 'main:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
+          <a href="{% url 'finance:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
           {%endif%}
         </div>
 
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'finance:pay'%}" target="__blank" >Make Payment</a>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'main:update_profile' request.user.id %}" target="__blank" >Update My Profile</a>
-      </div>
-      <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'management:user_session' request.user %}" target="__blank" >My Sessions</a>
-      </div>
-      <!-- <div class="col-md-2">
-        <a class="btn btn-secondary" href="{% url 'main:contact' %}" target="__blank" >Help?</a>
-      </div> -->
+        </div>
+        <div class="col-md-2">
+          <!-- here update_profile view is used userProfile model, so for that we need to pass id of userProfile model  which is one to one field(profile) with customerUser model -->
+          <a class="btn btn-secondary" href="{% url 'main:update_profile' request.user.profile.id %}" target="__blank" >Update My Profile</a>
+        </div>
+        <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'management:user_session' request.user %}" target="__blank" >My Sessions</a>
+        </div>
+        <!-- <div class="col-md-2">
+          <a class="btn btn-secondary" href="{% url 'main:contact' %}" target="__blank" >Help?</a>
+        </div> -->
 
       </div>
       {% endif %}
