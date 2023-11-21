@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
+AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,6 +40,12 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "django_crontab",
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook"
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -59,7 +65,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'Middleware.MiddlewareFile.MailMiddleware'
+    'Middleware.MiddlewareFile.MailMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 
 ]
 
@@ -303,8 +310,36 @@ def source_target():
     return (source_host,source_dbname,source_user,source_password,target_db_path)
 
 
+#######################################
+# DAJNGO SOCIAL ALL AUTH LOGIN SETTING
+#######################################
+
+
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = 'accounts.views.CustomSocialAccountAdapter'
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    },
+    "facebook": {
+        "SCOPE": [
+            "public_profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    },
+}
 # import json
 
 # # Load Google Drive API credentials
 # with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
 #     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
+
+
+# 300757737869-c4as7i23oji94v66iactpflc9n8um3f5.apps.googleusercontent.com
+# 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
