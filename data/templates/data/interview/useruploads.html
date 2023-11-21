@@ -36,6 +36,7 @@
                       {{ useruploads.dynamic_fields|format_dynamic_fields|safe }}
                     </p>
                     <hr/>
+                    <a class="btn btn-primary" href="{% url 'data:question-detail' useruploads.question_type %}?source=userupllad" target="__blank">Edit</a>
                     {%comment%}<div class="row">
                       {% if useruploads.doc_url is none %}
                       <div class="col-md-12">
@@ -54,7 +55,9 @@
               </div>
            </div>
           {%endfor%}
-    </div>
+    </div><br>
+    <br>
+    <br>
     {%else%}
     <p>No any record</p>
     {%endif%}
