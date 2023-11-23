@@ -38,6 +38,7 @@
             <table id="table1">
                 <thead class="border-bottom font-weight-bold">
                 <tr>
+                    <th>CATEGOTY</th>
                     <th>REQUIREMENT</th>
                     <th>JUSTIFICATION</th>
                     <th>BREAKDOWN</th>
@@ -60,6 +61,13 @@
                         <input type="hidden" id="requirement_id" name="requirement_id" value={{ active_requirement }}>
 
                     {% endif %}
+                    <td rowspan="4">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="4">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -234,6 +242,13 @@
                 </tr>
 
                 <tr>
+                    <td rowspan="7">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="7">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -540,6 +555,13 @@
 
                 <tr>
                     <td rowspan="2">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
+                    <td rowspan="2">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
                                    value="REQ:CODA000{{ justifications.requirement_id }}">
@@ -647,6 +669,13 @@
 
 
                 <tr>
+                    <td rowspan="2">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="2">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -757,6 +786,13 @@
 
 
                 <tr>
+                    <td rowspan="3">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="3">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -898,6 +934,7 @@
                         {% endif %}                    </td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
