@@ -38,9 +38,6 @@ from django.views.generic import (
         UpdateView,
     )
 from .forms import *
-<<<<<<< HEAD
-import logging
-=======
 from django.http import JsonResponse
 from django.apps import apps
 from langchain.llms import OpenAI
@@ -48,7 +45,6 @@ from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
 
->>>>>>> origin/main_prod
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -106,8 +102,6 @@ def layout(request):
     return render(request, "main/home_templates/newlayout.html", context)
 
 
-<<<<<<< HEAD
-=======
 
 def fetch_model_table_names(request):
     app_name = request.GET.get('category', None)  # Replace with the actual app name
@@ -208,7 +202,6 @@ def get_respos(request):
         return JsonResponse({'error': str(e)})
 
 
->>>>>>> origin/main_prod
 # =====================SERVICES  VIEWS=======================================
 class ServiceCreateView(LoginRequiredMixin, CreateView):
     model = Service

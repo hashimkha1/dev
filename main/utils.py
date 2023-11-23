@@ -165,11 +165,6 @@ def generate_database_response(user_message, app='investing', table='investments
     # Get all the models from the specified app
     app_config = apps.get_app_config(app)
     models = app_config.get_models()
-<<<<<<< HEAD
-    
-
-=======
->>>>>>> origin/main_prod
     response_data = []
     # Flag to check if any matching records were found
     records_found = False
@@ -207,12 +202,6 @@ def generate_database_response(user_message, app='investing', table='investments
                 response_data.append({model_name: model_data})
                 records_found = True
 
-<<<<<<< HEAD
-        # Check if the model_data list is not empty
-        if any(model_data):
-            response_data.append({model_name: model_data})
-            print(response_data)
-=======
     # Add a message if no matching records were found
     if not records_found:
         table_description = {
@@ -222,7 +211,6 @@ def generate_database_response(user_message, app='investing', table='investments
         }
         response_data.append(table_description)
     # print("response_data=================>",response_data)
->>>>>>> origin/main_prod
     return response_data
 
 

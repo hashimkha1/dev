@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "django_crontab",
+    'allauth',
+    'allauth.account',
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    'allauth.account.middleware.AccountMiddleware',
     'Middleware.MiddlewareFile.MailMiddleware'
 
 ]
@@ -132,25 +135,25 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": dbname,
-        "USER":user,
-        "PASSWORD":password,
-        "HOST": host
-    }
-}
-'''=========== Heroku DB ================'''
 # DATABASES = {
-#     'default': {
-#         "ENGINE": 'django.db.backends.postgresql',
-#         "NAME": 'd8liqmn44tm61v',
-#         "USER": 'ylzxqlnsngttgn',
-#         "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-#         "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": dbname,
+#         "USER":user,
+#         "PASSWORD":password,
+#         "HOST": host
 #     }
 # }
+'''=========== Heroku DB ================'''
+DATABASES = {
+    'default': {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'd8liqmn44tm61v',
+        "USER": 'ylzxqlnsngttgn',
+        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+    }
+}
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)

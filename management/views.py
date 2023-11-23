@@ -1544,6 +1544,28 @@ def assess(request):
             form = ManagementForm()
     return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
+def clientassessment(request):
+    if request.method == "POST":
+        form = ClientAssessmentForm(request.POST, request.FILES)
+        if form.is_valid():
+            totalpoints=compute_total_points(form)
+            form.instance.totalpoints = totalpoints
+            form.save()
+            if totalpoints <= 40:
+                message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
+                return redirect("main:service_plans",slug='full-course')
+            else:
+                return redirect('main:layout')
+        else:
+            # Form is not valid, print errors
+            print("Form is not valid. Errors:")
+            for field, errors in form.errors.items():
+                print(f"Field: {field}")
+                for error in errors:
+                    print(f"- {error}")
+    else:
+        form = ClientAssessmentForm()
+    return render(request, "management/departments/hr/clientassessment_form.html", {"form": form})
 
 class AssessListView(ListView):
     # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
