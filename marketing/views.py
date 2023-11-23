@@ -104,6 +104,7 @@ def runwhatsapp(request):
         }
         
         headers = {
+            "accept": "application/json",
             "Content-Type": "application/json",
             "x-maytapi-key": token,
         }
@@ -111,9 +112,17 @@ def runwhatsapp(request):
         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
         response = requests.post(url, headers=headers, data=json.dumps(payload))
         # # Check if the API request was successful
-        if response.status_code != 200:
-            return response
-    return redirect('marketing:whatsapp_status')
+        # if response.status_code != 200:
+        #     return response
+        title = 'WHATSAPP'
+        if response.status_code == 200:
+           message = f"Hi, {request.user}, your messages have been sent to your groups."
+        else:
+            message = f"Hi, {request.user}, your messages have not been sent to your groups"
+        context = {"title": title, "message": message}
+        return render(request, "main/errors/generalerrors.html", context)
+    # return redirect('marketing:whatsapp_status')
+
 
 def whatsapp_status(request):
     title = 'WHATSAPP'
