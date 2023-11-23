@@ -16,6 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django.urls import reverse
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import CredentialFilter,UserFilter
@@ -750,23 +751,11 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
     success_url = "/accounts/tracker"
     # success_url="usertime"
-    # fields=['category','task','duration']
-    fields = [
-        "empname",
-        "employee",
-        "author",
-        "category",
-        "sub_category",
-        "task",
-        "duration",
-        "plan",
-    ]
-
+    fields = ["empname","employee","author","category","sub_category","task","duration","plan"]   
     def form_valid(self, form):
         user = self.request.user
         form.instance.author = self.request.user
         try:
-
             if form.instance.category == "Job_Support":
                 # print(form.instance.empname)
                 idval, points, targetpoints = Task.objects.values_list(
@@ -781,9 +770,7 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                     | Q(activity_name="Job support")
                     | Q(activity_name="job support"),
                     employee__username=form.instance.empname,
-                )[
-                    0
-                ]
+                )[0]
                 self.idval = idval
                 if (
                     form.instance.sub_category == "Development"  
@@ -795,7 +782,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
 
                 if points >= targetpoints:
                     targetpoints += 10
-                
                 Task.objects.filter(
                     Q(activity_name=form.instance.category)
                     | Q(activity_name="job_support")
@@ -809,7 +795,6 @@ class TrackCreateView(LoginRequiredMixin, CreateView):
                 ).update(point=points, mxpoint=targetpoints)
         except:
             pass
-
         return super().form_valid(form)
     
     def get_success_url(self):

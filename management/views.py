@@ -878,7 +878,7 @@ def usertask(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     path_list,subtitle,pre_sub_title=path_values(request)
     second_title=path_list[-2]
-    print(second_title)
+    # print(second_title)
     today, year, deadline_date, *_ = paytime()
     employee = get_object_or_404(User, username=kwargs.get("username"))
     
@@ -1387,8 +1387,7 @@ def newevidence(request, taskid):
 
     else:
         form = EvidenceForm(request=request)
-
-    return render(request, "management/daf/evidence_form.html", {"form": form})
+        return render(request, "management/daf/evidence_form.html", {"form": form})
 
 def evidence(request):
     links = TaskLinks.objects.all().order_by("-created_at")
@@ -1401,7 +1400,7 @@ def userevidence(request, user=None, *args, **kwargs):
 
     # Calculate the date range for the last 2 months
     now = timezone.localtime()
-    print(now)
+    # print(now)
     two_months_ago = now - timezone.timedelta(days=60)
 
     # Filter the TaskLinks based on the created_at field within the date range
@@ -1547,16 +1546,23 @@ def assess(request):
 
 def clientassessment(request):
     if request.method == "POST":
+        previous_user = CustomerUser.objects.filter(email=request.POST['email'])
+        user_count = previous_user.count()
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             totalpoints=compute_total_points(form)
             form.instance.totalpoints = totalpoints
             form.save()
-            if totalpoints <= 40:
-                message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
-                return redirect("main:service_plans",slug='full-course')
+            if user_count > 0:
+                messages.success(request, f'User already exists with this email')
+                return redirect("/password-reset")
+            # if totalpoints <= 40:
+            #     message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
+            #     return redirect("accounts:account-login")
             else:
-                return redirect('main:layout')
+                # return redirect('main:layout')
+                return redirect("accounts:account-login")
+
         else:
             # Form is not valid, print errors
             print("Form is not valid. Errors:")

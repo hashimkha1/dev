@@ -94,7 +94,7 @@
           {% elif user.category == 5 %}
           <a href="{% url 'main:display_service' slug="investing" %}" class="btn btn-secondary">New Contract</a>
           {%else%}
-          <a href="{% url 'main:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
+          <a href="{% url 'finance:newcontract' request.user %}" class="btn btn-secondary">New Contract</a>
           {%endif%}
         </div>
 
