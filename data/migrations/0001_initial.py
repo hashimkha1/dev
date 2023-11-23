@@ -185,7 +185,7 @@ class Migration(migrations.Migration):
                 ('comment', models.TextField()),
                 ('doc', models.FileField(blank=True, default='None', upload_to='Uploads/doc/')),
                 ('link', models.CharField(blank=True, max_length=255, null=True)),
-                ('dynamic_fields', models.TextField(blank=True, null=True)),
+                # ('dynamic_fields', models.TextField(blank=True, null=True)),
                 ('is_active', models.BooleanField(default=True)),
                 ('client', models.ForeignKey(default=1, on_delete=django.db.models.deletion.RESTRICT, related_name='client_assiged', to=settings.AUTH_USER_MODEL)),
             ],

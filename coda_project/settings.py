@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"),)
+AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
 
 # Application definition
 INSTALLED_APPS = [
@@ -40,8 +40,12 @@ INSTALLED_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "django_crontab",
-    'allauth',
-    'allauth.account',
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook"
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -61,8 +65,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'allauth.account.middleware.AccountMiddleware',
-    'Middleware.MiddlewareFile.MailMiddleware'
+    'Middleware.MiddlewareFile.MailMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 
 ]
 
@@ -114,14 +118,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('HEROKU_PROD_HOST')
-        dbname = os.environ.get('HEROKU_PROD_NAME')
-        user = os.environ.get('HEROKU_PROD_USER')
-        password = os.environ.get('HEROKU_PROD_PASS')
-        # host = os.environ.get('POSTGRES_DB_NAME')
-        # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
-        # user = os.environ.get('POSTGRESDB_USER')
-        # password = os.environ.get('POSTGRESSPASS') 
+        host = os.environ.get('POSTGRES_DB_NAME')
+        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
+        user = os.environ.get('POSTGRESDB_USER')
+        password = os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -304,3 +304,38 @@ def source_target():
     #Target                     
     target_db_path=os.environ.get('TARGET_PATH_PROD')
     return (source_host,source_dbname,source_user,source_password,target_db_path)
+
+
+#######################################
+# DAJNGO SOCIAL ALL AUTH LOGIN SETTING
+#######################################
+
+
+SITE_ID = 1
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = 'accounts.views.CustomSocialAccountAdapter'
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": [
+            "profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    },
+    "facebook": {
+        "SCOPE": [
+            "public_profile",
+            "email"
+        ],
+        "AUTH_PARAMS": {"access_type": "online"}
+    },
+}
+# import json
+
+# # Load Google Drive API credentials
+# with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
+#     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
+
+
+# 300757737869-c4as7i23oji94v66iactpflc9n8um3f5.apps.googleusercontent.com
+# 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

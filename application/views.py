@@ -299,6 +299,13 @@ def rate(request):
                 return redirect("management:new_evidence", taskid=task.id)
             except Task.DoesNotExist:
                 print("Task does not exist")
+        else:
+            # Form is not valid, print errors
+            print("Form is not valid. Errors:")
+            for field, errors in form.errors.items():
+                print(f"Field: {field}")
+                for error in errors:
+                    print(f"- {error}")
     else:
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})

@@ -32,7 +32,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'management:evidence'%}" target="__blank" >Evidence</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'main:update_profile' request.user.id %}" target="__blank" >Update My Profile</a>
+                                <a class="dropdown-item" href="{% url 'main:update_profile' request.user.profile.id %}" target="__blank" >Update My Profile</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'application:userscores' request.user %}" target="__blank" >My Score</a>
                             {%endif%}

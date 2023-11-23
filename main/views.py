@@ -668,11 +668,12 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         instance = form.save()
         # form.instance.username = self.request.user
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
-        image_name = form.cleaned_data.get('image').name
-        folder_id = '1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
-        image_path = instance.image.path
-        print('image_name',image_name,"---------------------","image_path",image_path)
-        upload_image_to_drive(image_path, folder_id,image_name)
+        # if form.cleaned_data.get('image') is not None:
+        #     image_name = form.cleaned_data.get('image').name
+        #     folder_id = '1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+        #     image_path = instance.image.path
+        #     print('image_name',image_name,"---------------------","image_path",image_path)
+        #     upload_image_to_drive(image_path, folder_id,image_name)
         return super().form_valid(form)
 
     def get_success_url(self):
