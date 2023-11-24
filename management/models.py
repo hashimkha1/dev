@@ -735,6 +735,7 @@ class Whatsapp(models.Model):
     group_name = models.CharField(max_length=100, null=True, blank=True)
     group_id = models.CharField(max_length=100, null=True, blank=True)
     image_url = models.CharField(max_length=500, null=True, blank=True)
+    link = models.CharField(max_length=500, null=True, blank=True)
     message= models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
