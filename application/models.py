@@ -44,17 +44,6 @@ class UserProfile(models.Model):
     emergency_national_id_no = models.CharField(max_length=254, null=True, blank=True)
     emergency_phone = models.CharField(max_length=254, null=True, blank=True)
     emergency_email = models.CharField(max_length=254, null=True, blank=True)
-    # Bank Account Details
-    account_number = models.CharField(max_length=50)
-    account_holder_name = models.CharField(max_length=100)
-    bank_name = models.CharField(max_length=200) 
-    # Letter from Administration
-    administration_letter = models.TextField()
-     # Handwritten Letter
-    handwritten_letter = models.ImageField(upload_to='handwritten_letters/',null=True, blank=True)
-     # Academic Credentials
-    academic_credentials = models.FileField(upload_to='academic_credentials/',null=True, blank=True)
-
 
 
     def __str__(self):
