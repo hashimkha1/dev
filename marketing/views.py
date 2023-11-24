@@ -83,7 +83,7 @@ def runwhatsapp(request):
 
     for group_id in group_ids:
         
-        if True:
+        if image_url:
             message_type = "media"
             message_content = image_url
             filename = "image.jpg"
