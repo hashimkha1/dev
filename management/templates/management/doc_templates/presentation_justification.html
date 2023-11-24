@@ -1,39 +1,36 @@
-<!doctype html>
-<html lang="en">
-    
-<head>
-    <style>
-        input {
-            border: 0px solid transparent;
-        }
+{% extends "main/base_templates/new_base.html"%}
+{% block content %}
+<style>
+    input {
+        border: 0px solid transparent;
+        text-align: center; 
+        max-width: 150px;
+     
+    }
 
-        table, th, td {
-            height: auto;
-            width: 1200px;
-            border: 1px solid black;
-            border-collapse: collapse;
-            overflow: auto;
+    table, th, td {
+        height: auto;
+        width: 1200px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        overflow: auto;
+        text-align: center; 
 
+    }
 
-        }
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
 
-        .center {
-            position: fixed;
-            top: 10%;
-            left: 10%;
-            bottom: 25%;
-            right: 25%;
-        }
-
-    </style>
-</head>
-
-<body>
+</style>
 
 
 <!-- SignUp Modal -->
 <form action="/management/add_justification/" method='post'>
-    <dev class="center">
+    <dev class="center" style="padding-top: 20px; padding-bottom: 20px;">
         <dev>
             <table id="table1">
                 <thead class="border-bottom font-weight-bold">
@@ -47,6 +44,104 @@
                     <th>Total(mins)</th>
                 </tr>
                 </thead>
+
+                <tr>
+                    <td rowspan="2">
+                        <input type="text" class="foo" id="req_id" name="req_id" value="{{category}}">
+                    </td>
+                    <td rowspan="2">
+                        {% if justifications.requirement_id %}
+                            <input type="text" class="foo" id="req_id" name="req_id" value="REQ:CODA000{{ justifications.requirement_id }}">
+                        {% else %}
+                            <input type="text" class="foo" id="req_id" name="req_id" value="REQ:CODA000{{ active_requirement }}">
+                        {% endif %}
+                    </td>
+                    <td rowspan="2">
+                        {% if justifications.Meeting %}
+                            <input type="checkbox" id="meeting" name="meeting" value={{ justifications.Meeting }} checked="true">
+                            <label for="demoCheckbox"> MEETING/SESSION </label>
+                        {% else %}
+                            <input type="checkbox" id="meeting" name="meeting" value="1">
+                            <label for="demoCheckbox"> MEETING/SESSION </label>
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        {% if justifications.Meetingrequirement_assignment %}
+                            <input type="checkbox" id="requirement_assignment" name="requirement_assignment"
+                                   value={{ justifications.Meetingrequirement_assignment }} checked="true">
+                            <label for="demoCheckbox"> Requirement Assignment</label>
+
+                        {% else %}
+
+                            <input type="checkbox" id="requirement_assignment" name="requirement_assignment" value="1">
+                            <label for="demoCheckbox"> Requirement Assignment</label>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+                        <input type="number" id="requirement_assignment_time" name="requirement_assignment_time" value="60" readonly>
+                    </td>
+                    <td>
+                        {% if justifications.requirement_assignmentquantity %}
+                            <input type="number" id="requirement_assignment_quantity" name="requirement_assignment_quantity"
+                                   value={{ justifications.requirement_assignmentquantity }}
+                                   oninput="calculateTotal('requirement_assignment')">
+
+                        {% else %}
+                            <input type="number" id="requirement_assignment_quantity" name="requirement_assignment_quantity" value="0"
+                            oninput="calculateTotal('requirement_assignment')">
+                        {% endif %}
+
+                    </td>
+                    <td>
+
+                        {% if justifications.requirement_assignmenttotal %}
+                            <label id="requirement_assignment_total">{{ justifications.requirement_assignmenttotal }} </label>
+                        {% else %}
+                            <label id="requirement_assignment_total"></label>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+
+                    <td>
+                        {% if justifications.Meetingpbr %}
+                            <input type="checkbox" id="pbr" name="pbr" value={{ justifications.Meetingpbr }} checked="true">
+                            <label for="demoCheckbox"> PBR(Discussion)</label>
+
+                        {% else %}
+
+                            <input type="checkbox" id="pbr" name="pbr" value="1">
+                            <label for="demoCheckbox"> PBR(Discussion)</label>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+                        <input type="number" id="pbr_time" name="pbr_time" value="120" readonly>
+                    </td>
+                    <td>
+                        {% if justifications.pbrquantity %}
+                            <input type="number" id="pbr_quantity" name="pbr_quantity"
+                                   value={{ justifications.pbrquantity }} oninput="calculateTotal('pbr')">
+                        {% else %}
+                            <input type="number" id="pbr_quantity" name="pbr_quantity" value="0" 
+                            oninput="calculateTotal('pbr')">
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        {% if justifications.pbrtotal %}
+                            <label id="pbr_total">{{ justifications.pbrtotal }} </label>
+                        {% else %}
+                            <label id="pbr_total"></label>
+                        {% endif %}
+
+                    </td>
+                </tr>
 
                 <tr>
                     {% if justifications.requirement_id %}
@@ -119,6 +214,7 @@
                         {% endif %}
                     </td>
                 </tr>
+           
                 <tr>
 
                     <td>
@@ -254,7 +350,7 @@
 
         </dev>
 
-        <dev>
+        <dev style="padding-top: 5px;">
             <button type="submit" class="btn btn-primary">Submit</button>
         </dev>
     </dev>
@@ -322,7 +418,5 @@ let totalTime = 0;
     }
 }
 </script>
+{% endblock content %}
 
-
-</body>
-</html>

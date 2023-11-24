@@ -2532,6 +2532,7 @@ def add_requirement_justification(request):
     if category == 'Website':
         
         justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
             'table': ['dictionary', 'Erd', 'Table', 'Testing'],
             'view': ['flow_diagram', 'create', 'detail', 'list', 'update', 'delete', 'testing_view'],
             'template': ['template_creation', 'template_testing'],
@@ -2542,6 +2543,7 @@ def add_requirement_justification(request):
     elif category == 'Other':
 
         justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
             'content': ['editing', 'creating'],
             'design': ['design_of_existing']
         }
@@ -2549,6 +2551,7 @@ def add_requirement_justification(request):
     else:
 
         justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
             'database': ['access', 'view', 'flow_diagram', 'testing_uat', 'testing_scripting'],
             'data_cleaning': ['workflow', 'testing_workflow'],
             'reporting': ['landing_page', 'executive_summary', 'detail_reports', 'table_list', 'report_testing_scripting'],
