@@ -19,8 +19,7 @@ from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
 from .forms import (
     RatingForm,
     ReportingForm,
-    # ApplicantProfileFormA,
-    UserProfileForm,
+    ApplicantProfileFormA,
     ApplicantProfileFormB,
     ApplicantProfileFormC,
 )
@@ -299,13 +298,6 @@ def rate(request):
                 return redirect("management:new_evidence", taskid=task.id)
             except Task.DoesNotExist:
                 print("Task does not exist")
-        else:
-            # Form is not valid, print errors
-            print("Form is not valid. Errors:")
-            for field, errors in form.errors.items():
-                print(f"Field: {field}")
-                for error in errors:
-                    print(f"- {error}")
     else:
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
@@ -394,10 +386,7 @@ def ratewid(request,pk):
 def enter_score(request):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
-        print(form.errors)
         if form.is_valid():
-            print("hello")
-            print(form.instance.data_tools)
             form.save()
             return redirect("application:userscores", request.user )
     else:

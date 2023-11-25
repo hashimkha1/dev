@@ -17,15 +17,8 @@
           <th>Email</th>
           <th>CellPhone</th>
           <th>Country</th>
-          <th>Bank Account Details</th>
-          <th>Letter from Administration</th>
-          <th>Handwritten Letter</th>
-          <th>Academic Credentials</th>
           <th>Section</th>
           <th> A</th>
-          <th> B</th>
-          <th> C</th>
-          
           <th> B</th>
           <th> C</th>
 
@@ -44,16 +37,6 @@
           <td>{{applicant.email}}</td>
           <td>{{applicant.phone}}</td>
           <td>{{applicant.country}}</td>
-          <td>Account Number: {{ user_profile.account_number }}</td>
-          <td>Account Holder Name: {{ user_profile.account_holder_name }}</td>
-          <td>Bank Name: {{user_profile.bank_name}}</td>
-          <td>{{user_profile.administration_letter}}</td>
-          <td>
-            <img src="{{user_profile.handwritten_letter.url}}" alt="Handwritten Letter">
-          </td>
-          <td>
-            <a href="{{ user_profile.academic_credentials.url }}" target="_blank">View Academic Credentials</a>
-          </td>
           <td>{{applicant.profile.section}}</td>
           <!-- {% if applicant.profile.upload_a %}
              <td>

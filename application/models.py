@@ -158,7 +158,6 @@ class Rated(models.Model):
             ("Database", "Database"),
             ("Python", "Python"),
             ("SAS", "SAS"),
-            ("Other", "Other"),
         ]
     TOPIC_CHOICES = [
         ("English", "English"),
