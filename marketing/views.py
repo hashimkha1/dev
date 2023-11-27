@@ -73,7 +73,7 @@ def whatsapp_apis(request):
 
 class AdsCreateView(LoginRequiredMixin, CreateView):
     model = Ads
-    success_url = "marketing/adslist/"  
+    success_url = "/marketing/adslist/"  
     form_class=AdsForm
     # fields = "__all__"
 

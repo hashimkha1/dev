@@ -29,4 +29,4 @@ class Ads(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
 
     def __str__(self):
-        return self.group_name
+        return self.image_name
