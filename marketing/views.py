@@ -1,12 +1,14 @@
-from django.shortcuts import render
 
-# Create your views here.
+import os
+from django.shortcuts import render
 import requests
 import json
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from management.models import Whatsapp
-from .forms import WhatsappForm
+from management.models import Whatsapp,Whatsapp_Groups
+from marketing.models import Ads
+from main.models import Assets
+from .forms import WhatsappForm,AdsForm
 from django.urls import reverse
 from mail.custom_email import send_email
 from main.utils import path_values,courses
@@ -16,6 +18,7 @@ from django.views.generic import (
         CreateView,
         UpdateView,
     )
+from main.context_processors import images
 from django.contrib.auth import get_user_model
 User=get_user_model()
 
@@ -25,7 +28,7 @@ def marketing(request):
 #====================Social Media===========================
 
 class whatsappCreateView(LoginRequiredMixin, CreateView):
-    model = Whatsapp
+    model = Whatsapp_Groups
     success_url = "/whatsapplist/"  
     form_class=WhatsappForm
     # fields = "__all__"
@@ -36,7 +39,7 @@ class whatsappCreateView(LoginRequiredMixin, CreateView):
 
 
 class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Whatsapp
+    model = Whatsapp_Groups # Whatsapp 
     form_class=WhatsappForm
 
     def form_valid(self, form):
@@ -55,31 +58,88 @@ class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return False
 
 def delete_whatsapp(request,id):
-    whatsapp_record = Whatsapp.objects.get(pk=id)
+    whatsapp_record = Whatsapp_Groups.objects.get(pk=id)
     if request.user.is_superuser:
         whatsapp_record.delete()
     return redirect('marketing:whatsapp_list')
 
 def whatsapp_apis(request):
-    whatsaapitems=Whatsapp.objects.all()
+    whatsaapitems=Whatsapp_Groups.objects.all()
     context={
             "whatsaapitems":whatsaapitems
     }
     return render(request, 'marketing/whatsapplist.html',context)
 
-def runwhatsapp(request):
-    print("Print this")
-    whatsapp_items = Whatsapp.objects.all()
 
-    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    
+class AdsCreateView(LoginRequiredMixin, CreateView):
+    model = Ads
+    success_url = "marketing/adslist/"  
+    form_class=AdsForm
+    # fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Ads # Whatsapp 
+    form_class=AdsForm
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("marketing:ads_list")
+
+    def test_func(self):
+        # plan = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user:
+            return True
+        return False
+
+def delete_ads(request,id):
+    ad = Ads.objects.get(pk=id)
+    if request.user.is_superuser:
+        ad.delete()
+    return redirect('marketing:ads_list')
+
+def ads(request):
+    ad_items=Ads.objects.all()
+    context={
+            "ad_items":ad_items
+    }
+    return render(request, 'marketing/adslist.html',context)
+
+
+
+def runwhatsapp(request):
+    # image_data_analysi_categories = Assets.objects.filter(category='background')
+    # image_webdevelopers_categories = Assets.objects.filter(category='webdevelopers')
+    # image_Family_categories = Assets.objects.filter(category='Farm')
+    # image_investment_categories = Assets.objects.filter(category='Farm')
+    # print("image_background===================>",image_investment_categories)
+
+    # Get the environmental variables for product_id,screen and token
+    product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
+    screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
+    token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
-    image_url = whatsapp_items[0].image_url
-    message = whatsapp_items[0].message
-    product_id =whatsapp_items[0].product_id   # "c1fbaec3-69c7-4e67-bdab-e69742ffddd0"  #whatsapp_items[1].product_id ""
-    screen_id = whatsapp_items[0].screen_id   #"36265" #whatsapp_items[1].screen_id
-    token =whatsapp_items[0].token   #"692c55b7-b8ed-471c-a0ef-905df21fe6c7" #whatsapp_items[0].token
-    link=whatsapp_items[0].link
+
+    # Get the message,image_url,and type from Ads table
+    data_url = Ads.objects.filter(image_name__name='data_page_v1').values_list('name', flat=True).first()
+    # data_url = Ads.objects.filter(name='data_page_v1').values_list('image_url', flat=True).first()
+    image_url =f'http://drive.google.com/uc?export=view&id={data_url}'
+    print("images_all===================>",image_url)
+
+   # Get a list of all group IDs from the Whatsapp_Group model
+    # whatsapp_items = Whatsapp_Groups.objects.all()
+    whatsapp_items = Whatsapp_Groups.objects.filter(group_name='Testing')
+    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
+    # print("Print this",group_ids)
 
     for group_id in group_ids:
         

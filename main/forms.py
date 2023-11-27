@@ -4,7 +4,7 @@ from django.db.models import Q
 from django.forms import ModelForm, Textarea
 from django.contrib.auth.forms import UserCreationForm
 from accounts.models import CustomerUser, Tracker,CredentialCategory,Credential
-from management.models import Whatsapp
+from management.models import Whatsapp_Groups
 from .models import Testimonials
 from django.utils.translation import gettext_lazy as _
 # from .models import Expenses

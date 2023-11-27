@@ -30,12 +30,14 @@ def images(request):
     image_names=Assets.objects.values_list('name',flat=True)
     default_url = Assets.objects.filter(name='default_emp_v1').values_list('image_url', flat=True).first()
     banner_url = Assets.objects.filter(name='banner_v1').values_list('image_url', flat=True).first()
-    print(banner_url)
+    data_url = Assets.objects.filter(name='data_page_v1').values_list('image_url', flat=True).first()
+    # print(data_url)
     return {
         'images': images,
         "image_names":image_names,
         "default_url":default_url,
-        "banner_url":banner_url
+        "banner_url":banner_url,
+        "data_url":data_url
     }
 
 def services(request):
