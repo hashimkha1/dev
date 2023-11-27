@@ -743,6 +743,35 @@ class Whatsapp(models.Model):
     def __str__(self):
         return self.group_name
     
+class Whatsapp_Groups(models.Model):
+    # types
+    investments = "investments"
+    data_analysis = "Data Analyis"
+    coda = "coda"
+    other = "other"
+    TYPE_CHOICES = [
+        (investments, "investments"),
+        (data_analysis, "data_analysis"),
+        (coda, "coda"),
+        (other, "Other"),
+    ]
+    group_name = models.CharField(max_length=100, null=True, blank=True)
+    group_id = models.CharField(max_length=100, null=True, blank=True)
+    # image_url = models.CharField(max_length=500, null=True, blank=True)
+    # link = models.CharField(max_length=500, null=True, blank=True)
+    # type = models.CharField(max_length=100, null=True, blank=True)
+    type = models.CharField(
+        max_length=25,
+        choices=TYPE_CHOICES,
+        default=other,
+    )
+    # message= models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+
+    def __str__(self):
+        return self.group_name
+    
 
 class Meetings(models.Model):
     Group = [
