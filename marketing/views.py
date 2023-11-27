@@ -116,7 +116,7 @@ def ads(request):
 
 
 def runwhatsapp(request):
-    print("Print this")
+    # print("Print this")
     product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
@@ -125,7 +125,7 @@ def runwhatsapp(request):
 
     for ad in ads_items:
         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
-        print('///////////',ad.image_name.category)
+        # print('///////////',ad.image_name.category)
 
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
 
@@ -133,8 +133,6 @@ def runwhatsapp(request):
         full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
         message = ad.message
         link = ad.link
-
-        
 
         for group_id in group_ids:
             if image_url:
