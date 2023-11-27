@@ -1,6 +1,5 @@
 from django.contrib import admin
-
-from marketing.models import Ads
-
+from . models import *
 # Register your models here.
+
 admin.site.register(Ads)

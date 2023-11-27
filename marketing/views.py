@@ -115,73 +115,63 @@ def ads(request):
     return render(request, 'marketing/adslist.html',context)
 
 
-
 def runwhatsapp(request):
-    # image_data_analysi_categories = Assets.objects.filter(category='background')
-    # image_webdevelopers_categories = Assets.objects.filter(category='webdevelopers')
-    # image_Family_categories = Assets.objects.filter(category='Farm')
-    # image_investment_categories = Assets.objects.filter(category='Farm')
-    # print("image_background===================>",image_investment_categories)
-
-    # Get the environmental variables for product_id,screen and token
+    # print("Print this")
     product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
+    ads_items = Ads.objects.all()
 
-    # Get the message,image_url,and type from Ads table
-    data_url = Ads.objects.filter(image_name__name='data_page_v1').values_list('name', flat=True).first()
-    # data_url = Ads.objects.filter(name='data_page_v1').values_list('image_url', flat=True).first()
-    image_url =f'http://drive.google.com/uc?export=view&id={data_url}'
-    print("images_all===================>",image_url)
+    for ad in ads_items:
+        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
+        # print('///////////',ad.image_name.category)
 
-   # Get a list of all group IDs from the Whatsapp_Group model
-    # whatsapp_items = Whatsapp_Groups.objects.all()
-    whatsapp_items = Whatsapp_Groups.objects.filter(group_name='Testing')
-    group_ids = list(whatsapp_items.values_list('group_id', flat=True))
-    # print("Print this",group_ids)
+        group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
 
-    # Loop through all group IDs and send the message to each group
-    for group_id in group_ids:
-        # print("Sending message to group", group_id)
-        # Set the message type to "text" or "media" depending on whether an image URL is provided
-        if image_url:
-            message_type = "media"
-            message_content = image_url
-            filename = "image.jpg"
-        else:
-            message_type = "text"
-            message_content = message
-            filename = None
+        image_url = ad.image_name.image_url
+        full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
+        message = ad.message
+        link = ad.link
 
-        # Set up the API request payload and headers
-        payload = {
-            "to_number": group_id,
-            "type": message_type,
-            "message": message_content,
-            "filename": filename,
-        }
-        
-        headers = {
-            "Content-Type": "application/json",
-            "x-maytapi-key": token,
-        }
-        # Send the API request and print the response
-        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
-        # # Check if the API request was successful
-        # if response.status_code != 200:
-        #     return response
-        # if response.status_code in(200,302,300):
-        # print(response)
-    
-    if response.status_code == 200:
-        message = f"Hi, {request.user}, your messages have been sent to your groups."
-    else:
-        message = f"Hi, {request.user}, your messages have not been sent to your groups"
+        for group_id in group_ids:
+            if image_url:
+                message_type = "media"
+                message_content = full_image__url
+                filename = "image.jpg"
+
+                payload = {
+                    "to_number": group_id,
+                    "type": message_type,
+                    "message": message_content,
+                    "text": f'{message}\nvisit us at {link}'
+                }
+            else:
+                message_type = "text"
+                message_content = f'{message}\nvisit us at {link}'
+                filename = None
+
+                payload = {
+                    "to_number": group_id,
+                    "type": message_type,
+                    "message": message_content,
+                    "filename": filename,
+                }
+
+            headers = {
+                "accept": "application/json",
+                "Content-Type": "application/json",
+                "x-maytapi-key": token,
+            }
+            url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+            response = requests.post(url, headers=headers, data=json.dumps(payload))
+
+            if response.status_code != 200:
+                print(f"Error sending message to group {group_id}")
+
+    message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": title, "message": message}
     return render(request, "main/errors/generalerrors.html", context)
-    # return redirect('marketing:whatsapp_status')
 
 # def whatsapp_status(request):
 #     title = 'WHATSAPP'
