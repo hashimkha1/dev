@@ -5,8 +5,8 @@ import requests
 import json
 from django.db.models import Q
 from django.shortcuts import redirect, render
-from management.models import Whatsapp,Whatsapp_Groups
-from marketing.models import Ads
+# from management.models import Whatsapp,Whatsapp_Groups
+from marketing.models import Ads,Whatsapp_Groups
 from main.models import Assets
 from .forms import WhatsappForm,AdsForm
 from django.urls import reverse
@@ -68,7 +68,7 @@ def whatsapp_apis(request):
     context={
             "whatsaapitems":whatsaapitems
     }
-    return render(request, 'marketing/whatsapplist.html',context)
+    return render(request, 'marketing/groups.html',context)
 
 
 class AdsCreateView(LoginRequiredMixin, CreateView):

@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm, Textarea
-from management.models import Whatsapp,Whatsapp_Groups
-from marketing.models import Ads
+# from management.models import Whatsapp,Whatsapp_Groups
+from marketing.models import Ads,Whatsapp_Groups
 from django.utils.translation import gettext_lazy as _
 
 

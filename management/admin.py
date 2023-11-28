@@ -12,10 +12,11 @@ from management.models import (
     TaskLinks,
     TaskHistory,
     Advertisement,
-    Training,ProcessJustification,ProcessBreakdown,Whatsapp,Whatsapp_Groups,
+    Training,ProcessJustification,ProcessBreakdown,
     Meetings
 
 )
+
 
 from django.contrib import messages
 
@@ -102,9 +103,6 @@ admin.site.register(Advertisement, AdsAdmin)
 admin.site.register(ProcessJustification)
 admin.site.register(ProcessBreakdown)
 admin.site.register(TaskGroups)
-
-admin.site.register(Whatsapp)
-admin.site.register(Whatsapp_Groups)
 
 """
 admin.site.register(Employee)
