@@ -26,7 +26,6 @@ from google.auth import exceptions
 
 
 
-
 register = template.Library()
 
 @register.filter
@@ -120,36 +119,22 @@ def unique_slug_generator(instance, new_slug=None):
 """ =============open_ai chat bot===========   """
 def generate_chatbot_response(user_message):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
-    # db = SQLDatabase.from_uri("postgresql://ylzxqlnsngttgn:1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311@ec2-52-86-115-245.compute-1.amazonaws.com/d8liqmn44tm61v")
-   
-
-    # toolkit = SQLDatabaseToolkit(db=db)
-
-    # agent_executor = create_sql_agent(
-    #     llm=OpenAI(temperature=0),
-    #     toolkit=toolkit,
-    #     verbose=True
-    # )
-    
-    # database_response = agent_executor.run(user_message)
-    
-    # ChatGPT Interaction
-    chatgpt_response = openai.Completion.create(
-        model="text-davinci-001",
-        prompt=user_message,
-        temperature=0.4,
-        max_tokens=200,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0
+    response = openai.Completion.create(
+            model="text-davinci-001",
+            prompt=user_message,
+            temperature=0.4,
+            max_tokens=100,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
     )
-
-    # Format the final response to include both database and ChatGPT responses
-    final_response = {
-        "chatgpt_response": chatgpt_response.choices[0].text if chatgpt_response else None
-    }
-
-    return final_response
+    if response:
+        res = response["choices"][0]
+        result=res['text']
+    else:
+        result = None
+    return result
+    # return response.choices[0].text
 
 
 def parse_user_query(user_query):
@@ -743,13 +728,13 @@ App_Categories = {
 }
 
 courses = {
-    "ETL-Alteryx" : [
+    "ETL" : [
                 {
                     "title": "Discover ETL Mastery with Alteryx.",
                     "description":" <li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Course Recap and Certification</li>"
                 },
             ],
-    "Database |SQL or Snowflake": [
+    "database": [
                 {
                     "title":"Mastering Databases: From Data Storage to Advanced SQL Mastery",
                     "description":"<li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Working with Relational Databases</li><li>Database Administration and Security</li><li>Performance Tuning and Optimization</li><li>Real-World Database Projects</li><li>Integration with Python and Data Analysis</li><li>Certification</li>",
@@ -762,7 +747,7 @@ courses = {
                 },
     ],
 
-    "AI": [
+    "interview": [
                 {
                     "title": "Module 1:CHATGPT|BARD",
                     "description":"<li>Introduction to AI</li>\
@@ -798,7 +783,7 @@ courses = {
                 },
     ],
 
-    "Full Course": [
+    "End_To_End": [
                 {
                     "title": "Introduction: Project Defition",
                     "description":"<li>CODA Employee Productivity  Project\

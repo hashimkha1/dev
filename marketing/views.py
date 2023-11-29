@@ -6,6 +6,7 @@ import json
 from django.db.models import Q
 from django.shortcuts import redirect, render
 from management.models import Whatsapp
+from main.models import Pricing
 from .forms import WhatsappForm
 from django.urls import reverse
 from mail.custom_email import send_email
@@ -144,7 +145,16 @@ def send_email_ads(request):
     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
     context_data = services(request)
 
+    user_category = request.user.category
+
+    # Retrieve the list of users based on their category
+    users_to_email = User.objects.filter(category=user_category)
+
+
     # Access the 'plans' variable from the context data
+    # print( user_category)
+    # print( users_to_email)
+    
     plans = context_data.get('plans')
     print("plans---->",plans)
     context={
@@ -157,12 +167,19 @@ def send_email_ads(request):
                 'contact_message':'info@codanalytics.net',
             }
     try:
-        send_email( category=request.user.category, 
-                    to_email=[request.user.email,], 
-                    subject=subject, html_template=url, 
-		    		context=context
-                    )
-        return render(request, "email/marketing/marketing_ads.html",context)
-    except:
-        return render(request, "email/marketing/marketing_ads.html",context)
+        # Send email to each user in the selected category
+        for user in users_to_email:
+            context['user'] = user.first_name 
+            send_email(
+                category=user.category,  
+                to_email=[user.email],
+                subject=subject,
+                html_template=url,
+                context=context
+            )
+
+        return render(request, "email/marketing/marketing_ads.html", context)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return render(request, "email/marketing/marketing_ads.html", context)
     
