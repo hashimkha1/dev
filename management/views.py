@@ -1546,19 +1546,22 @@ def assess(request):
 
 def clientassessment(request):
     if request.method == "POST":
-        # previous_user = CustomerUser.objects.filter(email=request.POST['email'])
-        # user_count = previous_user.count()
+        previous_user = CustomerUser.objects.filter(email=request.POST['email'])
+        user_count = previous_user.count()
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             totalpoints=compute_total_points(form)
             form.instance.totalpoints = totalpoints
             form.save()
+            if user_count > 0:
+                messages.success(request, f'User already exists with this email')
+                return redirect("/password-reset")
             # if totalpoints <= 40:
             #     message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
             #     return redirect("accounts:account-login")
-            # else:
+            else:
                 # return redirect('main:layout')
-            return redirect("accounts:account-login")
+                return redirect("accounts:account-login")
 
         else:
             # Form is not valid, print errors
