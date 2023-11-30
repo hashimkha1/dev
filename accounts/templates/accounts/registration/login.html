@@ -103,18 +103,22 @@
 						<input type="checkbox" name="" id="" />
 						<label for="" class="align-items-center">Remember Me</label>
 					</div>
-					<button type="submit" class="btn btn-primary">LOG IN</button>
-					<p class="text-center mt-2" style="color: #FFF;">or</p>
-					<div class="row" style="display: flex; justify-content: center; align-items: center;">
-						  <a id="google-signin-link" href="{% provider_login_url 'google' %}" type='button' class="loginBtn loginBtn--google">
-							Login with Google
-						  </a>
+					
+					<div class="row">
+						<button type="submit" class="btn btn-primary mb-3">LOG IN</button>
+						<p class="text-center mt-2 col-md-4 mb-3" style="color: #FFF;">or</p>
+						<div class="row col-md-4 mb-3" style="display: flex; justify-content: center; align-items: center;">
+							  <a id="google-signin-link" href="{% provider_login_url 'google' %}" type='button' class="loginBtn loginBtn--google">
+								Login with Google
+							  </a>
+						</div>
 					</div>
-					<div class="row" style="display: flex; justify-content: center; align-items: center;">
+
+					<!-- <div class="row" style="display: flex; justify-content: center; align-items: center;">
 						<a id="facebook-signin-link" href="{% provider_login_url 'facebook' %}" type='button' class="loginBtn loginBtn--facebook">
 						  Login with Facebook
 						</a>
-					</div>
+					</div> -->
 				</form>
 				<div class="text-center mt-4">
 					<p>Or log in with:</p>

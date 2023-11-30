@@ -1,43 +1,40 @@
-<!doctype html>
-<html lang="en">
-    
-<head>
-    <style>
-        input {
-            border: 0px solid transparent;
-        }
+{% extends "main/base_templates/new_base.html"%}
+{% block content %}
+<style>
+    input {
+        border: 0px solid transparent;
+        text-align: center; 
+        max-width: 150px;
+    }
 
-        table, th, td {
-            height: auto;
-            width: 1200px;
-            border: 1px solid black;
-            border-collapse: collapse;
-            overflow: auto;
+    table, th, td {
+        height: auto;
+        width: 1200px;
+        border: 1px solid black;
+        border-collapse: collapse;
+        overflow: auto;
 
+        text-align: center; 
+    }
 
-        }
+    .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
 
-        .center {
-            position: fixed;
-            top: 10%;
-            left: 10%;
-            bottom: 25%;
-            right: 25%;
-        }
-
-    </style>
-</head>
-
-<body>
+</style>
 
 
 <!-- SignUp Modal -->
 <form action="/management/add_justification/" method='post'>
-    <dev class="center">
+    <dev class="center" style="padding-top: 20px; padding-bottom: 20px;">
         <dev>
             <table id="table1">
                 <thead class="border-bottom font-weight-bold">
                 <tr>
+                    <th>CATEGOTY</th>
                     <th>REQUIREMENT</th>
                     <th>JUSTIFICATION</th>
                     <th>BREAKDOWN</th>
@@ -46,6 +43,104 @@
                     <th>Total(mins)</th>
                 </tr>
                 </thead>
+                
+                <tr>
+                    <td rowspan="2">
+                        <input type="text" class="foo" id="req_id" name="req_id" value="{{category}}">
+                    </td>
+                    <td rowspan="2">
+                        {% if justifications.requirement_id %}
+                            <input type="text" class="foo" id="req_id" name="req_id" value="REQ:CODA000{{ justifications.requirement_id }}">
+                        {% else %}
+                            <input type="text" class="foo" id="req_id" name="req_id" value="REQ:CODA000{{ active_requirement }}">
+                        {% endif %}
+                    </td>
+                    <td rowspan="2">
+                        {% if justifications.Meeting %}
+                            <input type="checkbox" id="meeting" name="meeting" value={{ justifications.Meeting }} checked="true">
+                            <label for="demoCheckbox"> MEETING/SESSION </label>
+                        {% else %}
+                            <input type="checkbox" id="meeting" name="meeting" value="1">
+                            <label for="demoCheckbox"> MEETING/SESSION </label>
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        {% if justifications.Meetingrequirement_assignment %}
+                            <input type="checkbox" id="requirement_assignment" name="requirement_assignment"
+                                   value={{ justifications.Meetingrequirement_assignment }} checked="true">
+                            <label for="demoCheckbox"> Requirement Assignment</label>
+
+                        {% else %}
+
+                            <input type="checkbox" id="requirement_assignment" name="requirement_assignment" value="1">
+                            <label for="demoCheckbox"> Requirement Assignment</label>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+                        <input type="number" id="requirement_assignment_time" name="requirement_assignment_time" value="60" readonly>
+                    </td>
+                    <td>
+                        {% if justifications.requirement_assignmentquantity %}
+                            <input type="number" id="requirement_assignment_quantity" name="requirement_assignment_quantity"
+                                   value={{ justifications.requirement_assignmentquantity }}
+                                   oninput="calculateTotal('requirement_assignment')">
+
+                        {% else %}
+                            <input type="number" id="requirement_assignment_quantity" name="requirement_assignment_quantity" value="0"
+                            oninput="calculateTotal('requirement_assignment')">
+                        {% endif %}
+
+                    </td>
+                    <td>
+
+                        {% if justifications.requirement_assignmenttotal %}
+                            <label id="requirement_assignment_total">{{ justifications.requirement_assignmenttotal }} </label>
+                        {% else %}
+                            <label id="requirement_assignment_total"></label>
+                        {% endif %}
+                    </td>
+                </tr>
+
+                <tr>
+
+                    <td>
+                        {% if justifications.Meetingpbr %}
+                            <input type="checkbox" id="pbr" name="pbr" value={{ justifications.Meetingpbr }} checked="true">
+                            <label for="demoCheckbox"> PBR(Discussion)</label>
+
+                        {% else %}
+
+                            <input type="checkbox" id="pbr" name="pbr" value="1">
+                            <label for="demoCheckbox"> PBR(Discussion)</label>
+                        {% endif %}
+
+
+                    </td>
+                    <td>
+                        <input type="number" id="pbr_time" name="pbr_time" value="120" readonly>
+                    </td>
+                    <td>
+                        {% if justifications.pbrquantity %}
+                            <input type="number" id="pbr_quantity" name="pbr_quantity"
+                                   value={{ justifications.pbrquantity }} oninput="calculateTotal('pbr')">
+                        {% else %}
+                            <input type="number" id="pbr_quantity" name="pbr_quantity" value="0" 
+                            oninput="calculateTotal('pbr')">
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        {% if justifications.pbrtotal %}
+                            <label id="pbr_total">{{ justifications.pbrtotal }} </label>
+                        {% else %}
+                            <label id="pbr_total"></label>
+                        {% endif %}
+
+                    </td>
+                </tr>
 
                 <tr>
                     {% if justifications.requirement_id %}
@@ -61,6 +156,13 @@
 
                     {% endif %}
                     <td rowspan="4">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
+                    <td rowspan="4">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
                                    value="REQ:CODA000{{ justifications.requirement_id }}">
@@ -74,26 +176,26 @@
 
                     </td>
                     <td rowspan="4">
-                        {% if justifications.table %}
+                        {% if justifications.Table %}
                              <input type="checkbox" id="Table" name="Table"
-                                    value={{ justifications.table }} checked="true">
-                            <label for="demoCheckbox"> Table</label>
+                                    value={{ justifications.Table }} checked="true">
+                            <label for="demoCheckbox"> TABLE </label>
 
                         {% else %}
                             <input type="checkbox" id="Table" name="Table" value="1">
-                            <label for="demoCheckbox"> Table</label>
+                            <label for="demoCheckbox"> TABLE </label>
                         {% endif %}
 
                     </td>
                     <td>
-                        {% if justifications.tabledictionary %}
-                            <input type="checkbox" id="Dictionary" name="Dictionary"
-                                   value={{ justifications.tabledictionary }} checked="true">
+                        {% if justifications.Tabledictionary %}
+                            <input type="checkbox" id="dictionary" name="dictionary"
+                                   value={{ justifications.Tabledictionary }} checked="true">
                             <label for="demoCheckbox"> Dictionary</label>
 
                         {% else %}
 
-                            <input type="checkbox" id="Dictionary" name="Dictionary" value="1">
+                            <input type="checkbox" id="dictionary" name="dictionary" value="1">
                             <label for="demoCheckbox"> Dictionary</label>
                         {% endif %}
 
@@ -126,8 +228,8 @@
                 <tr>
 
                     <td>
-                        {% if justifications.tableerd %}
-                            <input type="checkbox" id="Erd" name="Erd" value={{ justifications.tableerd }} checked="true">
+                        {% if justifications.TableErd %}
+                            <input type="checkbox" id="Erd" name="Erd" value={{ justifications.TableErd }} checked="true">
                             <label for="demoCheckbox"> Erd</label>
 
                         {% else %}
@@ -139,23 +241,23 @@
 
                     </td>
                     <td>
-                        <input type="number" id="erd_time" name="erd_time" value="15" readonly>
+                        <input type="number" id="Erd_time" name="Erd_time" value="15" readonly>
                     </td>
                     <td>
-                        {% if justifications.erdquantity %}
-                            <input type="number" id="erd_quantity" name="erd_quantity"
-                                   value={{ justifications.erdquantity }} oninput="calculateTotal('erd')">
+                        {% if justifications.Erdquantity %}
+                            <input type="number" id="Erd_quantity" name="Erd_quantity"
+                                   value={{ justifications.Erdquantity }} oninput="calculateTotal('Erd')">
                         {% else %}
-                            <input type="number" id="erd_quantity" name="erd_quantity" value="0" 
-                            oninput="calculateTotal('erd')">
+                            <input type="number" id="Erd_quantity" name="Erd_quantity" value="0" 
+                            oninput="calculateTotal('Erd')">
                         {% endif %}
 
                     </td>
                     <td>
-                        {% if justifications.erdtotal %}
-                            <label id="erd_total">{{ justifications.erdtotal }} </label>
+                        {% if justifications.Erdtotal %}
+                            <label id="Erd_total">{{ justifications.Erdtotal }} </label>
                         {% else %}
-                            <label id="erd_total"></label>
+                            <label id="Erd_total"></label>
                         {% endif %}
 
                     </td>
@@ -163,13 +265,13 @@
                 <tr>
 
                     <td>
-                        {% if justifications.tabletable_model %}
-                            <input type="checkbox" id="Table_model" name="Table_model"
-                                   value={{ justifications.tabletable_model }} checked="true">
+                        {% if justifications.TableTable %}
+                            <input type="checkbox" id="Table" name="Table"
+                                   value={{ justifications.TableTable }} checked="true">
                             <label for="demoCheckbox"> Table/Model</label>
 
                         {% else %}
-                            <input type="checkbox" id="Table_model" name="Table_model" value="1">
+                            <input type="checkbox" id="Table" name="Table" value="1">
                             <label for="demoCheckbox"> Table/Model</label>
                         {% endif %}
 
@@ -200,9 +302,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.tabletesting %}
+                        {% if justifications.TableTesting %}
                            <input type="checkbox" id="Testing" name="Testing"
-                                  value={{ justifications.tabletesting }} checked="true">
+                                  value={{ justifications.TableTesting }} checked="true">
                             <label for="demoCheckbox"> Testing</label>
                         {% else %}
 
@@ -235,6 +337,13 @@
 
                 <tr>
                     <td rowspan="7">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
+                    <td rowspan="7">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
                                    value="REQ:CODA000{{ justifications.requirement_id }}">
@@ -248,8 +357,8 @@
 
                     </td>
                     <td rowspan="7">
-                        {% if justifications.view %}
-                            <input type="checkbox" id="view" name="view" value={{ justifications.view }} checked="true">
+                        {% if justifications.View %}
+                            <input type="checkbox" id="view" name="view" value={{ justifications.View }} checked="true">
                             <label for="demoCheckbox"> VIEW</label>
                         {% else %}
                             <input type="checkbox" id="view" name="view" value="1">
@@ -259,9 +368,9 @@
 
                     </td>
                     <td>
-                        {% if justifications.viewflow_diagram %}
+                        {% if justifications.Viewflow_diagram %}
                             <input type="checkbox" id="flow_diagram" name="flow_diagram"
-                                   value={{ justifications.viewflow_diagram }} checked="true">
+                                   value={{ justifications.Viewflow_diagram }} checked="true">
                             <label for="demoCheckbox"> Flow Diagram</label>
                         {% else %}
 
@@ -298,12 +407,12 @@
                 <tr>
 
                     <td>
-                        {% if justifications.viewcreate %}
-                            <input type="checkbox" id="view_create" name="view_create"
-                                   value={{ justifications.viewcreate }} checked="true">
-                             <label for="demoCheckbox"> {{ justifications.viewcreate }} </label>
+                        {% if justifications.Viewcreate %}
+                            <input type="checkbox" id="create" name="create"
+                                   value={{ justifications.Viewcreate }} checked="true">
+                             <label for="demoCheckbox"> {{ justifications.Viewcreate }} </label>
                         {% else %}
-                            <input type="checkbox" id="view_create" name="view_create" value="1">
+                            <input type="checkbox" id="create" name="create" value="1">
                             <label for="demoCheckbox"> Create</label>
 
                         {% endif %}
@@ -337,9 +446,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.viewdetail %}
+                        {% if justifications.Viewdetail %}
                               <input type="checkbox" id="detail" name="detail"
-                                     value={{ justifications.viewdetail }} checked="true">
+                                     value={{ justifications.Viewdetail }} checked="true">
                             <label for="demoCheckbox"> Detail</label>
                         {% else %}
                             <input type="checkbox" id="detail" name="detail" value="1">
@@ -379,9 +488,9 @@
 
                     <td>
 
-                        {% if justifications.viewlist %}
+                        {% if justifications.Viewlist %}
                            <input type="checkbox" id="list" name="list"
-                                  value={{ justifications.viewlist }} checked="true">
+                                  value={{ justifications.Viewlist }} checked="true">
                             <label for="demoCheckbox"> List</label>
                         {% else %}
 
@@ -420,9 +529,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.viewupdate %}
+                        {% if justifications.Viewupdate %}
                             <input type="checkbox" id="update" name="update"
-                                   value={{ justifications.viewupdate }} checked="true">
+                                   value={{ justifications.Viewupdate }} checked="true">
                             <label for="demoCheckbox"> Update</label>
                         {% else %}
                             <input type="checkbox" id="update" name="update" value="1">
@@ -459,9 +568,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.viewdelete %}
+                        {% if justifications.Viewdelete %}
                             <input type="checkbox" id="delete" name="delete"
-                                   value={{ justifications.viewdelete }} checked="true">
+                                   value={{ justifications.Viewdelete }} checked="true">
                             <label for="demoCheckbox"> Delete</label>
                         {% else %}
                             <input type="checkbox" id="delete" name="delete" value="1">
@@ -500,9 +609,9 @@
 
                     <td>
 
-                        {% if justifications.viewtesting %}
+                        {% if justifications.Viewtesting_view %}
                             <input type="checkbox" id="testing_view" name="testing_view"
-                                   value={{ justifications.viewtesting }} checked="true">
+                                   value={{ justifications.Viewtesting_view }} checked="true">
                             <label for="demoCheckbox"> Testing</label>
                         {% else %}
                             <input type="checkbox" id="testing_view" name="testing_view" value="1">
@@ -516,9 +625,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.viewtestingquantity %}
+                        {% if justifications.testing_viewquantity %}
                             <input type="number" id="testing_view_quantity" name="testing_view_quantity"
-                                   value={{ justifications.viewtestingquantity }}  oninput="calculateTotal('testing_view')">
+                                   value={{ justifications.testing_viewquantity }}  oninput="calculateTotal('testing_view')">
 
                         {% else %}
                             <input type="number" id="testing_view_quantity" name="testing_view_quantity" value="0"
@@ -529,8 +638,8 @@
 
                     </td>
                     <td>
-                        {% if justifications.viewtestingtotal %}
-                            <label id="testing_view_total">{{ justifications.viewtestingtotal }} </label>
+                        {% if justifications.testing_viewtotal %}
+                            <label id="testing_view_total">{{ justifications.testing_viewtotal }} </label>
                         {% else %}
                             <label id="testing_view_total"></label>
                         {% endif %}
@@ -539,6 +648,13 @@
 
 
                 <tr>
+                    <td rowspan="2">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="2">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -552,8 +668,8 @@
                         {% endif %}
                     </td>
                     <td rowspan="2">
-                        {% if justifications.template %}
-                            <input type="checkbox" id="template" name="template" value={{ justifications.template }}
+                        {% if justifications.Template %}
+                            <input type="checkbox" id="template" name="template" value={{ justifications.Template }}
                             checked="true">
                             <label for="demoCheckbox"> TEMPLATES</label>
 
@@ -566,9 +682,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.templatecreation %}
+                        {% if justifications.Templatetemplate_creation %}
                             <input type="checkbox" id="template_creation" name="template_creation"
-                                   value="{{ justifications.templatecreation }}" checked="true">
+                                   value="{{ justifications.Templatetemplate_creation }}" checked="true">
                             <label for="demoCheckbox"> Template Creation</label>
                         {% else %}
 
@@ -582,9 +698,9 @@
                                readonly>
                     </td>
                     <td>
-                        {% if justifications.templatecreationquantity %}
+                        {% if justifications.template_creationquantity %}
                             <input type="number" id="template_creation_quantity" name="template_creation_quantity"
-                                   value={{ justifications.templatecreationquantity }} oninput="calculateTotal('template_creation')"> 
+                                   value={{ justifications.template_creationquantity }} oninput="calculateTotal('template_creation')"> 
                         {% else %}
                             <input type="number" id="template_creation_quantity" name="template_creation_quantity"
                                    value="0" oninput="calculateTotal('template_creation')">
@@ -594,8 +710,8 @@
                     </td>
                     <td>
 
-                        {% if justifications.templatecreationtotal %}
-                            <label id="template_creation_total">{{ justifications.templatecreationtotal }} </label>
+                        {% if justifications.template_creationtotal %}
+                            <label id="template_creation_total">{{ justifications.template_creationtotal }} </label>
                         {% else %}
                             <label id="template_creation_total"></label>
                         {% endif %}
@@ -608,9 +724,9 @@
 
                     <td>
 
-                        {% if justifications.templatetesting %}
+                        {% if justifications.Templatetemplate_testing %}
                             <input type="checkbox" id="template_testing" name="template_testing"
-                                   value={{ justifications.templatetesting }} checked="true">
+                                   value={{ justifications.Templatetemplate_testing }} checked="true">
                             <label for="demoCheckbox"> Template Testing</label>
                         {% else %}
                             <input type="checkbox" id="template_testing" name="template_testing" value="1">
@@ -626,9 +742,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.templatetestingquantity %}
+                        {% if justifications.template_testingquantity %}
                             <input type="number" id="template_testing_quantity" name="template_testing_quantity"
-                                   value={{ justifications.templatetestingquantity }} oninput="calculateTotal('template_testing')"> 
+                                   value={{ justifications.template_testingquantity }} oninput="calculateTotal('template_testing')"> 
                         {% else %}
                             <input type="number" id="template_testing_quantity" name="template_testing_quantity"
                                    value="0" oninput="calculateTotal('template_testing')">
@@ -638,8 +754,8 @@
                     </td>
                     <td>
 
-                        {% if justifications.templatetestingtotal %}
-                            <label id="template_testing_total">{{ justifications.templatetestingtotal }} </label>
+                        {% if justifications.template_testingtotal %}
+                            <label id="template_testing_total">{{ justifications.template_testingtotal }} </label>
                         {% else %}
                             <label id="template_testing_total"></label>
                         {% endif %}                    </td>
@@ -647,6 +763,13 @@
 
 
                 <tr>
+                    <td rowspan="2">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="2">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -660,9 +783,9 @@
                         {% endif %}
                     </td>
                     <td rowspan="2">
-                        {% if justifications.forms %}
+                        {% if justifications.Forms %}
                             <input type="checkbox" id="forms" name="forms" checked="true"
-                                   value={{ justifications.forms }}>
+                                   value={{ justifications.Forms }}>
                             <label for="demoCheckbox"> FORMS</label>
 
                         {% else %}
@@ -675,9 +798,9 @@
                     <td>
 
 
-                        {% if justifications.formscreation %}
+                        {% if justifications.Formsform_creation %}
                             <input type="checkbox" id="form_creation" name="form_creation"
-                                   value={{ justifications.formscreation }} checked="true">
+                                   value={{ justifications.Formsform_creation }} checked="true">
                             <label for="demoCheckbox"> Form Creation</label>
                         {% else %}
                             <input type="checkbox" id="form_creation" name="form_creation" value="1">
@@ -692,9 +815,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.formscreationquantity %}
+                        {% if justifications.form_creationquantity %}
                             <input type="number" id="form_creation_quantity" name="form_creation_quantity"
-                                   value={{ justifications.formscreationquantity }} oninput="calculateTotal('form_creation')">
+                                   value={{ justifications.form_creationquantity }} oninput="calculateTotal('form_creation')">
 
                         {% else %}
 
@@ -706,8 +829,8 @@
 
                     </td>
                     <td>
-                        {% if justifications.formscreationtotal %}
-                            <label id="form_creation_total">{{ justifications.formscreationtotal }} </label>
+                        {% if justifications.form_creationtotal %}
+                            <label id="form_creation_total">{{ justifications.form_creationtotal }} </label>
                         {% else %}
                             <label id="form_creation_total"></label>
                         {% endif %}
@@ -717,9 +840,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.formstesting %}
+                        {% if justifications.Formsform_testing %}
                             <input type="checkbox" id="form_testing" name="form_testing"
-                                   value={{ justifications.formstesting }} checked="true">
+                                   value={{ justifications.Formsform_testing }} checked="true">
                             <label for="demoCheckbox"> Form Testing</label>
                         {% else %}
 
@@ -733,9 +856,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.formstestingquantity %}
+                        {% if justifications.form_testingquantity %}
                             <input type="number" id="form_testing_quantity" name="form_testing_quantity"
-                                   value={{ justifications.formstestingquantity }} oninput="calculateTotal('form_testing')" >
+                                   value={{ justifications.form_testingquantity }} oninput="calculateTotal('form_testing')" >
 
                         {% else %}
                             <input type="number" id="form_testing_quantity" name="form_testing_quantity" value="0" 
@@ -748,8 +871,8 @@
                     </td>
                     <td>
 
-                        {% if justifications.formstestingtotal %}
-                            <label id="form_testing_total">{{ justifications.formstestingtotal }} </label>
+                        {% if justifications.form_testingtotal %}
+                            <label id="form_testing_total">{{ justifications.form_testingtotal }} </label>
                         {% else %}
                             <label id="form_testing_total"></label>
                         {% endif %}                    </td>
@@ -757,6 +880,13 @@
 
 
                 <tr>
+                    <td rowspan="3">
+                        
+
+                        <input type="text" class="foo" id="req_id" name="req_id"
+                            value="{{category}}">
+                       
+                    </td>
                     <td rowspan="3">
                         {% if justifications.requirement_id %}
                             <input type="text" class="foo" id="req_id" name="req_id"
@@ -770,9 +900,9 @@
                         {% endif %}
                     </td>
                     <td rowspan="3">
-                        {% if justifications.apis %}
+                        {% if justifications.Apis %}
                             <input type="checkbox" id="apis" name="apis"
-                                   value={{ justifications.apis }} checked="true">
+                                   value={{ justifications.Apis }} checked="true">
                             <label for="demoCheckbox"> APIs</label>
                         {% else %}
                             <input type="checkbox" id="apis" name="apis" value="1">
@@ -783,9 +913,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.apisnew %}
+                        {% if justifications.Apisnew_api %}
                             <input type="checkbox" id="new_api" name="new_api"
-                                   value={{ justifications.apisnew }} checked="true">
+                                   value={{ justifications.Apisnew_api }} checked="true">
                             <label for="demoCheckbox"> API(Brand New)</label>
                         {% else %}
 
@@ -799,9 +929,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.newquantity %}
+                        {% if justifications.new_apiquantity %}
                             <input type="number" id="new_api_quantity" name="new_api_quantity"
-                                   value={{ justifications.newquantity }}  oninput="calculateTotal('new_api')">
+                                   value={{ justifications.new_apiquantity }}  oninput="calculateTotal('new_api')">
 
                         {% else %}
                             <input type="number" id="new_api_quantity" name="new_api_quantity" value="0" 
@@ -813,8 +943,8 @@
                     </td>
                     <td>
 
-                        {% if justifications.newtotal %}
-                            <label id="new_api_total" >{{ justifications.newtotal }} </label>
+                        {% if justifications.new_apitotal %}
+                            <label id="new_api_total" >{{ justifications.new_apitotal }} </label>
                         {% else %}
                             <label id="new_api_total" ></label>
                         {% endif %}
@@ -823,9 +953,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.apisexisting %}
+                        {% if justifications.Apisexisting_api %}
                             <input type="checkbox" id="existing_api" name="existing_api"
-                                   value={{ justifications.apisexisting }} checked="true">
+                                   value={{ justifications.Apisexisting_api }} checked="true">
                             <label for="demoCheckbox"> API(Existing)</label>
                         {% else %}
                             <input type="checkbox" id="existing_api" name="existing_api" value="1">
@@ -838,9 +968,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.existingquantity %}
+                        {% if justifications.existing_apiquantity %}
                             <input type="number" id="existing_api_quantity" name="existing_api_quantity"
-                                   value={{ justifications.existingquantity }}  oninput="calculateTotal('existing_api')">
+                                   value={{ justifications.existing_apiquantity }}  oninput="calculateTotal('existing_api')">
 
                         {% else %}
 
@@ -853,8 +983,8 @@
                     <td>
 
 
-                        {% if justifications.existingtotal %}
-                            <label id="existing_api_total">{{ justifications.existingtotal }} </label>
+                        {% if justifications.existing_apitotal %}
+                            <label id="existing_api_total">{{ justifications.existing_apitotal }} </label>
                         {% else %}
                             <label id="existing_api_total"></label>
                         {% endif %}                    </td>
@@ -862,9 +992,9 @@
                 <tr>
 
                     <td>
-                        {% if justifications.apistesting %}
+                        {% if justifications.Apisapi_testing %}
                             <input type="checkbox" id="api_testing" name="api_testing"
-                                   value={{ justifications.apistesting }} checked="true">
+                                   value={{ justifications.Apisapi_testing }} checked="true">
                             <label for="demoCheckbox"> API Testing</label>
                         {% else %}
                             <input type="checkbox" id="api_testing" name="api_testing" value="1">
@@ -877,9 +1007,9 @@
                     </td>
                     <td>
 
-                        {% if justifications.apistestingquantity %}
+                        {% if justifications.api_testingquantity %}
                             <input type="number" id="api_testing_quantity" name="api_testing_quantity"
-                                   value={{ justifications.apistestingquantity }}  oninput="calculateTotal('api_testing')">
+                                   value={{ justifications.api_testingquantity }}  oninput="calculateTotal('api_testing')">
 
                         {% else %}
 
@@ -891,13 +1021,14 @@
                     <td>
 
 
-                        {% if justifications.apistestingtotal %}
-                            <label id="api_testing_total">{{ justifications.apistestingtotal }} </label>
+                        {% if justifications.api_testingtotal %}
+                            <label id="api_testing_total">{{ justifications.api_testingtotal }} </label>
                         {% else %}
                             <label id="api_testing_total"></label>
                         {% endif %}                    </td>
                 </tr>
                 <tr>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>
@@ -925,7 +1056,7 @@
 
         </dev>
 
-        <dev>
+        <dev style="padding-top: 5px;">
             <button type="submit" class="btn btn-primary">Submit</button>
         </dev>
     </dev>
@@ -994,6 +1125,5 @@ let totalTime = 0;
 }
 </script>
 
+{% endblock content %}
 
-</body>
-</html>
