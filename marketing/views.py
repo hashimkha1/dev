@@ -202,9 +202,6 @@ def send_email_ads(request):
 
 
     # Access the 'plans' variable from the context data
-    # print( user_category)
-    # print( users_to_email)
-    
     plans = context_data.get('plans')
     print("plans---->",plans)
     context={
