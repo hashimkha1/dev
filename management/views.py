@@ -2556,7 +2556,7 @@ def add_requirement_justification(request):
             'data_cleaning': ['workflow', 'testing_workflow'],
             'reporting': ['landing_page', 'executive_summary', 'detail_reports', 'table_list', 'report_testing_scripting'],
             'automation': ['existing_tool', 'python_script', 'form_testing'],
-            'external_apis': ['new', ' existing', 'api_testing']
+            'external_apis': ['new', 'existing', 'api_testing']
         }
 
 
