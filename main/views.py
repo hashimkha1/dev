@@ -18,7 +18,7 @@ from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
-from management.models import Whatsapp
+# from management.models import Whatsapp
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 # from langchain.agents import create_sql_agent

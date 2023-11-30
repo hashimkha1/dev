@@ -194,9 +194,11 @@ def send_email_ads(request):
     context_data = services(request)
 
     user_category = request.user.category
+    print(user_category)
 
     # Retrieve the list of users based on their category
     users_to_email = User.objects.filter(category=user_category)
+    print(users_to_email)
 
 
     # Access the 'plans' variable from the context data
