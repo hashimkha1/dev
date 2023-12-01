@@ -35,8 +35,9 @@ from investing.utils import get_user_investment
 from .utils import get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 from management.models import Requirement
-
-
+from django.views import View
+from .utils import *
+from .mpesa_integration import *
 
 
 User = get_user_model()
@@ -1234,3 +1235,97 @@ def dcinflows(request):
     }
     return render(request, "finance/payments/dcinflows.html", context)
 
+
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib import messages
+
+def MpesaPaymentView(request):
+    context = {}
+
+    if request.method == 'POST':
+        phone_number = request.POST.get('phone_number')
+
+        user_email = request.user.email  # Replace with the actual path to the user's email
+        print('user_email: ', user_email)
+        otp = generate_and_send_otp(user_email)
+        print('otp: ', otp)
+
+        request.session['phone_number'] = phone_number
+        
+        request.session['payment_otp'] = otp
+        return redirect('finance:otp_confirmation')
+    else:
+        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        downpayment = payment_info.down_payment
+        paypal_charges = calculate_paypal_charges(downpayment)
+        request.session['amount'] = downpayment
+        
+        reference = f"MPESA-{request.session.get('phone_number')}-{request.session.get('amount')}"
+        request.session['reference'] = reference
+        context = {"payment": payment_info, 'paypal_charges': paypal_charges,} 
+        return render(request, 'finance/payments/mpesa_payment.html', context)
+
+# views.py
+def verify_otp(request):
+    if request.method == 'POST':
+        entered_otp = request.POST.get('otp')
+        stored_otp = request.session.get('payment_otp')
+        phone_number = request.session.get('phone_number')
+        amount = request.session.get('amount')
+        reference = request.session.get('reference')
+        print("Phone Number:", phone_number)
+        print("Amount:", amount)
+        print("reference:", reference)
+        
+
+        # Debugging: Print entered and stored OTP to console
+        print("Entered OTP:", entered_otp)
+        print("Stored OTP:", stored_otp)
+
+        if entered_otp == stored_otp:
+            print("_______correct")
+            # If OTP is verified, proceed with payment initiation
+            payment_data = []
+            if not payment_data:
+                print("____________________paymrnt_data", payment_data)
+                response = initiate_payment(phone_number, amount, reference)
+                print(response, "______________Response")
+                if ("ResponseCode" in response) and (response['ResponseCode'] == "0"):
+                    payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+                    Payment_History.objects.create(
+                        customer=request.user,
+                        payment_fees=payment_info.payment_fees,
+                        down_payment=payment_info.down_payment,
+                        student_bonus=payment_info.student_bonus,
+                        plan=payment_info.plan,
+                        fee_balance=payment_info.fee_balance,
+                        payment_method="M-pesa",
+                        contract_submitted_date=payment_info.contract_submitted_date,
+                        client_signature=payment_info.client_signature,
+                        company_rep=payment_info.company_rep,
+                        client_date=payment_info.client_date,
+                        rep_date=payment_info.rep_date,
+                    )
+                if response.get('ResponseCode') == '0':
+                    messages.success(request, 'Payment initiated successfully.')
+                    return redirect('finance:payment_success')  # Redirect to success page
+                else:
+                    messages.error(request, 'Failed to initiate payment.')
+                    return redirect('finance:payment_failed')  # Redirect to failed page
+            else:
+                messages.error(request, 'Payment data not found. Please try again.')
+                return redirect('finance:payment_failed')  # Redirect to failed page
+        else:
+            messages.error(request, 'Invalid OTP. Please try again.')
+            return redirect('finance:payment_failed')  # Redirect to failed page
+
+    return render(request, 'finance/payments/otp_confirmation.html')
+
+def payment_success(request):
+    return render(request, 'finance/payments/success.html')
+
+def payment_failed(request):
+    return render(request, 'finance/payments/failed.html')

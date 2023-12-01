@@ -126,6 +126,10 @@ def dba_values():
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')
         # password = os.environ.get('POSTGRESSPASS') 
+        # host = "ec2-52-86-115-245.compute-1.amazonaws.com"
+        # dbname = "d8liqmn44tm61v" #os.environ.get('POSTGRES_DB_NAME') 
+        # user = "ylzxqlnsngttgn"
+        # password = "1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311" 
         
     return host,dbname,user,password  
 
@@ -152,10 +156,10 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 DATABASES = {
     'default': {
         "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'd8liqmn44tm61v',
-        "USER": 'ylzxqlnsngttgn',
-        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+        "NAME": os.environ.get('HEROKU_DEVS_NAME'),
+        "USER": os.environ.get('HEROKU_DEVS_USER'),
+        "PASSWORD": os.environ.get('HEROKU_DEVS_PASS'),
+        "HOST": os.environ.get('HEROKU_DEVS_HOST'),  
     }
 }
 
@@ -215,9 +219,11 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_SSL = False
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST = "smtp.privateemail.com"
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASS")
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = os.environ.get('EMAIL_TEST_HOST_USER')
+print('EMAIL_HOST_USER: ', EMAIL_HOST_USER)
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_TEST_HOST_PASSWORD')
+print('EMAIL_HOST_PASSWORD: ', EMAIL_HOST_PASSWORD)
 EMAIL_FILE_PATH = BASE_DIR + "/emails"
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -334,6 +340,22 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type": "online"}
     },
 }
+from datetime import datetime
+# settings.py
+MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
+MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
+MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
+MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+
+# MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+# MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_KEY')
+# MPESA_SHORTCODE = os.environ.get('MPESA_CONSUMER_KEY')
+# MPESA_PASSWORD = os.environ.get('MPESA_CONSUMER_KEY')
+# MPESA_TIMESTAMP = os.environ.get('MPESA_CONSUMER_KEY')
+# MPESA_CALLBACK_URL = os.environ.get('MPESA_CONSUMER_KEY')
+
 # import json
 
 # # Load Google Drive API credentials
