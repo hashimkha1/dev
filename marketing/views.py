@@ -216,7 +216,6 @@ def send_email_ads(request):
     try:
         # Send email to each user in the selected category
         for user in users_to_email:
-            context['user'] = user.first_name 
             send_email(
                 category=user.category,  
                 to_email=[user.email],
