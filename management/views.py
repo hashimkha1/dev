@@ -403,7 +403,7 @@ class TaskGroupCreateView(LoginRequiredMixin, CreateView):
 
 # ======================TASKS=======================
 def reset_task(request):
-    dump_data()
+    dump_data(request)
     context={
         "message":f'We are done transfering your tasks to history and resetting the points to zero',
     }
@@ -434,6 +434,7 @@ def newtaskcreation(request):
         mxearning = request.POST["mxearning"]
 
         employee = request.POST["employee"].split(",")
+
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
