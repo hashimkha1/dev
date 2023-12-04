@@ -52,6 +52,10 @@ urlpatterns = [
     path('payment_method/<str:method>/', views.payment, name='payment_method'),
     path("payment_complete/", views.paymentComplete, name="payment_complete"),
     path('payments/', views.payments, name='payments'),
+    path('mpesa-payment/', views.MpesaPaymentView, name='mpesa_payment'),
+    path('otp-confirmation/', views.verify_otp, name='otp_confirmation'),
+    path('payment-success/', views.payment_success, name='payment_success'),
+    path('payment-failed/', views.payment_failed, name='payment_failed'),
     path('pay/<int:pk>/', views.PaymentInformationUpdateView.as_view(), name='updatepay'),
     
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),

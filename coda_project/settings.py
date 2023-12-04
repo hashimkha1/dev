@@ -337,6 +337,16 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type": "online"}
     },
 }
+
+
+# settings.py
+MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
+MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
+MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
+MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+
 # import json
 
 # # Load Google Drive API credentials

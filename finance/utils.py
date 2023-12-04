@@ -8,6 +8,7 @@ from django.contrib import messages
 from .models import TrainingLoan, Transaction
 from main.utils import App_Categories
 from accounts.models import Department
+from django.conf import settings
 
 
 CustomUser = get_user_model()
@@ -191,3 +192,21 @@ def calculate_paypal_charges(amount):
 
     # If the amount is not within any of the charge brackets, return None
     return None
+
+
+# utils.py
+from django_otp.oath import totp
+from django.core.mail import send_mail
+import random
+
+def generate_and_send_otp(user_email):
+    otp = str(random.randint(100000, 999999))
+    send_mail(
+        'OTP Confirmation',
+        f'Your OTP for payment confirmation is: {otp}',
+        settings.EMAIL_HOST_USER,
+        [user_email],
+        fail_silently=False,
+    )
+
+    return otp
