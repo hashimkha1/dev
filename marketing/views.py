@@ -65,7 +65,7 @@ def whatsapp_apis(request):
     context={
             "whatsaapitems":whatsaapitems
     }
-    return render(request, 'marketing/whatsapplist.html',context)
+    return render(request, 'marketing/groups.html',context)
 
 
 class AdsCreateView(LoginRequiredMixin, CreateView):
