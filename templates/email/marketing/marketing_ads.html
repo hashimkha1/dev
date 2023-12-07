@@ -24,43 +24,139 @@
 
         <div class="row bottom-coloumn">
             <div class="col-md-12 top-coloumn bottom-coloumn">
-                <p class="title-sub-pay text-center">
-                    COURSES
-                </p>
+                
                 <div class="row">
                     <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
-                        <h3 style="margin-top:0;">Hi {{ user }},</h3>
+                        <h3 style="margin-top:0;">Dear {{ user }},</h3>
+                        <p class="title-sub-pay text-center" style="font-size:xx-large;">
+                            OUR COURSES
+                        </p>
                         <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
-                        <ul style="list-style:none; padding-left:0;">
-                            {% for service in services %}
-                            {% for course, infos in courses.items %}
-                            {% if course ==  service.title %}
-                            <p>{{ service.title}}: $ {{service.price }}</p>
-                            {% for info in infos %}
-                            <div class="course__content">
-                              <div class="course__box"> <!-- Add a div for the square box -->
-                                <p>{{ info.title }}</p>
-                                <p>{{ info.description|safe }}</p>
-                              </div>
-                            </div>
-                            {% endfor %} 
-                            {% endif %} 
-                            {% endfor %} 
-                            {% endfor %} 
-                        </ul>
-                        <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                        <p>Thank you,</p>
-                        <p>The Finance Team</p>
+                        <div class="email-container">
+                            <ul>
+                                {% for course_title, course_infos in courses.items %}
+                                    <ul>
+                                        {% for service in services %}
+                                        {% if course_title ==  service.title %}    
+                                                <p class="course__price">Price: $ {{ service.price }}</p>
+                                        {% endif %}        
+                                        {% endfor %}        
+                                                <div class="course__content">
+                                                    <div class="course__box"> 
+                                                        {% for info in course_infos %}
+                                                            <p class="course__title">{{ info.title }}</p>
+                                                            <p class="course__description">{{ info.description|safe }}</p>
+                                                        {% endfor %}
+                                                        <a href="#" class="purchase-button">Purchase Now</a>
+                                                    </div>
+                                                </div>       
+                                    </ul>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        
+                        
+                        <style>
+                            /* Center the content */
+                            body {
+                                height: 100vh;
+                                margin: 0;
+                                background-color: #f0f0f0; /* Light gray background color */
+                            }
+                        
+                            /* Style the container */
+                            .email-container {
+                                max-width: 600px; /* Adjust the maximum width as needed */
+                                padding: 20px;
+                                background-color:  gainsboro; /* White background color */
+                                border-radius: 10px;
+                                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle box shadow */
+                            }
+                        
+                            /* Remove default padding and list-style */
+                            ul {
+                                list-style: none;
+                                padding-left: 0;
+                            }
+                        
+                            .course__content {
+                                margin: 10px 0;
+                            }
+                        
+                            .course__price {
+                                font-size: 1.7em;
+                                color: gray;
+                                margin-top: 8px;
+                            }
+                        
+                            .course__box {
+                                border: 1px solid #ccc;
+                                padding: 10px;
+                                border-radius: 7px;
+                                background-color: #f5f5f5;
+                                transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+                            }
+                        
+                            .course__title {
+                                font-size: 1.1em;
+                                font-weight: bold;
+                                color: gray;
+                            }
+                        
+                            .course__description {
+                                color: wheat;
+                                margin-top: 10px;
+                                font-size: 1.4em;
+                            }
+                        
+                            .purchase-button {
+                                position: left;
+                                bottom: 10px;
+                                right: 10px;
+                                padding: 5px 10px;
+                                text-decoration: none;
+                                background-color: #007bff;
+                                color: #fff;
+                                border-radius: 5px;
+                                transition: background-color 0.3s ease-in-out;
+                            }
+                        
+                            .course__box:hover {
+                                transform: scale(1.05);
+                                background-color: #e0e0e0;
+                                color: #333;
+                            }
+                        
+                            .course__box:hover .purchase-button {
+                                background-color: #00b36e; /* Change the button color on hover */
+                            }
+                        
+                            .closing-paragraphs {
+                                margin-top: 20px;
+                            }
+                        
+                            .closing-paragraphs p {
+                                margin-bottom: 10px;
+                                font-size: 1.1em;
+                                color: #777;
+                            }
+                        </style>
+                        
+                                <div class="closing-paragraphs">
+                                    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                                    <p>Thank you,</p>
+                                    <p>The Finance Team</p>
+                                </div>
                     </div>
                     <div class="col-md-5">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <p class="font-weight-bold text-uppercase follow-text">
                             say hello :
                         </p>
-                    </div>
+                    </div> -->
                     <div class="col-md-4">
                         <div class="d-flex" style="align-items: center;
                         margin-top: 1%;">

@@ -136,6 +136,37 @@ def runwhatsapp(request):
 #     return render(request, "main/errors/generalerrors.html", context)
 
 
+# def send_email_ads(request):
+#     path_list,sub_title,pre_sub_title=path_values(request)
+#     subject='NEXT CLASSES!SIGN UP!'
+#     url='email/marketing/marketing_ads.html'
+#     message=''
+#     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
+#     context_data = services(request)
+
+#     # Access the 'plans' variable from the context data
+#     plans = context_data.get('plans')
+#     print("plans---->",plans)
+#     context={
+#                 'subtitle': sub_title,
+#                 'user': request.user.first_name,
+#                 'services':plans,
+#                 'courses':courses,
+#                 'message':message,
+#                 'error_message':error_message,
+#                 'contact_message':'info@codanalytics.net',
+#             }
+#     try:
+#         send_email( category=request.user.category, 
+#                     to_email=[request.user.email,], 
+#                     subject=subject, html_template=url, 
+# 		    		context=context
+#                     )
+#         return render(request, "email/marketing/marketing_ads.html",context)
+#     except:
+#         return render(request, "email/marketing/marketing_ads.html",context)
+
+
 def send_email_ads(request):
     path_list,sub_title,pre_sub_title=path_values(request)
     subject='NEXT CLASSES!SIGN UP!'
@@ -143,6 +174,14 @@ def send_email_ads(request):
     message=''
     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
     context_data = services(request)
+
+    user_category = request.user.category
+    print(user_category)
+
+    # Retrieve the list of users based on their category
+    users_to_email = User.objects.filter(category=user_category)
+    print(users_to_email)
+
 
     # Access the 'plans' variable from the context data
     plans = context_data.get('plans')
@@ -157,12 +196,18 @@ def send_email_ads(request):
                 'contact_message':'info@codanalytics.net',
             }
     try:
-        send_email( category=request.user.category, 
-                    to_email=[request.user.email,], 
-                    subject=subject, html_template=url, 
-		    		context=context
-                    )
-        return render(request, "email/marketing/marketing_ads.html",context)
-    except:
-        return render(request, "email/marketing/marketing_ads.html",context)
+        # Send email to each user in the selected category
+        for user in users_to_email:
+            send_email(
+                category=user.category,  
+                to_email=[user.email],
+                subject=subject,
+                html_template=url,
+                context=context
+            )
+
+        return render(request, "email/marketing/marketing_ads.html", context)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return render(request, "email/marketing/marketing_ads.html", context)
     

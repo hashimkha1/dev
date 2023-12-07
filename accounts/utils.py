@@ -72,3 +72,9 @@ def get_clients_time(current_info,history_info,trackers):
 	except (TypeError, AttributeError):
 		delta = 0
 	return plantime,history_time,added_time,Usedtime,delta,num
+
+
+JOB_SUPPORT_CATEGORIES = [
+    "Job_Support", "job_support", "jobsupport", "Jobsupport", 
+    "JobSupport", "Job Support", "Job support", "job support"
+]
