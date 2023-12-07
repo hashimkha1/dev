@@ -30,6 +30,7 @@ from django.urls import reverse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.account.signals import user_logged_in
 from django.dispatch import receiver
+from allauth.socialaccount.models import SocialAccount
 # from allauth.core.exceptions import ImmediateHttpResponse
 
 # Create your views here..
@@ -879,6 +880,74 @@ class TrackDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 #custom adaptor for updating user object for category and subcategory field  
 class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
 
+    def pre_social_login(self, request, sociallogin):
+        
+        # Check if the user with the given email already exists in your custom User model
+        user = sociallogin.user
+        email = user.email
+        existing_user = CustomerUser.objects.filter(email=email).first()
+
+        if existing_user:
+            # Link the social login to the existing user
+            sociallogin.connect(request, existing_user)
+        else:
+            # If the user doesn't exist, create a new user
+            user = sociallogin.save(request, connect=False)
+            # Create a SocialAccount manually and associate it with the user
+            social_account = SocialAccount(
+                user=user,
+                uid=sociallogin.account.uid,
+                provider=sociallogin.account.provider,
+            )
+            social_account.save()
+
+        # If Category is Staff/employee
+        if existing_user is not None and existing_user.category == 2:
+            if existing_user.is_staff and not existing_user.is_employee_contract_signed:
+                
+                sociallogin.state['next'] = reverse("management:employee_contract")
+            
+            else:  # parttime (agents) & Fulltime
+                
+                sociallogin.state['next'] = reverse("management:companyagenda")
+
+        # If Category is client/customer:# Student # Job Support
+        elif existing_user is not None and (existing_user.category == 3 or existing_user.category == 4) :
+            
+            sociallogin.state['next'] = reverse('management:companyagenda')
+        
+        elif existing_user is not None and (existing_user.category == 5) :
+            
+            sociallogin.state['next'] = reverse('management:companyagenda')
+        
+        elif existing_user is not None and existing_user.profile.section is not None and existing_user.category == 1:
+            
+            if existing_user.profile.section == "A":
+                
+                sociallogin.state['next'] = reverse("application:section_a")
+           
+            elif existing_user.profile.section == "B":
+                
+                sociallogin.state['next'] = reverse("application:section_b")
+           
+            elif existing_user.profile.section == "C":
+                
+                sociallogin.state['next'] = reverse("application:policies")
+            else:
+                
+                sociallogin.state['next'] = reverse("application:interview")
+            
+        elif existing_user is not None and existing_user.profile.section is not None and existing_user.category == 1 and existing_user.sub_category==0:
+
+                sociallogin.state['next'] = reverse("application:policies")
+        
+        elif existing_user is not None and existing_user.is_admin:
+            
+            sociallogin.state['next'] = reverse("management:companyagenda")
+        
+        else:
+            sociallogin.state['next'] = reverse('main:layout')  # Redirect to your success page or handle as needed
+     
     def save_user(self, request, sociallogin, form=None):
         """
         This method is called after the user is created during social login.
@@ -915,16 +984,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         # If registration is open, return True; if not, return False.
         return True
 
-    # def pre_social_login(self, request, sociallogin):
-    #     # This isn't tested, but should work
-    #     try:
-    #         import pdb; pdb.set_trace()
-    #         user = CustomerUser.objects.get(email=sociallogin.email)
-    #         sociallogin.connect(request, user)
-
-    #     except CustomerUser.DoesNotExist:
-    #         pass
-
+ 
 
 ###########################################
 # create profile for social login account

@@ -154,7 +154,7 @@
                           </div>
                           <div class="col-md-3" id="gi">
                             {% with 'mpesa' as mpesa %}
-                            <a href="{% url 'finance:payment_method' mpesa %}" target="_blank">
+                            <a href="{% url 'finance:mpesa_payment' %}" target="_blank">
                               <button type="button" class="btn btn-secondary btn-lg">Mpesa</button>
                             </a>
                             {% endwith %}
@@ -162,7 +162,6 @@
                         </div>
                         <hr>
                   </div>
-    
   </div>
           </div>
 </div>

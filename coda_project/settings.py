@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
+AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
 
 # Application definition
 INSTALLED_APPS = [
@@ -337,6 +337,16 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type": "online"}
     },
 }
+
+
+# settings.py
+MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
+MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
+MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
+MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+
 # import json
 
 # # Load Google Drive API credentials

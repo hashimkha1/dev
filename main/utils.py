@@ -828,8 +828,12 @@ team_members = [
         "description":"The Supporting Tech Team comprises skilled professionals who provide technical support and expertise to enable effective analytics operations. They work closely with the Lead Team and other stakeholders to develop and maintain the infrastructure, tools, and technologies required for data analysis and reporting. These individuals possess strong technical skills and stay up-to-date with the latest advancements in analytics technology.",
     },
     {
-        "title": "Trainee Team",
-        "description":"The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies.",
+        "title": "Senior Trainee Team",
+        "description":"The CODA Senior Trainee Team consists of superb individuals who are have gone through the first level of training in the field of analytics and are now working through the web development through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of web development and enhanced data science skills. The trainees work closely with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies.",
+    },
+    {
+        "title": "Junior Trainee Team",
+        "description":"The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely with the Senior Trainee Team to learn and apply analytical techniques, tools, and methodologies.",
     },
 
 ]
