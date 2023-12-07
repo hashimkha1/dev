@@ -116,11 +116,14 @@ def runwhatsapp(request):
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
-    ads_items = Ads.objects.all()
-
+    ads_items = Ads.objects.filter(is_active=True)
+    # print("ads_items=>",ads_items)
+    # # return
     for ad in ads_items:
         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
-
+        print(ad.image_name.category)
+        # print("whatsapp_groups=>",whatsapp_groups)
+        # # return
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
 
         image_url = ad.image_name.image_url

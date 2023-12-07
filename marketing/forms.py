@@ -25,8 +25,10 @@ class AdsForm(forms.ModelForm):
                     "image_name",
                     "message",
                     "link",
+                    "is_active",
+                    "is_featured",
         ]
         labels = {
                     "image_name":"Select image_name",
                     "message":"Describe the message to be posted",
-}
+}   
