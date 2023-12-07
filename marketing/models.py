@@ -17,22 +17,21 @@ class Ads(models.Model):
 
 class Whatsapp_Groups(models.Model):
     # types
-    investments = "investments"
-    data_analysis = "Data Analyis"
-    coda = "coda"
-    other = "other"
     TYPE_CHOICES = [
-        (investments, "investments"),
-        (data_analysis, "data_analysis"),
-        (coda, "coda"),
-        (other, "Other"),
+        ("investments", "investments"),
+        ("Data Analyis", "data_analysis"),
+        ("coda", "coda"),
+        ("Job Support", "Job_Support"),
+        ("Interview", "Interview"),
+        ("Mentorship", "Mentorship"),
+        ("other", "Other"),
     ]
     group_name = models.CharField(max_length=100, null=True, blank=True)
     group_id = models.CharField(max_length=100, null=True, blank=True)
     type = models.CharField(
         max_length=25,
         choices=TYPE_CHOICES,
-        default=other,
+        default="Other",
     )
     # message= models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
