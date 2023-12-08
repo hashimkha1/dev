@@ -297,7 +297,7 @@ elif os.environ.get('ENVIRONMENT') == 'testing':
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 else:
-    SITEURL = "http://127.0.0.1:8000/"
+    SITEURL = "http://127.0.0.1:8000"
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 

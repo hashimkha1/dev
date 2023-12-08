@@ -16,6 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from django.urls import reverse
 from .models import CustomerUser, Tracker, CredentialCategory, Credential, Department
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import CredentialFilter,UserFilter
@@ -24,7 +25,7 @@ from application.models import UserProfile,Assets
 from finance.models import Payment_History,Payment_Information
 from mail.custom_email import send_email
 import string, random
-from .utils import generate_random_password
+from .utils import generate_random_password,JOB_SUPPORT_CATEGORIES
 
 from django.urls import reverse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
@@ -726,14 +727,6 @@ def usertracker(request, user=None, *args, **kwargs):
             subject=subject, 
             html_template='email/usertracker.html',
             context={'user': request.user})
-            # to = customer_get[1]
-            # html_content = f"""
-            #     <span><h3>Hi {customer_get[0]},</h3>Your Total Time at CODA is less than 30 hours kindly click here to sign a new contract <br>
-            #     <a href='https://www.codanalytics.net/finance/new_contract/{request.user}/'>click here to sign new contract</a><br>
-                
-            #     </span>"""
-            # email_template(subject, to, html_content)
-
         context = {
             "trackers": trackers,
             "num": num,
@@ -747,80 +740,117 @@ def usertracker(request, user=None, *args, **kwargs):
     #     return redirect("accounts:tracker-create")
 
 
+# class TrackCreateView(LoginRequiredMixin, CreateView):
+#     model = Tracker
+#     success_url = "/accounts/tracker"
+#     # success_url="usertime"
+#     fields = ["empname","employee","author","category","sub_category","task","duration","plan"]   
+#     def form_valid(self, form):
+#         user = self.request.user
+#         form.instance.author = self.request.user
+#         try:
+#             if form.instance.category == "Job_Support":
+#                 # print(form.instance.empname)
+#                 idval, points, targetpoints = Task.objects.values_list(
+#                     "id", "point", "mxpoint"
+#                 ).filter(
+#                     Q(activity_name=form.instance.category)
+#                     | Q(activity_name="job_support")
+#                     | Q(activity_name="jobsupport")
+#                     | Q(activity_name="Jobsupport")
+#                     | Q(activity_name="JobSupport")
+#                     | Q(activity_name="Job Support")
+#                     | Q(activity_name="Job support")
+#                     | Q(activity_name="job support"),
+#                     employee__username=form.instance.empname,
+#                 )[0]
+#                 self.idval = idval
+#                 if (
+#                     form.instance.sub_category == "Development"  
+#                     or form.instance.sub_category == "Testing"
+#                 ):
+#                     points = float(points) + (0.5 * form.instance.duration)
+#                 else:
+#                     points = float(points) + form.instance.duration
+
+#                 if points >= targetpoints:
+#                     targetpoints += 10
+#                 Task.objects.filter(
+#                     Q(activity_name=form.instance.category)
+#                     | Q(activity_name="job_support")
+#                     | Q(activity_name="jobsupport")
+#                     | Q(activity_name="Jobsupport")
+#                     | Q(activity_name="JobSupport")
+#                     | Q(activity_name="Job Support")
+#                     | Q(activity_name="Job support")
+#                     | Q(activity_name="job support"),
+#                     employee__username=form.instance.empname,
+#                 ).update(point=points, mxpoint=targetpoints)
+#         except:
+#             pass
+#         return super().form_valid(form)
+    
+#     def get_success_url(self):
+#         return reverse(
+#                         "management:new_evidence", 
+#                         kwargs={
+#                             'taskid':  self.idval
+#                         }
+#                     )
+
+
+
 class TrackCreateView(LoginRequiredMixin, CreateView):
     model = Tracker
     success_url = "/accounts/tracker"
-    # success_url="usertime"
-    # fields=['category','task','duration']
-    fields = [
-        "empname",
-        "employee",
-        "author",
-        "category",
-        "sub_category",
-        "task",
-        "duration",
-        "plan",
-    ]
+    fields = ["empname", "employee", "author", "category", "sub_category", "task", "duration", "plan"]
+
+    def __init__(self, *args, **kwargs):
+        super(TrackCreateView, self).__init__(*args, **kwargs)
+        self.idval = None  # Initialize idval
 
     def form_valid(self, form):
-        user = self.request.user
         form.instance.author = self.request.user
+        if form.instance.category == "Job_Support":
+            self.update_job_support_points(form)
+        return super().form_valid(form)
+
+    def update_job_support_points(self, form):
         try:
-
-            if form.instance.category == "Job_Support":
-                # print(form.instance.empname)
-                idval, points, targetpoints = Task.objects.values_list(
-                    "id", "point", "mxpoint"
-                ).filter(
-                    Q(activity_name=form.instance.category)
-                    | Q(activity_name="job_support")
-                    | Q(activity_name="jobsupport")
-                    | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport")
-                    | Q(activity_name="Job Support")
-                    | Q(activity_name="Job support")
-                    | Q(activity_name="job support"),
-                    employee__username=form.instance.empname,
-                )[
-                    0
-                ]
-                self.idval = idval
-                if (
-                    form.instance.sub_category == "Development"  
-                    or form.instance.sub_category == "Testing"
-                ):
-                    points = float(points) + (0.5 * form.instance.duration)
-                else:
-                    points = float(points) + form.instance.duration
-
-                if points >= targetpoints:
-                    targetpoints += 10
-                
-                Task.objects.filter(
-                    Q(activity_name=form.instance.category)
-                    | Q(activity_name="job_support")
-                    | Q(activity_name="jobsupport")
-                    | Q(activity_name="Jobsupport")
-                    | Q(activity_name="JobSupport")
-                    | Q(activity_name="Job Support")
-                    | Q(activity_name="Job support")
-                    | Q(activity_name="job support"),
-                    employee__username=form.instance.empname,
-                ).update(point=points, mxpoint=targetpoints)
-        except:
+            task_id, current_points, target_points = self.get_task_details(form.instance.empname, form.instance.category)
+            self.idval = task_id
+            updated_points = self.calculate_updated_points(form.instance.sub_category, form.instance.duration, current_points)
+            self.update_task_points(task_id, updated_points, target_points)
+        except Exception as e:
+            # Handle specific exceptions or log them
             pass
 
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return reverse(
-                        "management:new_evidence", 
-                        kwargs={
-                            'taskid':  self.idval
-                        }
-                    )
+    def get_task_details(self, empname, category):
+        return Task.objects.values_list("id", "point", "mxpoint").filter(
+            Q(activity_name__in=JOB_SUPPORT_CATEGORIES), employee__username=empname
+        )[0]
 
+    def calculate_updated_points(self, sub_category, duration, current_points):
+        if sub_category in ["Development", "Testing"]:
+            return float(current_points) + (0.5 * duration)
+        return float(current_points) + duration
+
+    def update_task_points(self, task_id, updated_points, target_points):
+        if updated_points >= target_points:
+            target_points += 10
+        Task.objects.filter(id=task_id).update(point=updated_points, mxpoint=target_points)
+
+    def get_success_url(self):
+        if self.request.user.is_client:
+            return reverse("accounts:user-list", kwargs={'username': self.request.user.username})
+        elif self.request.user.is_staff:
+            if not self.idval:
+                return reverse("accounts:tracker-list")
+            else:
+                return reverse("management:new_evidence", kwargs={'taskid': self.idval})
+        else:
+            return reverse("management:companyagenda")
+    
 
 @method_decorator(login_required, name="dispatch")
 class TrackUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

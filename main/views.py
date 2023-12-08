@@ -1,6 +1,5 @@
 import webbrowser
 import datetime
-import time
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
@@ -18,14 +17,8 @@ from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
-# from management.models import Whatsapp
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
-# from langchain.agents import create_sql_agent
-# from langchain.agents.agent_toolkits import SQLDatabaseToolkit
-# from langchain.sql_database import SQLDatabase
-# from langchain.llms.openai import OpenAI
-# from langchain.agents import AgentExecutor
 
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse

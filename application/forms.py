@@ -82,6 +82,7 @@ class RatingForm(forms.ModelForm):
             "rating_date",
             "type",
             "topic",
+            "data_tools",
             "uploadlinkurl",
             "projectDescription",
             "requirementsAnalysis",
@@ -95,6 +96,7 @@ class RatingForm(forms.ModelForm):
             "rating_date": "Date",
             "type": "type",
             "topic": "Topic",
+            "data_tools": "Data Tools",
             "uploadlinkurl": "Upload link url",
             "projectDescription": "Project Description",
             "requirementsAnalysis": "Requirements Analysis",
@@ -109,6 +111,7 @@ class RatingForm(forms.ModelForm):
         self.fields["topic"].required = False
         self.fields["type"].required = False
         self.fields["rating_date"].required = False
+        self.fields["data_tools"].required = False
         if self.request and self.request.user:
             is_employee = self.request.user.is_staff
             if is_employee:
