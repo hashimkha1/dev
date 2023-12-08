@@ -40,7 +40,6 @@ handler500 = "main.views.hendler500"
 urlpatterns = [
     path('parse_cashapp_mails/', parse_mail),
     path("admin/", admin.site.urls),
-    path('accounts/', include('allauth.urls')),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
     path(
