@@ -111,7 +111,7 @@ def ads(request):
     context={
             "ad_items":ad_items
     }
-    return render(request, 'marketing/adslist.html',context)
+    return render(request, 'marketing/adlist.html',context)
 
 @login_required(login_url="accounts:account-login")
 def runwhatsapp(request):
