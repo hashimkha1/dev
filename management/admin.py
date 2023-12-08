@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.urls import path, reverse
 from accounts.models import CustomerUser, TaskGroups
 from management.models import (
     Requirement,
@@ -12,7 +11,7 @@ from management.models import (
     TaskLinks,
     TaskHistory,
     Advertisement,
-    Training,ProcessJustification,ProcessBreakdown,Whatsapp,
+    Training,ProcessJustification,ProcessBreakdown,
     Meetings
 
 )
@@ -103,7 +102,6 @@ admin.site.register(ProcessJustification)
 admin.site.register(ProcessBreakdown)
 admin.site.register(TaskGroups)
 
-admin.site.register(Whatsapp)
 
 """
 admin.site.register(Employee)

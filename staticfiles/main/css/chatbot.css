@@ -18,13 +18,10 @@
     --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
     --primary: #581B98;
 }
-<<<<<<< HEAD
-=======
 .chatbot {
     z-index: 9;
 }    
 
->>>>>>> origin/main_prod
 
 /* CHATBOX
 =============== */
@@ -204,11 +201,8 @@
     border-bottom-left-radius: 50px;
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-<<<<<<< HEAD
-=======
     animation: shake 4s ease infinite;
 }
 .chatbox__button{
     animation: shake 4s ease infinite;
->>>>>>> origin/main_prod
 }
