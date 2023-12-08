@@ -3,6 +3,14 @@ from main.models import Assets
 # # Create your models here.
 
 class Ads(models.Model):
+    ad_title = models.CharField(max_length=100, null=True, blank=True)
+    company = models.CharField(max_length=100, null=True, blank=True)
+    short_name = models.CharField(max_length=50, null=True, blank=True)
+    company_site = models.CharField(max_length=255, null=True, blank=True)
+    meeting_link = models.CharField(max_length=500, null=True, blank=True)
+    video_link = models.CharField(max_length=500, null=True, blank=True)
+    signature = models.CharField(max_length=255, null=True, blank=True)
+    bulletin= models.TextField(null=True, blank=True)
     message= models.TextField(null=True, blank=True)
     image_name = models.ForeignKey(
         Assets, related_name="message_image", on_delete=models.CASCADE,default=1
@@ -12,8 +20,9 @@ class Ads(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
+
     def __str__(self):
-        return str(self.image_name)
+        return str(self.ad_title)
 
 
 class Whatsapp_Groups(models.Model):

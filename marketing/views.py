@@ -1,10 +1,12 @@
-import os
-from django.shortcuts import render
-import requests
+import os,requests
 import json
+from django.shortcuts import render
+from django.contrib import messages
 from django.db.models import Q
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from marketing.models import Ads,Whatsapp_Groups
+from .utils import send_message,build_message_payload
 from main.models import Assets
 from .forms import WhatsappForm,AdsForm
 from django.urls import reverse
@@ -111,26 +113,29 @@ def ads(request):
     }
     return render(request, 'marketing/adslist.html',context)
 
+@login_required(login_url="accounts:account-login")
 def runwhatsapp(request):
     product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
     ads_items = Ads.objects.filter(is_active=True)
-    # print("ads_items=>",ads_items)
-    # # return
     for ad in ads_items:
         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
-        print(ad.image_name.category)
-        # print("whatsapp_groups=>",whatsapp_groups)
-        # # return
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
-
         image_url = ad.image_name.image_url
         full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
         message = ad.message
+        company_description = ad.bulletin if ad.bulletin else ''
         link = ad.link
-
+        topic=ad.ad_title if ad.ad_title else 'General'
+        company=ad.company if ad.company else 'CROWN DATA ANALYSIS & CONSULTING LLC'
+        short_name=ad.short_name if ad.short_name else 'CODA'
+        signature=ad.signature if ad.signature else 'Chris Maghas-AI|Automation Expert'
+        company_site=ad.company_site if ad.signature else 'www.codanalytics.net/accounts/join'
+        video_link= f"Here is the recorded video:{ad.video_link}.Enjoy!" if ad.video_link else ''
+        join_link= f"Join Zoom Meeting \n:{ad.meeting_link}" if ad.meeting_link else ''
+        post= f'{company}-{short_name}\n\n{company_description}\n\n{topic}\n\n{message}\n\n{video_link}\n{join_link}\n\nFor questions, please reach us at: {company_site}\n{signature}'
         for group_id in group_ids:
             if image_url:
                 message_type = "media"
@@ -141,11 +146,11 @@ def runwhatsapp(request):
                     "to_number": group_id,
                     "type": message_type,
                     "message": message_content,
-                    "text": f'{message}\nvisit us at {link}'
+                    "text":post #f'{message}\nvisit us at {link}'
                 }
             else:
                 message_type = "text"
-                message_content = f'{message}\nvisit us at {link}'
+                message_content = post # f'{message}\nvisit us at {link}'
                 filename = None
 
                 payload = {
@@ -154,7 +159,6 @@ def runwhatsapp(request):
                     "message": message_content,
                     "filename": filename,
                 }
-
             headers = {
                 "accept": "application/json",
                 "Content-Type": "application/json",
@@ -169,6 +173,28 @@ def runwhatsapp(request):
     message = f"Hi, {request.user}, your messages have been sent to your groups."
     context = {"title": title, "message": message}
     return render(request, "main/errors/generalerrors.html", context)
+
+
+
+# @login_required(login_url="accounts:account-login")
+# def runwhatsapp(request):
+#     product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
+#     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
+#     token = os.environ.get('MAYTAPI_TOKEN')
+#     title = 'WHATSAPP'
+
+#     ads_items = Ads.objects.filter(is_active=True).prefetch_related('image_name')
+#     for ad in ads_items:
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
+#         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
+
+#         message_payload = build_message_payload(ad)
+
+#         for group_id in group_ids:
+#             send_message(product_id, screen_id, token, group_id, message_payload)
+
+#     messages.success(request, "Your messages have been sent to your groups.")
+#     return render(request, "main/errors/generalerrors.html", {"title": title})
 
 def send_email_ads(request):
     path_list,sub_title,pre_sub_title=path_values(request)
