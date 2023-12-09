@@ -1,12 +1,9 @@
-from django.db import models
-import os,requests,openai
+import os,requests
 import json
-import random,string
-from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-import datetime
-from management.models import Whatsapp
+import logging
 
 
+logger = logging.getLogger(__name__)
 
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))
@@ -18,51 +15,48 @@ def best_employee(task_obj):
     return best_users
 
 
-# def runwhatsapp(whatsapp):
-#     # whatsapp_items = Whatsapp.objects.all()
-#     # Get a list of all group IDs from the Whatsapp model
-#     whatsapp_obj=whatsapp
-#     print("whatsapp_items======>",whatsapp_obj)
-#     best_users = tuple(whatsapp_obj.values_list('group_id'))
-#     group_ids = list(whatsapp_obj.values_list('group_id', flat=True))
+def build_message_payload(ad):
+    image_url = ad.image_name.image_url
+    full_image_url = f'http://drive.google.com/uc?export=view&id={image_url}'
+    message = ad.message
+    link = ad.link
+    topic = ad.ad_title if ad.ad_title else ''
+    company = ad.company if ad.company else ''
+    short_name = ad.short_name if ad.short_name else ''
+    signature = ad.signature if ad.signature else ''
+    video_link = f"Here is the recorded video:{ad.video_link}" if ad.video_link else ''
+    join_link = f"Join Zoom Meeting \n:{ad.meeting_link}" if ad.video_link else ''
+    company_site = ad.company_site  # Assuming this is always present
 
-#     # Get the image URL and message from the first item in the Whatsapp model
-#     image_url = whatsapp_obj[0].image_url
-#     message = whatsapp_obj[0].message
-#     product_id = whatsapp_obj[0].product_id
-#     screen_id = whatsapp_obj[0].screen_id
-#     token = whatsapp_obj[0].token
+    post = f'{company}({short_name})\n\n{topic}\n{message}\n\n.{video_link}{join_link},Questions, Please reach us: {company_site}\n{signature}'
 
-#     # Loop through all group IDs and send the message to each group
-#     for group_id in group_ids:
-#         print("Sending message to group", group_id)
+    if image_url:
+        message_type = "media"
+        message_content = full_image_url
+        filename = "image.jpg"
+    else:
+        message_type = "text"
+        message_content = f'{message}\nvisit us at {link}'
+        filename = None
 
-#         # Set the message type to "text" or "media" depending on whether an image URL is provided
-#         if image_url:
-#             message_type = "media"
-#             message_content = image_url
-#             filename = "image.jpg"
-#         else:
-#             message_type = "text"
-#             message_content = message
-#             filename = None
+    payload = {
+        "type": message_type,
+        "message": message_content,
+        "text": post if message_type == "media" else None,
+        "filename": filename if message_type == "media" else None
+    }
+    return payload
 
-#         # Set up the API request payload and headers
-#         payload = {
-#             "to_number": group_id,
-#             "type": message_type,
-#             "message": message_content,
-#             "filename": filename,
-#         }
-        
-#         headers = {
-#             "Content-Type": "application/json",
-#             "x-maytapi-key": token,
-#         }
-#         # Send the API request and print the response
-#         url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
-#         response = requests.post(url, headers=headers, data=json.dumps(payload))
-#         # Check if the API request was successful
-#         if response.status_code != 200:
-#             return response
-#     return response
+def send_message(product_id, screen_id, token, group_id, message_payload):
+    headers = {
+        "accept": "application/json",
+        "Content-Type": "application/json",
+        "x-maytapi-key": token,
+    }
+    url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
+    try:
+        response = requests.post(url, headers=headers, data=json.dumps(message_payload))
+        if response.status_code != 200:
+            logger.error(f"Error sending message to group {group_id}: {response.text}")
+    except requests.RequestException as e:
+        logger.error(f"Request failed: {e}")

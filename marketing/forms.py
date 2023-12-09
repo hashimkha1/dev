@@ -22,13 +22,22 @@ class AdsForm(forms.ModelForm):
     class Meta:
         model = Ads #Whatsapp
         fields = [
-                    "image_name",
-                    "message",
-                    "link",
-                    "is_active",
-                    "is_featured",
+            "ad_title",
+            "company",
+            "short_name",
+            "company_site",
+            "meeting_link",
+            "video_link",
+            "signature",
+            "image_name",
+            "message",
+            "bulletin",
+            "link",
+            "is_active",
+            "is_featured",
         ]
         labels = {
                     "image_name":"Select image_name",
+                    "bulletin":"What does your company do?",
                     "message":"Describe the message to be posted",
 }   
