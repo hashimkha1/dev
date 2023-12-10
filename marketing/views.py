@@ -209,7 +209,7 @@ def send_email_ads(request):
     users_to_email = User.objects.filter(category=user_category)
     plans = context_data.get('plans')
     pricing_info = {
-        obj.title: obj.price if request.user.country == 'USA' else obj.discounted_price
+        obj.title: obj.price if request.user.country == 'US' else obj.discounted_price
         for obj in plans
     }
     print("Pricing Info:", pricing_info)

@@ -728,7 +728,7 @@ App_Categories = {
 }
 
 courses = {
-    "Etl" : [
+    "ETL" : [
                 {
                     "title": "Discover ETL Mastery with Alteryx.",
                     "description":" <li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Course Recap and Certification</li>"
@@ -747,7 +747,7 @@ courses = {
                 },
     ],
 
-    "Interview": [
+    "AI": [
                 {
                     "title": "Module 1:CHATGPT|BARD",
                     "description":"<li>Introduction to AI</li>\
@@ -783,7 +783,7 @@ courses = {
                 },
     ],
 
-    'End_To_End': [
+    'Full_Course': [
                 {
                     "title": "Introduction: Project Defition",
                     "description":"<li>CODA Employee Productivity  Project\
