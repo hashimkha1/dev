@@ -19,6 +19,15 @@
         type="text/css"
         href="{% static 'main/css/new_main.css' %}"
       />
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="{% static 'main/css/team_card.css' %}"
+      />
+    <script src="jquery-3.6.0.min.js"></script>
+
+
+
       {% if title %}
       <title>CODA - {{ title }}</title>
       {% else %}
@@ -48,6 +57,24 @@
             $("#collapsibleNavbar").toggleClass('show')
         })
     </script>
+    <!-- js for team_card.html  -->
+    <script>
+        document.querySelectorAll('.member-link').forEach(link => {
+          link.addEventListener('click', e => {
+            e.preventDefault();
+            const memberInfo = link.parentElement;
+            const description = memberInfo.querySelector('.description');
+      
+            if (memberInfo.classList.contains('show-description')) {
+              memberInfo.classList.remove('show-description');
+              description.style.opacity = '0';
+            } else {
+              memberInfo.classList.add('show-description');
+              description.style.opacity = '1';
+            }
+          });
+        });
+      </script>
 </body>
 
 </html>

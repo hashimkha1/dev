@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from marketing.models import Ads,Whatsapp_Groups
 from .utils import send_message,build_message_payload
-from main.models import Assets
+from main.models import Assets, Pricing
 from coda_project import settings
 from .forms import WhatsappForm,AdsForm
 from django.urls import reverse
@@ -200,27 +200,31 @@ def runwhatsapp(request):
 def send_email_ads(request):
     path_list,sub_title,pre_sub_title=path_values(request)
     subject='NEXT CLASSES!SIGN UP!'
-    url='email/marketing/marketing_ads.html'
+    url='marketing/marketing_ads.html'
     message=''
     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
     context_data = services(request)
-
     user_category = request.user.category
-    
-    
-
     # Retrieve the list of users based on their category
     users_to_email = User.objects.filter(category=user_category)
-    
-
-    # Access the 'plans' variable from the context data
+    if request.user.country == 'USA':
+        pricing_multiplier = 1.0
+    else:
+        pricing_multiplier = 0.5
+    print("Pricing Multiplier:", pricing_multiplier)
     plans = context_data.get('plans')
-    print("plans---->",plans)
+    for obj in plans:
+        print(obj.title, obj.price)
+
+    pricing_info = {obj.title: obj.price * pricing_multiplier for obj in plans}
+    print("Pricing Info:", pricing_info)
+  
     context={
                 "SITEURL": settings.SITEURL,
                 'subtitle': sub_title,
                 'user': request.user.first_name,
-                'services':plans,
+                "services": plans,
+                'services': pricing_info,
                 'courses':courses,
                 'message':message,
                 'error_message':error_message,

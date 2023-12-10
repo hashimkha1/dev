@@ -38,11 +38,11 @@
                             <ul>
                                 {% for course_title, course_infos in courses.items %}
                                     <ul>
-                                        {% for service in services %}
+                                        {% for service, price in services.items %}
                                         {% if course_title ==  service.title %}    
-                                                <p class="course__price">Price: $ {{ service.price }}</p>
+                                                <p class="course__price">Price: $ {{ price }}</p>
                                         {% endif %}        
-                                        {% endfor %}        
+                                        {% endfor %} 
                                                 <div class="course__content">
                                                     <div class="course__box"> 
                                                         {% for info in course_infos %}
