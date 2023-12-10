@@ -207,16 +207,11 @@ def send_email_ads(request):
     user_category = request.user.category
     # Retrieve the list of users based on their category
     users_to_email = User.objects.filter(category=user_category)
-    if request.user.country == 'USA':
-        pricing_multiplier = 1.0
-    else:
-        pricing_multiplier = 0.5
-    print("Pricing Multiplier:", pricing_multiplier)
     plans = context_data.get('plans')
-    for obj in plans:
-        print(obj.title, obj.price)
-
-    pricing_info = {obj.title: obj.price * pricing_multiplier for obj in plans}
+    pricing_info = {
+        obj.title: obj.price if request.user.country == 'USA' else obj.discounted_price
+        for obj in plans
+    }
     print("Pricing Info:", pricing_info)
   
     context={

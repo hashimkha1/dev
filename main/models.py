@@ -63,6 +63,7 @@ class Pricing(models.Model):
     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE,default=1)
     # subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
     price = models.FloatField()
+    discounted_price = models.FloatField(null=True, blank=True)
     duration =  models.PositiveIntegerField(null=True, blank=True)
     contract_length = models.IntegerField(choices=Contract.choices, default=3)
     is_active = models.BooleanField(default=True)
