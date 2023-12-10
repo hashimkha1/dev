@@ -176,7 +176,6 @@ def runwhatsapp(request):
     return render(request, "main/errors/generalerrors.html", context)
 
 
-
 # @login_required(login_url="accounts:account-login")
 # def runwhatsapp(request):
 #     product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
@@ -206,14 +205,12 @@ def send_email_ads(request):
     context_data = services(request)
     user_category = request.user.category
     # Retrieve the list of users based on their category
-    users_to_email = User.objects.filter(category=user_category)
+    # users_to_email = User.objects.filter(category=user_category)
+    users_to_email = User.objects.filter(is_staff=True,is_active=True)
+    # print(users_to_email)
     plans = context_data.get('plans')
-    pricing_info = {
-        obj.title: obj.price if request.user.country == 'USA' else obj.discounted_price
-        for obj in plans
-    }
-    print("Pricing Info:", pricing_info)
-  
+    pricing_info = context_data.get('pricing_info')
+
     context={
                 "SITEURL": settings.SITEURL,
                 'subtitle': sub_title,
