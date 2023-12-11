@@ -18,8 +18,8 @@ class Ads(models.Model):
     link = models.CharField(max_length=500, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
 
     def __str__(self):
         return str(self.ad_title)
@@ -46,7 +46,8 @@ class Whatsapp_Groups(models.Model):
     # message= models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
-
+    is_active = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
     def __str__(self):
         return self.group_name
     
