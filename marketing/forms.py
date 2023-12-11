@@ -10,6 +10,8 @@ class WhatsappForm(forms.ModelForm):
                     "group_name",
                     "group_id",
                     "type",
+                    "is_active",
+                    "is_featured",
         ]
         labels = {
                     "group_name":"Enter Whatsapp Group",

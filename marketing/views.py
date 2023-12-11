@@ -122,7 +122,7 @@ def runwhatsapp(request):
     title = 'WHATSAPP'
     ads_items = Ads.objects.filter(is_active=True)
     for ad in ads_items:
-        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category)
+        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
         image_url = ad.image_name.image_url
         full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
