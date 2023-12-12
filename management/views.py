@@ -436,12 +436,27 @@ def newtaskcreation(request):
         employee = request.POST["employee"].split(",")
 
         activitys = request.POST["activitys"].split(",")
-
+        
         for emp in employee:
             historytasks = TaskHistory.objects.filter(employee__is_staff=True, employee__is_active=True,
                                                       employee_id=emp)
-            group=employee_group_level(historytasks,TaskGroups)                                        
-         
+            
+            group_obj = TaskGroups.objects.get(id=group)
+            
+            #group for interns
+            if group_obj.title == 'Group I':
+                
+                group = group_obj.id
+                group_title = group_obj.title
+                
+            #group for contractual people
+            elif group_obj.title == 'Group H':
+                group = group_obj.id
+                group_title = group_obj.title
+                
+            else:
+                group, group_title, total_point =employee_group_level(historytasks,TaskGroups)                                        
+
             for act in activitys:
                 #check if activity exist
                 count=Task.objects.filter(category_id=category, activity_name=act).count()
@@ -450,17 +465,17 @@ def newtaskcreation(request):
                     Task.objects.values_list("description", "point", "mxpoint", "mxearning").filter(
                         category_id=category, activity_name=act)[0]
 
-                    if Task.objects.filter(groupname_id=group, category_id=category, activity_name=act).count() == 0:
+                    if Task.objects.filter(groupname_id=group, group=group_title, category_id=category, activity_name=act).count() == 0:
                         Task.objects.create(groupname_id=group, category_id=category, employee_id=emp,
                                             activity_name=act, description=des, point=0.00, mxpoint=mxpoint,
                                             mxearning=mxearning)
                     else:
-                        Task.objects.create(groupname_id=group, category_id=category, employee_id=emp,
+                        Task.objects.create(groupname_id=group, group=group_title, category_id=category, employee_id=emp,
                                             activity_name=act, description=des, point=0.00, mxpoint=maxpo,
                                             mxearning=maxear)
 
                 else:
-                    Task.objects.create(groupname_id=group, category_id=category, employee_id=emp, activity_name=act,
+                    Task.objects.create(groupname_id=group, group=group_title, category_id=category, employee_id=emp, activity_name=act,
                                         description=description, point=point, mxpoint=mxpoint, mxearning=mxearning)
         # return redirect("management:tasks")
         return JsonResponse({"success": True})
@@ -528,7 +543,7 @@ def getaveragetargets(request):
 
 def tasklist(request):
     context={}
-    tasks = Task.objects.all().order_by('-id')
+    tasks = Task.objects.exclude(employee__email=None).order_by('-id')
     if request.method == "POST":
         form = TagFilterForm(request.POST)
         if form.is_valid():

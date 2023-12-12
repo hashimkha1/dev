@@ -81,12 +81,15 @@
               <td>
               <a class="article-title" href="{% url 'management:user_task' task.employee %}">
                 {{task.employee}}
+                </a>
               </td>
 
               {% else %}
               <td>
-              <a class="article-title" href="{% url 'management:user_task' task.employee %}">
+              
+                <a class="article-title" href="{% url 'management:user_task' task.employee %}">
                 {{task.employee.first_name}},{{task.employee.last_name}}
+                </a>
               </td>
               {% endif %}
               <td>

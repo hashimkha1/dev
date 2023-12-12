@@ -86,51 +86,127 @@ def employee_reward(tasks):
 # Usint the number of points to assign employees to different groups 
 def employee_group_level(historytasks,TaskGroups):                                          
     if historytasks.exists():
+        
         count = historytasks.aggregate(total_point=Sum('point'))
-        if count.get('total_point') < 350:
+        total_point = count.get('total_point')
+
+        if historytasks[0].group == 'Group I':
+            
+            group_obj = TaskGroups.objects.filter(title='Group I')
+            if group_obj.exists():
+                group = group_obj.first().id
+                group_name = group_obj.first().title
+            else:
+                group_obj = TaskGroups.objects.create(title='Group I')
+                group = group_obj.id
+                group_name = group_obj.title
+
+        elif historytasks[0].group == 'Group H':
+            
+            group_obj = TaskGroups.objects.filter(title='Group H')
+            if group_obj.exists():
+                group = group_obj.first().id
+                group_name = group_obj.first().title
+            else:
+                group_obj = TaskGroups.objects.create(title='Group H')
+                group = group_obj.id
+                group_name = group_obj.title
+
+        elif count.get('total_point') < 350:
             group_obj = TaskGroups.objects.filter(title='Group A')
             if group_obj.exists():
                 group = group_obj.first().id
+                group_name = group_obj.first().title
+
             else:
                 group_obj = TaskGroups.objects.create(title='Group A')
                 group = group_obj.id
-        if 350 <= count.get('total_point') and count.get('total_point') < 600:
+                group_name = group_obj.title
+
+        elif 350 <= count.get('total_point') and count.get('total_point') < 600:
             group_obj = TaskGroups.objects.filter(title='Group B')
             if group_obj.exists():
                 group = group_obj.first().id
+                group_name = group_obj.first().title
+
             else:
                 group_obj = TaskGroups.objects.create(title='Group B')
                 group = group_obj.id
-        if 600 <= count.get('total_point') and count.get('total_point') < 800:
+                group_name = group_obj.title
+
+        elif 600 <= count.get('total_point') and count.get('total_point') < 800:
             group_obj = TaskGroups.objects.filter(title='Group C')
             if group_obj.exists():
                 group = group_obj.first().id
+                group_name = group_obj.first().title
+
             else:
                 group_obj = TaskGroups.objects.create(title='Group C')
                 group = group_obj.id
-        if 800 <= count.get('total_point') and count.get('total_point') < 1000:
+                group_name = group_obj.title
+
+        elif 800 <= count.get('total_point') and count.get('total_point') < 1000:
             group_obj = TaskGroups.objects.filter(title='Group D')
             if group_obj.exists():
                 group = group_obj.first().id
+                group_name = group_obj.first().title
+
             else:
                 group_obj = TaskGroups.objects.create(title='Group D')
                 group = group_obj.id
-        if 1000 <= count.get('total_point'):
+                group_name = group_obj.title
+
+        elif 1000 <= count.get('total_point'):
             group_obj = TaskGroups.objects.filter(title='Group E')
             if group_obj.exists():
                 group = group_obj.first().id
+                group_name = group_obj.first().title
+
             else:
                 group_obj = TaskGroups.objects.create(title='Group E')
                 group = group_obj.id
+                group_name = group_obj.title
+
     else:
+        total_point = 0
         group_obj = TaskGroups.objects.filter(title='Group A')
         if group_obj.exists():
             group = group_obj.first().id
+            group_name = group_obj.first().title
+
         else:
             group_obj = TaskGroups.objects.create(title='Group A')
             group = group_obj.id   
-    return group
+            group_name = group_obj.title
+
     
+    return group, group_name, total_point
+
+def increment_in_graduation_of_employee(employee, max_earning, new_group, PayslipConfig):
+        
+    payslipconfig_obj = PayslipConfig.objects.filter(user=employee)
+
+    if payslipconfig_obj.exists():
+        
+        increment_percentage = payslipconfig_obj.first().web_delta
+    
+    else:
+        payslipconfig_admin_obj = PayslipConfig.objects.filter(user__username='coda_info')
+        
+        if payslipconfig_admin_obj.exists():
+        
+            increment_percentage = payslipconfig_admin_obj.first().web_delta
+        
+        else:
+
+            increment_percentage = 1
+
+    
+    return max_earning + (max_earning*increment_percentage/100)
+    
+    
+
+
 def payinitial(tasks):
     num_tasks = tasks.count()
     Points = tasks.aggregate(Your_Total_Points=Sum("point"))
