@@ -29,10 +29,11 @@ from .utils import generate_random_password,JOB_SUPPORT_CATEGORIES
 
 from django.urls import reverse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-from allauth.account.signals import user_logged_in
-from django.dispatch import receiver
-from allauth.socialaccount.models import SocialAccount
-# from allauth.core.exceptions import ImmediateHttpResponse
+# from allauth.account.signals import user_logged_in
+# from django.dispatch import receiver
+# from allauth.socialaccount.models import SocialAccount
+from allauth.exceptions import ImmediateHttpResponse
+from django.http import HttpResponseRedirect
 
 # Create your views here..
 
@@ -912,25 +913,51 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
 
     def pre_social_login(self, request, sociallogin):
         
+        print('inside pre social login')
         # Check if the user with the given email already exists in your custom User model
         user = sociallogin.user
         email = user.email
         existing_user = CustomerUser.objects.filter(email=email).first()
-
+        category = request.session.get('category')
+      
         if existing_user:
+            print('existing user')
             # Link the social login to the existing user
             sociallogin.connect(request, existing_user)
+        
+        elif existing_user is None and category is None:
+            redirect_url = reverse("accounts:join")  # Replace with your desired URL
+            response = HttpResponseRedirect(redirect_url)
+            raise ImmediateHttpResponse(response)
+        
         else:
+            print('inside else')
+            
             # If the user doesn't exist, create a new user
-            user = sociallogin.save(request, connect=False)
-            # Create a SocialAccount manually and associate it with the user
-            social_account = SocialAccount(
-                user=user,
-                uid=sociallogin.account.uid,
-                provider=sociallogin.account.provider,
-            )
-            social_account.save()
+            sociallogin.save(request, connect=False)
+            
+            existing_user = sociallogin.user
+            existing_user.category = request.session.pop('category', default=None)
+            existing_user.sub_category = request.session.pop('subcategory', default=None)
+            if existing_user.email:
+                existing_user.username = existing_user.email
+                
+            if existing_user.category == '2':
+                existing_user.is_staff = True
+                existing_user.category = int(existing_user.category)
+                existing_user.sub_category = int(existing_user.sub_category)
+            elif existing_user.category == '3' or existing_user.category == '4':
+                existing_user.is_client = True
+                existing_user.category = int(existing_user.category)
+                existing_user.sub_category = int(existing_user.sub_category)
+            else:
+                existing_user.is_applicant = True
+                existing_user.category = int(existing_user.category)
+                existing_user.sub_category = int(existing_user.sub_category)
 
+            existing_user.save()
+            create_profile()
+        
         # If Category is Staff/employee
         if existing_user is not None and existing_user.category == 2:
             if existing_user.is_staff and not existing_user.is_employee_contract_signed:
@@ -977,52 +1004,7 @@ class CustomSocialAccountAdapter(DefaultSocialAccountAdapter):
         
         else:
             sociallogin.state['next'] = reverse('main:layout')  # Redirect to your success page or handle as needed
-     
-    def save_user(self, request, sociallogin, form=None):
-        """
-        This method is called after the user is created during social login.
-        You can perform additional actions or data storage here.
-        """
-    
-        user = sociallogin.user
-        user.category = request.session.pop('category', default=None)
-        user.sub_category = request.session.get('subcategory', default=None)
-        if user.email:
-            user.username = user.email
-            
-        if user.category == '2':
-            user.is_staff = True
-        elif user.category == '3' or user.category == '4':
-            user.is_client = True
-        else:
-            user.is_applicant = True
-
-        user.save()
-
-        return super(CustomSocialAccountAdapter, self).save_user(
-            request, sociallogin, form
-        )
-    
-    def is_open_for_signup(self, request, sociallogin):
-        category = request.session.get('category')
-        # if category is there , then only new user can create otherwise user is not allow to create
-        if category is None:
-            return False
-        
-        # Implement your custom logic here to determine if registration is open.
-        # For example, you can check if a certain condition is met, like a configuration setting.
-        # If registration is open, return True; if not, return False.
-        return True
-
  
-
-###########################################
-# create profile for social login account
-###########################################
-@receiver(user_logged_in)
-def user_logged_in_callback(request, user, **kwargs):
-    create_profile()
-
 
 def custom_social_login(request):   
 
