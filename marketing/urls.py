@@ -21,7 +21,11 @@ urlpatterns = [
     path('newwhatsapp/', views.whatsappCreateView.as_view(template_name='main/form.html'), name='whatsapp_new'),
     path('whatsapp/<int:pk>/', views.whatsappUpdateView.as_view(template_name='main/form.html'), name='whatsapp_update'),
     path('delete_whatsapp/<int:id>/', views.delete_whatsapp, name='delete_whatsapp'),
-    path('whatsapp_status/', views.whatsapp_status, name='whatsapp_status'),
+    path('adslist/', views.ads, name='ads_list'),
+    path('newad/', views.AdsCreateView.as_view(template_name='main/form.html'), name='ads_new'),
+    path('ad/<int:pk>/', views.AdsUpdateView.as_view(template_name='main/form.html'), name='ad_update'),
+    path('delete_ad/<int:id>/', views.delete_ads, name='delete_ad'),
+    # path('whatsapp_status/', views.whatsapp_status, name='whatsapp_status'),
 
 ]
 

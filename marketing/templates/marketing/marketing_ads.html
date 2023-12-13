@@ -1,4 +1,5 @@
 {%extends "main/base_templates/new_base.html"%} 
+{% load static %}
 {% block content %}
 <div class="container-fluid">
         <div class="row">
@@ -24,43 +25,51 @@
 
         <div class="row bottom-coloumn">
             <div class="col-md-12 top-coloumn bottom-coloumn">
-                <p class="title-sub-pay text-center">
-                    COURSES
-                </p>
+                
                 <div class="row">
                     <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
-                        <h3 style="margin-top:0;">Hi {{ user }},</h3>
+                        <h3 style="margin-top:0;">Dear {{ user }},</h3>
+                        <p class="title-sub-pay text-center" style="font-size:xx-large;">
+                            OUR COURSES
+                        </p>
                         <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
-                        <ul style="list-style:none; padding-left:0;">
-                            {% for service in services %}
-                            {% for course, infos in courses.items %}
-                            {% if course ==  service.title %}
-                            <p>{{ service.title}}: $ {{service.price }}</p>
-                            {% for info in infos %}
-                            <div class="course__content">
-                              <div class="course__box"> <!-- Add a div for the square box -->
-                                <p>{{ info.title }}</p>
-                                <p>{{ info.description|safe }}</p>
-                              </div>
-                            </div>
-                            {% endfor %} 
-                            {% endif %} 
-                            {% endfor %} 
-                            {% endfor %} 
-                        </ul>
-                        <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                        <p>Thank you,</p>
-                        <p>The Finance Team</p>
+                        <div class="email-container">
+                            <ul>
+                                {% for course_title, course_infos in courses.items %}
+                                    <ul>
+                                        {% for service, price in services.items %}
+                                        {% if course_title ==  service.title %}    
+                                                <p class="course__price">Price: $ {{ price }}</p>
+                                        {% endif %}        
+                                        {% endfor %} 
+                                                <div class="course__content">
+                                                    <div class="course__box"> 
+                                                        {% for info in course_infos %}
+                                                            <p class="course__title">{{ info.title }}</p>
+                                                            <p class="course__description">{{ info.description|safe }}</p>
+                                                        {% endfor %}
+                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" class="purchase-button">Purchase Now</a>
+                                                    </div>
+                                                </div>       
+                                    </ul>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                                <div class="closing-paragraphs">
+                                    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                                    <p>Thank you,</p>
+                                    <p>The Finance Team</p>
+                                </div>
                     </div>
                     <div class="col-md-5">
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4">
+                    <!-- <div class="col-md-4">
                         <p class="font-weight-bold text-uppercase follow-text">
                             say hello :
                         </p>
-                    </div>
+                    </div> -->
                     <div class="col-md-4">
                         <div class="d-flex" style="align-items: center;
                         margin-top: 1%;">

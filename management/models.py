@@ -727,20 +727,21 @@ class Advertisement(models.Model):
     def __str__(self):
         return self.post_description
     
-class Whatsapp(models.Model):
-    # whatsapp
-    product_id = models.CharField(max_length=100, null=True, blank=True)
-    token = models.CharField(max_length=100, null=True, blank=True)
-    screen_id = models.CharField(max_length=500, null=True, blank=True)
-    group_name = models.CharField(max_length=100, null=True, blank=True)
-    group_id = models.CharField(max_length=100, null=True, blank=True)
-    image_url = models.CharField(max_length=500, null=True, blank=True)
-    message= models.TextField(null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+# class Whatsapp(models.Model):
+#     # whatsapp
+#     product_id = models.CharField(max_length=100, null=True, blank=True)
+#     token = models.CharField(max_length=100, null=True, blank=True)
+#     screen_id = models.CharField(max_length=500, null=True, blank=True)
+#     group_name = models.CharField(max_length=100, null=True, blank=True)
+#     group_id = models.CharField(max_length=100, null=True, blank=True)
+#     image_url = models.CharField(max_length=500, null=True, blank=True)
+#     link = models.CharField(max_length=500, null=True, blank=True)
+#     message= models.TextField(null=True, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.group_name
+#     def __str__(self):
+#         return self.group_name
     
 
 class Meetings(models.Model):

@@ -1,9 +1,5 @@
 from django.db import models
-from django.http import Http404
-from decimal import Decimal
 from datetime import datetime,date
-from django.utils import timezone
-from django.utils.dateparse import parse_datetime
 from django.contrib.auth import get_user_model
 
 #User=settings.AUTH_USER_MODEL
@@ -78,6 +74,21 @@ class GotoMeetings(models.Model):
 
     def __str__(self):
         return self.meeting_topic
+	
+class upwork_Transanctions(models.Model):
+    date= models.CharField(max_length=250, null=True, blank=True)
+    ref_Id= models.CharField(max_length=250, null=True, blank=True)
+    type= models.CharField(max_length=500, null=True, blank=True)
+    description= models.CharField(max_length=250, null=True, blank=True)
+    agency= models.CharField(max_length=250, null=True, blank=True)
+    freelancer= models.CharField(max_length=250, null=True, blank=True)
+    team= models.CharField(max_length=250, null=True, blank=True)
+    account_name= models.CharField(max_length=250, null=True, blank=True)
+    amount= models.CharField(max_length=250, null=True, blank=True)
+    balance= models.CharField(max_length=250, null=True, blank=True)
+
+    def __str__(self):
+        return self.ref_Id
 
 class Logs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_in_logs", null=True, blank=True)

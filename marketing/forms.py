@@ -1,27 +1,45 @@
 from django import forms
-from django.forms import ModelForm, Textarea
-from management.models import Whatsapp
+from marketing.models import Ads,Whatsapp_Groups
 from django.utils.translation import gettext_lazy as _
 
 
 class WhatsappForm(forms.ModelForm):
     class Meta:
-        model = Whatsapp
+        model = Whatsapp_Groups #Whatsapp
         fields = [
                     "group_name",
                     "group_id",
-                    "image_url",
-                    "message",
-                    "product_id",
-                    "screen_id",
-                    "token",
+                    "type",
+                    "is_active",
+                    "is_featured",
         ]
         labels = {
                     "group_name":"Enter Whatsapp Group",
                     "group_id ":"Enter Whatsapp Group id",
-                    "image_url":"Enter url Image",
-                    "message":"Describe the message to be posted",
-                    "product_id ":"Enter Product ID",
-                    "screen_id":"Enter Screen ID",
-                    "token":"Enter token",
+                    "type":"ad_type",
         }
+
+
+class AdsForm(forms.ModelForm):
+    class Meta:
+        model = Ads #Whatsapp
+        fields = [
+            "ad_title",
+            "company",
+            "short_name",
+            "company_site",
+            "meeting_link",
+            "video_link",
+            "signature",
+            "image_name",
+            "message",
+            "bulletin",
+            "link",
+            "is_active",
+            "is_featured",
+        ]
+        labels = {
+                    "image_name":"Select image_name",
+                    "bulletin":"What does your company do?",
+                    "message":"Describe the message to be posted",
+}   

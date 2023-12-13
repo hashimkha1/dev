@@ -3,7 +3,7 @@ from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib import messages
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
@@ -296,7 +296,6 @@ def courseview(request, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
-
 def questionview(request, question_type=None, *args, **kwargs):
     question_mapping = {
         'performance': ['tableau', 'alteryx', 'sql', 'python'],
@@ -307,62 +306,67 @@ def questionview(request, question_type=None, *args, **kwargs):
         'resume': ['summary', 'skills', 'responsibilities'],
         'methodology': ['projects', 'releases', 'sprints', 'stories'],
     }
+    source = request.GET.get('source', False)
+
+
+    def handle_next_topic():
+        next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
+        if not next_topic.exists():
+            # return redirect('data:question-detail', question_type=question_type)
+            return redirect('data:user-list')
+        return redirect('data:question-detail', question_type=next_topic.first().question_type)
+    
+    
+    data = Interviews.objects.filter(client=request.user, question_type=question_type).first()
     if request.method == 'GET':
-        # print('question_typ==============e',question_type)
+        if data and source:
+            dynamic_data = json.loads(data.dynamic_fields)
+            form = InterviewForm(instance=data)
+            for field in form.fields:
+                if field in dynamic_data:
+                    form.fields[field].initial = dynamic_data[field]
+        elif data:
+            return handle_next_topic()
+
+        else:
+            form = InterviewForm()
+
         instance = JobRole.objects.get_by_question(question_type)
-        form= InterviewForm()
+        if instance is None:
+            return render(request, "main/errors/404.html")
+
+        context = {
+            "form": form,
+            "object": instance,
+            "interviews": Interviews.objects.all(),
+        }
+        return render(request, f'data/interview/interview_progress/questions.html', context)
+
+    if request.method == 'POST':
+        form = InterviewForm(request.POST, request.FILES, instance=data)
         required_fields = question_mapping.get(question_type, [])
         for field_name in required_fields:
             form.fields[field_name].required = True
-            
-        url=f'data/interview/interview_progress/questions.html'
-        # url="data/interview/interview_progress/" + str(instance) + ".html"
-        print(url)
-        context = {
-            "form":form,
-            "object": instance,
-            "interviews": Interviews.objects.all(),
-            # "path":path
-        }
-        if instance is None:
-            return render(request, "main/errors/404.html")
-        return render(request, url, context)
-    if request.method == 'POST':
-        try:
-            form = InterviewForm(request.POST, request.FILES)
-            required_fields = question_mapping.get(question_type, [])
-            for field_name in required_fields:
-                form.fields[field_name].required = True
-            if form.is_valid():
-                form_data = form.cleaned_data
-                data = Interviews.objects.filter(client=request.user, category=form_data['category'], question_type=question_type, link=form_data['link'], comment=form_data['comment'] )
-                if data.exists():
-                    messages.error(request, "you have already responded this question")
-                    return redirect('data:question-detail', question_type=question_type)
-                instance = form.save(commit=False)
-                instance.client = request.user
-                instance.question_type = question_type
-                dynamic_fields = {field: form_data[field] for field in required_fields}
-                # Convert the dynamic_fields dictionary to a JSON string
-                dynamic_fields_json = json.dumps(dynamic_fields)
-                # Save the JSON string to the instance's dynamic_fields field
-                instance.dynamic_fields = dynamic_fields_json
-                instance.save()
-                # data = form.cleaned_data
-        except Exception as e:
-            print(e)
-            value=request.path
-            message=value
-            context={
-                "message":message
-            }
-            print(message)
-            return render(request, "main/errors/404.html",{"message":message})
-        next_topic = JobRole.objects.filter(id__gt=JobRole.objects.get_by_question(question_type).id).order_by('id')
-        if not next_topic.exists():
-            return redirect('data:question-detail', question_type=question_type)
-        return redirect('data:question-detail', question_type=next_topic.first().question_type)
-    
+
+        if form.is_valid():
+            instance = form.save(commit=False)
+            instance.client = request.user
+            instance.question_type = question_type
+
+            dynamic_fields = {field: form.cleaned_data[field] for field in required_fields}
+            instance.dynamic_fields = json.dumps(dynamic_fields)
+            instance.save()
+            if source:
+               return redirect('data:user-list')
+            return handle_next_topic()
+        
+
+        # If form is not valid, handle the error
+        return render(request, "main/errors/404.html", {"message": "Form is not valid"})
+    # If neither GET nor POST, handle the error
+
+    return render(request, "main/errors/404.html", {"message": "Invalid request method"})
+
 @method_decorator(login_required, name="dispatch")
 class InterviewUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Interviews

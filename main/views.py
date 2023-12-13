@@ -563,20 +563,25 @@ def team(request):
     
     path_list, sub_title, pre_sub_title = path_values(request)
     team_members_staff = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
-    team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=3).order_by("user__date_joined")
-    team_members_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
+    team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=2).order_by("user__date_joined")
+    team_members_senior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=5).order_by("user__date_joined")
+    team_members_junior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
     clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
     number_of_staff = len(team_members_staff)-1
+    # team_members_count = len(team_members_agents)-1
+    # print(team_members_count)
+    # number_of_staff = len(team_members_staff)-1
     selected_class = count_to_class.get(number_of_staff, "default-class")
     if sub_title == 'team_profiles':
         team_categories = {
         'Lead Team': list(team_members_staff),
         'Support Team': list(team_members_agents),
-        'Trainee Team': list(team_members_trainees),
+        'Senior Trainee Team': list(team_members_senior_trainees),
+        'Junior Trainee Team': list(team_members_junior_trainees),
         }
         user_group=team_members
-        heading="THE BEST TEAM IN ANALYTICS"
+        heading="THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
     if sub_title == 'client_profiles':
         team_categories = {
         'Job Seekers': list(clients_job_seekers),

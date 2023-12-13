@@ -30,12 +30,14 @@ def images(request):
     image_names=Assets.objects.values_list('name',flat=True)
     default_url = Assets.objects.filter(name='default_emp_v1').values_list('image_url', flat=True).first()
     banner_url = Assets.objects.filter(name='banner_v1').values_list('image_url', flat=True).first()
-    print(banner_url)
+    data_url = Assets.objects.filter(name='data_page_v1').values_list('image_url', flat=True).first()
+    # print(data_url)
     return {
         'images': images,
         "image_names":image_names,
         "default_url":default_url,
-        "banner_url":banner_url
+        "banner_url":banner_url,
+        "data_url":data_url
     }
 
 def services(request):
@@ -43,11 +45,16 @@ def services(request):
     analysis_service = Service.objects.get(slug='data_analysis')
     service_categories = ServiceCategory.objects.filter(service=analysis_service.id)
     plans = Pricing.objects.filter(category__in=service_categories)
+    pricing_info = {
+        obj.title: obj.price if request.user.country == 'US' else obj.discounted_price
+        for obj in plans
+    }
     return {
         'services': services,
         "analysis_service": analysis_service,
         "service_categories": service_categories,
-        "plans": plans
+        "plans": plans,
+        "pricing_info": pricing_info
     }
 # def googledriveurl(request):
 #     return {

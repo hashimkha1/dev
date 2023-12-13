@@ -14,6 +14,7 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
+          <th>category</th>
           <th>name</th>
           <th>image_url</th>
           <th>description</th>
@@ -23,6 +24,7 @@
       <tbody>
         {% for image in images %}
         <tr>
+          <td>{{image.category}}</td>
           <td>{{image.name}}</td>
           <td>{{image.image_url}}</td>
           <td>{{image.description}}</td>

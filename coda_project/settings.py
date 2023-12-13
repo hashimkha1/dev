@@ -11,7 +11,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
-AUTHENTICATION_BACKENDS = (("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
+AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
 
 # Application definition
 INSTALLED_APPS = [
@@ -118,14 +118,10 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('HEROKU_PROD_HOST')
-        dbname = os.environ.get('HEROKU_PROD_NAME')
-        user = os.environ.get('HEROKU_PROD_USER')
-        password = os.environ.get('HEROKU_PROD_PASS')
-        # host = os.environ.get('POSTGRES_DB_NAME')
-        # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
-        # user = os.environ.get('POSTGRESDB_USER')
-        # password = os.environ.get('POSTGRESSPASS') 
+        host = os.environ.get('POSTGRES_DB_NAME')
+        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
+        user = os.environ.get('POSTGRESDB_USER')
+        password = os.environ.get('POSTGRESSPASS') 
         
     return host,dbname,user,password  
 
@@ -161,6 +157,13 @@ DATABASES = {
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
+
+import sys
+if 'test' in sys.argv:
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'coda_analytics'
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -294,7 +297,7 @@ elif os.environ.get('ENVIRONMENT') == 'testing':
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 else:
-    SITEURL = "http://127.0.0.1:8000/"
+    SITEURL = "http://127.0.0.1:8000"
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
     DEBUG = True
 
@@ -334,6 +337,16 @@ SOCIALACCOUNT_PROVIDERS = {
         "AUTH_PARAMS": {"access_type": "online"}
     },
 }
+
+
+# settings.py
+MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
+MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
+MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
+MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
+MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
+MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+
 # import json
 
 # # Load Google Drive API credentials

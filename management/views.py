@@ -403,7 +403,7 @@ class TaskGroupCreateView(LoginRequiredMixin, CreateView):
 
 # ======================TASKS=======================
 def reset_task(request):
-    dump_data()
+    dump_data(request)
     context={
         "message":f'We are done transfering your tasks to history and resetting the points to zero',
     }
@@ -434,6 +434,7 @@ def newtaskcreation(request):
         mxearning = request.POST["mxearning"]
 
         employee = request.POST["employee"].split(",")
+
         activitys = request.POST["activitys"].split(",")
 
         for emp in employee:
@@ -1546,16 +1547,23 @@ def assess(request):
 
 def clientassessment(request):
     if request.method == "POST":
+        previous_user = CustomerUser.objects.filter(email=request.POST['email'])
+        user_count = previous_user.count()
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             totalpoints=compute_total_points(form)
             form.instance.totalpoints = totalpoints
             form.save()
-            if totalpoints <= 40:
-                message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
-                return redirect("main:service_plans",slug='full-course')
+            if user_count > 0:
+                messages.success(request, f'User already exists with this email')
+                return redirect("/password-reset")
+            # if totalpoints <= 40:
+            #     message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
+            #     return redirect("accounts:account-login")
             else:
-                return redirect('main:layout')
+                # return redirect('main:layout')
+                return redirect("accounts:account-login")
+
         else:
             # Form is not valid, print errors
             print("Form is not valid. Errors:")
@@ -1920,54 +1928,80 @@ def form_submission_view(request):
 
 
 def justification(request, *args, **kwargs):
-    justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
-        .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
-                time=F("Process_in_breakdown__time"), requirement_id=F("requirements__id"),
-                Qty=F("Process_in_breakdown__Quantity"), total=F("Process_in_breakdown__total"))
-    if justifications:
-        justofication_dict = {}
-        justifications_ids = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk')) \
-            .values_list("id", flat=True)
-        obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
-        total_time = obj.aggregate(Sum('total'))
-        total_qty = obj.aggregate(Sum('Quantity'))
-        # print('total_time',total_time)
-        # print('total_qty',total_qty)
-        for justification in justifications:
-            if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
-                justofication_dict.update({justification.get('justification'): justification.get('justification'),
-                                           justification.get('justification') + justification.get('breakdown'):
-                                               justification.get('breakdown'),
-                                           justification.get('breakdown') + 'time': justification.get('time'),
-                                           justification.get('justification') + justification.get('breakdown') +
-                                           'quantity': justification.get('Qty'),
-                                           justification.get('justification') + justification.get('breakdown') +
-                                           'total': justification.get('total'),
-                                           'requirement_id': justification.get('requirement_id'),
-                                           })
-            else:
-                justofication_dict.update({justification.get('justification'): justification.get('justification'),
-                                           justification.get('justification')+justification.get('breakdown'):
-                                               justification.get('breakdown'),
-                                           justification.get('breakdown')+'time': justification.get('time'),
-                                           justification.get('breakdown')+'quantity': justification.get('Qty'),
-                                           justification.get('breakdown')+'total': justification.get('total'),
-                                           'requirement_id': justification.get('requirement_id'),
-                                           })
-        # print('justofication_dict==============',justofication_dict)
-        just_context={
-            "justifications": justofication_dict,
-            "total_time": total_time.get('total__sum'),
-                "total_qty": total_qty.get('Quantity__sum')
-            }
-        return render(request, "management/doc_templates/req_justifications.html", just_context)
-    context={
-        "active_requirement": kwargs.get('pk'),
-        # "total_time":total_time.get('total__sum')
-        "total_time":100
-     }
-    return render(request, "management/doc_templates/req_justifications.html", context)
+    try:
+        justifications = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk'))\
+            .values("id", "justification", breakdown=F("Process_in_breakdown__breakdown"),
+                    time=F("Process_in_breakdown__time"), requirement_id=F("requirements__id"),
+                    Qty=F("Process_in_breakdown__Quantity"), total=F("Process_in_breakdown__total"))
+        
+        requirement_obj = Requirement.objects.get(id=kwargs.get('pk'))
+        
+        if requirement_obj.category == 'Website':
+            category = 'Website' 
+            template = "management/doc_templates/req_justifications.html"
+        elif requirement_obj.category == 'Other':
+            category = 'Presentation'
+            template = "management/doc_templates/presentation_justification.html"
+        else:
+            category = 'Reporting'
+            template = "management/doc_templates/report_justification.html"
 
+        if justifications:
+            justofication_dict = {}
+            justifications_ids = ProcessJustification.objects.filter(requirements_id=kwargs.get('pk')) \
+                .values_list("id", flat=True)
+            obj = ProcessBreakdown.objects.filter(process__id__in=justifications_ids)
+            total_time = obj.aggregate(Sum('total'))
+            total_qty = obj.aggregate(Sum('Quantity'))
+            print('total_time',total_time)
+            print('total_qty',total_qty)
+            for justification in justifications:
+                if justification.get('breakdown') == 'testing' or justification.get('breakdown') == 'creation':
+                    justofication_dict.update({justification.get('justification'): justification.get('justification'),
+                                            justification.get('justification') + justification.get('breakdown'):
+                                                justification.get('breakdown'),
+                                            justification.get('breakdown') + 'time': justification.get('time'),
+                                            justification.get('justification') + justification.get('breakdown') +
+                                            'quantity': justification.get('Qty'),
+                                            justification.get('justification') + justification.get('breakdown') +
+                                            'total': justification.get('total'),
+                                            'requirement_id': justification.get('requirement_id'),
+                                            })
+                else:
+                    justofication_dict.update({justification.get('justification'): justification.get('justification'),
+                                            justification.get('justification')+justification.get('breakdown'):
+                                                justification.get('breakdown'),
+                                            justification.get('breakdown')+'time': justification.get('time'),
+                                            justification.get('breakdown')+'quantity': justification.get('Qty'),
+                                            justification.get('breakdown')+'total': justification.get('total'),
+                                            'requirement_id': justification.get('requirement_id'),
+                                            })
+            print('justofication_dict==============',justofication_dict)
+            just_context={
+                "category": category,
+                "justifications": justofication_dict,
+                "total_time": total_time.get('total__sum'),
+                "total_qty": total_qty.get('Quantity__sum')
+                }
+            
+            return render(request, template , just_context)
+        
+        context={
+            "category": category,
+            "active_requirement": kwargs.get('pk'),
+            # "total_time":total_time.get('total__sum')
+            "total_time":100
+        }
+        return render(request, template, context)
+   
+    except:
+        context={
+            "category": "Website",
+            "active_requirement": kwargs.get('pk'),
+            # "total_time":total_time.get('total__sum')
+            "total_time":100
+        }
+        return render(request, "management/doc_templates/req_justifications.html", context)
 
 
 # def add_requirement_justification(request):
@@ -2494,13 +2528,38 @@ def add_requirement_justification(request):
     requirement_id = request.POST.get('requirement_id')
     requirement_obj = get_object_or_404(Requirement, id=requirement_id)
 
-    justification_mapping = {
-        'table': ['dictionary', 'Erd', 'Table', 'Testing'],
-        'view': ['flow_diagram', 'create', 'detail', 'list', 'update', 'delete', 'testing_view'],
-        'template': ['template_creation', 'template_testing'],
-        'forms': ['form_creation', 'form_testing'],
-        'apis': ['new_api', 'existing_api', 'api_testing']
-    }
+    category = requirement_obj.category
+    
+    if category == 'Website':
+        
+        justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
+            'table': ['dictionary', 'Erd', 'Table', 'Testing'],
+            'view': ['flow_diagram', 'create', 'detail', 'list', 'update', 'delete', 'testing_view'],
+            'template': ['template_creation', 'template_testing'],
+            'forms': ['form_creation', 'form_testing'],
+            'apis': ['new_api', 'existing_api', 'api_testing']
+        }
+    
+    elif category == 'Other':
+
+        justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
+            'content': ['editing', 'creating'],
+            'design': ['design_of_existing']
+        }
+
+    else:
+
+        justification_mapping = {
+            'meeting': ['requirement_assignment', 'pbr'],
+            'database': ['access', 'view', 'flow_diagram', 'testing_uat', 'testing_scripting'],
+            'data_cleaning': ['workflow', 'testing_workflow'],
+            'reporting': ['landing_page', 'executive_summary', 'detail_reports', 'table_list', 'report_testing_scripting'],
+            'automation': ['existing_tool', 'python_script', 'form_testing'],
+            'external_apis': ['new', 'existing', 'api_testing']
+        }
+
 
     latest_total = 0
 
@@ -2523,7 +2582,7 @@ def add_requirement_justification(request):
                     print(f'Processing breakdown: {breakdown}')
                     print(f'Breakdown key: {breakdown_key}')
                     print(f'Breakdown qty: {breakdown_qty}')
-                    if breakdown_key in request.POST and breakdown_qty in request.POST:
+                    if breakdown in request.POST and breakdown_key in request.POST and breakdown_qty in request.POST:
                         time = int(request.POST.get(breakdown_key))
                         qty = int(request.POST.get(breakdown_qty))
                         print(f'Time: {time}, Qty: {qty}')
