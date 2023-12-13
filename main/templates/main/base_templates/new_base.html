@@ -29,7 +29,6 @@
         type="text/css"
         href="{% static 'main/css/email.css' %}"
       />
-      <!-- <link rel="stylesheet" href="{% static 'admin/css/email.css' %}"> -->
     <script src="jquery-3.6.0.min.js"></script>
 
 
@@ -65,22 +64,50 @@
     </script>
     <!-- js for team_card.html  -->
     <script>
-        document.querySelectorAll('.member-link').forEach(link => {
-          link.addEventListener('click', e => {
-            e.preventDefault();
-            const memberInfo = link.parentElement;
-            const description = memberInfo.querySelector('.description');
-      
-            if (memberInfo.classList.contains('show-description')) {
-              memberInfo.classList.remove('show-description');
-              description.style.opacity = '0';
-            } else {
-              memberInfo.classList.add('show-description');
-              description.style.opacity = '1';
+      document.querySelectorAll('.member-link').forEach(link => {
+        link.addEventListener('click', e => {
+          e.preventDefault();
+
+          let memberInfo = link.closest('.member-info');
+          let description = memberInfo.querySelector('.description');
+
+          // Close other open descriptions
+          document.querySelectorAll('.member-info.show-description').forEach(otherMemberInfo => {
+            if (otherMemberInfo !== memberInfo) {
+              otherMemberInfo.classList.remove('show-description');
+              otherMemberInfo.querySelector('.description').style.opacity = '0';
             }
           });
+
+          // Toggle the current description
+          memberInfo.classList.toggle('show-description');
+
+          // Update height only if show-description is added
+          if (memberInfo.classList.contains('show-description')) {
+            if (!memberInfo.hasAttribute('data-original-height')) {
+              // Store the original height in a data attribute
+              memberInfo.setAttribute('data-original-height', memberInfo.offsetHeight);
+            }
+
+            const originalHeight = parseInt(memberInfo.getAttribute('data-original-height'));
+            const descriptionHeight = description.offsetHeight;
+
+            // Calculate new height
+            const newHeight = originalHeight + descriptionHeight;
+
+            // Update member info height
+            memberInfo.style.height = `${newHeight}px`;
+          } else {
+            // Reset height to original value when description is closed
+            memberInfo.style.height = '';
+          }
+
+          // Set description opacity based on show/hide state
+          description.style.opacity = memberInfo.classList.contains('show-description') ? '1' : '0';
         });
-      </script>
+      });
+    </script>
+    
 </body>
 
 </html>
