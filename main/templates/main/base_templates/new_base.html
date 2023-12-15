@@ -75,6 +75,7 @@
           document.querySelectorAll('.member-info.show-description').forEach(otherMemberInfo => {
             if (otherMemberInfo !== memberInfo) {
               otherMemberInfo.classList.remove('show-description');
+              otherMemberInfo.style.height = ''; // Reset height
               otherMemberInfo.querySelector('.description').style.opacity = '0';
             }
           });
@@ -106,6 +107,8 @@
           description.style.opacity = memberInfo.classList.contains('show-description') ? '1' : '0';
         });
       });
+
+
     </script>
     
 </body>
