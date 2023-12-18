@@ -29,6 +29,30 @@ class TestForms(TestCase):
 
         self.assertFalse(form.is_valid())
         self.assertEquals(len(form.errors), 10)
+    
+    #########################################################################
+    # test cases for category in which username and password are not required
+    #########################################################################
+    def test_user_form_valid_data_Jobsupport(self):
+
+        form = UserForm(data={
+            'category': '3',
+            'sub_category': '6',
+            'first_name': 'cat',
+            'last_name': 'doe',
+            'email': 'johndoe@gmail.com',
+            'country': 'US',
+        })
+        self.assertTrue(form.is_valid())
+    
+    def test_user_form_no_data_jobsupport(self):
+
+        form = UserForm(data={
+            'category': '3'
+        })
+        
+        self.assertFalse(form.is_valid())
+        self.assertEquals(len(form.errors), 4)
 
 class TestCredentialForm(TestCase):
 

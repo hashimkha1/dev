@@ -32,7 +32,7 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 # from allauth.account.signals import user_logged_in
 # from django.dispatch import receiver
 # from allauth.socialaccount.models import SocialAccount
-from allauth.exceptions import ImmediateHttpResponse
+from allauth.core.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseRedirect
 
 # Create your views here..

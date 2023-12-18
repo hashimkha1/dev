@@ -52,7 +52,7 @@ class TestUserTrackerView(TestCase):
             last_name='Doe',
             email= 'johndoe@gmail.com',
             gender='1',
-            is_employee=True,
+            # is_employee=True,
             is_active=True,
             username='johndoee',
         )
@@ -77,7 +77,7 @@ class TestUserDeleteView(TestCase):
             last_name='Doe',
             email= 'johndoe@gmail.com',
             gender='1',
-            is_employee=True,
+            # is_employee=True,
             is_active=True,
             username='johndoee',
         )
