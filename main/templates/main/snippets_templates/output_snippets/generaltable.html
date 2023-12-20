@@ -12,6 +12,7 @@
         <td>{{ row.type }}</td>
         <td>{{ row.sell_strike }}</td>
         <td>{{ row.premium }}</td>
+        <td>{{ row.expiry }}</td>
     {% else %}
         <td>{{ row.action }}</td>
         <td>{{ row.stock_price }}</td>
@@ -19,8 +20,9 @@
         <td>{{ row.raw_return }}</td>
         <td>{{ days_to_expiration }}</td>
         <td>{{ row.annualized_return }}</td>
+        <td>{{ row.expiry|date:"n/d/Y" }}</td>
     {% endif %}
-    <td>{{ row.expiry|date:"n/d/Y" }}</td>
+    
     <td>{{ row.earnings_date }}</td>
     <!-- <td>
         <input type="checkbox" {% if row.is_featured %}checked{% endif %}>
