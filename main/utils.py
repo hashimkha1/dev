@@ -48,14 +48,13 @@ def dates_functionality():
 
 """======= Google Drive Code ========"""
 
-
 def upload_image_to_drive(image_path, folder_id,image_name):
     
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
-    SERVICE_ACCOUNT_FILE = 'main/google_drive_credetials/google_credentials.json'
+    # SERVICE_ACCOUNT_FILE = 'main/google_drive_credetials/google_credentials.json'
+    SERVICE_ACCOUNT_FILE = 'gapi/creds/google_credentials.json'
 
     credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-
 
     drive_service = build('drive', 'v3', credentials=credentials)
     http = httplib2.Http(timeout=30) 
@@ -72,9 +71,6 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     print(f'Image ID: {file.get("id")}')
 
 """========End of Code======="""
-
-
-
 
 
 # def tableau_refresh():

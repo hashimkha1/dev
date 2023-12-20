@@ -16,8 +16,10 @@ User = get_user_model()
 # Create your models here.
 
 class TimeStampedModel(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    is_active = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
 
     class Meta:
         abstract = True
@@ -98,7 +100,7 @@ class Testimonials(models.Model):
         return reverse('main:post-detail', kwargs={'pk': self.pk})
     
 
-class Assets(models.Model):
+class Assets(TimeStampedModel):
     name = models.CharField(max_length=200)
     category = models.CharField(default='background',max_length=200,null=True, blank=True)
     description = models.TextField(null=True, blank=True)

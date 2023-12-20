@@ -120,7 +120,7 @@ def runwhatsapp(request):
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
-    ads_items = Ads.objects.filter(is_active=True)
+    ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
     for ad in ads_items:
         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
@@ -171,7 +171,7 @@ def runwhatsapp(request):
             if response.status_code != 200:
                 print(f"Error sending message to group {group_id}")
 
-    message = f"Hi, {request.user}, your messages have been sent to your groups."
+    message = f"Hi, {request.user}, this post {post} have been sent to your groups."
     context = {"title": title, "message": message}
     return render(request, "main/errors/generalerrors.html", context)
 
