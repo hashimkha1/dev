@@ -4,15 +4,29 @@ from django.urls import reverse
 import datetime 
 
 class TestDepartmentModel(TestCase):
-    # def setUp(self):
-    #     self.department = Department.objects.create(name='Test Department')
+    def setUp(self):
+        self.department_obj = Department.objects.create(name='HR Department', slug='test_hr_department')
+        
 
     # def test_department_name(self):
     #     self.assertEqual(self.department.name, 'Test Department')
 
     def test_model_str(self):
-        self.name = Department.objects.create(name='HR Department')
-        self.assertEqual(str(self.name), 'HR Department')
+        
+        self.assertTrue(isinstance(self.department_obj, Department))
+        self.assertEqual(str(self.department_obj.name), 'HR Department')
+
+    # def test_model_get_by_id(self):
+    #     import pdb; pdb.set_trace()
+    #     fetch_department_by_id = Department.objects.get_by_id(self.department_obj.id)
+
+    #     self.assertTrue(fetch_department_by_id, 1)
+    
+    def test_model_get_by_wrong_id(self):
+        
+        fetch_department_by_id = Department.objects.get_by_id(20)
+
+        self.assertEquals(fetch_department_by_id, None)
 
 
 class TestTaskGroups(TestCase):

@@ -8,11 +8,11 @@ from decimal import Decimal
 from django.contrib.auth import get_user_model
 # importing modules
 from management.models import Task, TaskHistory,Advertisement,TaskLinks
-from accounts.models import CustomerUser
+from accounts.models import CustomerUser, TaskGroups
 from finance.models import TrainingLoan,LBandLS,PayslipConfig
 from application.models import UserProfile
 from getdata.models import ReplyMail, GotoMeetings
-
+from management.utils import employee_group_level, increment_in_graduation_of_employee
 
 # importing utils & Views
 from management.utils import loan_computation, paymentconfigurations
@@ -32,8 +32,10 @@ ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions'
 def dump_data(request):
     try:
         bulk_object = []
-        get_data = Task.objects.all()
+        
+        get_data = Task.objects.exclude(employee__email=None)
         for data in get_data:
+            
             bulk_object.append(
                 TaskHistory(
                     group=data.group,
@@ -51,11 +53,50 @@ def dump_data(request):
                     featured=data.featured,
                 )
             )
+
         TaskHistory.objects.bulk_create(bulk_object)
+        employees = User.objects.filter(is_staff=True, is_active=True)
+        for employee in employees: 
+
+            employee_taskhistory = TaskHistory.objects.filter(employee__is_staff=True, employee__is_active=True,
+                                                      employee_id=employee)
+            if employee_taskhistory.count() > 0:
+                
+                employee_task = get_data.filter(employee__is_staff=True, employee__is_active=True,employee=employee)
+                if employee_task.count() > 0:
+                    
+                    group, group_title, total_point = employee_group_level(employee_taskhistory, TaskGroups)
+                    new_max_earning = employee_task.first().mxearning
+                    
+                    #incrementing contractual people max_earnig by one whenever hr/she will complete 30 hour on project
+                    #here point is incresed by duration(hour) when newevidence uploaded for particular requirement.
+                    if group_title == 'Group H' and total_point > 30: 
+                        
+                        new_max_earning += (total_point // 3)
+
+                    #for intern no earning 
+                    elif group_title == 'Group I':
+                        
+                        new_max_earning = 0
+
+                    elif employee_task.first().groupname.id != group:
+
+                        new_max_earning = increment_in_graduation_of_employee(employee, employee_task.first().mxearning, group, PayslipConfig)
+                    
+                    print(employee.username, new_max_earning, total_point)
+                    employee_task.update(
+                        groupname_id = group,
+                        group = group_title,
+                        point = 0,
+                        mxearning = new_max_earning
+                    )
+
+                
+        return True
         # get_data.update(point=0)
-        for task in get_data:
-            task.point = 0
-            task.save()
+        # for task in get_data:
+        #     task.point = 0
+        #     task.save()
         # return True
     except Exception as e:
         print("error",str(e))

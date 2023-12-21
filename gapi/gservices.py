@@ -18,15 +18,24 @@ logger = logging.getLogger(__name__)
 # If you modified scopes, delete the file token.json and re-authenticate!
 SCOPES = ('https://mail.google.com/',)
 current_dir = os.path.dirname(os.path.abspath(__file__))
-
 client_id = os.environ.get('GAPI_CLIENT_ID')
 project_id = os.environ.get('GAPI_PROJECT_ID')
 client_secret = os.environ.get('GAPI_CLIENT_SECRET')
-DEFAULT_CREDENTIALS = {"installed":{"client_id": client_id,"project_id": project_id,"auth_uri": "https://accounts.google.com/o/oauth2/auth","token_uri": "https://oauth2.googleapis.com/token","auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs","client_secret": client_secret,"redirect_uris": ["http://localhost"]}}
+DEFAULT_CREDENTIALS = {"installed":
+                       {"client_id": client_id,
+                        "project_id": project_id,
+                        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                        "token_uri": "https://oauth2.googleapis.com/token",
+                        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                        "client_secret": client_secret,
+                        "redirect_uris": ["http://127.0.0.1:8000/"]
+                        # "redirect_uris": ["https://www.codanalytics.net"]
+                        }
+                       }
+
 # DEFAULT_CREDENTIALS = os.path.join(current_dir, 'creds/credentials.json')
 
 DEFAULT_TOKEN = os.path.join(current_dir, 'creds/token.pickle')
-
 
 def get_service(scopes=SCOPES, service_name='gmail', service_version='v1', token=DEFAULT_TOKEN, credentials=DEFAULT_CREDENTIALS):
     creds = None
