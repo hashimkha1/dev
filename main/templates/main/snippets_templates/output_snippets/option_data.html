@@ -38,16 +38,17 @@
                   <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:200
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}?filter_by=all"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:
+                        {{credit_spread_original_count}}
                       </a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
-                      :1200</a> 
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}?filter_by=all"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS:
+                      {{covered_calls_original_count}}</a> 
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
-                      SHORTPUT:300
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}?filter_by=all"  style="background-color: #4c51af; border-color: #4CAF50;">SHORTPUT:
+                      {{shortput_original_count}}
                     </a>
                   </div>
                 </div>
@@ -55,16 +56,17 @@
                   <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:{{ credit_spread_count  }}
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}?filter_by=by_option_return"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:
+                        {{ credit_spread_option_return_count }}
                       </a>
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
-                      :{{ covered_calls_count }}</a> 
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}?filter_by=by_option_return"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS:
+                      {{ covered_calls_option_return_count }}</a> 
                   </div>
                   <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
-                      SHORTPUT:{{ shortputdata_count }}
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}?filter_by=by_option_return"  style="background-color: #4c51af; border-color: #4CAF50;">SHORTPUT:
+                      {{ shortput_option_return_count }}
                     </a>
                   </div>
                 </div>
@@ -72,20 +74,34 @@
                   <hr/>
                   <div class="row text-center mb-4">
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='credit_spread' %}?filter_by=by_over_sold"  style="background-color: #4c4caf; border-color: #4CAF50;">CREDIT SPREAD:
+                      {{credit_spread_oversold_count}}
                       </a>
-                  </div>
-                  <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS
+                    </div>
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='covered_calls' %}?filter_by=by_over_sold"  style="background-color: #4c6baf; border-color: #4CAF50;">COVERED CALLS:
+                      {{covered_calls_oversold_count}}
                       </a> 
-                  </div>
-                  <div class="col-md-4">
-                    <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}"  style="background-color: #4c51af; border-color: #4CAF50;">
-                      SHORTPUT
+                    </div>
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title='shortputdata' %}?filter_by=by_over_sold"  style="background-color: #4c51af; border-color: #4CAF50;">SHORTPUT:
+                      {{shortput_oversold_count}}
+                      </a>
+                    </div>
+                </div>
+                <h5><b>Extra filter</b></h5>
+                 <hr/> 
+                 <div class="row text-center">
+
+                   <div class="col-md-4">
+                    <a class="btn btn-primary" href="{% url 'investing:option_list' title=subtitle %}?{{ request.GET.urlencode }}&extra_filter_by=top_5"  style="background-color: #4c4caf; border-color: #4CAF50;">Top 5
                     </a>
                   </div>
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title=subtitle %}?{{ request.GET.urlencode }}&extra_filter_by=null"  style="background-color: #4c51af; border-color: #4CAF50;"> All
+                      </a>
+                    </div>
                 </div>
-                 <hr/> 
                 </div>
               </div>
             </div>
