@@ -85,6 +85,7 @@ class Ticker_Data(models.Model):
     currentratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
     revenuegrowth =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
     fetched_date =models.DateField(auto_now_add=True,blank=True,null=True)
+    industry = models.CharField(max_length=500,blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Option Measures"

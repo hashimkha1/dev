@@ -37,6 +37,7 @@ from django.db.models import Q
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
+from django.db.models import Subquery, OuterRef, F, CharField
 
 
 register = template.Library()
@@ -174,8 +175,13 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     for key, value in model_mapping.items():
 
         current_stock_model = value['model']
+        # Subquery to get the computed value from other_model
+        subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
 
-        current_stockdata = current_stock_model.objects.all().distinct() #is_featured=True
+        # Annotate the queryset with the computed field
+        current_stockdata = current_stock_model.objects.distinct().annotate(
+            industry = Subquery(subquery, output_field=CharField())
+        ) #is_featured=True
 
         if current_stockdata.exists():  # Using exists() for clarity
             url_mapping = {
@@ -198,19 +204,16 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             # print(current_days_to_expiration, current_days_to_expiration_returns)
             
             all_return_symbols = all_return_symbols.values_list('symbol', flat=True)
-           
-            #filtering symbol which is not in option_return
-            #problem: here all_return_symbol and distinct_returns_symbol both are same model i.e. option_return so here condition is wrong like we are checking in first part that symbol not in option_return then in other part of or condition we are checking it is there in it
-            #so for all case that condiion will become true and all symbol are there no filtering happen
-            
-            filtered_stockdata_by_returns = [x for x in current_stockdata if x.symbol not in all_return_symbols or (x.symbol in distinct_returns_symbols and current_days_to_expiration >= 21)]
             
             #filtering symbol which is there in overboughtsold
             filtered_stockdata_by_oversold = [
-                x for x in filtered_stockdata_by_returns if x.symbol in distinct_overboughtsold_symbols
+                x for x in current_stockdata if x.symbol in distinct_overboughtsold_symbols
             ]
+           
+            #filtering symbol which is not in option_return  
+            filtered_stockdata_by_returns = [x for x in filtered_stockdata_by_oversold if x.symbol not in all_return_symbols or (x.symbol in distinct_returns_symbols and current_days_to_expiration >= 21)]
             
-            
+    
             context[f"{current_stock_model.__name__.lower()}_option_return_count"] = len(filtered_stockdata_by_returns)
             context[f"{current_stock_model.__name__.lower()}_oversold_count"] = len(filtered_stockdata_by_oversold)
             
