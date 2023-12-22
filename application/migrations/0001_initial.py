@@ -11,13 +11,8 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-<<<<<<< HEAD
-        ('main', '0003_auto_20231027_1221'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-=======
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         # ('main', '0003_auto_20231027_1221'),
->>>>>>> af2d891930b19c212436c9ea48f0393563b69804
     ]
 
     operations = [
