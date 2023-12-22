@@ -177,6 +177,10 @@ investment_rules = {
                     "rule":"RSI-Scans",
                     "description":"<30 and >80",
                 },
+                {
+                    "rule":"Margin Reqs",
+                    "description":"Initial:50% and Maintenace:25%",
+                },
     ],
     "reports": [
                 {
