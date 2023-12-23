@@ -3,26 +3,37 @@
   <div class="career text-center">
     <h3 class="title">WHATSAPP GROUP MANAGEMENT</h3>
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-4">
         <p><a href="{% url 'marketing:whatsapp_new'%}" class="btn btn-primary btn-sm"
           >ADD GROUP
         </a></p>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-4">
         <p><a href="{% url 'main:layout'%}" class="btn btn-primary btn-sm"
           >BACK
         </a></p>
       </div>
+      <div class="col-md-4">
+        TOTAL PARTICIPANTS
+        <p>
+            <a href="{% url 'main:layout' %}" class="btn btn-primary btn-sm" style="font-size: 50px;">
+                {{ total_participants }}
+            </a>
+        </p>
+    </div>
     </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
-          <!-- <th>Date</th> -->
-          <th>Type</th>
+          <!-- <th>id</th> -->
+          <th>Category</th>
+          <th>Ad Type</th>
           <th>Group_ID</th>
+          <!-- <th>Slug</th> -->
           <th>Group Name</th>
-          <th>Image</th>
+          <th>Participants</th>
+          <!-- <th>Image</th> -->
           <th>Update</th>
            <!---
           <th>Delete</th>
@@ -35,19 +46,15 @@
         {% for obj in  whatsaapitems  %}
             <tr>
               <!-- <td>{{obj.created_at|date:"F d, Y"}}</td> -->
+              <!-- <td>{{obj.id}}</td> -->
+              <td>{{obj.category}}</td>
               <td>{{obj.type}}</td>
               <td>{{obj.group_id}}</td>
+              <!-- <td>{{obj.slug}}</td> -->
               <td>{{obj.group_name}}</td>
-              <!-------
-              <td>{{employee.id}}</td>
-              <td>{{employee.category}}</td>
-               {% if employee.category == 1 or employee.category == 2 %}
-                {% endif %}
-             
-              <td> <a class="article-title" href="#">Edit</a></td>
-              <td> <a class="article-title" href="#">Delete</a></td>
-              --->
-              <td> <a class="article-title" href="{{obj.image_url}}">image</a></td>
+              <!-- <td>{{obj.slug}}</td> -->
+              <td>{{obj.participants}}</td>
+              <!-- <td> <a class="article-title" href="{{obj.image_url}}">image</a></td> -->
               <td> <a class="article-title" href="{% url 'marketing:whatsapp_update' obj.id %}">Edit</a></td>
             </tr>
          

@@ -7,9 +7,10 @@ class WhatsappForm(forms.ModelForm):
     class Meta:
         model = Whatsapp_Groups #Whatsapp
         fields = [
+                    "category",
+                    "type",
                     "group_name",
                     "group_id",
-                    "type",
                     "is_active",
                     "is_featured",
         ]

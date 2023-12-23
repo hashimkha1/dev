@@ -720,7 +720,26 @@ App_Categories = {
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
+    ],
+    "Marketing": [
+        {
+            "table_name": "Whatsapp_Dev",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+            
+        },
+        {
+            "table_name": "Whatsapp_Group",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Ads",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
     ]
+
 }
 
 courses = {

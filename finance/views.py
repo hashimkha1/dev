@@ -537,47 +537,98 @@ def payment(request,method):
         return render(request, "email/payment/payment_method.html",context)
     
 
+# @login_required
+# def pay(request, *args, **kwargs):
+#     if not request.user.is_authenticated:
+#         return redirect(reverse('accounts:account-login'))
+
+#     contract_url = reverse('finance:newcontract', args=[request.user.username])
+#     # Getting contract fees based on the submitted value
+#     try:
+#         payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+#         downpayment = payment_info.down_payment
+#     except Payment_Information.DoesNotExist:
+#         if request.method == 'POST' and request.POST.get('fees'):
+#             total_fee = request.POST.get('fees')
+#             downpayment=float(total_fee)*0.30
+#             fee_balance=total_fee-downpayment
+#             Payment_Information.objects.create(
+#                     customer=request.user,
+#                     payment_fees=total_fee,
+#                     down_payment=downpayment,
+#                     student_bonus=0,
+#                     plan=2,
+#                     fee_balance=fee_balance,
+#                     payment_method='mpesa',
+#                     contract_submitted_date=date.today(),
+#                     client_signature="client",
+#                     company_rep="coda",
+#                     client_date=date.today(),
+#                     rep_date=date.today(),
+#                     )
+#         else:
+#             if request.user.category == 3 or request.user.category == 4:
+#                 return redirect('main:bi_services')
+#             if request.user.category == 5:
+#                 return redirect('main:layout')
+#             else:
+#                 payment_info = 1
+		
+#     paypal_charges = calculate_paypal_charges(downpayment)
+#     context = {
+#         "title": "PAYMENT",
+#         'payments': payment_info,
+#         'paypal_charges': paypal_charges,
+#         "message": f"Hi {request.user}, you are yet to sign the contract with us. Kindly contact us at info@codanalytics.net.",
+#         "link": contract_url,
+#     }
+
+#     return render(request, "finance/payments/pay.html", context)
+
+
+# from django.shortcuts import render, redirect
+# from django.contrib.auth.decorators import login_required
+# from django.urls import reverse
+# from .models import Payment_Information
+# from datetime import date
+
 @login_required
 def pay(request, *args, **kwargs):
-    if not request.user.is_authenticated:
-        return redirect(reverse('accounts:account-login'))
-
     contract_url = reverse('finance:newcontract', args=[request.user.username])
-    # Getting contract fees based on the submitted value
+    payment_info = None
+
     try:
         payment_info = Payment_Information.objects.get(customer_id=request.user.id)
-        downpayment = payment_info.down_payment
     except Payment_Information.DoesNotExist:
         if request.method == 'POST' and request.POST.get('fees'):
-            total_fee = request.POST.get('fees')
-            downpayment=float(total_fee)*0.30
-            fee_balance=total_fee-downpayment
-            Payment_Information.objects.create(
-                    customer=request.user,
-                    payment_fees=total_fee,
-                    down_payment=downpayment,
-                    student_bonus=0,
-                    plan=2,
-                    fee_balance=fee_balance,
-                    payment_method='mpesa',
-                    contract_submitted_date=date.today(),
-                    client_signature="client",
-                    company_rep="coda",
-                    client_date=date.today(),
-                    rep_date=date.today(),
-                    )
+            total_fee = float(request.POST.get('fees'))
+            downpayment = total_fee * 0.30
+            fee_balance = total_fee - downpayment
+            payment_info = Payment_Information.objects.create(
+                customer=request.user,
+                payment_fees=total_fee,
+                down_payment=downpayment,
+                student_bonus=0,
+                plan=2,
+                fee_balance=fee_balance,
+                payment_method='mpesa',
+                contract_submitted_date=date.today(),
+                client_signature="client",
+                company_rep="coda",
+                client_date=date.today(),
+                rep_date=date.today(),
+            )
         else:
-            if request.user.category == 3 or request.user.category == 4:
-                return redirect('main:bi_services')
+            # Redirect for specific user categories or to contract signing view
             if request.user.category == 5:
                 return redirect('main:layout')
             else:
-                payment_info = 1
-		
-        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
-        downpayment = payment_info.down_payment
+				#Need modification to take the user to interested page.
+                return redirect('main:layout')
 
-    paypal_charges = calculate_paypal_charges(downpayment)
+    # Calculate PayPal charges
+    paypal_charges = calculate_paypal_charges(payment_info.down_payment) if payment_info else 0
+
     context = {
         "title": "PAYMENT",
         'payments': payment_info,
