@@ -835,6 +835,10 @@ courses = {
 
 team_members = [
     {
+        "title": "Elite Team",
+        "description": "The Elite Team is comprised of top-tier professionals distinguished by their exceptional talents and contributions in the field of analytics. This group represents the pinnacle of expertise and innovation, often involved in high-level strategic planning and complex problem-solving. Members of the Elite Team are known for their advanced analytical skills, visionary perspectives, and ability to drive transformative changes in the industry. They play a pivotal role in shaping the future of analytics practices, mentoring emerging talents, and spearheading groundbreaking projects that set new standards in the field."
+    },
+    {
         "title": "Lead Team",
         "description":"The Lead Team consists of experienced professionals who provide leadership and guidance in the analytics field. They have a deep understanding of business processes and use their expertise to drive strategic decision-making.These individuals are responsible for overseeing projects, managing teams, and ensuring the successful execution of analytics initiatives.With their strong analytical skills and extensive industry knowledge, the Lead Team plays a crucial role in delivering valuable insights and driving business growth.",
     },
