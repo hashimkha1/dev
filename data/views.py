@@ -62,7 +62,7 @@ def deliverable(request):
 
 @login_required
 def training(request):
-    return render(request, "data/training/training.html", {"title": "training"})
+    return render(request, "data/training/training_progress/train.html", {"title": "training"})
 
 
 @login_required

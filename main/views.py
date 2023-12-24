@@ -726,7 +726,7 @@ class MeetingsUpdateView(LoginRequiredMixin,UpdateView):
         return reverse('main:meetings') 
 
 def interview(request):
-    return redirect('data:interview')
+    return redirect('data:train')
 
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})
