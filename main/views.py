@@ -661,7 +661,7 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UserProfile
     # fields ="__all__"
-    fields=['position','description','image','google_image_id','image2','is_active','laptop_status']
+    fields=['position','description','image','image2','is_active','laptop_status']
     def form_valid(self, form):
         instance = form.save()
         form.instance.username = self.request.user
