@@ -671,10 +671,8 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
             folder_id ="15DFj4PQIqRFgM1T9x18Dq2rzmK32YLQ_" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
             image_path = instance.image.path
             image_id = upload_image_to_drive(image_path, folder_id,image_name)
-            full_url = f"https://drive.google.com/uc?id={self.image_id}"
-            instance.google_image_id = full_url
-        # instance = form.save()
-        # form.instance.username = self.request.user
+            assets_instance = Assets.objects.create(image_url=image_id)
+            instance.image2 = assets_instance
         return super().form_valid(form)
 
     def get_success_url(self):
