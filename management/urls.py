@@ -59,8 +59,11 @@ urlpatterns = [
     path('newtaskgroup/', TaskGroupCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='newtaskgroup'),
     path('contract/',views.contract, name='contract'),
 
+    path('newclient/', views.clientassessment, name='newclient'),
+    path('clientassessment/', views.ClientAssessmentListView.as_view(), name='clientassessment'),
+    # path('clientassessment/', views.clientassessment, name='clientassessment'),
+    # path('clientassessment/', views.clientassessment, name='clientassessment'),
     path('assess/', views.assess, name='assess'),
-    path('clientassessment/', views.clientassessment, name='clientassessment'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),
     path('session/<int:pk>/', views.SessionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='updatesession'),
