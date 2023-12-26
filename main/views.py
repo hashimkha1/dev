@@ -666,7 +666,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         instance = form.save()
         form.instance.username = self.request.user
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
-        if form.cleaned_data.get('image') is not None:
+        if form.cleaned_data.get('image') is not None and form.cleaned_data.get('image') is not False:
             image_name = form.cleaned_data.get('image').name
             folder_id ="15DFj4PQIqRFgM1T9x18Dq2rzmK32YLQ_" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
             image_path = instance.image.path
