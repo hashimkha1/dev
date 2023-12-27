@@ -17,10 +17,11 @@ from main.utils import App_Categories,Automation,Stocks,General,path_values,conv
 from getdata.utils import (
 					fetch_and_insert_data,populate_table_from_json_file
 )
-from finance.models import (Transaction)
+from finance.models import (Transaction, Payment_History)
 
 from investing.models import OverBoughtSold
 from marketing.models import Whatsapp_Groups
+from main.models import ServiceCategory
 
 #importing Options play funcationality
 
@@ -69,6 +70,51 @@ def bigdata(request):
 		"Stocks":Stocks,
 		"General":General,
 	}
+	return render(request, "getdata/bigdata.html",context)
+
+
+def update_link(service_array, user_payment_history, service_categories):
+	
+	updated_automation = []
+	for automation_service in service_array:
+		
+		if automation_service['service_category_slug'] and automation_service['service_category_slug'] in service_categories.keys():
+
+			# import pdb; pdb.set_trace()
+			if user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']]).exists():
+				
+				updated_automation.append(automation_service)	
+			
+			else:
+
+				automation_service['link'] = automation_service['service_url']
+				updated_automation.append(automation_service)
+			
+		else:
+			updated_automation.append(automation_service)
+	return updated_automation
+
+@login_required
+def bigdata(request):
+
+	if request.user.category != 2:
+		payment_history = Payment_History.objects.filter(customer_id=request.user)
+		service_categories = dict(ServiceCategory.objects.values_list('slug', 'id'))
+
+		context={
+			"title":  "data",
+			"Automation": update_link(Automation, payment_history, service_categories),
+			"Stocks":Stocks,
+			"General":update_link(General	, payment_history, service_categories),
+		}
+	else:
+		context={
+			"title": "data",
+			"Automation":Automation,
+			"Stocks":Stocks,
+			"General":General,
+		}
+		
 	return render(request, "getdata/bigdata.html",context)
 
 

@@ -426,27 +426,30 @@ Automation = [
         "title": "OPENAI",
         "link":"https://chat.openai.com/chat",
         "description":"CHATGPT/Gemini:The super power of modern day analytics ",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": "https://chat.openai.com/chat",
     },
     {
         "title": "Testimonials",
         "link":SITEURL+"/post/new/",
         "description":"Using AI to aid Clients to leave feedback",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": SITEURL+"/post/new/",
     },
-
     {
         "title": "Search Data",
         "link":SITEURL+"/search/",
         "description":"Giving You the power to search your own data",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": SITEURL+"/search/",
     },
 
     {
         "title": "Stocks & Options",
         "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
-        "service_category_slug": None
+        "service_category_slug": 'options',
+        "service_url": SITEURL+'/display_plans/options'
     },
 ]
 
@@ -481,31 +484,36 @@ General = [
         "title": "Social Media",
         "link":SITEURL+"/marketing/",
         "description":"Posting ads to social media",
-        "service_category_slug": None
+        "service_category_slug": 'social_media',
+        "service_url": SITEURL+'/display_plans/social_media/'
     },
     {
         "title": "Cash App",
         "link":SITEURL+"/getdata/cashappdata/",
         "description":"Fetching data from Cashapp and updating records",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": SITEURL+"/getdata/cashappdata/",
     },
     {
         "title": "Goto/Zoom meetings",
         "link":SITEURL+"/refresh_token_goto/",
         "description":"Fetching Meeting info using APIs",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": SITEURL+"/refresh_token_goto/",
     },
     {
         "title": "Open Urls",
         "link":SITEURL+"/plan_urls/",
         "description":"Script to automate simple tasks",
-        "service_category_slug": None
+        "service_category_slug": None,
+        "service_url": SITEURL+"/plan_urls/",
     },
     {
         "title": "Job Application",
         "link":SITEURL+"/getdata/replies/",
         "description":"Automating Job applications",
-        "service_category_slug": None
+        "service_category_slug": 'job-support',
+        "service_url": SITEURL+"/display_plans/job-support"
     },
   
 ]

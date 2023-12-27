@@ -294,7 +294,10 @@ def service_plans(request, *args, **kwargs):
     # except:
     #     payment_details=[]
     try:
-        if pre_sub_title:
+        if pre_sub_title == 'bigdata':
+            service_shown = ServiceCategory.objects.get(slug=sub_title).service
+
+        elif pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
             # print("service_shown====>",service_shown)
 
@@ -307,6 +310,8 @@ def service_plans(request, *args, **kwargs):
         
     except Service.DoesNotExist:
         return redirect('main:display_service', slug ='data_analysis')
+    except Exception:
+        return redirect('main:layout')
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
