@@ -8,6 +8,7 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from django.contrib.auth import get_user_model
+import openai
 # from finance.utils import get_exchange_rate
 User = get_user_model()
 
@@ -73,7 +74,16 @@ class Investment_rates(models.Model):
 
     def __str__(self):
         return self.name
+class InvestmentContent(models.Model):
+    title = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    description = models.TextField(blank=True)
+    class Meta:
+        verbose_name_plural = "InvestmentContent"
 
+
+    def __str__(self):
+        return self.title
 
 class Ticker_Data(models.Model):
     symbol = models.CharField(max_length=255,blank=True, null=True)

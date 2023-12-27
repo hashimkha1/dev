@@ -21,6 +21,8 @@ class CustomerUser(AbstractUser):
         Student = 4
         investor = 5
         General_User = 6
+    def get_category_display_name(self):
+        return dict(CustomerUser.Category.choices).get(self.category, 'Unknown')    
 
     # added this column here
     class SubCategory(models.IntegerChoices):
@@ -37,15 +39,15 @@ class CustomerUser(AbstractUser):
         Female = 2
 
     id = models.AutoField(primary_key=True)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
     date_joined = models.DateTimeField(default=timezone.now)
-    email = models.CharField(max_length=100)
+    email = models.CharField(max_length=255)
     gender = models.IntegerField(choices=Score.choices, blank=True, null=True)
-    phone = models.CharField(default="90001", max_length=100)
-    address = models.CharField(blank=True, null=True, max_length=100)
-    city = models.CharField(blank=True, null=True, max_length=100)
-    state = models.CharField(blank=True, null=True, max_length=100)
+    phone = models.CharField(default="90001",max_length=255)
+    address = models.CharField(blank=True, null=True, max_length=255)
+    city = models.CharField(blank=True, null=True, max_length=255)
+    state = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=Category.choices, default=999)
     # added this column here

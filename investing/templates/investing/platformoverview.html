@@ -1,0 +1,257 @@
+{%extends "main/base_templates/new_base.html"%} 
+{% load static %}
+{% block content %}
+<div class="banner-div">
+  <img class="baner-div" src="{% static 'main/image/invest3.jpg' %}" alt="Investment Image">
+  <div class="container-md">
+    <h2>Investment</h2>
+    <h1>Start Your Business With US</h1>
+  </div>
+</div>
+<style>
+  .baner-div {
+  min-height: 100%;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  position: relative;
+}
+
+
+.baner-div::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 50%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%);
+}
+
+.baner-div div {
+  position: absolute;
+  z-index: 2;
+  bottom: 6rem;
+  text-align: center;
+  left: 50%;
+  transform: translateX(-50%);
+}
+</style>
+
+<div class="stripdiv">
+  <div class="container">
+    <!-- <h2 class="mt-4 mt-md-0"> ABOUT CODA</h2> -->
+    <p class="me-lg-5">
+      
+        Welcome to our platform! We specialize in providing a comprehensive range of services to students and professionals. Whether you're seeking training in data analysis, consultancy services, or investment opportunities, we've got you covered.
+        Join us on the path to success in student training, consultancy, data analysis training, and investment.
+    </p>
+    <div class="center-container">
+      <a class="col" href="#">Start Investing Now</a>
+    </div>
+  </div>
+</div>
+<style>
+.stripdiv {
+  color: #2f2f30;
+  margin-bottom: -80px; 
+  background-color: #f5f5f5;
+}
+
+.stripdiv p {
+  text-align: center;
+  font-size: 32px;
+  letter-spacing: 1px;
+  font-weight: 500;
+  width: 80%;
+  margin: 0 auto; /* Remove the top margin for no separation */
+  padding: 5rem 0;
+  line-height: 1.7;
+  transition: color 0.3s, background-color 0.3s; /* Add smooth color transition */
+}
+
+.stripdiv:hover p {
+  color: #bd9551; /* Change text color on hover */
+}
+
+.center-container {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.col {
+  background-color: #e7ad4a;
+  color: #fff;
+  border: 1px solid #e7ad4a;
+  margin-bottom: 20px;
+  padding: 8px 30px;
+  font-size: 15px;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: color 0.3s, background-color 0.3s; /* Add smooth color transition */
+}
+
+.col,
+.col:hover {
+  text-decoration: none; /* Remove underline for both normal and hover states */
+}
+
+.col:hover {
+  color: black; /* Change text color on hover */
+  background-color: #355ba3; /* Change background color on hover */
+}
+</style>
+<div class="services-div">
+  <div class="container-lg">
+    <div class="row flex-column-reverse flex-md-row">
+      <div class="col-md-6 pe-lg-5">
+        <h2 class="mt-4 mt-md-0"> EXECUTIVE SUMMARY (BUSINESS OVERVIEW)</h2>
+        <div class="text-content" id="readMoreContent">
+          <p class="me-lg-5" id="truncatedText">
+            {{ generated_content|safe|truncatechars:400 }}
+          </p>
+          <p class="me-lg-5" id="remainingText" style="display: none;">
+            {{ generated_content|safe }}
+          </p>
+          <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton">
+            Read more
+          </a>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <img class="img-fluid ps-lg-5" 
+          src="{% static 'main/img/background/home2.jpg' %}"
+          alt="">
+      </div>
+    </div>
+  </div> 
+</div>
+
+<script>
+  function toggleReadMore() {
+    var truncatedText = document.getElementById("truncatedText");
+    var remainingText = document.getElementById("remainingText");
+    var button = document.getElementById("readMoreButton");
+
+    if (truncatedText.style.display === "none") {
+      truncatedText.style.display = "block";
+      remainingText.style.display = "none";
+      button.innerHTML = "Read more";
+    } else {
+      truncatedText.style.display = "none";
+      remainingText.style.display = "block";
+      button.innerHTML = "Read less";
+    }
+  }
+</script>
+
+
+<div class="services-div">
+  <div class="container-lg">
+      <div class="row flex-column-reverse flex-md-row">
+          <div class="col-md-6 pe-lg-5">
+              <h2 class="mt-4 mt-md-0">Market Opportunity</h2>
+              <p class="me-lg-5">
+                <p>Explore the vast market opportunities offered by the Coda platform. From training students to aiding in project management, helping students find jobs, and facilitating investments in our platforms.</p>
+                <p>Learn how Coda is making an impact in the following areas:</p>
+                <div class="styled-list-container">
+                  <div class="plain-list-container">
+                    <ul class="plain-list">
+                      <li>Training and Education</li>
+                      <li>Project Management Solutions</li>
+                      <li>Job Placement for Students</li>
+                      <li>Investment Opportunities</li>
+                    </ul>
+                  </div>
+                  
+                </div>
+              </p>
+          </div>
+          <div class="col-md-6">
+              <img class="img-fluid ps-lg-5 increased-width" 
+              
+              src="{% static 'main/image/about.jpg' %}"
+                
+              alt="">
+          </div>
+      </div>
+  </div> 
+</div>
+<style>
+
+
+/* Example CSS styles for the styled list */
+
+/* Example CSS styles for the styled list */
+  .plain-list-container {
+  text-align: center;
+}
+
+/* Minimalistic CSS styles for the plain list */
+.plain-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.plain-list li {
+  font-size: 22px;
+  text-transform: uppercase;
+}
+
+/* Optionally, add hover effect */
+.plain-list li:hover {
+  color: #355ba3; /* Change text color on hover */
+}
+
+</style>
+
+{% include 'investing/charts.html'%}
+
+<div class="testimonials-div">
+  <div class="container">
+      <h1>INVESTER SUCCESS STORIES</h1>
+      <div class="owl-carousel">
+      <div class="row text-center commit"> 
+        {% for post in posts %}
+            <div class="{{ selected_class }}">
+              <div class="carousel-card">
+                <div class="img-div p-3">
+                  <span>
+                    <img src="{{googledriveurl}}{{post.writer.profile.img_url}}" class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
+                  </span>
+                </div>
+                  <h3> 
+                    <a href="{% url 'main:post-detail' post.id %}">
+                      {{ post.writer.first_name }},{{post.writer.last_name}}
+                    </a>
+                  </h3>
+                  <h3 style="font-size: 16px;">{{ post.title }} {{ count_to_class.post.count }}</h3>
+
+                  <!-- <h3>{{post.title}} {{ count_to_class.post.count }}</h3> -->
+                  <font size="2">
+                      {{post.content|truncatewords:70}}
+                    </font>
+              </div>
+            </div>
+        {% endfor %}
+       </div>
+      </div>
+  </div>
+</div>
+ <div class="row text-center">
+
+  <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
+    <a href="{% url 'main:post-create' %}">Share Your Experiences</a>
+  </div>
+  <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
+    <a href="">back to top</a>
+  </div>
+  </div> 
+
+  {% include 'main/snippets_templates/chat.html'%}
+
+  </div> 
+  
+{% endblock %}

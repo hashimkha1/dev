@@ -8,6 +8,7 @@ urlpatterns = [
     # path('covered/', views.coveredcalls, name='covered'),
     path('training/', views.training, name='training'),
     path('newinvestment/', views.newinvestment, name='newinvestment'),
+    path('InvestmentPlatformOverview/', views.InvestmentPlatformOverview, name='InvestmentPlatformOverview'),
     path('newinvestmentrate/', views.newinvestmentrate, name='newinvestmentrate'),
     path('investments/', views.investments, name='investments'),
     path('companyreturns/', views.options_returns, name='companyreturns'),
