@@ -426,23 +426,27 @@ Automation = [
         "title": "OPENAI",
         "link":"https://chat.openai.com/chat",
         "description":"CHATGPT/Gemini:The super power of modern day analytics ",
+        "service_category_slug": None
     },
     {
         "title": "Testimonials",
         "link":SITEURL+"/post/new/",
         "description":"Using AI to aid Clients to leave feedback",
+        "service_category_slug": None
     },
 
     {
         "title": "Search Data",
         "link":SITEURL+"/search/",
         "description":"Giving You the power to search your own data",
+        "service_category_slug": None
     },
 
     {
         "title": "Stocks & Options",
         "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
+        "service_category_slug": None
     },
 ]
 
@@ -477,26 +481,31 @@ General = [
         "title": "Social Media",
         "link":SITEURL+"/marketing/",
         "description":"Posting ads to social media",
+        "service_category_slug": None
     },
     {
         "title": "Cash App",
         "link":SITEURL+"/getdata/cashappdata/",
         "description":"Fetching data from Cashapp and updating records",
+        "service_category_slug": None
     },
     {
         "title": "Goto/Zoom meetings",
         "link":SITEURL+"/refresh_token_goto/",
         "description":"Fetching Meeting info using APIs",
+        "service_category_slug": None
     },
     {
         "title": "Open Urls",
         "link":SITEURL+"/plan_urls/",
         "description":"Script to automate simple tasks",
+        "service_category_slug": None
     },
     {
         "title": "Job Application",
         "link":SITEURL+"/getdata/replies/",
         "description":"Automating Job applications",
+        "service_category_slug": None
     },
   
 ]
@@ -846,7 +855,17 @@ team_members = [
         "title": "Support Team",
         "description":"The Supporting Tech Team comprises skilled professionals who provide technical support and expertise to enable effective analytics operations. They work closely with the Lead Team and other stakeholders to develop and maintain the infrastructure, tools, and technologies required for data analysis and reporting. These individuals possess strong technical skills and stay up-to-date with the latest advancements in analytics technology.",
     },
-    
+    {
+        "title": "Senior Analysts",
+        "description": "Senior Analysts, the linchpin of our analytics excellence, blend seasoned experience with strategic insight. They unravel complexities in data, distilling actionable insights and shaping data-driven strategies. Leaders in our analytics community, they design and implement advanced frameworks, utilizing cutting-edge technologies to elevate data into a strategic asset. With precision and foresight, Senior Analysts ensure our strategies align with organizational goals, driving impactful decision-making."
+    },
+    {
+        "title": "Junior Analysts",
+        "description": "Junior Analysts, vital contributors to our analytics team, bring youthful energy and analytical aptitude. They tackle data challenges, supporting the extraction of valuable insights and contributing to the implementation of analytical frameworks. Keen learners, they stay abreast of evolving technologies, assisting in maintaining our analytical infrastructure. Junior Analysts play a key role in shaping data narratives, laying the foundation for informed decision-making, and embodying the future of our analytics capabilities."
+    },
+]
+
+future_talents = [
     {
         "title": "Senior Trainee Team",
         "description":"The Senior Trainee Team at CODA comprises advanced learners who have demonstrated exceptional aptitude and commitment in the analytics domain. Building upon the foundational skills acquired during earlier stages, this team engages in more complex projects and assumes greater responsibilities. With a focus on honing strategic thinking and leadership abilities, these trainees are groomed to take on pivotal roles. They mentor junior trainees, collaborate with the Lead Team, and contribute to innovative solutions alongside the Supporting Tech Team.",
@@ -855,7 +874,10 @@ team_members = [
         "title": "Junior Trainee Team",
         "description":"The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies.",
     },
-
+    {
+        "title": "Elementary",
+        "description": "The Elementary Trainee is a budding professional entering the analytics field with enthusiasm and a foundational understanding of analytical concepts. Working closely with the experienced Lead Team, this entry-level individual actively contributes to analytics projects, focusing on developing technical skills and gaining hands-on experience. Engaged in tasks such as data analysis and project support, the Elementary Trainee plays a crucial role in the team's success. They seek guidance, participate in training programs, and bring a fresh perspective to the table, laying the groundwork for a promising career in analytics within the organization."
+    }
 ]
 
 client_categories = [

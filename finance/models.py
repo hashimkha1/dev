@@ -30,7 +30,7 @@ class Payment_Information(models.Model):
     down_payment=models.IntegerField(default=500)
     student_bonus=models.IntegerField(null=True,blank=True)
     fee_balance=models.IntegerField(default=None)
-    plan = models.IntegerField()
+    plan = models.IntegerField() # assuming service_category id
     payment_method = models.CharField(max_length=100)
     contract_submitted_date = models.DateTimeField(default=timezone.now)
     client_signature = models.CharField(max_length=1000)

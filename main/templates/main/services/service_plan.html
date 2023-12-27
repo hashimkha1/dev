@@ -63,7 +63,7 @@
     <!-------------------Cards-Category Section----------------------->
 <div class="container-fluid padding">
   <div class="row padding">
-    {% for service in services %}
+    {% for service in services_plans %}
     <div class="row">
       <div class="col-md-12">
         <p class="display-5 text-center"><b>{{ service.name }}{{ service.title }}</b></p>
@@ -85,9 +85,12 @@
                 {% if service.slug %}
                 <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
                 {% else %}
-                <form action="{% url 'finance:newcontract' request.user %}" method="POST">
+                <form method="POST" {% if service.is_direct or service.price < 1000 %}action="{% url 'finance:pay' %}"{% else %}action="{% url 'finance:newcontract' request.user %}"{% endif %}>
                   {% csrf_token %}
                   <input type="hidden" name="service_title" value="{{ service.name }}{{ service.title }}">
+                  <input type="hidden" name="fees" value="{{ service.price }}">
+                  <input type="hidden" name="is_direct" value="{{ service.is_direct }}">
+                  <input type="hidden" name="service_category_id" value="{{ service.category.id }}">
                   <button type="submit" class="btn btn-primary">Proceed</button>
                 </form>
                 {% endif %}

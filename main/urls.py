@@ -16,6 +16,7 @@ urlpatterns = [
     
     path('team_profiles/', views.team, name='team_profiles'),
     path('client_profiles/', views.team, name='client_profiles'),
+    path('future_talents/', views.team, name='future_talents'),
     path('letter/', views.letters, name='letter'),
     path('appointment_letter/', views.letters, name='appointment_letter'),
     # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
