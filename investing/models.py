@@ -95,6 +95,7 @@ class Ticker_Data(models.Model):
     currentratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
     revenuegrowth =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
     fetched_date =models.DateField(auto_now_add=True,blank=True,null=True)
+    industry = models.CharField(max_length=500,blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Option Measures"
@@ -113,12 +114,13 @@ class credit_spread(models.Model):
     premium = models.CharField(max_length=255,blank=True, null=True)
     width = models.CharField(max_length=255,blank=True, null=True)
     prem_width = models.CharField(max_length=255,blank=True, null=True)
-    iv_rank = models.CharField(max_length=255,blank=True, null=True)
+    # iv_rank = models.CharField(max_length=255,blank=True, null=True)
+    rank = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
-    comment = models.CharField(max_length=255, blank=True, null=True)
-    on_date = models.CharField(max_length=255,blank=True, null=True)
-    is_active = models.BooleanField(default=True)
-    is_featured = models.BooleanField(default=True)
+    # comment = models.CharField(max_length=255, blank=True, null=True)
+    # on_date = models.CharField(max_length=255,blank=True, null=True)
+    # is_active = models.BooleanField(default=True)
+    # is_featured = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "credit_spread"

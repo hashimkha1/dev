@@ -8,12 +8,14 @@ from django.urls import re_path
 app_name = 'getdata'
 urlpatterns = [
     path('getrating/', views.getrating, name='data-getrating'),
+    path('groups/', views.fetch_whatsapp_groups, name='whatsappgroups'),
     path('index/', views.index, name='data-index'),
     path('upload/', views.upload_csv, name='upload'),
     path('dataupload/', views.uploaddata, name='upload-data'),
     path('bigdata/', views.bigdata, name='generate-data'),
     # path('datauploadcsv/', views.upload_csv, name='upload-data'),
     path('datauploadcsv/', views.stocks_upload_csv, name='upload-data'),
+    # path('datauploadcsv/', views.groups_upload_csv, name='upload-data'),
     path('cashapp/',parse_mail, name='cashapp-email'),
     path('cashappdata/', views.CashappListView.as_view(), name='cashapp-data'),
     path('cashappdetail/',views.CashappMailDetailSlugView.as_view(), name='cashappdetail'),

@@ -48,7 +48,7 @@ from management.models import (
     ProcessBreakdown,
     Meetings,
 )
-from data.models import DSU
+from data.models import DSU,ClientAssessment
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
 from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
@@ -1560,21 +1560,31 @@ def assess(request):
             form = ManagementForm()
     return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
+class AssessListView(ListView):
+    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
+    queryset=DSU.objects.all().order_by("-created_at")
+    template_name = "management/departments/hr/assessment.html"
+
+# ================================POTENTIAL CLIENTS==========================================
 def clientassessment(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email=request.POST['email'])
         user_count = previous_user.count()
+        print("user_count",user_count)
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             totalpoints=compute_total_points(form)
             form.instance.totalpoints = totalpoints
             form.save()
-            if user_count > 0:
-                messages.success(request, f'User already exists with this email')
-                return redirect("/password-reset")
-            # if totalpoints <= 40:
-            #     message="We highly recommend an end to end project based course in which will cover(Training,Interview,and Background Checks)"
-            #     return redirect("accounts:account-login")
+            # if user_count > 0:
+            #     print('Email',user_count)
+            #     messages.success(request, f'User already exists with this email')
+            #     return redirect("/password-reset")
+            if totalpoints <= 35:
+                post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
+                message = f"Hi Future Client,{post}."
+                context = {"title": "CODA Assessment", "message": message}
+                return render(request, "main/errors/generalerrors.html", context)
             else:
                 # return redirect('main:layout')
                 return redirect("accounts:account-login")
@@ -1590,10 +1600,9 @@ def clientassessment(request):
         form = ClientAssessmentForm()
     return render(request, "management/departments/hr/clientassessment_form.html", {"form": form})
 
-class AssessListView(ListView):
-    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-    queryset=DSU.objects.all().order_by("-created_at")
-    template_name = "management/departments/hr/assessment.html"
+class ClientAssessmentListView(ListView):
+    queryset=ClientAssessment.objects.all().order_by("-rating_date")
+    template_name = "management/departments/hr/clientassessment.html"
 
     # -----------------------------REQUIREMENTS---------------------------------
 def active_requirements(request, Status=None, *args, **kwargs):

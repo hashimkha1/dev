@@ -44,6 +44,7 @@ class UserProfile(models.Model):
     emergency_national_id_no = models.CharField(max_length=254, null=True, blank=True)
     emergency_phone = models.CharField(max_length=254, null=True, blank=True)
     emergency_email = models.CharField(max_length=254, null=True, blank=True)
+    google_image_id = models.CharField(max_length=254, null=True, blank=True)
 
 
     def __str__(self):

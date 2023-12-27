@@ -5,9 +5,24 @@
       .chat-btn {
         position: fixed;
         bottom: 20px;
-        right: 40px;
+        right: 100px;
+      }
+      .assessment-btn {
+        position: fixed;
+        bottom: 20px;
+        right: 15px;
       }
   
+      .assessment-btn button {
+        color: #266591;
+        padding: 6px 6px;
+        border-radius: 75%;
+        text-decoration: none;
+        display: flex;
+        align-items: left;
+        justify-content: center;
+        background-color: #276287; 
+      }
       .chat-btn a {
         color: #fff;
         padding: 6px 12px;
@@ -46,11 +61,21 @@
     <!-- Link to the new_main.css file -->
     
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/new_main.css' %}">
-
-    <div class="col-md-1 chat-btn">
-      <a href="https://api.whatsapp.com/send?phone=14702769443"  target="_blank">
-        <img class="img-fluid ps-lg-5 chat-icon" src="{% static 'main/img/whatsaap_v1.jpg' %}" alt="" width="35" height="35">
-      </a>
+    <div class="col-md-4 chat-btn text-right">
+        <div class="row text-center">
+          <div class="col-md-3 chat-btn">
+            <a href="https://api.whatsapp.com/send?phone=14702769443"  target="_blank">
+              <img class="img-fluid ps-lg-5 chat-icon" src="{% static 'main/img/whatsaap_v1.jpg' %}" alt="" width="35" height="35">
+            </a>
+          </div>
+          <div class="col-md-2 assessment-btn">
+            <button class="">
+              <a href="{% url 'management:newclient' %}"  target="_blank">
+                  <p>Self Assessment</p>
+                </a>
+            </button>
+          </div>
+      </div>
     </div>
   </div>
   

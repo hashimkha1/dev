@@ -19,7 +19,7 @@ from application.models import UserProfile
 from main.models import Service, Testimonials
 from finance.models import Payment_History, Transaction
 from .utils import (compute_pay,risk_ratios,
-                    computes_days_expiration,get_user_investment,financial_categories,investment_rules
+                    computes_days_expiration, computes_days_expiration_option_return, get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality
@@ -47,6 +47,7 @@ from django.db.models import Q
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
+from django.db.models import Subquery, OuterRef, F, CharField
 
 
 register = template.Library()
@@ -282,6 +283,10 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     distinct_returns_symbols = list(set([
         obj.symbol for obj in Options_Returns.objects.all() if obj.wash_days >= 40
     ]))
+
+    filter_name = request.GET.get('filter_by', None)
+    extra_filter = request.GET.get('extra_filter_by', None)
+
     # Taking distinct symbols which in oversold/overbought.
     distinct_overboughtsold_symbols = list(set([
         obj.symbol for obj in OverBoughtSold.objects.all()]))
@@ -307,54 +312,106 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
 
-    stockdata = stock_model.objects.filter(is_featured=True).distinct()
-    if stockdata.exists():  # Using exists() for clarity
-        url_mapping = {
-            'shortputdata': 'investing:shortputupdate',
-            'credit_spread': 'investing:creditspreadupdate',
-            'covered_calls': 'investing:coveredupdate',
-        }
-        url_name = url_mapping.get(sub_title, '')
+    context = {
+        "data": [],  # Empty data when stockdata does not exist
+        "days_to_expiration": 0,
+        "subtitle": sub_title,
+        "pre_sub_title": pre_sub_title,
+        'title': page_title,
+        "get_edit_url": "",
+        "url_name": "",
+    }
 
-        def get_edit_url(row_id):
-            return reverse(url_name, args=[row_id])
+    for key, value in model_mapping.items():
 
-        days_to_expiration = computes_days_expiration(stockdata)[1]
+        current_stock_model = value['model']
+        # Subquery to get the computed value from other_model
+        subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
 
-        # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
-        all_return_symbols = Options_Returns.objects.values_list('symbol', flat=True).distinct()
+        # Annotate the queryset with the computed field
+        current_stockdata = current_stock_model.objects.distinct().annotate(
+            industry = Subquery(subquery, output_field=CharField())
+        ) #is_featured=True
 
-        filtered_stockdata_by_returns = [
-            x for x in stockdata if x.symbol not in all_return_symbols or
-            (x.symbol in distinct_returns_symbols and days_to_expiration >= 21)
-        ]
-        filtered_stockdata_by_oversold = [
-            x for x in filtered_stockdata_by_returns if x.symbol in distinct_overboughtsold_symbols
-        ]
+        if current_stockdata.exists():  # Using exists() for clarity
+            url_mapping = {
+                'shortput': 'investing:shortputupdate',
+                'credit_spread': 'investing:creditspreadupdate',
+                'covered_calls': 'investing:coveredupdate',
+            }
+            url_name = url_mapping.get(value['model'], '')
 
-        context = {
-            "data": filtered_stockdata_by_oversold,
-            "covered_calls_count":covered_calls_count,
-            "shortputdata_count":shortputdata_count,
-            "credit_spread_count":credit_spread_count,
-            "days_to_expiration": days_to_expiration,
-            "categories": investment_rules,
-            "subtitle": sub_title,
-            "pre_sub_title": pre_sub_title,
-            'title': page_title,  # Using renamed title
-            "get_edit_url": get_edit_url,
-            "url_name": url_name,
-        }
-    else:
-        context = {
-            "data": [],  # Empty data when stockdata does not exist
-            "days_to_expiration": 0,
-            "subtitle": sub_title,
-            "pre_sub_title": pre_sub_title,
-            'title': page_title,
-            "get_edit_url": "",
-            "url_name": url_name,
-        }
+            def get_edit_url(row_id):
+                return reverse(url_name, args=[row_id])
+
+            # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
+            all_return_symbols = Options_Returns.objects.distinct()
+            
+            current_days_to_expiration = computes_days_expiration(current_stockdata)[1]
+            
+            # for testing with option_return expiration days, i created this function, but need to test by chrish
+            # current_days_to_expiration_returns = computes_days_expiration_option_return(all_return_symbols)[1]
+            # print(current_days_to_expiration, current_days_to_expiration_returns)
+            
+            all_return_symbols = all_return_symbols.values_list('symbol', flat=True)
+            
+            #filtering symbol which is there in overboughtsold
+            filtered_stockdata_by_oversold = [
+                x for x in current_stockdata if x.symbol in distinct_overboughtsold_symbols
+            ]
+           
+            #filtering symbol which is not in option_return  
+            filtered_stockdata_by_returns = [x for x in filtered_stockdata_by_oversold if x.symbol not in all_return_symbols or (x.symbol in distinct_returns_symbols and current_days_to_expiration >= 21)]
+            
+    
+            context[f"{current_stock_model.__name__.lower()}_option_return_count"] = len(filtered_stockdata_by_returns)
+            context[f"{current_stock_model.__name__.lower()}_oversold_count"] = len(filtered_stockdata_by_oversold)
+            
+            if current_stock_model == stock_model:
+                context['days_to_expiration'] = current_days_to_expiration
+                context['get_edit_url'] = get_edit_url
+                context['url_name'] = url_name
+
+                if filter_name == 'by_option_return':
+                    context['data'] = filtered_stockdata_by_returns
+                elif filter_name == 'by_over_sold':
+                    context['data'] = filtered_stockdata_by_oversold
+                else:
+                    context['data'] = current_stockdata
+
+                if extra_filter == 'top_5':
+
+                    if key != 'credit_spread':
+                        context['data'] = sorted(context['data'], key=lambda x: float(x.raw_return[:-1]), reverse=True)[:5]
+                    else:
+                        context['data'] = sorted(context['data'], key=lambda x: float(x.sell_strike[1:].replace(',', '')), reverse=True)[:5]
+            
+    context.update({
+        # "data": filtered_stockdata_by_oversold,
+        
+        "covered_calls_original_count":covered_calls_count,
+        "shortput_original_count":shortputdata_count,
+        "credit_spread_original_count":credit_spread_count,
+        
+        # "covered_calls_option_return_count":None,
+        # "shortput_option_return_count":None,
+        # "credit_spread_option_return_count":None,
+        
+        # "covered_calls_oversold_count":None,
+        # "shortput_oversold_count":None,
+        # "credit_spread_oversold_count":None,
+        
+        # "days_to_expiration": days_to_expiration,
+        # "get_edit_url": get_edit_url,
+        # "url_name": url_name,
+
+        "categories": investment_rules,
+        "subtitle": sub_title,
+        "pre_sub_title": pre_sub_title,
+        'title': page_title,  # Using renamed title
+        
+    })
+    
 
     if request.method == 'GET':
         selected_symbol = request.GET.get('symbol')

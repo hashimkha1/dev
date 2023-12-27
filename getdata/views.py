@@ -2,6 +2,7 @@
 import os
 import json
 import requests
+from django.http import JsonResponse
 from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse,HttpResponseBadRequest
@@ -14,11 +15,12 @@ from django.views.generic import (
 )
 from main.utils import App_Categories,Automation,Stocks,General,path_values,convert_date
 from getdata.utils import (
-					fetch_and_insert_data,
+					fetch_and_insert_data,populate_table_from_json_file
 )
 from finance.models import (Transaction)
 
 from investing.models import OverBoughtSold
+from marketing.models import Whatsapp_Groups
 
 #importing Options play funcationality
 
@@ -38,13 +40,24 @@ def index(request):
 	return render(request, 'getdata/index.html', {'title': 'index'})
 
 def getrating(request):
-	return render(request, 'getdata/getrating.html', {'title': 'getrating'})
+    return render(request, 'getdata/getrating.html', {'title': 'getrating'})
 
+@login_required
+def fetch_whatsapp_groups(request):
+    file_path='media/marketing/whatsapp_groups/Whatsapp_Groups_11232023_v1.txt'
+    populate_table_from_json_file(file_path)
+    # context={
+    #     'title': 'Fetching Whatsapp Groups From Text File',
+    #     'message':'We are done populating your database table'
+    # }
+    # return render(request, "main/errors/generalerrors.html", context)
+    return redirect('marketing:whatsapp_list')
+	
 
 def uploaddata(request):  
 	# context = {"posts": posts}
 	context = {
-		"App_Categories": App_Categories,
+        "App_Categories": App_Categories,
 	}
 	return render(request,"getdata/uploaddata.html", context) 
 
@@ -59,7 +72,6 @@ def bigdata(request):
 	return render(request, "getdata/bigdata.html",context)
 
 
-
 # ========================. DISPLAY/LIST VIEWS============================
 # class CashappListView(ListView):
 #     queryset = CashappMail.objects.all()
@@ -69,7 +81,6 @@ class CashappListView(ListView):
 	model = CashappMail
 	template_name = "main/snippets_templates/interview_snippets/result.html"
 	context_object_name = "cashappdata"
-
 
 class CashappMailDetailSlugView(DetailView):
 	queryset = CashappMail.objects.all()
@@ -120,7 +131,7 @@ from django.shortcuts import redirect
 
 #     # Redirect the user to the GoToMeeting's OAuth2 page
 #     return redirect(auth_url)
-
+@login_required
 def initiate_oauth(request):
 	# Your application's configuration
 	CLIENT_ID = 'a75f876d-cb58-404c-b5c0-4e91d9bc4052' # os.environ.get('GOTO_CLIENT_ID')
@@ -132,7 +143,7 @@ def initiate_oauth(request):
 	# Redirect the user to the GoToMeeting's OAuth2 page
 	return redirect(auth_url)
 
-
+@login_required
 def obtain_tokens(request):
 	# Obtain the authorization code from the request parameters
 	code = request.GET.get('code')
@@ -176,6 +187,7 @@ def obtain_tokens(request):
 	# Return the refresh token as a JsonResponse, or you can save it, etc.
 	return JsonResponse({"refresh_token": refresh_token})
 
+@login_required
 def refresh_token_function(request):
 	global refresh_token , client_code
 
@@ -218,7 +230,7 @@ def refresh_token_function(request):
 	return HttpResponse("token saved successfully")
 
 
-# def getmeetingresponse(startDate , endDate):
+@login_required
 def getmeetingresponse(startDate , endDate):
 	access_token = None
 	startDateTime="{}T00:00:00Z".format(startDate)
@@ -625,7 +637,56 @@ def stocks_upload_csv(request):
 
 	if request.method == 'GET':
 		return render(request, "getdata/uploaddata.html", context)
+	
+def groups_upload_csv(request):
+    context = {
+        "categories": App_Categories,
+    }
+    if request.method == "POST":
+        # Retrieve the uploaded CSV file
+        csv_file = request.FILES.get("csv_upload")
 
+        # Check if it's a CSV file
+        if not csv_file.name.endswith(".csv"):
+            messages.warning(request, "Not a CSV file")
+            return render(request, "getdata/uploaddata.html", context)
+        try:
+            # Read the CSV file
+            file = csv_file.read().decode("ISO-8859-1")
+            file_data = file.split("\n")
+            csv_data = [line for line in file_data if line.strip() != " "]
+            print(csv_data)
+            
+            # Create a set to store unique symbols
+            unique_ids = set()
+            for x in csv_data:
+                print(x)
+                fields = x.split(",")
+                
+                group_id = fields[0]
+
+                # Check if the symbol is unique
+                if group_id not in unique_ids:
+                    unique_ids.add(group_id)
+                    print(group_id)
+
+                    # Create or update the record
+                    created = Whatsapp_Groups.objects.update_or_create(
+                            group_id=fields[0],
+                            group_name=fields[1],
+                            type=fields[2],
+                    )
+
+            messages.success(request, "Data populated successfully")
+            return redirect('marketing:whatsapp_groups_list',id=None )
+        
+        except Exception as e:
+            messages.warning(request, str(e))
+            return render(request, "getdata/uploaddata.html", context)
+
+    if request.method == 'GET':
+        return render(request, "getdata/uploaddata.html", context)
+	
 def selinum_test(request):
 	# to test on server
 	chrome_options = webdriver.ChromeOptions()

@@ -68,6 +68,7 @@ class Pricing(models.Model):
     discounted_price = models.FloatField(null=True, blank=True)
     duration =  models.PositiveIntegerField(null=True, blank=True)
     contract_length = models.IntegerField(choices=Contract.choices, default=3)
+    is_direct = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
     class Meta:

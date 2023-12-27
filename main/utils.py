@@ -52,7 +52,7 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
     # SERVICE_ACCOUNT_FILE = 'main/google_drive_credetials/google_credentials.json'
-    SERVICE_ACCOUNT_FILE = 'gapi/creds/google_credentials.json'
+    SERVICE_ACCOUNT_FILE = 'gapi/creds/google_drive_credentials.json'
 
     credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
@@ -69,6 +69,7 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
     print(f'Image ID: {file.get("id")}')
+    return file.get("id")
 
 """========End of Code======="""
 
@@ -720,7 +721,26 @@ App_Categories = {
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
+    ],
+    "Marketing": [
+        {
+            "table_name": "Whatsapp_Dev",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+            
+        },
+        {
+            "table_name": "Whatsapp_Group",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        },
+        {
+            "table_name": "Ads",
+            "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
+             "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
+        }
     ]
+
 }
 
 courses = {
@@ -816,6 +836,10 @@ courses = {
 
 team_members = [
     {
+        "title": "Elite Team",
+        "description": "The Elite Team is comprised of top-tier professionals distinguished by their exceptional talents and contributions in the field of analytics. This group represents the pinnacle of expertise and innovation, often involved in high-level strategic planning and complex problem-solving. Members of the Elite Team are known for their advanced analytical skills, visionary perspectives, and ability to drive transformative changes in the industry. They play a pivotal role in shaping the future of analytics practices, mentoring emerging talents, and spearheading groundbreaking projects that set new standards in the field."
+    },
+    {
         "title": "Lead Team",
         "description":"The Lead Team consists of experienced professionals who provide leadership and guidance in the analytics field. They have a deep understanding of business processes and use their expertise to drive strategic decision-making.These individuals are responsible for overseeing projects, managing teams, and ensuring the successful execution of analytics initiatives.With their strong analytical skills and extensive industry knowledge, the Lead Team plays a crucial role in delivering valuable insights and driving business growth.",
     },
@@ -823,8 +847,13 @@ team_members = [
         "title": "Support Team",
         "description":"The Supporting Tech Team comprises skilled professionals who provide technical support and expertise to enable effective analytics operations. They work closely with the Lead Team and other stakeholders to develop and maintain the infrastructure, tools, and technologies required for data analysis and reporting. These individuals possess strong technical skills and stay up-to-date with the latest advancements in analytics technology.",
     },
+    
     {
-        "title": "Trainee Team",
+        "title": "Senior Trainee Team",
+        "description":"The Senior Trainee Team at CODA comprises advanced learners who have demonstrated exceptional aptitude and commitment in the analytics domain. Building upon the foundational skills acquired during earlier stages, this team engages in more complex projects and assumes greater responsibilities. With a focus on honing strategic thinking and leadership abilities, these trainees are groomed to take on pivotal roles. They mentor junior trainees, collaborate with the Lead Team, and contribute to innovative solutions alongside the Supporting Tech Team.",
+    },
+    {
+        "title": "Junior Trainee Team",
         "description":"The CODA Trainee Team consists of enthusiastic individuals who are undergoing training in the field of analytics through the CODA program. The CODA program provides trainees with hands-on experience and practical knowledge in various aspects of analytics. The trainees work closely with the Lead Team and Supporting Tech Team to learn and apply analytical techniques, tools, and methodologies.",
     },
 

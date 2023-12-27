@@ -661,17 +661,20 @@ class UserCreateView(LoginRequiredMixin, CreateView):
 class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = UserProfile
     # fields ="__all__"
-    fields=['position','description','image','image2','is_active','laptop_status']
+    fields=['position','description','image','google_image_id','image2','is_active','laptop_status']
     def form_valid(self, form):
         instance = form.save()
         form.instance.username = self.request.user
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
         if form.cleaned_data.get('image') is not None:
             image_name = form.cleaned_data.get('image').name
-            folder_id ="18oKV2n-FckryAz_ts1OiVZ-MONkPTWRM" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+            folder_id ="15DFj4PQIqRFgM1T9x18Dq2rzmK32YLQ_" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
             image_path = instance.image.path
-            print('image_name',image_name,"---------------------","image_path",image_path)
-            upload_image_to_drive(image_path, folder_id,image_name)
+            image_id = upload_image_to_drive(image_path, folder_id,image_name)
+            full_url = f"https://drive.google.com/uc?id={self.image_id}"
+            instance.google_image_id = full_url
+        # instance = form.save()
+        # form.instance.username = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -726,7 +729,7 @@ class MeetingsUpdateView(LoginRequiredMixin,UpdateView):
         return reverse('main:meetings') 
 
 def interview(request):
-    return redirect('data:interview')
+    return redirect('data:train')
 
 def coach_profile(request):
     return render(request, "main/coach_profile.html", {"title": "coach_profile"})

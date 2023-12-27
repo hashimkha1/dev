@@ -174,6 +174,8 @@ class ClientAssessmentForm(forms.ModelForm):
             # "rating_date",
             "skills",
             "experience",
+            "non_it_exp",
+            "it_exp",
             "projectcharter",
             "requirementsAnalysis",
             "reporting",
@@ -181,6 +183,8 @@ class ClientAssessmentForm(forms.ModelForm):
             "database",
             "testing",
             "deployment",
+            "frontend",
+            "backend",
             # "totalpoints"
         ]
         labels = {
@@ -189,10 +193,19 @@ class ClientAssessmentForm(forms.ModelForm):
             "first_name":"First Name",
             "last_name":"Last Name",
             "email":"Email",
-            # "rating_date":"Date",
             "education" : "Select your highest educational level?",
-            "skills":"What computer skills|Packages|certications do you have? ",
-            "experience":"Tell us about your past experience, if any",
+            "skills":"What other computer skills|Packages|certications do you have? ",
+            "experience":"Describe any other experience you might have?",
+            "non_it_exp":"How many years of Non IT Experience(Non IT Job)",
+            "it_exp":"How many years of IT Experience(Work Experience)",
+            "projectcharter":"Project Assessment",
+            "requirementsAnalysis":"Business Analysis Role",
+            "testing":"Testing",
+            "etl":"(Alteryx,SSIS,Other)",
+            "reporting":"Reprting(Powerbi,Tableau,Other)",
+            "database":"Database(SQL,Oracle,Other)",
+            "backend":"Backend(Python,Javascript,Other)",
+            "frontend":"Front End(HTML,CSS,Editors)",
         }
 
 

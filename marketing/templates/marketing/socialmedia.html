@@ -38,6 +38,12 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list'%}">See Groups</a>
                         <div class="dropdown-divider"></div>
+                        {% if request.user.is_superuser %}
+                        <a class="dropdown-item" target="_blank" href="{%url 'getdata:whatsappgroups'%}">Populate Groups</a>
+                        {% else %}
+                        <a class="dropdown-item" target="_blank" href="{%url 'finance:pay'%}">Populate Groups</a>
+                        {% endif%}
+                        <div class="dropdown-divider"></div>
                         <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1JBWX_QI6BBJrJhtZdahYRzFpFRXpe-lK/edit#slide=id.p2">PPT-Automation</a>
                     </div>
                 </li>
