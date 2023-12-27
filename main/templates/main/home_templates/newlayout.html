@@ -34,7 +34,7 @@
               <p class="me-lg-5">
                 {{service.description}}
               </p>
-              <a href= "{% url 'main:display_service' slug="data_analysis" %}" >read more</a>
+              <a href= "{% url 'main:display_service' slug=service.slug %}" >read more</a>
           </div>
           <div class="col-md-6">
               <img class="img-fluid ps-lg-5" 

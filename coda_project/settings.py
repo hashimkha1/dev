@@ -95,6 +95,7 @@ TEMPLATES = [
                 "data.context_processors.roles",
                 "data.context_processors.categories",
                 "data.context_processors.subcategories",
+                "main.context_processors.services",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',

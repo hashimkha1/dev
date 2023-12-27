@@ -55,6 +55,13 @@
             Services
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+
+            {% for service in main_services %}
+            <a class="dropdown-item"  href="{% url 'main:display_service' slug=service.slug %}">{{service.title}}</a>
+            <div class="dropdown-divider"></div>
+            {% endfor %}
+          </div>
+          <!-- <div class="dropdown-menu" aria-labelledby="navbarDropDown">
             <a
               class="dropdown-item"
               href="{% url 'main:display_service' slug="consultancy" %}"
@@ -68,7 +75,7 @@
             <a class="dropdown-item" href="{% url 'main:display_service' slug="investing" %}"
               >Stocks & Options Training</a
             >
-          </div>
+          </div> -->
         </li>
         {% if user.is_authenticated %}
         {% if user.is_admin or  user.is_staff or  user.is_superuser%}
