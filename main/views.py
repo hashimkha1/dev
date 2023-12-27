@@ -8,7 +8,7 @@ from django.shortcuts import redirect, render,get_object_or_404
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 from .models import Service,Plan,Assets
-from .utils import (Meetings,path_values,buildmodel,team_members,url_mapping,
+from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive
 )
@@ -17,6 +17,7 @@ from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
+from management.models import TaskHistory
 from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
@@ -37,8 +38,10 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
-
+from django.db.models import Subquery, OuterRef, Value
 from django.contrib.auth import get_user_model
+from django.db.models.functions import Coalesce
+
 User=get_user_model()
 
 #  ===================================================================================   
@@ -315,7 +318,7 @@ def service_plans(request, *args, **kwargs):
         "packages": packages,
         "category_slug": category_slug,
         "courses": courses,
-        "services": plans
+        "services_plans": plans
     }
     # print(request.user.category)
     # if payment_details and request.user.category==3:
@@ -554,6 +557,51 @@ def plan_urls(request):
 
 #========================Internal Team & Clients==============================
 
+# def team(request):
+#     count_to_class = {
+#         2: "col-md-6",
+#         3: "col-md-4",
+#         4: "col-md-3"
+#     }
+    
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     team_members_staff = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
+#     team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=2).order_by("user__date_joined")
+#     team_members_senior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=5).order_by("user__date_joined")
+#     team_members_junior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
+#     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
+#     clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
+#     number_of_staff = len(team_members_staff)-1
+#     # team_members_count = len(team_members_agents)-1
+#     # print(team_members_count)
+#     # number_of_staff = len(team_members_staff)-1
+#     selected_class = count_to_class.get(number_of_staff, "default-class")
+#     if sub_title == 'team_profiles':
+#         team_categories = {
+#         'Lead Team': list(team_members_staff),
+#         'Support Team': list(team_members_agents),
+#         'Senior Trainee Team': list(team_members_senior_trainees),
+#         'Junior Trainee Team': list(team_members_junior_trainees),
+#         }
+#         user_group=team_members
+#         heading="THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
+#     if sub_title == 'client_profiles':
+#         team_categories = {
+#         'Job Seekers': list(clients_job_seekers),
+#         'Job Support': list(clients_job_support),
+#         }
+#         user_group=client_categories
+#         heading="EXPERTS FOR DATA ANALYTICS/SCIENCE"
+
+#     context = {
+#         "team_categories": team_categories,
+#         "team_members": user_group,
+#         "title":heading,
+#         "selected_class":selected_class
+#     }
+#     return render(request, "main/team_profiles.html", context)
+
+
 def team(request):
     count_to_class = {
         2: "col-md-6",
@@ -562,26 +610,49 @@ def team(request):
     }
     
     path_list, sub_title, pre_sub_title = path_values(request)
-    team_members_staff = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
+    elite_team_member = UserProfile.objects.filter(user__is_admin=True)
     team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=2).order_by("user__date_joined")
-    team_members_senior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=5).order_by("user__date_joined")
-    team_members_junior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
     clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
     clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
-    number_of_staff = len(team_members_staff)-1
-    # team_members_count = len(team_members_agents)-1
-    # print(team_members_count)
-    # number_of_staff = len(team_members_staff)-1
+    
+    # team_members_staff = UserProfile.objects.filter(user__is_admin=False, user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
+    # team_members_senior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=5).order_by("user__date_joined")
+    # team_members_junior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
+    
+    if sub_title != 'client_profiles':
+        #for aggregate sum of point in subquery
+        class SQSum(Subquery):
+            output_field = models.IntegerField()
+            template = "(SELECT sum(point) from (%(subquery)s) _sum)"
+            
+        employee_taskhistory_subquery = SQSum(TaskHistory.objects.filter(employee_id__profile=OuterRef('pk')).values('point'))
+
+        all_staff_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).exclude(user__sub_category=2).annotate(
+            total_points=Coalesce(employee_taskhistory_subquery, Value(0))).order_by("user__date_joined")
+        
+        lead_team = list(filter(lambda v: v.total_points > 100, all_staff_member))
+        senior_analysts = list(filter(lambda v: v.total_points <= 100 and v.total_points > 50, all_staff_member))
+        junior_analysts = list(filter(lambda v: v.total_points <= 50 and v.total_points > 30, all_staff_member))
+        senior_trainee = list(filter(lambda v: v.total_points <= 30 and v.total_points > 10, all_staff_member))
+        junior_trainee = list(filter(lambda v: v.total_points <= 10 and v.total_points > 5, all_staff_member))
+        elementry = list(filter(lambda v: v.total_points <= 5, all_staff_member))
+
+
+
+    number_of_staff = len(lead_team)-1
+
     selected_class = count_to_class.get(number_of_staff, "default-class")
     if sub_title == 'team_profiles':
         team_categories = {
-        'Lead Team': list(team_members_staff),
+        'Elite Team': list(elite_team_member),
+        'Lead Team': lead_team,
         'Support Team': list(team_members_agents),
-        'Senior Trainee Team': list(team_members_senior_trainees),
-        'Junior Trainee Team': list(team_members_junior_trainees),
+        'Senior Analysts': senior_analysts,
+        'Junior Analysts': junior_analysts,
         }
         user_group=team_members
         heading="THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
+    
     if sub_title == 'client_profiles':
         team_categories = {
         'Job Seekers': list(clients_job_seekers),
@@ -589,7 +660,16 @@ def team(request):
         }
         user_group=client_categories
         heading="EXPERTS FOR DATA ANALYTICS/SCIENCE"
-
+    
+    if sub_title == 'future_talents':
+        team_categories = {
+        'Senior Trainee Team': senior_trainee,
+        'Junior Trainee Team': junior_trainee,
+        'Elementary': elementry
+        }
+        user_group=future_talents
+        heading="MINDS OF TOMORROW: LEADING DATA ANALYTICS AND WEB DEVELOPMENT"
+    
     context = {
         "team_categories": team_categories,
         "team_members": user_group,

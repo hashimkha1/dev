@@ -50,7 +50,7 @@ def services(request):
         for obj in plans
     }
     return {
-        'services': services,
+        'main_services': services,
         "analysis_service": analysis_service,
         "service_categories": service_categories,
         "plans": plans,

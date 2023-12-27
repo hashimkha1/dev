@@ -602,14 +602,18 @@ def pay(request, *args, **kwargs):
     except Payment_Information.DoesNotExist:
         if request.method == 'POST' and request.POST.get('fees'):
             total_fee = float(request.POST.get('fees'))
-            downpayment = total_fee * 0.30
+			
+            if not request.POST.get('is_direct', False):
+                downpayment = total_fee * 0.30
+            else:
+                downpayment = total_fee
             fee_balance = total_fee - downpayment
             payment_info = Payment_Information.objects.create(
-                customer=request.user,
+                customer_id=request.user,
                 payment_fees=total_fee,
                 down_payment=downpayment,
                 student_bonus=0,
-                plan=2,
+                plan= request.POST.get('service_category_id', 999), # added service_category id
                 fee_balance=fee_balance,
                 payment_method='mpesa',
                 contract_submitted_date=date.today(),

@@ -48,8 +48,8 @@ def fetch_and_insert_data():
     target_conn = psycopg2.connect(target_db_path)
     target_cursor = target_conn.cursor()
 
-    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold']
-    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold']
+    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold', 'investing_ticker_data']
+    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold', 'investing_ticker_data']
 
     try:
         # Iterate over source and target tables
