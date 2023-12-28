@@ -1569,17 +1569,20 @@ class AssessListView(ListView):
 def clientassessment(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email=request.POST['email'])
-        user_count = previous_user.count()
-        print("user_count",user_count)
+
+
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
+            if previous_user.exists():
+                user = previous_user.first()
+                
+                form.first_name = user.first_name
+                form.last_name = user.last_name
+                # messages.success(request, f'User already exists with this email') 
+            
             totalpoints=compute_total_points(form)
             form.instance.totalpoints = totalpoints
             form.save()
-            # if user_count > 0:
-            #     print('Email',user_count)
-            #     messages.success(request, f'User already exists with this email')
-            #     return redirect("/password-reset")
             if totalpoints <= 35:
                 post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
                 message = f"Hi Future Client,{post}."

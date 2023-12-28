@@ -9,6 +9,7 @@ from accounts.utils import generate_random_password
 
 @receiver(post_save, sender=ClientAssessment)
 def create_customer_user(sender, instance, created, **kwargs):
+ 
     if created and not CustomerUser.objects.filter(email=instance.email).exists():
         random_password = generate_random_password(8)
         user = CustomerUser.objects.create(
@@ -26,8 +27,8 @@ def create_customer_user(sender, instance, created, **kwargs):
         user.save()
         subject = "Coda Credential"
         send_email( 
-        category=4, #because it is a student
-        to_email=user.email,
+        category=2, #because it is a student
+        to_email=(user.email,),
         subject=subject, 
         html_template='email/user_credential.html',
         context={'user': user, 'password': random_password})
