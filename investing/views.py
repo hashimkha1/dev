@@ -304,9 +304,9 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     distinct_overboughtsold_symbols = list(set([
         obj.symbol for obj in OverBoughtSold.objects.all()]))
     # Query to count distinct symbols for each model
-    covered_calls_count=covered_calls.objects.all().count()
-    shortputdata_count=ShortPut.objects.all().count()
-    credit_spread_count=credit_spread.objects.all().count()
+    # covered_calls_count=covered_calls.objects.all().count()
+    # shortputdata_count=ShortPut.objects.all().count()
+    # credit_spread_count=credit_spread.objects.all().count()
 
     model_mapping = {
         'covered_calls': {
@@ -342,9 +342,9 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
 
         # Annotate the queryset with the computed field
-        current_stockdata = current_stock_model.objects.distinct().annotate(
+        current_stockdata = current_stock_model.objects.annotate(
             industry = Subquery(subquery, output_field=CharField())
-        ) #is_featured=True
+        ).distinct("symbol") #is_featured=True
 
         if current_stockdata.exists():  # Using exists() for clarity
             url_mapping = {
@@ -379,6 +379,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     
             context[f"{current_stock_model.__name__.lower()}_option_return_count"] = len(filtered_stockdata_by_returns)
             context[f"{current_stock_model.__name__.lower()}_oversold_count"] = len(filtered_stockdata_by_oversold)
+            context[f"{current_stock_model.__name__.lower()}_original_count"] = current_stockdata.count()
             
             if current_stock_model == stock_model:
                 context['days_to_expiration'] = current_days_to_expiration
@@ -398,13 +399,13 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                         context['data'] = sorted(context['data'], key=lambda x: float(x.raw_return[:-1]), reverse=True)[:5]
                     else:
                         context['data'] = sorted(context['data'], key=lambda x: float(x.sell_strike[1:].replace(',', '')), reverse=True)[:5]
-            
+          
     context.update({
         # "data": filtered_stockdata_by_oversold,
         
-        "covered_calls_original_count":covered_calls_count,
-        "shortput_original_count":shortputdata_count,
-        "credit_spread_original_count":credit_spread_count,
+        # "covered_calls_original_count":covered_calls_count,
+        # "shortput_original_count":shortputdata_count,
+        # "credit_spread_original_count":credit_spread_count,
         
         # "covered_calls_option_return_count":None,
         # "shortput_option_return_count":None,

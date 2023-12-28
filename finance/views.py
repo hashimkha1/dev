@@ -597,33 +597,40 @@ def pay(request, *args, **kwargs):
     contract_url = reverse('finance:newcontract', args=[request.user.username])
     payment_info = None
 
-    try:
-        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
-    except Payment_Information.DoesNotExist:
-        if request.method == 'POST' and request.POST.get('fees'):
-            total_fee = float(request.POST.get('fees'))
+    # try:
+    #     payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+    # except Payment_Information.DoesNotExist:
+    if request.method == 'POST' and request.POST.get('fees'):
+        total_fee = float(request.POST.get('fees'))
+        
+        if not request.POST.get('is_direct', False):
             downpayment = total_fee * 0.30
-            fee_balance = total_fee - downpayment
-            payment_info = Payment_Information.objects.create(
-                customer=request.user,
-                payment_fees=total_fee,
-                down_payment=downpayment,
-                student_bonus=0,
-                plan=2,
-                fee_balance=fee_balance,
-                payment_method='mpesa',
-                contract_submitted_date=date.today(),
-                client_signature="client",
-                company_rep="coda",
-                client_date=date.today(),
-                rep_date=date.today(),
-            )
         else:
+            downpayment = total_fee
+        fee_balance = total_fee - downpayment
+        payment_info = Payment_Information.objects.create(
+            customer_id=request.user,
+            payment_fees=total_fee,
+            down_payment=downpayment,
+            student_bonus=0,
+            plan= request.POST.get('service_category_id', 999), # added service_category id
+            fee_balance=fee_balance,
+            payment_method='mpesa',
+            contract_submitted_date=date.today(),
+            client_signature="client",
+            company_rep="coda",
+            client_date=date.today(),
+            rep_date=date.today(),
+        )
+    else:
+        try:
+            payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        except:
             # Redirect for specific user categories or to contract signing view
             if request.user.category == 5:
                 return redirect('main:layout')
             else:
-				#Need modification to take the user to interested page.
+                # Need modification to take the user to interested page.
                 return redirect('main:layout')
 
     # Calculate PayPal charges

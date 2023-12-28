@@ -294,7 +294,10 @@ def service_plans(request, *args, **kwargs):
     # except:
     #     payment_details=[]
     try:
-        if pre_sub_title:
+        if pre_sub_title == 'bigdata':
+            service_shown = ServiceCategory.objects.get(slug=sub_title).service
+
+        elif pre_sub_title:
             service_shown = Service.objects.get(slug=pre_sub_title)
             # print("service_shown====>",service_shown)
 
@@ -307,6 +310,8 @@ def service_plans(request, *args, **kwargs):
         
     except Service.DoesNotExist:
         return redirect('main:display_service', slug ='data_analysis')
+    except Exception:
+        return redirect('main:layout')
     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
     plans = Pricing.objects.filter(category=category_id)
@@ -746,12 +751,18 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         instance = form.save()
         form.instance.username = self.request.user
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
-        if form.cleaned_data.get('image') is not None:
+        if form.cleaned_data.get('image') is not None and form.cleaned_data.get('image') is not False:
             image_name = form.cleaned_data.get('image').name
             folder_id ="18oKV2n-FckryAz_ts1OiVZ-MONkPTWRM" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
             image_path = instance.image.path
+<<<<<<< HEAD
             print('image_name',image_name,"---------------------","image_path",image_path)
             upload_image_to_drive(image_path, folder_id,image_name)
+=======
+            image_id = upload_image_to_drive(image_path, folder_id,image_name)
+            assets_instance = Assets.objects.create(image_url=image_id)
+            instance.image2 = assets_instance
+>>>>>>> 2a6bb453db20da2df84879d6553a90d5339005aa
         return super().form_valid(form)
 
     def get_success_url(self):
