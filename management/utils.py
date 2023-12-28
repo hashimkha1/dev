@@ -47,7 +47,7 @@ def compute_total_points(form):
     except:
         pass
     totalpoints=pc+ra+rpt+etl+db+test+dep
-    print("totalpoints=====>",totalpoints)
+    print("totalpoints=====>",totalpoints/7)
     return totalpoints
 # ================================apis for payslip==========================
 def best_employee(task_obj):

@@ -52,7 +52,7 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     
     SCOPES = ["https://www.googleapis.com/auth/drive.file"]
     # SERVICE_ACCOUNT_FILE = 'main/google_drive_credetials/google_credentials.json'
-    SERVICE_ACCOUNT_FILE = 'gapi/creds/google_credentials.json'
+    SERVICE_ACCOUNT_FILE = 'gapi/creds/google_drive_credentials.json'
 
     credentials = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
 
@@ -69,6 +69,7 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     file = drive_service.files().create(body=file_metadata, media_body=media, fields='id').execute()
 
     print(f'Image ID: {file.get("id")}')
+    return file.get("id")
 
 """========End of Code======="""
 
