@@ -35,6 +35,8 @@
           <th>Database</th>
           <th>Testing</th>
           <th>Deployment</th>
+          <th>Non IT Exp</th>
+          <th>IT Exp</th>
           <th>Total</th>
             <th>Edit</th>
             <th>Delete</th>
@@ -65,19 +67,16 @@
             <td>{{skill.database}}</td>
             <td>{{skill.testing}}</td>
             <td>{{skill.deployment}}</td>
+            <td>{{skill.non_it_exp}}</td>
+            <td>{{skill.it_exp}}</td>
             <td>{{skill.totalpoints}}</td>
-            <td> <a class="article-title" href="#">Edit</a></td>
+            <td> <a class="article-title" href="{% url 'management:update_assessment' skill.id %}">Edit</a></td>
             <td> <a class="article-title" href="#">Delete</a></td>
             </tr>
          
         {% endfor %}
       </tbody>
     </table>
-
   </div>
 </section>
 {% endblock content %}
-
-
-
-

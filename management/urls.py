@@ -63,6 +63,7 @@ urlpatterns = [
     path('clientassessment/', views.ClientAssessmentListView.as_view(), name='clientassessment'),
     # path('clientassessment/', views.clientassessment, name='clientassessment'),
     # path('clientassessment/', views.clientassessment, name='clientassessment'),
+    path('update_assessment/<int:pk>/', views.AssessmentUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_assessment'),
     path('assess/', views.assess, name='assess'),
     path('assessment/', AssessListView.as_view(), name='assessment'),
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),

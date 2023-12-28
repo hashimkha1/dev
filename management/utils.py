@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 # ================================client assessment==========================
 def compute_total_points(form):
-    delta=2
+    delta=1
     totalpoints = 0
     try:
         pc=form.instance.projectcharter-delta
@@ -46,9 +46,27 @@ def compute_total_points(form):
         dep=form.instance.deployment-delta
     except:
         pass
-    totalpoints=pc+ra+rpt+etl+db+test+dep
-    print("totalpoints=====>",totalpoints/7)
+    try:
+        nie=form.instance.non_it_exp*250
+    except:
+        pass
+    try:
+        ie=form.instance.it_exp*500
+    except:
+        pass
+    try:
+        frontend=form.instance.frontend-delta
+    except:
+        pass
+    try:
+        backend=form.instance.backend-delta
+    except:
+        pass
+    # totalpoints=pc+ra+rpt+etl+db+test+dep+nie+ie+frontend+backend
+    totalpoints=pc+ra+rpt+etl+db+test+dep+frontend+backend
     return totalpoints
+
+
 # ================================apis for payslip==========================
 def best_employee(task_obj):
     sum_of_tasks = task_obj.annotate(sum=Sum('point'))

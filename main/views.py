@@ -638,9 +638,9 @@ def team(request):
             level_point=Case(
                 When(level=1, then=F('level') * 5.0),
                 When(level=2, then=F('level') * 10.0),
-                When(level=2, then=F('level') * 15.0),
-                When(level=2, then=F('level') * 20.0),
-                When(level=2, then=F('level') * 25.0),
+                When(level=3, then=F('level') * 15.0),
+                When(level=4, then=F('level') * 20.0),
+                When(level=5, then=F('level') * 25.0),
                 default=F('level'),  # Default case, if level doesn't match any condition
                 output_field=FloatField()
             )
@@ -660,14 +660,14 @@ def team(request):
         
         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
         
-        elite_team_member = UserProfile.objects.filter(user__is_admin=True)
-        lead_team = list(filter(lambda v: v.total_points > 100, all_staff_member))
-        support_team = list(filter(lambda v: v.total_points <= 100 and v.total_points > 80, all_staff_member))
-        senior_analysts = list(filter(lambda v: v.total_points <= 100 and v.total_points > 50, all_staff_member))
-        junior_analysts = list(filter(lambda v: v.total_points <= 50 and v.total_points > 30, all_staff_member))
-        senior_trainee = list(filter(lambda v: v.total_points <= 30 and v.total_points > 10, all_staff_member))
-        junior_trainee = list(filter(lambda v: v.total_points <= 10 and v.total_points > 5, all_staff_member))
-        elementry = list(filter(lambda v: v.total_points <= 5, all_staff_member))
+        elite_team_member = UserProfile.objects.filter(user__is_superuser=True,user__username='c_maghas')
+        lead_team = list(filter(lambda v: v.total_points > 2000, all_staff_member))
+        support_team = list(filter(lambda v: v.total_points <= 2000 and v.total_points > 1500, all_staff_member))
+        senior_analysts = list(filter(lambda v: v.total_points <= 1500 and v.total_points > 1000, all_staff_member))
+        junior_analysts = list(filter(lambda v: v.total_points <= 1000 and v.total_points > 750, all_staff_member))
+        senior_trainee = list(filter(lambda v: v.total_points <= 750 and v.total_points > 500, all_staff_member))
+        junior_trainee = list(filter(lambda v: v.total_points <= 500 and v.total_points > 250, all_staff_member))
+        elementry = list(filter(lambda v: v.total_points <= 250, all_staff_member))
 
 
 

@@ -1607,6 +1607,19 @@ class ClientAssessmentListView(ListView):
     queryset=ClientAssessment.objects.all().order_by("-rating_date")
     template_name = "management/departments/hr/clientassessment.html"
 
+class AssessmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = ClientAssessment
+    success_url = "/management/clientassessment"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
     # -----------------------------REQUIREMENTS---------------------------------
 def active_requirements(request, Status=None, *args, **kwargs):
     active_requirements = Requirement.objects.all().filter(is_active=True)
