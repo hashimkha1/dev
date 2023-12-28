@@ -178,12 +178,9 @@
       </div>
   </div> 
 </div>
+{% include 'investing/card.html'%}
 <style>
 
-
-/* Example CSS styles for the styled list */
-
-/* Example CSS styles for the styled list */
   .plain-list-container {
   text-align: center;
 }
@@ -209,37 +206,109 @@
 
 {% include 'investing/charts.html'%}
 
+<style>
+  .testimonials-div {
+    overflow: hidden;
+  }
+
+  .container {
+    position: relative;
+  }
+
+  .owl-carousel {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .carousel-card {
+    flex: 0 0 33.33%; /* Set the width to show three items at a time */
+    margin: 0 10px;
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+
+  .owl-controls {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .owl-controls button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .carousel-card.hidden {
+    opacity: 0;
+  }
+  .carousel-card p {
+    font-size: 11px; /* Adjust the font size as needed */
+  }
+</style>
+
 <div class="testimonials-div">
   <div class="container">
-      <h1>INVESTER SUCCESS STORIES</h1>
-      <div class="owl-carousel">
-      <div class="row text-center commit"> 
-        {% for post in posts %}
-            <div class="{{ selected_class }}">
-              <div class="carousel-card">
-                <div class="img-div p-3">
-                  <span>
-                    <img src="{{googledriveurl}}{{post.writer.profile.img_url}}" class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
-                  </span>
-                </div>
-                  <h3> 
-                    <a href="{% url 'main:post-detail' post.id %}">
-                      {{ post.writer.first_name }},{{post.writer.last_name}}
-                    </a>
-                  </h3>
-                  <h3 style="font-size: 16px;">{{ post.title }} {{ count_to_class.post.count }}</h3>
-
-                  <!-- <h3>{{post.title}} {{ count_to_class.post.count }}</h3> -->
-                  <font size="2">
-                      {{post.content|truncatewords:70}}
-                    </font>
-              </div>
-            </div>
-        {% endfor %}
-       </div>
-      </div>
+    <h1>SUCCESS STORIES</h1>
+    <div class="owl-carousel">
+      {% for investment in investments %}
+        <div class="carousel-card {% if forloop.counter > 3 %}hidden{% endif %}">
+          <h3> 
+            <a href="{% url 'main:post-detail' investment.id %}">
+              {{ investment.client.first_name }}, {{ investment.client.last_name }}
+            </a>
+          </h3>
+          <p style="font-size: 18px;">Amount: ${{ investment.amount }}</p>
+          <p style="font-size: 18px;">Date: {{ investment.investment_date }}</p>
+          <p style="font-size: 16px;">{{ investment.description }}</p>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="owl-controls">
+      <button class="prev" onclick="moveCarousel(-1)">❮</button>
+      <button class="next" onclick="moveCarousel(1)">❯</button>
+    </div>
   </div>
 </div>
+
+<script>
+  var currentIndex = 0;
+
+  function moveCarousel(direction) {
+    var carousel = document.querySelector('.owl-carousel');
+    var cardWidth = document.querySelector('.carousel-card').offsetWidth + 20; // Adjust for margin
+
+    currentIndex += direction;
+
+    if (currentIndex < 0) {
+      currentIndex = 0;
+    } else if (currentIndex >= {{ investments|length }} - 3) {
+      currentIndex = {{ investments|length }} - 3;
+    }
+
+    var translateValue = -currentIndex * cardWidth;
+    carousel.style.transform = 'translateX(' + translateValue + 'px)';
+
+    updateVisibility();
+  }
+
+  function updateVisibility() {
+    var cards = document.querySelectorAll('.carousel-card');
+    cards.forEach(function(card, index) {
+      if (index < currentIndex || index >= currentIndex + 3) {
+        card.classList.add('hidden');
+      } else {
+        card.classList.remove('hidden');
+      }
+    });
+  }
+</script>
+
+
  <div class="row text-center">
 
   <div class="col-md-6 back-to-top-btn d-flex justify-content-center">

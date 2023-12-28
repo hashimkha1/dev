@@ -1,0 +1,103 @@
+{% load static %}
+{% block content %}
+<div class="container">
+  <div class="reason-cards">
+    <div class="reason-card">
+      <div class="card-content">
+        <img class="icon" src="high_returns_icon.png" alt="High Returns Icon">
+        <div class="description">
+          Our platform offers competitive returns on investments, maximizing your profit potential. Learn more about high returns...
+        </div>
+      </div>
+    </div>
+
+    <!-- Repeat similar blocks for the remaining reasons -->
+
+  </div>
+</div>
+
+<style>
+  .container {
+    max-width: 800px;
+    margin: 50px auto;
+  }
+
+  .reason-card {
+    position: relative;
+    width: calc(33.33% - 20px);
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .card-content {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .icon {
+    width: 100%; /* Initially covers the whole card */
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .description {
+    padding: 10px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 0 0 8px 8px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  }
+
+  .reason-card.active .icon {
+    width: 20%; /* Shrinks the icon size when active */
+    transform: translate(-5%, -5%); /* Moves the icon to the top-left corner when active */
+  }
+
+  .reason-card.active .description {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .description p {
+    color: #666;
+    margin: 0;
+  }
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $(".icon").click(function(){
+      let card = $(this).closest('.reason-card');
+      let description = card.find('.description');
+
+      // Close other open descriptions
+      $(".reason-card.active").not(card).removeClass('active').find('.description').css({
+        'opacity': '0',
+        'visibility': 'hidden'
+      });
+
+      // Toggle the current description
+      card.toggleClass('active');
+
+      // Set description opacity based on show/hide state
+      description.css({
+        'opacity': card.hasClass('active') ? '1' : '0',
+        'visibility': card.hasClass('active') ? 'visible' : 'hidden'
+      });
+    });
+  });
+</script>
+
+{% endblock %}

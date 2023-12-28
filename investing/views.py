@@ -126,25 +126,25 @@ def get_or_create_investment_content():
 # Test the function and print the result
 print(get_or_create_investment_content())
 def InvestmentPlatformOverview(request):
-    count_to_class = {
-        2: "col-md-6",
-        3: "col-md-4",
-        4: "col-md-3"
-    }
-    latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
-    testimonials = []
-    for post in latest_posts:
-        writer = post['writer']
-        #querying for the latest post
-        user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
-        # user_profile = UserProfile.objects.filter(user=writer).first()
-        if user_profile:
-            latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
-            testimonials.append(latest_post)
+    # count_to_class = {
+    #     2: "col-md-6",
+    #     3: "col-md-4",
+    #     4: "col-md-3"
+    # }
+    # latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
+    # testimonials = []
+    # for post in latest_posts:
+    #     writer = post['writer']
+    #     #querying for the latest post
+    #     user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
+    #     # user_profile = UserProfile.objects.filter(user=writer).first()
+    #     if user_profile:
+    #         latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
+    #         testimonials.append(latest_post)
 
-    number_of_testimonials = len(testimonials)
-    selected_class = count_to_class.get(number_of_testimonials, "default-class")
-    services = Service.objects.filter(is_active=True).order_by('serial')
+    # number_of_testimonials = len(testimonials)
+    # selected_class = count_to_class.get(number_of_testimonials, "default-class")
+    # services = Service.objects.filter(is_active=True).order_by('serial')
     investment_content = get_or_create_investment_content()
 
     # Use the existing or generated content
@@ -212,11 +212,24 @@ def InvestmentPlatformOverview(request):
         'labels': [subcategory_mapping.get(entry['sub_category'], 'Unknown') for entry in monthly_registrations],
         'counts': [entry['count'] for entry in monthly_registrations],
     }
+    count_to_class = {
+        2: "col-md-6",
+        3: "col-md-4",
+        4: "col-md-3"
+    }
+
+    # Query the Investments model to get the relevant data
+    investments = Investments.objects.all()
+
+    selected_class = count_to_class.get(len(investments), "default-class")
+
     context = {
-        "services": services,
-        "posts": testimonials,
-        "title": "layout",
+        # "services": services,
+        # "posts": testimonials,
+        # "title": "layout",
+        "investments": investments,
         "selected_class": selected_class,
+        # "selected_class": selected_class,
         'generated_content': generated_content,
         'chart_data': data,
         'total_active_users': total_active_users, 
