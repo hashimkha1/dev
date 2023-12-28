@@ -38,9 +38,11 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
-from django.db.models import Subquery, OuterRef, Value
+from django.db.models import F, FloatField, Case, When, Value, Subquery, OuterRef
 from django.contrib.auth import get_user_model
 from django.db.models.functions import Coalesce
+from management.models import Requirement, Training
+from data.models import ClientAssessment
 
 User=get_user_model()
 
@@ -615,27 +617,52 @@ def team(request):
     }
     
     path_list, sub_title, pre_sub_title = path_values(request)
-    elite_team_member = UserProfile.objects.filter(user__is_admin=True)
-    team_members_agents = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__sub_category=2).order_by("user__date_joined")
-    clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
-    clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
-    
-    # team_members_staff = UserProfile.objects.filter(user__is_admin=False, user__is_staff=True, user__is_active=True, user__sub_category=1).order_by("user__date_joined")
-    # team_members_senior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=5).order_by("user__date_joined")
-    # team_members_junior_trainees = UserProfile.objects.filter(user__is_staff=True, user__is_active=True, user__category=2, user__sub_category=4).order_by("user__date_joined")
     
     if sub_title != 'client_profiles':
-        #for aggregate sum of point in subquery
-        class SQSum(Subquery):
-            output_field = models.IntegerField()
-            template = "(SELECT sum(point) from (%(subquery)s) _sum)"
-            
-        employee_taskhistory_subquery = SQSum(TaskHistory.objects.filter(employee_id__profile=OuterRef('pk')).values('point'))
 
-        all_staff_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).exclude(user__sub_category=2).annotate(
-            total_points=Coalesce(employee_taskhistory_subquery, Value(0))).order_by("user__date_joined")
+        #for aggregate sum of point in subquery
+        def get_sqsum(field):
+            class SQSum(Subquery):
+                output_field = models.IntegerField()
+                template = f"(SELECT sum({field}) from (%(subquery)s) _sum)"
+            return SQSum
         
+        #from task history model    
+        employee_taskhistory_subquery = get_sqsum('point')(TaskHistory.objects.filter(employee_id__profile=OuterRef('pk')).values('point'))
+        
+        #from requirement model(counting duration-task hour as point for staff)
+        employee_requiremet_subquery = get_sqsum('duration')(Requirement.objects.filter(assigned_to__profile=OuterRef('pk')).values('duration'))
+        
+        #from Training model
+        employee_training_subquery = get_sqsum('level_point')(Training.objects.filter(presenter__profile=OuterRef('pk')).annotate(
+            level_point=Case(
+                When(level=1, then=F('level') * 5.0),
+                When(level=2, then=F('level') * 10.0),
+                When(level=2, then=F('level') * 15.0),
+                When(level=2, then=F('level') * 20.0),
+                When(level=2, then=F('level') * 25.0),
+                default=F('level'),  # Default case, if level doesn't match any condition
+                output_field=FloatField()
+            )
+        ).values('level_point'))
+        
+        #from clientassesment model(takeing latest totalpoints for that user)
+        employee_clientassesment = ClientAssessment.objects.filter(email=OuterRef('user__email')).order_by('-rating_date')[:1]
+        
+        all_staff_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
+            
+            taskhistory_points=Coalesce(employee_taskhistory_subquery, Value(0)),
+            requirement_points=Coalesce(employee_requiremet_subquery, Value(0)),
+            training_points=Coalesce(employee_training_subquery, Value(0)),
+            clientassesment_points=Coalesce(employee_clientassesment.values('totalpoints'), Value(0)),
+            total_points=F('taskhistory_points') + F('requirement_points') + F('training_points') + F('clientassesment_points')
+            ).order_by("user__date_joined")
+        
+        # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
+        
+        elite_team_member = UserProfile.objects.filter(user__is_admin=True)
         lead_team = list(filter(lambda v: v.total_points > 100, all_staff_member))
+        support_team = list(filter(lambda v: v.total_points <= 100 and v.total_points > 80, all_staff_member))
         senior_analysts = list(filter(lambda v: v.total_points <= 100 and v.total_points > 50, all_staff_member))
         junior_analysts = list(filter(lambda v: v.total_points <= 50 and v.total_points > 30, all_staff_member))
         senior_trainee = list(filter(lambda v: v.total_points <= 30 and v.total_points > 10, all_staff_member))
@@ -644,21 +671,24 @@ def team(request):
 
 
 
-    number_of_staff = len(lead_team)-1
+    # number_of_staff = len(lead_team)-1
 
-    selected_class = count_to_class.get(number_of_staff, "default-class")
+    # selected_class = count_to_class.get(number_of_staff, "default-class")
     if sub_title == 'team_profiles':
         team_categories = {
         'Elite Team': list(elite_team_member),
         'Lead Team': lead_team,
-        'Support Team': list(team_members_agents),
+        'Support Team': list(support_team),
         'Senior Analysts': senior_analysts,
-        'Junior Analysts': junior_analysts,
         }
         user_group=team_members
         heading="THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
     
     if sub_title == 'client_profiles':
+
+        clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
+        clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
+    
         team_categories = {
         'Job Seekers': list(clients_job_seekers),
         'Job Support': list(clients_job_support),
@@ -668,9 +698,10 @@ def team(request):
     
     if sub_title == 'future_talents':
         team_categories = {
-        'Senior Trainee Team': senior_trainee,
-        'Junior Trainee Team': junior_trainee,
-        'Elementary': elementry
+            'Junior Analysts': junior_analysts,
+            'Senior Trainee Team': senior_trainee,
+            'Junior Trainee Team': junior_trainee,
+            'Elementary': elementry
         }
         user_group=future_talents
         heading="MINDS OF TOMORROW: LEADING DATA ANALYTICS AND WEB DEVELOPMENT"
@@ -679,7 +710,7 @@ def team(request):
         "team_categories": team_categories,
         "team_members": user_group,
         "title":heading,
-        "selected_class":selected_class
+        # "selected_class":selected_class
     }
     return render(request, "main/team_profiles.html", context)
 

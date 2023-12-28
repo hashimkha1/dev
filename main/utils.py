@@ -868,13 +868,13 @@ team_members = [
         "title": "Senior Analysts",
         "description": "Senior Analysts, the linchpin of our analytics excellence, blend seasoned experience with strategic insight. They unravel complexities in data, distilling actionable insights and shaping data-driven strategies. Leaders in our analytics community, they design and implement advanced frameworks, utilizing cutting-edge technologies to elevate data into a strategic asset. With precision and foresight, Senior Analysts ensure our strategies align with organizational goals, driving impactful decision-making."
     },
+]
+
+future_talents = [
     {
         "title": "Junior Analysts",
         "description": "Junior Analysts, vital contributors to our analytics team, bring youthful energy and analytical aptitude. They tackle data challenges, supporting the extraction of valuable insights and contributing to the implementation of analytical frameworks. Keen learners, they stay abreast of evolving technologies, assisting in maintaining our analytical infrastructure. Junior Analysts play a key role in shaping data narratives, laying the foundation for informed decision-making, and embodying the future of our analytics capabilities."
     },
-]
-
-future_talents = [
     {
         "title": "Senior Trainee Team",
         "description":"The Senior Trainee Team at CODA comprises advanced learners who have demonstrated exceptional aptitude and commitment in the analytics domain. Building upon the foundational skills acquired during earlier stages, this team engages in more complex projects and assumes greater responsibilities. With a focus on honing strategic thinking and leadership abilities, these trainees are groomed to take on pivotal roles. They mentor junior trainees, collaborate with the Lead Team, and contribute to innovative solutions alongside the Supporting Tech Team.",
