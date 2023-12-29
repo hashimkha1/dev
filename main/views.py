@@ -38,7 +38,7 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
-from django.db.models import F, FloatField, Case, When, Value, Subquery, OuterRef
+from django.db.models import F, FloatField, Case, When, Value, Subquery, OuterRef, Q
 from django.contrib.auth import get_user_model
 from django.db.models.functions import Coalesce
 from management.models import Requirement, Training
@@ -655,7 +655,7 @@ def team(request):
         
         ).order_by("user__date_joined")
 
-        all_staff_member = all_member.exclude(user__sub_category=2)
+        all_staff_member = all_member.exclude(Q(user__sub_category=2) | Q(user__username='c_maghas'))
         all_staff_contractor = all_member.filter(user__sub_category=2)
         
         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
@@ -698,7 +698,7 @@ def team(request):
         junior_analysts = list(filter(lambda v: v.total_points <= threshold_dict['senior_analysts'] and v.total_points > threshold_dict['junior_analysts'], all_staff_member))
         senior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['junior_analysts'] and v.total_points > threshold_dict['senior_trainee'], all_staff_member))
         junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
-        elementry = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'], all_staff_member))
+        elementry = list(filter(lambda v: v.total_points <= threshold_dict['junior_trainee'], all_staff_member))
 
         support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team'] and v.total_points > team_member_value_json['support_team']-team_member_value_json['delta'], all_staff_contractor))
 
