@@ -667,89 +667,41 @@ def team(request):
             team_member_value_json = team_member_value_json.get().value
         
         else:
-            team_member_value_json ={
-                "lead_team":{
-                    "min":2000,
-                    "max":None
-                },
-                "senior_analysts":{
-                    "min":2000,
-                    "max":1500
-                },
-                "junior_analysts":{
-                    "min":2000,
-                    "max":1500
-                },
-                "senior_trainee":{
-                    "min":2000,
-                    "max":1500
-                },
-                "junior_trainee":{
-                    "min":2000,
-                    "max":1500
-                },
-                "elementry":{
-                    "min":2000,
-                    "max":1500
-                },
-                "support_team":{
-                    "min":2000,
-                    "max":1500
-                }
-                }
+            team_member_value_json = {
+                "lead_team":2000,
+                "support_team":1000,
+                "delta":500,
+                "percentage": 10
+            }
+
+        staff_team = ["lead_team", "senior_analysts", "junior_analysts", "senior_trainee", "junior_trainee", "elementry"]
+        
+        threshold_dict = {} 
+        previous_threshold = 0
+        
+        for team in staff_team:
+            
+            if team == 'lead_team':
+                threshold_dict[team] = (team_member_value_json['lead_team']) 
+            else:
+                if previous_threshold - team_member_value_json['delta'] > 0:
+                    threshold_dict[team] = previous_threshold - team_member_value_json['delta']
+                else:
+                    threshold_dict[team] = previous_threshold - (previous_threshold*team_member_value_json['percentage']/100)
+
+            previous_threshold = threshold_dict[team]
 
         elite_team_member = UserProfile.objects.filter(user__is_superuser=True, user__username='c_maghas')
         
-        try:
-            lead_team = list(filter(lambda v: v.total_points > team_member_value_json['lead_team']['min'], all_staff_member))
-            senior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['senior_analysts']['max'] and v.total_points > team_member_value_json['senior_analysts']['min'], all_staff_member))
-            junior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['junior_analysts']['max'] and v.total_points > team_member_value_json['junior_analysts']['min'], all_staff_member))
-            senior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['senior_trainee']['max'] and v.total_points > team_member_value_json['senior_trainee']['min'], all_staff_member))
-            junior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['junior_trainee']['max'] and v.total_points > team_member_value_json['junior_trainee']['min'], all_staff_member))
-            elementry = list(filter(lambda v: v.total_points <= team_member_value_json['elementry']['max'], all_staff_member))
+        lead_team = list(filter(lambda v: v.total_points > threshold_dict['lead_team'], all_staff_member))
+        senior_analysts = list(filter(lambda v: v.total_points <= threshold_dict['lead_team'] and v.total_points > threshold_dict['senior_analysts'], all_staff_member))
+        junior_analysts = list(filter(lambda v: v.total_points <= threshold_dict['senior_analysts'] and v.total_points > threshold_dict['junior_analysts'], all_staff_member))
+        senior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['junior_analysts'] and v.total_points > threshold_dict['senior_trainee'], all_staff_member))
+        junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
+        elementry = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'], all_staff_member))
 
-            support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team']['max'] and v.total_points > team_member_value_json['support_team']['min'], all_staff_contractor))
-        except:
-            team_member_value_json ={
-                "lead_team":{
-                    "min":2000,
-                    "max":None
-                },
-                "senior_analysts":{
-                    "min":2000,
-                    "max":1500
-                },
-                "junior_analysts":{
-                    "min":2000,
-                    "max":1500
-                },
-                "senior_trainee":{
-                    "min":2000,
-                    "max":1500
-                },
-                "junior_trainee":{
-                    "min":2000,
-                    "max":1500
-                },
-                "elementry":{
-                    "min":2000,
-                    "max":1500
-                },
-                "support_team":{
-                    "min":2000,
-                    "max":1500
-                }
-                }
-            
-            lead_team = list(filter(lambda v: v.total_points > team_member_value_json['lead_team']['min'], all_staff_member))
-            senior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['senior_analysts']['max'] and v.total_points > team_member_value_json['senior_analysts']['min'], all_staff_member))
-            junior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['junior_analysts']['max'] and v.total_points > team_member_value_json['junior_analysts']['min'], all_staff_member))
-            senior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['senior_trainee']['max'] and v.total_points > team_member_value_json['senior_trainee']['min'], all_staff_member))
-            junior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['junior_trainee']['max'] and v.total_points > team_member_value_json['junior_trainee']['min'], all_staff_member))
-            elementry = list(filter(lambda v: v.total_points <= team_member_value_json['elementry']['max'], all_staff_member))
+        support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team'] and v.total_points > team_member_value_json['support_team']-team_member_value_json['delta'], all_staff_contractor))
 
-            support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team']['max'] and v.total_points > team_member_value_json['support_team']['min'], all_staff_contractor))
-    
     # number_of_staff = len(lead_team)-1
 
     # selected_class = count_to_class.get(number_of_staff, "default-class")
