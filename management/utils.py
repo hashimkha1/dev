@@ -47,14 +47,6 @@ def compute_total_points(form):
     except:
         pass
     try:
-        nie=form.instance.non_it_exp*250
-    except:
-        pass
-    try:
-        ie=form.instance.it_exp*500
-    except:
-        pass
-    try:
         frontend=form.instance.frontend-delta
     except:
         pass
@@ -62,9 +54,31 @@ def compute_total_points(form):
         backend=form.instance.backend-delta
     except:
         pass
+    
+    ############################
+    # developer points
+    ############################
+    #calculation
+    #1 days effective hour of work is 6(avg)
+    #here 1 sprint = 10 days
+    #1 month = 2 sprint
+    #we minus 1 year of experiance and only half of it will be counted because half of the year counted as learning
+
+    try:
+        developer_point = 0
+        if form.instance.it_exp > 0:
+            one_year_point = 1440 #24*10*6
+            
+            it_expiriance = form.instance.it_exp-1
+            developer_point = it_expiriance*one_year_point + (one_year_point/2)
+
+    except:
+        pass
+
+
     # totalpoints=pc+ra+rpt+etl+db+test+dep+nie+ie+frontend+backend
     totalpoints=pc+ra+rpt+etl+db+test+dep+frontend+backend
-    return totalpoints
+    return totalpoints, developer_point
 
 
 # ================================apis for payslip==========================

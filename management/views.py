@@ -1573,16 +1573,22 @@ def clientassessment(request):
 
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
+            
+            totalpoints, developerpoints =compute_total_points(form)
+            form.instance.totalpoints = totalpoints
+            
             if previous_user.exists():
                 user = previous_user.first()
                 
-                form.first_name = user.first_name
-                form.last_name = user.last_name
+                form.instance.first_name = user.first_name
+                form.instance.last_name = user.last_name
+                if user.category == 2: #coda staff member
+                    form.instance.totalpoints = developerpoints
+
                 # messages.success(request, f'User already exists with this email') 
-            
-            totalpoints=compute_total_points(form)
-            form.instance.totalpoints = totalpoints
+                
             form.save()
+
             if totalpoints <= 35:
                 post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
                 message = f"Hi Future Client,{post}."

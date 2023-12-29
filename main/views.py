@@ -43,6 +43,7 @@ from django.contrib.auth import get_user_model
 from django.db.models.functions import Coalesce
 from management.models import Requirement, Training
 from data.models import ClientAssessment
+from getdata.models import Editable
 
 User=get_user_model()
 
@@ -610,11 +611,6 @@ def plan_urls(request):
 
 
 def team(request):
-    count_to_class = {
-        2: "col-md-6",
-        3: "col-md-4",
-        4: "col-md-3"
-    }
     
     path_list, sub_title, pre_sub_title = path_values(request)
     
@@ -649,28 +645,111 @@ def team(request):
         #from clientassesment model(takeing latest totalpoints for that user)
         employee_clientassesment = ClientAssessment.objects.filter(email=OuterRef('user__email')).order_by('-rating_date')[:1]
         
-        all_staff_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
+        all_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
             
             taskhistory_points=Coalesce(employee_taskhistory_subquery, Value(0)),
             requirement_points=Coalesce(employee_requiremet_subquery, Value(0)),
             training_points=Coalesce(employee_training_subquery, Value(0)),
             clientassesment_points=Coalesce(employee_clientassesment.values('totalpoints'), Value(0)),
             total_points=F('taskhistory_points') + F('requirement_points') + F('training_points') + F('clientassesment_points')
-            ).order_by("user__date_joined")
+        
+        ).order_by("user__date_joined")
+
+        all_staff_member = all_member.exclude(user__sub_category=2)
+        all_staff_contractor = all_member.filter(user__sub_category=2)
         
         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
         
-        elite_team_member = UserProfile.objects.filter(user__is_superuser=True,user__username='c_maghas')
-        lead_team = list(filter(lambda v: v.total_points > 2000, all_staff_member))
-        support_team = list(filter(lambda v: v.total_points <= 2000 and v.total_points > 1500, all_staff_member))
-        senior_analysts = list(filter(lambda v: v.total_points <= 1500 and v.total_points > 1000, all_staff_member))
-        junior_analysts = list(filter(lambda v: v.total_points <= 1000 and v.total_points > 750, all_staff_member))
-        senior_trainee = list(filter(lambda v: v.total_points <= 750 and v.total_points > 500, all_staff_member))
-        junior_trainee = list(filter(lambda v: v.total_points <= 500 and v.total_points > 250, all_staff_member))
-        elementry = list(filter(lambda v: v.total_points <= 250, all_staff_member))
+        team_member_value_json = Editable.objects.filter(name='team_profile_value_json')
 
+        if team_member_value_json.exists():
 
+            team_member_value_json = team_member_value_json.get().value
+        
+        else:
+            team_member_value_json ={
+                "lead_team":{
+                    "min":2000,
+                    "max":None
+                },
+                "senior_analysts":{
+                    "min":2000,
+                    "max":1500
+                },
+                "junior_analysts":{
+                    "min":2000,
+                    "max":1500
+                },
+                "senior_trainee":{
+                    "min":2000,
+                    "max":1500
+                },
+                "junior_trainee":{
+                    "min":2000,
+                    "max":1500
+                },
+                "elementry":{
+                    "min":2000,
+                    "max":1500
+                },
+                "support_team":{
+                    "min":2000,
+                    "max":1500
+                }
+                }
 
+        elite_team_member = UserProfile.objects.filter(user__is_superuser=True, user__username='c_maghas')
+        
+        try:
+            lead_team = list(filter(lambda v: v.total_points > team_member_value_json['lead_team']['min'], all_staff_member))
+            senior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['senior_analysts']['max'] and v.total_points > team_member_value_json['senior_analysts']['min'], all_staff_member))
+            junior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['junior_analysts']['max'] and v.total_points > team_member_value_json['junior_analysts']['min'], all_staff_member))
+            senior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['senior_trainee']['max'] and v.total_points > team_member_value_json['senior_trainee']['min'], all_staff_member))
+            junior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['junior_trainee']['max'] and v.total_points > team_member_value_json['junior_trainee']['min'], all_staff_member))
+            elementry = list(filter(lambda v: v.total_points <= team_member_value_json['elementry']['max'], all_staff_member))
+
+            support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team']['max'] and v.total_points > team_member_value_json['support_team']['min'], all_staff_contractor))
+        except:
+            team_member_value_json ={
+                "lead_team":{
+                    "min":2000,
+                    "max":None
+                },
+                "senior_analysts":{
+                    "min":2000,
+                    "max":1500
+                },
+                "junior_analysts":{
+                    "min":2000,
+                    "max":1500
+                },
+                "senior_trainee":{
+                    "min":2000,
+                    "max":1500
+                },
+                "junior_trainee":{
+                    "min":2000,
+                    "max":1500
+                },
+                "elementry":{
+                    "min":2000,
+                    "max":1500
+                },
+                "support_team":{
+                    "min":2000,
+                    "max":1500
+                }
+                }
+            
+            lead_team = list(filter(lambda v: v.total_points > team_member_value_json['lead_team']['min'], all_staff_member))
+            senior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['senior_analysts']['max'] and v.total_points > team_member_value_json['senior_analysts']['min'], all_staff_member))
+            junior_analysts = list(filter(lambda v: v.total_points <= team_member_value_json['junior_analysts']['max'] and v.total_points > team_member_value_json['junior_analysts']['min'], all_staff_member))
+            senior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['senior_trainee']['max'] and v.total_points > team_member_value_json['senior_trainee']['min'], all_staff_member))
+            junior_trainee = list(filter(lambda v: v.total_points <= team_member_value_json['junior_trainee']['max'] and v.total_points > team_member_value_json['junior_trainee']['min'], all_staff_member))
+            elementry = list(filter(lambda v: v.total_points <= team_member_value_json['elementry']['max'], all_staff_member))
+
+            support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team']['max'] and v.total_points > team_member_value_json['support_team']['min'], all_staff_contractor))
+    
     # number_of_staff = len(lead_team)-1
 
     # selected_class = count_to_class.get(number_of_staff, "default-class")
