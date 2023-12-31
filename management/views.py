@@ -1569,17 +1569,26 @@ class AssessListView(ListView):
 def clientassessment(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email=request.POST['email'])
-        user_count = previous_user.count()
-        print("user_count",user_count)
+
+
         form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
-            totalpoints=compute_total_points(form)
+            
+            totalpoints, developerpoints =compute_total_points(form)
             form.instance.totalpoints = totalpoints
+            
+            if previous_user.exists():
+                user = previous_user.first()
+                
+                form.instance.first_name = user.first_name
+                form.instance.last_name = user.last_name
+                if user.category == 2: #coda staff member
+                    form.instance.totalpoints = developerpoints
+
+                # messages.success(request, f'User already exists with this email') 
+                
             form.save()
-            # if user_count > 0:
-            #     print('Email',user_count)
-            #     messages.success(request, f'User already exists with this email')
-            #     return redirect("/password-reset")
+
             if totalpoints <= 35:
                 post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
                 message = f"Hi Future Client,{post}."
@@ -1604,6 +1613,19 @@ class ClientAssessmentListView(ListView):
     queryset=ClientAssessment.objects.all().order_by("-rating_date")
     template_name = "management/departments/hr/clientassessment.html"
 
+class AssessmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = ClientAssessment
+    success_url = "/management/clientassessment"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
     # -----------------------------REQUIREMENTS---------------------------------
 def active_requirements(request, Status=None, *args, **kwargs):
     active_requirements = Requirement.objects.all().filter(is_active=True)

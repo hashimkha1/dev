@@ -46,15 +46,16 @@ class ReplyMail(models.Model):
 
 class Editable(models.Model):
 	name = models.CharField(max_length=255,blank=True,null=True)
-	putsrow = models.PositiveIntegerField(blank=True,null=True)
-	callsrow = models.PositiveIntegerField(blank=True,null=True)
+	value = models.JSONField(null=True)
+	# minVal = models.PositiveIntegerField(blank=True,null=True)
+	# callsrow = models.PositiveIntegerField(blank=True,null=True)
 
 	class Meta:
 		verbose_name_plural = "General"
 
 	def __str__(self):
 		return self.name
-
+	
 class GotoMeetings(models.Model):
     meeting_topic = models.CharField(max_length=250, null=True, blank=True)
     meeting_id = models.CharField(max_length=100, null=True, blank=True)
