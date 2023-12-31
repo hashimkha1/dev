@@ -9,6 +9,10 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
+
+import pandas as pd
+
+from getdata.utils import stock_data
 from .utils import (compute_pay,risk_ratios,
                     computes_days_expiration, computes_days_expiration_option_return, get_user_investment,financial_categories,investment_rules
                     )
@@ -18,7 +22,8 @@ from main.utils import path_values,dates_functionality
 from .forms import (
     OptionsForm,
     InvestmentForm,
-    InvestmentRateForm
+    InvestmentRateForm,
+    PortfolioForm
 )
 
 from .models import (
@@ -27,7 +32,7 @@ from .models import (
     credit_spread,
     Investments,
     Investment_rates,
-    Oversold,
+    Portifolio,
     OverBoughtSold,
     Options_Returns,
     Cost_Basis,
@@ -396,6 +401,56 @@ def credit_spread_update(request, pk):
         'form': form,
         'title': 'Update Credit spread',
     }
+    return render(request, 'main/snippets_templates/generalform.html', context)
+
+def portfolio(request, symbol):
+
+    model = request.GET.get('model')
+    
+    model_mapping = {
+        'covered_calls': {
+            'model': covered_calls
+        },
+        'shortputdata': {
+            'model': ShortPut
+        },
+        'credit_spread': {
+            'model': credit_spread
+        }
+    }
+
+    stock_model = model_mapping.get(model, None)
+
+    if stock_model:
+        subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
+
+        symbol_data = stock_model['model'].objects.filter(symbol=symbol).annotate(
+            industry = Subquery(subquery, output_field=CharField())
+        )
+
+    else:
+        symbol_data = None
+    initial_values=None
+    if symbol_data and symbol_data.exists():
+        symbol_data = symbol_data.first()
+        initial_values = {
+            'user': request.user,
+            'symbol': symbol,
+            'industry': symbol_data.industry,
+            'action': symbol_data.action if stock_model['model'] != 'credit_spread' else symbol_data.strategy,
+            'strike_price': symbol_data.strike_price if stock_model['model'] != 'credit_spread' else symbol_data.sell_strike,
+            'implied_volatility_rank': symbol_data.implied_volatility_rank if stock_model['model'] != 'credit_spread' else symbol_data.rank,
+            'expiry': symbol_data.expiry,
+            'earnings_date': symbol_data.earnings_date,
+        }
+
+    # Pass the initial values to the form when creating an instance
+    form = PortfolioForm(initial=initial_values)
+    # import pdb; pdb.set_trace()
+    context = {
+        'form': form,
+    }
+
     return render(request, 'main/snippets_templates/generalform.html', context)
 
 
