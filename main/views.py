@@ -644,10 +644,7 @@ def generate_openai_description(user_profile):
     # Take the top two IT skills
     top_it_skills = [skill[0] for skill in sorted_it_skills[:2]]
 
-    # Create a prompt for OpenAI
     prompt = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
-
-    # Use OpenAI to generate a description
     response = openai.Completion.create(
         engine="text-davinci-002",
         prompt=prompt,
@@ -712,18 +709,14 @@ def team(request):
         for category, members in team_categories.items():
             for member in members:
                 try:
-                    user_profile = member.user.profile  # Access the UserProfile associated with the User
+                    user_profile = member.user.profile  
                 except UserProfile.DoesNotExist:
-                    # Handle the case where UserProfile doesn't exist for the user
                     user_profile = UserProfile.objects.create(user=member.user)
 
                 if not user_profile.description:
-                    # Calculate total points based on ClientAssessment
                     total_points = ClientAssessment.objects.filter(
                         email=member.user.email
                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
-
-                    # Use OpenAI to generate a description based on total points
                     if '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' in openai.api_key:
                         user_profile.description = generate_openai_description(user_profile)
                     else:
