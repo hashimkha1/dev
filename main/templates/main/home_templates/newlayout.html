@@ -30,11 +30,15 @@
     {% for service in services %}
       <div class="row flex-column-reverse flex-md-row">
           <div class="col-md-6 pe-lg-5">
-              <h2 class="mt-4 mt-md-0">{{service.title}}</h2>
+              <h2 class="mt-4 mt-md-0" style="text-align: left;">{{service.title}}</h2>
               <p class="me-lg-5">
                 {{service.description}}
               </p>
-              <a href= "{% url 'main:display_service' slug=service.slug %}" >read more</a>
+              {% if service.title == "Investments" %}
+                <a href="{% url 'investing:InvestmentPlatformOverview' %}">read more</a>
+              {% else %}
+                  <a href="{% url 'main:display_service' slug=service.slug %}">read more</a>
+              {% endif %}
           </div>
           <div class="col-md-6">
               <img class="img-fluid ps-lg-5" 

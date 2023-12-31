@@ -60,8 +60,13 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
 
             {% for service in main_services %}
-            <a class="dropdown-item"  href="{% url 'main:display_service' slug=service.slug %}">{{service.title}}</a>
-            <div class="dropdown-divider"></div>
+              {% if service.title == "Investments" %}
+              <a class="dropdown-item" href="{% url 'investing:InvestmentPlatformOverview' %}">{{service.title}}</a>
+              <div class="dropdown-divider"></div>
+              {% else %}
+                <a class="dropdown-item"  href="{% url 'main:display_service' slug=service.slug %}">{{service.title}}</a>
+                <div class="dropdown-divider"></div>
+              {% endif %}
             {% endfor %}
           </div>
           <!-- <div class="dropdown-menu" aria-labelledby="navbarDropDown">

@@ -86,9 +86,8 @@ def newinvestmentrate(request):
         form = InvestmentRateForm()
     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
 def get_or_create_investment_content():
-    slug = 'your-slug'  # Replace with the actual slug
+    slug = 'your-slug'
     try:
-        # Try to get existing content
         investment_content = InvestmentContent.objects.filter(slug=slug).first()
         if investment_content and investment_content.description:
             print("Using existing content from the database.")
@@ -97,9 +96,9 @@ def get_or_create_investment_content():
             raise InvestmentContent.DoesNotExist
     except InvestmentContent.DoesNotExist:
         # If content doesn't exist, create it with ChatGPT
-        openai.api_key = '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'  # Replace with your OpenAI API key
-        context = "On the Coda platform, users can collaborate in real-time to create"
-        query = "Explain the key features of Coda and how users can benefit from them."
+        openai.api_key = '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'  
+        context = "On the Coda platform, CODA provides comprehensive data analysis training programs,Among our services are managing construction projects, running errands, and writing business plans, payroll management and more.Investing in CODA not only aligns with the evolving demands of the digital landscape but also offers significant growth potential and the opportunity to contribute to shaping the future of data-driven decision-making, financial markets, and project management excellence."
+        query = "Use the context as a example and generate a good overview."
         response = openai.Completion.create(
             engine="text-davinci-002",
             prompt=f"{context}\n\n{query}",
@@ -117,71 +116,49 @@ def get_or_create_investment_content():
         else:
             InvestmentContent.objects.create(
                 slug=slug,
-                title="Your Title",  # Replace with your title
+                title="Your Title",  
                 description=generated_description
             )
-        print("Generated content using ChatGPT and saved in the database.")
         return generated_description
 
 # Test the function and print the result
 print(get_or_create_investment_content())
 def InvestmentPlatformOverview(request):
-    # count_to_class = {
-    #     2: "col-md-6",
-    #     3: "col-md-4",
-    #     4: "col-md-3"
-    # }
-    # latest_posts = Testimonials.objects.values('writer').annotate(latest=Max('date_posted')).order_by('-latest')
-    # testimonials = []
-    # for post in latest_posts:
-    #     writer = post['writer']
-    #     #querying for the latest post
-    #     user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
-    #     # user_profile = UserProfile.objects.filter(user=writer).first()
-    #     if user_profile:
-    #         latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
-    #         testimonials.append(latest_post)
-
-    # number_of_testimonials = len(testimonials)
-    # selected_class = count_to_class.get(number_of_testimonials, "default-class")
-    # services = Service.objects.filter(is_active=True).order_by('serial')
     investment_content = get_or_create_investment_content()
 
     # Use the existing or generated content
     generated_content = investment_content # Assuming investment_content is the description field
 
     data = []
-    today = date.today()  # Create a date object
+    today = date.today() 
     for year in range(2021, today.year + 1):
         year_data = {
             "year": year,
             "sales": Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0,
             "expenses": Transaction.objects.filter(
-                Q(category__in=["employee", "developer", "other_expense"]),  # Use __in for efficient filtering
+                Q(category__in=["employee", "developer", "other_expense"]),  
                 activity_date__year=year
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0,
             "net_income": (Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0) - (Transaction.objects.filter(
-                Q(category__in=["employee", "developer", "other_expense"]),  # Use __in again
+                Q(category__in=["employee", "developer", "other_expense"]), 
                 activity_date__year=year
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0)
         }
         data.append(year_data)
+    #For pie graph 
     # Get total active users
     total_active_users = CustomerUser.objects.filter(is_active=True).count()
 
     # Get active user counts by category
     active_user_counts = CustomerUser.objects.filter(is_active=True).values('category').annotate(count=Count('id'))
 
-    # Create a mapping from numerical values to English names
+    # Creating a mapping from numerical values to English names
     category_mapping = dict(CustomerUser.Category.choices, Unknown="Unknown")
 
-    # Replace numerical values with English names in the query result
     active_user_counts_with_names = [
         {'category': category_mapping.get(entry['category'], 'Unknown'), 'count': entry['count']} 
         for entry in active_user_counts
     ]
-
-    # Aggregate counts for each category
     aggregated_counts = {}
     for entry in active_user_counts_with_names:
         category = entry['category']
@@ -196,46 +173,23 @@ def InvestmentPlatformOverview(request):
 
     # Print categories for debugging
     category_names = [entry['category'] for entry in categories_data]
-    print("Category Names:", category_names)
-
-    # Fetch data for the bar chart (user registrations this month by subcategory)
-    today = date.today()
-    current_month = today.month
-    monthly_registrations = CustomerUser.objects.filter(
-        Q(date_joined__month=current_month) & Q(date_joined__year=today.year)
-    ).values('sub_category').annotate(count=Count('id'))
-
-    # Map integer subcategory values to user-friendly labels
-    subcategory_mapping = dict(CustomerUser.SubCategory.choices)
-
-    monthly_registrations_data = {
-        'labels': [subcategory_mapping.get(entry['sub_category'], 'Unknown') for entry in monthly_registrations],
-        'counts': [entry['count'] for entry in monthly_registrations],
-    }
     count_to_class = {
         2: "col-md-6",
         3: "col-md-4",
         4: "col-md-3"
     }
 
-    # Query the Investments model to get the relevant data
     investments = Investments.objects.all()
 
     selected_class = count_to_class.get(len(investments), "default-class")
 
     context = {
-        # "services": services,
-        # "posts": testimonials,
-        # "title": "layout",
         "investments": investments,
         "selected_class": selected_class,
-        # "selected_class": selected_class,
         'generated_content': generated_content,
         'chart_data': data,
         'total_active_users': total_active_users, 
         'categories_data': categories_data,
-        # 'active_users_json': active_users_json,
-        # 'monthly_registrations_json': monthly_registrations_json
     }
     return render(request, 'investing/platformoverview.html',context)
 

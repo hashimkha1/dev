@@ -117,7 +117,58 @@
 
 
     </script>
+    <!-- Platformoverview html -->
+    <!-- Script for readmore for executive summary -->
+    <script>
+      function toggleReadMore() {
+        var truncatedText = document.getElementById("truncatedText");
+        var remainingText = document.getElementById("remainingText");
+        var button = document.getElementById("readMoreButton");
     
+        if (truncatedText.style.display === "none") {
+          truncatedText.style.display = "block";
+          remainingText.style.display = "none";
+          button.innerHTML = "Read more";
+        } else {
+          truncatedText.style.display = "none";
+          remainingText.style.display = "block";
+          button.innerHTML = "Read less";
+        }
+      }
+    </script>
+    <!-- Script for success stories -->
+    <script>
+      var currentIndex = 0;
+    
+      function moveCarousel(direction) {
+        var carousel = document.querySelector('.owl-carousel');
+        var cardWidth = document.querySelector('.carousel-card').offsetWidth + 20; // Adjust for margin
+    
+        currentIndex += direction;
+    
+        if (currentIndex < 0) {
+          currentIndex = 0;
+        } else if (currentIndex >= {{ investments|length }} - 3) {
+          currentIndex = {{ investments|length }} - 3;
+        }
+    
+        var translateValue = -currentIndex * cardWidth;
+        carousel.style.transform = 'translateX(' + translateValue + 'px)';
+    
+        updateVisibility();
+      }
+    
+      function updateVisibility() {
+        var cards = document.querySelectorAll('.carousel-card');
+        cards.forEach(function(card, index) {
+          if (index < currentIndex || index >= currentIndex + 3) {
+            card.classList.add('hidden');
+          } else {
+            card.classList.remove('hidden');
+          }
+        });
+      }
+    </script>
 </body>
 
 </html>

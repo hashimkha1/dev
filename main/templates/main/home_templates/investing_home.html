@@ -104,9 +104,9 @@
               <button type="button" class="btn btn-primary">GET MORE INFORMATION</button>
           </a>
           {% elif  service.slug == "investments_plans" %}
-          <a href="{% url 'main:contact' %}"><button type="button" class="btn btn-primary">GET MORE INFORMATION</button></a>
+          <a href="{% url 'investing:InvestmentPlatformOverview' %}"><button type="button" class="btn btn-primary">GET MORE INFORMATION</button></a>
           {% else %}
-          <a href="{{ SITEURL }}/display_plans/{{ service.slug }}/"><button type="button" class="btn btn-primary">GET MORE INFORMATION</button></a>
+          <a href="{% url 'investing:InvestmentPlatformOverview' %}"><button type="button" class="btn btn-primary">GET MORE INFORMATION</button></a>
           {% endif %}
 
         </div>

@@ -5,103 +5,19 @@
   <img class="baner-div" src="{% static 'main/image/invest3.jpg' %}" alt="Investment Image">
   <div class="container-md">
     <h2>Investment</h2>
-    <h1>Start Your Business With US</h1>
+    <h1>Start Your Investment With US</h1>
   </div>
 </div>
-<style>
-  .baner-div {
-  min-height: 100%;
-  width: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  position: relative;
-}
-
-
-.baner-div::after {
-  content: "";
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  bottom: 0;
-  left: 0;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 50%, rgba(0, 0, 0, 0.45) 80%, rgba(0, 0, 0, 0) 100%);
-}
-
-.baner-div div {
-  position: absolute;
-  z-index: 2;
-  bottom: 6rem;
-  text-align: center;
-  left: 50%;
-  transform: translateX(-50%);
-}
-</style>
-
 <div class="stripdiv">
   <div class="container">
-    <!-- <h2 class="mt-4 mt-md-0"> ABOUT CODA</h2> -->
     <p class="me-lg-5">
-      
-        Welcome to our platform! We specialize in providing a comprehensive range of services to students and professionals. Whether you're seeking training in data analysis, consultancy services, or investment opportunities, we've got you covered.
-        Join us on the path to success in student training, consultancy, data analysis training, and investment.
+      Welcome to our investment platform! Discover lucrative investment opportunities as we guide you on the path to financial success
     </p>
     <div class="center-container">
-      <a class="col" href="#">Start Investing Now</a>
+      <a class="col" href="{% url 'main:display_service' slug='investing' %}">Start Investing Now</a>
     </div>
   </div>
 </div>
-<style>
-.stripdiv {
-  color: #2f2f30;
-  margin-bottom: -80px; 
-  background-color: #f5f5f5;
-}
-
-.stripdiv p {
-  text-align: center;
-  font-size: 32px;
-  letter-spacing: 1px;
-  font-weight: 500;
-  width: 80%;
-  margin: 0 auto; /* Remove the top margin for no separation */
-  padding: 5rem 0;
-  line-height: 1.7;
-  transition: color 0.3s, background-color 0.3s; /* Add smooth color transition */
-}
-
-.stripdiv:hover p {
-  color: #bd9551; /* Change text color on hover */
-}
-
-.center-container {
-  text-align: center;
-  padding-bottom: 20px;
-}
-
-.col {
-  background-color: #e7ad4a;
-  color: #fff;
-  border: 1px solid #e7ad4a;
-  margin-bottom: 20px;
-  padding: 8px 30px;
-  font-size: 15px;
-  text-transform: uppercase;
-  text-decoration: none;
-  transition: color 0.3s, background-color 0.3s; /* Add smooth color transition */
-}
-
-.col,
-.col:hover {
-  text-decoration: none; /* Remove underline for both normal and hover states */
-}
-
-.col:hover {
-  color: black; /* Change text color on hover */
-  background-color: #355ba3; /* Change background color on hover */
-}
-</style>
 <div class="services-div">
   <div class="container-lg">
     <div class="row flex-column-reverse flex-md-row">
@@ -127,26 +43,6 @@
     </div>
   </div> 
 </div>
-
-<script>
-  function toggleReadMore() {
-    var truncatedText = document.getElementById("truncatedText");
-    var remainingText = document.getElementById("remainingText");
-    var button = document.getElementById("readMoreButton");
-
-    if (truncatedText.style.display === "none") {
-      truncatedText.style.display = "block";
-      remainingText.style.display = "none";
-      button.innerHTML = "Read more";
-    } else {
-      truncatedText.style.display = "none";
-      remainingText.style.display = "block";
-      button.innerHTML = "Read less";
-    }
-  }
-</script>
-
-
 <div class="services-div">
   <div class="container-lg">
       <div class="row flex-column-reverse flex-md-row">
@@ -179,78 +75,7 @@
   </div> 
 </div>
 {% include 'investing/card.html'%}
-<style>
-
-  .plain-list-container {
-  text-align: center;
-}
-
-/* Minimalistic CSS styles for the plain list */
-.plain-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 20px 0;
-}
-
-.plain-list li {
-  font-size: 22px;
-  text-transform: uppercase;
-}
-
-/* Optionally, add hover effect */
-.plain-list li:hover {
-  color: #355ba3; /* Change text color on hover */
-}
-
-</style>
-
 {% include 'investing/charts.html'%}
-
-<style>
-  .testimonials-div {
-    overflow: hidden;
-  }
-
-  .container {
-    position: relative;
-  }
-
-  .owl-carousel {
-    display: flex;
-    transition: transform 0.5s ease-in-out;
-  }
-
-  .carousel-card {
-    flex: 0 0 33.33%; /* Set the width to show three items at a time */
-    margin: 0 10px;
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out;
-  }
-
-  .owl-controls {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .owl-controls button {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 20px;
-  }
-
-  .carousel-card.hidden {
-    opacity: 0;
-  }
-  .carousel-card p {
-    font-size: 11px; /* Adjust the font size as needed */
-  }
-</style>
-
 <div class="testimonials-div">
   <div class="container">
     <h1>SUCCESS STORIES</h1>
@@ -258,57 +83,21 @@
       {% for investment in investments %}
         <div class="carousel-card {% if forloop.counter > 3 %}hidden{% endif %}">
           <h3> 
-            <a href="{% url 'main:post-detail' investment.id %}">
+            <h3 style="margin-top: 20px;">
               {{ investment.client.first_name }}, {{ investment.client.last_name }}
-            </a>
+            </h2>
           </h3>
-          <p style="font-size: 18px;">Amount: ${{ investment.amount }}</p>
           <p style="font-size: 18px;">Date: {{ investment.investment_date }}</p>
           <p style="font-size: 16px;">{{ investment.description }}</p>
         </div>
       {% endfor %}
     </div>
-    <div class="owl-controls">
-      <button class="prev" onclick="moveCarousel(-1)">❮</button>
-      <button class="next" onclick="moveCarousel(1)">❯</button>
+    <div class="owl-controls" style="margin-top: 20px;" >
+      <button class="prev" onclick="moveCarousel(-1)"  style="color:var(--golden-color); font-size: 50px;">❮</button>
+      <button class="next" onclick="moveCarousel(1)" style="color:var(--golden-color); font-size: 50px;">❯</button>
     </div>
   </div>
 </div>
-
-<script>
-  var currentIndex = 0;
-
-  function moveCarousel(direction) {
-    var carousel = document.querySelector('.owl-carousel');
-    var cardWidth = document.querySelector('.carousel-card').offsetWidth + 20; // Adjust for margin
-
-    currentIndex += direction;
-
-    if (currentIndex < 0) {
-      currentIndex = 0;
-    } else if (currentIndex >= {{ investments|length }} - 3) {
-      currentIndex = {{ investments|length }} - 3;
-    }
-
-    var translateValue = -currentIndex * cardWidth;
-    carousel.style.transform = 'translateX(' + translateValue + 'px)';
-
-    updateVisibility();
-  }
-
-  function updateVisibility() {
-    var cards = document.querySelectorAll('.carousel-card');
-    cards.forEach(function(card, index) {
-      if (index < currentIndex || index >= currentIndex + 3) {
-        card.classList.add('hidden');
-      } else {
-        card.classList.remove('hidden');
-      }
-    });
-  }
-</script>
-
-
  <div class="row text-center">
 
   <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
@@ -322,5 +111,4 @@
   {% include 'main/snippets_templates/chat.html'%}
 
   </div> 
-  
 {% endblock %}

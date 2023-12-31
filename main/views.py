@@ -7,6 +7,9 @@ from django.db.models import Q
 from django.shortcuts import redirect, render,get_object_or_404
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
+import openai
+from django.db.models import Sum
+from data.models import ClientAssessment
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
@@ -605,7 +608,53 @@ def plan_urls(request):
 #         "selected_class":selected_class
 #     }
 #     return render(request, "main/team_profiles.html", context)
+openai.api_key = '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'
+class SQSum(Subquery):
+    output_field = models.IntegerField()
+    template = "(SELECT sum(point) from (%(subquery)s) _sum)"
 
+
+def generate_openai_description(user_profile):
+    try:
+        client_assessment = ClientAssessment.objects.get(email=user_profile.user.email)
+    except ClientAssessment.DoesNotExist:
+        return "No ClientAssessment found for the user."
+    first_name = client_assessment.first_name
+
+    total_points =client_assessment.totalpoints
+    experience =client_assessment.experience
+    it_skills = [
+        ('Non-IT Experience', client_assessment.non_it_exp),
+        ('IT Experience', client_assessment.it_exp),
+        ('Project Charter', client_assessment.projectcharter),
+        ('Requirements Analysis', client_assessment.requirementsAnalysis),
+        ('Reporting', client_assessment.reporting),
+        ('ETL', client_assessment.etl),
+        ('Database', client_assessment.database),
+        ('Testing', client_assessment.testing),
+        ('Deployment', client_assessment.deployment),
+        ('Frontend', client_assessment.frontend),
+        ('Backend',client_assessment.backend),
+        # Add more IT skills as needed
+    ]
+
+    # Sort IT skills by rating in descending order
+    sorted_it_skills = sorted(it_skills, key=lambda x: x[1], reverse=True)
+
+    # Take the top two IT skills
+    top_it_skills = [skill[0] for skill in sorted_it_skills[:2]]
+
+    # Create a prompt for OpenAI
+    prompt = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
+
+    # Use OpenAI to generate a description
+    response = openai.Completion.create(
+        engine="text-davinci-002",
+        prompt=prompt,
+        max_tokens=100
+    )
+
+    return response.choices[0].text.strip()
 
 def team(request):
     count_to_class = {
@@ -647,16 +696,40 @@ def team(request):
     number_of_staff = len(lead_team)-1
 
     selected_class = count_to_class.get(number_of_staff, "default-class")
+
     if sub_title == 'team_profiles':
         team_categories = {
-        'Elite Team': list(elite_team_member),
-        'Lead Team': lead_team,
-        'Support Team': list(team_members_agents),
-        'Senior Analysts': senior_analysts,
-        'Junior Analysts': junior_analysts,
+            'Elite Team': list(elite_team_member),
+            'Lead Team': lead_team,
+            'Support Team': list(team_members_agents),
+            'Senior Analysts': senior_analysts,
+            'Junior Analysts': junior_analysts,
         }
-        user_group=team_members
-        heading="THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
+        user_group = team_members
+        heading = "THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
+
+        # Generate descriptions for team members if not present
+        for category, members in team_categories.items():
+            for member in members:
+                try:
+                    user_profile = member.user.profile  # Access the UserProfile associated with the User
+                except UserProfile.DoesNotExist:
+                    # Handle the case where UserProfile doesn't exist for the user
+                    user_profile = UserProfile.objects.create(user=member.user)
+
+                if not user_profile.description:
+                    # Calculate total points based on ClientAssessment
+                    total_points = ClientAssessment.objects.filter(
+                        email=member.user.email
+                    ).aggregate(Sum('totalpoints'))['totalpoints__sum']
+
+                    # Use OpenAI to generate a description based on total points
+                    if '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' in openai.api_key:
+                        user_profile.description = generate_openai_description(user_profile)
+                    else:
+                        user_profile.description = f"This professional has a total rating of {total_points} points based on assessments."
+
+                    user_profile.save()
     
     if sub_title == 'client_profiles':
         team_categories = {
@@ -755,14 +828,9 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
             image_name = form.cleaned_data.get('image').name
             folder_id ="18oKV2n-FckryAz_ts1OiVZ-MONkPTWRM" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
             image_path = instance.image.path
-<<<<<<< HEAD
-            print('image_name',image_name,"---------------------","image_path",image_path)
-            upload_image_to_drive(image_path, folder_id,image_name)
-=======
             image_id = upload_image_to_drive(image_path, folder_id,image_name)
             assets_instance = Assets.objects.create(image_url=image_id)
             instance.image2 = assets_instance
->>>>>>> 2a6bb453db20da2df84879d6553a90d5339005aa
         return super().form_valid(form)
 
     def get_success_url(self):
