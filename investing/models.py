@@ -5,8 +5,7 @@ from django.db import models
 from decimal import Decimal
 from datetime import datetime,date
 from django.utils import timezone
-from django.utils.dateparse import parse_datetime
-
+from main.models import TimeStampedModel
 from django.contrib.auth import get_user_model
 # from finance.utils import get_exchange_rate
 User = get_user_model()
@@ -176,7 +175,7 @@ class covered_calls(models.Model):
 # symbol,description,last,net change,condition
 # symbol# industry# strategy# strike Price# Days to Expiration: calculate# Rank# delta# theta# Earnings**# Conditions# is featured : When checked a user has invested in the position
 
-class Portifolio(models.Model):
+class Portifolio(TimeStampedModel):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     symbol = models.CharField(max_length=255,blank=True, null=True)
@@ -192,12 +191,12 @@ class Portifolio(models.Model):
     delta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     theta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     on_date = models.CharField(max_length=255,blank=True, null=True)
-    is_active = models.BooleanField(default=True,blank=True, null=True)
-    is_featured = models.BooleanField(default=True,blank=True, null=True) 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    # created_at = models.DateTimeField(default=timezone.now)
-    # updated_at = models.DateTimeField(default=timezone.now)
+    
+    # Comes from TimeStampedModel in main
+    # is_active = models.BooleanField(default=True,blank=True, null=True)
+    # is_featured = models.BooleanField(default=True,blank=True, null=True) 
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name_plural = "portifolio"
 
