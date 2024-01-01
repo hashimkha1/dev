@@ -174,23 +174,32 @@ class covered_calls(models.Model):
     #     return self.symbol
 
 # symbol,description,last,net change,condition
-class Oversold(models.Model):
+# symbol# industry# strategy# strike Price# Days to Expiration: calculate# Rank# delta# theta# Earnings**# Conditions# is featured : When checked a user has invested in the position
+
+class Portifolio(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     symbol = models.CharField(max_length=255,blank=True, null=True)
+    industry = models.CharField(max_length=255,blank=True, null=True)
     action = models.CharField(max_length=255,blank=True, null=True)
     strike_price = models.CharField(max_length=255,blank=True, null=True)
     implied_volatility_rank = models.CharField(max_length=255,blank=True, null=True)
-    stock_price = models.CharField(max_length=255,blank=True, null=True)
     expiry = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
     description = models.CharField(max_length=255,blank=True, null=True)
     condition = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
+    delta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    theta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     on_date = models.CharField(max_length=255,blank=True, null=True)
     is_active = models.BooleanField(default=True,blank=True, null=True)
-    is_featured = models.BooleanField(default=True,blank=True, null=True)
-
+    is_featured = models.BooleanField(default=True,blank=True, null=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    # created_at = models.DateTimeField(default=timezone.now)
+    # updated_at = models.DateTimeField(default=timezone.now)
     class Meta:
-        verbose_name_plural = "Oversold"
+        verbose_name_plural = "portifolio"
 
     def __str__(self):
         return self.symbol

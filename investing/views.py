@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-
+from django.views.generic import ListView
 import pandas as pd
 
 from getdata.utils import stock_data
@@ -25,7 +25,7 @@ from .forms import (
     InvestmentRateForm,
     PortfolioForm
 )
-
+from django.utils.decorators import method_decorator
 from .models import (
     ShortPut,
     covered_calls,
@@ -38,11 +38,11 @@ from .models import (
     Cost_Basis,
     Ticker_Data
 )
-from django.db.models import Q
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
-from django.db.models import Subquery, OuterRef, F, CharField
+from django.db.models import Subquery, OuterRef, F, CharField, Value
+from django.db.models.functions import Coalesce
 
 
 register = template.Library()
@@ -403,6 +403,7 @@ def credit_spread_update(request, pk):
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
 
+@login_required
 def portfolio(request, symbol):
 
     model = request.GET.get('model')
@@ -420,39 +421,87 @@ def portfolio(request, symbol):
     }
 
     stock_model = model_mapping.get(model, None)
-
-    if stock_model:
-        subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
-
-        symbol_data = stock_model['model'].objects.filter(symbol=symbol).annotate(
-            industry = Subquery(subquery, output_field=CharField())
-        )
-
-    else:
-        symbol_data = None
+    symbol_in_portfolio = Portifolio.objects.filter(user=request.user, symbol=symbol)
     initial_values=None
-    if symbol_data and symbol_data.exists():
-        symbol_data = symbol_data.first()
-        initial_values = {
-            'user': request.user,
-            'symbol': symbol,
-            'industry': symbol_data.industry,
-            'action': symbol_data.action if stock_model['model'] != 'credit_spread' else symbol_data.strategy,
-            'strike_price': symbol_data.strike_price if stock_model['model'] != 'credit_spread' else symbol_data.sell_strike,
-            'implied_volatility_rank': symbol_data.implied_volatility_rank if stock_model['model'] != 'credit_spread' else symbol_data.rank,
-            'expiry': symbol_data.expiry,
-            'earnings_date': symbol_data.earnings_date,
+    
+    if request.method == 'POST':
+        data = request.POST
+        form = PortfolioForm(data)
+
+        if form.is_valid():
+            if symbol_in_portfolio:
+                symbol_in_portfolio.update(
+                    description=form.instance.description,
+                    on_date=form.instance.on_date,
+                    is_active=form.instance.is_active,
+                    is_featured=form.instance.is_featured
+                )
+            else:
+                form.instance.user = request.user
+                form.instance.save()
+            
+            success_url = reverse('investing:option_list', kwargs={'title': model})
+        else:
+            # Form is not valid
+            return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+        return redirect(success_url)
+    
+    else:
+        if symbol_in_portfolio.exists():
+    
+            symbol_in_portfolio = symbol_in_portfolio.first()
+    
+            # Pass the initial values to the form when creating an instance
+            form = PortfolioForm(instance=symbol_in_portfolio)
+
+        else:
+        
+            if stock_model:
+                subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
+                condition = OverBoughtSold.objects.filter(symbol=symbol)
+                symbol_data = stock_model['model'].objects.filter(symbol=symbol).annotate(
+                    industry = Subquery(subquery, output_field=CharField()),
+                ) 
+                if symbol_data and symbol_data.exists():
+                    symbol_data = symbol_data.first()
+                    initial_values = {
+                        'symbol': symbol,
+                        'industry': symbol_data.industry,
+                        'condition': condition.first().condition_integer if condition.exists() else -1,
+                        'strike_price': symbol_data.strike_price if stock_model['model'] != 'credit_spread' else symbol_data.sell_strike,
+                        'expiry': symbol_data.expiry,
+                        # 'user': request.user,
+                        'action': symbol_data.action if stock_model['model'] != 'credit_spread' else symbol_data.strategy,
+                        'implied_volatility_rank': symbol_data.implied_volatility_rank if stock_model['model'] != 'credit_spread' else symbol_data.rank,
+                        'earnings_date': symbol_data.earnings_date,
+                    }
+            # Pass the initial values to the form when creating an instance
+            form = PortfolioForm(initial=initial_values)
+        
+        
+        # import pdb; pdb.set_trace()
+        context = {
+            'form': form,
         }
 
-    # Pass the initial values to the form when creating an instance
-    form = PortfolioForm(initial=initial_values)
-    # import pdb; pdb.set_trace()
-    context = {
-        'form': form,
-    }
+        return render(request, 'main/snippets_templates/generalform.html', context)
 
-    return render(request, 'main/snippets_templates/generalform.html', context)
+@method_decorator(login_required, name="dispatch")
+class PortfolioListView(ListView):
+    model = Portifolio
+    template_name = "investing/portfolioList.html"
+    context_object_name = "portfolio"
+    ordering = ["created_at"]
 
+    def get_queryset(self):
+        # Combine the custom query with the existing queryset
+        if self.request.user.is_superuser:
+
+            return super().get_queryset().filter(is_featured=True)
+        
+        else:
+            return super().get_queryset().filter(user=self.request.user, is_featured=True)
 
 class oversold_update(UpdateView):
     # model = Oversold

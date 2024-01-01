@@ -15,6 +15,7 @@ urlpatterns = [
     path('user_investments/<str:username>/', views.user_investments, name='user_investments'),
     path('options/<str:title>/', views.optiondata, name='option_list'),
     path('creditspreadupdate/<int:pk>', views.credit_spread_update, name='creditspreadupdate'),
+    path('myportfolio/', views.PortfolioListView.as_view(), name='my_portfolio'),
     path('myportfolioupdate/<str:symbol>', views.portfolio, name='portfolioupdate'),
     path('coveredupdate/<int:pk>', views.covered_update, name='coveredupdate'),
     path('shortputupdate/<int:pk>', views.shortput_update, name='shortputupdate'),
