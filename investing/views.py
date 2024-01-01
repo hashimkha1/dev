@@ -1,35 +1,31 @@
-from collections import Counter
 from datetime import date, datetime
-from django.db.models import Count
-from django.db.models import Sum, Q
+from django.db.models import(Subquery, OuterRef,CharField,Sum,Q,Count)
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
-from django.http import JsonResponse
 from django.urls import reverse
-from django.db.models import Q,Max,F
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-
 import openai
-from application.models import UserProfile
-
-from main.models import Service, Testimonials
 from finance.models import Payment_History, Transaction
+from django.views.generic import ListView
+import pandas as pd
+
 from .utils import (compute_pay,risk_ratios,
                     computes_days_expiration, computes_days_expiration_option_return, get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
-from main.utils import path_values,dates_functionality
-
+from main.utils import path_values,dates_functionality,generate_chatbot_response
+from main.context_processors import fetch_service_descriptions
 from .forms import (
     OptionsForm,
     InvestmentForm,
-    InvestmentRateForm
+    InvestmentRateForm,
+    PortfolioForm
 )
-
+from django.utils.decorators import method_decorator
 from .models import (
     InvestmentContent,
     ShortPut,
@@ -37,17 +33,15 @@ from .models import (
     credit_spread,
     Investments,
     Investment_rates,
-    Oversold,
+    Portifolio,
     OverBoughtSold,
     Options_Returns,
     Cost_Basis,
     Ticker_Data
 )
-from django.db.models import Q
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
-from django.db.models import Subquery, OuterRef, F, CharField
 
 
 register = template.Library()
@@ -85,6 +79,8 @@ def newinvestmentrate(request):
     else:
         form = InvestmentRateForm()
     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+
 def get_or_create_investment_content():
     slug = 'your-slug'
     try:
@@ -95,20 +91,10 @@ def get_or_create_investment_content():
         else:
             raise InvestmentContent.DoesNotExist
     except InvestmentContent.DoesNotExist:
-        # If content doesn't exist, create it with ChatGPT
-        openai.api_key = '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'  
-        context = "On the Coda platform, CODA provides comprehensive data analysis training programs,Among our services are managing construction projects, running errands, and writing business plans, payroll management and more.Investing in CODA not only aligns with the evolving demands of the digital landscape but also offers significant growth potential and the opportunity to contribute to shaping the future of data-driven decision-making, financial markets, and project management excellence."
+        context=fetch_service_descriptions()
         query = "Use the context as a example and generate a good overview."
-        response = openai.Completion.create(
-            engine="text-davinci-002",
-            prompt=f"{context}\n\n{query}",
-            temperature=0.7,
-            max_tokens=200,
-            n=1,
-        )
-        generated_description = response['choices'][0]['text']
-
-        # Create the new content in the database or update the existing one
+        user_message = f"{context}\n\n{query}"
+        generated_description = generate_chatbot_response(user_message)
         investment_content = InvestmentContent.objects.filter(slug=slug).first()
         if investment_content:
             investment_content.description = generated_description
@@ -116,13 +102,12 @@ def get_or_create_investment_content():
         else:
             InvestmentContent.objects.create(
                 slug=slug,
-                title="Your Title",  
+                title="Your Title",
                 description=generated_description
             )
         return generated_description
 
-# Test the function and print the result
-print(get_or_create_investment_content())
+
 def InvestmentPlatformOverview(request):
     investment_content = get_or_create_investment_content()
 
@@ -515,6 +500,105 @@ def credit_spread_update(request, pk):
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
 
+@login_required
+def portfolio(request, symbol):
+
+    model = request.GET.get('model')
+    
+    model_mapping = {
+        'covered_calls': {
+            'model': covered_calls
+        },
+        'shortputdata': {
+            'model': ShortPut
+        },
+        'credit_spread': {
+            'model': credit_spread
+        }
+    }
+
+    stock_model = model_mapping.get(model, None)
+    symbol_in_portfolio = Portifolio.objects.filter(user=request.user, symbol=symbol)
+    initial_values=None
+    
+    if request.method == 'POST':
+        data = request.POST
+        form = PortfolioForm(data)
+
+        if form.is_valid():
+            if symbol_in_portfolio:
+                symbol_in_portfolio.update(
+                    description=form.instance.description,
+                    on_date=form.instance.on_date,
+                    is_active=form.instance.is_active,
+                    is_featured=form.instance.is_featured
+                )
+            else:
+                form.instance.user = request.user
+                form.instance.save()
+            
+            success_url = reverse('investing:option_list', kwargs={'title': model})
+        else:
+            # Form is not valid
+            return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+        return redirect(success_url)
+    
+    else:
+        if symbol_in_portfolio.exists():
+    
+            symbol_in_portfolio = symbol_in_portfolio.first()
+    
+            # Pass the initial values to the form when creating an instance
+            form = PortfolioForm(instance=symbol_in_portfolio)
+
+        else:
+        
+            if stock_model:
+                subquery = Ticker_Data.objects.filter(symbol=OuterRef('symbol')).values('industry')[:1]
+                condition = OverBoughtSold.objects.filter(symbol=symbol)
+                symbol_data = stock_model['model'].objects.filter(symbol=symbol).annotate(
+                    industry = Subquery(subquery, output_field=CharField()),
+                ) 
+                if symbol_data and symbol_data.exists():
+                    symbol_data = symbol_data.first()
+                    initial_values = {
+                        'symbol': symbol,
+                        'industry': symbol_data.industry,
+                        'condition': condition.first().condition_integer if condition.exists() else -1,
+                        'strike_price': symbol_data.strike_price if stock_model['model'] != 'credit_spread' else symbol_data.sell_strike,
+                        'expiry': symbol_data.expiry,
+                        # 'user': request.user,
+                        'action': symbol_data.action if stock_model['model'] != 'credit_spread' else symbol_data.strategy,
+                        'implied_volatility_rank': symbol_data.implied_volatility_rank if stock_model['model'] != 'credit_spread' else symbol_data.rank,
+                        'earnings_date': symbol_data.earnings_date,
+                    }
+            # Pass the initial values to the form when creating an instance
+            form = PortfolioForm(initial=initial_values)
+        
+        
+        # import pdb; pdb.set_trace()
+        context = {
+            'form': form,
+        }
+
+        return render(request, 'main/snippets_templates/generalform.html', context)
+
+@method_decorator(login_required, name="dispatch")
+class PortfolioListView(ListView):
+    model = Portifolio
+    template_name = "investing/portfolioList.html"
+    context_object_name = "portfolio"
+    ordering = ["created_at"]
+
+    def get_queryset(self):
+        # Combine the custom query with the existing queryset
+        if self.request.user.is_superuser:
+
+            return super().get_queryset().filter(is_featured=True)
+        
+        else:
+            return super().get_queryset().filter(user=self.request.user, is_featured=True)
 
 class oversold_update(UpdateView):
     # model = Oversold

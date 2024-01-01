@@ -8,7 +8,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from datetime import date,datetime
+from datetime import date,datetime, timedelta
 from marketing.models import Whatsapp_Groups
 # To encode the data
 from base64 import urlsafe_b64decode
@@ -48,16 +48,12 @@ def fetch_and_insert_data():
     target_conn = psycopg2.connect(target_db_path)
     target_cursor = target_conn.cursor()
 
-    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold', 'investing_ticker_data']
-    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls','investing_oversold', 'investing_ticker_data']
+    source_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls',] #'investing_oversold','investing_ticker_data'
+    target_tables = ['investing_shortput', 'investing_credit_spread', 'investing_covered_calls',] #'investing_oversold','investing_ticker_data'
 
     try:
         # Iterate over source and target tables
         for source_table, target_table in zip(source_tables, target_tables):
-            # Drop the target table if it exists
-            target_cursor.execute(f"DROP TABLE IF EXISTS {target_table}")
-            print("Target table dropped.")
-
             # Fetch the structure of the source table
             source_cursor.execute(f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{source_table}'")
             columns = source_cursor.fetchall()
@@ -70,27 +66,47 @@ def fetch_and_insert_data():
                 if column_name not in unique_columns:
                     unique_columns[column_name] = column_data_type
 
-            create_table_query = f"CREATE TABLE {target_table} ("
+            # Create the target table if it doesn't exist
+            create_table_query = f"CREATE TABLE IF NOT EXISTS {target_table} ("
             column_names = set()  # Track column names to avoid duplicates
             for column_name, column_data_type in unique_columns.items():
                 if column_name not in column_names:
                     create_table_query += f"{column_name} {column_data_type}, "
                     column_names.add(column_name)
             create_table_query = create_table_query.rstrip(", ") + ")"
-
-            # Create the target table
             target_cursor.execute(create_table_query)
-            print("Target table created.")
 
             # Fetch data from the source table
             source_cursor.execute(f"SELECT * FROM {source_table}")
             rows = source_cursor.fetchall()
 
-            # Insert data into the target table
+            # Insert or update data in the target table
             for row in rows:
+                # import pdb; pdb.set_trace()
                 placeholders = "%s, " * len(row)
                 placeholders = placeholders.rstrip(", ")
-                target_cursor.execute(f"INSERT INTO {target_table} VALUES ({placeholders})", row)
+                
+                column_list = tuple('{element}' for element in tuple(unique_columns.keys()))
+                column_list = ', '.join(f'{key}' for key in unique_columns.keys())
+
+                # Use INSERT ... ON CONFLICT to insert or update the data
+                # target_cursor.execute(f"INSERT INTO {target_table} VALUES ({placeholders}) ON CONFLICT DO NOTHING", row)
+                target_cursor.execute(
+                    f"INSERT INTO {target_table} ({column_list}) "
+                    f"SELECT {placeholders} WHERE NOT EXISTS (SELECT 1 FROM {target_table} WHERE symbol = %s)",
+                    row + (row[0],)  # Add an extra element to the tuple
+                )
+
+
+            cut_off_date = datetime.now() - timedelta(days=10)
+            print(cut_off_date.date())
+            target_cursor.execute("SET datestyle TO 'MDY'")
+
+            # Delete rows with earning date in the past
+            target_cursor.execute(
+                f"DELETE FROM {target_table} WHERE to_date(left(earnings_date, 10), 'MM/DD/YYYY') < %s",
+                (cut_off_date.date().strftime('%m/%d/%Y'),)
+            )
 
         # Commit the changes in the target database
         target_conn.commit()

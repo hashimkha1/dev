@@ -40,6 +40,21 @@ def images(request):
         "data_url":data_url
     }
 
+def fetch_service_descriptions():
+    # Fetch all services with a non-empty, non-null description that are active
+    services_with_description = Service.objects.exclude(description__isnull=True).exclude(description='').filter(is_active=True)
+
+    # Prepare a dictionary to hold the context data
+    context_data = {}
+
+    for service in services_with_description:
+        # Use the title or slug as the key and the description as the value
+        context_data[service.title] = service.description
+
+    return context_data
+
+
+
 def services(request):
     services = Service.objects.all()
     # analysis_service = Service.objects.get(slug='data_analysis')

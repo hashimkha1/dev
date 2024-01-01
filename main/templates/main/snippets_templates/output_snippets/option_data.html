@@ -96,9 +96,13 @@
                    <div class="col-md-4">
                     <a class="btn btn-primary" href="{% url 'investing:option_list' title=subtitle %}?{{ request.GET.urlencode }}&extra_filter_by=top_5"  style="background-color: #4c4caf; border-color: #4CAF50;">Top 5
                     </a>
-                  </div>
+                    </div>
                     <div class="col-md-4">
                       <a class="btn btn-primary" href="{% url 'investing:option_list' title=subtitle %}?{{ request.GET.urlencode }}&extra_filter_by=null"  style="background-color: #4c51af; border-color: #4CAF50;"> All
+                      </a>
+                    </div>
+                    <div class="col-md-4">
+                      <a class="btn btn-primary" href="{% url 'investing:my_portfolio' %}"  style="background-color: #4CAF50; border-color: #4CAF50;"> My Portfolio
                       </a>
                     </div>
                 </div>

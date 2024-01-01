@@ -1,0 +1,59 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>YOUR PORTFOLIO</h2>
+    {% if portfolio.count == 0 %}
+        NO DATA
+    {% else %}
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+            {% if user.is_superuser %}
+            <th>user</th>
+            {% endif %}
+            <th>symbol</th>
+            <th>industry</th>
+            <th>action</th>
+            <th>strike_price</th>
+            <th>implied_volatility_rank</th>
+            <th>expiry</th>
+            <th>earnings_date</th>
+            <th>condition</th>
+            <th>comment</th>
+            <th>delta</th>
+            <th>theta</th>
+            <th>on_date</th>
+            <th>is_featured</th>
+            <th>Update</th>
+        </tr>
+      </thead>
+      <tbody>
+       
+        {% for obj in portfolio %}
+            <tr>
+                {% if user.is_superuser %}
+                <td>{{obj.user}}</td>
+                {% endif %}
+                <td>{{obj.symbol}}</td>
+                <td>{{obj.industry}}</td>
+                <td>{{obj.action}}</td>
+                <td>{{obj.strike_price}}</td>
+                <td>{{obj.implied_volatility_rank}}</td>
+                <td>{{obj.expiry}}</td>
+                <td>{{obj.earnings_date}}</td>
+                <td>{{obj.condition}}</td>
+                <td>{{obj.comment}}</td>
+                <td>{{obj.delta}}</td>
+                <td>{{obj.theta}}</td>
+                <td>{{obj.on_date}}</td>
+                <td>{{obj.is_featured}}</td>
+                <td><a class="article-title" href="{% url 'investing:portfolioupdate' obj.symbol %}?model=shortputdata">Edit</a></td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+
+</section>
+{% endblock content %}

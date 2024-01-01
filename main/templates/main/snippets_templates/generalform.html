@@ -1,9 +1,8 @@
-{% load crispy_forms_tags%} 
-{% load static %}
+{%extends "main/base_templates/new_base.html"%} 
 {% block title %}
 {% endblock %}
-{% include 'main/navbar_templates/data_navbar.html' %}
-
+{% load crispy_forms_tags%} 
+{% load static %}
 {% block content %}
    <link
       rel="stylesheet"
@@ -13,14 +12,26 @@
     />
 <div class="container ">
 <div class="content-section ">
-  <div><hr></div>
-  <div><hr></div>
+  <!-- <div><hr></div>
+  <div><hr></div> -->
     <form method="POST">
         {% csrf_token %}
         <fieldset class="form-group">
             <legend class="border-bottom mb-5 ">{{page_title}} </legend>
             {{ form|crispy }}
         </fieldset>
+        {% if form.errors %}
+        <div class="error-message">
+            <p>Please correct the following errors:</p>
+            <ul>
+                {% for field, error_list in form.errors.items %}
+                    {% for error in error_list %}
+                        <li>{{ field }}: {{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
         <div class="form-group">
             <button class="btn btn-outline-info" type="submit">Submit</button>
         </div>

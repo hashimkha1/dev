@@ -130,7 +130,6 @@ def generate_chatbot_response(user_message):
     else:
         result = None
     return result
-    # return response.choices[0].text
 
 
 def parse_user_query(user_query):
