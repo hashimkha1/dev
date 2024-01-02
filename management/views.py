@@ -1020,7 +1020,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
 
     if month == 1:
         month = 12
-        year -= year
+        year -= 1
     else:
         month -= 1
 
