@@ -145,7 +145,8 @@ def runwhatsapp(request):
         message = ad.message
         company_description = ad.bulletin if ad.bulletin else ''
         link = ad.link
-        topic=ad.ad_title if ad.ad_title else 'General'
+        # topic=ad.ad_title if ad.ad_title else 'General'
+        topic=ad.bulletin if ad.bulletin else 'General'
         company=ad.company if ad.company else 'CROWN DATA ANALYSIS & CONSULTING LLC'
         short_name=ad.short_name if ad.short_name else 'CODA'
         signature=ad.signature if ad.signature else 'Chris Maghas-AI|Automation Expert'

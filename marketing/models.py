@@ -7,14 +7,15 @@ from random import randint
 # # Create your models here.
 
 class Ads(models.Model):
-    ad_title = models.CharField(max_length=100, null=True, blank=True)
     company = models.CharField(max_length=100, null=True, blank=True)
+    ad_title = models.CharField(max_length=100, null=True, blank=True)
+    bulletin = models.CharField(max_length=100, null=True, blank=True)
     short_name = models.CharField(max_length=50, null=True, blank=True)
     company_site = models.CharField(max_length=255, null=True, blank=True)
     meeting_link = models.CharField(max_length=500, null=True, blank=True)
     video_link = models.CharField(max_length=500, null=True, blank=True)
     signature = models.CharField(max_length=255, null=True, blank=True)
-    bulletin= models.TextField(null=True, blank=True)
+    description= models.TextField(null=True, blank=True)
     message= models.TextField(null=True, blank=True)
     image_name = models.ForeignKey(
         Assets, related_name="message_image", on_delete=models.CASCADE,default=1
