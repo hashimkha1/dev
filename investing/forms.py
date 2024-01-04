@@ -24,35 +24,34 @@ class PortfolioForm(forms.ModelForm):
     action = forms.CharField(widget=forms.HiddenInput(),)   
     implied_volatility_rank = forms.CharField(widget=forms.HiddenInput(),)
     earnings_date = forms.CharField(widget=forms.HiddenInput(),)
-
     symbol = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     industry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    strike_price = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    # strike_price = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     condition = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    expiry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    # expiry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     on_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
     is_active = forms.BooleanField(initial=False,required=False) 
-    is_featured = forms.BooleanField(initial=False, required=False) 
-
     class Meta:
         model = Portifolio
-        # fields = '__all__'
+        # fields = '__all__'    
         fields = [
             'symbol',
             'industry',
             'action',
+            'condition',
             'strike_price',
             'implied_volatility_rank',
             'expiry',
             'earnings_date',
-            'description',
-            'condition',
             'comment',
-            'delta',
-            'theta',
+            'amount',
+            'long_leg_delta',
+            'short_leg_delta',
+            'long_leg_theta',
+            'short_leg_theta',
+            'number_of_contract',
             'on_date',
             'is_active',
-            'is_featured',
         ]
         
         def __init__(self, *args, **kwargs):
