@@ -2,6 +2,13 @@
 <section id="career">
   <div class="career text-center">
     <h3 class="title">WHATSAPP GROUP MANAGEMENT</h3>
+    {% if request.user.is_superuser %}
+    <div class="">
+      <p><a href="{% url 'marketing:refresh_groups'%}" class="btn btn-secondary btn-sm"
+        >Refresh Groups
+      </a></p>
+    </div>
+    {% endif %}
     <div class="row">
       <div class="col-md-3">
         <p><a href="{% url 'marketing:whatsapp_new'%}" class="btn btn-primary btn-sm"

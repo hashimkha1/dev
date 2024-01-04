@@ -1,17 +1,18 @@
 import os,requests
 import json
-from django.shortcuts import render
+# from django.core.management import call_command
 from django.db.models import Q
 from django.db.models import IntegerField, F,Sum
 from django.db.models.functions import Cast
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
-from marketing.models import Ads,Whatsapp_Groups
+from marketing.models import Ads,Whatsapp_Groups,Whatsapp_dev
 from coda_project import settings
 from .forms import WhatsappForm,AdsForm
 from django.urls import reverse
 from mail.custom_email import send_email
 from main.utils import path_values,courses
+from getdata.utils import Run_Command
 from main.context_processors import services
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
@@ -27,64 +28,7 @@ def marketing(request):
     return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
 #====================Social Media===========================
 
-class whatsappCreateView(LoginRequiredMixin, CreateView):
-    model = Whatsapp_Groups
-    success_url = "/whatsapplist/"  
-    form_class=WhatsappForm
-    # fields = "__all__"
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
-    model = Whatsapp_Groups
-    form_class = WhatsappForm
-    # slug_field = 'slug'
-    # slug_url_kwarg = 'slug'
-    # template_name = 'main/snippets_templates/form.html'
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['slug'] = self.get_object().slug  # Add the slug to the context
-    #     return context
-    
-    def form_valid(self, form):
-        form.instance.username = self.request.user
-        return super().form_valid(form)
-
-    def get_success_url(self):
-        return reverse("marketing:whatsapp_list")
-    
-    def test_func(self):
-        # plan = self.get_object()
-        if self.request.user.is_superuser:
-            return True
-        elif self.request.user:
-            return True
-        return False
-
-@login_required
-def delete_whatsapp(request,slug):
-    whatsapp_record = Whatsapp_Groups.objects.get(pk=slug)
-    if request.user.is_superuser:
-        whatsapp_record.delete()
-    return redirect('marketing:whatsapp_list')
-
-@login_required
-def whatsapp_groups(request):
-    # whatsaapitems=Whatsapp_Groups.objects.all().order_by('participants')
-    whatsapp_groups = Whatsapp_Groups.objects.annotate(
-    participant_count=Cast('participants', IntegerField())).order_by('-participant_count')
-    total_participants = Whatsapp_Groups.objects.aggregate(
-    total=Sum(Cast('participants', IntegerField()))
-    )['total']
-    context={
-            "whatsaapitems":whatsapp_groups,
-            "total_participants":total_participants
-    }
-    return render(request, 'marketing/groups.html',context)
-
+#====================AD MANAGEMENT===========================
 class AdsCreateView(LoginRequiredMixin, CreateView):
     model = Ads
     success_url = "marketing/adslist/"  
@@ -129,6 +73,95 @@ def ads(request):
             "ad_items":ad_items
     }
     return render(request, 'marketing/adlist.html',context)
+
+#====================WHATSAPP MANAGEMENT===========================
+class whatsappCreateView(LoginRequiredMixin, CreateView):
+    model = Whatsapp_Groups
+    success_url = "/marketing/whatsapplist/"  
+    form_class=WhatsappForm
+    # fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Whatsapp_Groups
+    form_class = WhatsappForm
+    # slug_field = 'slug'
+    # slug_url_kwarg = 'slug'
+    # template_name = 'main/snippets_templates/form.html'
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['slug'] = self.get_object().slug  # Add the slug to the context
+    #     return context
+    
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("marketing:whatsapp_list")
+    
+    def test_func(self):
+        # plan = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user:
+            return True
+        return False
+
+@login_required
+def delete_whatsapp(request,slug):
+    whatsapp_record = Whatsapp_Groups.objects.get(pk=slug)
+    if request.user.is_superuser:
+        whatsapp_record.delete()
+    return redirect('marketing:whatsapp_list')
+
+@login_required
+def whatsapp_groups(request):
+    whatsapp_groups = Whatsapp_Groups.objects.annotate(
+    participant_count=Cast('participants', IntegerField())).order_by('-participant_count')
+    total_participants = Whatsapp_Groups.objects.aggregate(
+    total=Sum(Cast('participants', IntegerField()))
+    )['total']
+    context={
+            "whatsaapitems":whatsapp_groups,
+            "total_participants":total_participants
+    }
+    return render(request, 'marketing/groups.html',context)
+
+# @login_required
+# def whatsapp_groups(request):
+#     # whatsaapitems=Whatsapp_Groups.objects.all().order_by('participants')
+#     whatsapp_groups = Whatsapp_dev.objects.annotate(
+#     participant_count=Cast('participants', IntegerField())).order_by('-participant_count')
+#     total_participants = Whatsapp_dev.objects.aggregate(
+#     total=Sum(Cast('participants', IntegerField()))
+#     )['total']
+#     print(total_participants)
+#     context={
+#             "whatsaapitems":whatsapp_groups,
+#             "total_participants":total_participants
+#     }
+#     return render(request, 'marketing/groups.html',context)
+
+
+@login_required(login_url="accounts:account-login")
+def refresh_whatsapp_groups(request):
+    # Trigger the management command
+    if request.user.is_superuser:
+        Run_Command('fetch_whatsapp_groups')
+        return redirect('marketing:whatsapp_list')
+    else:
+        return redirect('marketing:whatsapp_list')
+
+# @login_required(login_url="accounts:account-login")
+# def refresh_whatsapp_groups(request):
+#     Run_Command('fetch_whatsapp_groups')
+#     return redirect('marketing:whatsapp_list')
+
 
 @login_required(login_url="accounts:account-login")
 def runwhatsapp(request):

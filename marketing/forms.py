@@ -11,6 +11,7 @@ class WhatsappForm(forms.ModelForm):
                     "type",
                     "group_name",
                     "group_id",
+                    "participants",
                     "is_active",
                     "is_featured",
         ]

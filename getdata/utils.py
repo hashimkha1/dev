@@ -3,13 +3,17 @@ import os
 import re
 from bs4 import BeautifulSoup
 import psycopg2
+import requests
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import date,datetime, timedelta
-from marketing.models import Whatsapp_Groups
+from marketing.models import Whatsapp_Groups,Whatsapp_dev
+from django.core.management.base import BaseCommand
+from marketing.models import Whatsapp_dev  # Replace 'your_app' with the actual name of your app
+
 # To encode the data
 from base64 import urlsafe_b64decode
 import logging
@@ -403,3 +407,49 @@ def populate_table_from_json_file(file_path):
         return JsonResponse({'error': 'File not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON format'}, status=400)
+
+
+class Run_Command(BaseCommand):
+    help = 'Fetch WhatsApp groups and populate the database'
+
+    def handle(self, *args, **kwargs):
+        # Your code to fetch WhatsApp groups here
+        whatsapp_groups_data = self.fetch_whatsapp_groups()
+
+        # Iterate over the fetched data and add new groups to the database
+        for group_data in whatsapp_groups_data:
+            self.create_or_update_group(group_data)
+
+    def fetch_whatsapp_groups(self):
+        # Use the requests library to fetch WhatsApp groups from the API
+        product_id = os.environ.get('MAYTAPI_PRODUCT_ID')
+        screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
+        token = os.environ.get('MAYTAPI_TOKEN')
+        url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/getGroups"
+        headers = {"x-maytapi-key": token}
+        response = requests.get(url, headers=headers)
+
+        # Check for errors and return the data as a list of dictionaries
+        if response.status_code == 200:
+            return response.json()
+        else:
+            self.stdout.write(self.style.ERROR(f"Failed to fetch WhatsApp groups. Status code: {response.status_code}"))
+            return []
+
+    def create_or_update_group(self, group_data):
+        # Check if the group already exists in the database
+        group_id = group_data.get("group_id")
+        if Whatsapp_dev.objects.filter(group_id=group_id).exists():
+            print(group_id)
+            self.stdout.write(self.style.SUCCESS(f"Group with ID {group_id} already exists. Skipping."))
+        else:
+            # Create a new Whatsapp_Groups object with the fetched data
+            Whatsapp_dev.objects.create(
+                group_id=group_data.get("group_id"),
+                slug=group_data.get("slug"),
+                group_name=group_data.get("group_name"),
+                participants=group_data.get("participants"),
+                category=group_data.get("category"),
+                type=group_data.get("type"),
+            )
+            self.stdout.write(self.style.SUCCESS(f"Added new group with ID {group_id} to the database."))
