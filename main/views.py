@@ -273,14 +273,14 @@ def display_service(request,*args, **kwargs):
         return redirect('main:display_service')
     (service_category_slug,service_category_title,service_description,service_id)=service_instances(service_shown,sub_title)
     service_categories = ServiceCategory.objects.filter(service=service_id)
-    if service_category_slug=='investing':
-        context = {
-            'service_categories': service_categories,
-            "title": service_category_title,
-            "service_desc": service_description,
-            "slug":service_category_slug
-       }
-        return render(request, "main/home_templates/investing_home.html", context)
+    # if service_category_slug=='investing':
+    #     context = {
+    #         'service_categories': service_categories,
+    #         "title": service_category_title,
+    #         "service_desc": service_description,
+    #         "slug":service_category_slug
+    #    }
+    #     return render(request, "main/home_templates/investing_home.html", context)
     context = {}  # Initialize context with an empty dictionary
     context = {
         'service_categories': service_categories,

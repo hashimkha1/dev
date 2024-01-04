@@ -37,14 +37,14 @@
         More 
         </a>
     </td>
-
-    {% if subtitle == 'shortputdata' %}
+    <td><a class="article-title" href="{% url 'investing:portfolioupdate' row.symbol %}?model={{subtitle}}">Edit</a></td>
+    <!-- {% if subtitle == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
     {% elif subtitle == 'credit_spread' %}
         <td><a class="article-title" href="{% url 'investing:creditspreadupdate' row.id %}">Edit</a></td>
     {% else %}
         <td><a class="article-title" href="{% url 'investing:coveredupdate' row.id %}">Edit</a></td>
-    {% endif %}
+    {% endif %} -->
     <!-- <td><a class="article-title" href="{{ row.edit_url }}">Edit</a></td> -->
 
 </tr>

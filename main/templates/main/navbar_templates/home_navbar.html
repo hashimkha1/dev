@@ -25,13 +25,16 @@
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
             <a class="dropdown-item" href="{% url 'main:team_profiles' %}"
-              >Our Team's Profiles</a
+            >Our Team</a
             >
             <a class="dropdown-item" href="{% url 'main:future_talents' %}"
-              >Future Talents</a
+            >Future Talent</a
             >
             <a class="dropdown-item" href="{% url 'main:client_profiles' %}"
-              >Looking For Talent?</a
+            >Looking For Talent?</a
+            >
+            <a class="dropdown-item" href="#"
+              >Our Board</a
             >
             <a class="dropdown-item" href="{% url 'application:career' %}"
             >Career</a
@@ -60,7 +63,7 @@
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
 
             {% for service in main_services %}
-              {% if service.title == "Investments" %}
+              {% if service.title == "Investing" %}
               <a class="dropdown-item" href="{% url 'investing:InvestmentPlatformOverview' %}">{{service.title}}</a>
               <div class="dropdown-divider"></div>
               {% else %}
