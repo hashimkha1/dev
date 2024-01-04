@@ -120,9 +120,6 @@ def get_or_create_investment_content():
                 description=generated_description
             )
         return generated_description
-
-# Test the function and print the result
-print(get_or_create_investment_content())
 def InvestmentPlatformOverview(request):
     investment_content = get_or_create_investment_content()
 
