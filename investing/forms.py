@@ -28,9 +28,11 @@ class PortfolioForm(forms.ModelForm):
     industry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     # strike_price = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     condition = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    strategy = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     # expiry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     on_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
     is_active = forms.BooleanField(initial=False,required=False) 
+
     class Meta:
         model = Portifolio
         # fields = '__all__'    
@@ -39,10 +41,13 @@ class PortfolioForm(forms.ModelForm):
             'industry',
             'action',
             'condition',
-            'strike_price',
             'implied_volatility_rank',
             'expiry',
             'earnings_date',
+            'strategy',
+            'long_strike',
+            'short_strike',
+            'returns',
             'comment',
             'amount',
             'long_leg_delta',
@@ -54,5 +59,15 @@ class PortfolioForm(forms.ModelForm):
             'is_active',
         ]
         
-        def __init__(self, *args, **kwargs):
-            super(PortfolioForm, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        
+        super(PortfolioForm, self).__init__(*args, **kwargs)
+        if kwargs.get('initial') and kwargs['initial'].get('create') and kwargs['initial']['create']:
+            self.fields['symbol'].widget.attrs['readonly'] = False
+            self.fields['industry'].widget.attrs['readonly'] = False
+            self.fields['condition'].widget.attrs['readonly'] = False
+            self.fields['strategy'].widget.attrs['readonly'] = False
+            
+            self.fields['action'].widget = forms.TextInput()
+            self.fields['implied_volatility_rank'].widget = forms.DecimalField()
+            self.fields['earnings_date'].widget = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
