@@ -84,33 +84,27 @@ class whatsappCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
 
 class whatsappUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Whatsapp_Groups
     form_class = WhatsappForm
-    # slug_field = 'slug'
-    # slug_url_kwarg = 'slug'
-    # template_name = 'main/snippets_templates/form.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['slug'] = self.get_object().slug  # Add the slug to the context
-    #     return context
-    
     def form_valid(self, form):
         form.instance.username = self.request.user
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse("marketing:whatsapp_list")
-    
+        # Replace 'all' with the appropriate title value you need to pass
+        return reverse("marketing:whatsapp_list", kwargs={'title': 'all'})
+
     def test_func(self):
-        # plan = self.get_object()
         if self.request.user.is_superuser:
             return True
         elif self.request.user:
             return True
         return False
+
 
 @login_required
 def delete_whatsapp(request,slug):
@@ -119,34 +113,137 @@ def delete_whatsapp(request,slug):
         whatsapp_record.delete()
     return redirect('marketing:whatsapp_list')
 
+# @login_required
+# def whatsapp_groups(request,title):
+#     # Extract necessary path information and subtitles for page context
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     # Fetch active groups and total participant count if the subtitle indicates 'active_groups'
+#     if title == 'active_groups':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_active=True)
+#         participant_count_filter = {'is_active': True}
+
+#     elif title == 'featured_groups':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_featured=True)
+#         participant_count_filter = {'is_featured': True}
+
+#     elif title == 'silver':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_featured=True)
+#         participant_count_filter = {'is_featured': True}
+
+#     elif title == 'basic':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_featured=True)
+#         participant_count_filter = {'is_featured': True}
+
+#     else:
+#         # For any other subtitle, fetch all groups and order by participant count
+#         whatsapp_groups = Whatsapp_Groups.objects.annotate(
+#             participant_count=Cast('participants', IntegerField())
+#         ).order_by('-participant_count')
+#         participant_count_filter = {}
+
+#     # Calculate the total participants across all fetched groups
+#     total_participants = whatsapp_groups.aggregate(
+#         total=Sum(Cast('participants', IntegerField()))
+#     )['total']
+    
+#     # Prepare the context data for rendering
+#     print(whatsapp_groups)
+#     context = {
+#         "whatsapp_items": whatsapp_groups,
+#         "total_participants": total_participants
+#     }
+    
+#     return render(request, 'marketing/groups.html', context)
+
+
+# from django.shortcuts import render
+# from django.contrib.auth.decorators import login_required
+# from django.db.models import IntegerField, Sum, Case, When, Value
+# from .models import Whatsapp_Groups
+
+# @login_required
+# def whatsapp_groups(request, title):
+#     # Fetch groups based on title
+#     if title == 'active_groups':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_active=True)
+#         participant_count_filter = {'is_active': True}
+
+#     elif title == 'featured_groups':
+#         whatsapp_groups = Whatsapp_Groups.objects.filter(is_featured=True)
+#         participant_count_filter = {'is_featured': True}
+
+#     elif title == 'silver':
+#         # Filter groups with participant count between 150 and 500
+#         whatsapp_groups = Whatsapp_Groups.objects.annotate(
+#             participant_count=Cast('participants', IntegerField())
+#         ).filter(participant_count__gte=150, participant_count__lte=500)
+
+#     elif title == 'basic':
+#         # Filter groups with participant count less than 150
+#         whatsapp_groups = Whatsapp_Groups.objects.annotate(
+#             participant_count=Cast('participants', IntegerField())
+#         ).filter(participant_count__lt=150)
+
+#     else:
+#         # Default case: Fetch all groups and order by participant count
+#         whatsapp_groups = Whatsapp_Groups.objects.annotate(
+#             participant_count=Cast('participants', IntegerField())
+#         )
+
+#     # Calculate the total participants across all fetched groups
+#     total_participants = whatsapp_groups.aggregate(
+#         total=Sum('participant_count')
+#     )['total'] if whatsapp_groups else 0
+    
+#     # Prepare the context data for rendering
+#     context = {
+#         "whatsapp_items": whatsapp_groups.order_by('-participants'),
+#         "total_participants": total_participants
+#     }
+    
+#     return render(request, 'marketing/groups.html', context)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from django.db.models import IntegerField, Sum, Case, When, Value
+from .models import Whatsapp_Groups
+
 @login_required
-def whatsapp_groups(request,title):
-    # Extract necessary path information and subtitles for page context
-    path_list, sub_title, pre_sub_title = path_values(request)
-    # Fetch active groups and total participant count if the subtitle indicates 'active_groups'
+def whatsapp_groups(request, title):
+    # Annotate groups with participant count
+    annotated_whatsapp_groups = Whatsapp_Groups.objects.annotate(
+        participant_count=Cast('participants', IntegerField())
+    )
+
+    # Fetch groups based on title
     if title == 'active_groups':
-        whatsapp_groups = Whatsapp_Groups.objects.filter(is_active=True)
-        participant_count_filter = {'is_active': True}
+        whatsapp_groups = annotated_whatsapp_groups.filter(is_active=True)
+
+    elif title == 'featured_groups':
+        whatsapp_groups = annotated_whatsapp_groups.filter(is_featured=True)
+
+    elif title == 'silver':
+        # Filter groups with participant count between 150 and 500
+        whatsapp_groups = annotated_whatsapp_groups.filter(participant_count__gte=150, participant_count__lte=500)
+
+    elif title == 'basic':
+        # Filter groups with participant count less than 150
+        whatsapp_groups = annotated_whatsapp_groups.filter(participant_count__lt=150)
+
     else:
-        # For any other subtitle, fetch all groups and order by participant count
-        whatsapp_groups = Whatsapp_Groups.objects.annotate(
-            participant_count=Cast('participants', IntegerField())
-        ).order_by('-participant_count')
-        participant_count_filter = {}
+        # Default case: Fetch all groups and order by participant count
+        whatsapp_groups = annotated_whatsapp_groups
 
     # Calculate the total participants across all fetched groups
-    total_participants = whatsapp_groups.aggregate(
-        total=Sum(Cast('participants', IntegerField()))
-    )['total']
+    total_participants = whatsapp_groups.aggregate(total=Sum('participant_count'))['total'] if whatsapp_groups else 0
     
     # Prepare the context data for rendering
-    print(whatsapp_groups)
     context = {
-        "whatsapp_items": whatsapp_groups,
+        "whatsapp_items": whatsapp_groups.order_by('-participant_count'),
         "total_participants": total_participants
     }
-    
     return render(request, 'marketing/groups.html', context)
+
 
 # @login_required
 # def whatsapp_groups(request):

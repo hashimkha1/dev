@@ -2,17 +2,48 @@
 <section id="career">
   <div class="career text-center">
     <h3 class="title">WHATSAPP GROUP MANAGEMENT</h3>
-    {% if request.user.is_superuser %}
-    <div class="">
-      <p><a href="{% url 'marketing:refresh_groups'%}" class="btn btn-secondary btn-sm"
-        >Refresh Groups
-      </a></p>
+    <div class="row text-center">
+      <div class="col-md-2"></div>
+            {% if request.user.is_superuser %}
+            <div class="col-md-3">
+              <p><a href="{% url 'marketing:refresh_groups'%}" class="btn btn-secondary btn-sm"
+                >Refresh Groups
+              </a></p>
+            </div>
+            {% endif %}
+            <div class="col-md-3">
+              <p><a href="{% url 'marketing:whatsapp_new'%}" class="btn btn-secondary btn-sm"
+                >ADD GROUP
+              </a></p>
+            </div>
+            <div class="col-md-3">
+              <p><a href="{% url 'marketing:ads_list'%}" class="btn btn-secondary btn-sm"
+                >CREATE AD
+              </a></p>
+            </div>
+            <div class="col-md-2"></div>
     </div>
-    {% endif %}
+
+  <hr>
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-2">
         <p><a href="{% url 'marketing:whatsapp_list' title='all'%}" class="btn btn-primary btn-sm"
           >ALL
+        </a></p>
+      </div>
+      <div class="col-md-2">
+        <p><a href="{% url 'marketing:whatsapp_list' title='featured_groups'%}" class="btn btn-primary btn-sm"
+          >GOLD
+        </a></p>
+      </div>
+      <div class="col-md-2">
+        <p><a href="{% url 'marketing:whatsapp_list' title='silver'%}" class="btn btn-primary btn-sm"
+          >SILVER
+        </a></p>
+      </div>
+      <div class="col-md-2">
+        <p><a href="{% url 'marketing:whatsapp_list' title='basic'%}" class="btn btn-primary btn-sm"
+          >Basic
         </a></p>
       </div>
       <div class="col-md-2">
@@ -21,17 +52,6 @@
         </a></p>
       </div>
       <div class="col-md-2">
-        <p><a href="{% url 'marketing:whatsapp_new'%}" class="btn btn-primary btn-sm"
-          >ADD GROUP
-        </a></p>
-      </div>
-      <div class="col-md-2">
-        <p><a href="{% url 'marketing:ads_list'%}" class="btn btn-primary btn-sm"
-          >ADD AD
-        </a></p>
-      </div>
-
-      <div class="col-md-3">
         TOTAL PARTICIPANTS
         <p>
             <a href="{% url 'main:layout' %}" class="btn btn-primary btn-sm" style="font-size: 50px;">
@@ -39,6 +59,7 @@
             </a>
         </p>
     </div>
+
     </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table class="table table-borderless" style="width: 100%">
