@@ -29,30 +29,39 @@
   <div class="container-lg">
     {% for service in services %}
       <div class="row flex-column-reverse flex-md-row">
-          <div class="col-md-6 pe-lg-5">
-              <h2 class="mt-4 mt-md-0" style="text-align: left;">{{service.title}}</h2>
-              <p class="me-lg-5">
-                {{service.description}}
-              </p>
-              {% if service.title == "Investments" %}
-                <a href="{% url 'investing:InvestmentPlatformOverview' %}">read more</a>
-              {% else %}
-                  <a href="{% url 'main:display_service' slug=service.slug %}">read more</a>
+        <div class="col-md-6 pe-lg-5">
+          <h2 class="mt-4 mt-md-0" style="text-align: left;">{{ service.title }}</h2>
+          <div class="text-content">
+            <p class="me-lg-5 truncated-text" id="truncatedText{{ forloop.counter }}">
+              {{service.description|safe|truncatechars:400}}
+            </p>
+            <p class="me-lg-5 remaining-text" id="remainingText{{ forloop.counter }}" style="display: none;">
+              {{service.description|safe}}
+            </p>
+            <button  class=" reead-more-button" data-index="{{ forloop.counter }}">
+              Read more
+            </button>
+          </div>
+          {% if service.title == "Investments" %}
+            <a class="btn btn-primary read-more-button" href="{% url 'investing:InvestmentPlatformOverview' %}">Proceed</a>
+          {% else %}
+            <a class="btn btn-primary read-more-button" href="{% url 'main:display_service' slug=service.slug %}">Proceed</a>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <img class="img-fluid ps-lg-5"
+            {% for image in images %}
+              {% if image.name == service.slug %}
+                src="{{ googledriveurl }}{{ image.image_url }}"
               {% endif %}
-          </div>
-          <div class="col-md-6">
-              <img class="img-fluid ps-lg-5" 
-              {% for image in images %}
-                 {% if image.name == service.slug %}
-                      src="{{googledriveurl}}{{image.image_url}}"
-                 {% endif %}
-                 {% endfor %}
-              alt="">
-          </div>
+            {% endfor %}
+            alt="">
+        </div>
       </div>
-      {% endfor %}
+    {% endfor %}
+  </div>
 </div>
-</div>
+
 <!-- 
   <div class="container-lg">
     {% for service in services %}
