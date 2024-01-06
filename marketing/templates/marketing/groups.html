@@ -11,20 +11,26 @@
     {% endif %}
     <div class="row">
       <div class="col-md-3">
+        <p><a href="{% url 'marketing:whatsapp_list' title='all'%}" class="btn btn-primary btn-sm"
+          >ALL
+        </a></p>
+      </div>
+      <div class="col-md-2">
+        <p><a href="{% url 'marketing:whatsapp_list' title='active_groups'%}" class="btn btn-primary btn-sm"
+          >ACTIVE GROUPS
+        </a></p>
+      </div>
+      <div class="col-md-2">
         <p><a href="{% url 'marketing:whatsapp_new'%}" class="btn btn-primary btn-sm"
           >ADD GROUP
         </a></p>
       </div>
-      <div class="col-md-3">
+      <div class="col-md-2">
         <p><a href="{% url 'marketing:ads_list'%}" class="btn btn-primary btn-sm"
           >ADD AD
         </a></p>
       </div>
-      <div class="col-md-3">
-        <p><a href="{% url 'main:layout'%}" class="btn btn-primary btn-sm"
-          >BACK
-        </a></p>
-      </div>
+
       <div class="col-md-3">
         TOTAL PARTICIPANTS
         <p>
@@ -55,7 +61,7 @@
         </tr>
       </thead>
       <tbody>
-        {% for obj in  whatsaapitems  %}
+        {% for obj in  whatsapp_items  %}
             <tr>
               <!-- <td>{{obj.created_at|date:"F d, Y"}}</td> -->
               <!-- <td>{{obj.id}}</td> -->

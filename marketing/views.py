@@ -120,17 +120,46 @@ def delete_whatsapp(request,slug):
     return redirect('marketing:whatsapp_list')
 
 @login_required
-def whatsapp_groups(request):
-    whatsapp_groups = Whatsapp_Groups.objects.annotate(
-    participant_count=Cast('participants', IntegerField())).order_by('-participant_count')
-    total_participants = Whatsapp_Groups.objects.aggregate(
-    total=Sum(Cast('participants', IntegerField()))
+def whatsapp_groups(request,title):
+    # Extract necessary path information and subtitles for page context
+    path_list, sub_title, pre_sub_title = path_values(request)
+    # Fetch active groups and total participant count if the subtitle indicates 'active_groups'
+    if title == 'active_groups':
+        whatsapp_groups = Whatsapp_Groups.objects.filter(is_active=True)
+        participant_count_filter = {'is_active': True}
+    else:
+        # For any other subtitle, fetch all groups and order by participant count
+        whatsapp_groups = Whatsapp_Groups.objects.annotate(
+            participant_count=Cast('participants', IntegerField())
+        ).order_by('-participant_count')
+        participant_count_filter = {}
+
+    # Calculate the total participants across all fetched groups
+    total_participants = whatsapp_groups.aggregate(
+        total=Sum(Cast('participants', IntegerField()))
     )['total']
-    context={
-            "whatsaapitems":whatsapp_groups,
-            "total_participants":total_participants
+    
+    # Prepare the context data for rendering
+    print(whatsapp_groups)
+    context = {
+        "whatsapp_items": whatsapp_groups,
+        "total_participants": total_participants
     }
-    return render(request, 'marketing/groups.html',context)
+    
+    return render(request, 'marketing/groups.html', context)
+
+# @login_required
+# def whatsapp_groups(request):
+#     whatsapp_groups = Whatsapp_Groups.objects.annotate(
+#     participant_count=Cast('participants', IntegerField())).order_by('-participant_count')
+#     total_participants = Whatsapp_Groups.objects.aggregate(
+#     total=Sum(Cast('participants', IntegerField()))
+#     )['total']
+#     context={
+#             "whatsaapitems":whatsapp_groups,
+#             "total_participants":total_participants
+#     }
+#     return render(request, 'marketing/groups.html',context)
 
 # @login_required
 # def whatsapp_groups(request):
