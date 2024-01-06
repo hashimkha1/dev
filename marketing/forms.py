@@ -11,6 +11,7 @@ class WhatsappForm(forms.ModelForm):
                     "type",
                     "group_name",
                     "group_id",
+                    "participants",
                     "is_active",
                     "is_featured",
         ]
@@ -26,21 +27,22 @@ class AdsForm(forms.ModelForm):
         model = Ads #Whatsapp
         fields = [
             "ad_title",
+            "bulletin",
             "company",
             "short_name",
+            "description",
             "company_site",
+            "message",
             "meeting_link",
             "video_link",
             "signature",
             "image_name",
-            "message",
-            "bulletin",
             "link",
             "is_active",
             "is_featured",
         ]
         labels = {
                     "image_name":"Select image_name",
-                    "bulletin":"What does your company do?",
-                    "message":"Describe the message to be posted",
+                    "description":"What does your company do?",
+                    "message":"Describe the ad message to be posted",
 }   

@@ -378,8 +378,10 @@ class MonthForm(forms.Form):
 
     YEAR = (
         ('0', 'Year'),
+        ('2021', '2021'),
         ('2022', '2022'),
         ('2023', '2023'),
+        ('2024', '2024'),
     )
     month = forms.ChoiceField(choices=MONTHS)
     year = forms.ChoiceField(choices=YEAR)

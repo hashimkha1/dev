@@ -1023,7 +1023,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
 
     if month == 1:
         month = 12
-        year -= year
+        year -= 1
     else:
         month -= 1
 
@@ -1573,8 +1573,12 @@ def clientassessment(request):
     if request.method == "POST":
         previous_user = CustomerUser.objects.filter(email=request.POST['email'])
 
+        client_assesment = ClientAssessment.objects.filter(email=request.POST['email'])
 
-        form = ClientAssessmentForm(request.POST, request.FILES)
+        if client_assesment.exists():
+            form = ClientAssessmentForm(request.POST, request.FILES, instance=client_assesment.first())
+        else:
+            form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             
             totalpoints, developerpoints =compute_total_points(form)
@@ -1587,11 +1591,9 @@ def clientassessment(request):
                 form.instance.last_name = user.last_name
                 if user.category == 2: #coda staff member
                     form.instance.totalpoints = developerpoints
-
-                # messages.success(request, f'User already exists with this email') 
                 
             form.save()
-
+            
             if totalpoints <= 35:
                 post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
                 message = f"Hi Future Client,{post}."

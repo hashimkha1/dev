@@ -36,7 +36,7 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_new'%}">Add New Group</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list'%}">See Groups</a>
+                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list' title='all' %}">See Groups</a>
                         <div class="dropdown-divider"></div>
                         {% if request.user.is_superuser %}
                         <a class="dropdown-item" target="_blank" href="{%url 'getdata:whatsappgroups'%}">Populate Groups</a>
@@ -72,13 +72,13 @@
                     <button type="btn" class="btn-primary">Select</button>
                   </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp'%}"> Run to Publish</a>
+                        <a class="dropdown-item" target="_blank" href="#"> Run to Publish</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_new'%}">Add New Group</a>
+                        <a class="dropdown-item" target="_blank" href="#">Add New Group</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list'%}">See Groups</a>
+                        <a class="dropdown-item" target="_blank" href="#">See Groups</a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1JBWX_QI6BBJrJhtZdahYRzFpFRXpe-lK/edit#slide=id.p2">PPT-Automation</a>
+                        <a class="dropdown-item" target="_blank" href="#">PPT-Automation</a>
                     </div>
                 </li>
             </ul>
@@ -105,15 +105,15 @@
                     >
                     <button type="btn" class="btn-primary">Select</button>
                   </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp'%}"> Run to Publish</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_new'%}">Add New Group</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list'%}">See Groups</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1JBWX_QI6BBJrJhtZdahYRzFpFRXpe-lK/edit#slide=id.p2">PPT-Automation</a>
-                    </div>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropDown">
+                    <a class="dropdown-item" target="_blank" href="#"> Run to Publish</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="#">Add New Group</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="#">See Groups</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" target="_blank" href="#">PPT-Automation</a>
+                </div>
                 </li>
             </ul>
           </div>

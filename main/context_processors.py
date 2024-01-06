@@ -54,9 +54,9 @@ def fetch_service_descriptions():
     return context_data
 
 
-
 def services(request):
-    services = Service.objects.all()
+    # services = Service.objects.all()
+    services = Service.objects.filter(is_active=True)
     # analysis_service = Service.objects.get(slug='data_analysis')
     # service_categories = ServiceCategory.objects.filter(service=analysis_service.id)
     # plans = Pricing.objects.filter(category__in=service_categories)

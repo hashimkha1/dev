@@ -18,9 +18,10 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
-          <th>ad_title</th>
+          <th>AD Title</th>
+          <th>Long_Title</th>
           <th>company</th>
-          <th>short_name</th>
+          <!-- <th>short_name</th> -->
           <th>company_site</th>
           <!-- <th>meeting_link</th> -->
           <!-- <th>video_link</th> -->
@@ -29,7 +30,7 @@
           <th>message</th> -->
           <th>image_name</th>
           <!-- <th>link</th> -->
-          <th>created_at</th>
+          <!-- <th>created_at</th> -->
           <th>updated_at</th>
           <th>is_active</th>
           <th>is_featured</th>
@@ -39,7 +40,8 @@
         {% for obj in  ad_items  %}
             <tr>
               <td>{{obj.ad_title}}</td>
-              <td>{{obj.company}}</td>
+              <td>{{obj.bulletin}}</td>
+              <!-- <td>{{obj.company}}</td> -->
               <td>{{obj.short_name}}</td>
               <td>{{obj.company_site}}</td>
               <!-- <td>{{obj.meeting_link}}</td>
@@ -49,7 +51,7 @@
               <td>{{obj.message}}</td> -->
               <td>{{obj.image_name}}</td>
               <!-- <td>{{obj.link}}</td> -->
-              <td>{{obj.created_at}}</td>
+              <!-- <td>{{obj.created_at}}</td> -->
               <td>{{obj.updated_at}}</td>
               <td>{{obj.is_active}}</td>
               <td>{{obj.is_featured}}</td>
