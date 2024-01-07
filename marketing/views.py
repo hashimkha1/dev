@@ -187,13 +187,17 @@ def runwhatsapp(request):
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
     ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
+    # print("ads_items==========>",ads_items)
     for ad in ads_items:
-        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
+        # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
+        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name,is_active=True)
+        # print("whatsapp_groups==========>",whatsapp_groups)
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
+        group_names = list(whatsapp_groups.values_list('group_name', flat=True))
         image_url = ad.image_name.image_url
         full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
         message = ad.message
-        company_description = ad.bulletin if ad.bulletin else ''
+        company_description = ad.description if ad.description else ''
         link = ad.link
         # topic=ad.ad_title if ad.ad_title else 'General'
         topic=ad.bulletin if ad.bulletin else 'General'
@@ -204,6 +208,7 @@ def runwhatsapp(request):
         video_link= f"Here is the recorded video:{ad.video_link}.Enjoy!" if ad.video_link else ''
         join_link= f"Join Zoom Meeting \n:{ad.meeting_link}" if ad.meeting_link else ''
         post= f'{company}-{short_name}\n\n{company_description}\n\n{topic}\n\n{message}\n\n{video_link}\n{join_link}\n\nFor questions, please reach us at: {company_site}\n{signature}'
+
         for group_id in group_ids:
             if image_url:
                 message_type = "media"
@@ -238,7 +243,7 @@ def runwhatsapp(request):
             if response.status_code != 200:
                 print(f"Error sending message to group {group_id}")
 
-    message = f"Hi, {request.user}, this post {post} have been sent to your groups."
+    message = f"Hi, {request.user}, your ads have been sent to your selected groups"
     context = {"title": title, "message": message}
     return render(request, "main/errors/generalerrors.html", context)
 

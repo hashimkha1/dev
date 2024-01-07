@@ -30,6 +30,7 @@ class Service(models.Model):
     slug = models.SlugField(default='slug',max_length=255)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Services"
@@ -45,6 +46,8 @@ class ServiceCategory(models.Model):
     name = models.CharField(max_length=254)
     slug = models.SlugField(null=True, blank=True,unique=True)
     description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = "Service Categories"
@@ -76,6 +79,33 @@ class Pricing(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# class Pricing(models.Model):
+#     class Contract(models.IntegerChoices):
+#         One_month = 1
+#         Two_months = 2
+#         Three_months = 3
+#         open = 12
+#     serial = models.PositiveIntegerField(null=True, blank=True)
+#     title = models.CharField(max_length=254)
+#     description = models.TextField(null=True, blank=True)
+#     category = models.ForeignKey(ServiceCategory, on_delete=models.CASCADE,default=1)
+#     # subcategory = models.CharField(default='Full Course', max_length=200, null=True, blank=True)
+#     premium_price = models.FloatField(null=True, blank=True)
+#     silver_oprice = models.FloatField(null=True, blank=True)
+#     price = models.FloatField()
+#     discounted_price = models.FloatField(null=True, blank=True)
+#     duration =  models.PositiveIntegerField(null=True, blank=True)
+#     contract_length = models.IntegerField(choices=Contract.choices, default=3)
+#     is_direct = models.BooleanField(default=False)
+#     is_active = models.BooleanField(default=True)
+
+#     class Meta:
+#         verbose_name_plural = "Pricing"
+
+#     def __str__(self):
+#         return self.title
 
 
 class Testimonials(models.Model):
