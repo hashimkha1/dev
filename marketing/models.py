@@ -47,6 +47,7 @@ class Whatsapp_Groups(models.Model):
         ("Job_Support", "Job_Support"),
         ("interview", "interview"),
         ("mentorship", "mentorship"),
+        ("automation", "automation"),
         ("other", "other"),
     ]
     id = models.AutoField(primary_key=True)
