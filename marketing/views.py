@@ -205,7 +205,7 @@ def runwhatsapp(request):
         short_name=ad.short_name if ad.short_name else 'CODA'
         signature=ad.signature if ad.signature else 'Chris Maghas-AI|Automation Expert'
         company_site=ad.company_site if ad.signature else 'www.codanalytics.net/accounts/join'
-        video_link= f"Here is the recorded video:{ad.video_link}.Enjoy!" if ad.video_link else ''
+        video_link= f"Here is the recorded video:{ad.video_link}" if ad.video_link else ''
         join_link= f"Join Zoom Meeting \n:{ad.meeting_link}" if ad.meeting_link else ''
         post= f'{company}-{short_name}\n\n{company_description}\n\n{topic}\n\n{message}\n\n{video_link}\n{join_link}\n\nFor questions, please reach us at: {company_site}\n{signature}'
 
