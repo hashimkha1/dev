@@ -6,14 +6,17 @@
 
 <div class="col" style="padding: 10px;">
   <div class="card cardbody">
-    <form method="get">
-      {{filter.form}}
-      <button type="submit">Search</button>
-      <a href="{% url 'investing:portfoliocreate' %}" class="btn btn-primary ml-2">create</a>
+    <form class="row" method="get">
+      <div class="col-md-6">
+        {{filter.form}}
+        <button type="submit" class="btn btn-primary">Search</button>
+      </div>
+      <div class="col-md-6 d-flex justify-content-end align-items-center">
+        <a href="{% url 'investing:portfoliocreate' %}" class="btn btn-primary ml-2">Create</a>
+      </div>
     </form>
   </div>
 </div>
-
 
 
 </div>

@@ -68,6 +68,14 @@ class PortfolioForm(forms.ModelForm):
             self.fields['condition'].widget.attrs['readonly'] = False
             self.fields['strategy'].widget.attrs['readonly'] = False
             
+            condition_CHOICES = [
+                ('neutral','neutral'),
+                ('oversold','oversold'),
+                ('overbought','overbought')
+            ]
+
+            # Use ChoiceField in the form
+            self.fields['condition'] = forms.ChoiceField(choices=condition_CHOICES,)
             self.fields['action'].widget = forms.TextInput()
-            self.fields['implied_volatility_rank'].widget = forms.DecimalField()
-            self.fields['earnings_date'].widget = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
+            self.fields['implied_volatility_rank'].widget = forms.TextInput()
+            self.fields['earnings_date'].widget = forms.DateInput(attrs={'type': 'date'})
