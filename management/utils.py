@@ -15,43 +15,43 @@ logger = logging.getLogger(__name__)
 # from .models import Task
 
 # ================================client assessment==========================
-def compute_total_points(form):
+def compute_total_points(instance):
     delta=1
     totalpoints = 0
     try:
-        pc=form.instance.projectcharter-delta
+        pc=instance.projectcharter-delta
     except:
         pass
     try:
-        ra=form.instance.requirementsAnalysis-delta
+        ra=instance.requirementsAnalysis-delta
     except:
         pass
     try:
-        rpt=form.instance.reporting-delta
+        rpt=instance.reporting-delta
     except:
         pass
     try:
-        etl=form.instance.etl-delta
+        etl=instance.etl-delta
     except:
         pass
     try:
-        db=form.instance.database-delta
+        db=instance.database-delta
     except:
         pass
     try:
-        test=form.instance.testing-delta
+        test=instance.testing-delta
     except:
         pass
     try:
-        dep=form.instance.deployment-delta
+        dep=instance.deployment-delta
     except:
         pass
     try:
-        frontend=form.instance.frontend-delta
+        frontend=instance.frontend-delta
     except:
         pass
     try:
-        backend=form.instance.backend-delta
+        backend=instance.backend-delta
     except:
         pass
     
@@ -63,13 +63,13 @@ def compute_total_points(form):
     #here 1 sprint = 10 days
     #1 month = 2 sprint
     #we minus 1 year of experiance and only half of it will be counted because half of the year counted as learning
-
     try:
         developer_point = 0
-        if form.instance.it_exp > 0:
+      
+        if instance.it_exp > 0:
             one_year_point = 1440 #24*10*6
             
-            it_expiriance = form.instance.it_exp-1
+            it_expiriance = instance.it_exp-1
             developer_point = it_expiriance*one_year_point + (one_year_point/2)
 
     except:
