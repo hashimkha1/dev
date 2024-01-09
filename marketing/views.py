@@ -1,5 +1,6 @@
 import os,requests
 import json
+import logging
 # from django.core.management import call_command
 from django.db.models import IntegerField, F,Sum
 from django.db.models.functions import Cast
@@ -21,7 +22,7 @@ from django.views.generic import (
 from main.context_processors import images
 from django.contrib.auth import get_user_model
 User=get_user_model()
-
+logger = logging.getLogger(__name__)
 #====================General===========================
 def marketing(request):
     return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
@@ -187,13 +188,15 @@ def runwhatsapp(request):
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
     ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
-    # print("ads_items==========>",ads_items)
+    print("ads_items==========>",ads_items)
     for ad in ads_items:
         # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
         whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name,is_active=True)
-        # print("whatsapp_groups==========>",whatsapp_groups)
+        print("whatsapp_groups==========>",whatsapp_groups)
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
         group_names = list(whatsapp_groups.values_list('group_name', flat=True))
+        print("whatsapp_NAMES==========>",group_names)
+        
         image_url = ad.image_name.image_url
         full_image__url=f'http://drive.google.com/uc?export=view&id={image_url}'
         message = ad.message
@@ -210,6 +213,19 @@ def runwhatsapp(request):
         post= f'{company}-{short_name}\n\n{company_description}\n\n{topic}\n\n{message}\n\n{video_link}\n{join_link}\n\nFor questions, please reach us at: {company_site}\n{signature}'
 
         for group_id in group_ids:
+            # Validate data
+            if not group_id:
+                logger.error("Group ID is missing.")
+                continue
+
+            if not full_image__url:
+                logger.error(f"image__url content is missing for group {group_id}.")
+                continue
+
+            if not post:
+                logger.error(f" post is missing for group {group_id}.")
+                continue
+
             if image_url:
                 message_type = "media"
                 message_content = full_image__url
@@ -239,9 +255,10 @@ def runwhatsapp(request):
             }
             url = f"https://api.maytapi.com/api/{product_id}/{screen_id}/sendMessage"
             response = requests.post(url, headers=headers, data=json.dumps(payload))
-
             if response.status_code != 200:
-                print(f"Error sending message to group {group_id}")
+                error_message=f"Error sending message to group {group_id}. Details: {response.content}"
+                logger.error(error_message)
+                print(error_message)
 
     message = f"Hi, {request.user}, your ads have been sent to your selected groups"
     context = {"title": title, "message": message}
