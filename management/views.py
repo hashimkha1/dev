@@ -1,5 +1,7 @@
 import math
 import calendar,string,requests
+from typing import Any
+from django.db.models.query import QuerySet
 from django.contrib import messages
 from django import template
 from datetime import date, datetime, timedelta
@@ -63,7 +65,7 @@ from management.utils import (email_template,paytime,payinitial,paymentconfigura
                                calculate_total_pay,get_bonus_and_summary,compute_total_points
                         )
 from main.utils import countdown_in_month,path_values
-
+from django.db.models import Subquery, OuterRef
 import logging
 logger = logging.getLogger(__name__)
 
@@ -649,7 +651,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
 
     if selected_month == 1:
         selected_month = 12
-        selected_year -= selected_year
+        selected_year -= 1
     else:
         selected_month -= 1
 
@@ -1578,7 +1580,7 @@ def clientassessment(request):
             form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             
-            totalpoints, developerpoints =compute_total_points(form)
+            totalpoints, developerpoints =compute_total_points(form.instance)
             form.instance.totalpoints = totalpoints
             
             if previous_user.exists():
@@ -1612,8 +1614,30 @@ def clientassessment(request):
     return render(request, "management/departments/hr/clientassessment_form.html", {"form": form})
 
 class ClientAssessmentListView(ListView):
-    queryset=ClientAssessment.objects.all().order_by("-rating_date")
     template_name = "management/departments/hr/clientassessment.html"
+
+    def get_queryset(self) -> QuerySet[Any]:
+        # import pdb; pdb.set_trace()
+        queryset = ClientAssessment.objects.all().order_by("-rating_date").annotate(
+            usser_category = Subquery(CustomerUser.objects.filter(email=OuterRef('email')).values('category')[:1])
+        )
+        
+        for instance in queryset:
+            
+            totalpoints, developerpoints = compute_total_points(instance)
+
+            if instance.usser_category != 2 and instance.totalpoints != totalpoints:
+
+                instance.totalpoints = totalpoints
+                instance.save()
+            
+            elif instance.usser_category == 2 and instance.totalpoints != developerpoints:
+
+                instance.totalpoints = developerpoints
+                instance.save()
+
+        
+        return queryset
 
 class AssessmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ClientAssessment

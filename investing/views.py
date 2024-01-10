@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F
+from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F, Case, When, Value
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
@@ -44,6 +44,7 @@ from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
 from getdata.models import Editable
+from .filters import PortfolioFilter
 
 register = template.Library()
 User=get_user_model
@@ -500,10 +501,15 @@ def credit_spread_update(request, pk):
         'title': 'Update Credit spread',
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
+
 from decimal import Decimal
-def calculate_remaining_amount(query_set, username):
+def calculate_remaining_amount(query_set, username, exclude_symbol=None):
+    
     total_amount = 20000
     investment_threshold = 10
+
+    if exclude_symbol:
+        query_set=query_set.exclude(symbol=exclude_symbol)
 
     investor = Investor_Information.objects.filter(investor__username=username)
     if not investor.exists():
@@ -518,10 +524,54 @@ def calculate_remaining_amount(query_set, username):
         total_amount = investor.first().total_amount
         investment_threshold = investor.first().investment_threshold
         
-    invested_amount = query_set.aggregate(total_amount=Sum('amount'))['total_amount'] if query_set.aggregate(total_amount=Sum('amount'))['total_amount'] else 0
+    invested_amount = query_set.filter(is_active=True).aggregate(total_amount=Sum('amount'))['total_amount'] if query_set.aggregate(total_amount=Sum('amount'))['total_amount'] else 0
     threshold_amount = total_amount*investment_threshold/100
     
-    return total_amount, investment_threshold, invested_amount, threshold_amount, Decimal(invested_amount)- Decimal(threshold_amount)
+    return total_amount, investment_threshold, invested_amount, threshold_amount, Decimal(threshold_amount) - Decimal(invested_amount)
+
+@login_required
+def portfolioCreate(request):
+
+    if request.method == 'POST':
+        data = request.POST
+        condition_dict = {
+            '-1':'neutral',
+            '1': 'oversold',
+            '0': 'overbought',
+        }
+        print(data)
+        query_set = Portifolio.objects.filter(user=request.user)
+        total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, request.user.username, data['symbol'])
+        form = PortfolioForm(data)
+        reversed_condition_dict = {value: key for key, value in condition_dict.items()}
+        # import pdb; pdb.set_trace()
+        if form.is_valid():
+            
+            if not form.instance.is_active or form.instance.amount <= remaining_investment_amount:
+                form.instance.condition = reversed_condition_dict[form.instance.condition]
+
+                form.instance.user = request.user
+                
+                form.save()
+                success_url = reverse('investing:my_portfolio')
+            else:
+
+                form.add_error(None, f"you exceed your limit of investment(max limit:{threshold_amount}). try to reduce this investment amount or close another investment.")
+                return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+        else:
+            # Form is not valid
+            return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
+        return redirect(success_url)
+    
+    else:
+        form = PortfolioForm(initial={'create':True})
+        context = {
+            'form': form,
+        }
+
+        return render(request, 'main/snippets_templates/generalform.html', context)
 
 @login_required
 def portfolio(request, symbol):
@@ -552,13 +602,13 @@ def portfolio(request, symbol):
         data = request.POST
         
         query_set = Portifolio.objects.filter(user=request.user)
-        total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, request.user.username)
+        total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, request.user.username, symbol)
         form = PortfolioForm(data)
         reversed_condition_dict = {value: key for key, value in condition_dict.items()}
 
         if form.is_valid():
             
-            if form.instance.amount < remaining_investment_amount:
+            if not form.instance.is_active or form.instance.amount <= remaining_investment_amount:
                 form.instance.condition = reversed_condition_dict[form.instance.condition]
                 
                 if symbol_in_portfolio:
@@ -567,6 +617,15 @@ def portfolio(request, symbol):
                     
                 else:
                     form.instance.user = request.user
+                # form.instance.amount=form.instance.long_strike-form.instance.short_strike
+                try:
+                    # strategy_type='Debit Spread' if form.instance.long_strike <= form.instance.short_strike else 'Credit Spread'
+                    amount=form.instance.long_strike-form.instance.short_strike
+                except:
+                    amount=0
+                # print("amount",strategy_type,amount,form.instance.amount,form.instance.long_strike,form.instance.short_strike)
+                form.instance.amount=amount*100
+                # form.instance.strategy=strategy_type
                 
                 form.save()
                 success_url = reverse('investing:my_portfolio')
@@ -611,6 +670,7 @@ def portfolio(request, symbol):
                         'action': symbol_data.action if stock_model['model'] != 'credit_spread' else symbol_data.strategy,
                         'implied_volatility_rank': symbol_data.implied_volatility_rank if stock_model['model'] != 'credit_spread' else symbol_data.rank,
                         'earnings_date': symbol_data.earnings_date,
+                        'strategy': model
                     }
             # Pass the initial values to the form when creating an instance
             form = PortfolioForm(initial=initial_values)
@@ -629,14 +689,23 @@ class PortfolioListView(ListView):
     template_name = "investing/portfolioList.html"
     context_object_name = "portfolio"
     ordering = ["created_at"]
+    # filterset_class = PortfolioFilter
 
     def get_queryset(self):
         username = self.request.user.username
         if self.request.user.is_superuser:
             username = self.request.GET.get('username', None)
         # Combine the custom query with the existing queryset
-        query = super().get_queryset().filter(is_active=True)
-
+        query = super().get_queryset().annotate(
+            condition_name=Case(
+                When(Q(condition=1), then=Value('oversold')),
+                When(Q(condition=0), then=Value('overbought')),
+                When(Q(condition=-1), then=Value('neutral')),
+                default=F('condition'),  # Default case, adjust as needed
+                output_field=CharField()
+            )
+        )
+        
         if self.request.user.is_superuser and username is None:
             return query
         else:
@@ -645,12 +714,11 @@ class PortfolioListView(ListView):
     def get_context_data(self, **kwargs):
         # Call the base implementation first to get the default context
         context = super().get_context_data(**kwargs)
-        
         query_set = self.get_queryset()
         username = self.request.user.username
         if self.request.user.is_superuser:
             username = self.request.GET.get('username', self.request.user.username)
-
+        
         total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, username)
         remaining_amount = total_amount - invested_amount
         total_theta = query_set.aggregate(total_theta=Sum((F('long_leg_theta') - F('short_leg_theta')) * F('number_of_contract')))['total_theta']
@@ -664,7 +732,11 @@ class PortfolioListView(ListView):
         context['total_theta'] = total_theta if total_theta else 0
         context['total_delta'] = total_delta if total_delta else 0
         context['hide_summary'] = False if self.request.user.is_superuser and self.request.GET.get('username') is None else True
-
+        
+        filter = PortfolioFilter(self.request.GET, query_set)
+        context["filter"] = filter
+        query_set = filter.qs
+        context['portfolio'] = query_set
         return context
     
 class oversold_update(UpdateView):
