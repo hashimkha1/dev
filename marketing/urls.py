@@ -17,7 +17,8 @@ urlpatterns = [
     #---------------WHATSAPP--------------------#
     path('email_ads/', views.send_email_ads, name='email_ads'),
     path('whatsapp/', views.runwhatsapp, name='whatsapp'),
-    path('whatsapplist/', views.whatsapp_groups, name='whatsapp_list'),
+    path('groups/<str:title>', views.whatsapp_groups, name='whatsapp_list'),
+    path('refresh_groups/', views.refresh_whatsapp_groups, name='refresh_groups'),
     path('newwhatsapp/', views.whatsappCreateView.as_view(template_name='main/form.html'), name='whatsapp_new'),
     # path('whatsapp/<str:slug>/', views.whatsappUpdateView.as_view(template_name='main/snippets_templates/form.html'), name='whatsapp_update'),
     path('delete_whatsapp/<str:slug>/', views.delete_whatsapp, name='delete_whatsapp'),
