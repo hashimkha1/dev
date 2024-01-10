@@ -78,6 +78,19 @@ class Pricing(models.Model):
         return self.title
 
 
+class PricingSubPlan(TimeStampedModel):
+    my_pricing = models.ForeignKey(Pricing, on_delete=models.CASCADE)
+    title = models.CharField(max_length=254)
+    description = models.TextField(null=True, blank=True)
+    price = models.FloatField()
+    
+    class Meta:
+        verbose_name_plural = "PricingSubPlan"
+
+    def __str__(self):
+        return self.title + '-' + self.my_pricing.title
+
+
 class Testimonials(models.Model):
     # asset_id = models.ForeignKey(Assets, on_delete=models.CASCADE,default=1)
     title = models.CharField(max_length=100)

@@ -538,7 +538,6 @@ def portfolioCreate(request):
             '1': 'oversold',
             '0': 'overbought',
         }
-        print(data)
         query_set = Portifolio.objects.filter(user=request.user)
         total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, request.user.username, data['symbol'])
         form = PortfolioForm(data)
