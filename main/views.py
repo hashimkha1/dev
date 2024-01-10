@@ -13,8 +13,7 @@ from data.models import ClientAssessment
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
-                    generate_database_response,generate_chatbot_response,upload_image_to_drive
-)
+                    generate_database_response,generate_chatbot_response,upload_image_to_drive)
 from .models import Testimonials
 from getdata.models import Logs
 from coda_project import settings
@@ -32,8 +31,8 @@ from django.views.generic import (
         DeleteView,
         ListView,
         DetailView,
-        UpdateView,
-    )
+        UpdateView,)
+
 from .forms import *
 from django.http import JsonResponse
 from django.apps import apps
