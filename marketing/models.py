@@ -5,8 +5,12 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from random import randint
 # # Create your models here.
+from django.contrib.auth import get_user_model
+# from finance.utils import get_exchange_rate
+User = get_user_model() 
 
 class Ads(models.Model):
+    my_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     company = models.CharField(max_length=100, null=True, blank=True)
     ad_title = models.CharField(max_length=100, null=True, blank=True)
     bulletin = models.CharField(max_length=100, null=True, blank=True)
@@ -25,6 +29,7 @@ class Ads(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     is_active = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
+    #in future we required field that help us to define which platform this ads coming
 
     def __str__(self):
         return str(self.ad_title)

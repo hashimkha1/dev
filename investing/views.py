@@ -515,9 +515,12 @@ def calculate_remaining_amount(query_set, username, exclude_symbol=None):
         default_value = Editable.objects.filter(name='investor_default')
 
         if default_value.exists():
-            default_value =  default_value.first()
-            total_amount = default_value.get('investment_total_amount', 20000)
-            investment_threshold = default_value.get('investment_threshold', 10)
+            try:
+                default_value =  default_value.first()
+                total_amount = default_value.get('investment_total_amount', 20000)
+                investment_threshold = default_value.get('investment_threshold', 10)
+            except:
+                pass
     else:
 
         total_amount = investor.first().total_amount

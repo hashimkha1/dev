@@ -96,7 +96,6 @@ def update_link(service_array, user_payment_history, service_categories):
 
 @login_required
 def bigdata(request):
-
 	if request.user.category != 2:
 		payment_history = Payment_History.objects.filter(customer_id=request.user)
 		service_categories = dict(ServiceCategory.objects.values_list('slug', 'id'))

@@ -18,6 +18,9 @@
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
+          {% if request.user.is_superuser %}
+          <th>User</th>
+          {% endif %}
           <th>AD Title</th>
           <th>Long_Title</th>
           <th>company</th>
@@ -39,6 +42,9 @@
       <tbody>
         {% for obj in  ad_items  %}
             <tr>
+              {% if request.user.is_superuser %}
+              <th>{{obj.my_user}}</th>
+              {% endif %}
               <td>{{obj.ad_title}}</td>
               <td>{{obj.bulletin}}</td>
               <!-- <td>{{obj.company}}</td> -->

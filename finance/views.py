@@ -613,7 +613,8 @@ def pay(request, *args, **kwargs):
             payment_fees=total_fee,
             down_payment=downpayment,
             student_bonus=0,
-            plan= request.POST.get('service_category_id', 999), # added service_category id
+            plan=request.POST.get('service_category_id', 999), # added service_category id
+			subplan=request.POST.get('subplan_id', None),
             fee_balance=fee_balance,
             payment_method='mpesa',
             contract_submitted_date=date.today(),
@@ -655,6 +656,7 @@ def paymentComplete(request):
     down_payment = payments.down_payment
     studend_bonus = payments.student_bonus
     plan = payments.plan
+    subplan = payments.subplan
     fee_balance = payments.fee_balance
     payment_mothod = payments.payment_method
     contract_submitted_date = payments.contract_submitted_date
@@ -668,6 +670,7 @@ def paymentComplete(request):
         down_payment=down_payment,
         student_bonus=studend_bonus,
         plan=plan,
+		subplan=subplan,
         fee_balance=fee_balance,
         payment_method=payment_mothod,
         contract_submitted_date=contract_submitted_date,

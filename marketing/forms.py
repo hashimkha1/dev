@@ -23,6 +23,9 @@ class WhatsappForm(forms.ModelForm):
 
 
 class AdsForm(forms.ModelForm):
+    is_featured = forms.BooleanField(widget=forms.CheckboxInput(attrs={'disabled': 'disabled'}), required = False)
+    is_active = forms.BooleanField(widget=forms.CheckboxInput(attrs={'disabled': 'disabled'}), required = False)
+
     class Meta:
         model = Ads #Whatsapp
         fields = [
@@ -45,4 +48,16 @@ class AdsForm(forms.ModelForm):
                     "image_name":"Select image_name",
                     "description":"What does your company do?",
                     "message":"Describe the ad message to be posted",
-}   
+        }   
+        
+    def __init__(self, *args, **kwargs):
+        
+        is_superuser = kwargs.pop('user', None)
+        
+        super(AdsForm, self).__init__(*args, **kwargs)
+        if is_superuser:
+            self.fields['is_featured'].widget.attrs['disabled'] = False
+            self.fields['is_active'].widget.attrs['disabled'] = False
+
+            
+            

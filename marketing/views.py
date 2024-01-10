@@ -1,7 +1,7 @@
 import os,requests
 import json
 # from django.core.management import call_command
-from django.db.models import IntegerField, F,Sum
+from django.db.models import IntegerField, F,Sum, Q
 from django.db.models.functions import Cast
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
@@ -20,6 +20,10 @@ from django.views.generic import (
     )
 from main.context_processors import images
 from django.contrib.auth import get_user_model
+from finance.models import Payment_History
+from main.models import PricingSubPlan
+from .utils import update_ads_by_pricing
+
 User=get_user_model()
 
 #====================General===========================
@@ -34,8 +38,23 @@ class AdsCreateView(LoginRequiredMixin, CreateView):
     form_class=AdsForm
     # fields = "__all__"
 
+    def get_success_url(self):
+        return reverse("marketing:ads_list")
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user.is_superuser
+        return kwargs
+
     def form_valid(self, form):
-        form.instance.user = self.request.user
+        form.instance.my_user = self.request.user
+        if not self.request.user.is_superuser:
+            
+            if not self.request.user.is_superuser:
+                is_featured, is_active = update_ads_by_pricing(form.instance.my_user)
+                form.instance.is_featured = is_featured
+                form.instance.is_active = is_active
+
         return super().form_valid(form)
 
 
@@ -43,8 +62,19 @@ class AdsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Ads # Whatsapp 
     form_class=AdsForm
 
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user.is_superuser
+        return kwargs
+    
     def form_valid(self, form):
         form.instance.username = self.request.user
+        
+        if not self.request.user.is_superuser:
+            is_featured, is_active = update_ads_by_pricing(form.instance.my_user)
+            form.instance.is_featured = is_featured
+            form.instance.is_active = is_active
+            
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -67,7 +97,11 @@ def delete_ads(request,id):
 
 @login_required
 def ads(request):
-    ad_items=Ads.objects.all()
+    if request.user.is_superuser:
+        
+        ad_items=Ads.objects.all()
+    else:
+        ad_items=Ads.objects.filter(my_user=request.user)
     context={
             "ad_items":ad_items
     }
@@ -186,11 +220,21 @@ def runwhatsapp(request):
     screen_id = os.environ.get('MAYTAPI_SCREEN_ID')
     token = os.environ.get('MAYTAPI_TOKEN')
     title = 'WHATSAPP'
-    ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
+    # ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
+    ads_items = Ads.objects.filter(image_name__is_active=True, my_user=request.user).filter(Q(is_active=True) | Q(is_featured=True))
     # print("ads_items==========>",ads_items)
     for ad in ads_items:
         # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
-        whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name,is_active=True)
+        # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name,is_active=True)
+    
+        if ad.is_featured:
+            whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name).filter(Q(is_active=True) | Q(is_featured=True))
+        elif ad.is_active:
+            whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name).filter(is_active=True)
+        else:
+            whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name).annotate(
+                participant_count=Cast('participants', IntegerField())
+            ).filter(participant_count__lt=150)
         # print("whatsapp_groups==========>",whatsapp_groups)
         group_ids = list(whatsapp_groups.values_list('group_id', flat=True))
         group_names = list(whatsapp_groups.values_list('group_name', flat=True))
