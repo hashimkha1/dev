@@ -501,6 +501,7 @@ def credit_spread_update(request, pk):
         'title': 'Update Credit spread',
     }
     return render(request, 'main/snippets_templates/generalform.html', context)
+
 from decimal import Decimal
 def calculate_remaining_amount(query_set, username, exclude_symbol=None):
     
@@ -618,6 +619,15 @@ def portfolio(request, symbol):
                     
                 else:
                     form.instance.user = request.user
+                # form.instance.amount=form.instance.long_strike-form.instance.short_strike
+                try:
+                    # strategy_type='Debit Spread' if form.instance.long_strike <= form.instance.short_strike else 'Credit Spread'
+                    amount=form.instance.long_strike-form.instance.short_strike
+                except:
+                    amount=0
+                # print("amount",strategy_type,amount,form.instance.amount,form.instance.long_strike,form.instance.short_strike)
+                form.instance.amount=amount*100
+                # form.instance.strategy=strategy_type
                 
                 form.save()
                 success_url = reverse('investing:my_portfolio')

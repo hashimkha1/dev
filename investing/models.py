@@ -200,8 +200,10 @@ class Portifolio(TimeStampedModel):
     
     strategy = models.CharField(max_length=255,blank=True, null=True)
     returns = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
-    short_strike = models.CharField(max_length=255,blank=True, null=True)
-    long_strike = models.CharField(max_length=255,blank=True, null=True)
+    short_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    long_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # short_strike = models.CharField(max_length=255,blank=True, null=True)
+    # long_strike = models.CharField(max_length=255,blank=True, null=True)
 
     amount = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
     long_leg_delta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) # +

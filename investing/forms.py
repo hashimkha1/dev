@@ -21,14 +21,14 @@ class OptionsForm(forms.ModelForm):
 
 class PortfolioForm(forms.ModelForm):
     # user = forms.CharField(widget = forms.HiddenInput(), required = False)
-    action = forms.CharField(widget=forms.HiddenInput(),)   
-    implied_volatility_rank = forms.CharField(widget=forms.HiddenInput(),)
+    # action = forms.CharField(widget=forms.HiddenInput(),)   
+    # implied_volatility_rank = forms.CharField(widget=forms.HiddenInput(),)
     earnings_date = forms.CharField(widget=forms.HiddenInput(),)
     symbol = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     industry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     # strike_price = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     condition = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    strategy = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    # strategy = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     # expiry = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}))
     on_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date'}),label="Date")
     is_active = forms.BooleanField(initial=False,required=False) 
@@ -49,7 +49,7 @@ class PortfolioForm(forms.ModelForm):
             'short_strike',
             'returns',
             'comment',
-            'amount',
+            # 'amount',
             'long_leg_delta',
             'short_leg_delta',
             'long_leg_theta',
