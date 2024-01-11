@@ -33,12 +33,12 @@
           <h2 class="mt-4 mt-md-0" style="text-align: left;">{{ service.title }}</h2>
           <div class="text-content">
             <p class="me-lg-5 truncated-text" id="truncatedText{{ forloop.counter }}">
-              {{service.description|safe|truncatechars:400}}
+              {{ service.description|safe|truncatechars:400 }}
             </p>
             <p class="me-lg-5 remaining-text" id="remainingText{{ forloop.counter }}" style="display: none;">
-              {{service.description|safe}}
+              {{ service.description|safe }}
             </p>
-            <button  class=" reead-more-button" data-index="{{ forloop.counter }}">
+            <button class="reead-more-button" data-index="{{ forloop.counter }}">
               Read more
             </button>
           </div>
@@ -49,18 +49,25 @@
           {% endif %}
         </div>
         <div class="col-md-6">
-          <img class="img-fluid ps-lg-5"
+          <img id="service_{{ service.id }}" class="img-fluid ps-lg-5"
             {% for image in images %}
-              {% if image.name == service.slug %}
+              {% if image.name == service.slug and image.image_url != 'None' %}
                 src="{{ googledriveurl }}{{ image.image_url }}"
+                onerror="handleImageError(this)"
+              {% else %}
+              src=""
+                onerror="handleImageError(this); this.onerror='null';"
+
               {% endif %}
             {% endfor %}
-            alt="">
+  
+            >
         </div>
       </div>
     {% endfor %}
   </div>
 </div>
+
 
 <!-- 
   <div class="container-lg">
@@ -108,7 +115,7 @@
               <div class="carousel-card">
                 <div class="img-div p-3">
                   <span>
-                    <img src="{{googledriveurl}}{{post.writer.profile.img_url}}" class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
+                    <img onerror="handleImageErrorInsucessStory(this)" {%if post.writer.profile.img_url%} src="{{googledriveurl}}{{post.writer.profile.img_url}}" {%else%} src="{% static '/main/img/service-1.jpg' %}" {%endif%}class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
                   </span>
                 </div>
                   <h3> 
@@ -161,6 +168,30 @@
   </div>
   </div> 
 
+  <script>
+    function handleImageError(img) {
+      var parentDiv = img.parentNode; // Get the grandparent div
+      
+      // Center the content above the removed div
+      var contentDiv = parentDiv.previousElementSibling;
+  
+      if (contentDiv) {
+        contentDiv.style.textAlign = 'justify';
+        contentDiv.classList.remove('col-md-6'); // Remove the current class
+        contentDiv.classList.remove('pe-lg-5');
+        //contentDiv.classList.add('your-new-class'); // Add the new class
+      }
+      parentDiv.style.display = 'none'; // Hide the image
+  
+      // parentDiv.remove(); // Remove the grandparent div
+    }
+    function handleImageErrorInsucessStory(img) {
+
+      img.src = "{% static '/main/img/service-1.jpg' %}"
+      // parentDiv.remove(); // Remove the grandparent div
+    }
+  </script>
+  
   {% include 'main/snippets_templates/chat.html'%}
 
   </div> 

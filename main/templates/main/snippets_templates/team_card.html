@@ -20,7 +20,7 @@
                 {% if member.description %}
                     <div class="col-md-4">
                         <div class="img-div p-3">
-                            <img src="{{ googledriveurl }}{{ member.img_url }}" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
+                            <img src="{{ googledriveurl }}{{ member.img_url }}" onerror="handleImageError(this)" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
                         </div>
                         <div class="member-info">
                           <a href="#" class="member-link">
@@ -42,3 +42,9 @@
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
   {% endfor %}
 </div>
+
+<script>
+  function handleImageError(img) {
+    img.remove(); // Remove the grandparent div
+  }
+</script>

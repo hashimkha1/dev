@@ -586,7 +586,7 @@ class SQSum(Subquery):
 
 def generate_openai_description(user_profile):
     try:
-        client_assessment = ClientAssessment.objects.get(email=user_profile.user.email)
+        client_assessment = ClientAssessment.objects.filter(email=user_profile.user.email).first()
     except ClientAssessment.DoesNotExist:
         return "No ClientAssessment found for the user."
     first_name = client_assessment.first_name
@@ -741,7 +741,10 @@ def team(request):
                     total_points = ClientAssessment.objects.filter(
                         email=member.user.email
                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
-                    user_profile.description = generate_openai_description(user_profile)
+                    try:
+                        user_profile.description = generate_openai_description(user_profile)
+                    except:
+                        user_profile.description = 'null'
                     # if 'sk-S7SvCB' in openai.api_key:
                         # user_profile.description = generate_openai_description(user_profile)
                     # else:
