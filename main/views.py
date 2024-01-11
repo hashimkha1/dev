@@ -714,7 +714,7 @@ def team(request):
         junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
         elementry = list(filter(lambda v: v.total_points <= threshold_dict['junior_trainee'], all_staff_member))
 
-        support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team'] and v.total_points > team_member_value_json['support_team']-team_member_value_json['delta'], all_staff_contractor))
+        support_team = list(filter(lambda v: v.total_points > team_member_value_json['support_team'], all_staff_contractor))
 
     # number_of_staff = len(lead_team)-1
 
