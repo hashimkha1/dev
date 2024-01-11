@@ -38,6 +38,10 @@
       />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>  
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Add this in the <head> section of your HTML -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
     
 
       {% if title %}
@@ -168,6 +172,47 @@
           }
         });
       }
+    </script>
+    <!-- READMORE FOR NEWLAYOUT -->
+    <style>
+      .reead-more-button {
+        margin-bottom: 10px;
+        font-size: 19px;
+        background-color: transparent;
+        border: none;
+        color: #e7ad4a;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+    </style>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        var buttons = document.querySelectorAll('.reead-more-button');
+    
+        buttons.forEach(function(button) {
+          button.addEventListener('click', function() {
+            toggleReadMore(this);
+          });
+        });
+    
+        function toggleReadMore(button) {
+          var index = button.getAttribute('data-index');
+          var truncatedText = document.getElementById("truncatedText" + index);
+          var remainingText = document.getElementById("remainingText" + index);
+    
+          if (truncatedText && remainingText) {
+            if (truncatedText.style.display === "none") {
+              truncatedText.style.display = "block";
+              remainingText.style.display = "none";
+              button.innerHTML = "Read more";
+            } else {
+              truncatedText.style.display = "none";
+              remainingText.style.display = "block";
+              button.innerHTML = "Read less";
+            }
+          }
+        }
+      });
     </script>
 </body>
 

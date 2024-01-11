@@ -578,6 +578,7 @@ def plan_urls(request):
 #     }
 #     return render(request, "main/team_profiles.html", context)
     
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 class SQSum(Subquery):
     output_field = models.IntegerField()
     template = "(SELECT sum(point) from (%(subquery)s) _sum)"
