@@ -516,9 +516,12 @@ def calculate_remaining_amount(query_set, username, exclude_symbol=None):
         default_value = Editable.objects.filter(name='investor_default')
 
         if default_value.exists():
-            default_value =  default_value.first()
-            total_amount = default_value.get('investment_total_amount', 20000)
-            investment_threshold = default_value.get('investment_threshold', 10)
+            try:
+                default_value =  default_value.first()
+                total_amount = default_value.get('investment_total_amount', 20000)
+                investment_threshold = default_value.get('investment_threshold', 10)
+            except:
+                pass
     else:
 
         total_amount = investor.first().total_amount
@@ -539,7 +542,6 @@ def portfolioCreate(request):
             '1': 'oversold',
             '0': 'overbought',
         }
-        print(data)
         query_set = Portifolio.objects.filter(user=request.user)
         total_amount, investment_threshold, invested_amount, threshold_amount, remaining_investment_amount = calculate_remaining_amount(query_set, request.user.username, data['symbol'])
         form = PortfolioForm(data)

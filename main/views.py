@@ -293,11 +293,6 @@ def display_service(request,*args, **kwargs):
 
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
-    # print("pre_sub_title==========>",pre_sub_title)
-    # try:
-    #     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
-    # except:
-    #     payment_details=[]
     try:
         if pre_sub_title == 'bigdata':
             service_shown = ServiceCategory.objects.get(slug=sub_title).service
@@ -330,35 +325,7 @@ def service_plans(request, *args, **kwargs):
         "courses": courses,
         "services_plans": plans
     }
-    # print(request.user.category)
-    # if payment_details and request.user.category==3:
-    #     return render(request, "data/interview/interview_progress/start_interview.html",context)
-    # else:
     return render(request, "main/services/service_plan.html", context)
-
-
-# def full_course(request, *args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     # print("pre_sub_title==========>",pre_sub_title)
-#     try:
-#         service_shown = Service.objects.get(slug="data_analysis")
-#     except Service.DoesNotExist:
-#         return redirect('main:display_service', slug ='data_analysis')
-#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
-#     plans = Pricing.objects.filter(category=category_id)
-
-#     context = {}
-#     context = {
-#         "SITEURL": settings.SITEURL,
-#         "title": category_name,
-#         "packages": packages,
-#         "category_slug": category_slug,
-#         "courses": courses,
-#         "services": plans
-#     }
-#     # print(request.user.category)
-#     return render(request, "main/services/full_course.html", context)
 
 @login_required
 def job_market(request):
@@ -610,7 +577,7 @@ def plan_urls(request):
 #         "selected_class":selected_class
 #     }
 #     return render(request, "main/team_profiles.html", context)
-openai.api_key = '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'
+    
 class SQSum(Subquery):
     output_field = models.IntegerField()
     template = "(SELECT sum(point) from (%(subquery)s) _sum)"
@@ -646,14 +613,15 @@ def generate_openai_description(user_profile):
     # Take the top two IT skills
     top_it_skills = [skill[0] for skill in sorted_it_skills[:2]]
 
-    prompt = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=100
-    )
-
-    return response.choices[0].text.strip()
+    user_message = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
+    response=generate_chatbot_response(user_message)
+    # response = openai.Completion.create(
+    #     engine="text-davinci-002",
+    #     prompt=prompt,
+    #     max_tokens=100
+    # )
+    # return response.choices[0].text.strip()
+    return response.strip()
 
 def team(request):
     
@@ -772,11 +740,11 @@ def team(request):
                     total_points = ClientAssessment.objects.filter(
                         email=member.user.email
                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
-                    if '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' in openai.api_key:
-                        user_profile.description = generate_openai_description(user_profile)
-                    else:
-                        user_profile.description = f"This professional has a total rating of {total_points} points based on assessments."
-
+                    user_profile.description = generate_openai_description(user_profile)
+                    # if 'sk-S7SvCB' in openai.api_key:
+                        # user_profile.description = generate_openai_description(user_profile)
+                    # else:
+                        # user_profile.description = f"This professional has a total rating of {total_points} points based on assessments."
                     user_profile.save()
     
     if sub_title == 'client_profiles':
