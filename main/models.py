@@ -73,6 +73,7 @@ class Pricing(models.Model):
     contract_length = models.IntegerField(choices=Contract.choices, default=3)
     is_direct = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
+    redirect_url_path = models.CharField(max_length=1024, null=True)
 
     class Meta:
         verbose_name_plural = "Pricing"

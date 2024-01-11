@@ -578,6 +578,7 @@ def plan_urls(request):
 #     }
 #     return render(request, "main/team_profiles.html", context)
     
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 class SQSum(Subquery):
     output_field = models.IntegerField()
     template = "(SELECT sum(point) from (%(subquery)s) _sum)"
@@ -585,7 +586,7 @@ class SQSum(Subquery):
 
 def generate_openai_description(user_profile):
     try:
-        client_assessment = ClientAssessment.objects.get(email=user_profile.user.email)
+        client_assessment = ClientAssessment.objects.filter(email=user_profile.user.email).first()
     except ClientAssessment.DoesNotExist:
         return "No ClientAssessment found for the user."
     first_name = client_assessment.first_name
@@ -713,7 +714,7 @@ def team(request):
         junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
         elementry = list(filter(lambda v: v.total_points <= threshold_dict['junior_trainee'], all_staff_member))
 
-        support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team'] and v.total_points > team_member_value_json['support_team']-team_member_value_json['delta'], all_staff_contractor))
+        support_team = list(filter(lambda v: v.total_points > team_member_value_json['support_team'], all_staff_contractor))
 
     # number_of_staff = len(lead_team)-1
 
@@ -740,7 +741,10 @@ def team(request):
                     total_points = ClientAssessment.objects.filter(
                         email=member.user.email
                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
-                    user_profile.description = generate_openai_description(user_profile)
+                    try:
+                        user_profile.description = generate_openai_description(user_profile)
+                    except:
+                        user_profile.description = 'null'
                     # if 'sk-S7SvCB' in openai.api_key:
                         # user_profile.description = generate_openai_description(user_profile)
                     # else:

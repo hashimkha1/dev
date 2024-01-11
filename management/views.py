@@ -39,6 +39,7 @@ from django.views.generic import (
 from application.models import UserProfile
 from management.models import (
     Advertisement,
+    Category,
     Policy,
     TaskCategory,
     Task,
@@ -290,14 +291,16 @@ import json
 @login_required
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
-    with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
-        data = json.load(file)
-    if request.user.is_superuser or (request.user.is_staff):
-        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
-    elif request.user.is_superuser or (request.user.category == 5 and request.user.is_client):
-        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Client dashboard"})
+    categories = Category.objects.prefetch_related('subcategory_set__link_set').all()
+
+    if request.user.is_superuser or request.user.is_staff:
+        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "categories": categories})
+    elif request.user.is_client:
+        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard", "categories": categories})
+    elif request.user.is_investor:
+        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Investor dashboard", "categories": categories})
     else:
-        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
+        return render(request, "management/departments/agenda/default_dashboard.html", {"title": "Default dashboard"})
 
 
 def updatelinks_companyagenda(request):

@@ -44,28 +44,27 @@
                                {% endif %}
                                <div class="dropdown-divider"></div>
                             </div>
-                        {% for departments,sub_departments in  data.items  %}
-                        {% if   departments == "HUMAN RESOURCE" or  departments == "FINANCE" or  departments == "MARKETING" %} 
-                            <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
-                                <div style="float: right;">
-                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                            {% for category in categories %}
+                            {% if category.name == "HUMAN RESOURCE" or category.name == "FINANCE" or category.name == "MARKETING" %} 
+                                <div style="padding: 10px; border: 1px solid black; margin-top: 10px; font-size: 12px">
+                                    <p style="background: #bcbce2; font-weight: bold">{{ category.name }}</p>
+                                    <div style="float: right;">
+                                        <button class="update_links" onclick="update_links(this)">Update links</button>
+                                    </div>
+                                    <div class="links">
+                                        {% for subcategory in category.subcategory_set.all %}
+                                            {% if subcategory.link_set.all %}
+                                                <span>{{ subcategory.name }}</span>
+                                                {% for link in subcategory.link_set.all %}
+                                                    <a href="{{ link.url }}" style="display: block">{{ link.name }}</a>
+                                                {% endfor %}
+                                            {% else %}
+                                                <a href="#" style="display: block">{{ subcategory.name }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                                <div class="links">
-                                    {% for sub,links in  sub_departments.items  %}
-                                        
-                                        {% if links.items|length != 0 %}
-                                            <span>{{sub}}</span>
-                                            {% for linkname,link in links.items %}
-                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
-                                            {% endfor %}
-                                        {% else %}
-                                            <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                            {%endif%}
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -90,33 +89,32 @@
                 </div>
 
                 <div class="col-md-3">
-                    <div style="border: 1px solid black;padding:20px;">
+                    <div style="border: 1px solid black; padding: 20px;">
                         <h5 class="text-center text-dark">Company Agenda</h5>
-                        {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "BASICS" or departments == "IT"  or  departments == "PROJECTS" %} 
-                            <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
-                                <div style="float: right;">
-                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                        {% for category in categories %}
+                            {% if category.name == "BASICS" or category.name == "IT" or category.name == "PROJECTS" %} 
+                                <div style="padding: 10px; border: 1px solid black; margin-top: 10px; font-size: 12px">
+                                    <p style="background: #bcbce2; font-weight: bold">{{ category.name }}</p>
+                                    <div style="float: right;">
+                                        <button class="update_links" onclick="update_links(this)">Update links</button>
+                                    </div>
+                                    <div class="links">
+                                        {% for subcategory in category.subcategory_set.all %}
+                                            {% if subcategory.link_set.all %}
+                                                <span>{{ subcategory.name }}</span>
+                                                {% for link in subcategory.link_set.all %}
+                                                    <a href="{{ link.url }}" style="display: block">{{ link.name }}</a>
+                                                {% endfor %}
+                                            {% else %}
+                                                <a href="#" style="display: block">{{ subcategory.name }}</a>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
                                 </div>
-                                <div class="links">
-                                    {% for sub,links in  sub_departments.items  %}
-                                        
-                                        {% if links.items|length != 0 %}
-                                            <span>{{sub}}</span>
-                                            {% for linkname,link in links.items %}
-                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
-                                            {% endfor %}
-                                        {% else %}
-                                            <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
                             {% endif %}
                         {% endfor %}
                     </div>
-                </div>
+                </div>                
             </div>
         </div>
     </div>

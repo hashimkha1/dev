@@ -119,6 +119,7 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     elif os.environ.get('ENVIRONMENT') == 'local':
+        # In Heroku/Postgres it is Heroku_UAT
         host = os.environ.get('HEROKU_DEV_HOST')
         dbname = os.environ.get('HEROKU_DEV_NAME')
         user = os.environ.get('HEROKU_DEV_USER')
@@ -150,6 +151,7 @@ DATABASES = {
         "HOST": host
     }
 }
+
 
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
