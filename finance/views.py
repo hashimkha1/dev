@@ -1319,7 +1319,7 @@ def MpesaPaymentView(request):
         request.session['payment_otp'] = otp
         return redirect('finance:otp_confirmation')
     else:
-        payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+        payment_info = Payment_Information.objects.filter(customer_id=request.user.id).first()
         downpayment = payment_info.down_payment
         paypal_charges = calculate_paypal_charges(downpayment)
         request.session['amount'] = downpayment

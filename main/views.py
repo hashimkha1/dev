@@ -168,19 +168,21 @@ def search(request):
 
 def get_respos(request):
     user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
-    
+    general_use = request.GET.get('generalUse', False)
+    # import pdb; pdb.set_trace()
     if not user_message:
         return JsonResponse({'response': 'Invalid user message'})
     try:
-        database_response = generate_database_response(user_message)
-        if database_response:
-            # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            messages = [HumanMessage(content=str(database_response))]
-            response_llm = llm.predict_messages(messages)
-            # chat_model_result = chat_model.predict_messages(messages)
-            return JsonResponse({'response': response_llm.content})
-        
+        if not general_use:
+            database_response = generate_database_response(user_message)
+            if database_response:
+                # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                messages = [HumanMessage(content=str(database_response))]
+                response_llm = llm.predict_messages(messages)
+                # chat_model_result = chat_model.predict_messages(messages)
+                return JsonResponse({'response': response_llm.content})
+            
         chatbot_response = generate_chatbot_response(user_message)
         if chatbot_response:
             return JsonResponse({'response': chatbot_response})

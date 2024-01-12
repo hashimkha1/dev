@@ -116,7 +116,7 @@ def unique_slug_generator(instance, new_slug=None):
 def generate_chatbot_response(user_message):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
     response = openai.Completion.create(
-            model="text-davinci-001",
+            model="gpt-3.5-turbo-instruct",
             prompt=user_message,
             temperature=0.4,
             max_tokens=100,

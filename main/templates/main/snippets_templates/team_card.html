@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="section">
   {% for category, members in team_categories.items %}
   <div class="row">
@@ -45,6 +47,7 @@
 
 <script>
   function handleImageError(img) {
-    img.remove(); // Remove the grandparent div
+    // img.remove(); // Remove the grandparent div
+    img.src = "{% static '/main/img/service-1.jpg' %}"
   }
 </script>
