@@ -58,7 +58,7 @@
             {% for image in images %}
               {% if image.name == service.slug and image.image_url != 'None' %}
                 src="{{ googledriveurl }}{{ image.image_url }}"
-                onerror="handleImageError(this, '{{service.name}}')"
+                onerror="handleImageError(this, '{{service.slug}}')"
               {% else %}
               src="{% static 'main/img/home/' %}{{service.slug}}.jpeg"
               onerror="handleImageError(this, '{{service.slug}}'); this.onerror='null';"
