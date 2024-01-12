@@ -140,18 +140,18 @@ class Policy(models.Model):
     def __str__(self):
         return f"{self.id} policy"
 
-class Category(models.Model):
-    name = models.CharField(max_length=255)
-    def __str__(self):
-        return self.name
+# class Category(models.Model):
+#     name = models.CharField(max_length=255)
+#     def __str__(self):
+#         return self.name
 
 
 class SubCategory(models.Model):
     name = models.CharField(max_length=255)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     
     def __str__(self):
-        return f"{self.name} - {self.category}"
+        return f"{self.name} - {self.department}"
 
 class Link(models.Model):
     name = models.CharField(max_length=255)
@@ -159,6 +159,7 @@ class Link(models.Model):
     subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.name} - {self.subcategory}"
+    
 # ==================================ACTIVITIES====================================
 class TaskCategory(models.Model):
     # Tasks Category.

@@ -39,7 +39,7 @@ from django.views.generic import (
 from application.models import UserProfile
 from management.models import (
     Advertisement,
-    Category,
+    # Category,
     Policy,
     TaskCategory,
     Task,
@@ -291,7 +291,7 @@ import json
 @login_required
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
-    categories = Category.objects.prefetch_related('subcategory_set__link_set').all()
+    categories = Department.objects.prefetch_related('subcategory_set__link_set').all()
 
     if request.user.is_superuser or request.user.is_staff:
         return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "categories": categories})
