@@ -20,7 +20,6 @@ from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import TaskHistory
-from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
 from django.contrib.auth.decorators import login_required
@@ -101,7 +100,6 @@ def layout(request):
         "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
-
 
 
 def fetch_model_table_names(request):
@@ -344,12 +342,13 @@ def newpost(request):
             return redirect('main:layout')
     else:
         form = PostForm()
-        topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
+        topics = ['Project Manager', 'Business Analysis', 'Data Analyst']
 
         # Randomly select a title from the list
         selected_title = random.choice(topics)
-        quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
-        result = buildmodel(question=quest)
+        user_message = f"write a full paragraph on how good/great coaches/trainers of {selected_title} in CODA were?" # pick a question bunch of questions
+        # result = buildmodel(question=quest)
+        result = generate_chatbot_response(user_message)
 
         if result is None:
             selected_review = random.choice(reviews)
@@ -594,7 +593,7 @@ def generate_openai_description(user_profile):
     first_name = client_assessment.first_name
 
     total_points =client_assessment.totalpoints
-    experience =client_assessment.experience
+    experience =client_assessment.it_exp
     it_skills = [
         ('Non-IT Experience', client_assessment.non_it_exp),
         ('IT Experience', client_assessment.it_exp),
@@ -609,7 +608,6 @@ def generate_openai_description(user_profile):
         ('Backend',client_assessment.backend),
         # Add more IT skills as needed
     ]
-
     # Sort IT skills by rating in descending order
     sorted_it_skills = sorted(it_skills, key=lambda x: x[1], reverse=True)
 
@@ -618,18 +616,10 @@ def generate_openai_description(user_profile):
 
     user_message = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
     response=generate_chatbot_response(user_message)
-    # response = openai.Completion.create(
-    #     engine="text-davinci-002",
-    #     prompt=prompt,
-    #     max_tokens=100
-    # )
-    # return response.choices[0].text.strip()
     return response.strip()
 
 def team(request):
-    
     path_list, sub_title, pre_sub_title = path_values(request)
-    
     if sub_title != 'client_profiles':
 
         #for aggregate sum of point in subquery
@@ -735,7 +725,7 @@ def team(request):
         for category, members in team_categories.items():
             for member in members:
                 try:
-                    user_profile = member.user.profile  
+                    user_profile = member.user.profile 
                 except UserProfile.DoesNotExist:
                     user_profile = UserProfile.objects.create(user=member.user)
 
@@ -747,10 +737,6 @@ def team(request):
                         user_profile.description = generate_openai_description(user_profile)
                     except:
                         user_profile.description = 'null'
-                    # if 'sk-S7SvCB' in openai.api_key:
-                        # user_profile.description = generate_openai_description(user_profile)
-                    # else:
-                        # user_profile.description = f"This professional has a total rating of {total_points} points based on assessments."
                     user_profile.save()
     
     if sub_title == 'client_profiles':
@@ -811,6 +797,7 @@ def about(request):
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
     end_date=start_date + relativedelta(months=3)
     staff=[member for member in team_members if member.img_category=='employee']
+
     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
     context={
         "start_date": start_date,
@@ -853,7 +840,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
         if form.cleaned_data.get('image') is not None and form.cleaned_data.get('image') is not False:
             image_name = form.cleaned_data.get('image').name
-            folder_id ="18oKV2n-FckryAz_ts1OiVZ-MONkPTWRM" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+            folder_id =os.environ.get('DRIVER_FOLDER_ID')
             image_path = instance.image.path
             image_id = upload_image_to_drive(image_path, folder_id,image_name)
             assets_instance = Assets.objects.create(image_url=image_id)
@@ -876,7 +863,6 @@ def it(request):
 
 def finance(request):
     return render(request, "main/departments/finance_landing_page.html", {"title": "Finance"})
-
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})

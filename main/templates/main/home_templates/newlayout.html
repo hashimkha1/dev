@@ -49,8 +49,8 @@
             <a class="btn btn-primary read-more-button" href="{% url 'main:display_service' slug=service.slug %}">Proceed</a>
           {% endif %}
           {% if request.user.is_superuser or  request.user.is_staff %}
-            <a class="btn btn-primary read-more-button" onclick="toggleContent('more-content', '{{service.description}}','{{forloop.counter}}') ">More</a>
-            <a class="btn btn-primary read-more-button" onclick="toggleContent('less-content', '{{service.description}}', '{{forloop.counter}}')">Less</a>
+            <a class="btn btn-primary read-more-button" onclick="toggleContent('more-content', '{{service.description}}','{{forloop.counter}}') ">Long</a>
+            <a class="btn btn-primary read-more-button" onclick="toggleContent('less-content', '{{service.description}}', '{{forloop.counter}}')">Short</a>
           {% endif %}
         </div>
         <div class="col-md-6">
