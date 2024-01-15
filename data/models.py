@@ -567,7 +567,7 @@ class ClientAssessment(models.Model):
     experience = models.TextField(default="Tell us more on your experience(internships,projects,current work etc)")
     non_it_exp = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
     it_exp = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
-    projectcharter = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
+    projectmanagement = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 2
     requirementsAnalysis  = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 3
     reporting = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 5
     etl = models.IntegerField(default=0,validators=[MinValueValidator(0), MaxValueValidator(10)])# 5
