@@ -1,6 +1,8 @@
 import os,requests
 import json
 import logging
+from finance.models import Payment_History
+from main.models import PricingSubPlan
 
 
 logger = logging.getLogger(__name__)
@@ -60,3 +62,34 @@ def send_message(product_id, screen_id, token, group_id, message_payload):
             logger.error(f"Error sending message to group {group_id}: {response.text}")
     except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
+
+
+def update_ads_by_pricing(user):
+     
+    gold_subplan = PricingSubPlan.objects.filter(title__iexact='gold', my_pricing__title='whatsapp')
+    silver_subplan = PricingSubPlan.objects.filter(title__iexact='silver', my_pricing__title='whatsapp')
+
+    if gold_subplan.exists():
+        gold_subplan = gold_subplan.first().id
+    else:
+        gold_subplan = 999
+    
+    if silver_subplan.exists():
+        silver_subplan = silver_subplan.first().id
+    else:
+        silver_subplan = 999
+    
+    if Payment_History.objects.filter(customer=user, subplan=gold_subplan).exists():
+        is_featured = True
+        is_active = True
+    
+    elif Payment_History.objects.filter(customer=user, subplan=silver_subplan).exists():
+        is_featured = False
+        is_active = True
+    
+    else:
+        is_featured = False
+        is_active = False
+    
+
+    return is_featured, is_active

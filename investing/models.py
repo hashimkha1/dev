@@ -31,29 +31,28 @@ class Investments(models.Model):
     def __str__(self):
         return f"Investment ID: {self.id}, Client: {self.client.username}"
 
-
 class Investor_Information(models.Model):
-	investor= models.ForeignKey(
+    investor= models.ForeignKey(
 	    		   User,
 			       limit_choices_to={'is_active': True, 'is_client': True},
-			       on_delete=models.CASCADE
-				   )
-	total_amount = models.DecimalField(max_digits=10, decimal_places=2)
-	protected_capital = models.DecimalField(max_digits=10, decimal_places=2)
-	amount_invested = models.DecimalField(max_digits=10, decimal_places=2)
-	duration = models.PositiveIntegerField(blank=True,null=True)
-	positions= models.PositiveIntegerField(blank=True,null=True)
-	bi_weekly_returns= models.DecimalField(max_digits=10, decimal_places=2)
-	payment_method= models.CharField(max_length=255,blank=True,null=True)
-	client_signature =models.CharField(max_length=255,blank=True,null=True)
-	company_rep= models.CharField(max_length=255,blank=True,null=True)
-	contract_date=models.DateField(auto_now_add=True,blank=True,null=True)
+			       on_delete=models.CASCADE)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    investment_threshold = models.IntegerField(default=10)
+    protected_capital = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_invested = models.DecimalField(max_digits=10, decimal_places=2)
+    duration = models.PositiveIntegerField(blank=True,null=True)
+    positions= models.PositiveIntegerField(blank=True,null=True)
+    bi_weekly_returns= models.DecimalField(max_digits=10, decimal_places=2)
+    payment_method= models.CharField(max_length=255,blank=True,null=True)
+    client_signature =models.CharField(max_length=255,blank=True,null=True)
+    company_rep= models.CharField(max_length=255,blank=True,null=True)
+    contract_date=models.DateField(auto_now_add=True,blank=True,null=True)
+    
+    class Meta:
+        verbose_name_plural = "Investor_Information"
 
-	class Meta:
-		verbose_name_plural = "Investor_Information"
-
-	def __str__(self):
-		return self.payment_method
+    def __str__(self):
+        return self.payment_method
 
 class Investment_rates(models.Model):
     name = models.CharField(max_length=255,blank=True,null=True)
@@ -191,22 +190,33 @@ class Portifolio(TimeStampedModel):
     symbol = models.CharField(max_length=255,blank=True, null=True)
     industry = models.CharField(max_length=255,blank=True, null=True)
     action = models.CharField(max_length=255,blank=True, null=True)
-    strike_price = models.CharField(max_length=255,blank=True, null=True)
+    # strike_price = models.CharField(max_length=255,blank=True, null=True)
     implied_volatility_rank = models.CharField(max_length=255,blank=True, null=True)
     expiry = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
-    description = models.CharField(max_length=255,blank=True, null=True)
     condition = models.CharField(max_length=255,blank=True, null=True)
     comment = models.CharField(max_length=255, blank=True, null=True)
-    delta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
-    theta = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     on_date = models.CharField(max_length=255,blank=True, null=True)
+    
+    strategy = models.CharField(max_length=255,blank=True, null=True)
+    returns = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
+    short_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    long_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # short_strike = models.CharField(max_length=255,blank=True, null=True)
+    # long_strike = models.CharField(max_length=255,blank=True, null=True)
+
+    amount = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
+    long_leg_delta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) # +
+    short_leg_delta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) #-
+    long_leg_theta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) # +
+    short_leg_theta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) #-
+    number_of_contract = models.IntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     # Comes from TimeStampedModel in main
     # is_active = models.BooleanField(default=True,blank=True, null=True)
     # is_featured = models.BooleanField(default=True,blank=True, null=True) 
-    # created_at = models.DateTimeField(auto_now_add=True)
-    # updated_at = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name_plural = "portifolio"
 
@@ -235,7 +245,7 @@ class OverBoughtSold(models.Model):
                 return 0  # 'overbought'
         except ValueError:
             # Handle any exceptions gracefully
-            return -1  
+            return -1  #neutral
 
     
     class Meta:

@@ -5,16 +5,21 @@ from django.dispatch import receiver
 from django.utils.text import slugify
 from random import randint
 # # Create your models here.
+from django.contrib.auth import get_user_model
+# from finance.utils import get_exchange_rate
+User = get_user_model() 
 
 class Ads(models.Model):
-    ad_title = models.CharField(max_length=100, null=True, blank=True)
+    my_user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     company = models.CharField(max_length=100, null=True, blank=True)
+    ad_title = models.CharField(max_length=100, null=True, blank=True)
+    bulletin = models.CharField(max_length=100, null=True, blank=True)
     short_name = models.CharField(max_length=50, null=True, blank=True)
     company_site = models.CharField(max_length=255, null=True, blank=True)
     meeting_link = models.CharField(max_length=500, null=True, blank=True)
     video_link = models.CharField(max_length=500, null=True, blank=True)
     signature = models.CharField(max_length=255, null=True, blank=True)
-    bulletin= models.TextField(null=True, blank=True)
+    description= models.TextField(null=True, blank=True)
     message= models.TextField(null=True, blank=True)
     image_name = models.ForeignKey(
         Assets, related_name="message_image", on_delete=models.CASCADE,default=1
@@ -24,6 +29,7 @@ class Ads(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     is_active = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
+    #in future we required field that help us to define which platform this ads coming
 
     def __str__(self):
         return str(self.ad_title)
@@ -46,6 +52,7 @@ class Whatsapp_Groups(models.Model):
         ("Job_Support", "Job_Support"),
         ("interview", "interview"),
         ("mentorship", "mentorship"),
+        ("automation", "automation"),
         ("other", "other"),
     ]
     id = models.AutoField(primary_key=True)
@@ -101,24 +108,43 @@ def populate_slug(sender, instance, **kwargs):
         instance.slug = slug
 
 
-# class Whatsapp_Dev(TimeStampedModel):
-#     # types
-#     TYPE_CHOICES = [
-#         ("investments", "investments"),
-#         ("data_analysis", "data_analysis"),
-#         ("coda", "coda"),
-#         ("Job_Support", "Job_Support"),
-#         ("interview", "interview"),
-#         ("mentorship", "mentorship"),
-#         ("other", "other"),
-#     ]
-#     group_id = models.CharField(max_length=100, null=True, blank=True)
-#     group_name = models.CharField(max_length=100, null=True, blank=True)
-#     participants = models.CharField(max_length=50, null=True, blank=True)
-#     type = models.CharField(
-#         max_length=25,
-#         choices=TYPE_CHOICES,
-#         default="other",
-#     )
-#     def __str__(self):
-#         return self.group_name
+class Whatsapp_dev(TimeStampedModel):
+    # types
+    CATEGORY_CHOICES = [
+        ("Finance", "Finance"),
+        ("IT", "IT"),
+        ("Internal", "Internal"),
+        ("Political", "Political"),
+        ("Business", "Business"),
+        ("other", "other"),
+    ]
+    TYPE_CHOICES = [
+        ("investments", "investments"),
+        ("data_analysis", "data_analysis"),
+        ("coda", "coda"),
+        ("Job_Support", "Job_Support"),
+        ("interview", "interview"),
+        ("mentorship", "mentorship"),
+        ("other", "other"),
+    ]
+    id = models.AutoField(primary_key=True)
+    group_id = models.CharField(max_length=100, null=True, blank=True)
+    slug = models.SlugField(max_length=100, null=True, blank=True,unique=True)
+    group_name = models.CharField(max_length=100, null=True, blank=True)
+    participants = models.CharField(max_length=50, null=True, blank=True)
+    category = models.CharField(
+        max_length=25,
+        choices=CATEGORY_CHOICES,
+        default="other",
+    )
+    type = models.CharField(
+        max_length=25,
+        choices=TYPE_CHOICES,
+        default="other",
+    )
+    # created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    # updated_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    # is_active = models.BooleanField(default=False)
+    # is_featured = models.BooleanField(default=False)
+    def __str__(self):
+        return self.group_name

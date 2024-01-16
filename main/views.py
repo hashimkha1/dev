@@ -13,15 +13,13 @@ from data.models import ClientAssessment
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
-                    generate_database_response,generate_chatbot_response,upload_image_to_drive
-)
+                    generate_database_response,generate_chatbot_response,upload_image_to_drive)
 from .models import Testimonials
 from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import TaskHistory
-from finance.models import Payment_Information
 from main.forms import PostForm,ContactForm
 
 from django.contrib.auth.decorators import login_required
@@ -32,8 +30,8 @@ from django.views.generic import (
         DeleteView,
         ListView,
         DetailView,
-        UpdateView,
-    )
+        UpdateView,)
+
 from .forms import *
 from django.http import JsonResponse
 from django.apps import apps
@@ -104,7 +102,6 @@ def layout(request):
     return render(request, "main/home_templates/newlayout.html", context)
 
 
-
 def fetch_model_table_names(request):
     app_name = request.GET.get('category', None)  # Replace with the actual app name
     app_models = apps.get_app_config(app_name).get_models()
@@ -169,19 +166,21 @@ def search(request):
 
 def get_respos(request):
     user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
-    
+    general_use = request.GET.get('generalUse', False)
+    # import pdb; pdb.set_trace()
     if not user_message:
         return JsonResponse({'response': 'Invalid user message'})
     try:
-        database_response = generate_database_response(user_message)
-        if database_response:
-            # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-            messages = [HumanMessage(content=str(database_response))]
-            response_llm = llm.predict_messages(messages)
-            # chat_model_result = chat_model.predict_messages(messages)
-            return JsonResponse({'response': response_llm.content})
-        
+        if not general_use:
+            database_response = generate_database_response(user_message)
+            if database_response:
+                # chat_model = ChatOpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+                messages = [HumanMessage(content=str(database_response))]
+                response_llm = llm.predict_messages(messages)
+                # chat_model_result = chat_model.predict_messages(messages)
+                return JsonResponse({'response': response_llm.content})
+            
         chatbot_response = generate_chatbot_response(user_message)
         if chatbot_response:
             return JsonResponse({'response': chatbot_response})
@@ -294,11 +293,6 @@ def display_service(request,*args, **kwargs):
 
 def service_plans(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
-    # print("pre_sub_title==========>",pre_sub_title)
-    # try:
-    #     payment_details = Payment_Information.objects.get(customer_id_id=request.user.id)
-    # except:
-    #     payment_details=[]
     try:
         if pre_sub_title == 'bigdata':
             service_shown = ServiceCategory.objects.get(slug=sub_title).service
@@ -331,35 +325,7 @@ def service_plans(request, *args, **kwargs):
         "courses": courses,
         "services_plans": plans
     }
-    # print(request.user.category)
-    # if payment_details and request.user.category==3:
-    #     return render(request, "data/interview/interview_progress/start_interview.html",context)
-    # else:
     return render(request, "main/services/service_plan.html", context)
-
-
-# def full_course(request, *args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     # print("pre_sub_title==========>",pre_sub_title)
-#     try:
-#         service_shown = Service.objects.get(slug="data_analysis")
-#     except Service.DoesNotExist:
-#         return redirect('main:display_service', slug ='data_analysis')
-#     service_categories = ServiceCategory.objects.filter(service=service_shown.id)
-#     (category_slug,category_name,category_id)=service_plan_instances(service_categories,sub_title)
-#     plans = Pricing.objects.filter(category=category_id)
-
-#     context = {}
-#     context = {
-#         "SITEURL": settings.SITEURL,
-#         "title": category_name,
-#         "packages": packages,
-#         "category_slug": category_slug,
-#         "courses": courses,
-#         "services": plans
-#     }
-#     # print(request.user.category)
-#     return render(request, "main/services/full_course.html", context)
 
 @login_required
 def job_market(request):
@@ -376,12 +342,13 @@ def newpost(request):
             return redirect('main:layout')
     else:
         form = PostForm()
-        topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
+        topics = ['Project Manager', 'Business Analysis', 'Data Analyst']
 
         # Randomly select a title from the list
         selected_title = random.choice(topics)
-        quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
-        result = buildmodel(question=quest)
+        user_message = f"write a full paragraph on how good/great coaches/trainers of {selected_title} in CODA were?" # pick a question bunch of questions
+        # result = buildmodel(question=quest)
+        result = generate_chatbot_response(user_message)
 
         if result is None:
             selected_review = random.choice(reviews)
@@ -611,7 +578,8 @@ def plan_urls(request):
 #         "selected_class":selected_class
 #     }
 #     return render(request, "main/team_profiles.html", context)
-openai.api_key = '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'
+    
+openai.api_key = os.environ.get('OPENAI_API_KEY')
 class SQSum(Subquery):
     output_field = models.IntegerField()
     template = "(SELECT sum(point) from (%(subquery)s) _sum)"
@@ -619,13 +587,13 @@ class SQSum(Subquery):
 
 def generate_openai_description(user_profile):
     try:
-        client_assessment = ClientAssessment.objects.get(email=user_profile.user.email)
+        client_assessment = ClientAssessment.objects.filter(email=user_profile.user.email).first()
     except ClientAssessment.DoesNotExist:
         return "No ClientAssessment found for the user."
     first_name = client_assessment.first_name
 
     total_points =client_assessment.totalpoints
-    experience =client_assessment.experience
+    experience =client_assessment.it_exp
     it_skills = [
         ('Non-IT Experience', client_assessment.non_it_exp),
         ('IT Experience', client_assessment.it_exp),
@@ -640,26 +608,18 @@ def generate_openai_description(user_profile):
         ('Backend',client_assessment.backend),
         # Add more IT skills as needed
     ]
-
     # Sort IT skills by rating in descending order
     sorted_it_skills = sorted(it_skills, key=lambda x: x[1], reverse=True)
 
     # Take the top two IT skills
     top_it_skills = [skill[0] for skill in sorted_it_skills[:2]]
 
-    prompt = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=100
-    )
-
-    return response.choices[0].text.strip()
+    user_message = f"Generate a description for {first_name}, a professional with {experience} years of experience in {', '.join(top_it_skills)}."
+    response=generate_chatbot_response(user_message)
+    return response.strip()
 
 def team(request):
-    
     path_list, sub_title, pre_sub_title = path_values(request)
-    
     if sub_title != 'client_profiles':
 
         #for aggregate sum of point in subquery
@@ -746,7 +706,7 @@ def team(request):
         junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
         elementry = list(filter(lambda v: v.total_points <= threshold_dict['junior_trainee'], all_staff_member))
 
-        support_team = list(filter(lambda v: v.total_points <= team_member_value_json['support_team'] and v.total_points > team_member_value_json['support_team']-team_member_value_json['delta'], all_staff_contractor))
+        support_team = list(filter(lambda v: v.total_points > team_member_value_json['support_team'], all_staff_contractor))
 
     # number_of_staff = len(lead_team)-1
 
@@ -765,7 +725,7 @@ def team(request):
         for category, members in team_categories.items():
             for member in members:
                 try:
-                    user_profile = member.user.profile  
+                    user_profile = member.user.profile 
                 except UserProfile.DoesNotExist:
                     user_profile = UserProfile.objects.create(user=member.user)
 
@@ -773,11 +733,10 @@ def team(request):
                     total_points = ClientAssessment.objects.filter(
                         email=member.user.email
                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
-                    if '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' in openai.api_key:
+                    try:
                         user_profile.description = generate_openai_description(user_profile)
-                    else:
-                        user_profile.description = f"This professional has a total rating of {total_points} points based on assessments."
-
+                    except:
+                        user_profile.description = 'null'
                     user_profile.save()
     
     if sub_title == 'client_profiles':
@@ -838,6 +797,7 @@ def about(request):
     start_date = datetime.strptime(date_object, '%m/%d/%Y')
     end_date=start_date + relativedelta(months=3)
     staff=[member for member in team_members if member.img_category=='employee']
+
     img_urls=[member.img_url for member in team_members if member.img_category=='employee']
     context={
         "start_date": start_date,
@@ -880,7 +840,7 @@ class UserProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView)
         # Replace 'folder_id' with the ID of the folder where you want to save the image.
         if form.cleaned_data.get('image') is not None and form.cleaned_data.get('image') is not False:
             image_name = form.cleaned_data.get('image').name
-            folder_id ="18oKV2n-FckryAz_ts1OiVZ-MONkPTWRM" # os.environ.get('DRIVER_FOLDER_ID') #'1qzO8GAa5jGRgFYsamGEmnrI_bHbJ6Zre'
+            folder_id =os.environ.get('DRIVER_FOLDER_ID')
             image_path = instance.image.path
             image_id = upload_image_to_drive(image_path, folder_id,image_name)
             assets_instance = Assets.objects.create(image_url=image_id)
@@ -903,7 +863,6 @@ def it(request):
 
 def finance(request):
     return render(request, "main/departments/finance_landing_page.html", {"title": "Finance"})
-
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})

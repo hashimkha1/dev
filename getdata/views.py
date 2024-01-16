@@ -96,7 +96,6 @@ def update_link(service_array, user_payment_history, service_categories):
 
 @login_required
 def bigdata(request):
-
 	if request.user.category != 2:
 		payment_history = Payment_History.objects.filter(customer_id=request.user)
 		service_categories = dict(ServiceCategory.objects.values_list('slug', 'id'))
@@ -205,10 +204,6 @@ def obtain_tokens(request):
 	CLIENT_SECRET ='ykEQJ5Rd8xx8sPOD1W5KTJnO' #os.environ.get('GOTO_SECRET_KEY')
 	REDIRECT_URI = "http://localhost:8000/getdata/obtain_tokens/" #os.environ.get('CODA_REDIRECT_URI')
 
-	# print(CLIENT_ID)
-	# print(CLIENT_SECRET)
-	# print(REDIRECT_URI)
-
 	# Payload for the token request
 	payload = {
 		'grant_type': 'authorization_code',
@@ -242,11 +237,9 @@ def refresh_token_function(request):
 
 	# to get the current working directory
 	dir_path = str(os.getcwd())
-	print(dir_path)
 
 	with open(dir_path+'/getdata/gotomeeting/credentialsForRefresh.json','r') as f:
 		myJson = json.load(f)
-		print("json------------------------myjson", myJson)
 		refresh_token = myJson['refresh_token']
 		client_code = myJson['client_code']
 	response = None
@@ -300,9 +293,7 @@ def getmeetingresponse(startDate , endDate):
 	# print("2. getting meetings from {} to {}\n".format(startDate , endDate))
 	from datetime import datetime
 	from pytz import utc
-	print(startDate,endDate)
 	urlMeeting = urlGotoMeeting.format(startDateTime,endDateTime)
-	print("----->urll meeting",urlMeeting)
 
 	# print("3. request made : ",urlMeeting)
 	response = requests.request("GET" , url=urlMeeting , headers=headers)

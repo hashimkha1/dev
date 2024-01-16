@@ -1,3 +1,5 @@
+{% load static %}
+
 <div class="section">
   {% for category, members in team_categories.items %}
   <div class="row">
@@ -20,7 +22,7 @@
                 {% if member.description %}
                     <div class="col-md-4">
                         <div class="img-div p-3">
-                            <img src="{{ googledriveurl }}{{ member.img_url }}" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
+                            <img src="{{ googledriveurl }}{{ member.img_url }}" onerror="handleImageError(this, '{{member.user.first_name}}')" class="team-img rounded-circle" width="120px" height="120px" alt="Team Member Image">
                         </div>
                         <div class="member-info">
                           <a href="#" class="member-link">
@@ -42,3 +44,17 @@
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
   {% endfor %}
 </div>
+
+<script>
+  function handleImageError(img, name) {
+    // img.remove(); // Remove the grandparent div
+    console.log(name)
+    if (img.src.includes('/static/')){
+      img.src = "{% static '/main/img/profile/profile.jpeg' %}"
+    }
+    else{
+      img.src = "{% static 'main/img/profile/' %}"+ name.toLowerCase() +".jpeg"
+      // img.src = "{% static '/main/img/service-1.jpg' %}"
+    }
+  }
+</script>
