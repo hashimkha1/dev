@@ -80,19 +80,23 @@ class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
 
     # Department
+    BASIC = "Basic"
     HR = "HR Department"
     IT = "IT Department"
     MKT = "Marketing Department"
     FIN = "Finance Department"
     SECURITY = "Security Department"
     MANAGEMENT = "Management Department"
+    Project = "Project"
     HEALTH = "Health Department"
     Other = "Other"
     DEPARTMENT_CHOICES = [
+        (BASIC, "BASIC Department"),
         (HR, "HR Department"),
         (IT, "IT Department"),
         (MKT, "Marketing Department"),
         (FIN, "Finance Department"),
+        (Project, "Project"),
         (SECURITY, "Security Department"),
         (MANAGEMENT, "Management Department"),
         (HEALTH, "Health Department"),
