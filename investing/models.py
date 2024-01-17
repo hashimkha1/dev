@@ -190,7 +190,7 @@ class Portifolio(TimeStampedModel):
     symbol = models.CharField(max_length=255,blank=True, null=True)
     industry = models.CharField(max_length=255,blank=True, null=True)
     action = models.CharField(max_length=255,blank=True, null=True)
-    strike_price = models.CharField(max_length=255,blank=True, null=True)
+    # strike_price = models.CharField(max_length=255,blank=True, null=True)
     implied_volatility_rank = models.CharField(max_length=255,blank=True, null=True)
     expiry = models.CharField(max_length=255,blank=True, null=True)
     earnings_date = models.CharField(max_length=255,blank=True, null=True)
@@ -198,11 +198,18 @@ class Portifolio(TimeStampedModel):
     comment = models.CharField(max_length=255, blank=True, null=True)
     on_date = models.CharField(max_length=255,blank=True, null=True)
     
-    amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    long_leg_delta = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) # +
-    short_leg_delta = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) #-
-    long_leg_theta = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) # +
-    short_leg_theta = models.DecimalField(max_digits=10, decimal_places=2, default=0.00) #-
+    strategy = models.CharField(max_length=255,blank=True, null=True)
+    returns = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
+    short_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    long_strike = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    # short_strike = models.CharField(max_length=255,blank=True, null=True)
+    # long_strike = models.CharField(max_length=255,blank=True, null=True)
+
+    amount = models.DecimalField(max_digits=10, decimal_places=4, default=0.00)
+    long_leg_delta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) # +
+    short_leg_delta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) #-
+    long_leg_theta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) # +
+    short_leg_theta = models.DecimalField(max_digits=10, decimal_places=4, default=0.00) #-
     number_of_contract = models.IntegerField(default=1)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

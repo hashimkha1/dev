@@ -1,17 +1,10 @@
 import os,requests,openai
 import random,string
-from django.views.generic import DeleteView, ListView, TemplateView, UpdateView
-from accounts.forms import UserForm
-from django.http import HttpResponseRedirect, Http404, JsonResponse,HttpResponse
-from accounts.models import CustomerUser
 from coda_project.settings import SITEURL
 # import tableauserverclient as TSC
 import datetime
 from datetime import datetime as date_obj
 from django.utils.text import slugify
-# from main.models import Assets
-# from yourapp.utils import random_string_generator
-
 from django import template
 from django.apps import apps
 from django.db.models import Q
@@ -32,11 +25,8 @@ register = template.Library()
 def convert_date(date_string):
     return datetime.strptime(date_string, "%m/%d/%Y").date()
 
-
-
 def random_string_generator(size=25, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
-
 
 def dates_functionality():
     current_year = date_obj.now().year
@@ -44,7 +34,6 @@ def dates_functionality():
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
     return ytd_duration,current_year
-
 
 """======= Google Drive Code ========"""
 
@@ -71,7 +60,6 @@ def upload_image_to_drive(image_path, folder_id,image_name):
     print(f'Image ID: {file.get("id")}')
 
 """========End of Code======="""
-
 
 # def tableau_refresh():
 #     # Set Tableau Server credentials and site
@@ -116,7 +104,7 @@ def unique_slug_generator(instance, new_slug=None):
 def generate_chatbot_response(user_message):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
     response = openai.Completion.create(
-            model="text-davinci-001",
+            model="gpt-3.5-turbo-instruct",
             prompt=user_message,
             temperature=0.4,
             max_tokens=100,
@@ -194,33 +182,6 @@ def generate_database_response(user_message, app='investing', table='investments
     return response_data
 
 
-
-# def generate_database_response(user_message, app='investing'):
-#     # Get all the models from the specified app
-#     app_config = apps.get_app_config(app)
-#     models = app_config.get_models()
-
-#     response_data = []
-
-#     # Iterate over models from the specified app
-#     for model in models:
-#         model_name = model.__name__
-
-#         fields = model._meta.get_fields()
-#         model_data = []
-
-#         for field in fields:
-#             if field.get_internal_type() == 'CharField':
-#                 query = Q(**{f"{field.name}__icontains": user_message})
-#                 results = model.objects.filter(query)
-#                 model_data.extend(results.values())
-
-#         # Check if the model_data list is not empty
-#         if any(model_data):
-#             response_data.append({model_name: model_data})
-#     return response_data
-
-
 """ ===========End of code============ """
 
 def buildmodel(question):
@@ -228,9 +189,6 @@ def buildmodel(question):
     # https://platform.openai.com/account/api-keys
     # 
     openai.api_key = os.environ.get('OPENAI_API_KEY')
-   
-    # print(openai.api_key)
-
     #Building engine
     try:
         response = openai.Completion.create(

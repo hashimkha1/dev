@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import (
                         FeaturedCategory,FeaturedSubCategory, 
-                        ActivityLinks, FeaturedActivity,Interviews, 
+                        ActivityLinks, FeaturedActivity,Interviews, ClientAssessment,
                         Training_Responses,Prep_Questions,JobRole, TrainingResponsesTracking
                     )
 
@@ -29,3 +29,4 @@ admin.site.register(ActivityLinks)
 admin.site.register(Interviews)
 admin.site.register(Prep_Questions)
 admin.site.register(JobRole)
+admin.site.register(ClientAssessment)

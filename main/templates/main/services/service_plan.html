@@ -75,11 +75,31 @@
         <div class="card">
             <div class="row">
               <hr>
-              <div class="col-md-10">
+              <div class="col-md">
                 <p>
                   {{ service.description|safe }}
                 </p>
               </div>
+              {% if service.pricingsubplan_set.count > 0 %}
+                {% for subplan in service.pricingsubplan_set.all %}
+                <div class="col-md-2 text-center">
+                  <b>${{ subplan.price|floatformat:2 }}</b>
+                  {% if subplan.slug %}
+                  <a href="{{ SITEURL }}/{{ subplan.my_pricing.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
+                  {% else %}
+                  <form method="POST" {% if subplan.my_pricing.redirect_url_path and subplan.price == 0 %}action="{{subplan.my_pricing.redirect_url_path}}" {% elif subplan.my_pricing.is_direct or subplan.price < 1000 %}action="{% url 'finance:pay' %}"{% else %}action="{% url 'finance:newcontract' request.user %}"{% endif %}>
+                    {% csrf_token %}
+                    <input type="hidden" name="service_title" value="{{ subplan.title }}">
+                    <input type="hidden" name="fees" value="{{ subplan.price }}">
+                    <input type="hidden" name="is_direct" value="{{ subplan.my_pricing.is_direct }}">
+                    <input type="hidden" name="service_category_id" value="{{ subplan.my_pricing.category.id }}">
+                    <input type="hidden" name="subplan_id" value="{{ subplan.id }}">
+                    <button type="submit" class="btn btn-primary">Proceed</button>
+                  </form>
+                  {% endif %}
+                </div>
+                {% endfor %}
+              {% else %}
               <div class="col-md-2 text-center">
                 <b>${{ service.price|floatformat:2 }}</b>
                 {% if service.slug %}
@@ -95,6 +115,7 @@
                 </form>
                 {% endif %}
               </div>
+              {% endif %}
             </div>
         </div>
       </div>
