@@ -1,5 +1,7 @@
 import math
 import calendar,string,requests
+from typing import Any
+from django.db.models.query import QuerySet
 from django.contrib import messages
 from django import template
 from datetime import date, datetime, timedelta
@@ -37,7 +39,7 @@ from django.views.generic import (
 from application.models import UserProfile
 from management.models import (
     Advertisement,
-    Category,
+    # Category,
     Policy,
     TaskCategory,
     Task,
@@ -64,7 +66,7 @@ from management.utils import (email_template,paytime,payinitial,paymentconfigura
                                calculate_total_pay,get_bonus_and_summary,compute_total_points
                         )
 from main.utils import countdown_in_month,path_values
-
+from django.db.models import Subquery, OuterRef
 import logging
 logger = logging.getLogger(__name__)
 
@@ -289,14 +291,16 @@ import json
 @login_required
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
-    with open(settings.STATIC_ROOT + '/companyagenda.json', 'r') as file:
-        data = json.load(file)
-    if request.user.is_superuser or (request.user.is_staff):
-        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "data": data})
-    elif request.user.is_superuser or (request.user.category == 5 and request.user.is_client):
-        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Client dashboard"})
+    categories = Department.objects.prefetch_related('subcategory_set__link_set').all()
+
+    if request.user.is_superuser or request.user.is_staff:
+        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "categories": categories})
+    elif request.user.is_client:
+        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard", "categories": categories})
+    elif request.user.is_investor:
+        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Investor dashboard", "categories": categories})
     else:
-        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard"})
+        return render(request, "management/departments/agenda/default_dashboard.html", {"title": "Default dashboard"})
 
 
 def updatelinks_companyagenda(request):
@@ -650,7 +654,7 @@ def task_payslip(request, employee=None, *args, **kwargs):
 
     if selected_month == 1:
         selected_month = 12
-        selected_year -= selected_year
+        selected_year -= 1
     else:
         selected_month -= 1
 
@@ -1579,7 +1583,7 @@ def clientassessment(request):
             form = ClientAssessmentForm(request.POST, request.FILES)
         if form.is_valid():
             
-            totalpoints, developerpoints =compute_total_points(form)
+            totalpoints, developerpoints =compute_total_points(form.instance)
             form.instance.totalpoints = totalpoints
             
             if previous_user.exists():
@@ -1613,8 +1617,30 @@ def clientassessment(request):
     return render(request, "management/departments/hr/clientassessment_form.html", {"form": form})
 
 class ClientAssessmentListView(ListView):
-    queryset=ClientAssessment.objects.all().order_by("-rating_date")
     template_name = "management/departments/hr/clientassessment.html"
+
+    def get_queryset(self) -> QuerySet[Any]:
+        # import pdb; pdb.set_trace()
+        queryset = ClientAssessment.objects.all().order_by("-rating_date").annotate(
+            usser_category = Subquery(CustomerUser.objects.filter(email=OuterRef('email')).values('category')[:1])
+        )
+        
+        for instance in queryset:
+            
+            totalpoints, developerpoints = compute_total_points(instance)
+
+            if instance.usser_category != 2 and instance.totalpoints != totalpoints:
+
+                instance.totalpoints = totalpoints
+                instance.save()
+            
+            elif instance.usser_category == 2 and instance.totalpoints != developerpoints:
+
+                instance.totalpoints = developerpoints
+                instance.save()
+
+        
+        return queryset
 
 class AssessmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = ClientAssessment

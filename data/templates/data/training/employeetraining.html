@@ -144,29 +144,29 @@
                     {% if user.is_staff or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
-                        {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "VIDEOS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
+                        {% if subcategories %}
                             <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
+                                <p style="background:#bcbce2;font-weight:bold">{{ subcategories.0.featuredcategory.title }}</p>
                                 <div style="float: right;">
                                     <button class="update_links" onclick="update_links(this)">Update links</button>
                                 </div>
                                 <div class="links">
-                                   {% for sub,links in  sub_departments.items  %}
-
-                                        {% if links.items|length != 0 %}
-                                            <span>{{sub}}</span>
-                                            {% for linkname,link in links.items %}
-                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
+                                    {% for subcategory in subcategories %}
+                                            {% for activity in subcategory.subcategories_fetured.all %}
+                                            <span>{{ activity }}</span>
+                                                {% for link in links %}
+                                                    <p>Link: {{ link }}</p>
+                                                    <p>Activity Featured: {{ link.activity_featured.all }}</p>
+                                                    {% if activity in link.activity_featured.all %}
+                                                        <p>Link: {{ link }}</p>
+                                                        <a href="{{ link.link }}" style="display: block">{{ link.link_name }}</a>
+                                                    {% endif %}
+                                                {% endfor %}
                                             {% endfor %}
-                                        {% else %}
-                                            <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
-                                        {% endif %}
                                     {% endfor %}
                                 </div>
                             </div>
-                            {% endif %}
-                        {% endfor %}
+                        {% endif %}
                     </div>
                   {% endif %}
                 </div>

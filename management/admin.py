@@ -13,7 +13,7 @@ from management.models import (
     Advertisement,
     Training,ProcessJustification,ProcessBreakdown,
     Meetings,
-    Category,SubCategory,Link
+    SubCategory,Link
 
 )
 
@@ -93,6 +93,7 @@ class TrainingAdmin(admin.ModelAdmin):
 
 admin.site.register(Training, TrainingAdmin)
 admin.site.register(Policy)
+admin.site.register(Meetings)
 admin.site.register(Task, TaskAdmin)
 admin.site.register(TaskLinks)
 admin.site.register(TaskHistory)
@@ -113,17 +114,17 @@ class SubCategoryInline(admin.TabularInline):
     inlines = [LinkInline]
     extra = 1
 
-class CategoryAdmin(admin.ModelAdmin):
-    inlines = [SubCategoryInline]
+# class CategoryAdmin(admin.ModelAdmin):
+#     inlines = [SubCategoryInline]
 
-    def get_inline_instances(self, request, obj=None):
-        # Dynamically adjust inlines based on the currently selected object
-        if obj:
-            return [inline(self.model, self.admin_site) for inline in self.inlines]
-        else:
-            return super(CategoryAdmin, self).get_inline_instances(request, obj)
+#     def get_inline_instances(self, request, obj=None):
+#         # Dynamically adjust inlines based on the currently selected object
+#         if obj:
+#             return [inline(self.model, self.admin_site) for inline in self.inlines]
+#         else:
+#             return super(CategoryAdmin, self).get_inline_instances(request, obj)
 
-admin.site.register(Category, CategoryAdmin)
+# admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory)
 admin.site.register(Link)
 

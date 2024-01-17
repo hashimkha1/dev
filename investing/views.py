@@ -87,7 +87,7 @@ def get_or_create_investment_content():
     try:
         investment_content = InvestmentContent.objects.filter(slug=slug).first()
         if investment_content and investment_content.description:
-            print("Using existing content from the database.")
+            # print("Using existing content from the database.")
             return investment_content.description
         else:
             raise InvestmentContent.DoesNotExist
