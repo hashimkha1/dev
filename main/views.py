@@ -137,7 +137,7 @@ def search(request):
             if result:
                 # This one is simple hu
                 # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-                chat_model = ChatOpenAI(openai_api_key='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')
+                chat_model = ChatOpenAI(openai_api_key='OPENAI_API_KEY')
                 messages = [HumanMessage(content=str(result))]
                 # response_llm = llm.predict_messages(messages)
                 chat_model_result = chat_model.predict_messages(messages)
