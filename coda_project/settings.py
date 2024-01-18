@@ -7,8 +7,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # print(BASE_DIR)
-# SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
@@ -113,12 +112,6 @@ def dba_values():
         user = os.environ.get('HEROKU_PROD_USER')
         password = os.environ.get('HEROKU_PROD_PASS')
     elif os.environ.get('ENVIRONMENT') == 'testing':
-        # In Heroku/Postgres it is Heroku_UAT
-        host = os.environ.get('HEROKU_DEV_HOST')
-        dbname = os.environ.get('HEROKU_DEV_NAME')
-        user = os.environ.get('HEROKU_DEV_USER')
-        password = os.environ.get('HEROKU_DEV_PASS')
-    elif os.environ.get('ENVIRONMENT') == 'local':
         # In Heroku/Postgres it is Heroku_UAT
         host = os.environ.get('HEROKU_DEV_HOST')
         dbname = os.environ.get('HEROKU_DEV_NAME')
@@ -336,7 +329,6 @@ SOCIALACCOUNT_PROVIDERS = {
     },
 }
 
-
 # settings.py
 MPESA_CONSUMER_KEY = os.environ.get('MPESA_CONSUMER_KEY')
 MPESA_CONSUMER_SECRET = os.environ.get('MPESA_CONSUMER_SECRET')
@@ -344,13 +336,3 @@ MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
 MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
 MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
 MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
-
-# import json
-
-# # Load Google Drive API credentials
-# with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
-#     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
-
-
-# 300757737869-c4as7i23oji94v66iactpflc9n8um3f5.apps.googleusercontent.com
-# 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

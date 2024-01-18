@@ -1034,6 +1034,11 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
         if form.is_valid():
             month = int(form.cleaned_data['month'])
             year = int(form.cleaned_data['year'])
+            if month == 12:
+                month = 1
+                year = int(form.cleaned_data['year']) + 1
+            else:
+                month +=1
     else:
         form = MonthForm()
 
@@ -1041,7 +1046,7 @@ def usertaskhistory(request, user=None,  *args, **kwargs):
     user_data=TrainingLoan.objects.filter(user=employee, is_active=True)
     userprofile = UserProfile.objects.get(user_id=employee)
     LBLS=LBandLS.objects.filter(user=employee)
-    tasks =TaskHistory.objects.filter(employee=employee, submission__month=str(month+1), submission__year=str(year))
+    tasks =TaskHistory.objects.filter(employee=employee, submission__month=str(month), submission__year=str(year))
     if tasks is None:
         message=f'Hi {request.user}, you do not have history information for last month,kindly contact admin!'
         return render(request, "main/errors/404.html",{"message":message})

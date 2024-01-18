@@ -47,6 +47,8 @@
 
 <script>
   function handleImageError(img, name) {
+    img.style.height = '120px'; // Set the desired height in pixels
+    img.style.width = '120px';  // Set the desired width in pixels
     // img.remove(); // Remove the grandparent div
     console.log(name)
     if (img.src.includes('/static/')){
