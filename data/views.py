@@ -804,11 +804,19 @@ def userjobtracker(request, user=None, *args, **kwargs):
 
 def employetraining(request):
     request.session["siteurl"] = settings.SITEURL
-    with open(settings.STATIC_ROOT + '/employeetraining.json', 'r') as file:
-        data = json.load(file)
-    return render(
-        request, "data/training/employeetraining.html", {"title": "employeeetraining", "data":data}
-    )
+
+    category_titles = ["VIDEOS", "POWER POINTS"]
+    video_categories = FeaturedCategory.objects.filter(title__in=category_titles)
+    subcategories = FeaturedSubCategory.objects.filter(featuredcategory__in=video_categories)
+    links = ActivityLinks.objects.filter(Featuredsubcategory__in=subcategories).distinct()
+
+    context = {
+        "title": "employeeetraining",
+        "subcategories": subcategories,
+        "links": links,
+    }
+
+    return render(request, "data/training/employeetraining.html", context)
 def updatelinks_employetraining(request):
     department = request.POST["department"]
     subdepartment = request.POST["subdepartment"]

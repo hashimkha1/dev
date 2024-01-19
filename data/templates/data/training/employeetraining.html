@@ -94,27 +94,32 @@
                     {% if user.is_staff or user.is_superuser %}
                     <div style="border: 1px solid black;padding:20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
-                        {% for departments,sub_departments in  data.items  %}
-                        {% if departments == "POWER POINTS" or departments == "IT" or  departments == "MARKETING" or  departments == "PROJECTS" %}
-                            <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">{{departments}}</p>
-                                <div style="float: right;">
-                                    <button class="update_links" onclick="update_links(this)">Update links</button>
-                                </div>
-                                <div class="links">
-                                   {% for sub,links in  sub_departments.items  %}
-
-                                        {% if links.items|length != 0 %}
-                                            <span>{{sub}}</span>
-                                            {% for linkname,link in links.items %}
-                                                <a href="{{link}}" style="display: block"/>{{linkname}} </i></a>
-                                            {% endfor %}
-                                        {% else %}
-                                            <a href="{{links}}" style="display: block"/>{{sub}} </i></a>
+                        {% for category in categories %}
+                            {% if category.title == "POWER POINTS" %}
+                            {% with subcategories=category.featuredsubcategory_set.all %}
+                                        {% if subcategories %}
+                                            <div style="padding: 10px; border: 1px solid black; margin-top: 10px; font-size: 12px;">
+                                                <p style="background:#bcbce2;font-weight:bold">{{category.title}}</p>
+                                                <div style="float: right;">
+                                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                                                </div>
+                                                <div class="links">
+                                                    {% for subcategory in subcategories %}
+                                                        <div>
+                                                            <span>{{ subcategory.title }}</span>
+                                                            {% if subcategory.subcategorie_fetured.all %}
+                                                                {% for link in subcategory.subcategorie_fetured.all %}
+                                                                    <a href="{{ link.link }}"  style="display: block">{{ link.link_name }}</a>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <p>No links available for this subcategory.</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
                                         {% endif %}
-                                    {% endfor %}
-                                </div>
-                            </div>
+                                    {% endwith %}
                             {% endif %}
                         {% endfor %}
                     </div>
@@ -142,33 +147,40 @@
 
                 <div class="col-md-3">
                     {% if user.is_staff or user.is_superuser %}
-                    <div style="border: 1px solid black;padding:20px;">
+                    <div style="border: 1px solid black; padding: 20px;">
                         <h5 class="text-center text-dark">Employee Training</h5>
-                        {% if subcategories %}
-                            <div style="padding:10px;border: 1px solid black;margin-top: 10px;font-size: 12px">
-                                <p style="background:#bcbce2;font-weight:bold">{{ subcategories.0.featuredcategory.title }}</p>
-                                <div style="float: right;">
-                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                        {% for category in categories %}
+                            {% if category.title == "VIDEOS" %}
+                                <div>
+                                    {% with subcategories=category.featuredsubcategory_set.all %}
+                                        {% if subcategories %}
+                                            <div style="padding: 10px; border: 1px solid black; margin-top: 10px; font-size: 12px;">
+                                                <p style="background:#bcbce2;font-weight:bold">{{category.title}}</p>
+                                                <div style="float: right;">
+                                                    <button class="update_links" onclick="update_links(this)">Update links</button>
+                                                </div>
+                                                <div class="links">
+                                                    {% for subcategory in subcategories %}
+                                                        <div>
+                                                            <span>{{ subcategory.title }}</span>
+                                                            {% if subcategory.subcategorie_fetured.all %}
+                                                                {% for link in subcategory.subcategorie_fetured.all %}
+                                                                    <a href="{{ link.link }}"  style="display: block">{{ link.link_name }}</a>
+                                                                {% endfor %}
+                                                            {% else %}
+                                                                <p>No links available for this subcategory.</p>
+                                                            {% endif %}
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    {% endwith %}
                                 </div>
-                                <div class="links">
-                                    {% for subcategory in subcategories %}
-                                            {% for activity in subcategory.subcategories_fetured.all %}
-                                            <span>{{ activity }}</span>
-                                                {% for link in links %}
-                                                    <p>Link: {{ link }}</p>
-                                                    <p>Activity Featured: {{ link.activity_featured.all }}</p>
-                                                    {% if activity in link.activity_featured.all %}
-                                                        <p>Link: {{ link }}</p>
-                                                        <a href="{{ link.link }}" style="display: block">{{ link.link_name }}</a>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            {% endfor %}
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        {% endif %}
+                            {% endif %}
+                        {% endfor %}
                     </div>
-                  {% endif %}
+                {% endif %}
                 </div>
             </div>
         </div>

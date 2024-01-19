@@ -394,6 +394,9 @@ class ActivityLinks(models.Model):
     Activity = models.ManyToManyField(
         FeaturedActivity, blank=True, related_name="activity_featured"
     )
+    Featuredsubcategory = models.ManyToManyField(
+        FeaturedSubCategory, blank=True, related_name="subcategorie_fetured"
+    )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     link_name = models.CharField(max_length=255, default="General")
     # description=models.TextField()
