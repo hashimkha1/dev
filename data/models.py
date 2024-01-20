@@ -281,6 +281,8 @@ class FeaturedCategory(models.Model):
     Development = "Development"
     Testing = "Testing"
     Deployment = "Deployment"
+    VIDEOS = "VIDEOS"
+    POWER_POINTS = "POWER POINTS"
     Other = "Other"
 
     CAT_CHOICES = [
@@ -288,6 +290,8 @@ class FeaturedCategory(models.Model):
         (Planning, "Initiation & Planning"),
         (Development, "Development"),
         (Testing, "Testing"),
+        (VIDEOS, "VIDEOS"),
+        (POWER_POINTS, "POWER POINTS"),
         (Deployment, "Deployment"),
         (Other, "Other"),
     ]
