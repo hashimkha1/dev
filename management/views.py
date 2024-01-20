@@ -1,3 +1,4 @@
+from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F, Case, When, Value
 import math
 import calendar,string,requests
 from typing import Any
@@ -52,7 +53,7 @@ from management.models import (
     Meetings,
 )
 from data.models import DSU,ClientAssessment
-from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
+from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, Payment_History, TrainingLoan,PayslipConfig, Transaction
 from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
@@ -65,9 +66,12 @@ from management.utils import (email_template,paytime,payinitial,paymentconfigura
                                addloantable,employee_reward,employee_group_level,lap_save_bonus,
                                calculate_total_pay,get_bonus_and_summary,compute_total_points
                         )
-from main.utils import countdown_in_month,path_values
+from main.utils import countdown_in_month, generate_chatbot_response,path_values
 from django.db.models import Subquery, OuterRef
 import logging
+
+from investing.models import InvestmentContent, Investments
+from main.context_processors import fetch_service_descriptions
 logger = logging.getLogger(__name__)
 
 # User=settings.AUTH_USER_MODEL
@@ -2750,3 +2754,97 @@ def add_requirement_justification(request):
 #     }
     
 #     return render(request, "management/doc_templates/active_requirements.html", context)
+def get_or_create_investment_content():
+    slug = 'your-slug'
+    try:
+        investment_content = InvestmentContent.objects.filter(slug=slug).first()
+        if investment_content and investment_content.description:
+            # print("Using existing content from the database.")
+            return investment_content.description
+        else:
+            raise InvestmentContent.DoesNotExist
+    except InvestmentContent.DoesNotExist:
+        context=fetch_service_descriptions()
+        query = "Use the context as a example and generate a good overview."
+        user_message = f"{context}\n\n{query}"
+        generated_description = generate_chatbot_response(user_message)
+        investment_content = InvestmentContent.objects.filter(slug=slug).first()
+        if investment_content:
+            investment_content.description = generated_description
+            investment_content.save()
+        else:
+            InvestmentContent.objects.create(
+                slug=slug,
+                title="Your Title",
+                description=generated_description
+            )
+        return generated_description
+def InvestmentPlatformOverview(request):
+    investment_content = get_or_create_investment_content()
+
+    # Use the existing or generated content
+    generated_content = investment_content # Assuming investment_content is the description field
+
+    data = []
+    today = date.today() 
+    for year in range(2021, today.year + 1):
+        year_data = {
+            "year": year,
+            "sales": Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0,
+            "expenses": Transaction.objects.filter(
+                Q(category__in=["employee", "developer", "other_expense"]),  
+                activity_date__year=year
+            ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0,
+            "net_income": (Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0) - (Transaction.objects.filter(
+                Q(category__in=["employee", "developer", "other_expense"]), 
+                activity_date__year=year
+            ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0)
+        }
+        data.append(year_data)
+    #For pie graph 
+    # Get total active users
+    total_active_users = CustomerUser.objects.filter(is_active=True).count()
+
+    # Get active user counts by category
+    active_user_counts = CustomerUser.objects.filter(is_active=True).values('category').annotate(count=Count('id'))
+
+    # Creating a mapping from numerical values to English names
+    category_mapping = dict(CustomerUser.Category.choices, Unknown="Unknown")
+
+    active_user_counts_with_names = [
+        {'category': category_mapping.get(entry['category'], 'Unknown'), 'count': entry['count']} 
+        for entry in active_user_counts
+    ]
+    aggregated_counts = {}
+    for entry in active_user_counts_with_names:
+        category = entry['category']
+        count = entry['count']
+        if category not in aggregated_counts:
+            aggregated_counts[category] = count
+        else:
+            aggregated_counts[category] += count
+
+    # Create a list of dictionaries with unique category names and their counts
+    categories_data = [{'category': category, 'count': count} for category, count in aggregated_counts.items()]
+
+    # Print categories for debugging
+    category_names = [entry['category'] for entry in categories_data]
+    count_to_class = {
+        2: "col-md-6",
+        3: "col-md-4",
+        4: "col-md-3"
+    }
+
+    investments = Investments.objects.all()
+
+    selected_class = count_to_class.get(len(investments), "default-class")
+
+    context = {
+        "investments": investments,
+        "selected_class": selected_class,
+        'generated_content': generated_content,
+        'chart_data': data,
+        'total_active_users': total_active_users, 
+        'categories_data': categories_data,
+    }
+    return render(request, 'management/platformoverview.html',context)
