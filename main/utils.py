@@ -8,6 +8,13 @@ from django.utils.text import slugify
 from django import template
 from django.apps import apps
 from django.db.models import Q
+from langchain.agents import create_sql_agent
+from langchain_community.agent_toolkits import SQLDatabaseToolkit
+from langchain.agents.agent_types import AgentType
+from langchain_community.chat_models import ChatOpenAI
+from langchain.llms.openai import OpenAI
+from langchain_community.utilities import SQLDatabase
+
 """ ========This code is for save images in google drive======= """
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload 
@@ -931,3 +938,21 @@ def split_sentences(description):
         else:
             requirement_description = sentence
     return onboarding_description,troubleshooting_description,requirement_description
+
+def langchainModelForAnswer(question): 
+
+    try:
+        agent_executor = create_sql_agent(
+            llm=ChatOpenAI(temperature=0, openai_api_key=os.getenv('OPENAI_API_KEY'), model=os.getenv('SEACH_DATA_AI_MODEL')),
+            toolkit=SQLDatabaseToolkit(
+                db=SQLDatabase.from_uri(os.getenv('SOURCE_DATABASE_URI'), ignore_tables = None),
+                llm=OpenAI(temperature=0, openai_api_key=os.getenv('OPENAI_API_KEY'))
+            ),
+            verbose=False,
+            agent_type=AgentType.OPENAI_FUNCTIONS
+        )
+        respose = agent_executor.run(question)
+        print(respose)
+    except Exception as e:
+        respose = "some error were there, try again!"
+    return respose
