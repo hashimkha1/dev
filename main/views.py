@@ -199,7 +199,7 @@ def search(request):
         form = SearchForm()
         context = {
             "values": values,
-            "instruction": instructions,
+            "instructions": instructions,
             "form": form
         }
         return render(request, "main/snippets_templates/search.html", context)

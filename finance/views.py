@@ -569,7 +569,7 @@ def pay(request, *args, **kwargs):
         )
     else:
         try:
-            payment_info = Payment_Information.objects.get(customer_id=request.user.id)
+            payment_info = Payment_Information.objects.filter(customer_id=request.user.id).first()
         except:
             # Redirect for specific user categories or to contract signing view
             if request.user.category == 5:
@@ -623,6 +623,7 @@ def paymentComplete(request):
         client_date=client_date,
         rep_date=rep_date,
     )
+	
     return JsonResponse("Payment completed!", safe=False)
 
 class DefaultPaymentListView(ListView):
