@@ -11,7 +11,7 @@ from datetime import date,datetime,time,timezone
 import openai
 from finance.models import Payment_History, Transaction
 from django.views.generic import ListView
-import pandas as pd
+# import pandas as pd
 
 from .utils import (compute_pay,risk_ratios,
                     computes_days_expiration, computes_days_expiration_option_return, get_user_investment,financial_categories,investment_rules

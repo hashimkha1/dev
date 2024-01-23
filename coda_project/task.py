@@ -56,6 +56,8 @@ def dump_data(request):
 
         TaskHistory.objects.bulk_create(bulk_object)
         employees = User.objects.filter(is_staff=True, is_active=True)
+        
+        updated_task = []
         for employee in employees: 
 
             employee_taskhistory = TaskHistory.objects.filter(employee__is_staff=True, employee__is_active=True,
@@ -65,33 +67,51 @@ def dump_data(request):
                 employee_task = get_data.filter(employee__is_staff=True, employee__is_active=True,employee=employee)
                 if employee_task.count() > 0:
                     
-                    group, group_title, total_point = employee_group_level(employee_taskhistory, TaskGroups)
-                    new_max_earning = employee_task.first().mxearning
-                    
-                    #incrementing contractual people max_earnig by one whenever hr/she will complete 30 hour on project
-                    #here point is incresed by duration(hour) when newevidence uploaded for particular requirement.
-                    if group_title == 'Group H' and total_point > 30: 
+                    for task in employee_task:
                         
-                        new_max_earning += (total_point // 3)
-
-                    #for intern no earning 
-                    elif group_title == 'Group I':
+                        group, group_title, total_point = employee_group_level(employee_taskhistory.filter(activity_name=task.activity_name), TaskGroups)
+                        new_max_earning = task.mxearning
                         
-                        new_max_earning = 0
+                        #incrementing contractual people max_earnig by one whenever hr/she will complete 30 hour on project
+                        #here point is incresed by duration(hour) when newevidence uploaded for particular requirement.
+                        if group_title == 'Group H' and total_point > 30: 
+                            
+                            new_max_earning += (total_point // 3)
 
-                    elif employee_task.first().groupname.id != group:
+                            task.groupname_id = group
+                            task.group = group_title
+                            task.point = 0
+                            task.mxearning = new_max_earning
 
-                        new_max_earning = increment_in_graduation_of_employee(employee, employee_task.first().mxearning, group, PayslipConfig)
+                            updated_task.append(task)
+
+                        #for intern no earning 
+                        elif group_title == 'Group I':
+                            
+                            new_max_earning = 0
+
+                            task.groupname_id = group
+                            task.group = group_title
+                            task.point = 0
+                            task.mxearning = new_max_earning
+                            updated_task.append(task)
+
+                        elif task.groupname.id != group:
+
+                            new_max_earning = increment_in_graduation_of_employee(employee, task.mxearning, group, PayslipConfig)
+
+                            task.groupname_id = group
+                            task.group = group_title
+                            task.point = 0
+                            task.mxearning = new_max_earning
+                            
+                            updated_task.append(task)
                     
-                    print(employee.username, new_max_earning, total_point)
-                    employee_task.update(
-                        groupname_id = group,
-                        group = group_title,
-                        point = 0,
-                        mxearning = new_max_earning
-                    )
 
-                
+        if len(updated_task) > 0:
+            Task.objects.bulk_update(updated_task, ['groupname', 'group', 'point', 'mxearning'])
+
+
         return True
         # get_data.update(point=0)
         # for task in get_data:

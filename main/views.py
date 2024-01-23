@@ -35,8 +35,10 @@ from django.views.generic import (
 from .forms import *
 from django.http import JsonResponse
 from django.apps import apps
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
+# from langchain.llms import OpenAI
+# from langchain.chat_models import ChatOpenAI
+from langchain_community.llms import OpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
 from django.db.models import F, FloatField, Case, When, Value, Subquery, OuterRef, Q
@@ -177,11 +179,10 @@ def search(request):
     if request.method == "POST":
         form = SearchForm(request.POST, request.FILES)
         if form.is_valid():
-            data = form.cleaned_data
             instance = form.instance
             instance.searched_by = request.user
-             
-            response = langchainModelForAnswer(instance.question)
+            question = instance.question + f"and for more context, try to refer {instance.topic} table in {instance.category} category first."
+            response = langchainModelForAnswer(question)
 
             instance.save()
         else:

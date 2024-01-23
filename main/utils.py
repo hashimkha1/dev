@@ -11,8 +11,7 @@ from django.db.models import Q
 from langchain.agents import create_sql_agent
 from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
-from langchain_community.chat_models import ChatOpenAI
-from langchain.llms.openai import OpenAI
+from langchain_openai import ChatOpenAI, OpenAI
 from langchain_community.utilities import SQLDatabase
 
 """ ========This code is for save images in google drive======= """
@@ -951,8 +950,11 @@ def langchainModelForAnswer(question):
             verbose=False,
             agent_type=AgentType.OPENAI_FUNCTIONS
         )
-        respose = agent_executor.run(question)
-        print(respose)
+        params ={
+            'input': question,
+        }
+        response = agent_executor.invoke(params)
     except Exception as e:
-        respose = "some error were there, try again!"
-    return respose
+        print(e)
+        response = "some error were there, try again!"
+    return response['output']
