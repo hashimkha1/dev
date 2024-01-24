@@ -358,6 +358,9 @@ class FeaturedSubCategory(models.Model):
 
     def __str__(self):
         return self.title
+    def __str__(self):
+        return f"{self.title} - {self.featuredcategory}"
+    
 
 
 class FeaturedActivity(models.Model):
@@ -398,8 +401,12 @@ class ActivityLinks(models.Model):
     Activity = models.ManyToManyField(
         FeaturedActivity, blank=True, related_name="activity_featured"
     )
-    Featuredsubcategory = models.ManyToManyField(
-        FeaturedSubCategory, blank=True, related_name="subcategorie_fetured"
+    Featuredsubcategory = models.ForeignKey(
+        FeaturedSubCategory, 
+        blank=True, 
+        null=True, 
+        on_delete=models.SET_NULL,
+        related_name="subcategorie_fetured"
     )
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     link_name = models.CharField(max_length=255, default="General")

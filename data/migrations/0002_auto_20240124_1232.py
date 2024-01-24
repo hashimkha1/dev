@@ -11,10 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='clientassessment',
-            name='projectcharter',
-        ),
         migrations.AddField(
             model_name='activitylinks',
             name='Featuredsubcategory',
