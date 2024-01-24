@@ -61,6 +61,20 @@
     </div>
 
     </div>
+    <div>
+      <form method="post">
+        {% csrf_token %}
+
+        <label for="dropdown">Select an option:</label>
+        <select name="dropdown_option" id="dropdown">
+            <option value="is_active">is_active</option>
+            <option value="is_featured">is_featured</option>
+        </select>
+
+        <button type="submit" name="action" value="true">Checked</button>
+        <button type="submit" name="action" value="false">Unchecked</button>
+    </form>
+    </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
