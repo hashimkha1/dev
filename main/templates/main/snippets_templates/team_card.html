@@ -52,7 +52,7 @@
     // img.remove(); // Remove the grandparent div
     console.log(name)
     if (img.src.includes('/static/')){
-      img.src = "" //"{% static '/main/img/profile/profile.jpeg' %}"
+      img.src = "{% static 'main/img/service-1.jpg' %}" //"{% static '/main/img/profile/profile.jpeg' %}"
     }
     else{
       img.src = "{% static 'main/img/profile/' %}"+ name.toLowerCase() +".jpeg"

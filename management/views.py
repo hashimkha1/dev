@@ -1665,6 +1665,7 @@ class AssessmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
     # -----------------------------REQUIREMENTS---------------------------------
+
 def active_requirements(request, Status=None, *args, **kwargs):
     active_requirements = Requirement.objects.all().filter(is_active=True)
     context = {"active_requirements": active_requirements}

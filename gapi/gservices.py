@@ -4,7 +4,7 @@ from base64 import urlsafe_b64decode
 from django.shortcuts import get_object_or_404, redirect, render
 
 import os
-import pandas as pd
+# import pandas as pd
 from bs4 import BeautifulSoup
 # Gmail API utils
 from googleapiclient.discovery import build

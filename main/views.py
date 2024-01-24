@@ -13,7 +13,7 @@ from data.models import ClientAssessment
 from .models import Service,Plan,Assets
 from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
-                    generate_database_response,generate_chatbot_response,upload_image_to_drive)
+                    generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
 from .models import Testimonials
 from getdata.models import Logs
 from coda_project import settings
@@ -35,8 +35,10 @@ from django.views.generic import (
 from .forms import *
 from django.http import JsonResponse
 from django.apps import apps
-from langchain.llms import OpenAI
-from langchain.chat_models import ChatOpenAI
+# from langchain.llms import OpenAI
+# from langchain.chat_models import ChatOpenAI
+from langchain_community.llms import OpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 import os
 from django.db.models import F, FloatField, Case, When, Value, Subquery, OuterRef, Q
@@ -112,8 +114,60 @@ def fetch_model_table_names(request):
 
 
 # =====================TESTIMONIALS  VIEWS=======================================
+# @login_required
+# def search(request):
+#     instructions = [
+#         {"topic": "Review", "description": "Select Your User Category."},
+#         {"topic": "Sample", "description": "Select Topic Category"},
+#         {"topic": "copy", "description": "Enter topic-related question"},
+#         {"topic": "Submit", "description": "Click on Submit Review!"},
+#     ]
+#     values = ["management", "investing", "main", "getdata", "data", "projectmanagement"]
+
+#     if request.method == "POST":
+#         form = SearchForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             data = form.cleaned_data
+#             instance = form.save(commit=False)
+#             instance.searched_by = request.user
+#             category = form.instance.category
+#             table = form.instance.topic
+#             # print('table============',table)
+#             question = form.instance.question
+#             app = category
+#             result, = generate_database_response(user_message=question, app=app,table=table)
+#             if result:
+#                 # This one is simple hu
+#                 # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
+#                 chat_model = ChatOpenAI(openai_api_key='OPENAI_API_KEY')
+#                 messages = [HumanMessage(content=str(result))]
+#                 # response_llm = llm.predict_messages(messages)
+#                 chat_model_result = chat_model.predict_messages(messages)
+#                 # response1 = response_llm.content.split(':', 1)[-1].strip()
+#                 response = chat_model_result.content
+#             else:
+#                 response = None
+
+#             context = {
+#                 "values": values,
+#                 "instructions": instructions,
+#                 "response": response,
+#                 "form": form
+#             }
+
+#         return render(request, "main/snippets_templates/search.html", context)
+#     else:
+#         form = SearchForm()
+#         context = {
+#             "values": values,
+#             "instructions": instructions,
+#             "form": form
+#         }
+#         return render(request, "main/snippets_templates/search.html", context)
+
 @login_required
 def search(request):
+
     instructions = [
         {"topic": "Review", "description": "Select Your User Category."},
         {"topic": "Sample", "description": "Select Topic Category"},
@@ -125,34 +179,21 @@ def search(request):
     if request.method == "POST":
         form = SearchForm(request.POST, request.FILES)
         if form.is_valid():
-            data = form.cleaned_data
-            instance = form.save(commit=False)
+            instance = form.instance
             instance.searched_by = request.user
-            category = form.instance.category
-            table = form.instance.topic
-            # print('table============',table)
-            question = form.instance.question
-            app = category
-            result, = generate_database_response(user_message=question, app=app,table=table)
-            if result:
-                # This one is simple hu
-                # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-                chat_model = ChatOpenAI(openai_api_key='OPENAI_API_KEY')
-                messages = [HumanMessage(content=str(result))]
-                # response_llm = llm.predict_messages(messages)
-                chat_model_result = chat_model.predict_messages(messages)
-                # response1 = response_llm.content.split(':', 1)[-1].strip()
-                response = chat_model_result.content
-            else:
-                response = None
+            question = instance.question + f"and for more context, try to refer {instance.topic} table in {instance.category} category first."
+            response = langchainModelForAnswer(question)
 
-            context = {
-                "values": values,
-                "instructions": instructions,
-                "response": response,
-                "form": form
-            }
-
+            instance.save()
+        else:
+            response = 'form is invalid'
+        
+        context = {
+            "values": values,
+            "instructions": instructions,
+            "response": response,
+            "form": form
+        }
         return render(request, "main/snippets_templates/search.html", context)
     else:
         form = SearchForm()
@@ -162,7 +203,6 @@ def search(request):
             "form": form
         }
         return render(request, "main/snippets_templates/search.html", context)
-
 
 def get_respos(request):
     user_message = request.GET.get('userMessage', '')  # Get the user's message from the request
