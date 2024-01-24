@@ -24,4 +24,9 @@ urlpatterns = [
     path('overboughtsold/<str:symbol>', views.oversoldpositions, name='overboughtsold'),
     path('measures/', views.ticker_measures, name='ticker_measures'),
     path('oversoldupdate/<int:pk>', views.oversold_update.as_view(), name='oversoldupdate'),
+    path('investstrategy/', views.list_investment_strategies, name='investstrategy'),
+    path('investstrategycreate/', views.create_investment_strategies, name='investstrategycreate'),
+    path('investstrategyupdate/<int:pk>', views.update_investment_strategies, name='investstrategyupdate')
+
+
 ]

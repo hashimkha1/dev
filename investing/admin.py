@@ -25,6 +25,6 @@ admin.site.register(Investment_rates)
 admin.site.register(Investor_Information)
 admin.site.register(InvestmentContent)
 admin.site.register(InvestmentsStrategy)
-class InvestmentContentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'description')
+# class InvestmentContentAdmin(admin.ModelAdmin):
+#     list_display = ('title', 'slug', 'description')
 
