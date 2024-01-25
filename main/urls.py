@@ -48,7 +48,7 @@ urlpatterns = [
     #---------------HUMAN RESOURCE--------------------#
 
     #-----------------------------FINANCE--------------------#
-
+       
         #--------------------------MANAGEMENT--------------------#
         path('newprofile/', views.UserCreateView.as_view(template_name='main/form.html'), name='newprofile'),
         path('updateprofile/<int:pk>/', views.UserProfileUpdateView.as_view(template_name='main/form.html'), name='update_profile'),
@@ -90,5 +90,12 @@ urlpatterns = [
     path('403/', views.hendler403, name='403-error'),
     path('404/', views.hendler404, name='404-error'),
     path('500/', views.hendler500, name='500-error'),
+
+    #===========company records=======
+
+    path('companyassetlist/', views.Company_AssetListview.as_view(),name='companyassetlist'),
+    path('fxcompany_assetlist/', views.company_asset_list,name='fxcompany_assetlist'),
+    path('companyassetcreate/', views.Company_AssetCreateView.as_view(),name='companyassetcreate'),
+    path('fxcompany_assetcreate/', views.company_asset_create,name='fxcompany_assetcreate'),
 
 ]
