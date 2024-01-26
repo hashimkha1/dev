@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-import openai
+import os
 from finance.models import Payment_History, Transaction
 from django.views.generic import ListView
 # import pandas as pd
@@ -45,6 +45,7 @@ from django.utils import timezone
 # from getdata.utils import fetch_data_util
 from getdata.models import Editable
 from .filters import PortfolioFilter
+import json
 
 register = template.Library()
 User=get_user_model
@@ -344,17 +345,41 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                 
     if use_ai:
         
-        data = 'symbol strike_price rank premium\n'
+        data = 'symbol rank days_to_expiry earning_date return\n'
         for stock_data in context['data']:
             #{stock_data.strategy if stock_model != 'credir_spread' else stock_data.action}
-            data += f"{stock_data.symbol} {stock_data.sell_strike if sub_title == 'credir_spread' else stock_data.strike_price} {stock_data.rank if sub_title == 'credir_spread' else stock_data.implied_volatility_rank} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
+            data += f"{stock_data.symbol} {stock_data.rank if sub_title == 'credit_spread' else stock_data.implied_volatility_rank} {computes_days_expiration([stock_data])[1]} {stock_data.earnings_date} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
 
             data += "\n"
+             #"in output just give me list of symbol"
+        question = data + "\n" + "on above data, list top 5 symbol. in which, consider filed in this priority order, 1> rank 2> days_to_expiry 3> earning_date 4> return."+ """
+            output format example: {
+            description: "why you choose this five",
+            symbols: ["ENPH", "PYPL"]
+            }, and do not pass any extra string in output
+            """
+        message_dict = [
+            {"role": "system", "content": question},
+            # {"role": "system", "content": "also can you describe why you choose that symbol in short description"},
+        ]
+        try:
+            # print(question)
+            answer = generate_chatbot_response(None, user_message_dict=message_dict)
             
-        question = data + "\n\n" + "on above data, can you suggest top 5 optimal stock?"
-        answer = generate_chatbot_response(question)
+            # Parse the JSON string into a Python dictionary
+            data_dict = json.loads(answer)
+
+            # Accessing values in the dictionary
+            description = data_dict["description"]
+            symbols = data_dict["symbols"]
+
+            context['data'] = context['data'].filter(symbol__in=symbols)
+
+        except Exception as e:
+            description = "try again!!!"
+        
     else:
-        answer = None
+        description = None
 
     context.update({
         # "data": filtered_stockdata_by_oversold,
@@ -379,7 +404,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         "subtitle": sub_title,
         "pre_sub_title": pre_sub_title,
         'title': page_title,  # Using renamed title
-        'message': answer
+        'ai_message': description
         
     })
     

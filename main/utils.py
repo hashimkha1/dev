@@ -107,21 +107,32 @@ def unique_slug_generator(instance, new_slug=None):
 
 
 """ =============open_ai chat bot===========   """
-def generate_chatbot_response(user_message):
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
-    response = openai.completions.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=user_message,
-            temperature=0.4,
-            # max_tokens=100,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
+def generate_chatbot_response(user_message, user_message_dict=None):
+    
+    if user_message_dict is None:
+        messages = [
+        {"role": "system", "content": user_message},
+        ]
+    else:
+        messages = user_message_dict
+
+    client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+
+    response = client.chat.completions.create(
+    # response = openai.completions.create(
+            model="gpt-4-1106-preview",
+            messages=messages,
+            # response_format="json"
+            # temperature=0.4,
+            # max_tokens=4096,
+            # top_p=1,
+            # frequency_penalty=0,
+            # presence_penalty=0
     )
     
     if response:
-        res = response.choices[0]
-        result=res.text     
+        result=response.choices[0].message.content     
+        
     else:
         result = None
     return result
