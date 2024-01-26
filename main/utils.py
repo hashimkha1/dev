@@ -967,8 +967,8 @@ def langchainModelForAnswer(question):
         params ={
             'input': question,
         }
-        response = agent_executor.invoke(params)
+        response = agent_executor.invoke(params)['output']
     except Exception as e:
         print(e)
         response = "some error were there, try again!"
-    return response['output']
+    return response

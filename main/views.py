@@ -1,5 +1,5 @@
 import webbrowser
-import datetime
+import datetime, json
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
@@ -1073,3 +1073,49 @@ def clints_availability(request):
 
     context['obj'] = dist
     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
+
+
+def FrequentlyAskedQuestion(request):
+    CAT_CHOICES = [
+        ("all", "all"),
+        ("accounts", "Registration"),
+        ("application", "Application"),
+        ("finance", "Financial Information"),
+        ("management", "Employees Activities"),
+        ("data", "Data Analysis"),
+        ("getdata", "Automation"),
+        ("investing", "Investments"),
+        ("main", "General Information"),
+        ("projectmanagement", "Field Projects"),
+    ]
+    questions = Search.objects.all().distinct('question')
+
+    if request.method == 'POST':
+        raw_data = request.body.decode('utf-8')
+
+        if raw_data:
+            
+            payload = json.loads(raw_data)
+            question = payload.get('question', None)
+            category = payload.get('category', None)
+            topic = payload.get('topic', None)
+
+            if question:
+                question += f"and for more context, try to refer {topic} table in {category} category first."
+                print(question)
+                # Parse the JSON data
+                response = langchainModelForAnswer(question)
+                print(response)
+
+                return JsonResponse({"answer": response})
+    else:
+
+        category = request.GET.get('category')
+        if category and category != "all":
+            questions = questions.filter(category=category)
+     
+        context = {
+            "questions": questions,
+            "categories": CAT_CHOICES
+        }
+        return render(request, "main/home_templates/help.html", context)
