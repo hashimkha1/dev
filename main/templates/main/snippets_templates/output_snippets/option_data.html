@@ -102,7 +102,7 @@
                       </a>
                     </div>
                     <div class="col-md-4">
-                      <a class="btn btn-primary" href="{% url 'investing:my_portfolio' %}"  style="background-color: #4CAF50; border-color: #4CAF50;"> My Portfolio
+                      <a class="btn btn-primary" href="{% url 'investing:option_list' title=subtitle %}?{{ request.GET.urlencode }}&use_ai=True"  style="background-color: #4c51af; border-color: #4CAF50;"> Ask AI
                       </a>
                     </div>
                 </div>
@@ -132,6 +132,10 @@
                   <!-- <h6>{{category|upper}}</h6> -->
                   {% endif %}
             {% endfor %}
+                    <hr/>
+                    <div class="col-md-12">
+                    <a class="btn btn-primary" href="{% url 'investing:my_portfolio' %}"  style="background-color: #4CAF50; border-color: #4CAF50;"> My Portfolio</a>
+                  </div>
                 </div>
               </div>
             </div>

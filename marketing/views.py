@@ -149,10 +149,20 @@ def delete_whatsapp(request,slug):
 
 @login_required
 def whatsapp_groups(request, title):
+
     # Annotate groups with participant count
     annotated_whatsapp_groups = Whatsapp_Groups.objects.annotate(
         participant_count=Cast('participants', IntegerField())
     )
+    if request.method == 'POST':
+       
+        selected_option = request.POST.get('dropdown_option')
+        action = request.POST.get('action') == 'true'
+        
+        if selected_option == 'is_active':
+            annotated_whatsapp_groups.update(is_active=action)
+        elif selected_option == 'is_featured':
+            annotated_whatsapp_groups.update(is_featured=action)            
 
     # Fetch groups based on title
     if title == 'active_groups':

@@ -243,6 +243,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
 
     filter_name = request.GET.get('filter_by', None)
     extra_filter = request.GET.get('extra_filter_by', None)
+    use_ai = request.GET.get('use_ai', False)
 
     # Taking distinct symbols which in oversold/overbought.
     distinct_overboughtsold_symbols = list(set([
@@ -343,7 +344,21 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                         context['data'] = sorted(context['data'], key=lambda x: float(x.raw_return[:-1]), reverse=True)[:5]
                     else:
                         context['data'] = sorted(context['data'], key=lambda x: float(x.sell_strike[1:].replace(',', '')), reverse=True)[:5]
-          
+                
+    if use_ai:
+        
+        data = 'symbol strike_price rank premium\n'
+        for stock_data in context['data']:
+            #{stock_data.strategy if stock_model != 'credir_spread' else stock_data.action}
+            data += f"{stock_data.symbol} {stock_data.sell_strike if sub_title == 'credir_spread' else stock_data.strike_price} {stock_data.rank if sub_title == 'credir_spread' else stock_data.implied_volatility_rank} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
+
+            data += "\n"
+            
+        question = data + "\n\n" + "on above data, can you suggest top 5 optimal stock?"
+        answer = generate_chatbot_response(question)
+    else:
+        answer = None
+
     context.update({
         # "data": filtered_stockdata_by_oversold,
         
@@ -367,6 +382,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         "subtitle": sub_title,
         "pre_sub_title": pre_sub_title,
         'title': page_title,  # Using renamed title
+        'message': answer
         
     })
     
