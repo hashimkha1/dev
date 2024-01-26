@@ -23,7 +23,8 @@ from .forms import (
     OptionsForm,
     InvestmentForm,
     InvestmentRateForm,
-    PortfolioForm
+    PortfolioForm,
+    InvestmentsStrategyForm
 )
 from django.utils.decorators import method_decorator
 from .models import (
@@ -38,7 +39,9 @@ from .models import (
     Options_Returns,
     Cost_Basis,
     Ticker_Data,
-    Investor_Information
+    Investor_Information,
+    InvestmentsStrategy
+    
 )
 from accounts.models import CustomerUser
 from django.utils import timezone
@@ -917,3 +920,65 @@ def oversoldpositions(request,symbol=None):
         }
 
     return render(request, "investing/oversold.html", context)
+
+def list_investment_strategies(request):
+    investment_strategies  = InvestmentsStrategy.objects.all()
+    return render(request,'investing/investstrategies.html',{'investment_strategies':investment_strategies})   
+
+def create_investment_strategies(request):
+    if request.method == 'POST':
+        form = InvestmentsStrategyForm(request.POST)
+        if form.is_valid:
+            form.save()
+            return redirect('investing:investstrategy')
+    else:
+        form = InvestmentsStrategyForm()
+        return render(request,'investing/investment_form.html',{'form':form}) 
+
+def update_investment_strategies(request,pk):
+    investment_strategy = get_object_or_404(InvestmentsStrategy,pk=pk)
+    if request.method == 'POST':
+        form = InvestmentsStrategyForm(request.POST,instance=investment_strategy)
+        if form.is_valid:
+            form.save()
+            return redirect('investstrategy')
+    else:
+        form = InvestmentsStrategyForm(instance=investment_strategy)
+        return render(request,'investing/investment_form.html',{'form':form})
+
+def delete_investment_strategy(request,pk):
+    investment_strategy = get_object_or_404(InvestmentsStrategy,pk=pk)
+    if request.strategy == 'POST':
+        investment_strategy.delete()
+        return redirect(investstrategy)
+    return render (request,'',{'investment_strategy': delete_investment_strategy})    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
