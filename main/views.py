@@ -12,7 +12,7 @@ from django.db.models import Sum
 from data.models import ClientAssessment
 from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
-from .utils import (Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
+from .utils import (Automation, General, Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
 from coda_project import settings
@@ -326,25 +326,31 @@ def display_service(request, *args, **kwargs):
     description = investment_content.description if investment_content else "No description available"
 
     testimonials, selected_class = get_testimonials()
-     # Calculate the number of students and other users
-    students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
-    other_users_count = CustomerUser.objects.exclude(category=CustomerUser.Category.Student).count()
 
+    # Calculate the number of students and other users
+    students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
+    teachers_count = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member).count()
+    # Calculate the total number of courses
+    total_courses_count = ServiceCategory.objects.filter(service=service_id).count()
 
     context = {
         'service_categories': service_categories,
         "title": service_category_title,
         "service_desc": service_description,
         'content': description,
+        "General":General,
+        "Automation":Automation,
         "sub_titles": service_sub_titles,
         "posts": testimonials,
         "selected_class": selected_class,
         "slug": service_category_slug,
         "asset_image_url": asset_image_url,
-                "students_count": students_count,
-        "other_users_count": other_users_count,
+        "students_count": students_count,
+        "teachers_count": teachers_count,
+        "total_courses_count": total_courses_count,
     }
     return render(request, "main/services/show_services.html", context)
+
 
 
 
