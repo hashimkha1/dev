@@ -12,25 +12,6 @@
     <h1 style="font-size: 64px;">{{sub_titles}}</h1>
   </div>
 </div>
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-      var titleElement = document.querySelector('h2');
-      var truncatedTitleElement = document.getElementById('truncatedTitle');
-
-      if (titleElement) {
-          var words = titleElement.innerText.split(' ');
-
-          // Check if title contains more than 3 words
-          if (words.length > 3) {
-              var truncatedTitle = words.slice(0, 2).join(' ');
-              truncatedTitleElement.innerText = truncatedTitle;
-          } else {
-              // If the title has 3 or fewer words, display the original title
-              truncatedTitleElement.innerText = titleElement.innerText;
-          }
-      }
-  });
-</script>
 <div class="stripdiv">
   <div class="container">
     <p class="me-lg-5">
@@ -49,7 +30,7 @@
         <hr style="width: 36%; height: 4px; background-color: #E7AD4A;">
           <div class="text-content" id="readMoreContent">
               <p class="me-lg-5" id="truncatedText">
-                {{ content|safe|truncatechars:404 }}
+                {{ content|safe|truncatechars:380 }}
               </p>
               <p class="me-lg-5" id="remainingText" style="display: none;">
                 {{ content|safe }}
@@ -60,10 +41,6 @@
           </div>
       </div>
       <div class="col-md-6">
-        <!-- <video class="img-fluid ps-lg-5" width="100%" height="auto" controls style="padding-top: 71px;">
-          <source src="{% static 'main/image/vid_v1.mp4' %}" type="video/mp4">
-          Your browser does not support the video tag.
-        </video> -->
       <div class="videocontainers">
         <div class="videocontainer">
           <iframe src="https://drive.google.com/file/d/1HNif_Ru_0UqZbvFy792NSZqtTyc460Um/preview" width="100%" height="auto" controls crossorigin playsinline class="plyr"></iframe>
@@ -73,55 +50,34 @@
     </div>
   </div> 
 </div>
-<script>
+<style>
+  /*css for show services  */
+.videocontainers{
+  padding-top: 97px;
+}
+.videocontainer {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+}
+
+.videocontainer iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+</style>
+<!-- <script>
   document.addEventListener('DOMContentLoaded', () => {
       const player = new Plyr('.plyr');
   });
-</script>
-<style>
-   .videocontainers{
-    padding-top: 97px;
-  }
-  .videocontainer {
-    position: relative;
-    width: 100%;
-    height: 0;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    overflow: hidden;
-  }
-
-  .videocontainer iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-  }
-</style>
+</script> -->
 {% include 'main/services/course.html'%}
-<!-- <div class="testimonials-div">
-  <div class="container">
-    <h1>SUCCESS STORIES</h1>
-    <div class="owl-carousel">
-      {% for investment in investments %}
-        <div class="carousel-card {% if forloop.counter > 3 %}hidden{% endif %}">
-          <h3> 
-            <h3 style="margin-top: 20px;">
-              {{ investment.client.first_name }}, {{ investment.client.last_name }}
-            </h2>
-          </h3>
-          <p style="font-size: 18px;">Date: {{ investment.investment_date }}</p>
-          <p style="font-size: 16px;">{{ investment.description }}</p>
-        </div>
-      {% endfor %}
-    </div>
-    <div class="owl-controls" style="margin-top: 20px;" >
-      <button class="prev" onclick="moveCarousel(-1)"  style="color:var(--golden-color); font-size: 50px;">❮</button>
-      <button class="next" onclick="moveCarousel(1)" style="color:var(--golden-color); font-size: 50px;">❯</button>
-    </div>
-  </div>
-</div> -->
 <div class="testimonials-div">
   <div class="container">
       <h1>CLIENT SUCCESS STORIES</h1>
