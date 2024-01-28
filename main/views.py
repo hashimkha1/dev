@@ -801,9 +801,6 @@ def team(request,title):
 
     if sub_title == 'board':
         BOG_members = UserProfile.objects.filter(user__is_staff=True, user__is_active=True,user__sub_category=6).order_by("user__date_joined")
-        print("BOG_members==============>",BOG_members)
-        clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
-    
         team_categories = {
             'Board Members': list(BOG_members),
         }
