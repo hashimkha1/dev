@@ -351,3 +351,33 @@ class Tracker(models.Model):
     def total_payment(self):
         total = self.duration.objects.aggregate(TOTAL=Sum("duration"))["TOTAL"]
         return total
+
+
+class Team_Members(models.Model):
+    CAT_CHOICES = [
+        ("board", "Board Members"),
+        ("analytics_team", "Analytics Team"),
+        ("future_talent", "Future Talent"),
+        ("support_team", "Support Team"),
+        ("clients", "Clients"),
+        ("other", "other"),
+    ]
+
+    category = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="Other",
+    )
+
+    title = models.CharField(max_length=255, default="Task")
+    description = models.TextField()
+
+    class Meta:
+        verbose_name_plural = "Team Classification"
+
+    def get_absolute_url(self):
+        return reverse("main:layout")
+
+    def __str__(self):
+        return self.title
+

@@ -199,7 +199,7 @@ def contract_data_submission(request):
 				customer_id=int(customer.id)
 				)
 			payment_history_data.save()
-			new_payment_added = Payment_Information.objects.get(customer_id_id=customer.id)
+			new_payment_added = Payment_Information.objects.filter(customer_id_id=customer.id).first()
 
 			if new_payment_added:
 				# messages.success(request, f'Added New Contract For the {username}!')
@@ -276,7 +276,7 @@ def contract_investment_submission(request):
 def mycontract(request, *args, **kwargs):
 	username = kwargs.get('username')
 	client_data = CustomerUser.objects.get(username=username)
-    
+
 	if client_data.category == 5:
 		try:
 			investor_details = Investor_Information.objects.filter(investor_id=client_data.id).order_by('-contract_date').first()
@@ -292,7 +292,7 @@ def mycontract(request, *args, **kwargs):
 			return redirect('investing:investments')
 	else:
 		try:
-			payment_details = Payment_Information.objects.get(customer_id_id=client_data.id)
+			payment_details = Payment_Information.objects.filter(customer_id_id=client_data.id).first()
 			contract_date = payment_details.contract_submitted_date.strftime("%d %B, %Y")
 			context = {
 				'job_support_data': client_data,
@@ -1208,7 +1208,7 @@ def dcinflows(request):
         total_paid = 0
         
     amount_ksh = 0  # Assign a default value of 0
-    
+    receipt_url = ''
     for transact in transactions:
         # print("receipturl",transact.receipturl)
         total_amt += transact.total_payment

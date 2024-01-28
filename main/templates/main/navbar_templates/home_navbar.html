@@ -24,20 +24,20 @@
             About
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-            <a class="dropdown-item" href="{% url 'main:team_profiles' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='board' %}"
+              >Leadership</a
+            >
+            <a class="dropdown-item" href="{% url 'main:members' title='team_profiles' %}"
             >Our Team</a
             >
-            <a class="dropdown-item" href="{% url 'main:future_talents' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='future_talents' %}"
             >Future Talent</a
             >
-            <a class="dropdown-item" href="{% url 'main:client_profiles' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='client_profiles' %}"
             >Looking For Talent?</a
             >
-            <a class="dropdown-item" href="#"
-              >Our Board</a
-            >
             <a class="dropdown-item" href="{% url 'application:career' %}"
-            >Career</a
+            >Career</a 
           >
         </div>
       </li>
@@ -140,7 +140,7 @@
             >Support</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
                     {% if user.is_admin or  user.is_staff or  user.is_superuser %}
-                          <a class="dropdown-item"href="{% url 'main:layout' %}" target="" >Help?</a >
+                          <a class="dropdown-item"href="{% url 'main:help' %}" target="" >Help?</a >
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="{% url 'management:requirements-active' %}" target="" >Active Requirements</a>
                               <div class="dropdown-divider"></div>

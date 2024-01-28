@@ -107,20 +107,32 @@ def unique_slug_generator(instance, new_slug=None):
 
 
 """ =============open_ai chat bot===========   """
-def generate_chatbot_response(user_message):
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
-    response = openai.Completion.create(
-            model="gpt-3.5-turbo-instruct",
-            prompt=user_message,
-            temperature=0.4,
-            max_tokens=100,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
+def generate_chatbot_response(user_message, user_message_dict=None):
+    
+    if user_message_dict is None:
+        messages = [
+        {"role": "system", "content": user_message},
+        ]
+    else:
+        messages = user_message_dict
+
+    client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+
+    response = client.chat.completions.create(
+    # response = openai.completions.create(
+            model="gpt-4-1106-preview",
+            messages=messages,
+            # response_format="json"
+            # temperature=0.4,
+            # max_tokens=4096,
+            # top_p=1,
+            # frequency_penalty=0,
+            # presence_penalty=0
     )
+    
     if response:
-        res = response["choices"][0]
-        result=res['text']
+        result=response.choices[0].message.content     
+        
     else:
         result = None
     return result
@@ -197,7 +209,7 @@ def buildmodel(question):
     openai.api_key = os.environ.get('OPENAI_API_KEY')
     #Building engine
     try:
-        response = openai.Completion.create(
+        response = openai.completions.create(
             model="text-davinci-001",
             prompt=question,
             temperature=0.4,
@@ -206,8 +218,10 @@ def buildmodel(question):
             frequency_penalty=0,
             presence_penalty=0
         )
-        res = response["choices"][0]
-        result=res['text']
+        # res = response["choices"][0]
+        # result=res['text']
+        res = response.choices[0]
+        result=res.text
     except:
         result = None
     return result
@@ -862,6 +876,13 @@ client_categories = [
     },
 
 ]
+board_members = [
+    {
+        "title": "Board Members",
+        "description": "The Board Members of CODA comprise a distinguished group of leaders with a broad spectrum of expertise in the IT industry and business management. They are tasked with steering CODA towards a sustainable future by adopting sound, ethical, and legal governance and financial management policies, as well as by making sure the nonprofit has adequate resources to advance its mission. These individuals are responsible for strategic planning, overseeing CODA’s operations and finances, and ensuring the organization’s dedication to service, excellence, and the furtherance of its purpose."
+    },
+]
+
 
 packages = [
     {
@@ -961,8 +982,8 @@ def langchainModelForAnswer(question):
         params ={
             'input': question,
         }
-        response = agent_executor.invoke(params)
+        response = agent_executor.invoke(params)['output']
     except Exception as e:
         print(e)
         response = "some error were there, try again!"
-    return response['output']
+    return response

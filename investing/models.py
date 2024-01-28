@@ -316,3 +316,33 @@ class Cost_Basis(models.Model):
 
     def __str__(self):
         return self.symbol
+
+class InvestmentsStrategy(models.Model):  
+    symbol = models.CharField(max_length=255,blank=True,null=True)
+    action = models.CharField(max_length=255,blank=True,null=True)
+    expiry = models.CharField(max_length=255,blank=True,null=True)
+    days_to_expiry = models.CharField(max_length=255,blank=True,null=True)
+    strike_price = models.DecimalField(max_digits=10,decimal_places=2)
+    mid_price = models.DecimalField(max_digits=10,decimal_places=2)
+    bid_price = models.DecimalField(max_digits=10,decimal_places=2)
+    ask_price = models.DecimalField(max_digits=10,decimal_places=2)
+    implied_volatility_rank = models.DecimalField(max_digits=10,decimal_places=2)
+    earnings_date = models.DateField(auto_now_add=True)
+    earnings_flag = models.BooleanField(default=True)
+    stock_price = models.DecimalField(max_digits=10,decimal_places=2)
+    raw_return = models.DecimalField(max_digits=10,decimal_places=2)
+    annualized_return = models.DecimalField(max_digits=10,decimal_places=2)
+    distance_to_strike = models.DecimalField(max_digits=10,decimal_places=2)
+    comment = models.TextField()
+    on_date = models.DateTimeField()
+    trade_type = models.CharField(max_length=255,blank=True,null=True)
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return f"{self.symbol}-{self.get_type_display()}"
+
+
+ 

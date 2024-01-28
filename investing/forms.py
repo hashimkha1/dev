@@ -1,11 +1,16 @@
 from django import forms
-from .models import Investments,Investment_rates,ShortPut,Portifolio
+from .models import Investments,Investment_rates,ShortPut,Portifolio,InvestmentsStrategy
 
 class InvestmentForm(forms.ModelForm):
     class Meta:
         model =Investments
         fields = ['amount','description']
         # fields = "__all__"
+
+class InvestmentsStrategyForm(forms.ModelForm):
+    class Meta:
+        model = InvestmentsStrategy
+        fields = "__all__"        
 
 class InvestmentRateForm(forms.ModelForm):
     class Meta:
