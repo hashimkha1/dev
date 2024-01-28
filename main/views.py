@@ -656,7 +656,7 @@ def generate_openai_description(user_profile):
     response=generate_chatbot_response(user_message)
     return response.strip()
 
-def team(request):
+def team(request,title):
     path_list, sub_title, pre_sub_title = path_values(request)
     if sub_title != 'client_profiles':
 

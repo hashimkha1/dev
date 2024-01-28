@@ -24,21 +24,21 @@
             About
           </a>
           <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-            <a class="dropdown-item" href="{% url 'main:board' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='board' %}"
               >Leadership</a
             >
-            <a class="dropdown-item" href="{% url 'main:team_profiles' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='team_profiles' %}"
             >Our Team</a
             >
-            <a class="dropdown-item" href="{% url 'main:future_talents' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='future_talents' %}"
             >Future Talent</a
             >
-            <a class="dropdown-item" href="{% url 'main:client_profiles' %}"
+            <a class="dropdown-item" href="{% url 'main:members' title='client_profiles' %}"
             >Looking For Talent?</a
             >
-            <a class="dropdown-item" href="{% url 'application:career' %}"
-            >Career</a
-          >
+            <!-- <a class="dropdown-item" href="{% url 'application:career' %}"
+            >Career</a 
+          >-->
         </div>
       </li>
       <!-- <a class="dropdown-item" href="{% url 'main:appointment_letter' %}"
