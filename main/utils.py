@@ -883,13 +883,21 @@ packages = [
 
 ]
 
-def service_instances(service_shown,sub_title):
+def service_instances(service_shown, sub_title):
     service_category_slug = next((x.slug for x in service_shown if sub_title == x.slug), None)
     service_category_title = next((x.title for x in service_shown if sub_title == x.slug), None)
     service_description = next((x.description for x in service_shown if sub_title == x.slug), None)
+    service_sub_titles = next((x.sub_titles for x in service_shown if sub_title == x.slug), None)
     service_id = next((x.id for x in service_shown if sub_title == x.slug), None)
-    return (service_category_slug,service_category_title,
-            service_description,service_id)
+
+    return (
+        service_category_slug,
+        service_category_title,
+        service_description,
+        service_sub_titles,  # Include sub_title in the returned tuple
+        service_id
+    )
+
 
 def service_plan_instances(service_categories,sub_title):
     category_slug = next((x.slug for x in service_categories if sub_title == x.slug), None)
