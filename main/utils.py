@@ -876,6 +876,13 @@ client_categories = [
     },
 
 ]
+board_members = [
+    {
+        "title": "Board Members",
+        "description": "The Board Members of CODA comprise a distinguished group of leaders with a broad spectrum of expertise in the IT industry and business management. They are tasked with steering CODA towards a sustainable future by adopting sound, ethical, and legal governance and financial management policies, as well as by making sure the nonprofit has adequate resources to advance its mission. These individuals are responsible for strategic planning, overseeing CODA’s operations and finances, and ensuring the organization’s dedication to service, excellence, and the furtherance of its purpose."
+    },
+]
+
 
 packages = [
     {

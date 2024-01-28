@@ -362,3 +362,4 @@ def servicecategory_pre_save_receiver(sender, instance, *args, **kwargs):
 pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
+
