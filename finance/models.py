@@ -732,3 +732,16 @@ class Field_Expense(models.Model):
 
     def __str__(self):
         return f"Expense {self.id} on {self.date}"
+
+class Company_Assets(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255,null=False)
+    quantity = models.PositiveIntegerField() 
+    unit_amt = models.DecimalField(max_digits=10,decimal_places=2)
+    serial_number = models.CharField(max_length=255,unique=True) 
+    description = models.TextField()
+    purchase_date = models.DateTimeField(default=timezone.now) 
+    location = models.CharField(max_length=255,blank=True,null=True) 
+    
+    def __str__(self):
+        return self.name  

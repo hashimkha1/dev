@@ -8,7 +8,7 @@ from django.http import QueryDict, Http404,JsonResponse
 from requests import request
 from datetime import datetime,date
 from decimal import *
-from django.urls import reverse
+from django.urls import reverse,reverse_lazy
 from django.views.generic import (
 	CreateView,
 	ListView,
@@ -22,9 +22,9 @@ from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense,Budget
+		DC48_Inflow,Field_Expense,Budget,Company_Assets
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -1333,3 +1333,71 @@ def payment_success(request):
 
 def payment_failed(request):
     return render(request, 'finance/payments/failed.html')
+
+    #==========class based views=============
+class Company_AssetsListview (ListView):
+    model =Company_Assets    
+    template_name = "finance/reports/company_assetlist.html"
+    def get_context_data(self,**kwargs):
+        context= super().get_context_data(**kwargs)        
+        return context
+
+class company_assetCreateView(CreateView): 
+    model = Company_Assets 
+    fields = '__all__'  
+    template_name='finance/reports/company_create.html'
+    success_url= reverse_lazy ('finance:fxassetlist')
+
+    def form_valid(self,form):
+        return super().form_valid(form)
+
+class company_assetsUpdateView(UpdateView):
+    model = Company_Assets 
+    form_class = Company_AssetsForm
+    template_name='finance/reports/company_assetupdate.html'
+    success_url = reverse_lazy('finance:fxassetlist') 
+
+    def form_valid(self,form):
+        return super().form_valid(form)   
+
+class company_assetsDeleteView(DeleteView):
+    model = Company_Assets
+    template_name = "finance/reports/company_assetsdelete.html"
+    success_url = reverse_lazy('finance:fxassetlist')
+      
+
+#==========function  based views=========
+def company_assets_list(request):
+    object_list = Company_Assets.objects.all()
+    #check
+    print('object+++++++++++',object_list)     
+    return render(request,"finance/reports/company_assetlist.html",{'object_list':object_list})
+
+def company_assets_create(request):
+    if request.method == 'POST':
+        form = Company_AssetsForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('finance:fxassetlist')  
+    else:
+        form = Company_AssetsForm()
+
+    return render(request, "finance/reports/company_create.html", {'form': form})
+
+def company_assets_update(request,pk):
+    assets = get_object_or_404(Company_Assets,pk=pk) 
+    if request.method == 'POST':
+        form = Company_AssetsForm(request.POST,instance=assets) 
+        if form.is_valid():
+            form.save()
+        return redirect('finance:fxassetlist')  
+    else:
+        form = Company_AssetsForm(instance=assets)  
+        return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets}) 
+
+def company_assets_delete(request,pk):
+    assets=get_oject_or_404(Company_Assets,pk=pk)
+    if request.method == 'POST':
+        assets.delete()
+        return redirect('finance:fxassetlist')
+    return render(request,"finance/reports/company_assetsdelete.html",{'assets':assets})    

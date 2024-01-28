@@ -1,0 +1,98 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career text-center">
+    <h3 class="title text-center">ASSET/LIABILITY LIST</h3>
+
+
+<div class="row text-center"">
+
+
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">
+        <div class="col-md-4" id="bada">
+          <div class="card">
+          <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+              <h5><b>Total ASSET</b></h5>
+              <hr/>
+              <i><h6>{{total_amt}}</h6></i>
+              <!-- <i><h6>{{Points}}/{{MaxPoints}}</h6></i> -->
+              <hr/>
+            </div>
+          </div>
+        </div>
+                    <div class="col-md-4" id="bada">
+                      <div class="card">
+                      <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+                        <div class="card-body">
+                          <h5><b>Additional Assets</b></h5>
+                          <hr/>
+                          <i><h6>{{total_add_amount}}</h6></i>
+                          <!-- <i><h6>{{Points}}/{{MaxPoints}}</h6></i> -->
+                          <hr/>
+                        </div>
+                      </div>
+                    </div>
+
+
+
+
+                    <div class="col-md-4 point_msg" id="bada" data-toggle="tooltip">
+                      <div class="card">
+                          {% if request.path == '/finance/suppliers/' %}
+                              <p><a href="{% url 'finance:newsupplier'%}" class="btn btn-primary btn-sm"
+                              >NEW ASSETS
+                            </a></p>
+                            <p><a href="{% url 'finance:supplies'%}" class="btn btn-primary btn-sm"
+                              >GO TO LIABILITY LIST
+                            </a></p>
+                          {% elif request.path == '/finance/food/' %}
+                            <p><a href="{% url 'finance:newsupplies'%}" class="btn btn-primary btn-sm"
+                              >NEW LIABILITY
+                            </a></p>
+                            <p><a href="{% url 'finance:suppliers'%}" class="btn btn-primary btn-sm"
+                              >GO TO ASSETS
+                            </a></p>
+                          {% endif %}
+                      </div>
+                    </div>
+
+
+        <!-- Asset Table -->
+        <div class="col-md-12">    
+            <div class="career text-center">
+                <table class="table table-borderless" style="width: 100%">
+                    <thead class="border-bottom font-weight-bold">  
+                        <tr>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Value</th>
+                            <th>Serial Number</th>
+                            <th>Description</th>
+                            <th>Purchase Date</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for asset in object_list %}
+                        <tr>
+                            <td>{{ asset.name }}</td>
+                            <td>{{ asset.quantity }}</td>
+                            <td>{{ asset.value }}</td>
+                            <td>{{ asset.serial_number }}</td>    
+                            <td>{{ asset.description }}</td>      
+                            <td>{{ asset.purchase_date|date:"n-d-Y" }}</td>    
+                            <td>{{ asset.location }}</td>          
+                            <td>
+                                <a href="{% url 'finance:assetupdate' asset.id %}">Update</a> |
+                                <a href="{% url 'finance:assetdelete' asset.id %}">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr>
+</section>
+{% endblock content %}
