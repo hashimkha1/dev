@@ -6,7 +6,7 @@ from .views import (
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView
+                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_assetsDetaiView,company_assets_detail
 )
 app_name = 'finance'
 urlpatterns = [
@@ -90,13 +90,16 @@ urlpatterns = [
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
     path("food/",views.foodlist,name="supplies"),
-    #path("assetlist/",views.Company_AssetsListview.as_view(),name="assetlist"),
+    path("assetlist/",views.Company_AssetsListview.as_view(),name="assetlist"),
     path("fxassetlist/",views.company_assets_list,name="fxassetlist"),
     path("assetcreate/",views.company_assetCreateView.as_view(),name="assetcreate"),
     path("fxassetcreate/",views.company_assets_create,name="fxassetcreate"),
-    path("fxassetupdate/<int:pk>/",views.company_assetsUpdateView.as_view(),name="fxassetupdate"),
-    path("assetupdate/<int:pk>/",views.company_assets_update,name="assetupdate"),
+    path("assetupdate/<int:pk>/",views.company_assetsUpdateView.as_view(),name="assetupdate"),
+    path("fxassetupdate/<int:pk>/",views.company_assets_update,name="fxassetupdate"),
     path("assetdelete/<int:pk>/",views.company_assetsDeleteView.as_view(),name="assetdelete"),
+    path("assetdetail/<int:pk>/",views.company_assetsDetaiView.as_view(),name="assetdetail"),
+    path("fxassetdetail/<int:pk>/",views.company_assets_detail,name="fxassetdetail"),
+
     
 
     #Testing DYC

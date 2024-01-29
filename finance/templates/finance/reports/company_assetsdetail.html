@@ -1,0 +1,48 @@
+{% extends "main/base_templates/new_base.html" %} 
+{% block content %}
+<section class="container">
+    <h2>{{ object.title }}</h2>
+    <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Name: <a href="{% url 'finance:assetdetail' object.id %}">{{ object.name }}</a></h5>
+                    <p class="card-text">{{ object.category }}</p>
+                    <p class="card-text">Quantity: {{ object.quantity }}</p>
+                    <p class="card-text">Unit Amount: {{ object.unit_amt }}</p>
+                    <p class="card-text">Serial Number: {{ object.serial_number }}</p>
+                    <p class="card-text">Description: {{ object.description }}</p>
+                    <p class="card-text">Purchase Date: {{ object.purchase_date }}</p>
+                    <p class="card-text">Location: {{ object.location }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Assigned Name</h5>
+                    {% if object.assets %}
+                    <p class="card-text">{{ object.assets.employee }}</p>
+                    {% else %}
+                    <p class="card-text">None</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+    {% if user.is_authenticated and user.is_superuser %}
+    <div class="row text-center">
+        <div class="col-md-12">
+            <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'finance:assetupdate' object.id %}">Update</a>
+            <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'finance:assetdelete' object.id %}">Delete</a>
+        </div>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
