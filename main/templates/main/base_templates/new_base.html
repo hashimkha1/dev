@@ -41,6 +41,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <!-- Add this in the <head> section of your HTML -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.3/plyr.css" />
+    <script src="https://cdn.plyr.io/3.6.3/plyr.js"></script>
 
     
 
@@ -212,6 +214,27 @@
             }
           }
         }
+      });
+    </script>
+
+    <!-- Js for show services.html -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+          var titleElement = document.querySelector('h2');
+          var truncatedTitleElement = document.getElementById('truncatedTitle');
+    
+          if (titleElement) {
+              var words = titleElement.innerText.split(' ');
+    
+              // Check if title contains more than 3 words
+              if (words.length > 3) {
+                  var truncatedTitle = words.slice(0, 2).join(' ');
+                  truncatedTitleElement.innerText = truncatedTitle;
+              } else {
+                  // If the title has 3 or fewer words, display the original title
+                  truncatedTitleElement.innerText = titleElement.innerText;
+              }
+          }
       });
     </script>
 </body>

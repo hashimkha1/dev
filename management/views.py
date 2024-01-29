@@ -1,3 +1,4 @@
+from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F, Case, When, Value
 import math
 import calendar,string,requests
 from typing import Any
@@ -52,7 +53,7 @@ from management.models import (
     Meetings,
 )
 from data.models import DSU,ClientAssessment
-from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, TrainingLoan,PayslipConfig
+from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, Payment_History, TrainingLoan,PayslipConfig, Transaction
 from accounts.models import Tracker, Department, TaskGroups,CustomerUser
 from main.filters import RequirementFilter,TaskHistoryFilter,TaskFilter
 from django.conf import settings
@@ -65,9 +66,12 @@ from management.utils import (email_template,paytime,payinitial,paymentconfigura
                                addloantable,employee_reward,employee_group_level,lap_save_bonus,
                                calculate_total_pay,get_bonus_and_summary,compute_total_points
                         )
-from main.utils import countdown_in_month,path_values
+from main.utils import countdown_in_month, generate_chatbot_response,path_values
 from django.db.models import Subquery, OuterRef
 import logging
+
+from investing.models import InvestmentContent, Investments
+from main.context_processors import fetch_service_descriptions
 logger = logging.getLogger(__name__)
 
 # User=settings.AUTH_USER_MODEL

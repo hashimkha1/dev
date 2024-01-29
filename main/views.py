@@ -10,8 +10,9 @@ from dateutil.relativedelta import relativedelta
 import openai
 from django.db.models import Sum
 from data.models import ClientAssessment
+from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
-from .utils import (Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
+from .utils import (Automation, General, Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
 from coda_project import settings
@@ -45,6 +46,7 @@ from django.db.models.functions import Coalesce
 from management.models import Requirement, Training
 from data.models import ClientAssessment
 from getdata.models import Editable
+from investing.views import get_or_create_investment_content
 
 User=get_user_model()
 
@@ -72,7 +74,7 @@ def data_policy(request):
 
 #===============Processing Images from Database==================
 
-def layout(request):
+def get_testimonials():
     count_to_class = {
         2: "col-md-6",
         3: "col-md-4",
@@ -82,15 +84,19 @@ def layout(request):
     testimonials = []
     for post in latest_posts:
         writer = post['writer']
-        #querying for the latest post
-        user_profile = UserProfile.objects.filter(user=writer,user__is_client=True).first()
-        # user_profile = UserProfile.objects.filter(user=writer).first()
+        user_profile = UserProfile.objects.filter(user=writer, user__is_client=True).first()
         if user_profile:
             latest_post = Testimonials.objects.filter(writer=writer, date_posted=post['latest']).first()
             testimonials.append(latest_post)
 
     number_of_testimonials = len(testimonials)
     selected_class = count_to_class.get(number_of_testimonials, "default-class")
+
+    return testimonials, selected_class
+
+
+def layout(request):
+    testimonials, selected_class = get_testimonials()
 
     services = Service.objects.filter(is_active=True).order_by('serial')
     context = {
@@ -100,7 +106,6 @@ def layout(request):
         "selected_class": selected_class,
     }
     return render(request, "main/home_templates/newlayout.html", context)
-
 
 def fetch_model_table_names(request):
     app_name = request.GET.get('category', None)  # Replace with the actual app name
@@ -302,30 +307,50 @@ def delete_service(request,id):
     return redirect('main:services')
 
 
-def display_service(request,*args, **kwargs):
+def display_service(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     try:
         service_shown = Service.objects.all()
     except Service.DoesNotExist:
         return redirect('main:display_service')
-    (service_category_slug,service_category_title,service_description,service_id)=service_instances(service_shown,sub_title)
+
+    (service_category_slug, service_category_title, service_description, service_sub_titles, service_id) = service_instances(service_shown, sub_title)
     service_categories = ServiceCategory.objects.filter(service=service_id)
-    # if service_category_slug=='investing':
-    #     context = {
-    #         'service_categories': service_categories,
-    #         "title": service_category_title,
-    #         "service_desc": service_description,
-    #         "slug":service_category_slug
-    #    }
-    #     return render(request, "main/home_templates/investing_home.html", context)
-    context = {}  # Initialize context with an empty dictionary
+    try:
+        asset = Assets.objects.get(name=service_category_title)
+        asset_image_url = asset.service_image.url
+    except Assets.DoesNotExist:
+        asset_image_url = None
+    investment_content = InvestmentContent.objects.first()
+
+    description = investment_content.description if investment_content else "No description available"
+
+    testimonials, selected_class = get_testimonials()
+
+    # Calculate the number of students and other users
+    students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
+    teachers_count = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member).count()
+    # Calculate the total number of courses
+    total_courses_count = ServiceCategory.objects.filter(service=service_id).count()
+
     context = {
         'service_categories': service_categories,
         "title": service_category_title,
         "service_desc": service_description,
-        "slug":service_category_slug
+        'content': description,
+        "General":General,
+        "Automation":Automation,
+        "sub_titles": service_sub_titles,
+        "posts": testimonials,
+        "selected_class": selected_class,
+        "slug": service_category_slug,
+        "asset_image_url": asset_image_url,
+        "students_count": students_count,
+        "teachers_count": teachers_count,
+        "total_courses_count": total_courses_count,
     }
-    return render(request, "main/services/show_service.html", context)
+    return render(request, "main/services/show_services.html", context)
+
 
 
 
