@@ -96,9 +96,5 @@ urlpatterns = [
 
     #===========company records=======
 
-    path('companyassetlist/', views.Company_AssetListview.as_view(),name='companyassetlist'),
-    path('fxcompany_assetlist/', views.company_asset_list,name='fxcompany_assetlist'),
-    path('companyassetcreate/', views.Company_AssetCreateView.as_view(),name='companyassetcreate'),
-    path('fxcompany_assetcreate/', views.company_asset_create,name='fxcompany_assetcreate'),
 
 ]
