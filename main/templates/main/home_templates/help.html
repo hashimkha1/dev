@@ -1,0 +1,117 @@
+<!-- faq_category.html -->
+{%extends "main/base_templates/new_base.html"%} 
+{% block content %}
+<style>
+    body {
+            font-family: Arial, sans-serif;
+            
+        }
+
+        .faq-container {
+            
+            margin: auto;
+        }
+
+        .faq-item {
+            height: 50px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 10px;
+            /* border-top: 1px solid #ccc; */
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            /* cursor: pointer; */
+            background-color: #fff;
+        }
+        #loading-spinner {
+            display: none;
+            margin-top: 20px;
+        }
+</style>
+
+<div class="container">
+    {% csrf_token %}
+    <form method="get" style="padding: 15px;">
+        <label for="dropdown">Select category:</label>
+        
+        <select name="category" id="dropdown">
+          {%for category in categories%}
+          <option value="{{category.0}}">{{category.1}}</option>
+          {%endfor%}
+        </select>
+
+        <button type="submit" name="action" value="search">search</button>
+        
+    </form>
+    <div class="faq-container">
+        <ul class="list-group">
+            {% for question in questions %}
+                <li class="list-group-item faq-item" >
+                    <a href="#" onclick="getAnswer('{{ question.question }}', '{{ question.category }}', '{{ question.topic }}', '{{ question.id }}')">{{ question.question }}</a>
+                </li>
+                <div class="faq-answer" id="answer-{{question.id}}" style="display: none;"></div>
+                <div id="loading-spinner-{{question.id}}" class="text-center" style="display: none;">
+                    <div class="spinner-border" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
+
+</div>
+
+<script>
+    function getAnswer(question, category, topic, id) {
+    const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+    const url = "{% url 'main:help' %}"
+
+    const payload = {
+        question: question,
+        category: category,
+        topic: topic
+    };
+    const answerElement = document.getElementById('answer-' + id);
+    const spinnerElement = document.getElementById('loading-spinner-' + id);
+
+    if (answerElement.style.display === 'none') {
+        spinnerElement.style.display = 'block';
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken,
+                // Add any other headers if needed
+            },
+            body: JSON.stringify(payload),
+        })
+        .then(response => response.json())
+        .then(data => {
+            spinnerElement.style.display = 'none';
+            console.log('Server response:', data);
+            answerElement.innerText = "answer: " + data['answer'];
+            answerElement.classList.add('faq-answer');
+            answerElement.style.display = 'block'; // Show the element
+            // Handle the response from the server
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Handle errors
+        });
+    } else {
+        answerElement.style.display = 'none';  // Hide the element
+        spinnerElement.style.display = 'none';
+    }
+}
+</script>
+
+{% endblock content %}

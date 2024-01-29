@@ -9,7 +9,8 @@ from .models import (
     Investment_rates,
     Investor_Information,
     Portifolio,
-    OverBoughtSold
+    OverBoughtSold,
+    InvestmentsStrategy
 )
 
 # Register your models here.
@@ -23,6 +24,7 @@ admin.site.register(Investments)
 admin.site.register(Investment_rates)
 admin.site.register(Investor_Information)
 admin.site.register(InvestmentContent)
-class InvestmentContentAdmin(admin.ModelAdmin):
-    list_display = ('title', 'slug', 'description')
+admin.site.register(InvestmentsStrategy)
+# class InvestmentContentAdmin(admin.ModelAdmin):
+#     list_display = ('title', 'slug', 'description')
 

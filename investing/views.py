@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-import openai
+import os
 from finance.models import Payment_History, Transaction
 from django.views.generic import ListView
 # import pandas as pd
@@ -23,7 +23,8 @@ from .forms import (
     OptionsForm,
     InvestmentForm,
     InvestmentRateForm,
-    PortfolioForm
+    PortfolioForm,
+    InvestmentsStrategyForm
 )
 from django.utils.decorators import method_decorator
 from .models import (
@@ -38,13 +39,16 @@ from .models import (
     Options_Returns,
     Cost_Basis,
     Ticker_Data,
-    Investor_Information
+    Investor_Information,
+    InvestmentsStrategy
+    
 )
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
 from getdata.models import Editable
 from .filters import PortfolioFilter
+import json
 
 register = template.Library()
 User=get_user_model
@@ -240,6 +244,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
 
     filter_name = request.GET.get('filter_by', None)
     extra_filter = request.GET.get('extra_filter_by', None)
+    use_ai = request.GET.get('use_ai', False)
 
     # Taking distinct symbols which in oversold/overbought.
     distinct_overboughtsold_symbols = list(set([
@@ -340,7 +345,45 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                         context['data'] = sorted(context['data'], key=lambda x: float(x.raw_return[:-1]), reverse=True)[:5]
                     else:
                         context['data'] = sorted(context['data'], key=lambda x: float(x.sell_strike[1:].replace(',', '')), reverse=True)[:5]
-          
+                
+    if use_ai:
+        
+        data = 'symbol rank days_to_expiry earning_date return\n'
+        for stock_data in context['data']:
+            #{stock_data.strategy if stock_model != 'credir_spread' else stock_data.action}
+            data += f"{stock_data.symbol} {stock_data.rank if sub_title == 'credit_spread' else stock_data.implied_volatility_rank} {computes_days_expiration([stock_data])[1]} {stock_data.earnings_date} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
+
+            data += "\n"
+             #"in output just give me list of symbol"
+        question = data + "\n" + "on above data, list top 5 symbol. in which, consider filed in this priority order, 1> rank 2> days_to_expiry 3> earning_date 4> return."+ """
+            output format example: {
+            description: "why you choose this five",
+            symbols: ["ENPH", "PYPL"]
+            }, and do not pass any extra string in output
+            """
+        message_dict = [
+            {"role": "system", "content": question},
+            # {"role": "system", "content": "also can you describe why you choose that symbol in short description"},
+        ]
+        try:
+            # print(question)
+            answer = generate_chatbot_response(None, user_message_dict=message_dict)
+            
+            # Parse the JSON string into a Python dictionary
+            data_dict = json.loads(answer)
+
+            # Accessing values in the dictionary
+            description = data_dict["description"]
+            symbols = data_dict["symbols"]
+
+            context['data'] = context['data'].filter(symbol__in=symbols)
+
+        except Exception as e:
+            description = "try again!!!"
+        
+    else:
+        description = None
+
     context.update({
         # "data": filtered_stockdata_by_oversold,
         
@@ -364,6 +407,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
         "subtitle": sub_title,
         "pre_sub_title": pre_sub_title,
         'title': page_title,  # Using renamed title
+        'ai_message': description
         
     })
     
@@ -876,3 +920,65 @@ def oversoldpositions(request,symbol=None):
         }
 
     return render(request, "investing/oversold.html", context)
+
+def list_investment_strategies(request):
+    investment_strategies  = InvestmentsStrategy.objects.all()
+    return render(request,'investing/investstrategies.html',{'investment_strategies':investment_strategies})   
+
+def create_investment_strategies(request):
+    if request.method == 'POST':
+        form = InvestmentsStrategyForm(request.POST)
+        if form.is_valid:
+            form.save()
+            return redirect('investing:investstrategy')
+    else:
+        form = InvestmentsStrategyForm()
+        return render(request,'investing/investment_form.html',{'form':form}) 
+
+def update_investment_strategies(request,pk):
+    investment_strategy = get_object_or_404(InvestmentsStrategy,pk=pk)
+    if request.method == 'POST':
+        form = InvestmentsStrategyForm(request.POST,instance=investment_strategy)
+        if form.is_valid:
+            form.save()
+            return redirect('investstrategy')
+    else:
+        form = InvestmentsStrategyForm(instance=investment_strategy)
+        return render(request,'investing/investment_form.html',{'form':form})
+
+def delete_investment_strategy(request,pk):
+    investment_strategy = get_object_or_404(InvestmentsStrategy,pk=pk)
+    if request.strategy == 'POST':
+        investment_strategy.delete()
+        return redirect(investstrategy)
+    return render (request,'',{'investment_strategy': delete_investment_strategy})    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -61,6 +61,38 @@
     </div>
 
     </div>
+    <div>
+      <form method="post">
+        {% csrf_token %}
+
+        <label for="dropdown">Select category:</label>
+        
+        <select name="category" id="dropdown">
+          {%for category in category_choices%}
+          <option value="{{category}}">{{category}}</option>
+          {%endfor%}
+        </select>
+
+        <label for="dropdown">Select ads_type:</label>
+
+        <select name="ads_type" id="dropdown">
+          {%for ads_type in ads_type_choices%}
+          <option value="{{ads_type}}">{{ads_type}}</option>
+          {%endfor%}
+        </select>
+
+        <label for="dropdown">Select option:</label>
+
+        <select name="dropdown_option" id="dropdown">
+            <option value="is_active">is_active</option>
+            <option value="is_featured">is_featured</option>
+        </select>
+        
+        <button type="submit" name="action" value="search">search</button>
+        <button type="submit" name="action" value="true">Checked</button>
+        <button type="submit" name="action" value="false">Unchecked</button>
+    </form>
+    </div>
     <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
     <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">

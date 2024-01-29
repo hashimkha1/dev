@@ -149,10 +149,52 @@ def delete_whatsapp(request,slug):
 
 @login_required
 def whatsapp_groups(request, title):
+    CATEGORY_CHOICES = [
+        "all",
+        "Finance",
+        "IT",
+        "Internal",
+        "Political",
+        "Business",
+        "other",
+    ] 
+    TYPE_CHOICES = [
+        "all",
+        "investments",
+        "data_analysis",
+        "coda",
+        "Job_Support",
+        "interview",
+        "mentorship",
+        "automation",
+        "other",
+    ]
+
     # Annotate groups with participant count
     annotated_whatsapp_groups = Whatsapp_Groups.objects.annotate(
         participant_count=Cast('participants', IntegerField())
     )
+    
+    if request.method == 'POST':
+       
+        selected_option = request.POST.get('dropdown_option')
+        category = request.POST.get('category', 'all')
+        ads_type = request.POST.get('ads_type', 'all') 
+        action = request.POST.get('action', 'search')
+        
+        if category != "all":
+            annotated_whatsapp_groups = annotated_whatsapp_groups.filter(category=category)
+
+        if ads_type != "all":
+            annotated_whatsapp_groups = annotated_whatsapp_groups.filter(type=ads_type)
+
+        if action != "search":
+            
+            action = request.POST.get('action', 'search') == 'true'
+            if selected_option == 'is_active':
+                annotated_whatsapp_groups.update(is_active=action)
+            elif selected_option == 'is_featured':
+                annotated_whatsapp_groups.update(is_featured=action)            
 
     # Fetch groups based on title
     if title == 'active_groups':
@@ -179,7 +221,9 @@ def whatsapp_groups(request, title):
     # Prepare the context data for rendering
     context = {
         "whatsapp_items": whatsapp_groups.order_by('-participant_count'),
-        "total_participants": total_participants
+        "total_participants": total_participants,
+        "category_choices": CATEGORY_CHOICES,
+        "ads_type_choices": TYPE_CHOICES
     }
     return render(request, 'marketing/groups.html', context)
 
@@ -224,6 +268,7 @@ def runwhatsapp(request):
     # ads_items = Ads.objects.filter(is_active=True, image_name__is_active=True)
     ads_items = Ads.objects.filter(image_name__is_active=True, my_user=request.user).filter(Q(is_active=True) | Q(is_featured=True))
     # print("ads_items==========>",ads_items)
+    
     for ad in ads_items:
         # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.category,is_active=True)
         # whatsapp_groups = Whatsapp_Groups.objects.filter(type=ad.image_name.name,is_active=True)

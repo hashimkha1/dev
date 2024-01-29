@@ -1,5 +1,5 @@
 import webbrowser
-import datetime
+import datetime, json
 import random
 from django.db.models import Min,Max
 from django.http import JsonResponse,Http404
@@ -10,18 +10,16 @@ from dateutil.relativedelta import relativedelta
 import openai
 from django.db.models import Sum
 from data.models import ClientAssessment
-from .models import Service,Plan,Assets
-from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
+from .models import Service,Plan,Assets,Testimonials
+from .utils import (Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
-from .models import Testimonials
-from getdata.models import Logs
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import TaskHistory
+from accounts.models import Team_Members
 from main.forms import PostForm,ContactForm
-
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -658,7 +656,7 @@ def generate_openai_description(user_profile):
     response=generate_chatbot_response(user_message)
     return response.strip()
 
-def team(request):
+def team(request,title):
     path_list, sub_title, pre_sub_title = path_values(request)
     if sub_title != 'client_profiles':
 
@@ -701,7 +699,7 @@ def team(request):
         
         ).order_by("user__date_joined")
 
-        all_staff_member = all_member.exclude(Q(user__sub_category=2) | Q(user__username='c_maghas'))
+        all_staff_member = all_member.exclude(Q(user__sub_category=2) |Q(user__sub_category=6)|Q(user__username='c_maghas'))
         all_staff_contractor = all_member.filter(user__sub_category=2)
         
         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
@@ -800,6 +798,14 @@ def team(request):
         }
         user_group=future_talents
         heading="MINDS OF TOMORROW: LEADING DATA ANALYTICS AND WEB DEVELOPMENT"
+
+    if sub_title == 'board':
+        BOG_members = UserProfile.objects.filter(user__is_staff=True, user__is_active=True,user__sub_category=6).order_by("user__date_joined")
+        team_categories = {
+            'Board Members': list(BOG_members),
+        }
+        user_group=board_members
+        heading="THE BOG"
     
     context = {
         "team_categories": team_categories,
@@ -808,6 +814,176 @@ def team(request):
         # "selected_class":selected_class
     }
     return render(request, "main/team_profiles.html", context)
+
+
+# def team(request):
+#     path_list, sub_title, pre_sub_title = path_values(request)
+#     if sub_title != 'client_profiles':
+
+#         #for aggregate sum of point in subquery
+#         def get_sqsum(field):
+#             class SQSum(Subquery):
+#                 output_field = models.IntegerField()
+#                 template = f"(SELECT sum({field}) from (%(subquery)s) _sum)"
+#             return SQSum
+        
+#         #from task history model    
+#         employee_taskhistory_subquery = get_sqsum('point')(TaskHistory.objects.filter(employee_id__profile=OuterRef('pk')).values('point'))
+        
+#         #from requirement model(counting duration-task hour as point for staff)
+#         employee_requiremet_subquery = get_sqsum('duration')(Requirement.objects.filter(assigned_to__profile=OuterRef('pk')).values('duration'))
+        
+#         #from Training model
+#         employee_training_subquery = get_sqsum('level_point')(Training.objects.filter(presenter__profile=OuterRef('pk')).annotate(
+#             level_point=Case(
+#                 When(level=1, then=F('level') * 5.0),
+#                 When(level=2, then=F('level') * 10.0),
+#                 When(level=3, then=F('level') * 15.0),
+#                 When(level=4, then=F('level') * 20.0),
+#                 When(level=5, then=F('level') * 25.0),
+#                 default=F('level'),  # Default case, if level doesn't match any condition
+#                 output_field=FloatField()
+#             )
+#         ).values('level_point'))
+        
+#         #from clientassesment model(takeing latest totalpoints for that user)
+#         employee_clientassesment = ClientAssessment.objects.filter(email=OuterRef('user__email')).order_by('-rating_date')[:1]
+        
+#         all_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
+            
+#             taskhistory_points=Coalesce(employee_taskhistory_subquery, Value(0)),
+#             requirement_points=Coalesce(employee_requiremet_subquery, Value(0)),
+#             training_points=Coalesce(employee_training_subquery, Value(0)),
+#             clientassesment_points=Coalesce(employee_clientassesment.values('totalpoints'), Value(0)),
+#             total_points=F('taskhistory_points') + F('requirement_points') + F('training_points') + F('clientassesment_points')
+        
+#         ).order_by("user__date_joined")
+
+#         all_staff_member = all_member.exclude(Q(user__sub_category=2) | Q(user__username='c_maghas'))
+#         all_staff_contractor = all_member.filter(user__sub_category=2)
+        
+#         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
+        
+#         team_member_value_json = Editable.objects.filter(name='team_profile_value_json')
+
+#         if team_member_value_json.exists():
+
+#             team_member_value_json = team_member_value_json.get().value
+        
+#         else:
+#             team_member_value_json = {
+#                 "lead_team":2000,
+#                 "support_team":1000,
+#                 "delta":500,
+#                 "percentage": 10
+#             }
+
+#         staff_team = ["lead_team", "senior_analysts", "junior_analysts", "senior_trainee", "junior_trainee", "elementry"]
+        
+#         threshold_dict = {} 
+#         previous_threshold = 0
+        
+#         for team in staff_team:
+            
+#             if team == 'lead_team':
+#                 threshold_dict[team] = (team_member_value_json['lead_team']) 
+#             else:
+#                 if previous_threshold - team_member_value_json['delta'] > 0:
+#                     threshold_dict[team] = previous_threshold - team_member_value_json['delta']
+#                 else:
+#                     threshold_dict[team] = previous_threshold - (previous_threshold*team_member_value_json['percentage']/100)
+
+#             previous_threshold = threshold_dict[team]
+
+#         elite_team_member = UserProfile.objects.filter(user__is_superuser=True, user__username='c_maghas')
+        
+#         lead_team = list(filter(lambda v: v.total_points > threshold_dict['lead_team'], all_staff_member))
+#         senior_analysts = list(filter(lambda v: v.total_points <= threshold_dict['lead_team'] and v.total_points > threshold_dict['senior_analysts'], all_staff_member))
+#         junior_analysts = list(filter(lambda v: v.total_points <= threshold_dict['senior_analysts'] and v.total_points > threshold_dict['junior_analysts'], all_staff_member))
+#         senior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['junior_analysts'] and v.total_points > threshold_dict['senior_trainee'], all_staff_member))
+#         junior_trainee = list(filter(lambda v: v.total_points <= threshold_dict['senior_trainee'] and v.total_points > threshold_dict['junior_trainee'], all_staff_member))
+#         elementry = list(filter(lambda v: v.total_points <= threshold_dict['junior_trainee'], all_staff_member))
+
+#         support_team = list(filter(lambda v: v.total_points > team_member_value_json['support_team'], all_staff_contractor))
+
+#     # number_of_staff = len(lead_team)-1
+
+#     # selected_class = count_to_class.get(number_of_staff, "default-class")
+#     if sub_title == 'team_profiles':
+#         team_categories = {
+#         'Elite Team': list(elite_team_member),
+#         'Lead Team': lead_team,
+#         'Support Team': list(support_team),
+#         'Senior Analysts': senior_analysts,
+#         }
+#         # user_group = team_members
+        
+#         user_group=Team_Members.objects.filter(category='analytics_team')
+#         heading = "THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
+
+#         # Generate descriptions for team members if not present
+#         for category, members in team_categories.items():
+#             for member in members:
+#                 try:
+#                     user_profile = member.user.profile 
+#                 except UserProfile.DoesNotExist:
+#                     user_profile = UserProfile.objects.create(user=member.user)
+
+#                 if not user_profile.description:
+#                     total_points = ClientAssessment.objects.filter(
+#                         email=member.user.email
+#                     ).aggregate(Sum('totalpoints'))['totalpoints__sum']
+#                     try:
+#                         user_profile.description = generate_openai_description(user_profile)
+#                     except:
+#                         user_profile.description = 'null'
+#                     user_profile.save()
+    
+#     if sub_title == 'client_profiles':
+
+#         clients_job_seekers = UserProfile.objects.filter(user__is_client=True, user__is_active=True).exclude(user__sub_category=4).order_by("user__date_joined")
+#         clients_job_support = UserProfile.objects.filter(user__is_client=True, user__sub_category=4, user__is_active=True).order_by("user__date_joined")
+    
+#         team_categories = {
+#         'Job Seekers': list(clients_job_seekers),
+#         'Job Support': list(clients_job_support),
+#         }
+#         # user_group=client_categories
+#         user_group=Team_Members.objects.filter(category='clients')
+#         print(user_group)
+#         heading="EXPERTS FOR DATA ANALYTICS/SCIENCE"
+    
+#     if sub_title == 'future_talents':
+#         team_categories = {
+#             'Junior Analysts': junior_analysts,
+#             'Senior Trainee Team': senior_trainee,
+#             'Junior Trainee Team': junior_trainee,
+#             'Elementary': elementry
+#         }
+#         # user_group=future_talents
+#         user_group=Team_Members.objects.filter(category='future_talent')
+#         print(user_group)
+#         heading="MINDS OF TOMORROW: LEADING DATA ANALYTICS AND WEB DEVELOPMENT"
+
+#     if sub_title == 'board':
+#         team_categories = {
+#             'Junior Analysts': junior_analysts,
+#             'Senior Trainee Team': senior_trainee,
+#             'Junior Trainee Team': junior_trainee,
+#             'Elementary': elementry
+#         }
+#         # user_group=future_talents
+#         user_group=Team_Members.objects.filter(category='board')
+#         print(user_group)
+#         heading="THE BOG"
+    
+#     context = {
+#         "team_categories": team_categories,
+#         "team_members": user_group,
+#         "title":heading,
+#         # "selected_class":selected_class
+#     }
+#     return render(request, "main/team_profiles.html", context)
 
 
 #========================Internal documents==============================  
@@ -1073,3 +1249,49 @@ def clints_availability(request):
 
     context['obj'] = dist
     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
+
+
+def FrequentlyAskedQuestion(request):
+    CAT_CHOICES = [
+        ("all", "all"),
+        ("accounts", "Registration"),
+        ("application", "Application"),
+        ("finance", "Financial Information"),
+        ("management", "Employees Activities"),
+        ("data", "Data Analysis"),
+        ("getdata", "Automation"),
+        ("investing", "Investments"),
+        ("main", "General Information"),
+        ("projectmanagement", "Field Projects"),
+    ]
+    questions = Search.objects.all().distinct('question')
+
+    if request.method == 'POST':
+        raw_data = request.body.decode('utf-8')
+
+        if raw_data:
+            
+            payload = json.loads(raw_data)
+            question = payload.get('question', None)
+            category = payload.get('category', None)
+            topic = payload.get('topic', None)
+
+            if question:
+                question += f"and for more context, try to refer {topic} table in {category} category first."
+                print(question)
+                # Parse the JSON data
+                response = langchainModelForAnswer(question)
+                print(response)
+
+                return JsonResponse({"answer": response})
+    else:
+
+        category = request.GET.get('category')
+        if category and category != "all":
+            questions = questions.filter(category=category)
+     
+        context = {
+            "questions": questions,
+            "categories": CAT_CHOICES
+        }
+        return render(request, "main/home_templates/help.html", context)
