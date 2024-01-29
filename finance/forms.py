@@ -8,7 +8,8 @@ from .models import (
     TrainingLoan,
     Transaction,
     Inflow,
-    Company_Assets
+    Company_Assets,CompanyLiabilities
+
 )
 
 class DepartmentFilterForm(forms.Form):
@@ -112,3 +113,8 @@ class Company_AssetsForm(forms.ModelForm):
     class Meta:
         model = Company_Assets
         fields = '__all__'        
+
+class CompanyLiabilitiesForm(forms.ModelForm):
+    class Meta:
+        model = CompanyLiabilities
+        fields = '__all__'          

@@ -6,12 +6,12 @@ from .views import (
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_assetsDetaiView,company_assets_detail
+                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_assetsDetaiView,company_assets_detail ,company_liability_list,company_liability_create,company_liability_update,company_liability_delete,company_liability_detail
 )
 app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
-    
+   
     path('finance_report/', views.finance_report, name='finance_report'),
     path('budget/', views.budget, name='budget'),
     path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
@@ -88,7 +88,7 @@ urlpatterns = [
     ),
     path("supplier/update/<int:pk>/",views.SupplierUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-supplier"),
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
-    path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),
+    path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),    
     path("food/",views.foodlist,name="supplies"),
     path("assetlist/",views.Company_AssetsListview.as_view(),name="assetlist"),
     path("fxassetlist/",views.company_assets_list,name="fxassetlist"),
@@ -99,6 +99,12 @@ urlpatterns = [
     path("assetdelete/<int:pk>/",views.company_assetsDeleteView.as_view(),name="assetdelete"),
     path("assetdetail/<int:pk>/",views.company_assetsDetaiView.as_view(),name="assetdetail"),
     path("fxassetdetail/<int:pk>/",views.company_assets_detail,name="fxassetdetail"),
+    path("fxliabilitylist/", views.company_liability_list, name="fxliabilitylist"),
+    path("liabilitycreate/", views.company_liability_create, name="liabilitycreate"),
+    path("liabilityupdate/<int:pk>/",views.company_liability_update,name="liabilityupdate"),
+    path("liabilitydelete/<int:pk>/",views.company_liability_delete,name="liabilitydelete"),
+    path("liabilitydetail/<int:pk>/",views.company_liability_detail,name="liabilitydetail"),
+   
 
     
 

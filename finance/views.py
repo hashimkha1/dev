@@ -22,9 +22,9 @@ from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense,Budget,Company_Assets
+		DC48_Inflow,Field_Expense,Budget,Company_Assets,CompanyLiabilities
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm,CompanyLiabilitiesForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -1413,4 +1413,54 @@ def company_assets_delete(request,pk):
 
 def  company_assets_detail(request,pk):
     object_list= get_object_or_404(Company_Assets,pk=pk) 
-    return render(request,"finance/reports/company_assetsdetail.html",{'object_list':object_list})    
+    return render(request,"finance/reports/company_assetsdetail.html",{'object_list':object_list}) 
+
+
+
+
+def company_liability_list(request):
+    object_list = CompanyLiabilities.objects.all()    
+    print('object+++++++++++', object_list)     
+    return render(request, "finance/reports/company_liability.html", {'object_list': object_list}) 
+
+def company_liability_create(request):
+    if request.method == 'POST':
+        form = CompanyLiabilitiesForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('finance:fxliabilitylist')  
+    else:
+        form = CompanyLiabilitiesForm()
+
+    return render(request, "finance/reports/company_create.html", {'form': form}) 
+
+def company_liability_update(request,pk):
+    liabilities = get_object_or_404(CompanyLiabilities,pk=pk) 
+    if request.method == 'POST':
+        form = CompanyLiabilitiesForm(request.POST,instance=liabilities) 
+        if form.is_valid():
+            form.save()
+        return redirect('finance:fxliabilitylist')  
+    else:
+        form = CompanyLiabilitiesForm(instance=liabilities)  
+        return render(request,"finance/reports/company_assetupdate.html",{'form':form,'liabilities':liabilities}) 
+
+
+def company_liability_delete(request,pk):
+    liabilities = get_object_or_404(CompanyLiabilities,pk=pk) 
+    if request.method == 'POST':
+        liabilities.delete()
+        return redirect('finance:fxliabilitylist')
+    return render(request,"finance/reports/company_assetsdelete.html",{'liabilities':liabilities})
+
+def  company_liability_detail(request,pk):
+    object_list= get_object_or_404(CompanyLiabilities,pk=pk) 
+    return render(request,"finance/reports/company_liabilitydetail.html",{'object_list':object_list}) 
+
+
+
+
+
+
+
+

@@ -1,0 +1,71 @@
+{% extends "main/base_templates/new_base.html" %} 
+{% block content %}
+<section id="career text-center">
+    <h3 class="title text-center">ASSET/LIABILITY LIST</h3>
+
+    <div class="row text-center">
+        <!-- Card for Total Liabilities -->
+        <div class="col-md-4" id="bada">
+            <div class="card">
+                <div class="card-body">
+                    <h5><b>Total LIABILITIES</b></h5>
+                    <hr/>
+                    <i><h6>{{ total_amt }}</h6></i>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card for Additional Liabilities -->
+        <div class="col-md-4" id="bada">
+            <div class="card">
+                <div class="card-body">
+                    <h5><b>Additional Liabilities</b></h5>
+                    <hr/>
+                    <i><h6>{{ total_add_amount }}</h6></i>
+                    <hr/>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Liability Table -->
+        <div class="col-md-12">    
+            <div class="career text-center">
+                <table class="table table-borderless" style="width: 100%">
+                    <thead class="border-bottom font-weight-bold">  
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Description</th>
+                            <th>Created At</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for liability in object_list %}
+                        <tr>
+                            <td>{{ liability.name }}</td>
+                            <td>{{ liability.category }}</td>
+                            <td>{{ liability.liability_type }}</td> <!-- Updated to match model field -->
+                            <td>{{ liability.amount }}</td>
+                            <td>{{ liability.description }}</td> <!-- Corrected field name (lowercase) -->
+                            <td>{{ liability.created_at|date:"n-d-Y" }}</td>
+                            
+                            <!-- Example actions (Update/Delete), add actual URLs -->
+                            <td>
+                                <a href="{% url 'finance:liabilityupdate' liability.id %}">Update</a> |
+                                <a href="{% url 'finance:liabilitydelete' liability.id %}">Delete</a>
+                            </td>
+                        </tr>
+                        {% endfor %}      
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <hr>
+</section>
+{% endblock content %}

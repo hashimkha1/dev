@@ -14,7 +14,9 @@ from .models import (
     Payment_Information,
     Transaction,Inflow,
     TrainingLoan,
-    Company_Assets
+    Company_Assets,
+    CompanyLiabilities,
+    
 )  # , DocUpload
 from accounts.models import Department
 
@@ -99,3 +101,4 @@ admin.site.register(Default_Payment_Fees)
 admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
 admin.site.register(Company_Assets)
+admin.site.register(CompanyLiabilities)
