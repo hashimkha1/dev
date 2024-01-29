@@ -314,13 +314,13 @@ def display_service(request, *args, **kwargs):
     except Service.DoesNotExist:
         return redirect('main:display_service')
 
-    (service_category_slug, service_category_title, service_description, service_sub_titles, service_id) = service_instances(service_shown, sub_title)
+    (service_category_slug, service_category_title, service_description,  service_id) = service_instances(service_shown, sub_title)
     service_categories = ServiceCategory.objects.filter(service=service_id)
-    try:
-        asset = Assets.objects.get(name=service_category_title)
-        asset_image_url = asset.service_image.url
-    except Assets.DoesNotExist:
-        asset_image_url = None
+    # try:
+    #     asset = Assets.objects.get(name=service_category_title)
+    #     asset_image_url = asset.service_image.url
+    # except Assets.DoesNotExist:
+    #     asset_image_url = None
     investment_content = InvestmentContent.objects.first()
 
     description = investment_content.description if investment_content else "No description available"
@@ -340,11 +340,11 @@ def display_service(request, *args, **kwargs):
         'content': description,
         "General":General,
         "Automation":Automation,
-        "sub_titles": service_sub_titles,
+        # "sub_titles": service_sub_titles,
         "posts": testimonials,
         "selected_class": selected_class,
         "slug": service_category_slug,
-        "asset_image_url": asset_image_url,
+        # "asset_image_url": asset_image_url,
         "students_count": students_count,
         "teachers_count": teachers_count,
         "total_courses_count": total_courses_count,
