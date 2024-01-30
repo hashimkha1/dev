@@ -63,12 +63,12 @@
     <!-------------------Cards-Category Section----------------------->
 <div class="container-fluid padding">
   <div class="row padding">
-    {% for service in services_plans %}
+    {% for service in services_plans %} 
     <div class="row">
       <div class="col-md-12">
-        <p class="display-5 text-center"><b>{{ service.name }}{{ service.title }}</b></p>
-      </div>
-      </div>
+          <p class="display-5 text-center"><b>{{ service.name }}{{ service.title }}</b></p>
+        </div>
+        </div>
     <div class="col-md-12 " id="bada">
       <div class="popover__wrapper">
       <div class="card-group">
@@ -100,15 +100,47 @@
                 </div>
                 {% endfor %}
               {% else %}
+
+              <!-- Now you can use service_price throughout this block -->
               <div class="col-md-2 text-center">
+                <!-- {% if request.user.is_authenticated and request.user.country.code != "US" and service.discounted_price > 0 or not request.user.is_authenticated%}
+                
+                <b>${{ service.discounted_price|floatformat:2 }}</b>
+                
+                {% endif %}
+
+                {% if request.user.is_authenticated and request.user.country.code == "US" or not request.user.is_authenticated %}
+                
+                <b>${{ service.price|floatformat:2 }}</b>              
+                
+                {% endif %} -->
+               
+                {% if request.user.is_authenticated%}
+                  {% if request.user.country.code != "US" and service.discounted_price > 0 %}
+                  <b>${{ service.discounted_price|floatformat:2 }}</b>
+                  {% else %}
+                  <b>${{ service.price|floatformat:2 }}</b>
+                  {% endif %}
+                {% else %}
+                {% if service.discounted_price > 0 %}
+                <b>${{ service.discounted_price|floatformat:2 }}</b>&nbsp; &nbsp; 
                 <b>${{ service.price|floatformat:2 }}</b>
+                {% else %}
+                <b>${{ service.price|floatformat:2 }}</b>
+                {% endif %}
+                {% endif %}
+                
                 {% if service.slug %}
                 <a href="{{ SITEURL }}/{{ service.slug }}/"><button type="button" class="btn btn-primary">More</button></a>
                 {% else %}
                 <form method="POST" {% if service.is_direct or service.price < 1000 %}action="{% url 'finance:pay' %}"{% else %}action="{% url 'finance:newcontract' request.user %}"{% endif %}>
                   {% csrf_token %}
                   <input type="hidden" name="service_title" value="{{ service.name }}{{ service.title }}">
+                  {% if request.user.country.code != "US" and service.discounted_price > 0 %}
+                  <input type="hidden" name="fees" value="{{ service.discounted_price }}">
+                  {% else %}
                   <input type="hidden" name="fees" value="{{ service.price }}">
+                  {% endif %}
                   <input type="hidden" name="is_direct" value="{{ service.is_direct }}">
                   <input type="hidden" name="service_category_id" value="{{ service.category.id }}">
                   <button type="submit" class="btn btn-primary">Proceed</button>
