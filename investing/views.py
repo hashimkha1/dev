@@ -14,7 +14,7 @@ from django.views.generic import ListView
 # import pandas as pd
 
 from .utils import (compute_pay,risk_ratios,
-                    computes_days_expiration, computes_days_expiration_option_return, get_user_investment,financial_categories,investment_rules
+                    computes_days_expiration, get_user_investment,financial_categories,investment_rules
                     )
 from main.filters import ReturnsFilter
 from main.utils import path_values,dates_functionality,generate_chatbot_response
@@ -244,7 +244,6 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
 
     filter_name = request.GET.get('filter_by', None)
     extra_filter = request.GET.get('extra_filter_by', None)
-    use_ai = request.GET.get('use_ai', False)
 
     # Taking distinct symbols which in oversold/overbought.
     distinct_overboughtsold_symbols = list(set([
@@ -270,6 +269,7 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
     }
     stock_model = model_mapping[sub_title]['model']
     page_title = model_mapping[sub_title]['title']  # Renamed to avoid conflict
+    description = None
 
     context = {
         "data": [],  # Empty data when stockdata does not exist
@@ -306,11 +306,12 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             # Efficiently fetch all symbols from Options_Returns to avoid repetitive DB calls
             all_return_symbols = Options_Returns.objects.distinct()
             
-            current_days_to_expiration = computes_days_expiration(current_stockdata)[1]
-            
-            # for testing with option_return expiration days, i created this function, but need to test by chrish
-            # current_days_to_expiration_returns = computes_days_expiration_option_return(all_return_symbols)[1]
-            # print(current_days_to_expiration, current_days_to_expiration_returns)
+            ########################################
+            # adding days of expiration in stockdata
+            ########################################
+
+            # current_days_to_expiration = computes_days_expiration(current_stockdata)[1]
+            current_stockdata = list(map(lambda v: (setattr(v, 'days_of_expiration', computes_days_expiration([v])[1]), v)[1], current_stockdata))
             
             all_return_symbols = all_return_symbols.values_list('symbol', flat=True)
             
@@ -320,15 +321,15 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             ]
            
             #filtering symbol which is not in option_return  
-            filtered_stockdata_by_returns = [x for x in filtered_stockdata_by_oversold if x.symbol not in all_return_symbols or (x.symbol in distinct_returns_symbols and current_days_to_expiration >= 21)]
+            filtered_stockdata_by_returns = [x for x in filtered_stockdata_by_oversold if x.symbol not in all_return_symbols or (x.symbol in distinct_returns_symbols and x.days_of_expiration >= 21)]
             
     
             context[f"{current_stock_model.__name__.lower()}_option_return_count"] = len(filtered_stockdata_by_returns)
             context[f"{current_stock_model.__name__.lower()}_oversold_count"] = len(filtered_stockdata_by_oversold)
-            context[f"{current_stock_model.__name__.lower()}_original_count"] = current_stockdata.count()
+            context[f"{current_stock_model.__name__.lower()}_original_count"] = len(current_stockdata)
             
             if current_stock_model == stock_model:
-                context['days_to_expiration'] = current_days_to_expiration
+                # context['days_to_expiration'] = current_days_to_expiration
                 context['get_edit_url'] = get_edit_url
                 context['url_name'] = url_name
 
@@ -345,17 +346,18 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                         context['data'] = sorted(context['data'], key=lambda x: float(x.raw_return[:-1]), reverse=True)[:5]
                     else:
                         context['data'] = sorted(context['data'], key=lambda x: float(x.sell_strike[1:].replace(',', '')), reverse=True)[:5]
-                
-    if use_ai:
+
+    if request.method == 'POST':
         
-        data = 'symbol rank days_to_expiry earning_date return\n'
+        condition_list = request.POST.getlist('selected_conditions')
+        data = 'symbol rank(Implied Volatility) days_to_expiry earning_date return\n'
         for stock_data in context['data']:
             #{stock_data.strategy if stock_model != 'credir_spread' else stock_data.action}
-            data += f"{stock_data.symbol} {stock_data.rank if sub_title == 'credit_spread' else stock_data.implied_volatility_rank} {computes_days_expiration([stock_data])[1]} {stock_data.earnings_date} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
+            data += f"{stock_data.symbol} {stock_data.rank if sub_title == 'credit_spread' else stock_data.implied_volatility_rank} {stock_data.days_of_expiration} {stock_data.earnings_date} {stock_data.premium if sub_title == 'credir_spread' else stock_data.raw_return}" 
 
             data += "\n"
              #"in output just give me list of symbol"
-        question = data + "\n" + "on above data, list top 5 symbol. in which, consider filed in this priority order, 1> rank 2> days_to_expiry 3> earning_date 4> return."+ """
+        question = data + "\n" + "on above data, list maximum top 5 symbol. in which, consider filed in this priority order," + ",".join(condition_list) + """
             output format example: {
             description: "why you choose this five",
             symbols: ["ENPH", "PYPL"]
@@ -376,13 +378,12 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             description = data_dict["description"]
             symbols = data_dict["symbols"]
 
-            context['data'] = context['data'].filter(symbol__in=symbols)
-
+            context['data'] = list(filter(lambda v: v.symbol in symbols, context['data'])) #.filter(symbol__in=symbols)
         except Exception as e:
+            print(e)
             description = "try again!!!"
         
-    else:
-        description = None
+
 
     context.update({
         # "data": filtered_stockdata_by_oversold,

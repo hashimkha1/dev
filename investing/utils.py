@@ -105,32 +105,6 @@ def computes_days_expiration(stockdata):
     return expiry_date, days_to_expiration
 
 
-
-def computes_days_expiration_option_return(stockdata):
-    date_today = datetime.now(timezone.utc)
-    days_to_expiration = 0
-    expiry_date = None  # initializing expiry_date here
-    for x in stockdata:
-        if isinstance(x.expiration_date, str):
-            try:
-                expiry_str = x.expiration_date
-                expirydate = datetime.strptime(expiry_str, "%m/%d/%Y")
-                expiry_date = expirydate.astimezone(timezone.utc)
-            except:
-                pass
-        elif isinstance(x.expiration_date, datetime):
-            expiry_date = x.expiration_date.astimezone(timezone.utc)
-        else:
-            continue
-
-        days_to_exp = expiry_date - date_today
-        days_to_expiration = days_to_exp.days
-        
-        
-    return expiry_date, days_to_expiration
-
-
-
 financial_categories = [
     {
         "title": "statistics",
@@ -157,9 +131,13 @@ investment_rules = {
                     "description":">21 days",
                 },
                 {
+                    "rule": "Earning date",
+                    "description":None
+                },
+                {
                     "rule": "Annualized Returns",
                     "description":">65%",
-                },
+                },  
             ],
     "yahoo": [
                 {
