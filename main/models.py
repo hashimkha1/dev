@@ -29,6 +29,8 @@ class Service(models.Model):
     title = models.CharField(default='training',max_length=254)
     slug = models.SlugField(default='slug',max_length=255)
     description = models.TextField(null=True, blank=True)
+    sub_titles = models.TextField(null=True, blank=True)
+    # executive_summary = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=False)
     class Meta:
@@ -146,6 +148,8 @@ class Assets(TimeStampedModel):
     name = models.CharField(max_length=200)
     category = models.CharField(default='background',max_length=200,null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    service_image =models.ImageField(null=True, blank=True, upload_to="images/")
+
     image_url = models.CharField(max_length=1000, null=True, blank=True)
 
     class Meta:
