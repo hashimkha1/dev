@@ -755,4 +755,29 @@ class CompanyLiabilities(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return self.name    
+        return self.name  
+
+class Coda_Assets(models.Model):
+    name = models.CharField(max_length=255)
+    category = models.CharField(max_length=255,null=True)
+    quantity = models.PositiveIntegerField()
+    unit_value = models.DecimalField(max_digits=12,decimal_places=2)
+    serial_number = models.CharField(max_length=50,null=True)
+    purchase_date = models.DateTimeField(default=timezone.now)
+    description = models.TextField()
+    location = models.CharField(max_length=50,null=True,blank=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

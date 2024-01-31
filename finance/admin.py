@@ -16,6 +16,7 @@ from .models import (
     TrainingLoan,
     Company_Assets,
     CompanyLiabilities,
+    Coda_Assets
     
 )  # , DocUpload
 from accounts.models import Department
@@ -102,3 +103,4 @@ admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
 admin.site.register(Company_Assets)
 admin.site.register(CompanyLiabilities)
+admin.site.register(Coda_Assets)
