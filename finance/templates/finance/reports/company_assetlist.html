@@ -55,8 +55,13 @@
                           {% endif %}
                       </div>
                     </div>
-
-
+                    <div class="row">
+                      <div class="col-12 d-flex justify-content-end">
+                          <p><a href="{% url 'finance:assetcreate' %}" class="btn btn-primary">
+                              Add New ASSET
+                          </a></p>
+                      </div>
+                  </div>
                     <div class="col-md-12">    
                       <div class="career text-center">
                           <table class="table table-borderless" style="width: 100%">
@@ -75,9 +80,7 @@
                               <tbody>
                                   {% for asset in object_list %}
                                   <tr>
-                                      <td>
-                                          <a href="{% url 'finance:assetdetail' asset.id %}">{{ asset.name }}</a>
-                                      </td>
+                                      <td>{{ asset.Name }}</td> 
                                       <td>{{ asset.quantity }}</td>
                                       <td>{{ asset.value }}</td>
                                       <td>{{ asset.serial_number }}</td>    

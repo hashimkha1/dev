@@ -6,7 +6,7 @@ from .views import (
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_assetsDetaiView,company_assets_detail ,company_liability_list,company_liability_create,company_liability_update,company_liability_delete,company_liability_detail
+                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_liability_list,company_liability_create,company_liability_update,company_liability_delete
 )
 app_name = 'finance'
 urlpatterns = [
@@ -97,13 +97,13 @@ urlpatterns = [
     path("assetupdate/<int:pk>/",views.company_assetsUpdateView.as_view(),name="assetupdate"),
     path("fxassetupdate/<int:pk>/",views.company_assets_update,name="fxassetupdate"),
     path("assetdelete/<int:pk>/",views.company_assetsDeleteView.as_view(),name="assetdelete"),
-    path("assetdetail/<int:pk>/",views.company_assetsDetaiView.as_view(),name="assetdetail"),
-    path("fxassetdetail/<int:pk>/",views.company_assets_detail,name="fxassetdetail"),
+    #path("assetdetail/<int:pk>/",views.company_assetsDetaiView.as_view(),name="assetdetail"),
+   # path("fxassetdetail/<int:pk>/",views.company_assets_detail,name="fxassetdetail"),
     path("fxliabilitylist/", views.company_liability_list, name="fxliabilitylist"),
     path("liabilitycreate/", views.company_liability_create, name="liabilitycreate"),
     path("liabilityupdate/<int:pk>/",views.company_liability_update,name="liabilityupdate"),
     path("liabilitydelete/<int:pk>/",views.company_liability_delete,name="liabilitydelete"),
-    path("liabilitydetail/<int:pk>/",views.company_liability_detail,name="liabilitydetail"),
+    #path("liabilitydetail/<int:pk>/",views.company_liability_detail,name="liabilitydetail"),
    
 
     

@@ -1365,12 +1365,7 @@ class company_assetsDeleteView(DeleteView):
     template_name = "finance/reports/company_assetsdelete.html"
     success_url = reverse_lazy('finance:fxassetlist')
 
-class company_assetsDetaiView(DetailView):
-    model = Company_Assets
-    template_name = "finance/reports/company_assetsdetail.html"
-    def get_context_data(self,**kwargs):
-        context= super().get_context_data(**kwargs)        
-        return context
+
    
 
       
@@ -1411,12 +1406,6 @@ def company_assets_delete(request,pk):
         return redirect('finance:fxassetlist')
     return render(request,"finance/reports/company_assetsdelete.html",{'assets':assets})
 
-def  company_assets_detail(request,pk):
-    object_list= get_object_or_404(Company_Assets,pk=pk) 
-    return render(request,"finance/reports/company_assetsdetail.html",{'object_list':object_list}) 
-
-
-
 
 def company_liability_list(request):
     object_list = CompanyLiabilities.objects.all()    
@@ -1453,9 +1442,6 @@ def company_liability_delete(request,pk):
         return redirect('finance:fxliabilitylist')
     return render(request,"finance/reports/company_assetsdelete.html",{'liabilities':liabilities})
 
-def  company_liability_detail(request,pk):
-    object_list= get_object_or_404(CompanyLiabilities,pk=pk) 
-    return render(request,"finance/reports/company_liabilitydetail.html",{'object_list':object_list}) 
 
 
 
