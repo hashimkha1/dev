@@ -10,4 +10,4 @@ admin.site.register(Assets)
 admin.site.register(Testimonials)
 admin.site.register(ClientAvailability)
 admin.site.register(PricingSubPlan)
-
+admin.site.register(Search)
