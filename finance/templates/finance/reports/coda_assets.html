@@ -55,13 +55,13 @@
                           {% endif %}
                       </div>
                     </div>
-                    <!-- <div class="row">
+                    <div class="row">
                       <div class="col-12 d-flex justify-content-end">
-                          <p><a href="{% url 'finance:assetcreate' %}" class="btn btn-primary">
+                          <p><a href="{% url 'finance:codassetcreate' %}" class="btn btn-primary">
                               Add New ASSET
                           </a></p>
                       </div>
-                  </div> -->
+                  </div>
                     <div class="col-md-12">    
                       <div class="career text-center">
                           <table class="table table-borderless" style="width: 100%">
@@ -84,9 +84,8 @@
                                       <td>{{ asset.category }}</td>
                                       <td>{{ asset.quantity }}</td>
                                       <td>{{ asset.unit_value }}</td>    
-                                      <td>{{ asset.serial_number }}</td>      
-                                      <td>{{ asset.purchase_date|date:"n-d-Y" }}</td>    
-                                      <td>{{ asset.description }}</td>
+                                      <td title="{{ asset.description }}">{{ asset.serial_number }}</td>         
+                                      <td>{{ asset.purchase_date|date:"n-d-Y" }}</td>                                    
                                       <td>{{ asset.location }}</td>
                                       <td>
                                           <a href="{% url 'finance:codassetupdate' asset.id %}">Update</a> |
