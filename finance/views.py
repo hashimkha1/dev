@@ -1477,6 +1477,10 @@ def coda_assets_delete(request,pk):
         return redirect('finance:codassetlist')    
     return render(request,'finance/reports/coda_assetsdelete.html',{'assets':assets})
 
+def coda_assets_detail(request,pk):
+    assets = get_object_or_404(Coda_Assets,pk=pk) 
+    return render(request,'finance/reports/coda_assetsdetail.html',{'assets':assets})    
+
 
 
 

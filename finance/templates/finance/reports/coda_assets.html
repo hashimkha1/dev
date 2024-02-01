@@ -80,7 +80,7 @@
                               <tbody>
                                   {% for asset in assets %}
                                   <tr>
-                                      <td>{{ asset.name }}</td> 
+                                      <td><a href="{% url 'finance:codassetdetai' asset.id %}">{{ asset.name }}</a></td> 
                                       <td>{{ asset.category }}</td>
                                       <td>{{ asset.quantity }}</td>
                                       <td>{{ asset.unit_value }}</td>    
