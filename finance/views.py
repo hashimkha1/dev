@@ -22,7 +22,7 @@ from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense,Budget,Company_Assets,CompanyLiabilities
+		DC48_Inflow,Field_Expense,Budget,Company_Assets,CompanyLiabilities,Coda_Assets
 	)
 from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm,CompanyLiabilitiesForm
 from mail.custom_email import send_email
@@ -1441,6 +1441,11 @@ def company_liability_delete(request,pk):
         liabilities.delete()
         return redirect('finance:fxliabilitylist')
     return render(request,"finance/reports/company_assetsdelete.html",{'liabilities':liabilities})
+
+def coda_assets_list(request):
+    assets= Coda_Assets.objects.all()
+    print("assets===========>",assets)
+    return render(request,"finance/reports/coda_assets.html",{'assets':assets})  
 
 
 

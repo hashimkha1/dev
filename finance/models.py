@@ -766,6 +766,9 @@ class Coda_Assets(models.Model):
     purchase_date = models.DateTimeField(default=timezone.now)
     description = models.TextField()
     location = models.CharField(max_length=50,null=True,blank=True)
+     
+    def __str__(self):
+        return self.name
 
 
 
