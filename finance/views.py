@@ -1468,7 +1468,17 @@ def coda_assets_update(request,pk):
             return redirect('finance:codassetlist')  
     else:
         form = Coda_AssetsForm(instance=assets)
-    return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets})                        
+    return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets})             
+
+def coda_assets_delete(request,pk):
+    assets = get_object_or_404(Coda_Assets,pk=pk)
+    if request.method == 'POST':
+        assets.delete()
+        return redirect('finance:codassetlist')    
+    return render(request,'finance/reports/coda_assetsdelete.html',{'assets':assets})
+
+
+
 
 
 

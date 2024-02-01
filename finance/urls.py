@@ -6,7 +6,7 @@ from .views import (
                     TransactionUpdateView,TransactionDeleteView,
                     UserInflowListView,InflowDetailView,InflowUpdateView,InflowDeleteView,
                     DefaultPaymentUpdateView,DefaultPaymentListView,
-                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_liability_list,company_liability_create,company_liability_update,company_liability_delete,coda_assets_list,coda_assets_create,coda_assets_update
+                    LoanListView,LoanUpdateView,LoanCreateView,userLoanListView,Company_AssetsListview,company_assets_list,company_assetCreateView,company_assets_create,company_assetsUpdateView,company_assets_update,company_assetsDeleteView,company_liability_list,company_liability_create,company_liability_update,company_liability_delete,coda_assets_list,coda_assets_create,coda_assets_update,coda_assets_delete
 )
 app_name = 'finance'
 urlpatterns = [
@@ -107,6 +107,7 @@ urlpatterns = [
     path("codassetlist/", views.coda_assets_list, name="codassetlist"),
     path("codassetcreate/", views.coda_assets_create, name="codassetcreate"),
     path("codassetupdate/<int:pk>/", views.coda_assets_update, name="codassetupdate"),
+    path("codassetdelete/<int:pk>/", views.coda_assets_delete, name="codassetdelete"),
    
 
     

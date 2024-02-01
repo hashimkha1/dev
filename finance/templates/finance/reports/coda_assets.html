@@ -89,8 +89,8 @@
                                       <td>{{ asset.description }}</td>
                                       <td>{{ asset.location }}</td>
                                       <td>
-                                          <a href="{% url 'finance:codassetupdate' asset.id %}">update</a> |
-                                          <a href="#"></a>
+                                          <a href="{% url 'finance:codassetupdate' asset.id %}">Update</a> |
+                                          <a href="{% url 'finance:codassetdelete' asset.id %}">Delete</a>
                                       </td>
                                   </tr>
                                   {% endfor %}      
