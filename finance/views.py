@@ -24,7 +24,7 @@ from .models import (
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
 		DC48_Inflow,Field_Expense,Budget,Company_Assets,CompanyLiabilities,Coda_Assets
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm,CompanyLiabilitiesForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm,CompanyLiabilitiesForm,Coda_AssetsForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -1444,8 +1444,19 @@ def company_liability_delete(request,pk):
 
 def coda_assets_list(request):
     assets= Coda_Assets.objects.all()
-    print("assets===========>",assets)
+    #print("assets===========>",assets)
     return render(request,"finance/reports/coda_assets.html",{'assets':assets})  
+
+def coda_assets_create(request):
+    if request.method =='POST':
+        form = Coda_AssetsForm(request.POST)
+        if form.is_valid():
+            form.save() 
+            print("object=========",form)
+            return redirect('finance:codassetlist') 
+    else:
+        form = Coda_AssetsForm 
+        return render(request,"finance/reports/company_create.html",{'form':form})         
 
 
 

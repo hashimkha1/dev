@@ -8,7 +8,8 @@ from .models import (
     TrainingLoan,
     Transaction,
     Inflow,
-    Company_Assets,CompanyLiabilities
+    Company_Assets,CompanyLiabilities,
+    Coda_Assets
 
 )
 
@@ -118,3 +119,8 @@ class CompanyLiabilitiesForm(forms.ModelForm):
     class Meta:
         model = CompanyLiabilities
         fields = '__all__'          
+
+class Coda_AssetsForm(forms.ModelForm):
+    class Meta:
+        model = Coda_Assets
+        fields = '__all__'        
