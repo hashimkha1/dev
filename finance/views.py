@@ -1452,7 +1452,7 @@ def coda_assets_create(request):
         form = Coda_AssetsForm(request.POST)
         if form.is_valid():
             form.save() 
-            print("object=========",form)
+           # print("object=========",form)
             return redirect('finance:codassetlist') 
     else:
         form = Coda_AssetsForm 
@@ -1463,8 +1463,7 @@ def coda_assets_update(request,pk):
     if request.method == 'POST': 
         form = Coda_AssetsForm(request.POST,instance=assets)
         if form.is_valid():
-            form.save() 
-            print("object=========",form)
+            form.save()            
             return redirect('finance:codassetlist')  
     else:
         form = Coda_AssetsForm(instance=assets)
