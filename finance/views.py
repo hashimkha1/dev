@@ -1456,7 +1456,19 @@ def coda_assets_create(request):
             return redirect('finance:codassetlist') 
     else:
         form = Coda_AssetsForm 
-        return render(request,"finance/reports/company_create.html",{'form':form})         
+        return render(request,"finance/reports/company_create.html",{'form':form}) 
+
+def coda_assets_update(request,pk):
+    assets= get_object_or_404(Coda_Assets,pk=pk)
+    if request.method == 'POST': 
+        form = Coda_AssetsForm(request.POST,instance=assets)
+        if form.is_valid():
+            form.save() 
+            print("object=========",form)
+            return redirect('finance:codassetlist')  
+    else:
+        form = Coda_AssetsForm(instance=assets)
+    return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets})                        
 
 
 
