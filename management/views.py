@@ -384,7 +384,7 @@ def benefits(request):
         "reporting_date": reporting_date,
         "day_name": day_name,
     }
-    return render(request, "management/hr/benefits.html", context)
+    return render(request, "management/departments/hr/benefits.html", context)
 
 
 # ===================================ACTIVITY CLASS-BASED VIEWS=========================================
