@@ -336,8 +336,6 @@ def display_service(request, *args, **kwargs):
     category_name = 'website Development'  
     projects = Pricing.objects.filter(category__name=category_name, is_active=True)
 
-    print(projects)
-
     context = {
         'service_categories': service_categories,
         "title": service_category_title,
@@ -785,7 +783,7 @@ def team(request,title):
         'Elite Team': list(elite_team_member),
         'Lead Team': lead_team,
         'Support Team': list(support_team),
-        'Senior Analysts': senior_analysts,
+        # 'Senior Analysts': senior_analysts,
         }
         user_group = team_members
         heading = "THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
@@ -823,7 +821,7 @@ def team(request,title):
     if sub_title == 'future_talents':
         team_categories = {
             'Junior Analysts': junior_analysts,
-            'Senior Trainee Team': senior_trainee,
+            # 'Senior Trainee Team': senior_trainee,
             'Junior Trainee Team': junior_trainee,
             'Elementary': elementry
         }
