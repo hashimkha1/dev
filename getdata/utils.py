@@ -112,8 +112,12 @@ def fetch_and_insert_data():
                 (cut_off_date.date().strftime('%m/%d/%Y'),)
             )
 
+        source_cursor.execute("DELETE FROM investing_overboughtsold WHERE created_at < CURRENT_TIMESTAMP - INTERVAL '30 days';")
+        target_cursor.execute("DELETE FROM investing_overboughtsold WHERE created_at < CURRENT_TIMESTAMP - INTERVAL '30 days';")
+
         # Commit the changes in the target database
         target_conn.commit()
+        source_conn.commit()
 
         print("Data transfer successful!")
     except Exception as e:
