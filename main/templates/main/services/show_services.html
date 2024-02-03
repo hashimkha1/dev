@@ -17,9 +17,6 @@
     <p class="me-lg-5">
       {{ service_desc }}
     </p>
-    <!-- <div class="center-container">
-      <a class="col" href="{% url 'main:display_service' slug=title|slugify %}">Start {{ title }} Now</a>
-    </div> -->
   </div>
 </div>
 <div class="services-div">
@@ -50,42 +47,8 @@
     </div>
   </div> 
 </div>
-<style>
-  /*css for show services  */
-.videocontainers{
-  padding-top: 97px;
-}
-.videocontainer iframe:hover {
-        /* box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); */
-        filter: brightness(100%)  ;
-    }
-.videocontainer {
-  position: relative;
-  width: 100%;
-  height: 0;
-  border-radius: 20px;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  overflow: hidden;
-}
-
-.videocontainer iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  border-radius: 20px;
-  height: 100%;
-  
-  filter: blur(1px) brightness(70%);
-}
-</style>
-<!-- <script>
-  document.addEventListener('DOMContentLoaded', () => {
-      const player = new Plyr('.plyr');
-  });
-</script> -->
 {% include 'main/services/course.html'%}
-{% if title == "Data Training & Professional Support" %}
+{% if title == "Data Intelligence Training & Professional Support" %}
   <div class="count-section">
     <div class="count-card">
       <img src="{% static 'main/image/studenticon.jpg' %}" alt="Student Icon" class="icon">
@@ -105,59 +68,18 @@
       <p class="count">{{ total_courses_count }}</p>
     </div>
   </div>
-{% endif %}
-<style>
-.count-section {
-  display: flex;
-  justify-content: space-around;
-  padding-left: 30px;
-  margin-top: 30px;
-  padding-bottom: 70px;
-}
-
-.count-card {
-  text-align: center;
-  background-color: #fff; /* Separate background color for each card */
-  padding: 20px; /* Add padding for spacing inside the card */
-  border-radius: 85px; /* Adjust the border-radius for a rounded look */
-}
-.count-card:hover {
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  filter: brightness(80%) ;
-    }
-.count-card .icon {
-  width: 100px; /* Adjust the width and height as needed */
-  height: 38px;
-  padding-right: 50px;
-  margin-bottom: 30px; /* Add margin for spacing between icon and title */
-}
-
-.count-card h3 {
-  color: #333;
-  margin-bottom: 10px; /* Add margin for spacing between title and count */
-}
-
-.count-card p {
-  font-size: 30px;
-  font-weight: bold;
-  color: #007bff; /* or your preferred color */
-}
-/* Media Query for smaller screens */
-@media only screen and (max-width: 768px) {
-  .count-section {
-    flex-direction: column; /* Stack cards vertically on smaller screens */
-    align-items: center; /* Center cards on smaller screens */
-  }
-
-  .count-card {
-    width: 60%; /* Take full width on smaller screens */
-    margin: 20px;
-    margin-right: 0; /* Remove margin on smaller screens */
-  }
-}
-</style>
-
-
+{%else%} 
+  <div class="container-lg">
+    <h2 class="mt-4 mt-md-0" style="text-align: left;color: #243865;font-weight: 700;">Our previous projects</h2>
+    <hr style="width: 32%; height: 4px; background-color: #E7AD4A;">
+    {% for project in projects %}
+    <div class="project-card">
+      <h3 class="project-title">{{ project.title }}</h3>
+      <p class="project-description">{{ project.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+{%endif%}
 <div class="testimonials-div">
   <div class="container">
       <h1>CLIENT SUCCESS STORIES</h1>
@@ -185,26 +107,6 @@
               </div>
             </div>
         {% endfor %}
-        <!-- {% for post in posts %}
-        <div class="col-md-4">
-          <div class="carousel-card">
-            <div class="img-div p-3">
-              <span>
-                <img src="{{googledriveurl}}={{post.writer.profile.image2.image_url}}" class="team-img" width="110px" height="110px" style="border-radius: 50%;"/>
-              </span>
-            </div>
-              <h3> 
-                <a href="{% url 'main:post-detail' post.id %}">
-                  {{ post.writer.first_name }},{{post.writer.last_name}}
-                </a>
-              </h3>
-              <h3>{{post.title}}</h3>
-              <font size="2">
-                  {{post.content|truncatewords:50}}
-                </font>
-          </div>
-        </div>
-        {% endfor %} -->
        </div>
 
 
@@ -228,70 +130,43 @@
     function handleImageErrorInsucessStory(img) {
 
       img.src = "{% static '/main/img/service-1.jpg' %}"
+      // parentDiv.remove(); // Remove the grandparent div
     }
     function toggleContent(message_type, service_description, index) {
         
         var descriptionDiv = document.getElementById("description"+index)
+        // console.log(descriptionDiv)
         if (message_type == 'more-content') {
           var message = 'eleborate this content:' + service_description
           // console.log(message)
         }
         else{
           var message = 'short this content:' + service_description
-          // console.log(message)
         }
         var url = "{% url 'main:get_respos' %}?userMessage="+message+"&generalUse=True"
-        // var csrftoken = getCookie('csrftoken');  // Assuming you have a function to retrieve the CSRF token
-
         fetch(url, {
           method:'GET',
           headers:{
             'Content-type':'application/json',
-            //'X-CSRFToken':csrftoken,
           },
         }).then(response => response.json())
           .then(data => {
               var newParagraph = document.createElement('p');
 
-              // Set the content of the new paragraph
               newParagraph.textContent = data['response'];
 
-             
               descriptionDiv.innerHTML = '';  // Remove existing content
               descriptionDiv.appendChild(newParagraph);
 
           })
           .catch(error => {
+              
               console.error('Error:', error);
           });
     }
   </script>
-
-
-
-<!-- <div class="row text-center">
-  <div>
-        <div >
-            {% for value in Automation %}
-            <div >
-              <h4>{{value.title}}</h4>
-              <p>{{value.description}}</p>
-          </div>
-          {% endfor%}
-          </div>
-    </div>
-        <div>
-            {% for value in General %}
-            <div >
-                <h4>{{value.title}}</h4>
-                <p>{{value.description}}</p>
-          </div>
-          {% endfor%}
-          </div>
-    </div>
-  </div>   -->
-
- {% include 'main/snippets_templates/chat.html'%} 
+  
+  {% include 'main/snippets_templates/chat.html'%}
 
   </div> 
 {% endblock %}

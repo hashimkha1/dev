@@ -314,7 +314,7 @@ def display_service(request, *args, **kwargs):
     except Service.DoesNotExist:
         return redirect('main:display_service')
 
-    (service_category_slug, service_category_title, service_description, service_sub_titles, service_id) = service_instances(service_shown, sub_title)
+    (service_category_slug, service_category_title, service_description,service_sub_titles, service_id) = service_instances(service_shown, sub_title)
     service_categories = ServiceCategory.objects.filter(service=service_id)
     try:
         asset = Assets.objects.get(name=service_category_title)
@@ -332,6 +332,9 @@ def display_service(request, *args, **kwargs):
     teachers_count = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member).count()
     # Calculate the total number of courses
     total_courses_count = ServiceCategory.objects.filter(service=service_id).count()
+  
+    category_name = 'website Development'  
+    projects = Pricing.objects.filter(category__name=category_name, is_active=True)
 
     context = {
         'service_categories': service_categories,
@@ -339,6 +342,7 @@ def display_service(request, *args, **kwargs):
         "service_desc": service_description,
         'content': description,
         "General":General,
+        "projects": projects,
         "Automation":Automation,
         "sub_titles": service_sub_titles,
         "posts": testimonials,
@@ -779,7 +783,7 @@ def team(request,title):
         'Elite Team': list(elite_team_member),
         'Lead Team': lead_team,
         'Support Team': list(support_team),
-        'Senior Analysts': senior_analysts,
+        # 'Senior Analysts': senior_analysts,
         }
         user_group = team_members
         heading = "THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
@@ -817,7 +821,7 @@ def team(request,title):
     if sub_title == 'future_talents':
         team_categories = {
             'Junior Analysts': junior_analysts,
-            'Senior Trainee Team': senior_trainee,
+            # 'Senior Trainee Team': senior_trainee,
             'Junior Trainee Team': junior_trainee,
             'Elementary': elementry
         }

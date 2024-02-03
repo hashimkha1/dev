@@ -106,6 +106,10 @@ def dump_data(request):
                             task.mxearning = new_max_earning
                             
                             updated_task.append(task)
+                        
+                        else:
+                            task.point = 0
+                            updated_task.append(task)
                     
 
         if len(updated_task) > 0:
