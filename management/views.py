@@ -127,11 +127,18 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
-def meetings(request):
+def meetings(request,status):
     if request.user.is_client:
         sessions = Meetings.objects.filter(is_active=True,group="client").order_by("created_at")
     else:
-        sessions=Meetings.objects.all().order_by("created_at")
+        if status == 'company':
+            sessions = Meetings.objects.filter(is_active=True,category=2).order_by("created_at")
+        elif status == 'training':
+            sessions = Meetings.objects.filter(is_active=True,category=3).order_by("created_at")
+        elif status == 'other':
+            sessions = Meetings.objects.filter(is_active=True,category=1).order_by("created_at")
+        else:
+            sessions=Meetings.objects.all().order_by("created_at")
 
     categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
     meeting_categories=sorted(categories_list)
@@ -155,7 +162,7 @@ def newmeeting(request):
 
 class MeetingUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Meetings
-    success_url = "/management/meetings"
+    success_url = "/management/meetings/company"
     fields = "__all__"
     form = MeetingForm()
 
@@ -243,9 +250,9 @@ def confirm_employee_contract(request):
         create_task('Group A', group, cat, user, 'General Meeting', 'General Meeting description, auto added', '0', '0', max_point, '0')
         create_task('Group A', group, cat, user, 'BI Session', 'BI Session description, auto added', '0', '0', max_point, '0')
         create_task('Group A', group, cat, user, 'One on One', 'One on One description, auto added', '0', '0', max_point, '0')
-        create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
-        create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
-        create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
+        # create_task('Group A', group, cat, user, 'Video Editing', 'Video Editing description, auto added', '0', '0', max_point, '0')
+        # create_task('Group A', group, cat, user, 'Dev Recruitment', 'Dev Recruitment description, auto added', '0', '0', max_point, '0')
+        # create_task('Group A', group, cat, user, 'Sprint', 'Sprint description, auto added', '0', '0', max_point, '0')
     except:
         print("Something wrong in task creation")
 

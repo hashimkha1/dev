@@ -2,16 +2,30 @@
 
 <section id="data_training">
     <div class="data_training text-center">
-        <h3 class="title">COMPANY MEETINGS</h3>
+        <h3 class="title">COMPANY MEETINGS
+          <p><a href="{% url 'management:newmeeting'%}" class="btn btn-primary btn-sm"
+            >ADD NEW MEETING
+          </a></p>
+        </h3>
         <div class="row">
-            <div class="col-md-6">
-                <p><a href="{% url 'management:newmeeting'%}" class="btn btn-primary btn-sm"
-                  >ADD NEW MEETING
-                </a></p>
-              </div>
-          <div class="col-md-6">
-            <p><a href="#" class="btn btn-primary btn-sm"
-              >ACTIVE MEETINGS
+          <div class="col-md-3">
+            <p><a href="{% url 'management:meetings' status='company' %}" class="btn btn-primary btn-sm"
+              >Company
+            </a></p>
+          </div>
+          <div class="col-md-3">
+            <p><a href="{% url 'management:meetings' status='training' %}" class="btn btn-primary btn-sm"
+              >Training Sessions
+            </a></p>
+          </div>
+          <div class="col-md-3">
+            <p><a href="{% url 'management:meetings' status='other' %}" class="btn btn-primary btn-sm"
+              >Other sessions
+            </a></p>
+          </div>
+          <div class="col-md-3">
+            <p><a href="{% url 'management:meetings' status='all' %}" class="btn btn-primary btn-sm"
+              >ALL MEETINGS
             </a></p>
           </div>
         </div>

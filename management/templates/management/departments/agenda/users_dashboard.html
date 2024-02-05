@@ -82,7 +82,7 @@
       <hr style="height:3px;border:none;color:rgb(102, 102, 122);background-color:rgb(157, 157, 178);" />
       <div class="row text-center">
         <div class="col-md-2">
-          <a href="{% url 'management:meetings' %}" class="btn btn-secondary">My Meetings</a>
+          <a href="{% url 'management:meetings' status='company' %}" class="btn btn-secondary">My Meetings</a>
         </div>
         <div class="col-md-2">
           <a class="btn btn-secondary" href="{% url 'finance:mycontract' request.user %}" target="__blank" >My Contract</a>

@@ -121,7 +121,7 @@
             >Account</a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropDown">
                     {% if user.is_admin or user.is_superuser %}
-                          <a class="dropdown-item" href="{% url 'management:meetings'%}" target="" >My Account</a >
+                          <a class="dropdown-item" href="{% url 'management:meetings' status='company' %}" target="" >My Account</a >
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
                             <div class="dropdown-divider"></div>

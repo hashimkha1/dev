@@ -24,7 +24,7 @@
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'main:my_availability' %}" target="" >My Schedule</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="{% url 'management:meetings' %}" target="" >My Meetings</a>
+                                <a class="dropdown-item" href="{% url 'management:meetings' status='company' %}" target="" >My Meetings</a>
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'management:user_task_history' request.user %}" target="" >Last DAF</a>
                                 <div class="dropdown-divider"></div>
