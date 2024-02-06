@@ -386,3 +386,10 @@ class MonthForm(forms.Form):
     )
     month = forms.ChoiceField(choices=MONTHS)
     year = forms.ChoiceField(choices=YEAR)
+
+def dynamic_agenda_form(model_instance):
+    class DynamicAgendaForm(forms.ModelForm):
+        class Meta:
+            model = model_instance.__class__
+            fields = '__all__'
+    return DynamicAgendaForm

@@ -15,7 +15,8 @@ urlpatterns = [
     #-----------COMPANY REPORTS---------------------------------------
     path('companyagenda/', views.companyagenda, name='companyagenda'),
     path('userdashboard/', views.dckdashboard, name='dckdashboard'),
-    path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
+    # path('companyagenda/updatelinks', views.updatelinks_companyagenda, name='companyagenda-updatelinks'),
+    path('update-agenda/<str:title>/<int:pk>/', views.updatelinks_companyagenda, name='update_agenda'),
 
     #-----------COMPANY POLICIES---------------------------------------
     path('policy/', views.policy, name='policy'),

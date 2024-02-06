@@ -1,6 +1,7 @@
 from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F, Case, When, Value
 import math
 import calendar,string,requests
+import json
 from typing import Any
 from django.db.models.query import QuerySet
 from django.contrib import messages
@@ -28,7 +29,8 @@ from management.forms import (
     EmployeeContractForm,
     MonthForm,
     MeetingForm,
-    TagFilterForm
+    TagFilterForm,
+    dynamic_agenda_form
 )
 from django.views.generic import (
     CreateView,
@@ -40,7 +42,7 @@ from django.views.generic import (
 from application.models import UserProfile
 from management.models import (
     Advertisement,
-    # Category,
+    SubCategory,
     Policy,
     TaskCategory,
     Task,
@@ -51,6 +53,7 @@ from management.models import (
     ProcessJustification,
     ProcessBreakdown,
     Meetings,
+    Link
 )
 from data.models import DSU,ClientAssessment
 from finance.models import Default_Payment_Fees, LoanUsers,LBandLS, Payment_History, TrainingLoan,PayslipConfig, Transaction
@@ -296,45 +299,123 @@ tasksummary = [
 ]
 
 # ----------------------REPORTS--------------------------------
-
-import json
-
 @login_required
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
-    department_id=request.GET.get('department_id', None)
+    department_id = request.GET.get('department_id', None)
+    categories = Department.objects.prefetch_related('subcategory_set__link_set').filter(id=department_id,is_active=True) if department_id else Department.objects.prefetch_related('subcategory_set__link_set').filter(is_active=True)
 
-    categories = Department.objects.prefetch_related('subcategory_set__link_set').filter(id=department_id) if department_id else Department.objects.prefetch_related('subcategory_set__link_set').all()
+    links = {
+        'My Meetings': reverse('management:meetings', kwargs={'status': 'company'}),
+        'My Schedule': reverse('main:my_availability'),
+        'Company Policies': reverse('application:policies'),
+        'Edit Profile': reverse('main:update_profile', args=[request.user.profile.id]),
+        
+    }
 
-    if request.user.is_superuser or request.user.is_staff:
-        return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "categories": categories})
+    # Conditional links based on user category
+    if request.user.category == 1 or request.user.is_applicant:
+        links.update({
+            'My Application': 'application:policies',
+            'My Interview': 'application:interview',
+            'Apply for Internship': 'main:contact',
+            'Apply for Training': 'main:contact',
+        })
+    elif request.user.category == 2 and request.user.sub_category == 2:
+        links.update({
+            'My DAF': 'management:user_task',
+            'Last DAF': 'management:user_task_history',
+            'My Evidence': 'management:user_evidence',
+            'Evidence': 'management:evidence',
+            'Add Links': reverse('management:meetings', kwargs={'status': 'company'}),
+            'Edit Links':reverse('management:meetings', kwargs={'status': 'company'}),
+        })
     elif request.user.is_client:
-        return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard", "categories": categories})
-    elif request.user.is_investor:
-        return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Investor dashboard", "categories": categories})
+        links.update({
+            'Assessment': 'management:clientassessment',
+            'My Training': 'data:train',
+            'My Interview': 'data:question-detail',  
+            'Job Support': 'data:start_training',  
+            'My Time': 'accounts:user-list',
+            'My Contract': 'finance:mycontract',
+            'New Contract': 'main:display_service',  
+            'Make Payment': 'finance:pay',
+            'My Sessions': 'management:user_session',
+        })
+
+    if request.user.is_superuser:
+        links.update({
+            'Tasks': 'management:tasks',
+            'History Tasks': 'management:taskhistory',
+            'Evidence': 'management:evidence',
+        })
+
+    context = {
+        'links': links,
+        "title": "Company Agenda",
+        "categories": categories
+    }
+    return render(request, "management/departments/agenda/general_agenda.html", context)
+
+# @login_required
+# def companyagenda(request):
+#     request.session["siteurl"] = settings.SITEURL
+#     department_id=request.GET.get('department_id', None)
+
+#     categories = Department.objects.prefetch_related('subcategory_set__link_set').filter(id=department_id) if department_id else Department.objects.prefetch_related('subcategory_set__link_set').all()
+
+#     if request.user.is_superuser or request.user.is_staff:
+#         return render(request, "management/departments/agenda/general_agenda.html", {"title": "Company Agenda", "categories": categories})
+#     elif request.user.is_client:
+#         return render(request, "management/departments/agenda/users_dashboard.html", {"title": "Client dashboard", "categories": categories})
+#     elif request.user.is_investor:
+#         return render(request, "management/departments/agenda/investor_dashboard.html", {"title": "Investor dashboard", "categories": categories})
+#     else:
+#         return render(request, "management/departments/agenda/default_dashboard.html", {"title": "Default dashboard"})
+
+
+# def updatelinks_companyagenda(request):
+#     department = request.POST["department"]
+#     subdepartment = request.POST["subdepartment"]
+#     linkname = request.POST["linkname"]
+#     link_url = request.POST["link_url"]
+
+#     with open(settings.STATIC_ROOT + '/companyagenda.json', "r") as jsonFile:
+#         data = json.load(jsonFile)
+
+#     if subdepartment == "":
+#         data[department][linkname] = link_url
+#     else:
+#         data[department][subdepartment][linkname] = link_url
+
+#     with open(settings.STATIC_ROOT + '/companyagenda.json', "w") as jsonFile:
+#         json.dump(data, jsonFile)
+
+#     return JsonResponse({"success": True})
+
+from django.shortcuts import get_object_or_404, render, redirect
+
+def updatelinks_companyagenda(request, title, pk):
+    print('HERE')
+    # Fetch the model instance based on the title and pk
+    if title == 'department':
+        model_instance = get_object_or_404(Department, pk=pk)
+    elif title == 'subcategory':
+        model_instance = get_object_or_404(SubCategory, pk=pk)
     else:
-        return render(request, "management/departments/agenda/default_dashboard.html", {"title": "Default dashboard"})
+        model_instance = get_object_or_404(Link, pk=pk)
 
+    DynamicForm = dynamic_agenda_form(model_instance)
 
-def updatelinks_companyagenda(request):
-    department = request.POST["department"]
-    subdepartment = request.POST["subdepartment"]
-    linkname = request.POST["linkname"]
-    link_url = request.POST["link_url"]
-
-    with open(settings.STATIC_ROOT + '/companyagenda.json', "r") as jsonFile:
-        data = json.load(jsonFile)
-
-    if subdepartment == "":
-        data[department][linkname] = link_url
+    if request.method == 'POST':
+        form = DynamicForm(request.POST, instance=model_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('management:companyagenda')
     else:
-        data[department][subdepartment][linkname] = link_url
+        form = DynamicForm(instance=model_instance)
 
-    with open(settings.STATIC_ROOT + '/companyagenda.json', "w") as jsonFile:
-        json.dump(data, jsonFile)
-
-    return JsonResponse({"success": True})
-
+    return render(request, "main/form.html", {'form': form})
 
 # ----------------------MANAGEMENT POLICIES& OTHER VIEWS--------------------------------
 def policy(request):
