@@ -14,6 +14,7 @@ from management.utils import unique_slug_generator,split_num_str
 from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups,Department
 from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
+from main.models import TimeStampedModel
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -146,19 +147,7 @@ class Policy(models.Model):
 #         return self.name
 
 
-class SubCategory(models.Model):
-    name = models.CharField(max_length=255)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return f"{self.name} - {self.department}"
 
-class Link(models.Model):
-    name = models.CharField(max_length=255)
-    url = models.URLField()
-    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
-    def __str__(self):
-        return f"{self.name} - {self.subcategory}"
     
 # ==================================ACTIVITIES====================================
 class TaskCategory(models.Model):
@@ -746,22 +735,6 @@ class Advertisement(models.Model):
     def __str__(self):
         return self.post_description
     
-# class Whatsapp(models.Model):
-#     # whatsapp
-#     product_id = models.CharField(max_length=100, null=True, blank=True)
-#     token = models.CharField(max_length=100, null=True, blank=True)
-#     screen_id = models.CharField(max_length=500, null=True, blank=True)
-#     group_name = models.CharField(max_length=100, null=True, blank=True)
-#     group_id = models.CharField(max_length=100, null=True, blank=True)
-#     image_url = models.CharField(max_length=500, null=True, blank=True)
-#     link = models.CharField(max_length=500, null=True, blank=True)
-#     message= models.TextField(null=True, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     updated_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return self.group_name
-    
 
 class Meetings(models.Model):
     Group = [
@@ -797,5 +770,28 @@ class Meetings(models.Model):
     is_active = models.BooleanField(default=True)
     is_featured = models.BooleanField(default=True)
 
+    # def __str__(self):
+    #     return self.meeting_topic
     def __str__(self):
-        return self.meeting_topic
+        return self.meeting_topic or ""
+
+class SubCategory(models.Model):
+    name = models.CharField(max_length=255)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    
+    # def __str__(self):
+    #     return f"{self.name} - {self.department}"
+    def __str__(self):
+        return self.name or ""
+
+class Link(TimeStampedModel):
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE)
+    meeting = models.ForeignKey(Meetings, on_delete=models.CASCADE,default=1)
+
+    # def __str__(self):
+    #     # return f"{self.name} - {str(self.subcategory)}-{str(self.meeting)}"
+    #     return self.name if self.name is not None else "Unnamed Link"
+    def __str__(self):
+        return self.name or ""

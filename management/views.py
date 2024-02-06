@@ -304,7 +304,7 @@ def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
     department_id = request.GET.get('department_id', None)
     categories = Department.objects.prefetch_related('subcategory_set__link_set').filter(id=department_id,is_active=True) if department_id else Department.objects.prefetch_related('subcategory_set__link_set').filter(is_active=True)
-
+    
     links = {
         'My Meetings': reverse('management:meetings', kwargs={'status': 'company'}),
         'My Schedule': reverse('main:my_availability'),
@@ -316,38 +316,38 @@ def companyagenda(request):
     # Conditional links based on user category
     if request.user.category == 1 or request.user.is_applicant:
         links.update({
-            'My Application': 'application:policies',
-            'My Interview': 'application:interview',
-            'Apply for Internship': 'main:contact',
-            'Apply for Training': 'main:contact',
+            'My Application':reverse('application:policies'),
+            'My Interview':reverse('application:interview'),
+            'Apply for Internship':reverse('main:contact'),
+            'Apply for Training':reverse('main:contact'),
         })
     elif request.user.category == 2 and request.user.sub_category == 2:
         links.update({
-            'My DAF': 'management:user_task',
-            'Last DAF': 'management:user_task_history',
-            'My Evidence': 'management:user_evidence',
-            'Evidence': 'management:evidence',
+            'My DAF': reverse('management:user_task'),
+            'Last DAF': reverse('management:user_task_history'),
+            'My Evidence': reverse('management:user_evidence'),
+            'Evidence': reverse('management:evidence'),
             'Add Links': reverse('management:meetings', kwargs={'status': 'company'}),
             'Edit Links':reverse('management:meetings', kwargs={'status': 'company'}),
         })
     elif request.user.is_client:
         links.update({
-            'Assessment': 'management:clientassessment',
-            'My Training': 'data:train',
-            'My Interview': 'data:question-detail',  
-            'Job Support': 'data:start_training',  
-            'My Time': 'accounts:user-list',
-            'My Contract': 'finance:mycontract',
-            'New Contract': 'main:display_service',  
-            'Make Payment': 'finance:pay',
-            'My Sessions': 'management:user_session',
+            'Assessment': reverse('management:clientassessment'),
+            'My Training': reverse('data:train'),
+            'My Interview': reverse('data:question-detail'),
+            'Job Support': reverse('data:start_training'),
+            'My Time': reverse('accounts:user-list'),
+            'My Contract': reverse('finance:mycontract'),
+            'New Contract': reverse('main:display_service'),
+            'Make Payment': reverse('finance:pay'),
+            'My Sessions': reverse('management:user_session'),
         })
 
     if request.user.is_superuser:
         links.update({
-            'Tasks': 'management:tasks',
-            'History Tasks': 'management:taskhistory',
-            'Evidence': 'management:evidence',
+            'Tasks':reverse('management:tasks'),
+            'History Tasks':reverse('management:taskhistory'),
+            'Evidence': reverse('management:evidence'),
         })
 
     context = {
