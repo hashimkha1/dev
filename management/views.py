@@ -133,12 +133,6 @@ def meetings(request,status):
     employees=[employee.first_name for employee in emp_obj ]
     _,rand_departments=task_assignment_random(employees)
 
-    context={
-        "departments": rand_departments,
-        "employees": employees,
-        "title": "Meetings",
-        "meetings":Meetings,
-    }
     if request.user.is_client:
         sessions = Meetings.objects.filter(is_active=True,category=3).order_by("created_at")
     else:
@@ -154,9 +148,11 @@ def meetings(request,status):
     categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
     meeting_categories=sorted(categories_list)
     context={
+        'header_links': defined_links(request),
         "meeting_categories":meeting_categories,
+        "employees": employees,
+        "title": "Meetings",
         "sessions":sessions
-
     }
     return render(request, "management/departments/hr/meetings.html",context)
 
@@ -307,8 +303,6 @@ tasksummary = [
 ]
 
 # ----------------------REPORTS--------------------------------
-from django.db.models import Q
-
 @login_required
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
