@@ -56,7 +56,7 @@
                             <p> <a class="btn btn-secondary btn-sm" href="{{session.meeting_link|default_if_none:'#'}}">LINK</a></p>
                           </div>
                           <div class="col-md-4">
-                            <p> <a class="btn btn-secondary btn-sm" href="{% url 'management:companyagenda' %}?department_id={{session.department.id}}">Agenda</a></p>
+                            <p> <a class="btn btn-secondary btn-sm" href="{% url 'management:companyagenda' %}?meeting_id={{session.id}}">Agenda</a></p>
                           </div>
                           <div class="col-md-4">
                             <p> <a class="btn btn-secondary btn-sm" href="{% url 'management:meeting-update' session.id %}">EDIT</a></p>

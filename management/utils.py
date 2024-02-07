@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from decimal import Decimal
 import calendar,string
+from django.urls import reverse
 from django.utils.text import slugify
 from datetime import date, datetime, timedelta
 from dateutil.relativedelta import relativedelta
@@ -659,3 +660,49 @@ def task_assignment_random(employees):
     random.shuffle(departments)
     rand_departments = zip(*[iter(departments)] * int(departments_per_worker))
     return employees,rand_departments
+
+def defined_links(request):
+    links = {
+        'My Meetings': reverse('management:meetings', kwargs={'status': 'company'}),
+        'My Schedule': reverse('main:my_availability'),
+        'Company Policies': reverse('application:policies'),
+        'Edit Profile': reverse('main:update_profile', args=[request.user.profile.id]),
+    }
+
+    # Conditional links based on user category
+    if request.user.category == 1 or request.user.is_applicant:
+        links.update({
+            'My Application':reverse('application:policies'),
+            'My Interview':reverse('application:interview'),
+            'Apply for Internship':reverse('main:contact'),
+            'Apply for Training':reverse('main:contact'),
+        })
+    elif request.user.category == 2 and request.user.sub_category == 2:
+        links.update({
+            'My DAF': reverse('management:user_task'),
+            'Last DAF': reverse('management:user_task_history'),
+            'My Evidence': reverse('management:user_evidence'),
+            'Evidence': reverse('management:evidence'),
+            'Add Links': reverse('management:meetings', kwargs={'status': 'company'}),
+            'Edit Links':reverse('management:meetings', kwargs={'status': 'company'}),
+        })
+    elif request.user.is_client:
+        links.update({
+            'Assessment': reverse('management:clientassessment'),
+            'My Training': reverse('data:train'),
+            'My Interview': reverse('data:question-detail'),
+            'Job Support': reverse('data:start_training'),
+            'My Time': reverse('accounts:user-list'),
+            'My Contract': reverse('finance:mycontract'),
+            'New Contract': reverse('main:display_service'),
+            'Make Payment': reverse('finance:pay'),
+            'My Sessions': reverse('management:user_session'),
+        })
+
+    if request.user.is_superuser:
+        links.update({
+            'Tasks':reverse('management:tasks'),
+            'History Tasks':reverse('management:taskhistory'),
+            'Evidence': reverse('management:evidence'),
+        })
+    return links
