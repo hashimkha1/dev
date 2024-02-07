@@ -140,7 +140,7 @@ def meetings(request,status):
         "meetings":Meetings,
     }
     if request.user.is_client:
-        sessions = Meetings.objects.filter(is_active=True,group="client").order_by("created_at")
+        sessions = Meetings.objects.filter(is_active=True,category=3).order_by("created_at")
     else:
         if status == 'company':
             sessions = Meetings.objects.filter(is_active=True,category=2).order_by("created_at")

@@ -665,7 +665,7 @@ def defined_links(request):
     links = {
         'My Meetings': reverse('management:meetings', kwargs={'status': 'company'}),
         'My Schedule': reverse('main:my_availability'),
-        'Company Policies': reverse('application:policies'),
+        'My Sessions': reverse('management:user_session', args=[request.user]),
         'Edit Profile': reverse('main:update_profile', args=[request.user.profile.id]),
     }
 
@@ -676,27 +676,27 @@ def defined_links(request):
             'My Interview':reverse('application:interview'),
             'Apply for Internship':reverse('main:contact'),
             'Apply for Training':reverse('main:contact'),
+             'Company Policies': reverse('application:policies'),
         })
-    elif request.user.category == 2 and request.user.sub_category == 2:
+    elif request.user.is_staff:
         links.update({
-            'My DAF': reverse('management:user_task'),
-            'Last DAF': reverse('management:user_task_history'),
-            'My Evidence': reverse('management:user_evidence'),
+            'My DAF': reverse('management:user_task', args=[request.user]),
+            'Last DAF': reverse('management:user_task_history', args=[request.user]),
+            'My Evidence': reverse('management:user_evidence', args=[request.user]),
+            'My Sessions': reverse('management:user_session', args=[request.user]),
             'Evidence': reverse('management:evidence'),
-            'Add Links': reverse('management:meetings', kwargs={'status': 'company'}),
-            'Edit Links':reverse('management:meetings', kwargs={'status': 'company'}),
         })
     elif request.user.is_client:
         links.update({
             'Assessment': reverse('management:clientassessment'),
             'My Training': reverse('data:train'),
-            'My Interview': reverse('data:question-detail'),
-            'Job Support': reverse('data:start_training'),
-            'My Time': reverse('accounts:user-list'),
-            'My Contract': reverse('finance:mycontract'),
-            'New Contract': reverse('main:display_service'),
+            'My Interview': reverse('data:question-detail', kwargs={'question_type': 'resume'}),
+            'Job Support': reverse('data:start_training', kwargs={'slug': 'interview'}),
+            'My Time': reverse('accounts:user-list', args=[request.user]),
+            'My Contract': reverse('finance:mycontract', args=[request.user]),
+            'New Contract': reverse('main:display_service', kwargs={'slug': 'data_analysis'}),
             'Make Payment': reverse('finance:pay'),
-            'My Sessions': reverse('management:user_session'),
+            
         })
 
     if request.user.is_superuser:
