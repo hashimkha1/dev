@@ -143,7 +143,7 @@ def meetings(request,status):
         elif status == 'other':
             sessions = Meetings.objects.filter(is_active=True,category=1).order_by("created_at")
         else:
-            sessions=Meetings.objects.all().order_by("created_at")
+            sessions=Meetings.objects.filter(is_active=True).order_by("created_at")
 
     categories_list = Meetings.objects.values_list('category__title', flat=True).distinct()
     meeting_categories=sorted(categories_list)

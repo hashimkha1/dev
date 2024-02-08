@@ -49,12 +49,12 @@ class PortfolioForm(forms.ModelForm):
             'implied_volatility_rank',
             'expiry',
             'earnings_date',
-            'strategy',
+            # 'strategy',
             'long_strike',
             'short_strike',
             'returns',
             'comment',
-            # 'amount',
+            'amount',
             'long_leg_delta',
             'short_leg_delta',
             'long_leg_theta',
@@ -79,15 +79,15 @@ class PortfolioForm(forms.ModelForm):
                 ('overbought','overbought')
             ]
 
-            strategy_CHOICES = [
-                ('covered_calls', 'covered_calls'),
-                ('shortputdata', 'shortputdata'),
-                ('credit_spread', 'credit_spread'),
-            ]
+            # strategy_CHOICES = [
+            #     ('covered_calls', 'covered_calls'),
+            #     ('shortputdata', 'shortputdata'),
+            #     ('credit_spread', 'credit_spread'),
+            # ]
 
             # Use ChoiceField in the form
             self.fields['condition'] = forms.ChoiceField(choices=condition_CHOICES,)
-            self.fields['strategy'] = forms.ChoiceField(choices=strategy_CHOICES,)
+            # self.fields['strategy'] = forms.ChoiceField(choices=strategy_CHOICES,)
             self.fields['action'].widget = forms.TextInput()
             self.fields['implied_volatility_rank'].widget = forms.TextInput()
             self.fields['earnings_date'].widget = forms.DateInput(attrs={'type': 'date'})

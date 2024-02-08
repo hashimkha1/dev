@@ -1,5 +1,6 @@
+import os
 from datetime import date, datetime
-from django.db.models import Subquery, OuterRef, CharField, Sum, Q, Count, F, Case, When, Value
+from django.db.models import Subquery, OuterRef, CharField, DecimalField,Sum, Q, Count, F, Case, When, Value
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import user_passes_test
 from django.urls import reverse
@@ -8,9 +9,9 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-import os
 from finance.models import Payment_History, Transaction
 from django.views.generic import ListView
+
 # import pandas as pd
 
 from .utils import (compute_pay,risk_ratios,
@@ -640,6 +641,9 @@ def portfolio(request, symbol):
     stock_model = model_mapping.get(model, None)
     symbol_in_portfolio = Portifolio.objects.filter(user=request.user, symbol=symbol)
     initial_values=None
+    amount=0
+    max_reward=0
+    strategy_type=None
     condition_dict = {
         '-1':'neutral',
         '1': 'oversold',
@@ -659,21 +663,32 @@ def portfolio(request, symbol):
                 form.instance.condition = reversed_condition_dict[form.instance.condition]
                 
                 if symbol_in_portfolio:
-                    
                     form = PortfolioForm(data, instance=symbol_in_portfolio.first())
                     
                 else:
                     form.instance.user = request.user
                 # form.instance.amount=form.instance.long_strike-form.instance.short_strike
+
                 try:
-                    # strategy_type='Debit Spread' if form.instance.long_strike <= form.instance.short_strike else 'Credit Spread'
-                    amount=form.instance.long_strike-form.instance.short_strike
-                except:
-                    amount=0
-                # print("amount",strategy_type,amount,form.instance.amount,form.instance.long_strike,form.instance.short_strike)
-                form.instance.amount=amount*100
-                # form.instance.strategy=strategy_type
-                
+                    difference_legs = form.instance.long_strike - form.instance.short_strike
+                    # Determine the action type
+                    action_type = form.instance.action.lower()
+
+                    # Check for 'put' or 'call' actions and set strategy_type and max_reward
+                    if (action_type == 'put' and difference_legs > 0) or (action_type == 'call' and difference_legs < 0):
+                        max_reward = difference_legs - form.instance.amount
+                        strategy_type = 'debit'
+                    else:
+                        max_reward = difference_legs
+                        form.instance.amount = difference_legs
+                        strategy_type = 'credit'
+
+
+                except Exception as e:
+                    print(f"Error: {e}")
+
+                # Set calculated values in the form instance
+                form.instance.strategy = strategy_type
                 form.save()
                 success_url = reverse('investing:my_portfolio')
             else:
@@ -745,12 +760,25 @@ class PortfolioListView(ListView):
         # Combine the custom query with the existing queryset
         query = super().get_queryset().annotate(
             condition_name=Case(
-                When(Q(condition=1), then=Value('oversold')),
-                When(Q(condition=0), then=Value('overbought')),
+                When(Q(condition=1), then=Value('overbought')),
+                When(Q(condition=0), then=Value('oversold')),
                 When(Q(condition=-1), then=Value('neutral')),
                 default=F('condition'),  # Default case, adjust as needed
                 output_field=CharField()
-            )
+        ),
+        difference_legs=(F('long_strike') - F('short_strike'))*100
+            ).annotate(
+                max_reward=Case(
+                    # For put spreads, calculate reward as 70% of the difference between legs
+                    When(Q(action='put') & Q(long_strike__gt=F('short_strike')), 
+                        then=F('difference_legs') - F('amount')),
+                    # For call spreads, calculate reward as the difference between legs
+                    When(Q(action='call') & Q(long_strike__gt=F('short_strike')), 
+                        then=F('difference_legs')),
+                    # Default case if none of the above conditions are met
+                    default=F('difference_legs'),
+                    output_field=DecimalField()
+                )
         )
         
         if self.request.user.is_superuser and username is None:
@@ -770,7 +798,6 @@ class PortfolioListView(ListView):
         remaining_amount = total_amount - invested_amount
         total_theta = query_set.aggregate(total_theta=Sum((F('long_leg_theta') - F('short_leg_theta')) * F('number_of_contract')))['total_theta']
         total_delta = query_set.aggregate(total_delta=Sum((F('long_leg_delta') - F('short_leg_delta')) * F('number_of_contract')))['total_delta']
-
         context['total_amount'] = total_amount
         context['invested_amount'] = invested_amount if invested_amount else 0
         context['remaining_amount'] = remaining_amount
