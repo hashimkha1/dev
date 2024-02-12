@@ -21,15 +21,48 @@ from django.views.generic import (
     )
 from main.context_processors import images
 from django.contrib.auth import get_user_model
-from finance.models import Payment_History
-from main.models import PricingSubPlan
 from .utils import update_ads_by_pricing
 
 User=get_user_model()
 logger = logging.getLogger(__name__)
 #====================General===========================
 def marketing(request):
-    return render(request, "marketing/socialmedia.html", {"title": "Marketing"})
+    social_media_cards = [
+        {
+            'title': 'Whatsapp',
+            'description': 'Managing WhatsApp groups.',
+            'menu_items': [
+                {'text': 'Run to Publish', 'url': reverse('marketing:whatsapp')},
+                {'text': 'Add New Group', 'url': reverse('marketing:whatsapp_new')},
+                {'text': 'See Groups', 'url': reverse('marketing:whatsapp_list', kwargs={'title': 'all'})},
+                {'text': 'Populate Groups', 'url': reverse('getdata:whatsappgroups') if request.user.is_superuser else reverse('finance:pay')},
+                {'text': 'PPT-Automation', 'url': 'https://docs.google.com/presentation/d/1JBWX_QI6BBJrJhtZdahYRzFpFRXpe-lK/edit#slide=id.p2'}
+            ]
+        },
+        {
+            'title': 'Facebook',
+            'description': 'Managing Facebook',
+            'menu_items': [
+                {'text': 'Run to Publish', 'url': 'https://www.facebook.com/chris.maghas/'},
+                {'text': 'Our Page', 'url': 'https://www.facebook.com/coachchrismaghas/'},
+                {'text': 'PPT-Automation', 'url': '#'}
+            ]
+        },
+        {
+            'title': 'Twitter',
+            'description': 'Managing Twitter',
+            'menu_items': [
+                {'text': 'Run to Publish', 'url': '#'},
+                {'text': 'twitter Page', 'url': 'https://twitter.com/CrownData'},
+                {'text': 'PPT-Automation', 'url': '#'}
+            ]
+        },
+    ]
+    context={
+        "title": "Marketing",
+        'social_media_cards': social_media_cards,
+    }
+    return render(request, "marketing/socialmedia.html",context)
 #====================Social Media===========================
 
 #====================AD MANAGEMENT===========================

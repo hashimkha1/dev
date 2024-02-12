@@ -1,124 +1,16 @@
-{%extends "main/base_templates/analysis_index.html"%} 
+{% extends "main/base_templates/analysis_index.html"%} 
 {% load static %}
 {% block title %}
 {% if department %}{{ department.name }}{% else %}activities{% endif %}
 {% endblock %}
 {% block content %}
-<!--------------------------Slider Section--------------------------------->
-<!-------------------Our home services Section------------------------->
-<!-------------------1. Our  Job Report Section------------------------->
 <section id="data_training">
 <div class="data_training text-center">
     <h3 class="title">Social Media</h3>
     <div class="row text-center">
-        <div class="col-md-4" id="gi">
-            <div class="card">
-              <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-              <div class="card-body">
-                <h4><b>Whatsapp</b></h4>
-                <hr/>
-                <p class="gi">
-                       managing whatsapp groups.
-                </p>
-                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item dropdown">
-                    <a
-                    class="nav-link dropdown-toggle"
-                    href=""
-                    id="navbarDropDown"
-                    role="button"
-                    data-toggle="dropdown"
-                    >
-                    <button type="btn" class="btn-primary">Select</button>
-                  </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp'%}"> Run to Publish</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_new'%}">Add New Group</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="{%url 'marketing:whatsapp_list' title='all' %}">See Groups</a>
-                        <div class="dropdown-divider"></div>
-                        {% if request.user.is_superuser %}
-                        <a class="dropdown-item" target="_blank" href="{%url 'getdata:whatsappgroups'%}">Populate Groups</a>
-                        {% else %}
-                        <a class="dropdown-item" target="_blank" href="{%url 'finance:pay'%}">Populate Groups</a>
-                        {% endif%}
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="https://docs.google.com/presentation/d/1JBWX_QI6BBJrJhtZdahYRzFpFRXpe-lK/edit#slide=id.p2">PPT-Automation</a>
-                    </div>
-                </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-        <div class="col-md-4" id="gi">
-            <div class="card">
-              <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-              <div class="card-body">
-                <h4><b>Facebook</b></h4>
-                <hr/>
-                <p class="gi">
-                       managing Facebook Page.
-                </p>
-                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item dropdown">
-                    <a
-                    class="nav-link dropdown-toggle"
-                    href=""
-                    id="navbarDropDown"
-                    role="button"
-                    data-toggle="dropdown"
-                    >
-                    <button type="btn" class="btn-primary">Select</button>
-                  </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                        <a class="dropdown-item" target="_blank" href="#"> Run to Publish</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="#">Add New Group</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="#">See Groups</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" target="_blank" href="#">PPT-Automation</a>
-                    </div>
-                </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-        <div class="col-md-4" id="gi">
-            <div class="card">
-              <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-              <div class="card-body">
-                <h4><b>Twitter</b></h4>
-                <hr/>
-                <p class="gi">
-                       managing Twitter.
-                </p>
-                <ul class="navbar-nav ml-auto">
-                  <li class="nav-item dropdown">
-                    <a
-                    class="nav-link dropdown-toggle"
-                    href=""
-                    id="navbarDropDown"
-                    role="button"
-                    data-toggle="dropdown"
-                    >
-                    <button type="btn" class="btn-primary">Select</button>
-                  </a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropDown">
-                    <a class="dropdown-item" target="_blank" href="#"> Run to Publish</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" target="_blank" href="#">Add New Group</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" target="_blank" href="#">See Groups</a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" target="_blank" href="#">PPT-Automation</a>
-                </div>
-                </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
+        {% for card in social_media_cards %}
+          {% include "main/snippets_templates/cards/social_media_card.html" %}
+        {% endfor %}
+    </div>
 </section>
 {% endblock content %}

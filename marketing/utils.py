@@ -1,6 +1,7 @@
 import os,requests
 import json
 import logging
+from django.urls import reverse
 from finance.models import Payment_History
 from main.models import PricingSubPlan
 
@@ -93,3 +94,8 @@ def update_ads_by_pricing(user):
     
 
     return is_featured, is_active
+
+   
+
+    
+    
