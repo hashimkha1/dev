@@ -22,6 +22,7 @@ from .forms import (
     ApplicantProfileFormA,
     ApplicantProfileFormB,
     ApplicantProfileFormC,
+    TraineeAssessmentForm
 )
 from .models import UserProfile, Application,Rated, Reporting
 from data.models import ActivityLinks
@@ -544,3 +545,65 @@ class TraineeDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):
         return reverse("application:trainees")
+    
+def training_assessment(request):
+    if request.method == "POST":
+        form = TraineeAssessmentForm(request.POST, request.FILES)
+        print(form.errors)
+        if form.is_valid():
+            print("hello")
+            print(form.instance.data_tools)
+            form.save()
+            return redirect("main:layout")
+    else:
+        form = TraineeAssessmentForm()
+    return render(request, "main/snippets_templates/generalform.html", {"form": form})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic import CreateView, UpdateView
+from .models import Trainee_Assessment, Topic
+from .forms import TraineeAssessmentForm
+
+def assessment_list(request):
+    assessments = Trainee_Assessment.objects.all()
+    context={
+        "assessments" :assessments
+    }
+    return render (request, 'application/applications/trainingassessment.html',context)
+
+# For creating a new Trainee_Assessment
+class TraineeAssessmentCreateView(CreateView):
+    model = Trainee_Assessment
+    form_class = TraineeAssessmentForm
+    template_name = 'main/snippets_templates/generalform.html'
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # Here you can add any additional processing before saving the object.
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # Redirect to a success page of your choice
+        return reverse('application:assessment_list')  # Replace with your view name or path
+
+# For updating an existing Trainee_Assessment
+class TraineeAssessmentUpdateView(UpdateView):
+    model = Trainee_Assessment
+    form_class = TraineeAssessmentForm
+    template_name = 'main/snippets_templates/generalform.html'
+    
+    def get_object(self):
+        # Override get_object to fetch the object based on the passed ID
+        id_ = self.kwargs.get("id")
+        return get_object_or_404(Trainee_Assessment, id=id_)
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # Here you can add any additional processing before saving the object.
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # Redirect to a success page of your choice
+        # return reverse('assessment_detail', kwargs={'id': self.object.id})  # Replace with your view name or path
+        return reverse('application:assessment_list')  # Replace with your view name or path

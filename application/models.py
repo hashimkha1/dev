@@ -7,7 +7,10 @@ from django.utils import timezone
 from main.models import TimeStampedModel
 from main.models import Assets
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 
+# from finance.utils import get_exchange_rate
+User = get_user_model()
 # from coda_project.storage import GoogleDriveStorage
 
 # Create your models here.
@@ -263,8 +266,25 @@ class Reporting(models.Model):
 
     def __str__(self):
         return f"{self.id} Reporting"
+    
+class Topic(models.Model):
+    TOPIC_CHOICES=[
+        ("projectDescription","projectDescription"),
+        ("requirementsAnalysis ","requirementsAnalysis "),
+        ("development","development"),
+        ("testing","testing"),
+        ("deployment","deployment"),
+    ]
+    topic_name = models.CharField(
+        max_length=255,
+        choices=TOPIC_CHOICES,
+        default='Other'
+    )
+    # name = models.CharField(max_length=100, unique=True)
 
-
+    def __str__(self):
+        return self.topic_name
+    
 class Trainee_Assessment(TimeStampedModel):
     class Score(models.IntegerChoices):
         Excellent = 1 
@@ -278,13 +298,6 @@ class Trainee_Assessment(TimeStampedModel):
         good = 3
         below_average = 4
 
-    TOPIC_CHOICES=[
-        ("projectDescription","projectDescription"),
-        ("requirementsAnalysis ","requirementsAnalysis "),
-        ("development","development"),
-        ("testing","testing"),
-        ("deployment","deployment"),
-    ]
     TOOL_CHOICES = [
             ("ETL", "ETL"),
             ("Reporting", "Reporting"),
@@ -294,35 +307,27 @@ class Trainee_Assessment(TimeStampedModel):
             ("Other", "Other"),
         ]
 
-    # session = models.AutoField(blank=True, null=True)
     assessor =  models.ForeignKey(
                     "accounts.CustomerUser", 
                     limit_choices_to=Q(is_staff=True), 
                     on_delete=models.CASCADE, 
                     related_name="assessor_username",
                     default=1,blank=True)
+
     trainee_username =  models.ForeignKey(
                     "accounts.CustomerUser", limit_choices_to=Q(is_staff=True)|Q(is_applicant=True), 
                     on_delete=models.CASCADE, related_name="trainee_username",default=1,blank=True)
-    topic = models.CharField(
-        max_length=255,
-        choices=TOPIC_CHOICES,
-        default='Other'
-    )
+    topic = models.ManyToManyField(Topic, blank=True)
     data_tools = models.CharField(
         max_length=255,
         choices=TOOL_CHOICES,
         default='Other'
     )
     audibility = models.IntegerField(choices=Audibility.choices, default=999)
-    projectDescription = models.BooleanField(default=False)# 2
-    requirementsAnalysis  = models.BooleanField(default=False)# 3
-    development = models.BooleanField(default=False)# 5
-    testing = models.BooleanField(default=False)# 3
-    deployment = models.BooleanField(default=False)# 2
     score = models.IntegerField(choices=Score.choices, default=999)
     duration = models.IntegerField(default=0)
     uploadlinkurl = models.CharField(max_length=1000,blank=True, null=True)
 
     def __str__(self):
         return f"{self.id} assessment"
+    

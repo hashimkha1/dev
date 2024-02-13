@@ -6,6 +6,8 @@ from .views import (
     ApplicantListView,
     TraineeDeleteView,
     TraineeUpdateView,
+    TraineeAssessmentCreateView,
+    TraineeAssessmentUpdateView
 )
 app_name = "application"
 urlpatterns = [
@@ -18,6 +20,9 @@ urlpatterns = [
         name="applicant-delete",
     ),
     path("applicants/", views.applicantlist, name="applicants"),
+    path('newassessment', TraineeAssessmentCreateView.as_view(), name='assessment_create'),
+    path('assessment_list/', views.assessment_list, name='assessment_list'),
+    path('assessments/<int:id>/edit/', TraineeAssessmentUpdateView.as_view(), name='assessment_update'),
     path("dckmembers/", views.applicantlist, name="dckmembers"),
     path("interview/", views.interview, name="interview"),
     path("first_interview/", views.first_interview, name="first_interview"),

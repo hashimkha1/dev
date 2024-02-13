@@ -253,8 +253,10 @@ class OverBoughtSold(models.Model):
     PE = models.CharField(max_length=255,blank=True, null=True)
     rank = models.CharField(max_length=255,blank=True, null=True)
     profit_margins = models.CharField(max_length=255,blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
 
     @property
     def condition_integer(self):

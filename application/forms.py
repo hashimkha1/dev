@@ -1,15 +1,20 @@
 from pyexpat import model
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from .models import *
 
-from .models import (
-    UserProfile,
-    Application,
-    # InteviewUploads,
-    # Policy,
-    Rated,
-    Reporting,
-)
+class TraineeAssessmentForm(forms.ModelForm):
+    topics = forms.ModelMultipleChoiceField(
+        queryset=Topic.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False
+    )
+
+    class Meta:
+        model = Trainee_Assessment
+        fields = ['assessor', 'trainee_username', 'data_tools', 'audibility', 'score', 'duration', 'uploadlinkurl', 'topics']
+
+# In your view, you can use TraineeAssessmentForm to render the form.
 
 
 class ApplicantProfileFormA(forms.ModelForm):
