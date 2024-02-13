@@ -12,6 +12,7 @@ urlpatterns = [
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
+    path('wcag/', views.wcag, name='wcag'),
     path('contact/', views.contact, name='contact'),
     path('help/', views.FrequentlyAskedQuestion, name='help'),
     

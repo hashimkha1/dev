@@ -12,7 +12,7 @@ from django.db.models import Sum
 from data.models import ClientAssessment
 from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
-from .utils import (Automation, General, Meetings,path_values,buildmodel,team_members,future_talents,board_members, url_mapping,
+from .utils import (Automation, General, Meetings,path_values,Accessibility,team_members,future_talents,board_members, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
 from coda_project import settings
@@ -1111,6 +1111,13 @@ def finance(request):
 
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
+
+def wcag(request):
+    context={
+            "title": "WCAG STANDARDS",
+			"accessibility": Accessibility
+		}
+    return render(request, "main/departments/wcag.html", context)
 
 
 @login_required

@@ -428,6 +428,20 @@ Automation = [
         "service_category_slug": 'options',
         "service_url": SITEURL+'/display_plans/options'
     },
+    {
+        "title": "Social Media",
+        "link":SITEURL+"/marketing/",
+        "description":"Posting ads to social media",
+        "service_category_slug": 'social_media',
+        "service_url": SITEURL+'/display_plans/social_media/'
+    },
+    {
+        "title": "Accessibility Checks",
+        "link":SITEURL+"/wcag/",
+        "description":"Expanding accessibility to all",
+        "service_category_slug": 'accessibility',
+        "service_url": SITEURL+'/display_plans/options'
+    },
 ]
 
 
@@ -456,14 +470,6 @@ Stocks = [
 
 
 General = [
-
-    {
-        "title": "Social Media",
-        "link":SITEURL+"/marketing/",
-        "description":"Posting ads to social media",
-        "service_category_slug": 'social_media',
-        "service_url": SITEURL+'/display_plans/social_media/'
-    },
     {
         "title": "Cash App",
         "link":SITEURL+"/getdata/cashappdata/",
@@ -493,6 +499,34 @@ General = [
         "service_url": SITEURL+"/display_plans/job-support"
     },
   
+]
+
+Accessibility = [
+    {
+        "title": "OPENAI",
+        "link": "https://chat.openai.com/chat",
+        "description": "Leveraging AI to enhance analytics and insights, making data-driven decisions more accessible and impactful."
+    },
+    {
+        "title": "Visual Impairment",
+        "link": SITEURL + "wcag",
+        "description": "Ensuring web content is perceivable, providing alternatives for non-text content, and supporting assistive technologies for visual navigation."
+    },
+    {
+        "title": "Hearing Impairment",
+        "link": SITEURL + "wcag",
+        "description": "Creating an auditory-accessible experience by offering captioning, sign language interpretations, and visual alerts for individuals with hearing challenges."
+    },
+    {
+        "title": "Diverse Abilities",
+        "link": SITEURL + "wcag",
+        "description": "Offering a range of adaptive strategies and technologies to support users with various disabilities in accessing digital content effectively."
+    },
+    {
+        "title": "Accessibility Standards Compliance",
+        "link": "https://docs.google.com/spreadsheets/d/1J4Q-O4AVTMH1dt931mfY7-EFf7emsGAUTuumub-Ppj0/edit#gid=0",
+        "description": "Adhering to stringent WCAG guidelines to meet and exceed the standards of web accessibility for all users."
+    },
 ]
 
 url_mapping = {
@@ -735,6 +769,7 @@ App_Categories = {
     ]
 
 }
+
 
 courses = {
     "ETL" : [

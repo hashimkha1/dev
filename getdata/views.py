@@ -62,19 +62,7 @@ def uploaddata(request):
 	}
 	return render(request,"getdata/uploaddata.html", context) 
 
-# @login_required
-# def bigdata(request):
-# 	context={
-# 		"title": "data",
-# 		"Automation":Automation,
-# 		"Stocks":Stocks,
-# 		"General":General,
-# 	}
-# 	return render(request, "getdata/bigdata.html",context)
-
-
 def update_link(service_array, user_payment_history, service_categories):
-	
 	updated_automation = []
 	for automation_service in service_array:
 		
