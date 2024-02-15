@@ -127,7 +127,7 @@
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
                     {% else %}
-                      <a class="dropdown-item" href="{% url 'management:meetings'%}" target="" >My Account</a >
+                      <a class="dropdown-item" href="{% url 'management:meetings' status='company'%}" target="" >My Account</a >
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{% url 'account-logout'%}" target="" >Logout</a>
                         <div class="dropdown-divider"></div>
