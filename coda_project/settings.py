@@ -120,7 +120,6 @@ def dba_values():
         dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         user = os.environ.get('POSTGRESDB_USER')
         password = os.environ.get('POSTGRESSPASS') 
-        
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"
@@ -278,7 +277,7 @@ def payment_details(request):
 if os.environ.get('ENVIRONMENT') == 'production':
     SITEURL = "https://www.codanalytics.net"
     SECURE_SSL_REDIRECT = True
-    DEBUG = True
+    DEBUG = False
 elif os.environ.get('ENVIRONMENT') == 'testing':
     SECURE_SSL_REDIRECT = True
     SITEURL = "https://codamakutano.herokuapp.com"

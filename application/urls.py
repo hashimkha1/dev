@@ -3,7 +3,6 @@ from . import views
 from management.views import policies
 from .views import (
     ApplicantDeleteView,
-    ApplicantListView,
     TraineeDeleteView,
     TraineeUpdateView,
     TraineeAssessmentCreateView,
@@ -38,7 +37,6 @@ urlpatterns = [
     path("orientation/", views.orientation, name="orientation"),
     path("internal_training/", views.internal_training, name="internal"),
     # For Internal Use Only
-    # path("policy/", views.policy, name="policy"),
     path("policies/", views.policies, name="policies"),
     path("reporting/", views.trainee, name="trainee"),
     path("trainees/", views.trainees, name="trainees"),
