@@ -12,9 +12,14 @@ from django.db.models import Sum
 from data.models import ClientAssessment
 from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
-from .utils import (Automation, General, Meetings,path_values,Accessibility,team_members,future_talents,board_members, url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews,packages,courses,analyze_website_for_wcag_compliance,
-                    generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
+from .utils import (Automation, General, Meetings,path_values,Accessibility,
+                    team_members,future_talents,board_members, url_mapping,
+                    client_categories,service_instances,
+                    service_plan_instances,reviews,packages,
+                    courses,analyze_website_for_wcag_compliance,
+                    generate_database_response,generate_chatbot_response,
+                    upload_image_to_drive, langchainModelForAnswer,
+                    handle_openai_api_exception)
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
@@ -1102,11 +1107,12 @@ def wcag(request, website_url='www.codanalytics.net'):
 
             except Exception as e:
                 print(e)
-                
+                suggestions=handle_openai_api_exception(responses)
+                print(suggestions)
                 context = {
                     "form":WCAG_Form(),
                     "website_url": website_url,
-                    "suggestions": responses,
+                    "suggestions": suggestions,
                     "accessibility": Accessibility,
                     "improved_code": None,
                     "page_name": page_name,
@@ -1119,6 +1125,8 @@ def wcag(request, website_url='www.codanalytics.net'):
         "accessibility": Accessibility,
     }
     return render(request, "main/departments/wcag_form_list.html",  context )
+
+
 
 @login_required
 def meetings(request):

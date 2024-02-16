@@ -222,6 +222,15 @@ def analyze_website_for_wcag_compliance(uploaded_file_content):
         suggestions = "Could not generate suggestions due to an error."
     return suggestions
 
+def handle_openai_api_exception(responses):
+    user_message = f"Consider this response {responses}. Please display the information in tabular format with fields as (list_of_problems, problem_title, description). For improved_code value, format it in proper HTML."
+    try:
+        return generate_chatbot_response(user_message)
+    except Exception as e:
+        print(f"An error occurred while contacting the OpenAI API: {e}")
+        return "Could not generate suggestions due to an error."
+
+
 def countdown_in_month():
     now = datetime.datetime.now()
     next_month = now.replace(day=28) + datetime.timedelta(days=4)
