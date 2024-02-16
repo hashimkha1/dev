@@ -1115,26 +1115,54 @@ def hr(request):
 def wcag(request, website_url='www.codanalytics.net'):
     wcag_standards=WCAGStandard.objects.all()
     # print(wcag_standards)
+    
     if request.method == "POST":
         form = WCAG_Form(request.POST, request.FILES)
         # print(form)
         if form.is_valid():
-            website_url = form.cleaned_data['web_url']
-            responses=analyze_website_for_wcag_compliance(wcag_standards,website_url)
-            # print(responses)
-            # print(website_url)
-            context = {
-            'website_url': website_url,
-            'suggestions': responses,
-            "accessibility": Accessibility,
-            'wcag_standards': wcag_standards,
-            }
+            website_url = form.cleaned_data['website_url']
+            page_name = form.cleaned_data['page_name']
+            uploaded_file_content = request.FILES['upload_file'].read()
+            query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name=page_name)
+            if query.exists():
+                query = query.first()
+                responses=query.improvements
+            else:
+                responses=analyze_website_for_wcag_compliance(wcag_standards, website_url, uploaded_file_content)
+            
+            try:
+                final_json_response=json.loads(responses.replace('json','').strip('```').strip('\n'))
+                context = {
+                    "form":WCAG_Form(),
+                    "website_url": website_url,
+                    "suggestions": responses,
+                    "accessibility": Accessibility,
+                    "page_name": page_name,
+                    "improved_code": final_json_response['improved_code'],
+                    "problem_list": final_json_response['list_of_problem']
+                }
+                instance = form.save(commit=False)
+                instance.improvements = responses
+                instance.save()
+
+            except Exception as e:
+                print(e)
+                
+                context = {
+                    "form":WCAG_Form(),
+                    "website_url": website_url,
+                    "suggestions": responses,
+                    "accessibility": Accessibility,
+                    "improved_code": None,
+                    "page_name": page_name,
+                    "problem_list": []
+                }
             return render(request, "main/departments/wcag_form_list.html",context)
-    else:
-        context ={
-            "form":WCAG_Form(),
-            "accessibility": Accessibility,
-        }
+    
+    context ={
+        "form":WCAG_Form(),
+        "accessibility": Accessibility,
+    }
     return render(request, "main/departments/wcag_form_list.html",  context )
 
 @login_required

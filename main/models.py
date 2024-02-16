@@ -366,7 +366,19 @@ pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
 
+class WCAGStandardWebsite(models.Model):
+    website_url  = models.CharField(max_length=500)
+    page_name    = models.CharField(max_length=500)
+    improvements = models.TextField(null=True) 
+    # page_file   = models.FileField(upload_to='uploads/')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.website_url
+    
 class WCAGStandard(TimeStampedModel):
+    # my_wcag_website = models.ForeignKey(WCAGStandardWebsite, on_delete=models.CASCADE, null=True)
     criteria = models.CharField(max_length=100, unique=True)
     definition = models.TextField()
     what_to_test = models.CharField(max_length=255)

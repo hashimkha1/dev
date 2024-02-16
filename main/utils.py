@@ -108,7 +108,6 @@ def unique_slug_generator(instance, new_slug=None):
 
 """ =============open_ai chat bot===========   """
 def generate_chatbot_response(user_message, user_message_dict=None):
-    
     if user_message_dict is None:
         messages = [
         {"role": "system", "content": user_message},
@@ -129,7 +128,7 @@ def generate_chatbot_response(user_message, user_message_dict=None):
             # frequency_penalty=0,
             # presence_penalty=0
     )
-    
+
     if response:
         result=response.choices[0].message.content     
         
@@ -213,20 +212,36 @@ def analyze_website_for_wcag_compliance(wcag_standards, website_url):
         f"Suggestions:"
     )
 """ ===========End of code============ """
-def analyze_website_for_wcag_compliance(wcag_standards, website_url):
+def analyze_website_for_wcag_compliance(wcag_standards, website_url, html_content):
     # Construct a summary of WCAG standards
-    wcag_standards_summary = "\n".join([
-        f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
-        for ws in wcag_standards
-    ])
+    # wcag_standards_summary = "\n".join([
+    #     f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
+    #     for ws in wcag_standards
+    # ])
 
-    # Construct the prompt for OpenAI, including the website URL
-    user_message = (
-        f"Please examine the website at {website_url} against the following WCAG Standards "
-        f"to check for areas that do not meet these standards and suggest improvements:\n\n"
-        f"{wcag_standards_summary}\n\n"
-        f"Suggestions:"
-    )
+    # # Construct the prompt for OpenAI, including the website URL
+    # user_message = (
+    #     f"Please examine the website at {website_url} against the following WCAG Standards "
+    #     f"to check for areas that do not meet these standards and suggest improvements:\n\n"
+    #     f"{wcag_standards_summary}\n\n"
+    #     f"Suggestions:"
+    # )
+
+    user_message = f"""
+        html_code:
+      {html_content}   
+    """ + """
+    Consider wcag criteria and above html code i provided above, i need you to examine the html code and provide /pinpoint specific areas in the code and specific wcag criteria that fails to meet , furthermore rewrite and provide corrected version of the html code.
+    
+    output format example requires in json: {
+        list_of_problem: [{
+        problem_title: "title of problem",
+        description: "descripiton of problem you find in page"
+        }],
+        improved_code: "html code"
+    }, and do not change key name and do not pass any extra string in output 
+    """
+
     try:
         suggestions = generate_chatbot_response(user_message)
         # suggestions = openai_response.get('choices', [{}])[0].get('text', '')
@@ -523,23 +538,23 @@ Accessibility = [
     # },
     {
         "title": "Visual Impairment",
-        "link": SITEURL + "wcag",
-        "description": "Ensuring web content is perceivable, providing alternatives for non-text content, and supporting assistive technologies for visual navigation."
+        # "link": SITEURL + "wcag",
+        "description": "Ensuring web content is perceivable, providing alternatives for non-text content, and supporting assistive technologies for visual navigation.",
     },
     {
         "title": "Hearing Impairment",
-        "link": SITEURL + "wcag",
-        "description": "Creating an auditory-accessible experience by offering captioning, and visual alerts for individuals with hearing challenges."
+        # "link": SITEURL + "wcag",
+        "description": "Creating an auditory-accessible experience by offering captioning, and visual alerts for individuals with hearing challenges.",
     },
     {
         "title": "Diverse Abilities",
-        "link": SITEURL + "wcag",
-        "description": "Offering a range of adaptive strategies and technologies to support users with various disabilities in accessing digital content effectively."
+        # "link": SITEURL + "wcag",
+        "description": "Offering a range of adaptive strategies and technologies to support users with various disabilities in accessing digital content effectively.",
     },
     {
         "title": "Compliance Standards ",
         "link": "https://docs.google.com/spreadsheets/d/1J4Q-O4AVTMH1dt931mfY7-EFf7emsGAUTuumub-Ppj0/edit#gid=0",
-        "description": "Adhering to stringent WCAG guidelines to meet and exceed the standards of web accessibility for all users."
+        "description": "Adhering to stringent WCAG guidelines to meet and exceed the standards of web accessibility for all users.",
     },
 ]
 

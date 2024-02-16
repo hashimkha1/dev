@@ -31,13 +31,17 @@
                     {{instance.description}}
                   </p>
                   <hr>
-                  <div class="row text-center">
+                  <div class="row text-center d-flex align-items-center justify-content-center">
+                    {%if instance.link %}
                     <div class="col-md-6">
                       <a href="{{instance.link}}" class="btn btn-secondary">Access</a>
-                  </div>
+                    </div>
+                    {%endif%}
+                    {% if instance.video %}
                     <div class="col-md-6">
                       <a href="{{instance.video}}" class="btn btn-secondary">Video</a>
-                  </div>
+                    </div>
+                    {%endif%}
                   </div>
               </ul>
             </div>

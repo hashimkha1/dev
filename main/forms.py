@@ -88,6 +88,13 @@ class ClientAvailabilityForm(forms.ModelForm):
         model = ClientAvailability
         fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
 
-class WCAG_Form(forms.Form):
+class WCAG_Form(forms.ModelForm):
     #Enter your website ie www.example.com
-    web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    upload_file = forms.FileField()
+    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
+    page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
+
+    class Meta:
+        model = WCAGStandardWebsite
+        fields = ['upload_file', 'website_url', 'page_name']
