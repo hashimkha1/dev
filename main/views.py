@@ -53,6 +53,7 @@ User=get_user_model()
 def checkout(request):
     return render(request, "main/checkout.html", {"title": "checkout"})
 
+
 def hendler400(request,exception):
     return render(request, "errors/400.html")
 
@@ -116,57 +117,6 @@ def fetch_model_table_names(request):
 
 
 # =====================TESTIMONIALS  VIEWS=======================================
-# @login_required
-# def search(request):
-#     instructions = [
-#         {"topic": "Review", "description": "Select Your User Category."},
-#         {"topic": "Sample", "description": "Select Topic Category"},
-#         {"topic": "copy", "description": "Enter topic-related question"},
-#         {"topic": "Submit", "description": "Click on Submit Review!"},
-#     ]
-#     values = ["management", "investing", "main", "getdata", "data", "projectmanagement"]
-
-#     if request.method == "POST":
-#         form = SearchForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             data = form.cleaned_data
-#             instance = form.save(commit=False)
-#             instance.searched_by = request.user
-#             category = form.instance.category
-#             table = form.instance.topic
-#             # print('table============',table)
-#             question = form.instance.question
-#             app = category
-#             result, = generate_database_response(user_message=question, app=app,table=table)
-#             if result:
-#                 # This one is simple hu
-#                 # llm = OpenAI(openai_api_key=os.environ.get('OPENAI_API_KEY'))
-#                 chat_model = ChatOpenAI(openai_api_key='OPENAI_API_KEY')
-#                 messages = [HumanMessage(content=str(result))]
-#                 # response_llm = llm.predict_messages(messages)
-#                 chat_model_result = chat_model.predict_messages(messages)
-#                 # response1 = response_llm.content.split(':', 1)[-1].strip()
-#                 response = chat_model_result.content
-#             else:
-#                 response = None
-
-#             context = {
-#                 "values": values,
-#                 "instructions": instructions,
-#                 "response": response,
-#                 "form": form
-#             }
-
-#         return render(request, "main/snippets_templates/search.html", context)
-#     else:
-#         form = SearchForm()
-#         context = {
-#             "values": values,
-#             "instructions": instructions,
-#             "form": form
-#         }
-#         return render(request, "main/snippets_templates/search.html", context)
-
 @login_required
 def search(request):
 
@@ -1111,11 +1061,15 @@ def finance(request):
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
+def previous_issues(request):
+    previous_searches=WCAGStandardWebsite.objects.all()
+    context = {
+                    "previous_searches":previous_searches,
+                }
+    return render(request, "main/departments/wcag_website_issues.html",context)
+
 @login_required
 def wcag(request, website_url='www.codanalytics.net'):
-    wcag_standards=WCAGStandard.objects.all()
-    # print(wcag_standards)
-    
     if request.method == "POST":
         form = WCAG_Form(request.POST, request.FILES)
         # print(form)
@@ -1123,12 +1077,13 @@ def wcag(request, website_url='www.codanalytics.net'):
             website_url = form.cleaned_data['website_url']
             page_name = form.cleaned_data['page_name']
             uploaded_file_content = request.FILES['upload_file'].read()
-            query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name=page_name)
+            
+            query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name__contains=page_name)
             if query.exists():
                 query = query.first()
                 responses=query.improvements
             else:
-                responses=analyze_website_for_wcag_compliance(wcag_standards, website_url, uploaded_file_content)
+                responses=analyze_website_for_wcag_compliance(uploaded_file_content)
             
             try:
                 final_json_response=json.loads(responses.replace('json','').strip('```').strip('\n'))
@@ -1332,6 +1287,8 @@ def clints_availability(request):
     context['obj'] = dist
     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
 
+def help(request):
+    return render(request, "main/home_templates/help.html")
 
 def FrequentlyAskedQuestion(request):
     CAT_CHOICES = [
@@ -1376,4 +1333,4 @@ def FrequentlyAskedQuestion(request):
             "questions": questions,
             "categories": CAT_CHOICES
         }
-        return render(request, "main/home_templates/help.html", context)
+        return render(request, "main/home_templates/FAQS.html", context)

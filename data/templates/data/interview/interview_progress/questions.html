@@ -41,12 +41,12 @@
                         <p class="text-white ml-4 mb-0">Video {{ object.question_type|capfirst }}</p>
                     </a>
                 </div>
-                <div class="d-flex align-items-center mb-3">
+                <!-- <div class="d-flex align-items-center mb-3">
                     <div class="background-count-bullet">3</div>
                     <a class="text-white" target="_blank" href="{{object.doc}}">
                         <p class="text-white ml-4 mb-0">Sample {{ object.question_type|capfirst }}</p>
                     </a>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="col-md-5 top-left-coloumn" style="padding-left: 0px !important;padding-right: 0px !important;">
@@ -74,18 +74,11 @@
                         </div>
                       </div>
               </div>
-              <!-- <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                      <div class="row">
-                        <div class="col-md-3"><b>Critical:Required Within 24 hours</b> </div>
-                        <div class="col-md-3"><b>High:Within 1-3 days</b></div>
-                        <div class="col-md-3"><b>Medium:Takes 3-10 days</b></div>
-                        <div class="col-md-3"><b>Low : Not urgent</b></div>
-                      </div> -->
+
               <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                     <div class="row">
                         <div class="col-md-6 top-coloumn bg-white">
                             <div class="col-md-12">{{ form.category |as_crispy_field }}</div>
-<!--                            <div class="col-md-12">{{ form.question_type|as_crispy_field }}</div>-->
                             <div class="col-md-12">{{ form.doc|as_crispy_field }}</div>
                             <div class="col-md-12">{{ form.link|as_crispy_field }}</div>
                         </div>

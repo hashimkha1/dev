@@ -296,6 +296,7 @@ def courseview(request, question_type=None, *args, **kwargs):
     if instance is None:
         return render(request, "main/errors/404.html")
     return render(request, url, context)
+
 def questionview(request, question_type=None, *args, **kwargs):
     question_mapping = {
         'performance': ['tableau', 'alteryx', 'sql', 'python'],

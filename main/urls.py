@@ -12,9 +12,11 @@ urlpatterns = [
     path('data_policy/', views.data_policy, name='data_policy'),
     path('about/', views.about, name='about'),
     path('search/', views.search, name='search'),
+    path('previous_issues', views.previous_issues, name='previous_issues'),
     path('wcag/', views.wcag, name='wcag'),
     path('contact/', views.contact, name='contact'),
-    path('help/', views.FrequentlyAskedQuestion, name='help'),
+    path('help/', views.help, name='help'),
+    path('FAQS/', views.FrequentlyAskedQuestion, name='FAQS'),
     
     path('members/<str:title>', views.team, name='members'),
     # path('team_profiles/', views.team, name='team_profiles'),

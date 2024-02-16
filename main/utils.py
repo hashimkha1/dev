@@ -114,7 +114,6 @@ def generate_chatbot_response(user_message, user_message_dict=None):
         ]
     else:
         messages = user_message_dict
-
     client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
 
     response = client.chat.completions.create(
@@ -197,62 +196,30 @@ def generate_database_response(user_message, app='investing', table='investments
     # print("response_data=================>",response_data)
     return response_data
 
-def analyze_website_for_wcag_compliance(wcag_standards, website_url):
-    # Construct a summary of WCAG standards
-    wcag_standards_summary = "\n".join([
-        f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
-        for ws in wcag_standards
-    ])
-
-    # Construct the prompt for OpenAI, including the website URL
-    user_message = (
-        f"Please examine the website at {website_url} against the following WCAG Standards "
-        f"to check for areas that do not meet these standards and suggest improvements:\n\n"
-        f"{wcag_standards_summary}\n\n"
-        f"Suggestions:"
-    )
 """ ===========End of code============ """
-def analyze_website_for_wcag_compliance(wcag_standards, website_url, html_content):
-    # Construct a summary of WCAG standards
-    # wcag_standards_summary = "\n".join([
-    #     f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
-    #     for ws in wcag_standards
-    # ])
-
-    # # Construct the prompt for OpenAI, including the website URL
-    # user_message = (
-    #     f"Please examine the website at {website_url} against the following WCAG Standards "
-    #     f"to check for areas that do not meet these standards and suggest improvements:\n\n"
-    #     f"{wcag_standards_summary}\n\n"
-    #     f"Suggestions:"
-    # )
-
+def analyze_website_for_wcag_compliance(uploaded_file_content):
     user_message = f"""
-        html_code:
-      {html_content}   
-    """ + """
-    Consider wcag criteria and above html code i provided above, i need you to examine the html code and provide /pinpoint specific areas in the code and specific wcag criteria that fails to meet , furthermore rewrite and provide corrected version of the html code.
-    
-    output format example requires in json: {
-        list_of_problem: [{
-        problem_title: "title of problem",
-        description: "descripiton of problem you find in page"
-        }],
-        improved_code: "html code"
-    }, and do not change key name and do not pass any extra string in output 
+        html_code:{uploaded_file_content}   
+        """ + """
+            Please review the provided HTML code with respect to WCAG criteria. Identify specific areas in the code that do not meet the standards, and provide a rewritten, corrected version of the HTML code.
+            The output should be formatted in JSON as follows:
+            {
+                "list_of_problems": [
+                    {
+                        "problem_title": "Title of Problem",
+                        "description": "Description of the problem found in the page."
+                    }
+                ],
+                "improved_code": "Corrected HTML code"
+            }
+            Ensure that you do not alter the key names and do not include any additional strings in the output.
     """
-
     try:
         suggestions = generate_chatbot_response(user_message)
-        # suggestions = openai_response.get('choices', [{}])[0].get('text', '')
     except Exception as e:
         # Handle exceptions
         print(f"An error occurred while contacting the OpenAI API: {e}")
         suggestions = "Could not generate suggestions due to an error."
-
-    # You would typically return a Django HTTP response object
-    # For demonstration purposes, we'll just print the suggestions
-    # print(suggestions)
     return suggestions
 
 def countdown_in_month():

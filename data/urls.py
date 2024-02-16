@@ -43,7 +43,6 @@ urlpatterns = [
     path("roles/delete/<int:pk>/", views.RoleDeleteView.as_view(), name="role-delete"),
     path("student_feedback/", views.feedback, name="student_feedback"),
     # Interview SEction Urls starts
-    # path("interview/", views.interview, name="interview"),
     path("start_training/<str:slug>/", views.start_training, name="start_training"),
     path("interview_roles/", views.interview_roles, name="interview_roles"),
     path("interview_progress/", views.RoleListView.as_view(), name="interview_progress"),
