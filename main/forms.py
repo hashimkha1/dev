@@ -71,7 +71,7 @@ from django.utils.translation import gettext_lazy as _
 #         self.fields['searched_by'].required=False
 #         self.fields['category'].required=True
 #         self.fields['topic'].required=False
-#         self.fields['question'].required=True
+# #         self.fields['question'].required=True
 
 # class PostForm(forms.ModelForm):
 #     class Meta:  

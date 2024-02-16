@@ -7,12 +7,12 @@ from django.db.models import Q
 from django.shortcuts import redirect, render,get_object_or_404
 from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
-#from .models import Service,Plan,Assets
+
 from .utils import (Meetings,path_values,buildmodel,team_members,future_talents, url_mapping,
                     client_categories,service_instances,service_plan_instances,reviews,packages,courses,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive
 )
-#from .models import Testimonials
+from .models import CompanyAsset
 #from getdata.models import Logs
 from coda_project import settings
 #from application.models import UserProfile
@@ -363,34 +363,34 @@ def fetch_model_table_names(request):
 #     return render(request, "data/training/job_market.html")
 
 # # =====================TESTIMONIALS  VIEWS=======================================
-# @login_required
-# def newpost(request):
-#     if request.method == "POST":
-#         form = PostForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             form.instance.writer = request.user
-#             form.save()
-#             return redirect('main:layout')
-#     else:
-#         form = PostForm()
-#         topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
+@login_required
+def newpost(request):
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.instance.writer = request.user
+            form.save()
+            return redirect('main:layout')
+    else:
+        form = PostForm()
+        topics = ['Tableau', 'SQL', 'Business Analyst', 'Alteryx', 'Power BI', 'Scrum Master']
 
-#         # Randomly select a title from the list
-#         selected_title = random.choice(topics)
-#         quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
-#         result = buildmodel(question=quest)
+        # Randomly select a title from the list
+        selected_title = random.choice(topics)
+        quest = f"write a full paragraph on how good my {selected_title} coach was" # pick a question bunch of questions
+        result = buildmodel(question=quest)
 
-#         if result is None:
-#             selected_review = random.choice(reviews)
-#             selected_description = selected_review["description"]
-#             response=selected_description
-#         else:
-#             response=result
-#         context={
-#             "response" : response,
-#             "form": form
-#         }
-#     return render(request, "main/testimonials/newpost.html", context)
+        if result is None:
+            selected_review = random.choice(reviews)
+            selected_description = selected_review["description"]
+            response=selected_description
+        else:
+            response=result
+        context={
+            "response" : response,
+            "form": form
+        }
+    return render(request, "main/testimonials/newpost.html", context)
 
 # class PostListView(ListView):
 #     model = Testimonials
@@ -1009,3 +1009,9 @@ def fetch_model_table_names(request):
 
 #     context['obj'] = dist
 #     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
+
+
+def coda_assets_list(request):
+    assets = CompanyAsset.objects.all()
+    return render(request, "main\departments\codassetslist.html", {"assets":assets})
+ 

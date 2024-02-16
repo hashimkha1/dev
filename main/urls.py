@@ -6,6 +6,7 @@ from . import views
 app_name = 'main'
 urlpatterns = [
     path('', views.layout, name='layout'),
+    path('assetslist/', views.coda_assets_list, name='assetslist'),
     # path('get_respos', views.get_respos, name='get_respos'),
     # path('fetch_model_table_names/', views.fetch_model_table_names, name='fetch_model_table_names'),
     # # path('get_respos/<str:table>', views.get_respos, name='get_respos'),
@@ -34,13 +35,13 @@ urlpatterns = [
 
 #     #=======================SERVICES=====================================
 #     path('posts/', views.PostListView.as_view(), name='success'),
-#     path('post/new/', views.newpost, name='post-create'),
+      path('post/new/', views.newpost, name='post-create'),
 #     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
 #     path('post/<int:pk>/update/', views.PostUpdateView.as_view(template_name='main/snippets_templates/generalform.html'), name='post-update'),
 #     path('post/<int:pk>/delete/', views.PostDeleteView.as_view(), name='post-delete'),
 #     #==============DEPARTMENTS==============================================
 #     #==============Clint Available Time==============================================
-#     path('add_availability/', views.add_availability, name='add_availability'),
+#     path('add_availability/', views.coda_assets_list, name='add_availability'),
 #     path('my_availability/', views.my_availability, name='my_availability'),
 #     path('clints_availability/', views.clints_availability, name='clints_availability'),
 
