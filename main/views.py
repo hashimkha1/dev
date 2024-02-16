@@ -1304,6 +1304,8 @@ def clints_availability(request):
     context['obj'] = dist
     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
 
+def help(request):
+    return render(request, "main/home_templates/support.html")
 
 def FrequentlyAskedQuestion(request):
     CAT_CHOICES = [

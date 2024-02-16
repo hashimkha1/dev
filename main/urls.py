@@ -14,7 +14,8 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('wcag/', views.wcag, name='wcag'),
     path('contact/', views.contact, name='contact'),
-    path('help/', views.FrequentlyAskedQuestion, name='help'),
+    path('help/', views.help, name='help'),
+    path('FAQS/', views.FrequentlyAskedQuestion, name='FAQS'),
     
     path('members/<str:title>', views.team, name='members'),
     # path('team_profiles/', views.team, name='team_profiles'),

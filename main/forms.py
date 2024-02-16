@@ -88,6 +88,12 @@ class ClientAvailabilityForm(forms.ModelForm):
         model = ClientAvailability
         fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
 
+class ClientNameForm(forms.Form):
+    client = forms.ModelChoiceField(
+        queryset=CustomerUser.objects.filter(Q(is_client=True) | Q(is_staff=True)),
+        label='Select a client'
+    )
+
 class WCAG_Form(forms.Form):
     #Enter your website ie www.example.com
     web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
