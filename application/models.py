@@ -1,12 +1,21 @@
-# # from coda_project.application.views import first_interview
-# from datetime import datetime
-# from distutils.command.upload import upload
+from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django.utils.text import slugify
+from random import randint
+# # Create your models here.
+from django.contrib.auth import get_user_model
+# from finance.utils import get_exchange_rate
+User = get_user_model() 
 
-# from django.db import models
-# from django.utils import timezone
-# from accounts.models import CustomerUser
-# from main.models import Assets
-# from django.db.models import Q
-# from coda_project.storage import GoogleDriveStorage
 
-#
+class Company_Rating(models.Model):  
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    topic = models.CharField(max_length=255)
+    rating_date = models.DateTimeField()
+    punctuality = models.IntegerField()
+    communication = models.IntegerField()
+    understanding = models.IntegerField()
+    rater = models.IntegerField()
+
