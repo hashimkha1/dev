@@ -8,7 +8,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # print(BASE_DIR)
 # SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
+SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     "main.apps.MainConfig",
     "accounts.apps.AccountsConfig",
    # "data.apps.DataConfig",
-    #"application.apps.ApplicationConfig",
+    "application.apps.ApplicationConfig",
     # "getdata.apps.GetdataConfig",
     # "projectmanagement.apps.ProjectmanagementConfig",
     # "investing.apps.InvestingConfig",
@@ -88,14 +88,14 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "main.context_processors.images",
+                #"main.context_processors.images",
                 "main.context_processors.googledriveurl",
                 # "management.context_processors.categories",
                 # "management.context_processors.departments",
                 # "data.context_processors.roles",
                 # "data.context_processors.categories",
                 # "data.context_processors.subcategories",
-                "main.context_processors.services",
+                #"main.context_processors.services",
             ],
             'libraries': {
                 'customfilters': 'application.templatetags.customfilters',
