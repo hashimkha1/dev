@@ -92,8 +92,8 @@ class WCAG_Form(forms.ModelForm):
     #Enter your website ie www.example.com
     # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     upload_file = forms.FileField()
-    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
-    page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}), required=False)
+    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
 
     class Meta:
         model = WCAGStandardWebsite
