@@ -1,10 +1,10 @@
-# from django.contrib import admin
+from django.contrib import admin
 
-# from .models import *
+from .models import *
 
 # # Register your models here.
-# admin.site.register(Service)
-# admin.site.register(Pricing)
+admin.site.register(BalanceSheetCategory)
+admin.site.register(CompanyAsset)
 # admin.site.register(ServiceCategory)
 # admin.site.register(Assets)
 # admin.site.register(Testimonials)
