@@ -33,9 +33,9 @@
                     {% for subcategory, links in subcategories_with_links %}
                         <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
                             <span>{{ subcategory.name }}</span>
-                            {% if request.user.is_superuser or request.user.is_admin %}
+                            <!-- {% if request.user.is_superuser or request.user.is_admin %} -->
                                 <a href="{% url 'management:update_agenda' title='subcategory' pk=subcategory.pk %}" class="edit-btn">&#10004;</a>
-                            {% endif %}
+                            <!-- {% endif %} -->
                         </div>
                         {% for link in links %}
                             <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">

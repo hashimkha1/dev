@@ -1,0 +1,91 @@
+
+{%extends "main/base_templates/new_base.html"%} {%load crispy_forms_tags%}
+{%block content %}
+<div class="content-section">
+  <form method="POST" enctype="multipart/form-data" autocomplete="off">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom  text-center">
+        <h1>USING OPENAI FOR ACCESSIBILITY {{title}}</h1>
+      </legend>
+      <div class="row text-center">
+        <div class="col-md-12" id="bada">
+          <div class="card">
+          <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+            <div class="card-body">
+                Committed to Excellence in Accessibility: We believe in creating an inclusive digital space that is equally accessible to everyone. Our approach adheres to the WCAG (Web Content Accessibility Guidelines) standards, ensuring that all our services, information, and resources are available to people with diverse abilities. By recognizing the importance of accessibility, we strive to empower individuals and foster an environment of equal access and opportunityi>
+            </div>
+          </div>
+          <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+          <div class="data_training text-center">
+            <h3 class="title">{{title}}</h3>
+                <div class="row text-center">
+                    {% for value in accessibility %}
+                    <div class="col-md-3" id="gi">
+                        {% include 'main/snippets_templates/cards/card.html' with instance=value %}
+                  </div>
+                  {% endfor%}
+                  </div>
+            </div>
+            <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        </div>
+</div>
+<div class=" text-center">
+    <p>Enter Your Site To Test For Compliance</p>
+  </div>
+  <hr/>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-2">Enter Your Site:{{form.web_url}}</div>
+    <div class="col-md-1"></div>
+</div>
+    </fieldset>
+    <div class="form-group text-center">
+      <button class="btn btn-outline-info" type="submit">Submit</button>
+    </div>
+  </form>
+</div>
+  <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+  <section id="career">
+    <div class="career text-center">
+      <h1>WCAG Compliance Analysis for: {{ website_url }} </h1>
+        <div class="card">
+            <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
+              <div class="card-body">
+                {% if suggestions %}
+                <div>
+                    {{ suggestions|linebreaks }} 
+                </div>
+                {% else %}
+                    <p>No suggestions available or an error occurred during analysis.</p>
+                {% endif %}
+              </div>
+            </div>
+
+      <div class="table-responsive">
+      <!-- <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%"> -->
+        <table class="table table-striped table-bordered" style="width: 100%">
+        <thead class="border-bottom font-weight-bold">
+          <tr>
+            <th>definition</th>
+            <th>what_to_test</th>
+            <th>how_to_test</th>
+            <th>user_affected</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for standard in wcag_standards %}
+          <tr>
+                <td>{{standard.definition</td>
+                <td>{{standard.what_to_test</td>
+                <td>{{standard.how_to_test</td>
+                <td>{{standard.user_affected</td>
+                <td><h4 ><a href="#">Edit</H4></a></p></td>  
+         </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    </div>
+  </section>
+  {% endblock content%}

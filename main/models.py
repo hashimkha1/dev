@@ -366,15 +366,12 @@ pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
 
-class Company_Asset(models.Model):
-    name = models.CharField(max_length=255)
-    quantity = models.PositiveIntegerField()  # Assuming quantity can't be negative
-    value = models.DecimalField(max_digits=12, decimal_places=2)
-    serial_number = models.CharField(max_length=255, unique=True)  # Assuming serial number should be unique
-    description = models.TextField(blank=True)
-    purchase_date = models.DateTimeField(default=timezone.now)
-    location = models.CharField(max_length=255, blank=True, null=True)  # Consistent order of arguments
+class WCAGStandard(TimeStampedModel):
+    criteria = models.CharField(max_length=100, unique=True)
+    definition = models.TextField()
+    what_to_test = models.CharField(max_length=255)
+    how_to_test = models.TextField()
+    user_affected = models.TextField()
 
     def __str__(self):
-        return self.name
-
+        return self.criteria

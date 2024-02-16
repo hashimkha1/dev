@@ -145,7 +145,6 @@ def parse_user_query(user_query):
 
 
 def generate_database_response(user_message, app='investing', table='investments'):
-
     # Parse the user query to extract the table and keywords
     keywords = parse_user_query(user_message)
     # Get all the models from the specified app
@@ -199,32 +198,47 @@ def generate_database_response(user_message, app='investing', table='investments
     # print("response_data=================>",response_data)
     return response_data
 
+def analyze_website_for_wcag_compliance(wcag_standards, website_url):
+    # Construct a summary of WCAG standards
+    wcag_standards_summary = "\n".join([
+        f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
+        for ws in wcag_standards
+    ])
 
+    # Construct the prompt for OpenAI, including the website URL
+    user_message = (
+        f"Please examine the website at {website_url} against the following WCAG Standards "
+        f"to check for areas that do not meet these standards and suggest improvements:\n\n"
+        f"{wcag_standards_summary}\n\n"
+        f"Suggestions:"
+    )
 """ ===========End of code============ """
+def analyze_website_for_wcag_compliance(wcag_standards, website_url):
+    # Construct a summary of WCAG standards
+    wcag_standards_summary = "\n".join([
+        f"{ws.criteria}: {ws.definition}. What to test: {ws.what_to_test}" 
+        for ws in wcag_standards
+    ])
 
-def buildmodel(question):
-    #fetching api key 
-    # https://platform.openai.com/account/api-keys
-    # 
-    openai.api_key = os.environ.get('OPENAI_API_KEY')
-    #Building engine
+    # Construct the prompt for OpenAI, including the website URL
+    user_message = (
+        f"Please examine the website at {website_url} against the following WCAG Standards "
+        f"to check for areas that do not meet these standards and suggest improvements:\n\n"
+        f"{wcag_standards_summary}\n\n"
+        f"Suggestions:"
+    )
     try:
-        response = openai.completions.create(
-            model="text-davinci-001",
-            prompt=question,
-            temperature=0.4,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0
-        )
-        # res = response["choices"][0]
-        # result=res['text']
-        res = response.choices[0]
-        result=res.text
-    except:
-        result = None
-    return result
+        suggestions = generate_chatbot_response(user_message)
+        # suggestions = openai_response.get('choices', [{}])[0].get('text', '')
+    except Exception as e:
+        # Handle exceptions
+        print(f"An error occurred while contacting the OpenAI API: {e}")
+        suggestions = "Could not generate suggestions due to an error."
+
+    # You would typically return a Django HTTP response object
+    # For demonstration purposes, we'll just print the suggestions
+    # print(suggestions)
+    return suggestions
 
 def countdown_in_month():
     now = datetime.datetime.now()
@@ -502,11 +516,11 @@ General = [
 ]
 
 Accessibility = [
-    {
-        "title": "OPENAI",
-        "link": "https://chat.openai.com/chat",
-        "description": "Leveraging AI to enhance analytics and insights, making data-driven decisions more accessible and impactful."
-    },
+    # {
+    #     "title": "OPENAI",
+    #     "link": "https://chat.openai.com/chat",
+    #     "description": "Leveraging AI to enhance analytics and insights, making data-driven decisions more accessible and impactful."
+    # },
     {
         "title": "Visual Impairment",
         "link": SITEURL + "wcag",
@@ -515,7 +529,7 @@ Accessibility = [
     {
         "title": "Hearing Impairment",
         "link": SITEURL + "wcag",
-        "description": "Creating an auditory-accessible experience by offering captioning, sign language interpretations, and visual alerts for individuals with hearing challenges."
+        "description": "Creating an auditory-accessible experience by offering captioning, and visual alerts for individuals with hearing challenges."
     },
     {
         "title": "Diverse Abilities",
@@ -523,7 +537,7 @@ Accessibility = [
         "description": "Offering a range of adaptive strategies and technologies to support users with various disabilities in accessing digital content effectively."
     },
     {
-        "title": "Accessibility Standards Compliance",
+        "title": "Compliance Standards ",
         "link": "https://docs.google.com/spreadsheets/d/1J4Q-O4AVTMH1dt931mfY7-EFf7emsGAUTuumub-Ppj0/edit#gid=0",
         "description": "Adhering to stringent WCAG guidelines to meet and exceed the standards of web accessibility for all users."
     },

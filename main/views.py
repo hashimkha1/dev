@@ -13,14 +13,13 @@ from data.models import ClientAssessment
 from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
 from .utils import (Automation, General, Meetings,path_values,Accessibility,team_members,future_talents,board_members, url_mapping,
-                    client_categories,service_instances,service_plan_instances,reviews,packages,courses,
+                    client_categories,service_instances,service_plan_instances,reviews,packages,courses,analyze_website_for_wcag_compliance,
                     generate_database_response,generate_chatbot_response,upload_image_to_drive, langchainModelForAnswer)
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import TaskHistory
-from accounts.models import Team_Members
-from main.forms import PostForm,ContactForm
+from main.forms import PostForm,ContactForm,WCAG_Form
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -1112,13 +1111,31 @@ def finance(request):
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
-def wcag(request):
-    context={
-            "title": "WCAG STANDARDS",
-			"accessibility": Accessibility
-		}
-    return render(request, "main/departments/wcag.html", context)
-
+@login_required
+def wcag(request, website_url='www.codanalytics.net'):
+    wcag_standards=WCAGStandard.objects.all()
+    # print(wcag_standards)
+    if request.method == "POST":
+        form = WCAG_Form(request.POST, request.FILES)
+        # print(form)
+        if form.is_valid():
+            website_url = form.cleaned_data['web_url']
+            responses=analyze_website_for_wcag_compliance(wcag_standards,website_url)
+            # print(responses)
+            # print(website_url)
+            context = {
+            'website_url': website_url,
+            'suggestions': responses,
+            "accessibility": Accessibility,
+            'wcag_standards': wcag_standards,
+            }
+            return render(request, "main/departments/wcag_form_list.html",context)
+    else:
+        context ={
+            "form":WCAG_Form(),
+            "accessibility": Accessibility,
+        }
+    return render(request, "main/departments/wcag_form_list.html",  context )
 
 @login_required
 def meetings(request):
@@ -1177,6 +1194,7 @@ def contact(request):
     else:
         form = ContactForm()
     return render(request, "main/contact/contact_message.html", {"form": form})
+
 
 class ImageCreateView(LoginRequiredMixin, CreateView):
     model = Assets

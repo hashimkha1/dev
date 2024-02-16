@@ -1,9 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.db.models import Q
 from django.forms import ModelForm, Textarea
-from django.contrib.auth.forms import UserCreationForm
-from accounts.models import CustomerUser, Tracker,CredentialCategory,Credential
+from accounts.models import CustomerUser
 from .models import Testimonials
 from django.utils.translation import gettext_lazy as _
 # from .models import Expenses
@@ -90,14 +88,6 @@ class ClientAvailabilityForm(forms.ModelForm):
         model = ClientAvailability
         fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
 
-
-class ClientNameForm(forms.Form):
-    client = forms.ModelChoiceField(
-        queryset=CustomerUser.objects.filter(Q(is_client=True) | Q(is_staff=True)),
-        label='Select a client'
-    )
-
-class Company_AssetForm(forms.Form):
-    class Meta:
-        model = Company_Asset
-        fields =' __all__'    
+class WCAG_Form(forms.Form):
+    #Enter your website ie www.example.com
+    web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
