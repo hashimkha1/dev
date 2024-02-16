@@ -1305,7 +1305,7 @@ def clints_availability(request):
     return render(request, "main/availability/client_availability.html", {"form": form, "context": context})
 
 def help(request):
-    return render(request, "main/home_templates/support.html")
+    return render(request, "main/home_templates/help.html")
 
 def FrequentlyAskedQuestion(request):
     CAT_CHOICES = [
@@ -1350,4 +1350,4 @@ def FrequentlyAskedQuestion(request):
             "questions": questions,
             "categories": CAT_CHOICES
         }
-        return render(request, "main/home_templates/help.html", context)
+        return render(request, "main/home_templates/FAQS.html", context)
