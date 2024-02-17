@@ -1,0 +1,12 @@
+{%extends "main/base_templates/application_base.html"%}
+ {%load crispy_forms_tags%} 
+ {%block content %}
+<div>
+    <h1>Website Details</h1>
+    <p><strong>Website URL:</strong> {{ website.website_url }}</p>
+    <p><strong>Page Name:</strong> {{ website.page_name }}</p>
+    <p><strong>Improvements:</strong> {{ website.improvements }}</p>
+    <p><strong>Created At:</strong> {{ website.created_at }}</p>
+    <p><strong>Updated At:</strong> {{ website.updated_at }}</p>
+</div>
+{% endblock %}
