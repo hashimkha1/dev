@@ -32,19 +32,27 @@
 </div>
 <div class=" text-center">
     <p>Enter Your Site To Test For Compliance 
-      <a class="btn btn-secondary" href="{% url 'main:previous_issues' %}">Check Previous Searches</a>
+      <a class="btn btn-secondary" href="{% url 'main:check_wcag_compliance' %}">Check Previous Searches</a>
       <div class="dropdown-divider"></div></p>
   </div>
   <hr/>
   <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-3">
-        <label for="website_url">Enter Your Site:</label>
+    <div class="col-md-2">
+      <label for="page_name">Enter company:</label>
+      {{ form.company }}
+  </div>
+  <div class="col-md-2">
+      <label for="upload_file">Enter app/folder:</label>
+      {{ form.app_name }}
+  </div>
+    <div class="col-md-2">
+      <label for="page_name">Enter page name:</label>
+      {{ form.page_name }}
+  </div>
+    <div class="col-md-2">
+        <label for="website_url">Enter Page url/link:</label>
         {{ form.website_url }}
-    </div>
-    <div class="col-md-3">
-        <label for="page_name">Enter page name:</label>
-        {{ form.page_name }}
     </div>
     <div class="col-md-3">
         <label for="upload_file">Upload HTML file:</label>
@@ -157,46 +165,5 @@
       </div>
 </section>
   {% endif %}
-  <!-- <section id="career">
-    <div class="career text-center">
-      <h1>WCAG Compliance Analysis for: {{ website_url }} </h1>
-        <div class="card">
-
-              <div class="card-body">
-                {% if suggestions %}
-                <div>
-                    {{ suggestions|linebreaks }} 
-                </div>
-                {% else %}
-                    <p>No suggestions available or an error occurred during analysis.</p>
-                {% endif %}
-              </div>
-            </div>
-
-      <div class="table-responsive">
-   
-        <table class="table table-striped table-bordered" style="width: 100%">
-        <thead class="border-bottom font-weight-bold">
-          <tr>
-            <th>definition</th>
-            <th>what_to_test</th>
-            <th>how_to_test</th>
-            <th>user_affected</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for standard in wcag_standards %}
-          <tr>
-                <td>{{standard.definition}}</td>
-                <td>{{standard.what_to_test}}</td>
-                <td>{{standard.how_to_test}}</td>
-                <td>{{standard.user_affected}}</td>
-                <td><h4 ><a href="#">Edit</H4></a></p></td>  
-         </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    </div>
-  </section> -->
+ 
   {% endblock content%}

@@ -1,4 +1,4 @@
-import os,requests,openai
+import os,requests,openai,json
 import random,string
 from coda_project.settings import SITEURL
 # import tableauserverclient as TSC
@@ -215,7 +215,7 @@ def analyze_website_for_wcag_compliance(uploaded_file_content):
             Ensure that you do not alter the key names and do not include any additional strings in the output.
     """
     try:
-        suggestions = generate_chatbot_response(user_message)
+        suggestions =generate_chatbot_response(user_message)
     except Exception as e:
         # Handle exceptions
         print(f"An error occurred while contacting the OpenAI API: {e}")
@@ -230,6 +230,18 @@ def handle_openai_api_exception(responses):
         print(f"An error occurred while contacting the OpenAI API: {e}")
         return "Could not generate suggestions due to an error."
 
+# def check_company_for_payment(company):
+#     if company.lower() not in ["coda","crown data analysis and Consutancy"]:
+#         return redirect("finance:pay")
+
+#     try:
+#         return generate_chatbot_response(user_message)
+#     except Exception as e:
+#         print(f"An error occurred while contacting the OpenAI API: {e}")
+#         return "Could not generate suggestions due to an error."
+    
+def parse_json_response(responses):
+    return json.loads(responses.replace('json', '').strip('```').strip('\n'))
 
 def countdown_in_month():
     now = datetime.datetime.now()
@@ -442,10 +454,10 @@ Automation = [
     },
     {
         "title": "Accessibility Checks",
-        "link":SITEURL+"/wcag/",
+        "link":SITEURL+"/check_wcag_compliance/",
         "description":"Expanding accessibility to all",
         "service_category_slug": 'accessibility',
-        "service_url": SITEURL+'/display_plans/options'
+        "service_url": SITEURL+'/display_plans/accessibility/'
     },
 ]
 
@@ -507,11 +519,6 @@ General = [
 ]
 
 Accessibility = [
-    # {
-    #     "title": "OPENAI",
-    #     "link": "https://chat.openai.com/chat",
-    #     "description": "Leveraging AI to enhance analytics and insights, making data-driven decisions more accessible and impactful."
-    # },
     {
         "title": "Visual Impairment",
         # "link": SITEURL + "wcag",

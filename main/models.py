@@ -367,26 +367,36 @@ pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
 
 class WCAGStandardWebsite(models.Model):
-    website_url  = models.CharField(max_length=500)
-    page_name    = models.CharField(max_length=500)
-    improvements = models.TextField(null=True) 
+    CAT_CHOICES = [
+            ("accounts", "accounts"),
+            ("application", "application"),
+            ("finance", "finance"),
+            ("management", "management"),
+            ("data", "data"),
+            ("getdata", "getdata"),
+            ("investing", "investing"),
+            ("main", "main"),
+            ("projectmanagement", "projectmanagement"),
+    ]
+    company  = models.CharField(max_length=500,blank=True,null=True)#coda,safaricom,Google,
+    app_name = models.CharField(
+        max_length=25,
+        choices=CAT_CHOICES,
+        default="main",
+    )
+    page_name    = models.CharField(max_length=500,blank=True,null=True)
+    website_url  = models.CharField(max_length=500,blank=True,null=True)
+    improvements = models.TextField(blank=True,null=True) 
     # page_file   = models.FileField(upload_to='uploads/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.website_url
+        return self.app_name
         
-class WCAGStandardWebsite(models.Model):
-    website_url  = models.CharField(max_length=500)
-    page_name    = models.CharField(max_length=500)
-    improvements = models.TextField(null=True) 
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.website_url
-    
+
+
 class WCAGStandard(TimeStampedModel):
     # my_wcag_website = models.ForeignKey(WCAGStandardWebsite, on_delete=models.CASCADE, null=True)
     criteria = models.CharField(max_length=100, unique=True)

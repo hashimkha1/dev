@@ -12,14 +12,7 @@ from django.db.models import Sum
 from data.models import ClientAssessment
 from investing.models import InvestmentContent
 from .models import Service,Plan,Assets,Testimonials
-from .utils import (Automation, General, Meetings,path_values,Accessibility,
-                    team_members,future_talents,board_members, url_mapping,
-                    client_categories,service_instances,
-                    service_plan_instances,reviews,packages,
-                    courses,analyze_website_for_wcag_compliance,
-                    generate_database_response,generate_chatbot_response,
-                    upload_image_to_drive, langchainModelForAnswer,
-                    handle_openai_api_exception)
+from .utils import *
 from coda_project import settings
 from application.models import UserProfile
 from management.utils import task_assignment_random
@@ -264,12 +257,12 @@ def delete_service(request,id):
 def display_service(request, *args, **kwargs):
     path_list, sub_title, pre_sub_title = path_values(request)
     try:
-        service_shown = Service.objects.all()
+        service_shown = Service.objects.filter(is_active=True)
     except Service.DoesNotExist:
         return redirect('main:display_service')
 
     (service_category_slug, service_category_title, service_description,service_sub_titles, service_id) = service_instances(service_shown, sub_title)
-    service_categories = ServiceCategory.objects.filter(service=service_id)
+    service_categories = ServiceCategory.objects.filter(is_active=True,service=service_id)
     try:
         asset = Assets.objects.get(name=service_category_title)
         asset_image_url = asset.service_image.url
@@ -1066,65 +1059,112 @@ def finance(request):
 def hr(request):
     return render(request, "management/companyagenda.html", {"title": "HR"})
 
-def previous_issues(request):
-    previous_searches=WCAGStandardWebsite.objects.all()
-    context = {
-                    "previous_searches":previous_searches,
-                }
+# # @login_required
+def wcag(request, website_url='www.codanalytics.net'):
+    pass
+#     if request.method == "POST":
+#         form = WCAG_Form(request.POST, request.FILES)
+#         # print(form)
+#         if form.is_valid():
+#             website_url = form.cleaned_data['website_url']
+#             page_name = form.cleaned_data['page_name']
+#             uploaded_file_content = request.FILES['upload_file'].read()
+            
+#             query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name__contains=page_name)
+#             if query.exists():
+#                 query = query.first()
+#                 responses=query.improvements
+#             else:
+#                 responses=analyze_website_for_wcag_compliance(uploaded_file_content)
+            
+#             try:
+#                 final_json_response=json.loads(responses.replace('json','').strip('```').strip('\n'))
+#                 context = {
+#                     "form":WCAG_Form(),
+#                     "website_url": website_url,
+#                     "suggestions": responses,
+#                     "accessibility": Accessibility,
+#                     "page_name": page_name,
+#                     "improved_code": final_json_response['improved_code'],
+#                     "problem_list": final_json_response['list_of_problem']
+#                 }
+#                 instance = form.save(commit=False)
+#                 instance.improvements = responses
+#                 instance.save()
+
+#             except Exception as e:
+#                 print(e)
+#                 suggestions=handle_openai_api_exception(responses)
+#                 print(suggestions)
+#                 context = {
+#                     "form":WCAG_Form(),
+#                     "website_url": website_url,
+#                     "suggestions": suggestions,
+#                     "accessibility": Accessibility,
+#                     "improved_code": None,
+#                     "page_name": page_name,
+#                     "problem_list": []
+#                 }
+#             return render(request, "main/departments/wcag_form_list.html",context)
+    
+#     context ={
+#         "form":WCAG_Form(),
+#         "accessibility": Accessibility,
+#     }
+#     return render(request, "main/departments/wcag_form_list.html",  context )
+
+def create_context_for_exception(form, website_url, page_name, suggestions):
+    return {
+        "form": WCAG_Form(),
+        "website_url": website_url,
+        "suggestions": suggestions,
+        "accessibility": Accessibility,
+        "improved_code": None,
+        "page_name": page_name,
+        "problem_list": []
+    }
+
+def wcag_list_view(request):
+    previous_searches=WCAGStandardWebsite.objects.all().order_by("created_at")
+    context= {
+        "previous_searches": previous_searches,
+    }
     return render(request, "main/departments/wcag_website_issues.html",context)
 
-@login_required
-def wcag(request, website_url='www.codanalytics.net'):
+
+login_required
+def wcag_create_view(request, website_url='www.codanalytics.net'):
     if request.method == "POST":
         form = WCAG_Form(request.POST, request.FILES)
-        # print(form)
         if form.is_valid():
+            company = form.cleaned_data['company']
+            app_name = form.cleaned_data['app_name']
             website_url = form.cleaned_data['website_url']
             page_name = form.cleaned_data['page_name']
             uploaded_file_content = request.FILES['upload_file'].read()
-            
+            #checks the database
             query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name__contains=page_name)
             if query.exists():
                 query = query.first()
                 responses=query.improvements
             else:
                 responses=analyze_website_for_wcag_compliance(uploaded_file_content)
-            
             try:
-                final_json_response=json.loads(responses.replace('json','').strip('```').strip('\n'))
-                context = {
-                    "form":WCAG_Form(),
-                    "website_url": website_url,
-                    "suggestions": responses,
-                    "accessibility": Accessibility,
-                    "page_name": page_name,
-                    "improved_code": final_json_response['improved_code'],
-                    "problem_list": final_json_response['list_of_problem']
-                }
+                final_json_response = parse_json_response(responses)
+                context = create_context_for_exception(form, website_url, page_name, final_json_response)
+                # Save information in a database
                 instance = form.save(commit=False)
-                instance.improvements = responses
+                instance.improvements = final_json_response
                 instance.save()
-
+                return render(request, "main/departments/wcag_form_list.html",context)
             except Exception as e:
                 print(e)
-                suggestions=handle_openai_api_exception(responses)
-                print(suggestions)
-                context = {
-                    "form":WCAG_Form(),
-                    "website_url": website_url,
-                    "suggestions": suggestions,
-                    "accessibility": Accessibility,
-                    "improved_code": None,
-                    "page_name": page_name,
-                    "problem_list": []
-                }
-            return render(request, "main/departments/wcag_form_list.html",context)
-    
-    context ={
-        "form":WCAG_Form(),
-        "accessibility": Accessibility,
-    }
-    return render(request, "main/departments/wcag_form_list.html",  context )
+                context = create_context_for_exception(form, website_url, page_name, responses)
+              # return redirect('main:wcag_list_view')
+                return render(request, "main/departments/wcag_form_list.html", context)
+    else:
+        context={ "form":WCAG_Form(), "accessibility": Accessibility}
+        return render(request, "main/departments/wcag_form_list.html", context)
 
 
 

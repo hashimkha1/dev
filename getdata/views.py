@@ -13,7 +13,9 @@ from django.views.generic import (
 	ListView,
 	DetailView,
 )
-from main.utils import App_Categories,Automation,Stocks,General,path_values,convert_date
+from main.utils import App_Categories,Automation,Stocks,General
+from finance.utils import update_link
+
 from getdata.utils import (
 					fetch_and_insert_data,populate_table_from_json_file
 )
@@ -62,31 +64,36 @@ def uploaddata(request):
 	}
 	return render(request,"getdata/uploaddata.html", context) 
 
-def update_link(service_array, user_payment_history, service_categories):
-	updated_automation = []
-	for automation_service in service_array:
+
+# def update_link(service_array, user_payment_history, service_categories):
+# 	updated_automation = []
+# 	for automation_service in service_array:
 		
-		if automation_service['service_category_slug'] and automation_service['service_category_slug'] in service_categories.keys():
+# 		if automation_service['service_category_slug'] and automation_service['service_category_slug'] in service_categories.keys():
 
-			# import pdb; pdb.set_trace()
-			if user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']]).exists():
+# 			# import pdb; pdb.set_trace()
+# 			if user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']]).exists():
 				
-				updated_automation.append(automation_service)	
+# 				updated_automation.append(automation_service)	
 			
-			else:
+# 			else:
 
-				automation_service['link'] = automation_service['service_url']
-				updated_automation.append(automation_service)
+# 				automation_service['link'] = automation_service['service_url']
+# 				updated_automation.append(automation_service)
 			
-		else:
-			updated_automation.append(automation_service)
-	return updated_automation
+# 		else:
+# 			updated_automation.append(automation_service)
+# 	return updated_automation
+
 
 @login_required
 def bigdata(request):
 	if request.user.category != 2:
 		payment_history = Payment_History.objects.filter(customer_id=request.user)
+		print(payment_history)
 		service_categories = dict(ServiceCategory.objects.values_list('slug', 'id'))
+		print(service_categories)
+
 
 		context={
 			"title":  "data",

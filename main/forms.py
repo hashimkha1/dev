@@ -95,12 +95,14 @@ class ClientNameForm(forms.Form):
     )
 
 class WCAG_Form(forms.Form):
-    #Enter your website ie www.example.com
-    # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    upload_file = forms.FileField()
-    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    app_name= forms.ChoiceField(choices=[("", "Select a category")] + WCAGStandardWebsite.CAT_CHOICES)
+    # app_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    company = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    upload_file = forms.FileField()
 
     class Meta:
         model = WCAGStandardWebsite
-        fields = ['upload_file', 'website_url', 'page_name']
+        fields = ['company','app_name','upload_file', 'website_url', 'page_name']
+
