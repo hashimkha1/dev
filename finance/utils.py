@@ -1,7 +1,9 @@
 import os
+import random
 import requests
 from datetime import datetime
 from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django.db.models import Sum, Max
 from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
@@ -10,7 +12,7 @@ from main.utils import App_Categories
 from accounts.models import Department
 from django.conf import settings
 
-
+# utils.py
 CustomUser = get_user_model()
 
 
@@ -194,10 +196,22 @@ def calculate_paypal_charges(amount):
     return None
 
 
-# utils.py
-from django_otp.oath import totp
-from django.core.mail import send_mail
-import random
+def update_link(service_array, user_payment_history, service_categories):
+	updated_automation = []
+	for automation_service in service_array:
+		if automation_service['service_category_slug'] and automation_service['service_category_slug'] in service_categories.keys():
+			# import pdb; pdb.set_trace()
+			payment_plan=user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']])
+			if user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']]).exists():
+				updated_automation.append(automation_service)	
+			
+			else:
+				automation_service['link'] = automation_service['service_url']
+				updated_automation.append(automation_service)
+		else:
+			updated_automation.append(automation_service)
+	return updated_automation
+
 
 def generate_and_send_otp(user_email):
     otp = str(random.randint(100000, 999999))
@@ -208,5 +222,4 @@ def generate_and_send_otp(user_email):
         [user_email],
         fail_silently=False,
     )
-
     return otp
