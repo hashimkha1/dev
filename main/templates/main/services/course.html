@@ -7,8 +7,23 @@
 
         {% for service in service_categories %}
         <div class="course-card">
-            <!-- Replace the image source with your actual image source -->
-            <img class="course-image" src="{% static 'main/image/course.jpg' %}" alt="Course Image">
+          {% if title == "Data Intelligence Training & Professional Support" %}
+            {% if service.name == "IT-Training" %}
+              <img class="course-image" src="{% static 'main/image/ittraining.jpg' %}" alt="Course Image">
+            {% elif service.name == "Interview" %}
+              <img class="course-image" src="{% static 'main/image/interviews.jpg' %}" alt="Interview Image">
+            {% else %}
+                  <img class="course-image" src="{% static 'main/image/jobsupport.jpg' %}" alt="Default Image">
+            {% endif %}
+          {% else %}
+            {% if service.name == "IT-Project Management" %}
+              <img class="course-image" style="height: 170px;" src="{% static 'main/image/projectmanagement.png' %}" alt="Course Image">
+            {% elif service.name == "Field Projects Management" %}
+              <img class="course-image"style="height: 170px;" src="{% static 'main/image/fieldprojectmanagement.png' %}" alt="Interview Image">
+            {% else %}
+                  <img class="course-image"style="height: 170px;" src="{% static 'main/image/socialmediamarketing.png' %}" alt="Default Image">
+            {% endif %} 
+          {% endif %}   
             <div class="course-details">
                 <h3>{{ service.name }}</h3>
                 

@@ -732,55 +732,82 @@ class Field_Expense(models.Model):
 
     def __str__(self):
         return f"Expense {self.id} on {self.date}"
-
-class Company_Assets(models.Model):
-    name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255,null=False)
-    quantity = models.PositiveIntegerField() 
-    unit_amt = models.DecimalField(max_digits=10,decimal_places=2)
-    serial_number = models.CharField(max_length=255,unique=True) 
-    description = models.TextField()
-    purchase_date = models.DateTimeField(default=timezone.now) 
-    location = models.CharField(max_length=255,blank=True,null=True) 
     
-    def __str__(self):
-        return self.name  
 
-class CompanyLiabilities(models.Model):
+class BalanceSheetCategory(models.Model):
+    CATEGORY_TYPES = [
+        ('Asset', 'Asset'),
+        ('Long-term Asset', 'Long-term Asset'),
+        ('Liability', 'Liability'),
+        ('Long-term Liability', 'Long-term Liability'),
+        ('Revenue', 'Revenue'),
+        ('Expenses', 'Expenses'),
+    ]
+
     name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255, blank=True, default="")
-    liability_type = models.CharField(max_length=100, blank=True, default="")
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
-    description = models.TextField()
-    created_at = models.DateTimeField(default=timezone.now)
+    category_type = models.CharField(max_length=50, choices=CATEGORY_TYPES, default='Asset')
+    amount = models.DecimalField(max_digits=20, decimal_places=2,null=True)
+
+    class Meta:
+        unique_together = ('name', 'category_type')
+        verbose_name_plural = "Balance Sheet Categories"
 
     def __str__(self):
-        return self.name  
+        return f"{self.name} ({self.category_type})"
 
-class Coda_Assets(models.Model):
-    name = models.CharField(max_length=255)
-    category = models.CharField(max_length=255,null=True)
-    quantity = models.PositiveIntegerField()
-    unit_value = models.DecimalField(max_digits=12,decimal_places=2)
-    serial_number = models.CharField(max_length=50,null=True)
-    purchase_date = models.DateTimeField(default=timezone.now)
-    description = models.TextField()
-    location = models.CharField(max_length=50,null=True,blank=True)
-     
+
+class BalanceSheetSummary(models.Model):
+    date = models.DateField(default=timezone.now)
+
+    @property
+    def total_assets(self):
+        return self.entries.filter(category__category_type='Asset').aggregate(models.Sum('amount'))['amount__sum'] or 0
+
+    @property
+    def total_liabilities(self):
+        return self.entries.filter(category__category_type='Liability').aggregate(models.Sum('amount'))['amount__sum'] or 0
+
+    @property
+    def total_equity(self):
+        return self.entries.filter(category__category_type='Equity').aggregate(models.Sum('amount'))['amount__sum'] or 0
+
+    class Meta:
+        verbose_name_plural = "Balance Sheets"
+        ordering = ["-date"]
+
     def __str__(self):
-        return self.name
+        return f"Balance Sheet as of {self.date}"
 
+class BalanceSheetEntry(models.Model):
+    balance_sheet = models.ForeignKey('BalanceSheetSummary', on_delete=models.CASCADE, related_name='entries')
+    category = models.ForeignKey('BalanceSheetCategory', on_delete=models.CASCADE)
+   
 
+    class Meta:
+        verbose_name_plural = "Balance Sheet Entries"
 
+    def __str__(self):
+        return f"{self.category.name}: {self.amount}"
+    
 
+# class BalanceSheetEntry(models.Model):
+#     CATEGORY_TYPES = [
+#         ('Asset', 'Asset'),
+#         ('Liability', 'Liability'),
+#         ('Equity', 'Equity'),
+#     ]
 
+#     name = models.CharField(max_length=255)
+#     category_type = models.CharField(max_length=50, choices=CATEGORY_TYPES, default='Asset')
 
+#     # balance_sheet = models.ForeignKey('BalanceSheetSummary', on_delete=models.CASCADE, related_name='entries')
+#     # category = models.ForeignKey('BalanceSheetCategory', on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=20, decimal_places=2)
+#     date = models.DateField(default=timezone.now)
 
+#     class Meta:
+#         verbose_name_plural = "Balance Sheet Entries"
 
-
-
-
-
-
-
+#     def __str__(self):
+#         return f"{self.category.name}: {self.amount}"
 

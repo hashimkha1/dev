@@ -8,9 +8,6 @@ from .models import (
     TrainingLoan,
     Transaction,
     Inflow,
-    Company_Assets,CompanyLiabilities,
-    Coda_Assets
-
 )
 
 class DepartmentFilterForm(forms.Form):
@@ -109,18 +106,3 @@ class LoanForm(forms.ModelForm):
         self.fields["user"].queryset = CustomerUser.objects.filter(
             Q(is_admin=True) | Q(is_staff=True)| Q(is_client=True)
         )
-
-class Company_AssetsForm(forms.ModelForm):
-    class Meta:
-        model = Company_Assets
-        fields = '__all__'        
-
-class CompanyLiabilitiesForm(forms.ModelForm):
-    class Meta:
-        model = CompanyLiabilities
-        fields = '__all__'          
-
-class Coda_AssetsForm(forms.ModelForm):
-    class Meta:
-        model = Coda_Assets
-        fields = '__all__'        

@@ -14,10 +14,9 @@ from .models import (
     Payment_Information,
     Transaction,Inflow,
     TrainingLoan,
-    Company_Assets,
-    CompanyLiabilities,
-    Coda_Assets
-    
+    BalanceSheetCategory,
+    BalanceSheetEntry,
+    BalanceSheetSummary
 )  # , DocUpload
 from accounts.models import Department
 
@@ -101,6 +100,6 @@ admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)
 admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
-admin.site.register(Company_Assets)
-admin.site.register(CompanyLiabilities)
-admin.site.register(Coda_Assets)
+admin.site.register(BalanceSheetCategory),
+admin.site.register(BalanceSheetEntry),
+admin.site.register(BalanceSheetSummary)

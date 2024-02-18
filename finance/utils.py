@@ -1,17 +1,235 @@
 import os
+import json
 import requests
 from datetime import datetime
+from django.shortcuts import get_object_or_404,render
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.db.models import Sum, Max
-from django.shortcuts import get_object_or_404,render
 from django.contrib import messages
-from .models import TrainingLoan, Transaction
-from main.utils import App_Categories
-from accounts.models import Department
 from django.conf import settings
-
+from .models import BalanceSheetCategory, Payment_Information, TrainingLoan, Transaction,Payment_History
+from accounts.models import Department
+from main.utils import App_Categories,generate_chatbot_response
+from django.http import JsonResponse
 
 CustomUser = get_user_model()
+
+
+
+@login_required
+def fetch_and_process_financial_data(request):
+    try:
+        # Fetch and process transaction data
+        transactions_data = Transaction.objects.values('category').annotate(
+            total_amount=Sum('amount')
+        ).order_by('-total_amount')
+
+        # Fetch and process payment information data
+        payment_information_data = Payment_History.objects.values(
+            'plan', 'payment_fees', 'down_payment', 'fee_balance'
+        ).order_by('-fee_balance')
+
+        # Process the data into the format expected by OpenAI
+        transactions_summary = "\n".join([f"{t['category']}: {t['total_amount']}" for t in transactions_data])
+        payment_information_summary = "\n".join([f"Plan {p['plan']} - Fees: {p['payment_fees']}, Down Payment: {p['down_payment']}, Balance: {p['fee_balance']}" for p in payment_information_data])
+
+        # Construct the prompt for OpenAI
+        prompt = f"Consider the following financial data:\n\nTransactions:\n{transactions_summary}\n\nPayment Information:\n{payment_information_summary}\n\nGenerate the following Balance Sheet format:\n\n{{\n\
+           'assets': [\n\
+                {{'category': 'amount'}},\n\
+                # Add additional categories as needed\n\
+            ],\n\
+            'Long-term Assets': [\n\
+                {{'category': 'amount'}},\n\
+                # Add additional categories as needed\n\
+            ],\n\
+            'liabilities': [\n\
+                {{'plan': 'payment fees'}},\n\
+                # Add additional liabilities as needed\n\
+            ],\n\
+            'Long-term Liabilities': [\n\
+                {{'plan': 'payment fees'}},\n\
+                # Add additional liabilities as needed\n\
+            ]\n\
+        }} , convert this data into a Balance Sheet, and ensure the following:\n\
+        - Display the below mention names Long-term Assets based on a larger amount, and use only below mention assets with smaller amounts.\n\
+        - Display the below mention Long-term Liabilities based on a larger amount, and use only below mention liabilities with smaller amounts.\n\
+        - change the name of assets category to salary,Cash,Short-term Investments,Accounts Receivable,Inventory,Prepaid Expenses,Equipment,Future Growth Bonds,Technological Advancements,other assets \n\
+        - change the name of long term assets category to Long-term Investments,Long-term Receivables,Equity Investment,Property,Partners,Sponsers,Intangible Assets,Talent Appreciation Fund,Contingent Prosperity Provisions \n\
+        - change the name of liabilities plan to Short-term Borrowing,Lease Liabilities,Accrued Expenses,Long-term Debt,Deferred Tax Liabilities,Sponsers,Other,liabilities \n\
+        - change the name of Long-term Liabilities plan to Long-term Borrowing,Pension Obligations,Accrued Expenses,Contingent Liabilities,Retirement Obligations,Long-term Warranty Provisions,Other,liabilities \n\
+        - Do not show duplicate entries."
+        # Send the prompt to OpenAI (replace with actual OpenAI call)
+        openai_response = generate_chatbot_response(prompt)
+        print("OpenAI response:", openai_response)
+
+        try:
+            data_dict = json.loads(openai_response.replace("'", '"'))
+
+            # Extract the balance sheet data from the response
+            assets = data_dict.get("assets", [])
+            long_term_assets = data_dict.get("Long-term Assets", [])
+            liabilities = data_dict.get("liabilities", [])
+            long_term_liabilities = data_dict.get("Long-term Liabilities", [])
+
+            # Save the assets, liabilities, long-term assets, and long-term liabilities to the BalanceSheetCategory model
+            save_balance_sheet_data(assets, 'Asset')
+            save_balance_sheet_data(liabilities, 'Liability')
+            save_balance_sheet_data(long_term_assets, 'Long-term Asset')
+            save_balance_sheet_data(long_term_liabilities, 'Long-term Liability')
+
+            return {'assets': assets, 'liabilities': liabilities}
+        except json.JSONDecodeError as e:
+            # Handle JSON parsing error
+            print(f"Error processing OpenAI response: {e}")
+    except Exception as e:
+        # Handle other exceptions
+        print(f"An unexpected error occurred: {e}")
+
+    return {assets,long_term_assets,liabilities,long_term_liabilities}
+def calculate_revenue_and_expenses(request):
+    # Calculate total revenue
+    revenue_queryset = Payment_Information.objects.aggregate(
+        total_payment_fees=Sum('payment_fees'),
+        total_down_payments=Sum('down_payment'),
+        total_student_bonuses=Sum('student_bonus')
+    )
+
+    total_revenue = (
+        (revenue_queryset.get('total_payment_fees') or 0) +
+        (revenue_queryset.get('total_down_payments') or 0) +
+        (revenue_queryset.get('total_student_bonuses') or 0)
+    )
+
+    expenses_queryset = Transaction.objects.values('category').annotate(
+        total_amount=Sum('amount')
+    ).order_by()
+
+    data = {
+        'revenue_summary': {
+            'total_payment_fees': revenue_queryset.get('total_payment_fees') or 0,
+            'total_down_payments': revenue_queryset.get('total_down_payments') or 0,
+            'total_student_bonuses': revenue_queryset.get('total_student_bonuses') or 0,
+        },
+        'total_revenue': total_revenue,
+        'expenses_summary': "\n".join([f"{t['category']}: {t['total_amount']}" for t in expenses_queryset]),
+    }
+    prompt = f"Generate a financial statement based on the following data:\n\n" \
+        f"**Revenue Summary:**\n" \
+        f"- Total Payment Fees: {data['revenue_summary']['total_payment_fees']}\n" \
+        f"- Total Down Payments: {data['revenue_summary']['total_down_payments']}\n" \
+        f"- Total Student Bonuses: {data['revenue_summary']['total_student_bonuses']}\n\n" \
+        f"**Total Revenue:**\n" \
+        f"{data['total_revenue']}\n\n" \
+        f"{data['expenses_summary']}\n\n" \
+        f"**Net Income:**\n" \
+        f"[net_income]\n\n" \
+        f"Please use this data to create a comprehensive financial statement, including total revenue, total expenses, and net income. Ensure the statement is well-organized and provides a clear overview of the financial health.Do not pass any string and make a json response. The generated data should be consisted comes every time "
+    
+    openai_response = generate_chatbot_response(prompt)
+    print(openai_response)
+    data_dicts = json.loads(openai_response.replace("'", '"'))
+    financial_statement = data_dicts.get("Financial Statement", {})
+    total_revenue = financial_statement.get("Total Revenue", 0)
+    total_expenses = financial_statement.get("Total Expenses", 0)
+    net_income = financial_statement.get("Net Income", 0)
+  
+    revenue_breakdown = financial_statement.get("Revenue Breakdown", {})
+
+    # Extract the expense breakdown data
+    expense_breakdown = financial_statement.get("Expenses Breakdown", {})
+    # Convert the breakdowns to a list of dictionaries
+    revenue_data = [{"category": category, "amount": amount} for category, amount in revenue_breakdown.items()]
+    expense_data = [{"category": category, "amount": amount} for category, amount in expense_breakdown.items()]
+
+    # Save revenue breakdown
+    save_breakdown_data(revenue_data, category_type='Revenue')
+
+    # Save expense breakdown
+    save_breakdown_data(expense_data, category_type='Expenses')
+    # save_balance_sheet_data(revenue_breakdown, 'Financial Statement')
+        # Prepare the JSON response
+    response_data = {
+        "total_revenue": total_revenue,
+        "total_expenses": total_expenses,
+        "net_income": net_income,
+        "revenue_breakdown": revenue_breakdown,
+        "expense_breakdown": expense_breakdown,
+    }
+
+    # Return a JSON response
+    return JsonResponse(response_data)
+def get_existing_revenue_expenses_data():
+    existing_revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
+    existing_expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
+    total_revenue = existing_revenue.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = existing_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    net_income = total_revenue - total_expenses
+
+    return existing_revenue.exists() and existing_expenses.exists(), existing_revenue, existing_expenses, total_revenue, total_expenses,net_income
+
+def save_breakdown_data(breakdown_data, category_type):
+    for item in breakdown_data:
+        category_name = item.get("category")
+        amount = item.get("amount")
+
+        existing_category = BalanceSheetCategory.objects.filter(name=category_name, category_type=category_type).first()
+
+        if existing_category:
+            existing_category.amount = float(amount)
+            existing_category.save()
+            print(f"Updated {category_type}: {category_name} - {amount}")
+        else:
+            BalanceSheetCategory.objects.create(name=category_name, category_type=category_type, amount=float(amount))
+            print(f"Saved {category_type}: {category_name} - {amount}")
+def save_balance_sheet_data(data, category_type):
+    for item in data:
+        for name, amount in item.items():
+            existing_category = BalanceSheetCategory.objects.filter(name=name, category_type=category_type).first()
+            if existing_category:
+                existing_category.amount = float(amount)
+                existing_category.save()
+                print(f"Updated {category_type}: {name} - {amount}")
+            else:
+                BalanceSheetCategory.objects.create(name=name, category_type=category_type, amount=float(amount))
+                print(f"Saved {category_type}: {name} - {amount}")
+
+
+# def balance_sheet_analysis(request):
+#     # Fetch and process transaction data
+#     transactions_data = Transaction.objects.annotate(
+#         total_amount=Sum('amount')
+#     ).values('category', 'total_amount')
+
+#     # Fetch and process payment information data
+#     payment_history_data = Payment_History.objects.values(
+#         'plan', 'payment_fees', 'down_payment', 'fee_balance'
+#     )
+
+#     # Process the data into the format expected by OpenAI
+#     transactions_summary = "\n".join([f"{t['category']}: {t['total_amount']}" for t in transactions_data])
+#     payment_history_summary = "\n".join([f"Plan {p['plan']} - Fees: {p['payment_fees']}, Down Payment: {p['down_payment']}, Balance: {p['fee_balance']}" for p in payment_history_data])
+#     print(transactions_summary,payment_history_summary)
+
+#     # Construct the prompt for OpenAI
+#     prompt = f"Based on the following transaction and payment history information, generate a balance sheet summary.\n\nTransactions:\n{transactions_summary}\n\nPayment History:\n{payment_history_summary}\n\nGenerate balance sheet:"
+
+#     # Send the prompt to OpenAI (placeholder function, replace with actual OpenAI call)
+#     openai_response = generate_chatbot_response(prompt)
+
+#     # Handle the OpenAI response (assumes JSON response with keys 'assets', 'liabilities', 'equity')
+#     try:
+#         data_dict = json.loads(openai_response)
+#         assets = data_dict.get("assets", [])
+#         liabilities = data_dict.get("liabilities", [])
+#         equity = data_dict.get("equity", [])
+#     except json.JSONDecodeError as e:
+#         print(f"Error processing OpenAI response: {e}")
+#         assets, liabilities, equity = [], [], []
+
+#     return assets,liabilities,equity
+
 
 
 def calculate_loan(user):

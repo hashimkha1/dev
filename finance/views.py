@@ -22,9 +22,10 @@ from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,
-		DC48_Inflow,Field_Expense,Budget,Company_Assets,CompanyLiabilities,Coda_Assets
+		DC48_Inflow,Field_Expense,Budget,
+        BalanceSheetCategory,BalanceSheetEntry,BalanceSheetSummary
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,Company_AssetsForm,CompanyLiabilitiesForm,Coda_AssetsForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -32,7 +33,6 @@ from main.filters import FoodFilter
 from main.models import Service,ServiceCategory,Pricing
 from investing.models import Investments,Investment_rates,Investor_Information
 from investing.utils import get_user_investment
-from .utils import get_exchange_rate,calculate_paypal_charges
 from management.utils import paytime
 from management.models import Requirement
 from django.views import View
@@ -342,53 +342,6 @@ def new_option_contract(request, *args, **kwargs):
         'contract_date': today.strftime("%d %B, %Y")
     }
     return render(request, 'management/contracts/client_investment_contract.html', context)
-
-
-# @login_required
-# def new_contract(request, *args, **kwargs):
-#     path_list, sub_title, pre_sub_title = path_values(request)
-#     print("subtile--->",pre_sub_title)
-#     username = kwargs.get('username')
-#     client_data = CustomerUser.objects.get(username=username)
-#     print(client_data)
-#     today = date.today()
-#     plan_title = request.POST.get('service_title').lower() if request.method == 'POST' and request.POST.get('service_title') else None
-#     plan = contract_charge = contract_duration = contract_period = None
-#     try:
-#         if request.user.category == 3:
-#             service_category_instance = ServiceCategory.objects.get(slug='data_analysis')
-#         else:
-#             return redirect('main:display_service')
-#     except ServiceCategory.DoesNotExist:
-#         return redirect('main:display_service')
-    
-#     # Access the service_instance properties
-#     service_instance = Service.objects.filter(servicecategory__name=service_category_instance.name).first()
-#     if service_instance:
-#         service_title = service_instance.title
-#         service_title_uppercase = service_title.upper()
-#         service_description = service_instance.description
-#     else:
-#         print("No service found for the given pricing title.")
-	
-#     plan = Pricing.objects.filter(category=service_category_instance.id, title__iexact=plan_title).first()
-#     if plan:
-#         contract_charge = plan.price
-#         contract_duration = plan.duration
-#         contract_period = plan.contract_length
-#         plan_id = plan.id
-#     context = {
-#         'service_title': service_title,
-#         'service_title_uppercase': service_title_uppercase,
-#         'client_data': client_data,
-#         'contract_data': plan,
-#         'contract_charge': contract_charge,
-#         'contract_duration': contract_duration,
-#         'contract_period': contract_period,
-#         'plan_id': plan_id,
-#         'contract_date': today.strftime("%d %B, %Y")
-#     }
-#     return render(request, 'management/contracts/client_contract.html', context)
 
 @login_required
 def new_contract(request, *args, **kwargs):
@@ -1334,159 +1287,137 @@ def payment_success(request):
 def payment_failed(request):
     return render(request, 'finance/payments/failed.html')
 
-    #==========class based views=============
-class Company_AssetsListview (ListView):
-    model =Company_Assets    
-    template_name = "finance/reports/company_assetlist.html"
-    def get_context_data(self,**kwargs):
-        context= super().get_context_data(**kwargs)        
-        return context
 
-class company_assetCreateView(CreateView): 
-    model = Company_Assets 
-    fields = '__all__'  
-    template_name='finance/reports/company_create.html'
-    success_url= reverse_lazy ('finance:fxassetlist')
+def get_existing_data():
+    existing_assets = BalanceSheetCategory.objects.filter(category_type='Asset')
+    existing_long_term_assets = BalanceSheetCategory.objects.filter(category_type='Long-term Asset')
+    existing_liabilities = BalanceSheetCategory.objects.filter(category_type='Liability')
+    existing_long_term_liabilities = BalanceSheetCategory.objects.filter(category_type='Long-term Liability')
 
-    def form_valid(self,form):
-        return super().form_valid(form)
+    total_current_assets = existing_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_long_term_assets = existing_long_term_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_current_liabilities = existing_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_long_term_liabilities = existing_long_term_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
 
-class company_assetsUpdateView(UpdateView):
-    model = Company_Assets 
-    form_class = Company_AssetsForm
-    template_name='finance/reports/company_assetupdate.html'
-    success_url = reverse_lazy('finance:fxassetlist') 
+    return (
+        existing_assets.exists() and existing_long_term_assets.exists() and
+        existing_liabilities.exists() and existing_long_term_liabilities.exists(),
+        existing_assets, existing_long_term_assets, existing_liabilities, existing_long_term_liabilities,
+        total_current_assets, total_long_term_assets, total_current_liabilities, total_long_term_liabilities
+    )
 
-    def form_valid(self,form):
-        return super().form_valid(form)   
+def openai_balancesheet(request):
+    context = {}  # Initialize context variable
 
-class company_assetsDeleteView(DeleteView):
-    model = Company_Assets
-    template_name = "finance/reports/company_assetsdelete.html"
-    success_url = reverse_lazy('finance:fxassetlist')
+    try:
+        (
+            data_exists,
+            existing_assets, existing_long_term_assets, existing_liabilities, existing_long_term_liabilities,
+            total_current_assets, total_long_term_assets, total_current_liabilities, total_long_term_liabilities
+        ) = get_existing_data()
 
+        # Check if data already exists in the model
+        if data_exists:
+            # Use existing data
+            print("Using existing data")
+            context = {
+                'company_name': 'CODA',
+                'assets': existing_assets,
+                'long_term_assets': existing_long_term_assets,
+                'liabilities': existing_liabilities,
+                'long_term_liabilities': existing_long_term_liabilities,
+                'total_current_assets': total_current_assets,
+                'total_long_term_assets': total_long_term_assets,
+                'total_current_liabilities': total_current_liabilities,
+                'total_long_term_liabilities': total_long_term_liabilities,
+                'total_assets': total_current_assets + total_long_term_assets,
+                'total_liabilities': total_current_liabilities + total_long_term_liabilities,
+            }
+        else:
+            try:
+                response = fetch_and_process_financial_data(request)
 
-   
+                # Use the newly generated data
+                context = {
+                    'assets': response['assets'],
+                    'long_term_assets': response['long_term_assets'],
+                    'liabilities': response['liabilities'],
+                    'long_term_liabilities': response['long_term_liabilities']
+                }
 
-      
+            except json.JSONDecodeError as e:
+                # Handle JSON parsing error
+                print(f"Error processing OpenAI response: {e}")
 
-#==========function  based views=========
-def company_assets_list(request):
-    object_list = Company_Assets.objects.all()
-    #check
-    #print('object+++++++++++',object_list)     
-    return render(request,"finance/reports/company_assetlist.html",{'object_list':object_list})
+    except Exception as e:
+        # Handle other exceptions
+        print(f"An unexpected error occurred: {e}")
 
-def company_assets_create(request):
-    if request.method == 'POST':
-        form = Company_AssetsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('finance:fxassetlist')  
+    # Calculate total revenues
+	# Get existing revenue and expenses data
+    (
+        data_exist,
+		existing_revenue,existing_expenses,total_revenue, total_expenses,net_income
+
+    ) = get_existing_revenue_expenses_data()
+
+    if  data_exist:
+        context.update({
+            'existing_revenue_data': existing_revenue,
+            'existing_expenses_data': existing_expenses,
+            'total_revenue': total_revenue,
+            'total_expenses': total_expenses,
+			"net_income": net_income,
+        })
     else:
-        form = Company_AssetsForm()
+        response = calculate_revenue_and_expenses(request)
+        data = response.json() if hasattr(response, 'json') else json.loads(response.content.decode('utf-8'))
 
-    return render(request, "finance/reports/company_create.html", {'form': form})
-
-def company_assets_update(request,pk):
-    assets = get_object_or_404(Company_Assets,pk=pk) 
-    if request.method == 'POST':
-        form = Company_AssetsForm(request.POST,instance=assets) 
-        if form.is_valid():
-            form.save()
-        return redirect('finance:fxassetlist')  
-    else:
-        form = Company_AssetsForm(instance=assets)  
-        return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets}) 
-
-def company_assets_delete(request,pk):
-    assets=get_oject_or_404(Company_Assets,pk=pk)
-    if request.method == 'POST':
-        assets.delete()
-        return redirect('finance:fxassetlist')
-    return render(request,"finance/reports/company_assetsdelete.html",{'assets':assets})
-
-
-def company_liability_list(request):
-    object_list = CompanyLiabilities.objects.all()    
-    print('object+++++++++++', object_list)     
-    return render(request, "finance/reports/company_liability.html", {'object_list': object_list}) 
-
-def company_liability_create(request):
-    if request.method == 'POST':
-        form = CompanyLiabilitiesForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('finance:fxliabilitylist')  
-    else:
-        form = CompanyLiabilitiesForm()
-
-    return render(request, "finance/reports/company_create.html", {'form': form}) 
-
-def company_liability_update(request,pk):
-    liabilities = get_object_or_404(CompanyLiabilities,pk=pk) 
-    if request.method == 'POST':
-        form = CompanyLiabilitiesForm(request.POST,instance=liabilities) 
-        if form.is_valid():
-            form.save()
-        return redirect('finance:fxliabilitylist')  
-    else:
-        form = CompanyLiabilitiesForm(instance=liabilities)  
-        return render(request,"finance/reports/company_assetupdate.html",{'form':form,'liabilities':liabilities}) 
-
-
-def company_liability_delete(request,pk):
-    liabilities = get_object_or_404(CompanyLiabilities,pk=pk) 
-    if request.method == 'POST':
-        liabilities.delete()
-        return redirect('finance:fxliabilitylist')
-    return render(request,"finance/reports/company_assetsdelete.html",{'liabilities':liabilities})
-
-def coda_assets_list(request):
-    assets= Coda_Assets.objects.all()
-    #print("assets===========>",assets)
-    return render(request,"finance/reports/coda_assets.html",{'assets':assets})  
-
-def coda_assets_create(request):
-    if request.method =='POST':
-        form = Coda_AssetsForm(request.POST)
-        if form.is_valid():
-            form.save() 
-           # print("object=========",form)
-            return redirect('finance:codassetlist') 
-    else:
-        form = Coda_AssetsForm 
-        return render(request,"finance/reports/company_create.html",{'form':form}) 
-
-def coda_assets_update(request,pk):
-    assets= get_object_or_404(Coda_Assets,pk=pk)
-    if request.method == 'POST': 
-        form = Coda_AssetsForm(request.POST,instance=assets)
-        if form.is_valid():
-            form.save()            
-            return redirect('finance:codassetlist')  
-    else:
-        form = Coda_AssetsForm(instance=assets)
-    return render(request,"finance/reports/company_assetupdate.html",{'form':form,'assets':assets})             
-
-def coda_assets_delete(request,pk):
-    assets = get_object_or_404(Coda_Assets,pk=pk)
-    if request.method == 'POST':
-        assets.delete()
-        return redirect('finance:codassetlist')    
-    return render(request,'finance/reports/coda_assetsdelete.html',{'assets':assets})
-
-def coda_assets_detail(request,pk):
-    assets = get_object_or_404(Coda_Assets,pk=pk) 
-    return render(request,'finance/reports/coda_assetsdetail.html',{'assets':assets})    
+        context.update({
+            'total_revenue': data.get('total_revenue', 0),
+            'total_expenses': data.get('total_expenses', 0),
+            'net_income': data.get('net_income', 0),
+            'revenue_breakdown': data.get('revenue_breakdown', {}),
+            'expense_breakdown': data.get('expense_breakdown', {}),
+        })
+# Render the template with the 'assets' variable
+    return render(request, "finance/reports/openai.html", context)
 
 
 
 
+def balancesheet(request):
+    try:
+        balance_sheet = BalanceSheetSummary.objects.last()
+        if balance_sheet:
+            # Fetch entries for assets, liabilities, and equity
+            current_assets = balance_sheet.entries.filter(category__category_type='Asset')
+            current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
+            equity = balance_sheet.entries.filter(category__category_type='Equity')
 
+            # Calculate totals
+            total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_liabilities_and_equity=total_liabilities+total_equity
+            context = {
+                'company_name': 'CODA',
+                'balance_sheet': balance_sheet,
+                'current_assets': current_assets,
+                'current_liabilities': current_liabilities,
+                'equity': equity,
+                'total_liabilities_and_equity': total_liabilities_and_equity,
+                'total_assets': total_assets,
+                'total_liabilities': total_liabilities,
+                'total_equity': total_equity
+            }
+        else:
+            context = {'error_message': 'No balance sheet data available.'}
+    except Exception as e:
+        print(f"Error: {e}")
+        context = {'error_message': 'An error occurred while fetching balance sheet data.'}
 
-
-
+    return render(request, "finance/reports/balancesheet.html", context)
 
 
 
