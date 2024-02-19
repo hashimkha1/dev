@@ -276,11 +276,18 @@ def display_service(request, *args, **kwargs):
 
     # Calculate the number of students and other users
     students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
-    teachers_count = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member).count()
+    teachers_count = 8  # Set the desired count
+    teachers = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member)[:teachers_count].count()
     # Calculate the total number of courses
-    total_courses_count = ServiceCategory.objects.filter(service=service_id).count()
+    title1 = "IT-Training"
+    title2 = "Interview"
+
+    total_courses_count = Pricing.objects.filter(
+        Q(category__name=title1) | Q(category__name=title2),
+        is_active=True
+    ).count()
   
-    category_name = 'website Development'  
+    category_name = 'IT-Project Management'  
     projects = Pricing.objects.filter(category__name=category_name, is_active=True)
 
     context = {
@@ -297,10 +304,11 @@ def display_service(request, *args, **kwargs):
         "slug": service_category_slug,
         "asset_image_url": asset_image_url,
         "students_count": students_count,
-        "teachers_count": teachers_count,
+        "teachers_count": teachers,
         "total_courses_count": total_courses_count,
     }
     return render(request, "main/services/show_services.html", context)
+
 
 
 
