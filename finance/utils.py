@@ -66,7 +66,6 @@ def fetch_and_process_financial_data(request):
         - Do not show duplicate entries."
         # Send the prompt to OpenAI (replace with actual OpenAI call)
         openai_response = generate_chatbot_response(prompt)
-        print("OpenAI response:", openai_response)
 
         try:
             data_dict = json.loads(openai_response.replace("'", '"'))
@@ -92,6 +91,10 @@ def fetch_and_process_financial_data(request):
         print(f"An unexpected error occurred: {e}")
 
     return {assets,long_term_assets,liabilities,long_term_liabilities}
+
+# from django.http import JsonResponse
+# import json
+
 def calculate_revenue_and_expenses(request):
     # Calculate total revenue
     revenue_queryset = Payment_Information.objects.aggregate(
@@ -106,54 +109,52 @@ def calculate_revenue_and_expenses(request):
         (revenue_queryset.get('total_student_bonuses') or 0)
     )
 
+    # Calculate total expenses
     expenses_queryset = Transaction.objects.values('category').annotate(
         total_amount=Sum('amount')
     ).order_by()
 
-    data = {
-        'revenue_summary': {
-            'total_payment_fees': revenue_queryset.get('total_payment_fees') or 0,
-            'total_down_payments': revenue_queryset.get('total_down_payments') or 0,
-            'total_student_bonuses': revenue_queryset.get('total_student_bonuses') or 0,
-        },
-        'total_revenue': total_revenue,
-        'expenses_summary': "\n".join([f"{t['category']}: {t['total_amount']}" for t in expenses_queryset]),
-    }
+    # Preparing data for OpenAI prompt
+    expenses_summary = "\n".join([f"{t['category']}: {t['total_amount']}" for t in expenses_queryset])
     prompt = f"Generate a financial statement based on the following data:\n\n" \
-        f"**Revenue Summary:**\n" \
-        f"- Total Payment Fees: {data['revenue_summary']['total_payment_fees']}\n" \
-        f"- Total Down Payments: {data['revenue_summary']['total_down_payments']}\n" \
-        f"- Total Student Bonuses: {data['revenue_summary']['total_student_bonuses']}\n\n" \
-        f"**Total Revenue:**\n" \
-        f"{data['total_revenue']}\n\n" \
-        f"{data['expenses_summary']}\n\n" \
-        f"**Net Income:**\n" \
-        f"[net_income]\n\n" \
-        f"Please use this data to create a comprehensive financial statement, including total revenue, total expenses, and net income. Ensure the statement is well-organized and provides a clear overview of the financial health.Do not pass any string and make a json response. The generated data should be consisted comes every time "
-    
-    openai_response = generate_chatbot_response(prompt)
-    print(openai_response)
-    data_dicts = json.loads(openai_response.replace("'", '"'))
-    financial_statement = data_dicts.get("Financial Statement", {})
+             f"**Revenue Summary:**\n" \
+             f"- Total Payment Fees: {revenue_queryset.get('total_payment_fees') or 0}\n" \
+             f"- Total Down Payments: {revenue_queryset.get('total_down_payments') or 0}\n" \
+             f"- Total Student Bonuses: {revenue_queryset.get('total_student_bonuses') or 0}\n\n" \
+             f"**Total Revenue:**\n" \
+             f"{total_revenue}\n\n" \
+             f"{expenses_summary}\n\n" \
+             f"**Net Income:**\n" \
+             f"[net_income]\n\n" \
+             f"Please use this data to create a comprehensive financial statement, including total revenue, total expenses, and net income. Ensure the statement is well-organized and provides a clear overview of the financial health. Do not pass any string and make a json response. The generated data should be consistent every time."
+
+    try:
+        openai_response = generate_chatbot_response(prompt)
+        if openai_response.strip():
+            data_dicts = json.loads(openai_response.replace("'", '"'))
+            financial_statement = data_dicts.get("Financial Statement", {})
+        else:
+            print("OpenAI response is empty.")
+            financial_statement = {}
+    except json.JSONDecodeError as e:
+        print(f"Error parsing OpenAI response: {e}")
+        financial_statement = {}
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        financial_statement = {}
+
+    # Process financial statement data
     total_revenue = financial_statement.get("Total Revenue", 0)
     total_expenses = financial_statement.get("Total Expenses", 0)
     net_income = financial_statement.get("Net Income", 0)
-  
     revenue_breakdown = financial_statement.get("Revenue Breakdown", {})
-
-    # Extract the expense breakdown data
     expense_breakdown = financial_statement.get("Expenses Breakdown", {})
-    # Convert the breakdowns to a list of dictionaries
-    revenue_data = [{"category": category, "amount": amount} for category, amount in revenue_breakdown.items()]
-    expense_data = [{"category": category, "amount": amount} for category, amount in expense_breakdown.items()]
 
-    # Save revenue breakdown
-    save_breakdown_data(revenue_data, category_type='Revenue')
+    # Save breakdown data
+    save_breakdown_data(revenue_breakdown, 'Revenue')
+    save_breakdown_data(expense_breakdown, 'Expenses')
 
-    # Save expense breakdown
-    save_breakdown_data(expense_data, category_type='Expenses')
-    # save_balance_sheet_data(revenue_breakdown, 'Financial Statement')
-        # Prepare the JSON response
+    # Prepare the JSON response
     response_data = {
         "total_revenue": total_revenue,
         "total_expenses": total_expenses,
@@ -162,8 +163,10 @@ def calculate_revenue_and_expenses(request):
         "expense_breakdown": expense_breakdown,
     }
 
-    # Return a JSON response
     return JsonResponse(response_data)
+
+# Additional utility functions like 'generate_chatbot_response' and 'save_breakdown_data' are assumed to be defined elsewhere in your code.
+
 def get_existing_revenue_expenses_data():
     existing_revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
     existing_expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
