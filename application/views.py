@@ -49,3 +49,13 @@ def company_properties_update(request,pk):
     else:
         form = propertiesForm(instance= properties)
         return render(request,"application/propertyupdate.html",{'form':form,'properties':properties})
+
+
+def company_properties_delete(request,pk):
+    properties = get_object_or_404(company_properties,pk=pk) 
+    if request.method =='POST':
+        properties.delete()
+        return redirect("application:propertylist")
+    return render(request,"application/propertydelete.html",{'properties':properties})
+
+
