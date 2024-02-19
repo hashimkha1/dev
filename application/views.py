@@ -16,6 +16,7 @@ from django.views.generic import (
         UpdateView,
     )
 from.models import company_properties
+from .forms import propertiesForm
 
 # User=settings.AUTH_USER_MODEL
 import json
@@ -26,3 +27,14 @@ def company_propertiesList(request):
     properties = company_properties.objects.all()
     print("properties====>",properties)  
     return render(request,"application/propertylist.html",{'properties':properties})
+
+def company_propertiesCreate(request):
+    if request.method == 'POST':
+        form =propertiesForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:propertylist")
+    else:
+        form = propertiesForm()
+        print("form ====>",form) 
+    return render(request,"application/propertycreate.html", {'form': form})
