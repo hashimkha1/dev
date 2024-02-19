@@ -1,0 +1,41 @@
+{%extends "main/base_templates/application_base.html"%}
+ {%load crispy_forms_tags%} 
+ {%block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Applicants</h2>
+    <div class="table-responsive">
+      <!-- <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%"> -->
+      <table class="table table-striped table-bordered" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>Id</th> 
+          <th>website_url</th>
+          <th>page_name</th>
+          <th>improvements</th>
+          <th>created_at</th>
+          <th>updated_at</th>
+          
+          
+        </tr>
+      </thead>
+      <tbody>
+        {% for wcag in wcag %}
+        <tr>
+          <td>{{wcag.id}}</td> 
+          <td>{{wcag.website_url}}</td>
+          <!--<td>{{applicant.topic|date:"F d, Y"}}</td>-->
+          <td>{{wcag.page_name}}</td>
+          <td>{{wcag.improvements}}</td>
+          <td>{{wcag.created_at}}</td>
+          <td>{{wcag.updated_at}}</td>
+          
+          <td>
+           
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  </div>
+</section>
+{%endblock content %}
