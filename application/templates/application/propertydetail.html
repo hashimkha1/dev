@@ -1,0 +1,48 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Clients</h2>
+    {% if user.is_active or user.is_superuser %}
+    <a
+      class="btn btn-secondary btn-sm mt-1 mb-1"
+      href="#"
+    >
+      Update</a
+    >
+    <a
+      class="btn btn-danger btn-sm mt-1 mb-1"
+      href="{%url 'application:propertydetail' properties.id%}"
+    >
+      Delete</a
+    >
+    {% endif %}
+
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th> name </th>
+          <th>quantity</th>
+          <th>value</th>
+          <th>purchase_date</th>
+          <th>description</th>
+          <th>location</th>
+          <th>serial_number</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+            <tr>
+              <td>{{object.name}}</td>
+              <td>{{object.quantity }}</td>
+              <td>{{object.value}}</td>
+              <td>{{object.purchase_date}}</td>
+              <td>{{object.description}}</td>
+              <td>{{object.location}}</td>
+              <td>{{object.serial_number}}</td>
+            </tr>
+      </tbody>
+    </table>
+  </div>
+
+</section>
+{% endblock content %}

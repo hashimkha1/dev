@@ -58,4 +58,8 @@ def company_properties_delete(request,pk):
         return redirect("application:propertylist")
     return render(request,"application/propertydelete.html",{'properties':properties})
 
+def company_properties_detail(request,pk):
+    properties = get_object_or_404(company_properties,pk=pk)            
+    return render(request,"application/propertydetail.html",{'properties':properties})
+
 
