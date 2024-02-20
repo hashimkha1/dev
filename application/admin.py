@@ -1,10 +1,12 @@
-# from django.contrib import admin
+from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-# from .models import UserProfile, Application, Policy, Rated, Reporting
 
-# # Register your models here.
-# admin.site.register(UserProfile)
-# admin.site.register(Application)
-# admin.site.register(Rated)
-# admin.site.register(Policy)
-# admin.site.register(Reporting)
+from .models import policies,company_resources,work_department
+
+ # Register your models here.
+#admin.site.register(UserProfile)
+admin.site.register(company_resources)
+admin.site.register(policies)
+#admin.site.register(group_task)
+admin.site.register(work_department)
