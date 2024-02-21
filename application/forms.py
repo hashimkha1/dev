@@ -33,16 +33,16 @@ from django.core.validators import  RegexValidator
 # #             "category":forms.SelectMultiple(attrs={'class':'form-control', 'id':'category'}),
 # #             "description": Textarea(attrs={"cols": 40, "rows": 2})
 # #             }
-# class WCAG_Form(forms.Form):
-#     #Enter your website ie www.example.com
-#     # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-#     upload_file = forms.FileField()
-#     website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-#     page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+class wcagForm(forms.Form):
+    #Enter your website ie www.example.com
+    # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    upload_file = forms.FileField()
+    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+    page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
 
-#    Meta:
-#         model = WCAGStandardWebsite
-#         fields = ['upload_file', 'website_url', 'page_name']  class
+    class Meta:
+        model = wcagsWebsite
+        fields = ['upload_file', 'website_url', 'page_name'] 
 
 
 class wcagForm(forms.ModelForm):

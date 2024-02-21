@@ -7,8 +7,8 @@ urlpatterns = [
     #=============================USERS VIEWS=====================================
     #path('', views.home, name='home'),
 
-    path('wcaglist/', views.wcagsWebsite_list_view, name='wcaglist'),
-    path('wcagcreate/', views.wcagsWebsite_create_view, name='wcagcreate'),
+    path('openailist/', views.wcagsWebsite_list_view, name='openailist'),
+    path('openaicreate/', views.wcagsWebsite_create_view, name='openaicreate'),
     #path('propertyupdate/<int:pk>/',views.company_properties_update,name='propertyupdate'),
     #path('propertydelete/<int:pk>/',views.company_properties_delete,name='propertydelete'),
     #path('propertydetail/<int:pk>/',views.company_properties_detail,name='propertydetail'),
