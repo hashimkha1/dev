@@ -73,9 +73,15 @@ class CustomerUser(AbstractUser):
         fullname = f'{self.first_name},{self.last_name}'
         return fullname
     
+    @property
     def is_recent(self):
         return self.date_joined >= timezone.now() - timedelta(days=365)
     
+    @property
+    def days_since_joined(self):
+        return (timezone.now().date() - self.date_joined.date()).days
+    
+
 class Department(models.Model):
     """Department Table will provide a list of the different departments in CODA"""
 

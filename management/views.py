@@ -1581,11 +1581,12 @@ class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
             return True
         return False
 
+
 def usersession(request, user=None, *args, **kwargs):
     request.session["siteurl"] = settings.SITEURL
     deadline_date=paytime()[2]
-    # print(f'Write Value:{deadline_date}')
     employee = get_object_or_404(User, username=kwargs.get("username"))
+    days_since_joined = employee.days_since_joined
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
     emp_target_sessions =75
     client_target_sessions =27
@@ -1602,6 +1603,7 @@ def usersession(request, user=None, *args, **kwargs):
         "num_sessions": num_sessions,
         "bal_session": bal_session,
         "deadline_date": deadline_date,
+        "days_since_joined": days_since_joined,
     }
     # setting  up session
     request.session["employee_name"] = kwargs.get("username")
