@@ -79,8 +79,8 @@ urlpatterns = [
     path("", include("main.urls")),
     path("accounts/", include("accounts.urls")),
     # path("data/", include("data.urls", namespace="data")),
-    # path("getdata/", include("getdata.urls", namespace="getdata")),
-    #path("application/", include("application.urls")),
+    # path("getdata/", include("getdata.urls", namespace="getdata")),   
+    path("application/", include("application.urls",namespace="application")),
     # path(
     #     "projectmanagement/",
     #     include("projectmanagement.urls", namespace="projectmanagement"),
