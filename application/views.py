@@ -17,7 +17,7 @@ from django.views.generic import (
         UpdateView,
     )
 from.models import wcagsWebsite
-#from .forms import WCAG_Form
+from .forms import wcagForm
 #from. utils import analyze_website_for_wcag_compliance
 
 # User=settings.AUTH_USER_MODEL
@@ -29,3 +29,14 @@ def wcagsWebsite_list_view(request):
     wcaglist=wcagsWebsite.objects.all().order_by("updated_at")
     
     return render(request,"application/wcaglist.html",{"wcaglist":wcaglist})
+
+def wcagsWebsite_create_view(request):
+    if request.method == 'POST':
+        form =  wcagForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:wcaglist")
+    else:
+        form = wcagForm()
+        print("form ====>",form) 
+    return render(request,"application\wcagcreate.html", {'form': form})
