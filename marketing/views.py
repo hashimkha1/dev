@@ -4,7 +4,7 @@ import logging
 # from django.core.management import call_command
 from django.db.models import IntegerField, F,Sum, Q
 from django.db.models.functions import Cast
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import redirect, render
 from marketing.models import Ads,Whatsapp_Groups,Whatsapp_dev
 from coda_project import settings
@@ -22,10 +22,14 @@ from django.views.generic import (
 from main.context_processors import images
 from django.contrib.auth import get_user_model
 from .utils import update_ads_by_pricing
+from main.permission import check_payment_history_permission
 
 User=get_user_model()
 logger = logging.getLogger(__name__)
 #====================General===========================
+
+@login_required
+@user_passes_test(lambda user: check_payment_history_permission(user, pricing_serial=19), login_url='/display_plans/it_solutions/')
 def marketing(request):
     social_media_cards = [
         {

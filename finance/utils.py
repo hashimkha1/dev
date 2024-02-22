@@ -419,15 +419,14 @@ def calculate_paypal_charges(amount):
     return None
 
 
-def update_link(service_array, user_payment_history, service_categories):
+def update_link(service_array, user_payment_history, pricing_serial_list):
 	updated_automation = []
+    
 	for automation_service in service_array:
-		if automation_service['service_category_slug'] and automation_service['service_category_slug'] in service_categories.keys():
-			# import pdb; pdb.set_trace()
-			payment_plan=user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']])
-			if user_payment_history.filter(plan = service_categories[automation_service['service_category_slug']]).exists():
-				updated_automation.append(automation_service)	
+		if automation_service['serial'] and automation_service['serial'] in pricing_serial_list.keys():
 			
+			if user_payment_history.filter(pricing_plan = automation_service['serial']).exists():
+				updated_automation.append(automation_service)	
 			else:
 				automation_service['link'] = automation_service['service_url']
 				updated_automation.append(automation_service)

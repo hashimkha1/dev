@@ -55,8 +55,8 @@
         {{ form.website_url }}
     </div>
     <div class="col-md-3">
-        <label for="upload_file">Upload HTML file:</label>
-        {{ form.upload_file }}
+        <label for="upload_file">Upload multi HTML file:</label>
+        {{ form.upload_multi_file }}
     </div>
     <div class="col-md-1"></div>
   </div>
@@ -67,10 +67,12 @@
   </form>
 </div>
   <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-  {% if problem_list|length > 0%}
+  {% if problem_json|length > 0%}
+
+  {% for problem in problem_json%}
   <section id="career">
     <div class="career">
-      <h1 class="text-center">WCAG Compliance Analysis for: {{ page_name }} </h1>
+      <h1 class="text-center">WCAG Compliance Analysis for: {{ problem.page_name }} </h1>
         <div class="card "> 
               <div class="card-body">
                 <link href="https://cdn.jsdelivr.net/npm/prismjs@1.24.1/themes/prism-okaidia.css" rel="stylesheet" />
@@ -107,13 +109,13 @@
                   <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                        Check Your Improve Code: {{page_name}}
+                        Check Your Improve Code: {{problem.page_name}}
                       </button>
                     </h2>
                     <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                       <div class="accordion-body">
                         <pre><code>
-                          {{ improved_code }}
+                          {{ problem.improved_code }}
                           </code>
                           </pre>
                       </div>
@@ -134,10 +136,10 @@
           </tr>
         </thead>
         <tbody>
-          {% for problem in problem_list %}
+          {% for problem_obj in problem.problem_list %}
             <tr>
-              <td>{{problem.problem_title}}</td>
-              <td>{{problem.description}}</td>
+              <td>{{problem_obj.problem_title}}</td>
+              <td>{{problem_obj.description}}</td>
               <td><a href="https://docs.google.com/spreadsheets/d/1J4Q-O4AVTMH1dt931mfY7-EFf7emsGAUTuumub-Ppj0/edit#gid=0">Access</a></td>
             </tr>
           {% endfor %}
@@ -146,6 +148,7 @@
     </div>
     </div>
   </section>
+  {% endfor %}
   {% else %}
   <section id="career">
   <div class="career text-center">

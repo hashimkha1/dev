@@ -18,7 +18,7 @@ from application.models import UserProfile
 from management.utils import task_assignment_random
 from management.models import TaskHistory
 from main.forms import PostForm,ContactForm,WCAG_Form
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import (
@@ -44,7 +44,7 @@ from management.models import Requirement, Training
 from data.models import ClientAssessment
 from getdata.models import Editable
 from investing.views import get_or_create_investment_content
-
+from main.permission import check_payment_history_permission
 User=get_user_model()
 
 #  ===================================================================================   
@@ -320,8 +320,11 @@ def service_plans(request, *args, **kwargs):
             service_shown = ServiceCategory.objects.get(slug=sub_title).service
 
         elif pre_sub_title:
-            service_shown = Service.objects.get(slug=pre_sub_title)
-            # print("service_shown====>",service_shown)
+            try:
+                service_shown = Service.objects.get(slug=pre_sub_title)
+                # print("service_shown====>",service_shown)
+            except Service.DoesNotExist:
+                service_shown = ServiceCategory.objects.get(slug=sub_title).service
 
         elif sub_title.lower() in ["job-support","interview","full-course"]:
             # service_shown = Data Analysis
@@ -1140,7 +1143,8 @@ def wcag_list_view(request):
     return render(request, "main/departments/wcag_website_issues.html",context)
 
 
-login_required
+@login_required
+@user_passes_test(lambda user: check_payment_history_permission(user, pricing_serial=21), login_url='/display_plans/it_solutions/')
 def wcag_create_view(request, website_url='www.codanalytics.net'):
     if request.method == "POST":
         form = WCAG_Form(request.POST, request.FILES)
@@ -1149,27 +1153,45 @@ def wcag_create_view(request, website_url='www.codanalytics.net'):
             app_name = form.cleaned_data['app_name']
             website_url = form.cleaned_data['website_url']
             page_name = form.cleaned_data['page_name']
-            uploaded_file_content = request.FILES['upload_file'].read()
-            #checks the database
-            query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name__contains=page_name)
-            if query.exists():
-                query = query.first()
-                responses=query.improvements
-            else:
-                responses=analyze_website_for_wcag_compliance(uploaded_file_content)
-            try:
-                final_json_response = parse_json_response(responses)
-                context = create_context_for_exception(form, website_url, page_name, final_json_response)
-                # Save information in a database
-                instance = form.save(commit=False)
-                instance.improvements = final_json_response
-                instance.save()
-                return render(request, "main/departments/wcag_form_list.html",context)
-            except Exception as e:
-                print(e)
-                context = create_context_for_exception(form, website_url, page_name, responses)
+            response_list = []
+            problem_json = []
+            for uploaded_file in list(filter(lambda v: v.name.split('.')[-1].lower() == 'html', request.FILES.getlist('upload_multi_file'))):
+                uploaded_file_content = uploaded_file.read()
+                #checks the database
+                query = WCAGStandardWebsite.objects.filter(website_url__contains=website_url, page_name__contains=uploaded_file.name)
+                if query.exists():
+                    query = query.first()
+                    responses=query.improvements
+                else:
+                    responses=analyze_website_for_wcag_compliance(uploaded_file_content)
+                try:
+                    final_json_response = parse_json_response(responses)
+                    # Save information in a database
+                    instance = form.save(commit=False)
+                    instance.page_name = uploaded_file.name
+                    instance.improvements = final_json_response
+                    instance.save()
+                    response_list.append(final_json_response)
+                    problem_json.append({
+                        "improved_code": final_json_response['improved_code'],
+                        "problem_list": final_json_response['list_of_problem'],
+                        "page_name": instance.page_name
+                    })
+                    
+                except Exception as e:
+                    response_list.append(responses)
+                    print(e)
               # return redirect('main:wcag_list_view')
-                return render(request, "main/departments/wcag_form_list.html", context)
+            context = {
+                "form": WCAG_Form(),
+                "website_url": website_url,
+                "suggestions": response_list,
+                "accessibility": Accessibility,
+                # "improved_code": None,
+                "page_name": page_name,
+                "problem_json": problem_json
+            }
+            return render(request, "main/departments/wcag_form_list.html", context)
     else:
         context={ "form":WCAG_Form(), "accessibility": Accessibility}
         return render(request, "main/departments/wcag_form_list.html", context)
