@@ -202,9 +202,9 @@
                         </p>
                         <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
                         <!-- <div class="email-container" > -->
-                            <ul>
+                            <ul style="list-style: none;padding-left: 0;">
                                 {% for course_title, course_infos in courses.items %}
-                                    <ul>
+                                    <ul style="list-style: none;padding-left: 0;">
                                         {% for service, price in services.items %}
                                         {% if course_title ==  service.title %}    
                                                 <p class="course__price">Price: $ {{ price }}</p>
