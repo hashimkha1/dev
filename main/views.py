@@ -1192,9 +1192,8 @@ def wcag_create_view(request, website_url='www.codanalytics.net'):
                 "problem_json": problem_json
             }
             return render(request, "main/departments/wcag_form_list.html", context)
-    else:
-        context={ "form":WCAG_Form(), "accessibility": Accessibility}
-        return render(request, "main/departments/wcag_form_list.html", context)
+    context={ "form":WCAG_Form(), "accessibility": Accessibility}
+    return render(request, "main/departments/wcag_form_list.html", context)
 
 
 
