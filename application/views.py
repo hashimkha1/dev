@@ -16,7 +16,7 @@ from django.views.generic import (
         UpdateView,
     )
 from.models import codawcags
-#from .forms import propertiesForm
+from .forms import wcagForm
 
 # User=settings.AUTH_USER_MODEL
 import json
@@ -27,3 +27,14 @@ def codawcagslist_view(request):
     wcaglists=codawcags.objects.all().order_by("updated_at")
     
     return render(request, "application/wcaglist.html",{"wcaglists":wcaglists})
+
+def wcag_create_view(request):
+    if request.method == 'POST':
+        form =wcagForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:wcaglist")
+    else:
+        form = wcagForm()
+        print("form ====>",form) 
+    return render(request,"application/wcagcreate.html", {'form': form})  
