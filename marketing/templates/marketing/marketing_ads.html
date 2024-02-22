@@ -2,6 +2,8 @@
 {% load static %}
 {% block content %}
 <div class="container-fluid">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
         <div class="row">
             <div class="col-md-12 top-coloumn" style="background-color: #001f3f; padding: 20px;">
                 <p class="lead"><span id="current-date-time" class="font-weight-bold text-warning"></span></p>
@@ -43,6 +45,7 @@
                                         {% endfor %} 
                                                 <div class="course__content">
                                                     <div class="course__box"> 
+                                                        <h2 style="color: #E7AD4A;">{{ course_title }}</h2>
                                                         {% for info in course_infos %}
                                                             <p class="course__title">{{ info.title }}</p>
                                                             <p class="course__description">{{ info.description|safe }}</p>
@@ -82,6 +85,7 @@
         height: 100vh;
         margin: 0;
         background-color: #f0f0f0;
+        font-family: 'Roboto', sans-serif;
     }
 
     ul {
@@ -122,7 +126,7 @@
         color: wheat;
         margin-top: 10px;
         font-size: 1.4em;
-        font-family: Arial, Helvetica, sans-serif;
+        font-family: Georgia, 'Times New Roman', Times, serif;
     }
 
     .purchase-button {
