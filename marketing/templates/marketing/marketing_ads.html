@@ -1,85 +1,6 @@
  
 {% load static %}
 {% block content %}
-<div class="container-fluid">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-
-        <div class="row">
-            <div class="col-md-12 top-coloumn" style="background-color: #001f3f; padding: 20px;">
-                <p class="lead"><span id="current-date-time" class="font-weight-bold text-warning"></span></p>
-                <tr>
-                    <td>
-                        <table width="100%">
-                            <tr>
-                                <td style="text-align: left;">
-                                    <p style="font-size: 24px; font-weight: bold; color: #fff;">CODA-CROWN DATA ANALYSIS AND CONSULTANCY LLC</p>
-                                    <p style="font-style: italic; color: #fff;">New Courses at CODA.</p>
-                                </td>
-                                <td style="text-align: right;">
-                                    
-                                        <a href="{% url 'accounts:account-login' %}" style="background-color: #E7AD4A; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Sign In</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-            </div>
-        </div>
-        <div class="row bottom-coloumn">
-            <div class="col-md-12 top-coloumn bottom-coloumn">
-                
-                <div class="row">
-                    <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
-                        <h3 style="margin-top:0;">Dear {{ user }},</h3>
-                        <p class="title-sub-pay text-center" style="font-size:xx-large;">
-                            OUR COURSES
-                        </p>
-                        <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
-                        <!-- <div class="email-container" > -->
-                            <ul>
-                                {% for course_title, course_infos in courses.items %}
-                                    <ul>
-                                        {% for service, price in services.items %}
-                                        {% if course_title ==  service.title %}    
-                                                <p class="course__price">Price: $ {{ price }}</p>
-                                        {% endif %}        
-                                        {% endfor %} 
-                                                <div class="course__content">
-                                                    <div class="course__box"> 
-                                                        <h2 style="color: #E7AD4A;">{{ course_title }}</h2>
-                                                        {% for info in course_infos %}
-                                                            <p class="course__title">{{ info.title }}</p>
-                                                            <p class="course__description">{{ info.description|safe }}</p>
-                                                        {% endfor %}
-                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" class="purchase-button">Purchase Now</a>
-                                                    </div>
-                                                </div>       
-                                    </ul>
-                                {% endfor %}
-                            </ul>
-                        <!-- </div> -->
-                                <div class="closing-paragraphs">
-                                    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                                    <p>Thank you,</p>
-                                    <p>Discover More:</p>
-                                </div>
-                                <div class="social-icons-container">
-                                    
-                                    <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" class="social-icon linkedin">
-                                        <img src="{% static 'admin/image/linkedin.png' %}" alt="LinkedIn">
-                                    </a>
-                                
-                                    <a href="https://www.facebook.com/chris.maghas/" target="_blank" class="social-icon facebook">
-                                        <img src="{% static 'admin/image/facebook.png' %}" alt="Facebook">
-                                    </a>
-                                
-                                    <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" class="social-icon youtube">
-                                        <img src="{% static 'admin/image/youtube.png' %}" alt="YouTube">
-                                    </a>
-                                </div>
-                    </div>
-            </div>
-        </div>
-    </div>
 <style>
     body {
         height: 100vh;
@@ -247,4 +168,84 @@
     // Set up a timer to update the date every second (you can adjust the interval as needed)
     setInterval(updateDateTime, 1000);
 </script>
+<div class="container-fluid">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+
+        <div class="row">
+            <div class="col-md-12 top-coloumn" style="background-color: #001f3f; padding: 20px;">
+                <p class="lead"><span id="current-date-time" class="font-weight-bold text-warning"></span></p>
+                <tr>
+                    <td>
+                        <table width="100%">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <p style="font-size: 24px; font-weight: bold; color: #fff;">CODA-CROWN DATA ANALYSIS AND CONSULTANCY LLC</p>
+                                    <p style="font-style: italic; color: #fff;">New Courses at CODA.</p>
+                                </td>
+                                <td style="text-align: right;">
+                                    
+                                        <a href="{% url 'accounts:account-login' %}" style="background-color: #E7AD4A; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Sign In</a>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+            </div>
+        </div>
+        <div class="row bottom-coloumn">
+            <div class="col-md-12 top-coloumn bottom-coloumn">
+                
+                <div class="row">
+                    <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
+                        <h3 style="margin-top:0;">Dear {{ user }},</h3>
+                        <p class="title-sub-pay text-center" style="font-size:xx-large;">
+                            OUR COURSES
+                        </p>
+                        <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
+                        <!-- <div class="email-container" > -->
+                            <ul>
+                                {% for course_title, course_infos in courses.items %}
+                                    <ul>
+                                        {% for service, price in services.items %}
+                                        {% if course_title ==  service.title %}    
+                                                <p class="course__price">Price: $ {{ price }}</p>
+                                        {% endif %}        
+                                        {% endfor %} 
+                                                <div class="course__content">
+                                                    <div class="course__box"> 
+                                                        <h2 style="color: #E7AD4A;">{{ course_title }}</h2>
+                                                        {% for info in course_infos %}
+                                                            <p class="course__title">{{ info.title }}</p>
+                                                            <p class="course__description">{{ info.description|safe }}</p>
+                                                        {% endfor %}
+                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" class="purchase-button">Purchase Now</a>
+                                                    </div>
+                                                </div>       
+                                    </ul>
+                                {% endfor %}
+                            </ul>
+                        <!-- </div> -->
+                                <div class="closing-paragraphs">
+                                    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                                    <p>Thank you,</p>
+                                    <p>Discover More:</p>
+                                </div>
+                                <div class="social-icons-container">
+                                    
+                                    <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" class="social-icon linkedin">
+                                        <img src="{% static 'admin/image/linkedin.png' %}" alt="LinkedIn">
+                                    </a>
+                                
+                                    <a href="https://www.facebook.com/chris.maghas/" target="_blank" class="social-icon facebook">
+                                        <img src="{% static 'admin/image/facebook.png' %}" alt="Facebook">
+                                    </a>
+                                
+                                    <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" class="social-icon youtube">
+                                        <img src="{% static 'admin/image/youtube.png' %}" alt="YouTube">
+                                    </a>
+                                </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+
     {% endblock content %}
