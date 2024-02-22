@@ -422,6 +422,7 @@ Automation = [
         "description":"CHATGPT/Gemini:The super power of modern day analytics ",
         "service_category_slug": None,
         "service_url": "https://chat.openai.com/chat",
+        "serial": None,
     },
     {
         "title": "Testimonials",
@@ -429,6 +430,7 @@ Automation = [
         "description":"Using AI to aid Clients to leave feedback",
         "service_category_slug": None,
         "service_url": SITEURL+"/post/new/",
+        "serial": None,
     },
     {
         "title": "Search Data",
@@ -436,6 +438,7 @@ Automation = [
         "description":"Giving You the power to search your own data",
         "service_category_slug": None,
         "service_url": SITEURL+"/search/",
+        "serial": None,
     },
 
     {
@@ -443,21 +446,24 @@ Automation = [
         "link":SITEURL+"/investing/options/shortputdata",
         "description":"Fetching information from options play",
         "service_category_slug": 'options',
-        "service_url": SITEURL+'/display_plans/options'
+        "service_url": SITEURL+'/display_plans/options',
+        "serial": None,
     },
     {
         "title": "Social Media",
         "link":SITEURL+"/marketing/",
         "description":"Posting ads to social media",
         "service_category_slug": 'social_media',
-        "service_url": SITEURL+'/display_plans/social_media/'
+        "service_url": SITEURL+'/display_plans/it_solution/',
+        "serial": 19,
     },
     {
         "title": "Accessibility Checks",
         "link":SITEURL+"/check_wcag_compliance/",
         "description":"Expanding accessibility to all",
         "service_category_slug": 'accessibility',
-        "service_url": SITEURL+'/display_plans/accessibility/'
+        "service_url": SITEURL+'/display_plans/it_solution/',
+        "serial": 21,
     },
 ]
 
@@ -493,6 +499,7 @@ General = [
         "description":"Fetching data from Cashapp and updating records",
         "service_category_slug": None,
         "service_url": SITEURL+"/getdata/cashappdata/",
+        'serial': None
     },
     {
         "title": "Goto/Zoom meetings",
@@ -500,6 +507,7 @@ General = [
         "description":"Fetching Meeting info using APIs",
         "service_category_slug": None,
         "service_url": SITEURL+"/refresh_token_goto/",
+        'serial': None
     },
     {
         "title": "Open Urls",
@@ -507,13 +515,15 @@ General = [
         "description":"Script to automate simple tasks",
         "service_category_slug": None,
         "service_url": SITEURL+"/plan_urls/",
+        'serial': None
     },
     {
         "title": "Job Application",
         "link":SITEURL+"/getdata/replies/",
         "description":"Automating Job applications",
         "service_category_slug": 'job-support',
-        "service_url": SITEURL+"/display_plans/job-support"
+        "service_url": SITEURL+"/display_plans/job-support",
+        'serial': None
     },
   
 ]

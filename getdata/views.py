@@ -23,7 +23,7 @@ from finance.models import (Transaction, Payment_History)
 
 from investing.models import OverBoughtSold
 from marketing.models import Whatsapp_Groups
-from main.models import ServiceCategory
+from main.models import Pricing
 
 #importing Options play funcationality
 
@@ -90,16 +90,14 @@ def uploaddata(request):
 def bigdata(request):
 	if request.user.category != 2:
 		payment_history = Payment_History.objects.filter(customer_id=request.user)
-		print(payment_history)
-		service_categories = dict(ServiceCategory.objects.values_list('slug', 'id'))
-		print(service_categories)
-
-
+		
+		pricing_serial_list = dict(Pricing.objects.values_list('serial', 'id'))
+		
 		context={
 			"title":  "data",
-			"Automation": update_link(Automation, payment_history, service_categories),
+			"Automation": update_link(Automation, payment_history, pricing_serial_list),
 			"Stocks":Stocks,
-			"General":update_link(General	, payment_history, service_categories),
+			"General":update_link(General	, payment_history, pricing_serial_list),
 		}
 	else:
 		context={

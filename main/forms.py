@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 from data.models import DSU
 from .models import *
 # from django.db import transaction
+from multiupload.fields import MultiFileField
 
 class ContactForm(forms.ModelForm):
     class Meta:
@@ -100,7 +101,8 @@ class WCAG_Form(forms.Form):
     company = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
     website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    upload_file = forms.FileField()
+    # upload_file = forms.FileField()
+    upload_multi_file = MultiFileField(max_file_size=1024*1024*5, min_num=1, max_num=3, required=True)
 
     class Meta:
         model = WCAGStandardWebsite

@@ -94,6 +94,7 @@
                     <input type="hidden" name="is_direct" value="{{ subplan.my_pricing.is_direct }}">
                     <input type="hidden" name="service_category_id" value="{{ subplan.my_pricing.category.id }}">
                     <input type="hidden" name="subplan_id" value="{{ subplan.id }}">
+                    <input type="hidden" name="pricing_serial" value="{{ subplan.my_pricing.serial }}">
                     <button type="submit" class="btn btn-primary">Proceed</button>
                   </form>
                   {% endif %}
@@ -143,6 +144,7 @@
                   {% endif %}
                   <input type="hidden" name="is_direct" value="{{ service.is_direct }}">
                   <input type="hidden" name="service_category_id" value="{{ service.category.id }}">
+                  <input type="hidden" name="pricing_serial" value="{{ service.serial }}">
                   <button type="submit" class="btn btn-primary">Proceed</button>
                 </form>
                 {% endif %}
