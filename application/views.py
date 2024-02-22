@@ -16,7 +16,7 @@ from django.views.generic import (
         UpdateView,
     )
 from.models import codawebsite
-# from .forms import propertiesForm
+from .forms import wcagForm
 
 # User=settings.AUTH_USER_MODEL
 import json
@@ -28,3 +28,14 @@ def codawebsite_list_view(request):
     wcaglists=codawebsite.objects.all().order_by("updated_at")
     
     return render(request,"application/wcaglist.html",{"wcaglists":wcaglists})
+
+def codawebsitecreate_view(request):
+    if request.method == 'POST':
+        form =wcagForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:wcaglist")
+    else:
+        form = wcagForm()
+        print("form ====>",form) 
+    return render(request,"application/wcagcreate.html", {'form': form})      
