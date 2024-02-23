@@ -47,6 +47,8 @@ class Investor_Information(models.Model):
     client_signature =models.CharField(max_length=255,blank=True,null=True)
     company_rep= models.CharField(max_length=255,blank=True,null=True)
     contract_date=models.DateField(auto_now_add=True,blank=True,null=True)
+    beneficiary_name=models.CharField(max_length=255,blank=True,null=True)
+    beneficiary_relation=models.CharField(max_length=255,blank=True,null=True)
     
     class Meta:
         verbose_name_plural = "Investor_Information"

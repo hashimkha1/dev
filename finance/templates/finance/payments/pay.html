@@ -43,11 +43,13 @@
                                             {% endif %} -->
                                           </b>
                                         </button>
-                                      <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
-                                        <button>
-                                          Edit
-                                        </button>
-                                      </a>
+                                      {% if payments %}
+                                        <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
+                                          <button>
+                                            Edit
+                                          </button>
+                                        </a>
+                                      {% endif %}
                                       <div id="paypal-button-container"></div>
                                 </div>
                             </div>
