@@ -24,4 +24,4 @@ class WCAG_TAB_Form(forms.Form):
 
     class Meta:
         model = WCAG_TAB
-        fields = ['improvements', 'website_url', 'page_name', ]
+        fields = ['upload_file', 'website_url', 'page_name',]
