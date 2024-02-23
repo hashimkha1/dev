@@ -422,7 +422,7 @@ def send_email_ads(request):
     # Retrieve the list of users based on their category
     # # users_to_email = User.objects.filter(category=user_category)
     # users_to_email = User.objects.filter(is_staff=True,is_active=True)
-    users_to_email = "khah7565@gmail.com"
+    users_to_email = "alinorgy8@gmail.com"
     # print(users_to_email)
     plans = context_data.get('plans')
     pricing_info = context_data.get('pricing_info')
