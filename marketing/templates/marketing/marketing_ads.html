@@ -2,127 +2,6 @@
 {% load static %}
 {% block content %}
 <style>
-    body {
-        height: 100vh;
-        margin: 0;
-        background-color: #f0f0f0;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    ul {
-        list-style: none;
-        padding-left: 0;
-    }
-
-    .course__content {
-        margin-left: 210px;
-        padding-bottom: 20px;
-    }
-
-    .course__price {
-        font-size: 1.7em;
-        color: gray;
-        margin-top: 8px;
-    }
-
-    .course__box {
-        border: 1px solid #ccc;
-        width: 55%;
-        display: inline-block;
-        margin-right: 0%;
-        box-sizing: border-box;
-        padding: 20px;
-        border-radius: 7px;
-        background-color: #f5f5f5;
-        transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-    }
-
-    .course__title {
-        font-size: 1.1em;
-        color: #243865;
-        font-weight: 700;
-    }
-
-    .course__description {
-        color: wheat;
-        margin-top: 10px;
-        font-size: 1.4em;
-        font-family: Georgia, 'Times New Roman', Times, serif;
-    }
-
-    .purchase-button {
-        position: left;
-        bottom: 10px;
-        right: 10px;
-        padding: 5px 10px;
-        text-decoration: none;
-        background-color: #007bff;
-        color: #fff;
-        border-radius: 5px;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .course__box:hover {
-        transform: scale(1.05);
-        background-color: #e0e0e0;
-        color: #333;
-    }
-
-    .course__box:hover .purchase-button {
-        background-color: #00b36e;
-    }
-
-    .closing-paragraphs {
-        margin-top: 20px;
-    }
-
-    .closing-paragraphs p {
-        margin-bottom: 10px;
-        font-size: 1.1em;
-        color: black;
-        font-size: 20px;
-        font-weight: 70px;
-    }
-
-    .social-icons-container {
-        display: flex;
-        margin-top: 1%;
-        margin-left: 120px;
-    }
-
-    .social-icon {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-decoration: none;
-        margin-right: 30px;
-        height: 40px;
-        width: 40px;
-        border-radius: 50%;
-        overflow: hidden;
-        transition: background-color 0.3s ease;
-    }
-
-    .social-icon img {
-        width: 100%;
-        height: auto;
-    }
-
-    .social-icon:hover {
-        background-color: #555;
-    }
-
-    .linkedin {
-        background-color: #0077B5;
-    }
-
-    .facebook {
-        background-color: #3b5998;
-    }
-
-    .youtube {
-        background-color: #ff0000;
-    }
 
     .lead {
         font-size: 1.5rem;
@@ -142,7 +21,6 @@
         .course__content {
             margin-left: 0;
         }
-
         .course__box {
             width: 100%;
             margin-right: 0;
@@ -153,22 +31,7 @@
         }
     }
 </style>
-<script>
-    function updateDateTime() {
-        var currentDate = new Date();
-        var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        var formattedDate = currentDate.toLocaleDateString('en-US', options);
-
-        document.getElementById('current-date-time').textContent = formattedDate;
-    }
-
-    // Update the date initially
-    updateDateTime();
-
-    // Set up a timer to update the date every second (you can adjust the interval as needed)
-    setInterval(updateDateTime, 1000);
-</script>
-<div class="container-fluid">
+<div class="container-fluid" style="height: 100vh;margin: 0;background-color: #f0f0f0;font-family: 'Roboto', sans-serif;">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 
         <div class="row">
@@ -210,42 +73,138 @@
                                                 <p class="course__price">Price: $ {{ price }}</p>
                                         {% endif %}        
                                         {% endfor %} 
-                                                <div class="course__content">
-                                                    <div class="course__box"> 
+                                            <div style="margin-left: 210px;
+                                            padding-bottom: 20px;" class="course__content">
+                                                <div class="course__box" style="border: 1px solid #ccc;
+                                                width: 55%;
+                                                display: inline-block;
+                                                margin-right: 0%;
+                                                box-sizing: border-box;
+                                                padding: 20px;
+                                                border-radius: 7px;
+                                                background-color: #f5f5f5;
+                                                transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+                                                @media (max-width: 768px) {
+                                                    width: 40%;
+                                                    margin-right: 0;
+                                                }"
+                                    
+                                         onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='#e0e0e0'; this.style.color='#333';"
+                                         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#f5f5f5'; this.style.color='#000';"> 
                                                         <h2 style="color: #E7AD4A;">{{ course_title }}</h2>
                                                         {% for info in course_infos %}
-                                                            <p class="course__title">{{ info.title }}</p>
-                                                            <p class="course__description">{{ info.description|safe }}</p>
+                                                            <p style="font-size: 1.1em; color: #243865; font-weight: 700;">{{ info.title }}</p>
+                                                            <p style="color: wheat;
+                                                            margin-top: 10px;
+                                                            font-size: 1.4em;
+                                                            font-family: Georgia, 'Times New Roman', Times, serif;">{{ info.description|safe }}</p>
                                                         {% endfor %}
-                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" class="purchase-button">Purchase Now</a>
+                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" style="position: left;
+                                                        bottom: 10px;
+                                                        right: 10px;
+                                                        padding: 5px 10px;
+                                                        text-decoration: none;
+                                                        background-color: #007bff;
+                                                        color: #fff;
+                                                        border-radius: 5px;
+                                                        transition: background-color 0.3s ease-in-out;">Purchase Now</a>
                                                     </div>
-                                                </div>       
+                                                </div>
+                                            </div>    
+
                                     </ul>
                                 {% endfor %}
                             </ul>
                         <!-- </div> -->
-                                <div class="closing-paragraphs">
-                                    <p>If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                                    <p>Thank you,</p>
-                                    <p>Discover More:</p>
+                                <div style="  margin-top: 20px;">
+                                    <p style="margin-bottom: 10px;
+                                    font-size: 1.1em;
+                                    color: black;
+                                    font-size: 20px;
+                                    font-weight: 70px;">If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                                    <p style="margin-bottom: 10px;
+                                    font-size: 1.1em;
+                                    color: black;
+                                    font-size: 20px;
+                                    font-weight: 70px;">Thank you</p>
+                                    <p style="margin-bottom: 10px;
+                                    font-size: 1.1em;
+                                    color: black;
+                                    font-size: 20px;
+                                    font-weight: 70px;">Discover More:</p>
                                 </div>
-                                <div class="social-icons-container">
-                                    
-                                    <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" class="social-icon linkedin">
-                                        <img src="{% static 'admin/image/linkedin.png' %}" alt="LinkedIn">
-                                    </a>
-                                
-                                    <a href="https://www.facebook.com/chris.maghas/" target="_blank" class="social-icon facebook">
-                                        <img src="{% static 'admin/image/facebook.png' %}" alt="Facebook">
-                                    </a>
-                                
-                                    <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" class="social-icon youtube">
-                                        <img src="{% static 'admin/image/youtube.png' %}" alt="YouTube">
-                                    </a>
-                                </div>
+                                <div style="display: flex;
+                                margin-top: 1%;
+                                margin-left: 120px;">
+                    
+                        <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" style="display: flex;
+                                                                                                        align-items: center;
+                                                                                                        justify-content: center;
+                                                                                                        text-decoration: none;
+                                                                                                        margin-right: 30px;
+                                                                                                        height: 40px;
+                                                                                                        width: 40px;
+                                                                                                        border-radius: 50%;
+                                                                                                        overflow: hidden;
+                                                                                                        transition: background-color 0.3s ease;
+                                                                                                        background-color: #0077B5;"
+                           onmouseover="this.style.backgroundColor='#555';"
+                           onmouseout="this.style.backgroundColor='#0077B5';">
+                            <img src="{% static 'admin/image/linkedin.png' %}" alt="LinkedIn" style="width: 100%; height: auto;">
+                        </a>
+                    
+                        <a href="https://www.facebook.com/chris.maghas/" target="_blank" style="display: flex;
+                                                                                                 align-items: center;
+                                                                                                 justify-content: center;
+                                                                                                 text-decoration: none;
+                                                                                                 margin-right: 30px;
+                                                                                                 height: 40px;
+                                                                                                 width: 40px;
+                                                                                                 border-radius: 50%;
+                                                                                                 overflow: hidden;
+                                                                                                 transition: background-color 0.3s ease;
+                                                                                                 background-color: #3b5998;"
+                           onmouseover="this.style.backgroundColor='#555';"
+                           onmouseout="this.style.backgroundColor='#3b5998';">
+                            <img src="{% static 'admin/image/facebook.png' %}" alt="Facebook" style="width: 100%; height: auto;">
+                        </a>
+                    
+                        <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" style="display: flex;
+                                                                                                      align-items: center;
+                                                                                                      justify-content: center;
+                                                                                                      text-decoration: none;
+                                                                                                      margin-right: 30px;
+                                                                                                      height: 40px;
+                                                                                                      width: 40px;
+                                                                                                      border-radius: 50%;
+                                                                                                      overflow: hidden;
+                                                                                                      transition: background-color 0.3s ease;
+                                                                                                      background-color: #ff0000;"
+                           onmouseover="this.style.backgroundColor='#555';"
+                           onmouseout="this.style.backgroundColor='#ff0000';">
+                            <img src="{% static 'admin/image/youtube.png' %}" alt="YouTube" style="width: 100%; height: auto;">
+                        </a>
+                    
+                    </div>
                     </div>
             </div>
         </div>
     </div>
+</div>
+    <script>
+        function updateDateTime() {
+            var currentDate = new Date();
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            var formattedDate = currentDate.toLocaleDateString('en-US', options);
+    
+            document.getElementById('current-date-time').textContent = formattedDate;
+        }
+    
+        // Update the date initially
+        updateDateTime();
+    
+        // Set up a timer to update the date every second (you can adjust the interval as needed)
+        setInterval(updateDateTime, 1000);
+    </script>
 
     {% endblock content %}
