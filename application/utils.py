@@ -1,17 +1,108 @@
+import os,requests,openai
+import random,string
+from coda_project.settings import SITEURL
+# import tableauserverclient as TSC
+import datetime
+from datetime import datetime as date_obj
+from django.utils.text import slugify
+from django import template
+from django.apps import apps
+from django.db.models import Q
+from langchain.agents import create_sql_agent
+# from langchain_community.agent_toolkits import SQLDatabaseToolkit
+# from langchain.agents.agent_types import AgentType
+# from langchain_openai import ChatOpenAI, OpenAI
+# from langchain_community.utilities import SQLDatabase
+
+""" ========This code is for save images in google drive======= """
+from google.oauth2 import service_account
+from googleapiclient.http import MediaFileUpload 
+from googleapiclient.discovery import build
+import httplib2  # Import the httplib2 library for setting the timeout
+from google.auth import exceptions
+from django.contrib.auth.decorators import login_required
+
+
+def generate_chatbot_response(user_message, user_message_dict=None):
+    
+    if user_message_dict is None:
+        messages = [
+        {"role": "system", "content": user_message},
+        ]
+    else:
+        messages = user_message_dict
+
+    client = openai.OpenAI(api_key='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'
+)
+
+    response = client.chat.completions.create(
+    # response = openai.completions.create(
+            model="gpt-4-1106-preview",
+            messages=messages,
+            # response_format="json"
+            # temperature=0.4,
+            # max_tokens=4096,
+            # top_p=1,
+            # frequency_penalty=0,
+            # presence_penalty=0
+    )
+    
+    if response:
+        result=response.choices[0].message.content     
+        
+    else:
+        result = None
+    return result
+
+def analyze_website_for_wcag_compliance(uploaded_file_content):
+    user_message = f"""
+        html_code:{uploaded_file_content}   
+        """ + """
+            Please review the provided HTML code with respect to WCAG criteria. Identify specific areas in the code that do not meet the standards, and provide a rewritten, corrected version of the HTML code.
+            The output should be formatted in JSON as follows:
+            {
+                "list_of_problems": [
+                    {
+                        "problem_title": "Title of Problem",
+                        "description": "Description of the problem found in the page."
+                    }
+                ],
+                "improved_code": "Corrected HTML code"
+            }
+            Ensure that you do not alter the key names and do not include any additional strings in the output.
+    """
+    try:
+        suggestions =generate_chatbot_response(user_message)
+    except Exception as e:
+        # Handle exceptions
+        print(f"An error occurred while contacting the OpenAI API: {e}")
+        suggestions = "Could not generate suggestions due to an error."
+    return suggestions
+
+def handle_openai_api_exception(responses):
+    user_message = f"Consider this response {responses}. Please display the information in tabular format with fields as (list_of_problems, problem_title, description). For improved_code value, format it in proper HTML."
+    try:
+        return generate_chatbot_response(user_message)
+    except Exception as e:
+        print(f"An error occurred while contacting the OpenAI API: {e}")
+        return "Could not generate suggestions due to an error."
+
+
+
 # Interview description data
 posts = [
     {
         "Inteview": "First   Interview",
         "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
+        "Description": "Understanding SQL,Tableau & Alteryx ",
+        "Duration": "5 Days ",
         "Lead": "HR Manager",
     },
     {
         "Inteview": "Second Interview",
         "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
+        "Description": "Understanding Company Projects, Values & Systems    ",
+        "Duration": "5 Days ",
         "Lead": "HR Manager",
     },
     {
@@ -91,15 +182,15 @@ TaskInfos = [
     {
         "Inteview": "First   Interview",
         "Concentration": "Data Analysis",
-        "Description": "Understanding SQL,Tableau & Alteryx	",
-        "Duration": "5 Days	",
+        "Description": "Understanding SQL,Tableau & Alteryx ",
+        "Duration": "5 Days ",
         "Lead": "HR Manager",
     },
     {
         "Inteview": "Second Interview",
         "Concentration": "General Tools& Company Projects",
-        "Description": "Understanding Company Projects, Values & Systems	",
-        "Duration": "5 Days	",
+        "Description": "Understanding Company Projects, Values & Systems    ",
+        "Duration": "5 Days ",
         "Lead": "HR Manager",
     },
     {
