@@ -1,0 +1,15 @@
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block title %}
+{% endblock %}
+
+{% block content %}
+<section class="container">
+    <h2>website_url:{{ wcag.website_url }}</h2>
+    <p><strong>page_name</strong>{{wcag.page_name}}</p>
+    <p><strong>improvements:</strong>{{wcag.improvements}}</p>
+    <p><strong>created_at :</strong>{{wcag.created_at }}</p>
+    <p><strong>updated_at :</strong>{{wcag.updated_at }}</p>
+</section>
+{% endblock content %}

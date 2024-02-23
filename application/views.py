@@ -114,3 +114,7 @@ def WCAG_TAB_delete(request,pk):
         wcag.delete()
         return redirect("application:wcaglist")
     return render(request,"application/applications/wcagdelete.html",{'wcag':wcag})
+
+def WCAG_TAB_detail(request,pk):
+    wcag = get_object_or_404(WCAG_TAB,pk=pk)            
+    return render(request,"application/applications/wcagdetail.html",{'wcag':wcag})

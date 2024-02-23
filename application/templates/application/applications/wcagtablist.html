@@ -20,6 +20,9 @@
       </thead>
       <tbody>
         {% for wcag in wcaglist %}
+        <td>
+         <a href="{% url 'application:wcagdetail' wcag.id %}">detail</a>
+        </td>
         <tr>
           <!-- <td>{{applicant.id}}</td> -->
           <td>{{wcag.id}}</td>
