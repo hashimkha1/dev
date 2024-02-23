@@ -15,13 +15,13 @@ class WCAG_TAB_Form(forms.ModelForm):
         model = WCAG_TAB
         fields ='__all__'
 
-class WCAG_TAB_Form(forms.Form):
-    #Enter your website ie www.example.com
-    # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    upload_file = forms.FileField()
-    website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-    page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+# class WCAG_TAB_Form(forms.Form):
+#     #Enter your website ie www.example.com
+#     # web_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+#     upload_file = forms.FileField()
+#     website_url = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
+#     page_name = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
 
-    class Meta:
-        model = WCAG_TAB
-        fields = ['upload_file', 'website_url', 'page_name',]
+#     class Meta:
+#         model = WCAG_TAB
+#         fields = ['upload_file', 'website_url', 'page_name',]

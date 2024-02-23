@@ -29,6 +29,8 @@
           <td>{{wcag.improvements}}</td>
           <td>{{wcag.created_at}}</td>
           <td>{{wcag.updated_at}}</td>
+          <a href="{% url 'application:wcagupdate' wcag.id %}">Update</a>
+
           <td>
         <tr>
         {% endfor %}

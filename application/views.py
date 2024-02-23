@@ -96,3 +96,14 @@ def WCAGTABcreate_view(request):
             "accessibility":  Accessibility({}).summary(),  # Assuming Accessibility is defined somewhere
         }
     return render(request, 'application/applications/wcagtabcreateOPENAI.html', context)
+
+def WCAG_TAB_Update(request,pk):
+    wcag = get_object_or_404(WCAG_TAB, pk=pk)
+    if request.method == 'POST':
+        form = WCAG_TAB_Form(request.POST,instance=wcag)
+        if form.is_valid():
+            form.save()
+            return redirect('application:wcaglist')
+    else:
+        form = WCAG_TAB_Form(instance=wcag)
+        return render(request, "application/applications/WCAGUpdate.html", {'form': form, 'wcag': wcag})
