@@ -107,3 +107,10 @@ def WCAG_TAB_Update(request,pk):
     else:
         form = WCAG_TAB_Form(instance=wcag)
         return render(request, "application/applications/WCAGUpdate.html", {'form': form, 'wcag': wcag})
+
+def WCAG_TAB_delete(request,pk):
+    wcag = get_object_or_404(WCAG_TAB,pk=pk) 
+    if request.method =='POST':
+        wcag.delete()
+        return redirect("application:wcaglist")
+    return render(request,"application/applications/wcagdelete.html",{'wcag':wcag})
