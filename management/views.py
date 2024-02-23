@@ -334,7 +334,7 @@ def companyagenda(request):
             if subcategories_with_links:
                 categories_with_links.append((department, subcategories_with_links))
 
-    else:
+    elif request.user.is_staff:
         categories_with_links = []
         departments = Department.objects.filter(is_active=True)
         for department in departments:
@@ -345,7 +345,8 @@ def companyagenda(request):
                     subcategories_with_links.append((subcategory, subcategory_links))
             if subcategories_with_links:
                 categories_with_links.append((department, subcategories_with_links))
-                
+    else:
+        categories_with_links = []
     context = {
         'header_links': defined_links(request),
         "title": "Company Agenda",

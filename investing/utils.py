@@ -50,6 +50,9 @@ def get_user_investment(investments, latest_investment_rates):
         else:
             number_positions = math.floor(number)
 
+        if number_positions > 7:
+            number_positions = 7
+
         returns = compute_pay(amount_invested, minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
 
     else:
@@ -59,6 +62,7 @@ def get_user_investment(investments, latest_investment_rates):
         amount_invested = 0.0
         number_positions = 0
         minimum_duration = 0
+        returns = 0
 
     return total_amount, protected_capital, amount_invested, returns, number_positions, minimum_duration
 
