@@ -16,7 +16,7 @@ DetailView,
 UpdateView,
 )
 from.models import InvestmentStrategy
-# from .forms import propertiesForm
+from .forms import strategyForm
 
 # User=settings.AUTH_USER_MODEL
 import json
@@ -27,3 +27,22 @@ def investStrategyList(request):
     strategy = InvestmentStrategy.objects.all()
     print("strategy====>",strategy)
     return render(request,"application/strategylist.html",{'strategy':strategy})
+
+def investStrategyCreate(request):
+    if request.method == 'POST':
+        form =strategyForm(request.POST)
+        if form.is_valid():
+            form.save
+            return redirect("application:strategylist")
+    else:
+        form = strategyForm()
+        print("form ====>",form)
+        return render(request,"application/strategycreate.html", {'form': form})
+
+
+
+
+
+
+
+

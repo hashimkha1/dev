@@ -92,7 +92,7 @@ urlpatterns = [
     #path("finance/", include("finance.urls"), name="finance"),
     # path('testing/', include("testing.urls"))
     
-    
+
     #redirect and custom url for social login
     # path('accounts/social/custom_login/', account_views.custom_social_login, name='custom_social_login'),
     # path('social_accounts/signup/', account_views.join),
