@@ -52,6 +52,18 @@ def investStrategyUpdate(request,pk):
         return render(request,"application/strategyupdate.html",{'form':form,'strategy':strategy})
 
 
+def investStrategyDelete(request,pk):
+    strategy = get_object_or_404(InvestmentStrategy,pk=pk)
+    if request.method =='POST':
+        strategy.delete()
+        return redirect("application:strategylist")
+        return render(request,"application/strategydelete.html",{'strategy':strategy})
+
+
+
+
+
+
 
 
 
