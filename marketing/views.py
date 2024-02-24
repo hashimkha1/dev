@@ -421,12 +421,10 @@ def send_email_ads(request):
     # user_category = request.user.category
     # Retrieve the list of users based on their category
     # users_to_email = User.objects.filter(category=user_category)
-    # users_to_email = User.objects.filter(is_staff=True,is_active=True)
-    users_to_email = "khah7565@gmail.com"
+    users_to_email = User.objects.filter(is_staff=True,is_active=True)
     # print(users_to_email)
     plans = context_data.get('plans')
     pricing_info = context_data.get('pricing_info')
-
     context={
                 "SITEURL": settings.SITEURL,
                 'subtitle': sub_title,
