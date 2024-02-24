@@ -1,11 +1,6 @@
-import psycopg2
 import math
-from django.db.models import Q
-from django.shortcuts import get_object_or_404, redirect, render
 from datetime import date,datetime,time,timezone
-from .models import (ShortPut,covered_calls,credit_spread)
 from django.db.models import Q
-from coda_project.settings import SITEURL
 from django.contrib.auth import get_user_model
 from coda_project.settings import dba_values ,source_target
 User=get_user_model
