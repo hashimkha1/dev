@@ -10,7 +10,7 @@ from datetime import datetime,date,timedelta
 
 #from .utils import (generate_chatbot_response,handle_openai_api_exception,analyze_website_for_wcag_compliance )
 from .models import websitewcag
-#from .forms import WCAG_CODAWCAGLTDForm
+from .forms import wcagForm
 #from getdata.models import Logs
 # from coda_project import settings
 #from application.models import UserProfile
@@ -48,4 +48,16 @@ def websitewcag_list(request):
     print("wcaglists=====>",wcaglists)
     
     return render(request, "application/wcaglist.html",{"wcaglists":wcaglists})
+
+def websitewcagcreate_view(request):
+    if request.method == 'POST':
+        form =wcagForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:wcaglist")
+    else:
+        form = wcagForm()
+        print("form ====>",form) 
+    return render(request,"application/wcagcreate.html", {'form': form})      
+
     
