@@ -118,7 +118,7 @@ def generate_chatbot_response(user_message, user_message_dict=None):
 
     response = client.chat.completions.create(
     # response = openai.completions.create(
-            model="gpt-4-1106-preview",
+            model = os.environ.get('OPENAI_MODEL'),
             messages=messages,
             # response_format="json"
             # temperature=0.4,
@@ -794,26 +794,40 @@ App_Categories = {
 
 
 courses = {
-    "ETL" : [
-                {
-                    "title": "Discover ETL Mastery with Alteryx.",
-                    "description":" <li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Course Recap and Certification</li>"
-                },
-            ],
-    "Database": [
-                {
-                    "title":"Mastering Databases: From Data Storage to Advanced SQL Mastery",
-                    "description":"<li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Working with Relational Databases</li><li>Database Administration and Security</li><li>Performance Tuning and Optimization</li><li>Real-World Database Projects</li><li>Integration with Python and Data Analysis</li><li>Certification</li>",
-                },
+    'Data Analysis':[
+        {
+                    "title": "Discover ETL Mastery with Alteryx",
+                    "description":" <li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Workflow Automation</li><li>Course Recap and Certification</li>"
+        },
+        {
+            "title":"Mastering Databases",
+             "description":"<li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Database Administration and Security</li><li>Certification</li>",
+        },
+        {
+            "title":"Tableau Unleashed|PowerBI Pro",
+            "description":"<li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Mastering Tableau for Reporting</li><li>Certification</li>",
+        }
     ],
-    "Reporting": [
-                {
-                    "title":"Tableau Unleashed|PowerBI Pro",
-                    "description":"<li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Mastering Tableau for Reporting</li><li>Introduction to Power BI</li><li>Advanced Power BI Reporting</li><li>Real-World Reporting Projects</li><li>Certification</li>",
-                },
-    ],
+    # "ETL" : [
+    #             {
+    #                 "title": "Discover ETL Mastery with Alteryx.",
+    #                 "description":" <li>Introduction to ETL and Alteryx</li><li>Data Extraction Techniques</li><li>Data Transformation and Enrichment</li><li>Workflow Automation</li><li>Advanced Analytics with Alteryx</li><li>Real-World Projects</li><li>Integration with APIs and External Data</li><li>Performance Optimization and Scalability</li><li>Course Recap and Certification</li>"
+    #             },
+    #         ],
+    # "Database": [
+    #             {
+    #                 "title":"Mastering Databases: From Data Storage to Advanced SQL Mastery",
+    #                 "description":"<li>SQL Fundamentals</li><li>Database Design and Modeling</li><li>Querying Data with SQL</li><li>Advanced SQL Techniques</li><li>Working with Relational Databases</li><li>Database Administration and Security</li><li>Performance Tuning and Optimization</li><li>Real-World Database Projects</li><li>Integration with Python and Data Analysis</li><li>Certification</li>",
+    #             },
+    # ],
+    # "Reporting": [
+    #             {
+    #                 "title":"Tableau Unleashed|PowerBI Pro",
+    #                 "description":"<li>Creating Basic Reports</li><li>Advanced Data Visualization</li><li>Interactive Dashboards</li><li>Connecting to Data Sources</li><li>Data Transformation and Preparation</li><li>Advanced Reporting Techniques</li><li>Mastering Tableau for Reporting</li><li>Introduction to Power BI</li><li>Advanced Power BI Reporting</li><li>Real-World Reporting Projects</li><li>Certification</li>",
+    #             },
+    # ],
 
-    "AI": [
+    "AI & AUTOMATION": [
                 {
                     "title": "Module 1:CHATGPT|BARD",
                     "description":"<li>Introduction to AI</li>\
@@ -849,27 +863,7 @@ courses = {
                 },
     ],
 
-    'Full_Course': [
-                {
-                    "title": "Introduction: Project Defition",
-                    "description":"<li>CODA Employee Productivity  Project\
-                                   <li>Tools|Organization and Installations",
-                },
-                {
-                    "title": "Project A:ETL-Data Cleaning",
-                    "description":"<li>Using Alteryx to create a workflow</li>\
-                                   <li>Advanced Workflow to automate ETL Process</li>"
-                },
-                {
-                    "title": "Project B:Database Management",
-                    "description":"<li>Data Modelling</li>\
-                                   <li>Data Retrieval</li>"
-                },
-                {
-                    "title": "Project C:Reporting",
-                    "description":"<li>Creating Highly Scalable Reports</li>\
-                                   <li>Reporting deployment</li>"
-                },
+    'Interview': [
                 {
                     "title": "Interview",
                     "description":"<li>Transcripts</li>\

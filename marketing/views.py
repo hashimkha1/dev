@@ -418,10 +418,11 @@ def send_email_ads(request):
     message=''
     error_message=f'Hi,{request.user.first_name}, there seems to be an issue on our end.kindly contact us directly for payment details.'
     context_data = services(request)
-    user_category = request.user.category
+    # user_category = request.user.category
     # Retrieve the list of users based on their category
     # users_to_email = User.objects.filter(category=user_category)
-    users_to_email = User.objects.filter(is_staff=True,is_active=True)
+    # users_to_email = User.objects.filter(is_staff=True,is_active=True)
+    users_to_email = "khah7565@gmail.com"
     # print(users_to_email)
     plans = context_data.get('plans')
     pricing_info = context_data.get('pricing_info')
@@ -429,8 +430,7 @@ def send_email_ads(request):
     context={
                 "SITEURL": settings.SITEURL,
                 'subtitle': sub_title,
-                'user': request.user.first_name,
-                "services": plans,
+                # "services": plans,
                 'services': pricing_info,
                 'courses':courses,
                 'message':message,
@@ -440,6 +440,7 @@ def send_email_ads(request):
     try:
         # Send email to each user in the selected category
         for user in users_to_email:
+            context['user'] = user.first_name
             send_email(
                 category=user.category,  
                 to_email=[user.email],
