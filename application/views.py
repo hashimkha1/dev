@@ -60,7 +60,9 @@ def investStrategyDelete(request,pk):
         return render(request,"application/strategydelete.html",{'strategy':strategy})
 
 
-
+def investStrategyDetail(request,pk):
+    strategy = get_object_or_404(InvestmentStrategy,pk=pk)
+    return render(request,"application/strategydetail.html",{'strategy':strategy})
 
 
 

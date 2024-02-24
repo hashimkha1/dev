@@ -1,0 +1,69 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Clients</h2>
+    {% if user.is_active or user.is_superuser %}
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="#"> Update</a>
+    <a
+      class="btn btn-danger btn-sm mt-1 mb-1"
+      href="{%url 'application:strategydetail' strategy.id%}"
+    >
+      Delete</a
+    >
+    {% endif %}
+
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>symbol</th>
+          <th>action</th>
+          <th>expiry</th>
+          <th>days_to_expiry</th>
+          <th>strike_price</th>
+          <th>mid_price</th>
+          <th>bid_price</th>
+          <th>ask_price</th>
+          <th>implied_volatility_rank</th>
+          <th>earnings_date</th>
+          <th>earnings_flag</th>
+          <th>stock_price</th>
+          <th>raw_return</th>
+          <th>annualized_return</th>
+          <th>distance_to_strike</th>
+          <th>comment</th>
+          <th>on_date</th>
+          <th>is_active</th>
+          <th>is_featured</th>
+          <th>created_at</th>
+          <th>updated_at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{{strategy.symbol}}</td>
+          <td>{{strategy.action}}</td>
+          <td>{{strategy.expiry }}</td>
+          <td>{{strategy.days_to_expiry}}</td>
+          <td>{{strategy.strike_price}}</td>
+          <td>{{strategy.mid_price}}</td>
+          <td>{{strategy.bid_price}}</td>
+          <td>{{strategy.ask_price}}</td>
+          <td>{{strategy.implied_volatility_rank}}</td>
+          <td>{{strategy.earnings_date }}</td>
+          <td>{{strategy.earnings_flag}}</td>
+          <td>{{strategy.stock_price}}</td>
+          <td>{{strategy.raw_return}}</td>
+          <td>{{strategy.annualized_return}}</td>
+          <td>{{strategy.distance_to_strike}}</td>
+          <td>{{strategy.comment}}</td>
+          <td>{{strategy.on_date }}</td>
+          <td>{{strategy.is_active}}</td>
+          <td>{{strategy.is_featured}}</td>
+          <td>{{strategy.created_at}}</td>
+          <td>{{strategy.updated_at}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endblock content %}

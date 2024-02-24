@@ -44,7 +44,7 @@
 <tbody>
 {% for strategy in strategy %}
 <tr>
-<th><a href="#"></a>
+<a href="{% url 'application:strategydetail' strategy.id %}">Detail</a>
 <td>{{strategy.symbol}}</td>
 <td>{{strategy.action}}</td>
 <td>{{strategy.expiry }}</td>
