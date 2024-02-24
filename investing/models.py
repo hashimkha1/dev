@@ -2,18 +2,16 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils import timezone
 from django.db import models
-from decimal import Decimal
 from datetime import datetime,date
+from django.urls import reverse
 from django.utils import timezone
 from main.models import TimeStampedModel
 from django.contrib.auth import get_user_model
-import openai
 # from finance.utils import get_exchange_rate
 User = get_user_model()
 
 # Create your models here.
 
-from django.conf import settings
 
 
 class Investments(models.Model):
@@ -26,7 +24,8 @@ class Investments(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField()
 
-
+    def get_absolute_url(self):
+        return reverse("investing:user_investments", args=[self.client.username])
 
     def __str__(self):
         return f"Investment ID: {self.id}, Client: {self.client.username}"

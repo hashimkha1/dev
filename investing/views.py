@@ -214,7 +214,9 @@ def user_investments(request, username=None, *args, **kwargs):
     (total_amount,protected_capital,amount_invested,
      bi_weekly_returns,number_positions,minimum_duration
      )=get_user_investment(investments,latest_investment_rates)
-    
+    # print(total_amount,protected_capital,amount_invested,
+    #  bi_weekly_returns,number_positions,minimum_duration
+    #  )
     context = {
         "investments": investments,
         # "latest_investment": latest_investment if investments.exists() else None,
@@ -228,6 +230,24 @@ def user_investments(request, username=None, *args, **kwargs):
     }
     return render(request, 'investing/clients_investments.html', context)
 
+
+class Investment_Update_View(UpdateView):
+    # model = Oversold
+    model = Investments
+    # success_url = "/investing/overboughtsold/None"
+    fields ="__all__"
+    # fields = ['symbol','comment','is_featured']
+    template_name="main/snippets_templates/generalform.html"
+
+    def form_valid(self, form):
+        # form.instance.author=self.request.user
+        return super().form_valid(form)
+    def test_func(self):
+        # if self.request.user.is_superuser:
+        if self.request.user:
+            return True
+        return False
+    
 def optionlist(request):
     default_title = "creditspread"
     title = request.GET.get('title', default_title)

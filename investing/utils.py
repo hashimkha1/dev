@@ -7,18 +7,24 @@ User=get_user_model
 
 host,dbname,user,password=dba_values()
 
+from decimal import Decimal
 
-def compute_pay(amount,minimum_amount= 2000, base_return=10, inc_rate=7, increment_threshold_amt=2000, decrease_threshold_amt=3000):
+def compute_pay(amount, minimum_amount=Decimal('2000'), base_return=Decimal('5'), inc_rate=Decimal('7'), increment_threshold_amt=Decimal('2000'), decrease_threshold_amt=Decimal('2000')):
     if amount <= minimum_amount:
+        print(base_return)
         return base_return
     elif amount <= decrease_threshold_amt:
-        increments = (amount - minimum_amount) // increment_threshold_amt
-        return base_return + increments * inc_rate
+        print(Decimal(amount),Decimal(minimum_amount))
+        difference = (Decimal(amount) -Decimal(minimum_amount)) // increment_threshold_amt
+        print(f'{amount},Base Amount:{base_return},difference_amount>2000:{difference},rate:{inc_rate}')
+        print(difference * inc_rate)
+        print(base_return + difference * inc_rate)
+        return base_return + difference * inc_rate
     else:
         remaining_amount = amount - decrease_threshold_amt
         decrease_in_increments = remaining_amount // increment_threshold_amt
-        new_increment_rate = max(inc_rate - decrease_in_increments, 3)
-        return base_return + ((decrease_threshold_amt - minimum_amount) // increment_threshold_amt) * inc_rate + (remaining_amount // increment_threshold_amt) * (new_increment_rate + inc_rate) // 2
+        new_increment_rate = max(inc_rate - decrease_in_increments, Decimal('3'))
+        return base_return + ((decrease_threshold_amt - minimum_amount) // increment_threshold_amt) * inc_rate + (remaining_amount // increment_threshold_amt) * (new_increment_rate + inc_rate) // Decimal('2')
 
 def get_user_investment(investments, latest_investment_rates):
     if investments.exists():
@@ -35,6 +41,7 @@ def get_user_investment(investments, latest_investment_rates):
             total_amt += amt.amount
 
         amount_invested = float(total_amt) * float(rate_investment)
+        # print(total_amt,amount_invested,rate_investment)
         total_amount = float(total_amt)
         protected_capital = total_amount - amount_invested
         number = (amount_invested / 1000)

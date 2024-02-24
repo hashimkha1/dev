@@ -108,7 +108,8 @@
                 <!-- <td>{{client.rate_return}}</td>
                 <td>{{client.returns}}</td> -->
                 <!-- <td>{{client.is_active}}</td> -->
-                <td>edit</td>
+                <td> <a class="article-title" href="{% url 'investing:investmentupdate' client.id %}">Edit</a></td>
+                <!-- <td>edit</td> -->
               </tr>
             {% endfor %}
           </tbody>

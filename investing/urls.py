@@ -26,7 +26,8 @@ urlpatterns = [
     path('oversoldupdate/<int:pk>', views.oversold_update.as_view(), name='oversoldupdate'),
     path('investstrategy/', views.list_investment_strategies, name='investstrategy'),
     path('investstrategycreate/', views.create_investment_strategies, name='investstrategycreate'),
-    path('investstrategyupdate/<int:pk>', views.update_investment_strategies, name='investstrategyupdate')
+    path('investstrategyupdate/<int:pk>', views.update_investment_strategies, name='investstrategyupdate'),
+    path('investmentupdate/<int:pk>', views.Investment_Update_View.as_view(), name='investmentupdate')
 
 
 ]
