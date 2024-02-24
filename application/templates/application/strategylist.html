@@ -1,0 +1,80 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+<div class="career text-center">
+<h3 class="title">INVESTEMENT STRATEGY</h3>
+<div class="row">
+<div class="col-md-6">
+<p><a href="{% url 'application:strategylist'%}" class="btn btn-primary btn-sm"
+>ADD symbol
+</a></p>
+</div>
+<div class="col-md-6">
+<p><a href="#" class="btn btn-primary btn-sm"
+>BACK
+</a></p>
+</div>
+</div>
+<hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+<table class="table table-borderless" style="width: 100%">
+<thead class="border-bottom font-weight-bold">
+<tr>
+<th>symbol</th>
+<th>action</th>
+<th>expiry</th>
+<th>days_to_expiry</th>
+<th>strike_price</th>
+<th>mid_price</th>
+<th>bid_price</th>
+<th>ask_price </th>
+<th>implied_volatility_rank</th>
+<th>earnings_date</th>
+<th>earnings_flag</th>
+<th>stock_price</th>
+<th>raw_return</th>
+<th>annualized_return</th>
+<th> distance_to_strike </th>
+<th>comment</th>
+<th>on_date</th>
+<th>is_active</th>
+<th>is_featured</th>
+<th>created_at</th>
+<th>updated_at</th>
+</tr>
+</thead>
+<tbody>
+{% for strategy in strategy %}
+<tr>
+<th><a href="#"></a>
+<td>{{strategy.symbol}}</td>
+<td>{{strategy.action}}</td>
+<td>{{strategy.expiry }}</td>
+<td>{{strategy.days_to_expiry}}</td>
+<td>{{strategy.strike_price}}</td>
+<td>{{strategy.mid_price}}</td>
+<td>{{strategy.bid_price}}</td>
+<td>{{strategy.ask_price}}</td>
+<td>{{strategy.implied_volatility_rank}}</td>
+<td>{{strategy.earnings_date }}</td>
+<td>{{strategy.earnings_flag}}</td>
+<td>{{strategy.stock_price}}</td>
+<td>{{strategy.raw_return}}</td>
+<td>{{strategy.annualized_return}}</td>
+<td>{{strategy.distance_to_strike}}</td>
+<td>{{strategy.comment}}</td>
+<td>{{strategy.on_date }}</td>
+<td>{{strategy.is_active}}</td>
+<td>{{strategy.is_featured}}</td>
+<td>{{strategy.created_at}}</td>
+<td>{{strategy.updated_at}}</td>
+<a href="#"></a>
+</td>
+<td>
+<a href="#"></a>
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</section>
+{% endblock content %}
