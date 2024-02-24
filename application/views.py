@@ -40,6 +40,29 @@ def investStrategyCreate(request):
         return render(request,"application/strategycreate.html", {'form': form})
 
 
+def investStrategyUpdate(request,pk):
+    strategy = get_object_or_404(InvestmentStrategy,pk=pk)
+    if request.method =='POST':
+        form =strategyForm(request.POST,instance = strategy)
+        if form.is_valid():
+            form.save()
+            return redirect("application:strategylist")
+    else:
+        form = strategyForm(instance= strategy)
+        return render(request,"application/strategyupdate.html",{'form':form,'strategy':strategy})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
