@@ -1330,6 +1330,20 @@ def get_existing_data():
         existing_assets, existing_long_term_assets, existing_liabilities, existing_long_term_liabilities,
         total_current_assets, total_long_term_assets, total_current_liabilities, total_long_term_liabilities
     )
+def financial_statements():
+    saved_Revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
+    saved_Expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
+    total_revenue = saved_Revenue.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = saved_Expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    net_income = total_revenue - total_expenses
+    return saved_Revenue, saved_Expenses, total_revenue, total_expenses, net_income
+def cashflowstatements():
+    saved_inflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Investing Activities')
+    saved_outflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Investing Activities')
+    saved_inflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Financing Activities')
+    saved_outflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Financing Activities')
+    return saved_inflow_investing, saved_outflow_investing, saved_inflow_financing, saved_outflow_financing
+
 
 def openai_balancesheet(request):
     context = {}  # Initialize context variable
@@ -1383,7 +1397,7 @@ def openai_balancesheet(request):
     # Get existing revenue and expenses data
     (
         saved_Revenve, saved_Expanses, total_revenue, total_expenses, net_income
-    ) = calculate_revenue_and_expenses(request)
+    ) = financial_statements()
 
     if (
         saved_Revenve.exists()
@@ -1398,12 +1412,12 @@ def openai_balancesheet(request):
         })
     else:
         # Calculate revenue and expenses
-        response = calculate_revenue_and_expenses(request)
+        calculate_revenue_and_expenses(request)
 
     # Cash flow data
     (
-        saved_inflow_investing, saved_outflow_investing, saved_inflow_financing, saved_outflow_financing, response
-    ) = cashflow(request)
+        saved_inflow_investing, saved_outflow_investing, saved_inflow_financing, saved_outflow_financing
+    ) = cashflowstatements()
 
     # Check if data already exists in the model
     if (
@@ -1421,7 +1435,7 @@ def openai_balancesheet(request):
         })
     else:
         # If data does not exist, call OpenAI to generate it
-        response = cashflow(request)
+        cashflow(request)
         # Handle the response and update the context accordingly
 
     # Render the template with the 'assets' variable
