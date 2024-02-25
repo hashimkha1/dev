@@ -687,17 +687,27 @@ def defined_links(request):
             'Evidence': reverse('management:evidence'),
         })
     elif request.user.is_client:
-        links.update({
-            'Assessment': reverse('management:clientassessment'),
-            'My Training': reverse('data:train'),
-            'My Interview': reverse('data:question-detail', kwargs={'question_type': 'resume'}),
-            'Job Support': reverse('data:start_training', kwargs={'slug': 'interview'}),
-            'My Time': reverse('accounts:user-list', args=[request.user]),
-            'My Contract': reverse('finance:mycontract', args=[request.user]),
-            'New Contract': reverse('main:display_service', kwargs={'slug': 'data_analysis'}),
-            'Make Payment': reverse('finance:pay'),
-            
-        })
+        if request.user.category == 5:
+
+            links.update({
+                'My Time': reverse('accounts:user-list', args=[request.user]),
+                'My Contract': reverse('finance:mycontract', args=[request.user]),
+                'New Contract': reverse('main:display_service', kwargs={'slug': 'data_analysis'}),
+                'Make Payment': reverse('finance:pay'), 
+                'Investment Portal': reverse('investing:user_investments', kwargs={'username': request.user.username})
+            })
+        else:
+                links.update({
+                'Assessment': reverse('management:clientassessment'),
+                'My Training': reverse('data:train'),
+                'My Interview': reverse('data:question-detail', kwargs={'question_type': 'resume'}),
+                'Job Support': reverse('data:start_training', kwargs={'slug': 'interview'}),
+                'My Time': reverse('accounts:user-list', args=[request.user]),
+                'My Contract': reverse('finance:mycontract', args=[request.user]),
+                'New Contract': reverse('main:display_service', kwargs={'slug': 'data_analysis'}),
+                'Make Payment': reverse('finance:pay'),
+                
+            })
 
     if request.user.is_superuser:
         links.update({

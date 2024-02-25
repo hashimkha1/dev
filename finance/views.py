@@ -235,6 +235,8 @@ def contract_investment_submission(request):
 			contract_duration = request.POST.get('contract_duration')
 			number_positions = int(request.POST.get('number_positions'))
 			bi_weekly_returns = float(request.POST.get('bi_weekly_returns'))
+			beneficiary_name = request.POST.get('beneficiary_name', None)
+			beneficiary_relation = request.POST.get('beneficiary_relation', None)
 			investor_dict_data = QueryDict(user_investor_data)
 			username = investor_dict_data.get('username')
 			try:
@@ -256,14 +258,30 @@ def contract_investment_submission(request):
 				payment_method=payment_method,
 				client_signature=client_signature,
 				company_rep=company_rep,
-				investor_id=int(investor.id)
+				investor_id=int(investor.id),
+				beneficiary_relation=beneficiary_relation,
+				beneficiary_name=beneficiary_name
 				)
 			investor_data.save()
+			payment_data=Payment_Information(
+				payment_fees=int(total_amount),
+				fee_balance=int(total_amount),
+				down_payment=int(total_amount),
+                payment_method=payment_method,
+                client_signature=client_signature,
+                company_rep=company_rep,
+                client_date=datetime.today(),
+                rep_date=datetime.today(),
+                customer_id_id=int(request.user.id),
+				plan=999
+                )
+			payment_data.save()
 			# new_payment_added = Investor_Information.objects.get(investor_id=investor.id)
 			# print("new_payment====>",new_payment_added)
 			# if new_payment_added:
 			# messages.success(request, f'Added New Contract For the {username}!')
-			return redirect('management:companyagenda')
+			# return redirect('management:companyagenda')
+			return redirect('finance:pay')
 	except Exception as e:
 		message=f'Hi,{request.user}, there is an issue on our end kindly contact us directly at info@codanalytics.net'
 		context={
@@ -280,13 +298,17 @@ def mycontract(request, *args, **kwargs):
 	if client_data.category == 5:
 		try:
 			investor_details = Investor_Information.objects.filter(investor_id=client_data.id).order_by('-contract_date').first()
-			contract_date = investor_details.contract_date.strftime("%d %B, %Y")
-			context = {
-				'client_data': client_data,
-				'contract_date': contract_date,
-				'investor_data': investor_details,
-			}
-			return render(request, 'management/contracts/my_investor_contract.html', context)
+			print(Investor_Information.objects.filter(investor_id=client_data.id).values_list('beneficiary_name','contract_date'))
+			if investor_details:
+				contract_date = investor_details.contract_date.strftime("%d %B, %Y")
+				context = {
+                    'client_data': client_data,
+                    'contract_date': contract_date,
+                    'investor_data': investor_details,
+                }
+				return render(request, 'management/contracts/my_investor_contract.html', context)
+			else:
+				return redirect('investing:investments')	
 
 		except Investor_Information.DoesNotExist:
 			return redirect('investing:investments')
@@ -522,7 +544,8 @@ def pay(request, *args, **kwargs):
         )
     else:
         try:
-            payment_info = Payment_Information.objects.filter(customer_id=request.user.id).first()
+	        
+            payment_info = Payment_Information.objects.filter(customer_id=request.user.id).order_by('-contract_submitted_date').first()
         except:
             # Redirect for specific user categories or to contract signing view
             if request.user.category == 5:

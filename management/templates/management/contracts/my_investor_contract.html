@@ -180,6 +180,17 @@
                                             </div>
                                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
                                           {% include 'main/snippets_templates/terms_conditions.html'%}
+                                          <div class="row" >
+                                            <div class="col-md-6">
+                                                Beneficiary Name:{{investor_data.beneficiary_name}}<br>
+                                                
+                                            </div>
+                                            <div class="col-md-6">
+                                                Beneficiary Relation:{{investor_data.beneficiary_relation}}<br>
+                                                
+                                            </div>
+                                          </div>
+                                          <br>
                                         <!-- <input type="checkbox" name="terms" required><b> I agree to the Terms of service</b> -->
                                         Signed on: <span class="fees">{{ investor_data.contract_date }} </span> <br>
                                         <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />

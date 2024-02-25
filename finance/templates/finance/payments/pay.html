@@ -43,11 +43,13 @@
                                             {% endif %} -->
                                           </b>
                                         </button>
-                                      <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
-                                        <button>
-                                          Edit
-                                        </button>
-                                      </a>
+                                      {% if payments %}
+                                        <a class="article-title" href="{% url 'finance:updatepay' payments.id %}">
+                                          <button>
+                                            Edit
+                                          </button>
+                                        </a>
+                                      {% endif %}
                                       <div id="paypal-button-container"></div>
                                 </div>
                             </div>
@@ -131,28 +133,28 @@
                         </p>
                         </font>
                         <div class="row text-center">
-                          <div class="col-md-3" id="gi">
+                          <div class="col-md-4" id="gi">
                             {% with 'cashapp' as cashapp %}
                             <a href="{% url 'finance:payment_method' cashapp %}" target="_blank">
                               <button type="button" class="btn btn-primary btn-lg">cashapp</button>
                             </a>
                             {% endwith %}
                           </div>
-                          <div class="col-md-3" id="gi">
+                          <div class="col-md-4" id="gi">
                             {% with 'zelle' as zelle %}
                             <a href="{% url 'finance:payment_method' zelle %}" target="_blank">
                               <button type="button" class="btn btn-outline-info btn-lg">CODA Zelle</button>
                             </a>
                             {% endwith %}
                           </div>
-                          <div class="col-md-3" id="gi">
+                          <!-- <div class="col-md-4" id="gi">
                             {% with 'dck' as dck %}
                             <a href="{% url 'finance:payment_method' dck %}" target="_blank">
                               <button type="button" class="btn btn-outline-info btn-lg">DCK48 Zelle</button>
                             </a>
                             {% endwith %}
-                          </div>
-                          <div class="col-md-3" id="gi">
+                          </div> -->
+                          <div class="col-md-4" id="gi">
                             {% with 'mpesa' as mpesa %}
                             <a href="{% url 'finance:mpesa_payment' %}" target="_blank">
                               <button type="button" class="btn btn-secondary btn-lg">Mpesa</button>

@@ -71,7 +71,7 @@ def join(request):
 
                 if form.cleaned_data.get("category") == 2:
                     form.instance.is_staff = True
-                elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4:
+                elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4 or form.cleaned_data.get("category") == 5:
                     form.instance.is_client = True
                 else:
                     form.instance.is_applicant = True
@@ -82,7 +82,7 @@ def join(request):
 
                     subject = "Coda Credential"
                     send_email( category=2,
-                    to_email=form.instance.email, #[request.user.email,],
+                    to_email=[form.instance.email], #[request.user.email,],
                     subject=subject, 
                     html_template='email/user_credential.html',
                     context={'user': form.instance, 'password': random_password})
@@ -251,6 +251,7 @@ def login_view(request):
             elif account is not None and (account.category == 5) :
                 login(request, account)
                 print("category,subcat",account.category,account.sub_category)
+                # url = reverse('management:meetings', kwargs={'status': 'company'})
                 return redirect('management:companyagenda')
            
             # If Category is applicant
