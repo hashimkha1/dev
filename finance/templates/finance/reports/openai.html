@@ -190,6 +190,185 @@
                 </tfoot>
             </table>
     </div>
+    <div id="cashflow"  style="display: none;">
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div style="background-color:#243865; padding: 4px;">
+                    <h3 style="color: aliceblue;" >Operating Activities</h3>
+                </div>
+                <hr>
+
+                <!-- Cash Inflows -->
+                <h4>Cash Inflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                        
+                        {% for asset in existing_revenue_data %}
+                        <tr>
+                            <td>{{ asset.name }}</td>
+                            <td>{{ asset.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total Cash Inflows</th>
+                            <th>${{ total_revenue }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Cash Outflows -->
+                <h4>Cash Outflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                        {% for expense in existing_expenses_data %}
+                        <tr>
+                            <td>{{ expense.name }}</td>
+                            <td>{{ expense.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                        
+                        <tr>
+                            <th>Cash Outflows</th>
+                            <th>${{ total_expenses }}</th>
+                        </tr>
+                    </tbody>
+                    <!-- <tfoot style="background-color:#596168; padding: 4px;">
+                        <tr>
+                            <th>Net Cash from Operating Activities</th>
+                            <th>${{ net_income }}</th>
+                        </tr>
+                    </tfoot> -->
+                </table>
+                <!-- <h4 style="background-color:#596168; color: white;padding: 4px;">Net Cash from Operating Activities : ${{ net_income }}</h4> -->
+            </div>
+        </div>
+
+        <!-- Investing Activities Section -->
+        <div></div>
+         <div class="row">
+            <div class="col-md-12 mb-4">
+                <div style="background-color:#243865; padding: 4px;">
+                    <h3 style="color: aliceblue;" >Investing Activities</h3>
+                </div>
+                <hr>
+
+                <!-- Cash Inflows -->
+                <h4>Cash Inflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                        
+                        {% for item in saved_inflow_investing %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount  }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total Cash Inflows</th>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+                 <!-- Cash Outflows --> 
+                <h4>Cash Outflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                        {% for item in saved_outflow_investing %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount  }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total Cash Inflows</th>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+         <!-- Financing Activities Section --> 
+       <div class="row">
+            <div class="col-md-12 mb-4">
+                <div style="background-color:#243865; padding: 4px;">
+                    <h3 style="color: aliceblue;" > Financing Activities</h3>
+                </div>
+                <hr>
+
+                <!-- Cash Inflows --> 
+                 <h4>Cash Inflows:</h4>
+                 <table class="table table-hover">
+                    <tbody>
+                        {% for item in saved_inflow_financing %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount  }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total Cash Inflows</th>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Cash Outflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                        {% for item in saved_outflow_financing %}
+                        <tr>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.amount  }}</td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <th>Total Cash Inflows</th>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Net Cash from Financing Activities -->
+            </div>
+        </div> 
+       <div class="row">
+            <div class="col-md-12 mb-4">
+                <div style="background-color:#243865; padding: 4px;">
+                    <h3 style="color: aliceblue;" > Net Cash Flow</h3>
+                </div>
+                <hr>
+
+                <!-- Cash Inflows --> 
+                 <h4>Total Cash Inflows:</h4>
+                 <table class="table table-hover">
+                    <tbody>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Total Cash Outflows:</h4>
+                <table class="table table-hover">
+                    <tbody>
+                            <th>${{ total_revenues }}</th>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Net Cash from Financing Activities -->
+            </div>
+        </div> 
+        <!-- Net Cash Flow Section
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h2>4. Net Cash Flow:</h2>
+
+                 Net Increase (Decrease) in Cash -->
+                <!-- <h4>Net Increase (Decrease) in Cash:</h4>
+                <p>(Net Cash from Operating Activities + Net Cash from Investing Activities + Net Cash from Financing Activities): ${{ net_increase_decrease_cash }}</p>
+            </div>
+        </div> --> 
+    </div>
+
 </div>
 
 <script>
@@ -234,6 +413,7 @@
         document.getElementById('balance-sheet-liabilities-section').style.display = 'flex';
         document.getElementById('total-section').style.display = 'flex';
         document.getElementById('financial-statement-section').style.display = 'none';
+        document.getElementById('cashflow').style.display = 'none';
     }
 
     function showFinancialStatement() {
@@ -242,6 +422,7 @@
         document.getElementById('balance-sheet-liabilities-section').style.display = 'none';
         document.getElementById('total-section').style.display = 'none';
         document.getElementById('financial-statement-section').style.display = 'flex';
+        document.getElementById('cashflow').style.display = 'none';
     }
 
     function showCashFlowStatement() {
@@ -250,6 +431,7 @@
         document.getElementById('balance-sheet-liabilities-section').style.display = 'none';
         document.getElementById('total-section').style.display = 'none';
         document.getElementById('financial-statement-section').style.display = 'none';
+        document.getElementById('cashflow').style.display = 'block';
     }
 </script>
 
