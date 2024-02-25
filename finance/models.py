@@ -761,18 +761,6 @@ class BalanceSheetCategory(models.Model):
     def __str__(self):
         return f"{self.name} ({self.category_type})"
 
-class CashflowStatement(models.Model):
-    CATEGORY_TYPES = [
-        ('Investing Activities', 'Investing Activities'),
-        ('Financing Activities', 'Financing Activities'),
-    ]
-    name = models.CharField(max_length=255)
-    category_type = models.CharField(max_length=50, choices=CATEGORY_TYPES, default='Asset')
-    amount = models.DecimalField(max_digits=20, decimal_places=2,null=True)
-    class Meta:
-        unique_together = ('name', 'category_type')
-        verbose_name_plural = "Balance Sheet Categories"
-
 
 class BalanceSheetSummary(models.Model):
     date = models.DateField(default=timezone.now)
