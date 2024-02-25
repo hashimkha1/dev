@@ -3,70 +3,85 @@ from datetime import date,datetime,time,timezone
 from django.db.models import Q
 from django.contrib.auth import get_user_model
 from coda_project.settings import dba_values ,source_target
+from decimal import Decimal, ROUND_HALF_UP
+
 User=get_user_model
 
 host,dbname,user,password=dba_values()
 
-from decimal import Decimal
 
-def compute_pay(amount, minimum_amount=Decimal('2000'), base_return=Decimal('5'), inc_rate=Decimal('7'), increment_threshold_amt=Decimal('2000'), decrease_threshold_amt=Decimal('2000')):
-    if amount <= minimum_amount:
-        print(base_return)
-        return base_return
-    elif amount <= decrease_threshold_amt:
-        print(Decimal(amount),Decimal(minimum_amount))
-        difference = (Decimal(amount) -Decimal(minimum_amount)) // increment_threshold_amt
-        print(f'{amount},Base Amount:{base_return},difference_amount>2000:{difference},rate:{inc_rate}')
-        print(difference * inc_rate)
-        print(base_return + difference * inc_rate)
-        return base_return + difference * inc_rate
-    else:
-        remaining_amount = amount - decrease_threshold_amt
-        decrease_in_increments = remaining_amount // increment_threshold_amt
-        new_increment_rate = max(inc_rate - decrease_in_increments, Decimal('3'))
-        return base_return + ((decrease_threshold_amt - minimum_amount) // increment_threshold_amt) * inc_rate + (remaining_amount // increment_threshold_amt) * (new_increment_rate + inc_rate) // Decimal('2')
+def compute_pay(amount, inc_rate=Decimal('10')):
+    amount = Decimal(str(amount))
+    return_rate = inc_rate / 6  # Divide the annual interest rate by 6 for bi-monthly payments
+    print(amount, inc_rate,return_rate)
+    print(f'{amount}, Rate: {inc_rate}')
+    interest = amount * return_rate / 100
+    interest = interest.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)  # Convert interest to 2 decimal places
+    return interest
+
+
+# def compute_pay(amount, minimum_amount=Decimal('2000'), base_return=Decimal('5'), inc_rate=Decimal('7'), increment_threshold_amt=Decimal('2000'), decrease_threshold_amt=Decimal('2000')):
+#     amount = Decimal(str(amount))
+#     if amount <= minimum_amount:
+#         print(base_return)
+#         return base_return
+#     elif amount <= decrease_threshold_amt:
+#         print(amount, minimum_amount)
+#         difference = (amount - minimum_amount) / increment_threshold_amt  # Use regular division here
+#         difference = int(difference)  # Convert to integer to get whole number part
+#         print(f'{amount}, Base Amount: {base_return}, Difference amount > 2000: {difference}, Rate: {inc_rate}')
+#         print(difference * inc_rate)
+#         print(base_return + difference * inc_rate)
+#         return base_return + difference * inc_rate
+#     else:
+#         remaining_amount = amount - decrease_threshold_amt
+#         decrease_in_increments = remaining_amount / increment_threshold_amt  # Use regular division here
+#         decrease_in_increments = int(decrease_in_increments)  # Convert to integer to get whole number part
+#         new_increment_rate = max(inc_rate - decrease_in_increments, Decimal('3'))
+#         return base_return + ((decrease_threshold_amt - minimum_amount) / increment_threshold_amt) * inc_rate + (remaining_amount / increment_threshold_amt) * (new_increment_rate + inc_rate) // Decimal('2')
+
+
 
 def get_user_investment(investments, latest_investment_rates):
     if investments.exists():
-        minimum_amount = latest_investment_rates.base_amount
-        base_return = latest_investment_rates.initial_return
-        inc_rate = latest_investment_rates.increment_rate
-        increment_threshold_amt = latest_investment_rates.increment_threshold
-        decrease_threshold_amt = latest_investment_rates.decrease_threshold
-        rate_investment = latest_investment_rates.investment_rate
+        minimum_amount = Decimal(str(latest_investment_rates.base_amount))
+        base_return = Decimal(str(latest_investment_rates.initial_return))
+        inc_rate = Decimal(str(latest_investment_rates.increment_rate))
+        increment_threshold_amt = Decimal(str(latest_investment_rates.increment_threshold))
+        decrease_threshold_amt = Decimal(str(latest_investment_rates.decrease_threshold))
+        rate_investment = Decimal(str(latest_investment_rates.investment_rate))
         minimum_duration = latest_investment_rates.duration
-        total_amt = 0
+        total_amt = Decimal('0')
 
         for amt in investments:
-            total_amt += amt.amount
+            total_amt += Decimal(str(amt.amount))
 
         amount_invested = float(total_amt) * float(rate_investment)
-        # print(total_amt,amount_invested,rate_investment)
         total_amount = float(total_amt)
         protected_capital = total_amount - amount_invested
         number = (amount_invested / 1000)
-        fractional_part = number - math.floor(number)
+        fractional_part = number - int(number)
 
         if fractional_part >= 0.5:
-            number_positions = math.ceil(number)
+            number_positions = int(number) + 1
         else:
-            number_positions = math.floor(number)
+            number_positions = int(number)
 
         if number_positions > 7:
             number_positions = 7
 
-        returns = compute_pay(amount_invested, minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
+        # returns = compute_pay(amount_invested, minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
+        returns = compute_pay(amount_invested,inc_rate) #compute_pay(amount_invested, minimum_amount, base_return, inc_rate, increment_threshold_amt, decrease_threshold_amt)
 
     else:
-        # Set default values for amount and returns or display an appropriate message
-        total_amount = 0.0
-        protected_capital = 0.0
-        amount_invested = 0.0
+        total_amount = Decimal('0')
+        protected_capital = Decimal('0')
+        amount_invested = Decimal('0')
         number_positions = 0
         minimum_duration = 0
-        returns = 0
+        returns = Decimal('0')
 
-    return total_amount, protected_capital, amount_invested, returns, number_positions, minimum_duration
+    return total_amount, protected_capital, amount_invested, returns, number_positions, minimum_duration,inc_rate
 
 
 def investment_test():
