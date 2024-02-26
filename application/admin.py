@@ -1,10 +1,10 @@
-# from django.contrib import admin
+from django.contrib import admin
 
-# from .models import UserProfile, Application, Policy, Rated, Reporting
+from .models import Balancesheet_categories
 
 # # Register your models here.
-# admin.site.register(UserProfile)
-# admin.site.register(Application)
+admin.site.register(Balancesheet_categories)
+#admin.site.register(BalanceSheetCategory)
 # admin.site.register(Rated)
 # admin.site.register(Policy)
 # admin.site.register(Reporting)
