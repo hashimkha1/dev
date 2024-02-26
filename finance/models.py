@@ -667,6 +667,10 @@ class Food(models.Model):
         on_delete=models.RESTRICT,
         limit_choices_to=Q(active=True)
     )
+    office_location = models.CharField(
+        max_length=255,       
+        default= 'makutano'       
+    )
     item = models.CharField(
         max_length=255,
         unique=True,
@@ -702,6 +706,26 @@ class Food(models.Model):
         return additional_amount
 
 
+class FoodHistory(models.Model):
+    item = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='history')
+    supplier = models.ForeignKey(Supplier, on_delete=models.RESTRICT)
+    office_location = models.CharField(max_length=255, default='makutano')
+   # item = models.CharField(max_length=255)
+    unit_amt = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    qty = models.PositiveIntegerField()
+    bal_qty = models.PositiveIntegerField()
+    description = models.TextField()
+    created_at = models.DateTimeField()
+    featured = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+    history_date = models.DateTimeField(default=timezone.now)   
+
+    def __str__(self):
+        return f"History of {self.item.item} on {self.history_date.strftime('%Y-%m-%d')}"
+
+    class Meta:
+        ordering = ['-history_date']  # Order by most recent changes first
+        
 
 class Field_Expense(models.Model):
     category = models.CharField(max_length=255, blank=True, default="")

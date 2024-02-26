@@ -8,6 +8,7 @@ from .models import (
     TrainingLoan,
     Transaction,
     Inflow,
+    FoodHistory,
 )
 
 class DepartmentFilterForm(forms.Form):
@@ -15,6 +16,11 @@ class DepartmentFilterForm(forms.Form):
         queryset=Department.objects.all(),
         label='Select a Deparment Tag'
     )
+
+class FoodHistoryForm(forms.ModelForm):
+    class Meta:
+        model = FoodHistory
+        fields = '__all__'
 
 class TransactionForm(forms.ModelForm):
     class Meta:

@@ -21,11 +21,11 @@ from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction,PayslipConfig,Supplier,Food,
+		Inflow,Transaction,PayslipConfig,Supplier,Food,FoodHistory,
 		DC48_Inflow,Field_Expense,Budget,
         BalanceSheetCategory,BalanceSheetEntry,BalanceSheetSummary
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
+from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,FoodHistoryForm
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -1066,6 +1066,56 @@ def foodlist(request):
         "food_filters": food_filters
     }
     return render(request,"finance/payments/food.html",context)
+
+def food_history_view(request):    
+    date_today = timezone.now()
+    current_year = date_today.year
+    current_month = date_today.month
+    query = Q()
+
+    selected_month = request.GET.get('month')
+    selected_year = request.GET.get('year')
+    selected_office_location = request.GET.get('office_location')
+
+    if selected_month and selected_month.isdigit():
+        query &= Q(history_date__month=selected_month)
+    if selected_year and selected_year.isdigit():
+        query &= Q(history_date__year=selected_year)
+    if selected_office_location:
+        query &= Q(office_location=selected_office_location)
+
+    food_histories = FoodHistory.objects.filter(query).order_by('-history_date')
+    total_amount = FoodHistory.objects.filter(query).aggregate(
+        total=Sum(F('unit_amt') * F('qty'))
+    )['total'] or 0
+
+    unique_office_locations = Food.objects.order_by('office_location').values_list('office_location', flat=True).distinct()
+    years = list(range(current_year - 5, current_year + 1))
+    months = [(i, timezone.datetime(2000, i, 1).strftime('%B')) for i in range(1, 13)]
+
+    context = {
+        'food_histories': food_histories,
+        'unique_office_locations': unique_office_locations,
+        'months': months,
+        'years': years,
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'total_amount': total_amount,
+    }
+
+    return render(request, 'finance/payments/foodhistory.html', context)
+
+
+def food_history_update(request,pk):
+    food_histories= get_object_or_404(FoodHistory,pk=pk)
+    if request.method == 'POST':                 
+        form = FoodHistoryForm(request.POST,instance=food_histories)
+        if form.is_valid():
+            form.save() 
+            return redirect('finance:foodhistory')            
+    else:
+        form = FoodHistoryForm(instance=food_histories)
+    return render(request,"finance/payments/foodhistory_update.html",{'form':form,'food_histories':food_histories}) 
 
 # =========================DC 48 KENYA===================================
 @method_decorator(login_required, name="dispatch")

@@ -16,7 +16,9 @@ from .models import (
     TrainingLoan,
     BalanceSheetCategory,
     BalanceSheetEntry,
-    BalanceSheetSummary
+    BalanceSheetSummary,
+    Food,
+    FoodHistory,
 )  # , DocUpload
 from accounts.models import Department
 
@@ -102,4 +104,6 @@ admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
 admin.site.register(BalanceSheetCategory),
 admin.site.register(BalanceSheetEntry),
-admin.site.register(BalanceSheetSummary)
+admin.site.register(BalanceSheetSummary),
+admin.site.register(Food),
+admin.site.register(FoodHistory),

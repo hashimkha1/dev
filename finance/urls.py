@@ -91,6 +91,6 @@ urlpatterns = [
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),    
     path("food/",views.foodlist,name="supplies"),
-
-    #Testing DYC
+    path("foodhistory/",views.food_history_view,name="foodhistory"),
+    path("foodhistoryupdate/<int:pk>/",views.food_history_update,name="foodhistoryupdate"),
 ]
