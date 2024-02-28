@@ -1,10 +1,18 @@
 from django import forms
 from django.forms import  Textarea
-from .models import CustomerUser
+from .models import CustomerUser,Transaction
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import  RegexValidator
 import re
 # from django.db import transaction
+
+
+
+class TransactionForm(forms.ModelForm):
+    class Meta:
+        model = Transaction
+        fields = '__all__'
+
 
 phone_regex = r'^\d{10}$'
 

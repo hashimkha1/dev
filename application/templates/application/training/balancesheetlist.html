@@ -1,0 +1,32 @@
+{%extends "main/base_templates/application_base.html"%}
+ {%load crispy_forms_tags%} 
+ {% load customfilters %}
+ {%block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>All Applicants</h2>
+    <div class="table-responsive">
+    <!-- <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%"> -->
+      <table class="table table-striped table-bordered" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <!-- <th>Applicant_Id</th> -->
+          <th>name</th>
+          <th>category_type</th>
+          <th>amount</th>            
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+        <tr>        
+          <td>{{category.name}}</td>
+          <td>{{category.category_type}}</td>
+          <td>{{category.amount}}</td>
+          <tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  </div>
+</section>
+{%endblock content %}

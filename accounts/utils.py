@@ -1,9 +1,17 @@
 from django.db.models import Q
 from django.db.models.aggregates import  Sum
 from datetime import date
-from accounts.models import CustomerUser
+from accounts.models import CustomerUser,Transaction
+from django.contrib.auth import get_user_model
+
 import string
 import secrets
+import os,requests,openai
+import json
+from datetime import datetime
+from django.db.models import Sum
+
+User = get_user_model()
 
 def generate_random_password(length=12):
     characters = string.ascii_letters + string.digits + "!@#$%&"
@@ -78,3 +86,100 @@ JOB_SUPPORT_CATEGORIES = [
     "Job_Support", "job_support", "jobsupport", "Jobsupport", 
     "JobSupport", "Job Support", "Job support", "job support"
 ]
+
+
+
+
+
+# Set the OpenAI API key
+# openai.api_key = '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'
+
+# def fetch_sample_data(limit=10):
+#     transactions = Transaction.objects.all()[:limit]
+#     data = [
+#         {
+#             "sender": str(transaction.sender),
+#             "department": str(transaction.department),
+#             "receiver": transaction.receiver,
+#             "phone": transaction.phone,
+#             "type": transaction.type,
+#             "activity_date": transaction.activity_date.strftime('%Y-%m-%d %H:%M:%S'),
+#             "receipt_link": transaction.receipt_link,
+#             "qty": float(transaction.qty),
+#             "amount": float(transaction.amount),
+#             "transaction_cost": float(transaction.transaction_cost),
+#             "description": transaction.description,
+#             "payment_method": transaction.payment_method,
+#             "category": transaction.category
+#         }
+#         for transaction in transactions
+#     ]
+#     return json.dumps(data, indent=4)
+
+# def generate_data_with_openai(sample_data):
+#     prompt = f"Here are some sample transaction records:\n{sample_data}\n\nGenerate 50 new similar transaction records:"
+
+#     response = openai.Completion.create(
+#         model="gpt-3.5-turbo-0125",
+#         prompt=prompt,
+#         max_tokens=2000  
+#     )
+
+#     return response.choices[0].text
+
+# def generate_new_transactions(openai_response):
+#     new_transactions = json.loads(openai_response)
+
+#     for t in new_transactions:
+#         Transaction.objects.create(
+#             sender=t["sender"], 
+#             department=t["department"],  
+#             receiver=t["receiver"],
+#             phone=t["phone"],
+#             type=t["type"],
+#             activity_date=datetime.strptime(t["activity_date"], '%Y-%m-%d %H:%M:%S'),
+#             receipt_link=t["receipt_link"],
+#             qty=t["qty"],
+#             amount=t["amount"],
+#             transaction_cost=t["transaction_cost"],
+#             description=t["description"],
+#             payment_method=t["payment_method"],
+#             category=t["category"]
+#         )
+
+# # Example usage
+# sample_data = fetch_sample_data()
+# generated_data = generate_data_with_openai(sample_data)
+# generate_new_transactions(generated_data)
+
+def mock_generate_new_transactions():
+    # This is a sample format. Adjust it according to your actual data structure
+    generated_data = [
+        {
+            "sender": "Sample Sender 1",
+            "department": "HR Department",
+            "receiver": "Sample Receiver 1",
+            "phone": "123456789",
+            "type": "Expense",
+            "activity_date": "2022-01-01 10:00:00",
+            "receipt_link": "http://example.com/receipt1",
+            "qty": 10,
+            "amount": 100,
+            "transaction_cost": 5,
+            "description": "Sample transaction 1",
+            "payment_method": "Cash",
+            "category": "Salary"
+        },
+        # Add more sample transactions as needed
+    ]
+    for transaction_data in generated_data:
+        sender_username = transaction_data['sender']
+        receiver_username = transaction_data['receiver']
+
+        # Retrieve or create CustomerUser instances
+        sender, _ = User.objects.get_or_create(username=sender_username)
+        receiver, _ = User.objects.get_or_create(username=receiver_username)
+
+        transaction_data['sender'] = sender.id
+        transaction_data['receiver'] = receiver.id
+    return json.dumps(generated_data)
