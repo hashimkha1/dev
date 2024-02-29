@@ -8,7 +8,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # print(BASE_DIR)
 # SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf'
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
@@ -117,12 +117,13 @@ def dba_values():
         host = os.environ.get('HEROKU_DEV_HOST')
         dbname = os.environ.get('HEROKU_DEV_NAME')
         user = os.environ.get('HEROKU_DEV_USER')
-        password = os.environ.get('HEROKU_DEV_PASS') 
+        password = os.environ.get('HEROKU_DEV_PASS')
     else:
         host = 'ec2-34-227-120-79.compute-1.amazonaws.com'
         dbname = 'ddmafrv54jmpsa'
         user = 'tjazbnhgsnuijb'
-        password = '71bc88cb99866755e1c39ba80aa2fe3dae42500b75ac2f1b0e66859807abfcce'
+        # port = 5432
+        password =  '71bc88cb99866755e1c39ba80aa2fe3dae42500b75ac2f1b0e66859807abfcce'
         # host = os.environ.get('POSTGRES_DB_NAME')
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')

@@ -16,7 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+#from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
 import logging
 
 
