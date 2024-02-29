@@ -818,6 +818,7 @@ def employetraining(request):
     }
 
     return render(request, "data/training/employeetraining.html", context)
+
 def updatelinks_employetraining(request):
     department = request.POST["department"]
     subdepartment = request.POST["subdepartment"]

@@ -414,7 +414,7 @@ class ActivityLinks(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     doc = models.FileField(default="None", upload_to="training/docs/")
-    link = models.CharField(max_length=100, blank=True, null=True)
+    link = models.CharField(max_length=1000, blank=True, null=True)
     is_active = models.IntegerField(default=1)
 
     class Meta:
