@@ -275,3 +275,59 @@ class Payment_History(models.Model):
     company_rep = models.CharField(max_length=1000)
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)  
+
+   
+class OverBoughtSold(models.Model):
+    symbol = models.CharField(max_length=255,blank=True, null=True)
+    description = models.CharField(max_length=255,blank=True, null=True)
+    last = models.CharField(max_length=255,blank=True, null=True)
+    volume = models.CharField(max_length=255,blank=True, null=True)
+    RSI = models.CharField(max_length=255,blank=True, null=True)
+    EPS = models.CharField(max_length=255,blank=True, null=True)
+    PE = models.CharField(max_length=255,blank=True, null=True)
+    rank = models.CharField(max_length=255,blank=True, null=True)
+    profit_margins = models.CharField(max_length=255,blank=True, null=True)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+    # created_at = models.DateTimeField(auto_now_add=True)
+    # updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def condition_integer(self):
+        try:
+            # Convert to float, round, and then convert to int
+            rsi_value = int(round(float(self.RSI)))  
+            if rsi_value >= 30:
+                return 1  # 'oversold'
+            else:
+                return 0  # 'overbought'
+        except ValueError:
+            # Handle any exceptions gracefully
+            return -1  #neutral
+
+    
+    class Meta:
+        verbose_name_plural = "Oversold"
+
+    def __str__(self):
+        return self.symbol
+
+
+
+class Ticker_Data(models.Model):
+    symbol = models.CharField(max_length=255,blank=True, null=True)
+    overallrisk =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    sharesshort =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    enterprisetoebitda =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    ebitda =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    quickratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    currentratio =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    revenuegrowth =models.DecimalField(max_digits=17, decimal_places=3,blank=True,null=True)
+    fetched_date =models.DateField(auto_now_add=True,blank=True,null=True)
+    industry = models.CharField(max_length=500,blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Option Measures"
+
+    def __str__(self):
+        return self.symbol
