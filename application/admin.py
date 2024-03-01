@@ -8,3 +8,4 @@ from .models import luke_csategorys_accs
 # admin.site.register(Balancesheet_entry)
 # admin.site.register(BalanceSheet_Summary)
 admin.site.register(luke_csategorys_accs)
+admin.site.register(lukeBGAC_LTD)
