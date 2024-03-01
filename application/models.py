@@ -79,7 +79,22 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
+        return f"{self.category.name}:{self.amount}" 
+
+    
+class Traccker(models.Model):
+    category = models.CharField(max_length=25)
+    sublogin_date_category = models.CharField(max_length=25)
+    task = models.CharField(max_length=25)
+    plan = models.CharField(max_length=255)
+    empname = models.CharField(max_length=50, null=True)
+    author = models.CharField(max_length=50, null=True)
+    employee = models.CharField(max_length=255)     
+    start_time = models.DateTimeField()
+    duration = models.IntegerField()
+    time = models.PositiveIntegerField()
+
+  
   
 
 
