@@ -326,28 +326,39 @@ def buildmodel(question):
     return result
 
 
-@login_required
-def analyze_website_for_wcag_compliance(wcag_standards):
-    wcag_standards_summary = "\n".join([
-        f"{ws.criteria}: {ws.definition} What to test: {ws.what_to_test}" 
-        for ws in wcag_standards
-    ])
-
-    # Construct the prompt for OpenAI
-    user_message = f"Based on the following WCAG Standards, examine the CODA website to check for areas that do not meet these standards:\n\n{wcag_standards_summary}\n\nExamine the website and suggest improvements:"
-
+def analyze_website_for_wcag_compliance(uploaded_file_content):
+    user_message = f"""
+        html_code:{uploaded_file_content}   
+        """ + """
+            Please review the provided HTML code with respect to WCAG criteria. Identify specific areas in the code that do not meet the standards, and provide a rewritten, corrected version of the HTML code.
+            The output should be formatted in JSON as follows:
+            {
+                "list_of_problems": [
+                    {
+                        "problem_title": "Title of Problem",
+                        "description": "Description of the problem found in the page."
+                    }
+                ],
+                "improved_code": "Corrected HTML code"
+            }
+            Ensure that you do not alter the key names and do not include any additional strings in the output.
+    """
     try:
-        suggestions = generate_chatbot_response(user_message)
-        # suggestions = openai_response.get('choices', [{}])[0].get('text', '')
+        suggestions =generate_chatbot_response(user_message)
     except Exception as e:
         # Handle exceptions
         print(f"An error occurred while contacting the OpenAI API: {e}")
         suggestions = "Could not generate suggestions due to an error."
-
-    # You would typically return a Django HTTP response object
-    # For demonstration purposes, we'll just print the suggestions
-    print(suggestions)
     return suggestions
+
+def handle_openai_api_exception(responses):
+    user_message = f"Consider this response {responses}. Please display the information in tabular format with fields as (list_of_problems, problem_title, description). For improved_code value, format it in proper HTML."
+    try:
+        return generate_chatbot_response(user_message)
+    except Exception as e:
+        print(f"An error occurred while contacting the OpenAI API: {e}")
+        return "Could not generate suggestions due to an error."
+
 
 def countdown_in_month():
     now = datetime.datetime.now()

@@ -10,5 +10,6 @@ urlpatterns = [
     path('balancesheetlist/', views.balancesheet_list, name='balancesheetlist'),
     path('wcaglist/', views.wcag_list_view, name='wcaglist'),
     path('wcagcreate/', views.wcag_create_view, name='wcagcreate'),
+    path('apicreate/', views.wcag_create_view, name='apicreate'),
     # path('join/', views.join, name='join'),
 ]
