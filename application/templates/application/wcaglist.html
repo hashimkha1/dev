@@ -1,0 +1,38 @@
+{%extends "main/base_templates/application_base.html"%}
+ {%load crispy_forms_tags%} 
+ {% load customfilters %}
+ {%block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2> WELCOME All Applicants</h2>
+    <div class="application">
+    <!-- <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%"> -->
+      <table class="table table-striped table-bordered" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <th>id</th>
+          <th>website_url</th>
+          <th>page_name</th>
+          <th>improvements</th>
+          <th>created_at</th>
+          <th>updated_at</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for wcaglists in wcaglists %}
+        <tr>       
+          <td>{{wcaglists.id}}</td>          
+          <td>{{wcaglists.website_url}}</td>
+          <td>{{wcaglists.page_name}}</td>
+          <td>{{wcaglists.improvements}}</td>
+          <td>{{wcaglists.created_at}}</td>
+          <td>{{wcaglists.updated_at}}</td>
+          <td>
+        <tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  </div>
+</section>
+{%endblock content %}
