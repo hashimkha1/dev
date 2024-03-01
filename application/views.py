@@ -18,6 +18,7 @@ from django.views.generic import (
 )
 from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,Traccker
 import logging
+from.forms import TracckerForm
 
 
 
@@ -71,6 +72,35 @@ def balancesheet_list(request):
 def TracckerList(request):
     employees= Traccker.objects.all()    
     return render(request,'application/traccker.list.html',{'employees':employees})
+
+
+
+def TracckerCreate(request):
+    if request.method == 'POST':
+        form = TracckerForm(request.POST)
+        if form.is_valid():
+            form.save() 
+            return redirect('application:traccker')  
+    else:
+        form = TracckerForm()  
+
+    employees = Traccker.objects.all()
+    return render(request, 'application/traccker_create.html', {'form': form, 'employees': employees})
+
+
+
+def TracckerUpdate(request, pk):    
+    employees = get_object_or_404(Traccker, pk=pk)    
+    if request.method == 'POST':
+        form = TracckerForm(request.POST, instance=employees)
+        if form.is_valid():
+            form.save() 
+            return redirect('application:traccker_detail', pk=pk)  
+    else:
+        form = TracckerForm(instance=employees)  
+    
+    return render(request, 'application/traccker.update.html', {'form': form, 'employees': employees})
+
 
    
 
