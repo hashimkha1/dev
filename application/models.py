@@ -79,7 +79,18 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
+        return f"{self.category.name}:{self.amount}"
+        
+
+class WCAGCODA(models.Model):
+    website_url  = models.CharField(max_length=500)
+    page_name    = models.CharField(max_length=500)
+    improvements = models.TextField(null=True) 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.website_url        
   
 
 
