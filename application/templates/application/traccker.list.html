@@ -1,0 +1,57 @@
+{% extends "main/base_templates/new_base.html" %} 
+{% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">TRACCKER</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{ num_tasks }}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="#" class="btn btn-secondary btn-sm">ADD CATEGORY</a>
+          <a href="#" class="btn btn-secondary btn-sm">ADD GROUP</a>
+        </p>
+      </div>
+    </div>
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">
+        <div class="career text-center">
+          <table class="table table-borderless" style="width: 100%">
+            <thead class="border-bottom font-weight-bold">
+              <tr>
+                <th>email_id</th>
+                <th>category</th>
+                <th>sublogin_date_category</th>
+                <th>task</th>
+                <th>plan</th>
+                <th>empname</th>
+                <th>author</th>
+                <th>employee</th>
+                <th>start_time</th>
+                <th>duration</th>
+                <th>time</th>
+              </tr>
+            </thead>
+            <tbody id="table_body_data">
+              {% for employee in employees %}
+                <tr>
+                  <td>{{ traccker.email_id }}</td>
+                  <td>{{ traccker.category }}</td>
+                  <td>{{ traccker.sublogin_date_category }}</td>
+                  <td>{{ traccker.task }}</td>
+                  <td>{{ traccker.plan }}</td>
+                  <td>{{ traccker.empname }}</td>
+                  <td>{{ traccker.author }}</td>
+                  <td>{{ traccker.employee }}</td>
+                  <td>{{ traccker.start_time }}</td>
+                  <td>{{ traccker.duration }}</td>
+                  <td>{{ traccker.time }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
