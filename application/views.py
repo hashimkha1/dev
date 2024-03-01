@@ -18,6 +18,7 @@ from django.views.generic import (
 )
 from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,WCAGCODA
 import logging
+from. forms import wcagForm
 
 
 
@@ -70,6 +71,18 @@ def balancesheet_list(request):
 def wcag_list_view(request):
     wcaglists=WCAGCODA.objects.all().order_by("updated_at")
     
-    return render(request, "application\wcaglist.html",{"wcaglists":wcaglists})            
+    return render(request, "application\wcaglist.html",{"wcaglists":wcaglists})    
+
+def wcag_create_view(request):
+    if request.method == 'POST':
+        form =wcagForm(request.POST)
+        if form.is_valid():
+            form.save            
+            return redirect("application:wcaglist")
+    else:
+        form = wcagForm()
+        print("form ====>",form) 
+    return render(request,"application/wcagcreate.html", {'form': form}) 
+
 
              
