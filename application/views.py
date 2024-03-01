@@ -16,7 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-#from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
 import logging
 
 
@@ -28,43 +28,43 @@ def Balancesheet_category_list(request):
 
 logger = logging.getLogger(__name__)
 
-def openai_balancesheet(request):
-    # Fetch financial data using the previously defined function
-    assets, liabilities, equity = fetch_and_process_financial_data(request)
+# def openai_balancesheet(request):
+#     # Fetch financial data using the previously defined function
+#     assets, liabilities, equity = fetch_and_process_financial_data(request)
 
-    # Logic to use the assets, liabilities, and equity data
-    # This part depends on how you want to utilize this data in your application
-    # ...
+#     # Logic to use the assets, liabilities, and equity data
+#     # This part depends on how you want to utilize this data in your application
+#     # ...
 
-def balancesheet_list(request):
-    try:
-        balance_sheet = BalanceSheet_Summary.objects.last()  
-        if balance_sheet:
-            current_assets = balance_sheet.entries.filter(category__category_type='Assets')
-            current_liabilities =  balance_sheet.entries.filter(category__category_type='Liability')
-            equity = balance_sheet.entries.filter(category__category_type='Equity')
-            total_assets = current_assets.aggregate(sum('amount'))['amount'] or 0
-            total_liabilities = current_liabilities.aggregate(sum('amount'))['amount'] or 0
-            total_equity = equity.aggregate(sum('amount'))['amount'] or 0
-            total_liabilities_and_equity = total_liabilities + total_equity
+# def balancesheet_list(request):
+#     try:
+#         balance_sheet = BalanceSheet_Summary.objects.last()  
+#         if balance_sheet:
+#             current_assets = balance_sheet.entries.filter(category__category_type='Assets')
+#             current_liabilities =  balance_sheet.entries.filter(category__category_type='Liability')
+#             equity = balance_sheet.entries.filter(category__category_type='Equity')
+#             total_assets = current_assets.aggregate(sum('amount'))['amount'] or 0
+#             total_liabilities = current_liabilities.aggregate(sum('amount'))['amount'] or 0
+#             total_equity = equity.aggregate(sum('amount'))['amount'] or 0
+#             total_liabilities_and_equity = total_liabilities + total_equity
 
-            context = {
-                'company_name':'CODA',
-                'balance_sheet':balance_sheet,
-                'current_assets':current_assets,
-                'current_liabilities':current_liabilities,
-                'equity':equity,
-                'total_assets': total_assets,
-                'total_liabilities_and_equity': total_liabilities_and_equity,
-                'total_liabilities': total_liabilities,
-                'total_equity': total_equity
-            }
-        else: 
-            context = {'error_message':'No balance sheet data available.'} 
-    except Exception as e:
-        logger.erro(f"error fetching balance sheet data: {e}")  
-        context = {'error_message': 'An error occured while fetching balance_sheet data'} 
+#             context = {
+#                 'company_name':'CODA',
+#                 'balance_sheet':balance_sheet,
+#                 'current_assets':current_assets,
+#                 'current_liabilities':current_liabilities,
+#                 'equity':equity,
+#                 'total_assets': total_assets,
+#                 'total_liabilities_and_equity': total_liabilities_and_equity,
+#                 'total_liabilities': total_liabilities,
+#                 'total_equity': total_equity
+#             }
+#         else: 
+#             context = {'error_message':'No balance sheet data available.'} 
+#     except Exception as e:
+#         logger.erro(f"error fetching balance sheet data: {e}")  
+#         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+#     return render(request,'application/training/balancelist.html',context)          
 
              
