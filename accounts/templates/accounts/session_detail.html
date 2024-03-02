@@ -1,0 +1,53 @@
+#===DETAIL
+{% extends "main/base_templates/new_base.html" %} {% block content %}
+<section class="container">
+<h2>{{ object.title }}</h2>
+<hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+
+<div class="row">
+  <div class="col-md-8">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">  slug:{{ object.slug }}</h5>
+        <p class="card-text">{{ object.duration }}</p>
+        <p class="card-text">submission_date:{{ object.submission_date }}</p>
+        <p class="card-text">deadline_date:{{ object.deadline_date }}</p>
+        <p class="card-text">points:{{ object.points }}</p>
+        <p class="card-text">mxpoints:{{ object.mxpoints }}</p>
+        <p class="card-text">mxearnings:{{ object.maxearnings }}</p>
+        <p class="card-text">earnings:{{ object.earnings }}</p>
+        <p class="card-text">is_active:{{ object.is_active }}</p>    
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-md-4">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Assigned sessions</h5>
+        {% if object.assignment %}
+        <p class="card-text">{{ object.assignment.employee }}</p>
+        {% else %}
+        <p class="card-text">None</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+
+
+{% if user.is_authenticated and user.is_superuser %}
+<div class="row text-center">
+  <div class="col-md-12">
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'projectmanagement:taskklist' object.id %}">Update</a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'projectmanagement:taskklist' object.id %}">Delete</a>
+  </div>
+</div>
+{% endif %}
+</section>
+{% endblock %}

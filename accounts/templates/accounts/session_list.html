@@ -1,0 +1,51 @@
+{% extends "main/base_templates/new_base.html" %} 
+{% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">TRAINING ASSESSMENTS</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{ num_tasks }}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="#" class="btn btn-secondary btn-sm">ADD CATEGORY</a>
+          <a href="#" class="btn btn-secondary btn-sm">ADD GROUP</a>
+        </p>
+      </div>
+    </div>
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">
+        <div class="career text-center">
+          <table class="table table-borderless" style="width: 100%">
+            <thead class="border-bottom font-weight-bold">
+              <tr>
+                <th>updated_date</th>
+                <th>username</th>
+                <th>date_joined</th>
+                <th>days</th>
+                <th>number_of_sessions</th>
+                <th>tools_covered</th>               
+              </tr>
+            </thead>
+            <tbody id="table_body_data">
+              {% for session in sessions %}
+                <tr>
+                  <td> <a href="{% url 'accounts:trainee_user' session.id%}">{{ session.updated_date }}</a></td>
+                  <td>{{ session.username }}</td>
+                  <td>{{ session.date_joined }}</td>
+                  <td>{{ session.days }}</td>
+                  <td>{{ session.number_of_sessions }}</td>
+                  <td>{{ session.tools_covered }}</td>                 
+                  <td>               
+                    <a href="{% url 'accounts:trainee' session.id %}">Update</a>
+
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>          
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

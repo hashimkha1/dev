@@ -3,7 +3,7 @@ from decimal import *
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Sum 
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models.signals import pre_save
@@ -12,6 +12,7 @@ from accounts.modelmanager import DepartmentManager
 #from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
 from django.contrib.auth import get_user_model
+
 #User = get_user_model()
 
 # Create your models here.
