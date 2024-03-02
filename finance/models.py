@@ -1,17 +1,15 @@
 from django.db import models
 from datetime import datetime, date
 from decimal import *
-from enum import unique
 from django.shortcuts import redirect, render
-from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Q,Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save, post_save
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
+from main.models import Company
 
 # from finance.utils import get_exchange_rate
 User = get_user_model()
@@ -551,39 +549,52 @@ class DC48_Inflow(models.Model):
             
 
 class Budget(models.Model):
-    CLIENTS_CHOICES = [
-        ("DYC", "Diaspora Youth Caucus"),
-        ("DC48KENYA", "DC48KENYA"),
-        ("Other", "Other"),
-    ]
-    CAT_CHOICES = [
-        ("Conference Facilities","Conference Facilities"),
-        ("Food","Food"),
-        ("Entertainment","Entertainment"),
-        ("Travel","Travel"),
-        ("Accomodation","Accomodation"),
-        ("Awards","Awards"),
-        ("Media Coverage","Media Coverage"),
-        ("Other", "Other"),
-    ]
+    # CLIENTS_CHOICES = [
+    #     ("DYC", "Diaspora Youth Caucus"),
+    #     ("DC48KENYA", "DC48KENYA"),
+    #     ("Other", "Other"),
+    # ]
+    # CAT_CHOICES = [
+    #     ("Conference Facilities","Conference Facilities"),
+    #     ("Food","Food"),
+    #     ("Entertainment","Entertainment"),
+    #     ("Travel","Travel"),
+    #     ("Accomodation","Accomodation"),
+    #     ("Awards","Awards"),
+    #     ("Media Coverage","Media Coverage"),
+    #     ("Other", "Other"),
+    # ]
 
-    clients_category = models.CharField(
-        max_length=25,
-        choices=CLIENTS_CHOICES,
-        default="Other",
-    )
+    # clients_category = models.CharField(
+    #     max_length=25,
+    #     choices=CLIENTS_CHOICES,
+    #     default="Other",
+    # )
+    company = models.ForeignKey(
+        Company, 
+        on_delete=models.CASCADE, 
+        related_name="company_type",
+        default=1)
+    
+    department = models.ForeignKey(
+        Department, 
+        on_delete=models.CASCADE, 
+        related_name="department_type",
+        default=1)
+    
     budget_lead = models.ForeignKey(
         "accounts.CustomerUser", 
         on_delete=models.CASCADE, 
-        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
+        limit_choices_to=(Q(is_staff=True,is_active=True,category=2)|Q(is_superuser=True)),
         related_name="budget_lead")
 
-    category = models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-        default="Other",
+    # category = models.CharField(
+    #     max_length=25,
+    #     choices=CAT_CHOICES,
+    #     default="Other",
         
-    )
+    # )
+    category = models.CharField(max_length=25,default="Other")
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)

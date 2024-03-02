@@ -20,7 +20,7 @@ urlpatterns = [
     path('FAQS/', views.FrequentlyAskedQuestion, name='FAQS'),
     
     path('members/<str:title>', views.team, name='members'),
-    # path('team_profiles/', views.team, name='team_profiles'),
+    path('newcompany/', views.CompanyCreateView.as_view(), name='newcompany'),
     # path('client_profiles/', views.team, name='client_profiles'),
     # path('future_talents/', views.team, name='future_talents'),
     # path('board/', views.team, name='board'),

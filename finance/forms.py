@@ -8,7 +8,7 @@ from .models import (
     TrainingLoan,
     Transaction,
     Inflow,
-    FoodHistory,
+    FoodHistory,Budget
 )
 
 class DepartmentFilterForm(forms.Form):
@@ -21,6 +21,7 @@ class FoodHistoryForm(forms.ModelForm):
     class Meta:
         model = FoodHistory
         fields = '__all__'
+
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -60,6 +61,44 @@ class TransactionForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(TransactionForm, self).__init__(*args, **kwargs)
         self.fields["payment_method"].empty_label = "Select"
+
+
+class BudgetForm(forms.ModelForm):
+    class Meta:
+        model = Budget
+
+        fields = [
+            "company", 
+            "budget_lead", 
+            "department", 
+            "category", 
+            "item", 
+            "qty", 
+            "unit_price", 
+            "description", 
+            "is_active", 
+            "receipt_link"
+        ]
+        labels = {
+            "company": "Company Name",
+            "budget_lead": "Username",
+            # "phone": "Receiver Phone",
+            "department": "Department",
+            "category": "Category",
+            "item": "Item",
+            # "payment_method": "Payment Method",
+            "qty": "Quantity",
+            "unit_price": "Unit Price",
+            # "transaction_cost": "Transaction Cost",
+            "description": "Description",
+            "receipt_link": "Link",
+        }
+        widgets = {"description": Textarea(attrs={"cols": 30, "rows": 1})}
+
+    def __init__(self, *args, **kwargs):
+        super(BudgetForm, self).__init__(*args, **kwargs)
+        # self.fields["payment_method"].empty_label = "Select"
+
 
 class InflowForm(forms.ModelForm):
     class Meta:

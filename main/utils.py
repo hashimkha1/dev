@@ -105,6 +105,11 @@ def unique_slug_generator(instance, new_slug=None):
         return unique_slug_generator(instance, new_slug=new_slug)
     return slug
 
+def slug_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        if instance.name:
+            instance.slug = unique_slug_generator(instance)
+
 
 """ =============open_ai chat bot===========   """
 def generate_chatbot_response(user_message, user_message_dict=None):

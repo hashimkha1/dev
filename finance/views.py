@@ -25,7 +25,9 @@ from .models import (
 		DC48_Inflow,Field_Expense,Budget,
         BalanceSheetCategory,BalanceSheetEntry,BalanceSheetSummary
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm,FoodHistoryForm
+from .forms import (LoanForm,TransactionForm,InflowForm,
+					DepartmentFilterForm,FoodHistoryForm,BudgetForm)
+
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
@@ -56,14 +58,20 @@ def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 
-
-# def budget(request):
-# 	budget=Budget.objects.all()
-# 	context = {
-# 				'budget': budget
-# 			}
-# 	return render(request, "finance/budgets/budget.html", context)
-
+@login_required
+def add_budget_item(request):
+    if request.method == "POST":
+        form = BudgetForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            instance=form.save(commit=False)
+            print(request.user)
+            instance.budget_lead=request.user
+            instance.save()
+            return redirect("finance:budget")
+    else:
+        form = BudgetForm()
+    return render(request, "finance/budgets/newbudget.html", {"form": form})
 
 def budget(request):
     budget_obj=Budget.objects.all()
@@ -678,6 +686,20 @@ def transact(request):
         form = TransactionForm()
     return render(request, "finance/payments/transact.html", {"form": form})
 
+@login_required
+def add_budget_item(request):
+    if request.method == "POST":
+        form = BudgetForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            instance=form.save(commit=False)
+            print(request.user)
+            instance.budget_lead=request.user
+            instance.save()
+            return redirect("/finance/budget/")
+    else:
+        form = BudgetForm()
+    return render(request, "finance/budgets/newbudget.html", {"form": form})
 
 class TransactionListView(ListView):
 	model = Transaction

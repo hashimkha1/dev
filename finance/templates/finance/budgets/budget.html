@@ -45,7 +45,7 @@
             <div class="col-md-6" id="bada">
               <div class="card">
                 <div class="card-body">
-                  <h5><b>BUDGETINT</b></h5>
+                  <h5><b>BUDGETING</b></h5>
                   <hr/>
                   <div class="row text-center">
         
@@ -76,9 +76,14 @@
                   <h5><b>ACTIONS</b></h5>
                   <hr/>
                   <i><h6>{{payday}}</h6></i>
+                  <div class="col-md-12" id="gi">
+                    <p><a href="{% url 'main:newcompany'%}" class="btn btn-secondary btn-sm"
+                        >Add Company
+                    </a></p>
+                </div>
                   <hr/>
                   <div class="col-md-12" id="gi">
-                    <p><a href="{% url 'finance:finance-transact'%}" class="btn btn-secondary btn-sm"
+                    <p><a href="{% url 'finance:add_budget_item'%}" class="btn btn-secondary btn-sm"
                         >Add item
                     </a></p>
                 </div>
@@ -96,7 +101,7 @@
       <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
-          <!-- <th>Client_Category</th> -->
+          <th>Company</th>
           <th>Category</th>
             <th>Item</th>
             <th>qty</th>
@@ -112,9 +117,9 @@
       <tbody>
         {% for item in budget_obj %}
         <tr>
-          <!-- <td>
-            {{item.clients_category}}
-        </td> -->
+          <td>
+            {{item.company}}
+        </td>
           <td>
             {{item.category}}
         </td>
