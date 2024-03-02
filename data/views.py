@@ -346,9 +346,8 @@ def questionview(request, question_type=None, *args, **kwargs):
     if request.method == 'POST':
         form = InterviewForm(request.POST, request.FILES, instance=data)
         required_fields = question_mapping.get(question_type, [])
-        for field_name in required_fields:
-            form.fields[field_name].required = True
-
+        # for field_name in required_fields:
+        #     form.fields[field_name].required = True
         if form.is_valid():
             instance = form.save(commit=False)
             instance.client = request.user
