@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
-from .forms import UserForm
+from .forms import UserForm,SessionForm
 from coda_project import settings
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
@@ -17,7 +17,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.urls import reverse
-from .models import CustomerUser
+from .models import CustomerUser,Session
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import UserFilter
 # from management.models import Task
@@ -437,4 +437,41 @@ def home(request):
 #     form = PasswordResetForm({'email': email})
 #     #form = PasswordResetForm({'email':'sample@sample.com'})
 #     return form.save(from_email=from_email, email_template_name=template)
-# ''' 
+# '''
+
+def session_list(request):
+    sessions = Session.objects.all()
+    return render(request, 'accounts/session_list.html', {'sessions': sessions})
+
+def session_create(request):
+    if request.method == 'POST':
+        form = SessionForm(request.POST)
+        if form.is_valid():
+            form.save()          
+            return redirect('accounts:traning')
+    else:
+        form = SessionForm()       
+    return render(request, 'accounts/session_create.html', {'form': form}) 
+
+def session_update(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    if request.method == 'POST':
+        form = SessionForm(request.POST, instance=session)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:traning')
+    else:
+        form = SessionForm(instance=session)
+    return render(request, 'accounts/session_update.html', {'form': form}) 
+
+def session_detail(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    return render(request, 'accounts/session_detail.html', {'session': session})  
+
+
+def session_delete(request, pk):
+    session = get_object_or_404(Session, pk=pk)
+    if request.method == 'POST':
+        session.delete()
+        return redirect('accounts:traning')
+    return render(request, 'accounts/session_delete.html', {'session': session})
