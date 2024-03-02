@@ -7,7 +7,6 @@ from .views import (
     TraineeUpdateView,
     TraineeAssessmentCreateView,
     TraineeAssessmentUpdateView
-    
 )
 app_name = "application"
 urlpatterns = [
