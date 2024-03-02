@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
 
-from .models import CustomerUser,departments,Transaction,Payment_Information,Payment_History
+from .models import CustomerUser,departments,Transaction,Session,Payment_Information,Payment_History
 # admin.site.register(CustomerUser)
 class CustomerAdmin(UserAdmin):
     add_form = UserCreationForm
@@ -64,6 +64,7 @@ admin.site.register(departments)
 admin.site.register(Transaction)
 admin.site.register(Payment_Information)
 admin.site.register(Payment_History)
+admin.site.register(Session)
 # admin.site.register(Transaction)
 # admin.site.register(Transaction)
 # admin.site.register(Transaction)

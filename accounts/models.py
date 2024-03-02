@@ -331,3 +331,17 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+
+class Session(models.Model):
+    updated_date =models.DateField()
+    username =models.CharField(max_length=100)
+    date_joined = models.DateField()
+    days =models.IntegerField()
+    number_of_sessions =models.IntegerField()
+    tools_covered =models.TextField()
+
+
+   
+    def __str__(self):
+        return f"{self.username} - {self.updated_date}"
+
