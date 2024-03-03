@@ -36,6 +36,8 @@
                   <td>{{ website.updated_at|date:"F j, Y, g:i a" }}</td>
                   <td>               
                     <a href="{% url 'application:wcagupdate' website.id %}">Update</a>
+                    <td>
+                    <a href="{% url 'application:wcagdelete' website.id %}">delete</a>
                   </td>
                 </tr>
               {% endfor %}

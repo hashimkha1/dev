@@ -101,4 +101,11 @@ def wcag_website_detail(request, pk):
     website = get_object_or_404(WCAGStandardWebsite, pk=pk)
     return render(request, 'application/WCAG_DETAIL.HTML', {'website': website})
 
+def wcag_website_delete(request, pk):
+    website = get_object_or_404(WCAGStandardWebsite, pk=pk)
+    if request.method == 'POST':
+        website.delete()
+        return redirect('wcag_website_list')
+    return render(request, 'application/WCAG_DELETE.HTML', {'website': website})
+
              
