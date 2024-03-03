@@ -7,8 +7,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # print(BASE_DIR)
-# SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = "!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf"
+#SECRET_KEY = os.environ.get('SECRET_KEY')
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
