@@ -16,9 +16,9 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,WCAGStandard
 import logging
-
+from.forms import WCAGStandardWebsiteForm
 
 
 def Balancesheet_category_list(request):
@@ -65,6 +65,26 @@ def balancesheet_list(request):
         logger.erro(f"error fetching balance sheet data: {e}")  
         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+    return render(request,'application/training/balancelist.html',context) 
+
+
+def wcag_website_list(request):
+    websites = WCAGStandard.objects.all()
+    return render(request, 'application/WCAG_LIST.HTML', {'websites': websites})
+
+   
+def wcag_website_create(request):
+    if request.method == 'POST':
+        form = WCAGStandardWebsiteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('wcag_website_list')
+    else:
+        form = WCAGStandardWebsiteForm()
+    return render(request, 'application/WCAG_CREATE.HTMl', {'form': form})
+
+   
+
+         
 
              

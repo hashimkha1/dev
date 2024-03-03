@@ -153,10 +153,10 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 DATABASES = {
     'default': {
         "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'd8liqmn44tm61v',
-        "USER": 'ylzxqlnsngttgn',
-        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+        "NAME": 'ddmafrv54jmpsa',
+        "USER": 'tjazbnhgsnuijb',
+        "PASSWORD": '71bc88cb99866755e1c39ba80aa2fe3dae42500b75ac2f1b0e66859807abfcce',
+        "HOST": 'ec2-34-227-120-79.compute-1.amazonaws.com',  
     }
 }
 
