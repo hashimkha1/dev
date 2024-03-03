@@ -1,0 +1,37 @@
+{% extends "main/base_templates/new_base.html" %}
+
+{% block content %}
+<section id="wcag-standard-detail">
+  <div class="container">
+    <h2>WCAG Standard Detail</h2>
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th>Page Name</th>
+              <td>{{ wcagstandard.page_name }}</td>
+            </tr>
+            <tr>
+              <th>Website URL</th>
+              <td>{{ wcagstandard.website_url }}</td>
+            </tr>
+            <tr>
+              <th>Improvements</th>
+              <td>{{ wcagstandard.improvements }}</td>
+            </tr>
+            <tr>
+              <th>Created At</th>
+              <td>{{ wcagstandard.created_at }}</td>
+            </tr>
+            <tr>
+              <th>Updated At</th>
+              <td>{{ wcagstandard.updated_at }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

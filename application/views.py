@@ -97,4 +97,8 @@ def wcag_website_update(request, pk):
         form = WCAGStandardWebsiteForm(instance=website)
     return render(request, 'application/WCAG_UPDATE.HTML', {'form': form})
 
+def wcag_website_detail(request, pk):
+    website = get_object_or_404(WCAGStandardWebsite, pk=pk)
+    return render(request, 'application/WCAG_DETAIL.HTML', {'website': website})
+
              

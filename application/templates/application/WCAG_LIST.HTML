@@ -29,13 +29,13 @@
             <tbody id="table_body_data">
               {% for website in websites %}
                 <tr>
-                  <td>{{ website.page_name }}</td>
+                  <td> <a href="{% url 'application:wcagdetail' website.id %}">{{ website.page_name }}</a></td>
                   <td>{{ website.website_url }}</td>
                   <td>{{ website.improvements }}</td>
                   <td>{{ website.created_at|date:"F j, Y, g:i a" }}</td>
                   <td>{{ website.updated_at|date:"F j, Y, g:i a" }}</td>
                   <td>               
-                    <a href="#">Update</a>
+                    <a href="{% url 'application:wcagupdate' website.id %}">Update</a>
                   </td>
                 </tr>
               {% endfor %}
