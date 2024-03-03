@@ -86,5 +86,15 @@ def wcag_website_create(request):
    
 
          
+def wcag_website_update(request, pk):
+    website = get_object_or_404(WCAGStandardWebsite, pk=pk)
+    if request.method == 'POST':
+        form = WCAGStandardWebsiteForm(request.POST, instance=website)
+        if form.is_valid():
+            form.save()
+            return redirect('wcag_website_list')
+    else:
+        form = WCAGStandardWebsiteForm(instance=website)
+    return render(request, 'application/WCAG_UPDATE.HTML', {'form': form})
 
              

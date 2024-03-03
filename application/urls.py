@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-                   Balancesheet_category_list,balancesheet_list ,wcag_website_list,wcag_website_create                 
+                   Balancesheet_category_list,balancesheet_list ,wcag_website_list,wcag_website_create,wcag_website_update                
                    )
 app_name = 'application'
 urlpatterns = [
@@ -10,5 +10,6 @@ urlpatterns = [
     path('balancesheetlist/', views.balancesheet_list, name='balancesheetlist'),
     path('wcaglist/', views.wcag_website_list, name='wcaglist'),
     path('wcagcreate/', views.wcag_website_create, name='wcagcreate'),
+    path('wcagupdate/<int:pk>/', views.wcag_website_update, name='wcagupdate'),
     # path('join/', views.join, name='join'),
 ]
