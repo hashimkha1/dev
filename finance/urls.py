@@ -12,7 +12,7 @@ app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
     path('statements/', views.openai_balancesheet, name='open_statements'),
-    # path('statements/', views.balancesheet, name='statements'),
+    path('send_invoice/', views.send_invoice, name='send_invoice'),
     path('finance_report/', views.finance_report, name='finance_report'),
     path('add_budget_item/', views.add_budget_item, name='add_budget_item'),
     path('budget/', views.budget, name='budget'),
@@ -68,7 +68,7 @@ urlpatterns = [
     path('loans/', LoanListView.as_view(template_name='finance/payments/loans.html'), name='trainingloans'),
     # path('newpay/', views.loan, name='newpay'),
     path('newpay/', LoanCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpay'),
-    path('loanuser/', views.userLoanListView, name='loanuser'),
+    path('loanuser/', views.userLoanListView.as_view(), name='loanuser'),
     path('loan/<int:pk>/update/', LoanUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='loan-update'),
      #FOOD & SUPPLIERS
     path(

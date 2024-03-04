@@ -81,6 +81,23 @@ def upload_image_to_drive(image_path, folder_id,image_name):
 #             if job.type == 'Extract':
 #                 print(f"Job ID: {job.id}, Job Type: {job.type}, Status: {job.status}, Created: {job.created_at}")
 
+# def get_location_data(zipcode):
+#     # Example of using an external API (replace with your chosen API)
+#     api_url = f'https://api.example.com/zipcode/{zipcode}'
+#     try:
+#         response = requests.get(api_url)
+#         if response.status_code == 200:
+#             data = response.json()
+#             return {
+#                 'city': data.get('city', ''),
+#                 'state': data.get('state', ''),
+#                 'country': data.get('country', '')
+#             }
+#         else:
+#             return None
+#     except Exception as e:
+#         print(f"Error fetching location data: {e}")
+#         return None
 
 
 def unique_slug_generator(instance, new_slug=None):

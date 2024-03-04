@@ -549,27 +549,6 @@ class DC48_Inflow(models.Model):
             
 
 class Budget(models.Model):
-    # CLIENTS_CHOICES = [
-    #     ("DYC", "Diaspora Youth Caucus"),
-    #     ("DC48KENYA", "DC48KENYA"),
-    #     ("Other", "Other"),
-    # ]
-    # CAT_CHOICES = [
-    #     ("Conference Facilities","Conference Facilities"),
-    #     ("Food","Food"),
-    #     ("Entertainment","Entertainment"),
-    #     ("Travel","Travel"),
-    #     ("Accomodation","Accomodation"),
-    #     ("Awards","Awards"),
-    #     ("Media Coverage","Media Coverage"),
-    #     ("Other", "Other"),
-    # ]
-
-    # clients_category = models.CharField(
-    #     max_length=25,
-    #     choices=CLIENTS_CHOICES,
-    #     default="Other",
-    # )
     company = models.ForeignKey(
         Company, 
         on_delete=models.CASCADE, 
@@ -588,12 +567,6 @@ class Budget(models.Model):
         limit_choices_to=(Q(is_staff=True,is_active=True,category=2)|Q(is_superuser=True)),
         related_name="budget_lead")
 
-    # category = models.CharField(
-    #     max_length=25,
-    #     choices=CAT_CHOICES,
-    #     default="Other",
-        
-    # )
     category = models.CharField(max_length=25,default="Other")
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)

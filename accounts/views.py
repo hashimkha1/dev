@@ -278,6 +278,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "city",
         "state",
         "country",
+        "zipcode",
         "is_superuser",
         "is_admin",
         "is_client",

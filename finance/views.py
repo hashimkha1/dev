@@ -32,10 +32,10 @@ from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
 from main.filters import FoodFilter
-from main.models import Service,ServiceCategory,Pricing
+from main.models import Service,ServiceCategory,Pricing,Company
 from investing.models import Investments,Investment_rates,Investor_Information
 from investing.utils import get_user_investment
-from management.utils import paytime
+from management.utils import paytime,loan_computation,paymentconfigurations
 from management.models import Requirement
 from django.views import View
 from .utils import *
@@ -518,6 +518,52 @@ def payment(request,method):
         return render(request, "email/payment/payment_method.html",context)
     except:
         return render(request, "email/payment/payment_method.html",context)
+    
+
+def send_invoice(request):
+    service='Training and Job Support'
+    url="email/payment/invoice.html"
+    payslip_config = PayslipConfig.objects.get(user__username='Judy')
+    organization = Company.objects.get(user__username='Judy')
+    client=CustomerUser.objects.get(username='Judy')
+    client_email="hunjin015@gmail.com" #client.email 
+    today = datetime.now()
+    date=datetime(today.year, today.month, 1)
+    debt_amount=payslip_config.loan_amount
+    repayment_percentage=payslip_config.loan_repayment_percentage
+    repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
+    balance_amount=debt_amount-repayment_amount
+
+    context={
+                'service': service,
+                'date': date,
+                'first_name': client.first_name,
+                'last_name': client.last_name,
+                'organization': organization.name,
+                'address':client.address,
+                'city':client.city,
+                'state':client.state,
+                'country':client.country,
+                'zipcode':client.zipcode,
+                'account_no':account_no,
+                'user_email':client.email,
+                'debt_amount':debt_amount,
+                'repayment_amount':repayment_amount,
+                'balance_amount':balance_amount,
+                'email':email_info,
+                'message':"message",
+                'error_message':"error_message",
+                'contact_message':'info@codanalytics.net',
+            }
+    try:
+        send_email( category=request.user.category, 
+                    to_email=[client_email],#[request.user.email,], 
+                    subject=service, html_template=url, 
+		    		context=context
+                    )
+        return render(request, "email/payment/invoice.html",context)
+    except:
+        return render(request, "email/payment/invoice.html",context)
     
 @login_required
 def pay(request, *args, **kwargs):
@@ -1330,14 +1376,14 @@ def verify_otp(request):
         phone_number = request.session.get('phone_number')
         amount = request.session.get('amount')
         reference = request.session.get('reference')
-        print("Phone Number:", phone_number)
-        print("Amount:", amount)
-        print("reference:", reference)
+        # print("Phone Number:", phone_number)
+        # print("Amount:", amount)
+        # print("reference:", reference)
         
 
         # Debugging: Print entered and stored OTP to console
-        print("Entered OTP:", entered_otp)
-        print("Stored OTP:", stored_otp)
+        # print("Entered OTP:", entered_otp)
+        # print("Stored OTP:", stored_otp)
 
         if entered_otp == stored_otp:
             print("_______correct")

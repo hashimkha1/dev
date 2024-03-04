@@ -44,6 +44,10 @@ from management.models import Requirement, Training
 from data.models import ClientAssessment
 from getdata.models import Editable
 from main.permission import check_payment_history_permission
+
+from .models import Location
+import requests
+
 User=get_user_model()
 
 #  ===================================================================================   
@@ -1251,3 +1255,26 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+
+
+# def populate_location(request):
+#     if request.method == 'POST':
+#         zipcode = request.POST.get('zipcode')
+#         # Call the zipcode lookup API to get location information
+#         location_data = get_location_data(zipcode)
+#         if location_data:
+#             # Create or update Location record
+#             location, created = Location.objects.update_or_create(
+#                 zipcode=zipcode,
+#                 defaults={
+#                     'city': location_data.get('city', ''),
+#                     'state': location_data.get('state', ''),
+#                     'country': location_data.get('country', '')
+#                 }
+#             )
+#             return render(request, 'location.html', {'location': location})
+#         else:
+#             return render(request, 'location.html', {'error': 'Invalid zipcode'})
+#     else:
+#         return render(request, 'location.html')

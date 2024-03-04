@@ -350,10 +350,41 @@ class Search(models.Model):
     def __str__(self):
         return self.question
 
-   
+# models.py
+from django.db import models
+
+class Location(models.Model):
+    zipcode = models.CharField(max_length=10, unique=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name = _("Location")
+        verbose_name_plural = _("Location")
+
+    def __str__(self):
+        return self.state
+
 class Company(TimeStampedModel):
     """Company Table will provide a list of the different company affiliated with CODA"""
     name = models.CharField(max_length=100,null=True, blank=True)
+    sector = models.CharField(max_length=100,null=True, blank=True)
+    company_address = models.CharField(max_length=100,null=True, blank=True)
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        # default=1,
+        null=True, 
+        blank=True
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        # default=1,
+        null=True, 
+        blank=True
+    )
     sector = models.CharField(max_length=100,null=True, blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
     slug = models.SlugField(max_length=255, unique=True)
