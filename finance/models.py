@@ -101,6 +101,7 @@ class PayslipConfig(models.Model):
     loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
     
     installment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000)
+    installment_date = models.DateField(null=True)
 
     # configs for laptop service
     laptop_status = models.BooleanField(default=True)
