@@ -523,47 +523,66 @@ def payment(request,method):
 def send_invoice(request):
     service='Training and Job Support'
     url="email/payment/invoice.html"
-    payslip_config = PayslipConfig.objects.get(user__username='Judy')
-    organization = Company.objects.get(user__username='Judy')
-    client=CustomerUser.objects.get(username='Judy')
-    client_email="hunjin015@gmail.com" #client.email 
-    today = datetime.now()
-    date=datetime(today.year, today.month, 1)
-    debt_amount=payslip_config.loan_amount
-    repayment_percentage=payslip_config.loan_repayment_percentage
-    repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
-    balance_amount=debt_amount-repayment_amount
 
-    context={
-                'service': service,
-                'date': date,
-                'first_name': client.first_name,
-                'last_name': client.last_name,
-                'organization': organization.name,
-                'address':client.address,
-                'city':client.city,
-                'state':client.state,
-                'country':client.country,
-                'zipcode':client.zipcode,
-                'account_no':account_no,
-                'user_email':client.email,
-                'debt_amount':debt_amount,
-                'repayment_amount':repayment_amount,
-                'balance_amount':balance_amount,
-                'email':email_info,
-                'message':"message",
-                'error_message':"error_message",
-                'contact_message':'info@codanalytics.net',
-            }
-    try:
-        send_email( category=request.user.category, 
-                    to_email=[client_email],#[request.user.email,], 
-                    subject=service, html_template=url, 
-		    		context=context
-                    )
-        return render(request, "email/payment/invoice.html",context)
-    except:
-        return render(request, "email/payment/invoice.html",context)
+    ###############################
+    # due payment userlist
+    ###############################
+    user_payment_information = Payment_Information.objects.filter(fee_balance__gt=0).distinct('customer_id')
+    for customer_payment_information in user_payment_information:
+        if PayslipConfig.objects.filter(user__username=customer_payment_information.customer_id.username).exists():
+            payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer_id.username)
+        else:
+            payslip_config = PayslipConfig.objects.create(
+                user = customer_payment_information.customer_id,
+                loan_amount = customer_payment_information.payment_fees,
+                loan_repayment_percentage = 0,
+                installment_amount = customer_payment_information.down_payment,
+            )
+
+        organization = Company.objects.filter(user__username=customer_payment_information.customer_id.username)
+        client=CustomerUser.objects.get(username=customer_payment_information.customer_id.username)
+        client_email=client.email
+        today = datetime.now()
+        date=datetime(today.year, today.month, 1)
+        # debt_amount=payslip_config.loan_amount
+        # repayment_percentage=payslip_config.loan_repayment_percentage
+        # repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
+        # balance_amount=debt_amount-repayment_amount
+        debt_amount=customer_payment_information.fee_balance
+        repayment_amount=payslip_config.installment_amount
+        balance_amount=debt_amount-repayment_amount
+
+        context={
+                    'service': service,
+                    'date': date,
+                    'first_name': client.first_name,
+                    'last_name': client.last_name,
+                    'organization': organization.first().name if organization.exists() else 'CODA',
+                    'address':client.address,
+                    'city':client.city,
+                    'state':client.state,
+                    'country':client.country,
+                    'zipcode':client.zipcode,
+                    'account_no':account_no,
+                    'user_email':client.email,
+                    'debt_amount':debt_amount,
+                    'repayment_amount':repayment_amount,
+                    'balance_amount':balance_amount,
+                    'email':email_info,
+                    'message':"message",
+                    'error_message':"error_message",
+                    'contact_message':'info@codanalytics.net',
+                }
+        try:
+            send_email( category=request.user.category, 
+                        to_email=[client_email],#[request.user.email,], 
+                        subject=service, html_template=url, 
+                        context=context
+                        )
+            # return render(request, "email/payment/invoice.html",context)
+        except:
+              pass
+    return render(request, "email/payment/invoice.html",context)
     
 @login_required
 def pay(request, *args, **kwargs):
@@ -655,6 +674,22 @@ def paymentComplete(request):
         client_date=client_date,
         rep_date=rep_date,
     )
+    try:
+        if PayslipConfig.objects.filter(user__username=request.user.username).exists():
+            payslip_config = PayslipConfig.objects.get(user__username=request.user.username)
+            payslip_config.loan_amount = payment_fees
+            payslip_config.installment_amount = down_payment
+            payslip_config.save()
+
+        else:
+            payslip_config = PayslipConfig.objects.create(
+                user = request.user.customer_id,
+                loan_amount = payment_fees,
+                loan_repayment_percentage = 0,
+                installment_amount = down_payment,
+            )
+    except:
+        pass
 	
     return JsonResponse("Payment completed!", safe=False)
 
