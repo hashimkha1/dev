@@ -21,9 +21,6 @@ urlpatterns = [
     
     path('members/<str:title>', views.team, name='members'),
     path('newcompany/', views.CompanyCreateView.as_view(), name='newcompany'),
-    # path('client_profiles/', views.team, name='client_profiles'),
-    # path('future_talents/', views.team, name='future_talents'),
-    # path('board/', views.team, name='board'),
     path('letter/', views.letters, name='letter'),
     path('appointment_letter/', views.letters, name='appointment_letter'),
     # path('download/', convert_html_to_pdf, name='appointment_letter_download'),
@@ -31,10 +28,8 @@ urlpatterns = [
     #=======================SERVICES=====================================
     path('newservice/', views.ServiceCreateView.as_view(template_name='main/form.html'), name='newservice'),
     path('services/', views.services, name='services'),
-    # path('services/<str:slug>/', views.bi_services, name='service'),
     path("display_service/<str:slug>/", views.display_service, name="display_service"),
     path("display_plans/<str:slug>/", views.service_plans, name="service_plans"),
-    # path("full_course", views.full_course, name="full_course"),
     path('update/<int:pk>/', views.ServiceUpdateView.as_view(template_name='main/form.html'), name='update_service'),
     path('price_update/<int:pk>/', views.PriceUpdateView.as_view(template_name='main/form.html'), name='update_price'),
     path('delete/<int:id>/', views.delete_service, name='delete_service'),
