@@ -480,6 +480,8 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 def payments(request):
 	payment_history=Payment_History.objects.all()
 	Payment_Info=Payment_Information.objects.all()
+	# payment_history=Payment_History.objects.filter(customer__is_client=True)
+	# Payment_Info=Payment_Information.objects.filter(customer_id__is_client=True)
 	context={
 		"title":"Payments",
 		"payment_history":payment_history,
@@ -727,13 +729,28 @@ class DefaultPaymentUpdateView(UpdateView):
 		return False
 
 # For payment purposes
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.forms.models import modelform_factory
+
+# def update_table(request, table_id, model_class):
+#     table = get_object_or_404(model_class, id=table_id)
+#     FormClass = modelform_factory(model_class, exclude=['id'])  # Exclude 'id' field if it's an auto-generated primary key
+#     if request.method == 'POST':
+#         form = FormClass(request.POST, instance=table)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('finance:pay')  # Redirect to the appropriate URL
+#     else:
+#         form = FormClass(instance=table)
+#     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
 	success_url = "/finance/pay/"
 	template_name="main/snippets_templates/generalform.html"
 	
-	# fields ="__all__"
-	fields=['customer_id','down_payment']
+	fields ="__all__"
+	# fields=['customer_id','down_payment']
 	def form_valid(self, form):
 		# form.instance.author=self.request.user
 		# if self.request.user.is_superuser or self.request.user:

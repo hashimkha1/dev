@@ -13,7 +13,8 @@ from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain_openai import ChatOpenAI, OpenAI
 from langchain_community.utilities import SQLDatabase
-
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.forms.models import modelform_factory
 """ ========This code is for save images in google drive======= """
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload 
@@ -40,6 +41,20 @@ def dates_functionality():
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
     return ytd_duration,current_year
+
+
+# def update_table(request, table_id, model_class):
+#     table = get_object_or_404(model_class, id=table_id)
+#     FormClass = modelform_factory(model_class, exclude=['id'])  # Exclude 'id' field if it's an auto-generated primary key
+#     if request.method == 'POST':
+#         form = FormClass(request.POST, instance=table)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('finance:pay')  # Redirect to the appropriate URL
+#     else:
+#         form = FormClass(instance=table)
+#     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
 
 """======= Google Drive Code ========"""
 
