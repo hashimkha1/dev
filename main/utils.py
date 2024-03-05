@@ -13,7 +13,8 @@ from langchain_community.agent_toolkits import SQLDatabaseToolkit
 from langchain.agents.agent_types import AgentType
 from langchain_openai import ChatOpenAI, OpenAI
 from langchain_community.utilities import SQLDatabase
-
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.forms.models import modelform_factory
 """ ========This code is for save images in google drive======= """
 from google.oauth2 import service_account
 from googleapiclient.http import MediaFileUpload 
@@ -34,12 +35,31 @@ def convert_date(date_string):
 def random_string_generator(size=25, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+# def first_day_of_month():
+#     """Function to return the first day of the current month."""
+#     return date.today().replace(day=1)
+
 def dates_functionality():
     current_year = date_obj.now().year
     current_date = date_obj.now()
+    first_date =current_date.replace(day=1)
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
-    return ytd_duration,current_year
+    return ytd_duration,current_year,first_date
+
+
+# def update_table(request, table_id, model_class):
+#     table = get_object_or_404(model_class, id=table_id)
+#     FormClass = modelform_factory(model_class, exclude=['id'])  # Exclude 'id' field if it's an auto-generated primary key
+#     if request.method == 'POST':
+#         form = FormClass(request.POST, instance=table)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('finance:pay')  # Redirect to the appropriate URL
+#     else:
+#         form = FormClass(instance=table)
+#     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
 
 """======= Google Drive Code ========"""
 
@@ -81,6 +101,23 @@ def upload_image_to_drive(image_path, folder_id,image_name):
 #             if job.type == 'Extract':
 #                 print(f"Job ID: {job.id}, Job Type: {job.type}, Status: {job.status}, Created: {job.created_at}")
 
+# def get_location_data(zipcode):
+#     # Example of using an external API (replace with your chosen API)
+#     api_url = f'https://api.example.com/zipcode/{zipcode}'
+#     try:
+#         response = requests.get(api_url)
+#         if response.status_code == 200:
+#             data = response.json()
+#             return {
+#                 'city': data.get('city', ''),
+#                 'state': data.get('state', ''),
+#                 'country': data.get('country', '')
+#             }
+#         else:
+#             return None
+#     except Exception as e:
+#         print(f"Error fetching location data: {e}")
+#         return None
 
 
 def unique_slug_generator(instance, new_slug=None):
@@ -104,6 +141,11 @@ def unique_slug_generator(instance, new_slug=None):
                 )
         return unique_slug_generator(instance, new_slug=new_slug)
     return slug
+
+def slug_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        if instance.name:
+            instance.slug = unique_slug_generator(instance)
 
 
 """ =============open_ai chat bot===========   """

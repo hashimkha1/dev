@@ -13,8 +13,6 @@ host,dbname,user,password=dba_values()
 def compute_pay(amount, inc_rate=Decimal('10')):
     amount = Decimal(str(amount))
     return_rate = inc_rate / 6  # Divide the annual interest rate by 6 for bi-monthly payments
-    print(amount, inc_rate,return_rate)
-    print(f'{amount}, Rate: {inc_rate}')
     interest = amount * return_rate / 100
     interest = interest.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)  # Convert interest to 2 decimal places
     return interest

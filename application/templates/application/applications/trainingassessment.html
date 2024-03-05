@@ -12,14 +12,15 @@
         <tr>
           <th>Date</th>
           <th>assessor </th>
-          <th>trainee_username </th>
-          <th>topic </th>
+          <th>username </th>
           <th>data_tools </th>
+          <!-- <th>topic </th> -->
           <th>audibility </th>
           <th>score </th>
           <th>duration </th>
           <th>Watch </th>
           <th>Update </th>
+          <th>Delete </th>
         
         </tr>
       </thead>
@@ -30,12 +31,6 @@
           <td>{{obj.assessor}}</td>
           <td>{{obj.trainee_username}}</td>
           <!-- <td>{{obj.topic.topic_name}}</td> -->
-          <!-- <td>{{ obj.get_topic_display }}</td>
-          <td>
-            {% for topic in obj.topics.all %}
-              {{ topic.name }}{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-          </td> -->
           <td>{{obj.data_tools}}</td>
           <td>{{obj.audibility}}</td>
           <td>{{obj.score}}</td>
@@ -47,7 +42,7 @@
             </a>
             </button>
           </td>
-         <td><h4 ><a href="url 'application:assessment_update' obj.id ">Edit</H4></a></p></td>  
+         <td><h4 ><a href="{% url 'application:assessment_update' obj.id %}">Edit</H4></a></p></td>  
          <td><h4 ><a href="#">❌</H4></a></p></td>  
       </tr>
         {% endfor %}

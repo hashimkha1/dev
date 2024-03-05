@@ -15,7 +15,7 @@
 <div class="stripdiv">
   <div class="container">
     <p class="me-lg-5">
-      {{ service_desc }}
+      {{ service_desc|safe|truncatechars:380 }}
     </p>
   </div>
 </div>

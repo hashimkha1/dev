@@ -1,10 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils.translation import gettext_lazy as _
 from django.db.models import Q
 from django.utils.text import slugify
 from django.db.models.signals import pre_save
-from .utils import unique_slug_generator
+from .utils import unique_slug_generator,slug_pre_save_receiver
 from django.urls import reverse
 from django.utils import timezone
 from django.conf import settings
@@ -350,21 +350,52 @@ class Search(models.Model):
     def __str__(self):
         return self.question
 
+# models.py
+from django.db import models
 
-# ===================PRESAVE FUNCTIONALITIES=====================
-def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
-    if not instance.slug:
-        instance.slug=unique_slug_generator
+class Location(models.Model):
+    zipcode = models.CharField(max_length=10, unique=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
 
+    class Meta:
+        verbose_name = _("Location")
+        verbose_name_plural = _("Location")
 
-def servicecategory_pre_save_receiver(sender, instance, *args, **kwargs):
-    if not instance.slug:
-        if instance.name:
-            instance.slug = unique_slug_generator(instance)
+    def __str__(self):
+        return self.state
 
-pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
+class Company(TimeStampedModel):
+    """Company Table will provide a list of the different company affiliated with CODA"""
+    name = models.CharField(max_length=100,null=True, blank=True)
+    sector = models.CharField(max_length=100,null=True, blank=True)
+    company_address = models.CharField(max_length=100,null=True, blank=True)
+    location = models.ForeignKey(
+        Location,
+        on_delete=models.CASCADE,
+        # default=1,
+        null=True, 
+        blank=True
+    )
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        # default=1,
+        null=True, 
+        blank=True
+    )
+    sector = models.CharField(max_length=100,null=True, blank=True)
+    description = models.TextField(max_length=500, null=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True)
 
-pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
+    class Meta:
+        verbose_name = _("Company")
+        verbose_name_plural = _("Companies")
+
+    def __str__(self):
+        return self.name
+
 
 class WCAGStandardWebsite(models.Model):
     CAT_CHOICES = [
@@ -407,3 +438,20 @@ class WCAGStandard(TimeStampedModel):
 
     def __str__(self):
         return self.criteria
+    
+# ==============================PRESAVE SLUG GENERATORS====================================
+def testimonials_pre_save_receiver(sender,instance,*args,**kwargs):
+    if not instance.slug:
+        instance.slug=unique_slug_generator
+
+
+def servicecategory_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        if instance.name:
+            instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
+
+pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
+
+pre_save.connect(slug_pre_save_receiver,sender=Company)

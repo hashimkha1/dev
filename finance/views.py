@@ -21,19 +21,21 @@ from accounts.models import CustomerUser
 from .models import (
 		LoanUsers, Payment_Information,Payment_History,
 		Default_Payment_Fees,TrainingLoan,
-		Inflow,Transaction,PayslipConfig,Supplier,Food,
+		Inflow,Transaction,PayslipConfig,Supplier,Food,FoodHistory,
 		DC48_Inflow,Field_Expense,Budget,
         BalanceSheetCategory,BalanceSheetEntry,BalanceSheetSummary
 	)
-from .forms import LoanForm,TransactionForm,InflowForm,DepartmentFilterForm
+from .forms import (LoanForm,TransactionForm,InflowForm,
+					DepartmentFilterForm,FoodHistoryForm,BudgetForm)
+
 from mail.custom_email import send_email
 from coda_project.settings import SITEURL,payment_details
 from main.utils import path_values,countdown_in_month,dates_functionality
 from main.filters import FoodFilter
-from main.models import Service,ServiceCategory,Pricing
+from main.models import Service,ServiceCategory,Pricing,Company
 from investing.models import Investments,Investment_rates,Investor_Information
 from investing.utils import get_user_investment
-from management.utils import paytime
+from management.utils import paytime,loan_computation,paymentconfigurations
 from management.models import Requirement
 from django.views import View
 from .utils import *
@@ -56,18 +58,24 @@ def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
 
-
-# def budget(request):
-# 	budget=Budget.objects.all()
-# 	context = {
-# 				'budget': budget
-# 			}
-# 	return render(request, "finance/budgets/budget.html", context)
-
+@login_required
+def add_budget_item(request):
+    if request.method == "POST":
+        form = BudgetForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            instance=form.save(commit=False)
+            print(request.user)
+            instance.budget_lead=request.user
+            instance.save()
+            return redirect("finance:budget")
+    else:
+        form = BudgetForm()
+    return render(request, "finance/budgets/newbudget.html", {"form": form})
 
 def budget(request):
     budget_obj=Budget.objects.all()
-    ytd_duration,current_year=dates_functionality()
+    ytd_duration,current_year,first_date=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
     total_amt = sum(transact.ksh_amount for transact in budget_obj)
     total_usd_amt =float(total_amt)/float(rate)
@@ -88,8 +96,6 @@ def budget(request):
         "remaining_hours": int(remaining_hours % 24),
     }
     return render(request, "finance/budgets/budget.html", context)
-
-
 
 
 class BudgetUpdateView(UpdateView):
@@ -472,6 +478,8 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 def payments(request):
 	payment_history=Payment_History.objects.all()
 	Payment_Info=Payment_Information.objects.all()
+	# payment_history=Payment_History.objects.filter(customer__is_client=True)
+	# Payment_Info=Payment_Information.objects.filter(customer_id__is_client=True)
 	context={
 		"title":"Payments",
 		"payment_history":payment_history,
@@ -511,6 +519,142 @@ def payment(request,method):
     except:
         return render(request, "email/payment/payment_method.html",context)
     
+
+# def send_invoice(request):
+#     service='Training and Job Support'
+#     url="email/payment/invoice.html"
+
+#     ###############################
+#     # due payment userlist
+#     ###############################
+#     user_payment_information = Payment_Information.objects.filter(fee_balance__gt=0).distinct('customer_id')
+#     for customer_payment_information in user_payment_information:
+#         if PayslipConfig.objects.filter(user__username=customer_payment_information.customer_id.username).exists():
+#             payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer_id.username)
+#         else:
+#             payslip_config = PayslipConfig.objects.create(
+#                 user = customer_payment_information.customer_id,
+#                 loan_amount = customer_payment_information.payment_fees,
+#                 loan_repayment_percentage = 0,
+#                 installment_amount = customer_payment_information.down_payment,
+#             )
+
+#         organization = Company.objects.filter(user__username=customer_payment_information.customer_id.username)
+#         client=CustomerUser.objects.get(username=customer_payment_information.customer_id.username)
+#         client_email=client.email
+#         today = datetime.now()
+#         date=datetime(today.year, today.month, 1)
+#         # debt_amount=payslip_config.loan_amount
+#         # repayment_percentage=payslip_config.loan_repayment_percentage
+#         # repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
+#         # balance_amount=debt_amount-repayment_amount
+#         debt_amount=customer_payment_information.fee_balance
+#         repayment_amount=payslip_config.installment_amount
+#         balance_amount=debt_amount-repayment_amount
+
+#         context={
+#                     'service': service,
+#                     'date': date,
+#                     'first_name': client.first_name,
+#                     'last_name': client.last_name,
+#                     'organization': organization.first().name if organization.exists() else 'CODA',
+#                     'address':client.address,
+#                     'city':client.city,
+#                     'state':client.state,
+#                     'country':client.country,
+#                     'zipcode':client.zipcode,
+#                     'account_no':account_no,
+#                     'user_email':client.email,
+#                     'debt_amount':debt_amount,
+#                     'repayment_amount':repayment_amount,
+#                     'balance_amount':balance_amount,
+#                     'email':email_info,
+#                     'message':"message",
+#                     'error_message':"error_message",
+#                     'contact_message':'info@codanalytics.net',
+#                 }
+#         try:
+#             send_email( category=request.user.category, 
+#                         to_email=[client_email],#[request.user.email,], 
+#                         subject=service, html_template=url, 
+#                         context=context
+#                         )
+#             # return render(request, "email/payment/invoice.html",context)
+#         except:
+#               pass
+#     return render(request, "email/payment/invoice.html",context)
+
+
+def send_invoice(request):
+    service='Training and Job Support'
+    url="email/payment/invoice.html"
+
+    ###############################
+    # due payment userlist
+    ###############################
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0,customer__username='coda_info').distinct('customer_id')
+    
+    successful_user_list = []
+    
+    for customer_payment_information in user_payment_information:
+        if PayslipConfig.objects.filter(user__username=customer_payment_information.customer.username).exists():
+            payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer.username)
+            # print("payslip_config====>",payslip_config)
+        else:
+            payslip_config = PayslipConfig.objects.create(
+                user = customer_payment_information.customer,
+                loan_amount = customer_payment_information.payment_fees,
+                loan_repayment_percentage = 0,
+                rp_starting_period= customer_payment_information.contract_submitted_date.strftime("%Y-%m-%d"),
+                installment_amount = customer_payment_information.down_payment,
+                installment_date = datetime.now().date()
+            )
+
+        # if payslip_config.installment_date == datetime.today().date():
+        organization = Company.objects.filter(user__username=customer_payment_information.customer.username)
+        client=customer_payment_information.customer
+        client_email=client.email
+        today = datetime.now()
+        date=datetime(today.year, today.month, 1)
+        debt_amount=customer_payment_information.fee_balance
+        repayment_amount=payslip_config.installment_amount
+        balance_amount=debt_amount-repayment_amount if debt_amount-repayment_amount > 0 else debt_amount
+
+        context={
+                    'service': service,
+                    'date': date,
+                    'first_name': client.first_name,
+                    'last_name': client.last_name,
+                    'organization': organization.first().name if organization.exists() else f"{client.first_name} {client.last_name}",
+                    'address':client.address,
+                    'city':client.city,
+                    'state':client.state,
+                    'country':client.country,
+                    'zipcode':client.zipcode,
+                    'account_no':account_no,
+                    'user_email':client.email,
+                    'debt_amount':debt_amount,
+                    'repayment_amount':repayment_amount,
+                    'balance_amount':balance_amount,
+                    'email':email_info,
+                    'message':"sucess",
+                    'error_message':"error_message",
+                    'contact_message':'info@codanalytics.net',
+                }
+        try:
+            send_email( category=request.user.category, 
+                        to_email=[client_email],#[request.user.email,], 
+                        subject=service, html_template=url, 
+                        context=context
+                        )                
+            successful_user_list.append(context)
+            # return render(request, "email/payment/invoice.html",context)
+        except:
+            pass
+
+    return render(request, "finance/payments/sendinvoice.html",{'customer_payment_information': successful_user_list})
+    
+
 @login_required
 def pay(request, *args, **kwargs):
     contract_url = reverse('finance:newcontract', args=[request.user.username])
@@ -601,6 +745,22 @@ def paymentComplete(request):
         client_date=client_date,
         rep_date=rep_date,
     )
+    try:
+        if PayslipConfig.objects.filter(user__username=request.user.username).exists():
+            payslip_config = PayslipConfig.objects.get(user__username=request.user.username)
+            payslip_config.loan_amount = payment_fees
+            payslip_config.installment_amount = down_payment
+            payslip_config.save()
+
+        else:
+            payslip_config = PayslipConfig.objects.create(
+                user = request.user.customer_id,
+                loan_amount = payment_fees,
+                loan_repayment_percentage = 0,
+                installment_amount = down_payment,
+            )
+    except:
+        pass
 	
     return JsonResponse("Payment completed!", safe=False)
 
@@ -638,13 +798,28 @@ class DefaultPaymentUpdateView(UpdateView):
 		return False
 
 # For payment purposes
+# from django.shortcuts import render, get_object_or_404, redirect
+# from django.forms.models import modelform_factory
+
+# def update_table(request, table_id, model_class):
+#     table = get_object_or_404(model_class, id=table_id)
+#     FormClass = modelform_factory(model_class, exclude=['id'])  # Exclude 'id' field if it's an auto-generated primary key
+#     if request.method == 'POST':
+#         form = FormClass(request.POST, instance=table)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('finance:pay')  # Redirect to the appropriate URL
+#     else:
+#         form = FormClass(instance=table)
+#     return render(request, 'main/snippets_templates/generalform.html', {'form': form})
+
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
 	success_url = "/finance/pay/"
 	template_name="main/snippets_templates/generalform.html"
 	
-	# fields ="__all__"
-	fields=['customer_id','down_payment']
+	fields ="__all__"
+	# fields=['customer_id','down_payment']
 	def form_valid(self, form):
 		# form.instance.author=self.request.user
 		# if self.request.user.is_superuser or self.request.user:
@@ -678,6 +853,20 @@ def transact(request):
         form = TransactionForm()
     return render(request, "finance/payments/transact.html", {"form": form})
 
+@login_required
+def add_budget_item(request):
+    if request.method == "POST":
+        form = BudgetForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            instance=form.save(commit=False)
+            print(request.user)
+            instance.budget_lead=request.user
+            instance.save()
+            return redirect("/finance/budget/")
+    else:
+        form = BudgetForm()
+    return render(request, "finance/budgets/newbudget.html", {"form": form})
 
 class TransactionListView(ListView):
 	model = Transaction
@@ -707,7 +896,7 @@ def filteroutflowsbydepartment(request):
 def outflows(request):
     outflows,form=filteroutflowsbydepartment(request)
     # print("values========>",outflows,form)
-    ytd_duration,current_year=dates_functionality()
+    ytd_duration,current_year,first_date=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
     #operations totals
     operations_obj = outflows
@@ -1067,6 +1256,56 @@ def foodlist(request):
     }
     return render(request,"finance/payments/food.html",context)
 
+def food_history_view(request):    
+    date_today = timezone.now()
+    current_year = date_today.year
+    current_month = date_today.month
+    query = Q()
+
+    selected_month = request.GET.get('month')
+    selected_year = request.GET.get('year')
+    selected_office_location = request.GET.get('office_location')
+
+    if selected_month and selected_month.isdigit():
+        query &= Q(history_date__month=selected_month)
+    if selected_year and selected_year.isdigit():
+        query &= Q(history_date__year=selected_year)
+    if selected_office_location:
+        query &= Q(office_location=selected_office_location)
+
+    food_histories = FoodHistory.objects.filter(query).order_by('-history_date')
+    total_amount = FoodHistory.objects.filter(query).aggregate(
+        total=Sum(F('unit_amt') * F('qty'))
+    )['total'] or 0
+
+    unique_office_locations = Food.objects.order_by('office_location').values_list('office_location', flat=True).distinct()
+    years = list(range(current_year - 5, current_year + 1))
+    months = [(i, timezone.datetime(2000, i, 1).strftime('%B')) for i in range(1, 13)]
+
+    context = {
+        'food_histories': food_histories,
+        'unique_office_locations': unique_office_locations,
+        'months': months,
+        'years': years,
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'total_amount': total_amount,
+    }
+
+    return render(request, 'finance/payments/foodhistory.html', context)
+
+
+def food_history_update(request,pk):
+    food_histories= get_object_or_404(FoodHistory,pk=pk)
+    if request.method == 'POST':                 
+        form = FoodHistoryForm(request.POST,instance=food_histories)
+        if form.is_valid():
+            form.save() 
+            return redirect('finance:foodhistory')            
+    else:
+        form = FoodHistoryForm(instance=food_histories)
+    return render(request,"finance/payments/foodhistory_update.html",{'form':form,'food_histories':food_histories}) 
+
 # =========================DC 48 KENYA===================================
 @method_decorator(login_required, name="dispatch")
 class DC48InflowCreateView(LoginRequiredMixin, CreateView):
@@ -1258,14 +1497,14 @@ def verify_otp(request):
         phone_number = request.session.get('phone_number')
         amount = request.session.get('amount')
         reference = request.session.get('reference')
-        print("Phone Number:", phone_number)
-        print("Amount:", amount)
-        print("reference:", reference)
+        # print("Phone Number:", phone_number)
+        # print("Amount:", amount)
+        # print("reference:", reference)
         
 
         # Debugging: Print entered and stored OTP to console
-        print("Entered OTP:", entered_otp)
-        print("Stored OTP:", stored_otp)
+        # print("Entered OTP:", entered_otp)
+        # print("Stored OTP:", stored_otp)
 
         if entered_otp == stored_otp:
             print("_______correct")

@@ -33,6 +33,7 @@ class UserForm(forms.ModelForm):
             "city",
             "state",
             "country",
+            "zipcode",
             "resume_file",
             "is_staff",
             "is_applicant",
@@ -49,6 +50,7 @@ class UserForm(forms.ModelForm):
             "city": "",
             "state": "",
             "country": "",
+            "zipcode": "",
         }
 
     def __init__(self, *args, **kwargs):

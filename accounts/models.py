@@ -48,6 +48,7 @@ class CustomerUser(AbstractUser):
     address = models.CharField(blank=True, null=True, max_length=255)
     city = models.CharField(blank=True, null=True, max_length=255)
     state = models.CharField(blank=True, null=True, max_length=255)
+    zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=Category.choices, default=999)
     # added this column here
@@ -140,8 +141,7 @@ class Department(models.Model):
     #     return reverse('management:department_list', args=[self.slug])
     def __str__(self):
         return self.name
-
-
+ 
 # =========================CREDENTIALS TABLE======================================
 class CredentialCategory(models.Model):
     department = models.ForeignKey(

@@ -79,7 +79,7 @@
                     <div class="row">
                         <div class="col-md-6 top-coloumn bg-white">
                             <div class="col-md-12">{{ form.category |as_crispy_field }}</div>
-                            <div class="col-md-12">{{ form.doc|as_crispy_field }}</div>
+                            <!-- <div class="col-md-12">{{ form.doc|as_crispy_field }}</div> -->
                             <div class="col-md-12">{{ form.link|as_crispy_field }}</div>
                         </div>
                         <div class="col-md-6 top-coloumn bg-white">
@@ -124,6 +124,8 @@
                             <div class="col-md-6">{{ form.sprints|as_crispy_field }}</div>
                             <div class="col-md-6">{{ form.stories|as_crispy_field }}</div>                                              
                           {% endif %}
+                          <input type="hidden" name="question_type" value="{{object.question_type}}">
+
                     </div>
                     <hr style="height:3px;border:none;color:#666669;background-color:rgb(106, 106, 155);" />
                   </fieldset>

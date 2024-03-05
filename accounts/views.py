@@ -29,12 +29,9 @@ from .utils import generate_random_password,JOB_SUPPORT_CATEGORIES
 
 from django.urls import reverse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
-# from allauth.account.signals import user_logged_in
-# from django.dispatch import receiver
-# from allauth.socialaccount.models import SocialAccount
 from allauth.core.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseRedirect
-
+from django.utils import timezone
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -93,100 +90,6 @@ def join(request):
         print(msg)
     
     return render(request, "accounts/registration/coda/join.html", {"form": form})
-
-
-# def join(request):
-#     if request.method == "POST":
-#         previous_user = CustomerUser.objects.filter(email = request.POST.get("email"))
-#         if len(previous_user) > 0:
-#             messages.success(request, f'User already exist with this email')
-#             form = UserForm()
-#             return redirect("/password-reset")
-#         else:
-#             contract_data,contract_date=agreement_data(request)
-#             dyc_total_amount,dyc_down_payment,early_registration_bonus=DYCDefaultPayments()
-#             if request.POST.get("category") == "3":
-#                 check_default_fee = Default_Payment_Fees.objects.all()
-#                 if check_default_fee:
-#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
-#                     default_fee = Default_Payment_Fees.objects.all().first()
-#                 else:
-#                     default_payment_fees = Default_Payment_Fees(
-#                         job_down_payment_per_month=1000,
-#                         job_plan_hours_per_month=40,
-#                         student_down_payment_per_month=500,
-#                         student_bonus_payment_per_month=100,
-#                     )
-#                     default_payment_fees.save()
-#                     # default_fee = Default_Payment_Fees.objects.get(id=1)
-#                     default_fee = Default_Payment_Fees.objects.all().first()
-#                 if (
-#                     request.POST.get("category") == "3"
-#                     and request.POST.get("sub_category") == "1"
-#                 ):
-#                     return render(
-#                         request,
-#                         "management/contracts/supportcontract_form.html",
-#                         {
-#                             "job_support_data": contract_data,
-#                             "contract_date": contract_date,
-#                             "payment_data": default_fee,
-#                         },
-#                     )
-#                 if (
-#                     request.POST.get("category") == "3"
-#                     and request.POST.get("sub_category") == "2"
-#                 ):
-#                     return render(
-#                         request,
-#                         "management/contracts/trainingcontract_form.html",
-#                         {
-#                             "contract_data": contract_data,
-#                             "contract_date": contract_date,
-#                             "payment_data": default_fee,
-#                         },
-#                     )
-#                 if (request.POST.get("category") == "4"):
-#                     context={
-#                                     'job_support_data': contract_data,
-#                                     'student_data': contract_data,
-#                                     'contract_date':contract_date,
-#                                     'payments':default_fee
-#                                 }
-#                     return render(request, 'management/contracts/dyc_contracts/student_contract.html',context)
-#                     # return render(
-#                     #     request,
-#                     #     "management/contracts/dyc_contracts/student_contract.html",
-#                     #     {
-#                     #         "contract_data": contract_data,
-#                     #         "contract_date": contract_date,
-#                     #         "dyc_total_amount": dyc_total_amount,
-#                     #         "contract_date": dyc_down_payment,
-#                     #         "early_registration_bonus": early_registration_bonus,
-#                     #         "default_fee": default_fee,
-#                     #     },
-#                     # )
-#             else:
-#                 form = UserForm(request.POST, request.FILES)
-#                 if form.is_valid():
-#                     print("category", form.cleaned_data.get("category"))
-
-#             if form.is_valid():
-#                 if form.cleaned_data.get("category") == 2:
-#                     form.instance.is_staff = True
-#                 elif form.cleaned_data.get("category") == 3:
-#                     form.instance.is_client = True
-#                 else:
-#                     form.instance.is_applicant = True
-
-#                 form.save()
-#                 # messages.success(request, f'Account created for {username}!')
-#                 return redirect('accounts:account-login')
-#     else:
-#         msg = "error validating form"
-#         form = UserForm()
-#         print(msg)
-#     return render(request, "accounts/registration/coda/join.html", {"form": form})
 
 
 # ---------------ACCOUNTS VIEWS----------------------
@@ -306,24 +209,56 @@ def login_view(request):
 
 
 # ================================USERS SECTION================================
-def users(request):
-    users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
-    userfilters=UserFilter(request.GET,queryset=users)
+# def users(request):
+#     users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+#     userfilters=UserFilter(request.GET,queryset=users)
 
+#     # Use the Paginator to paginate the queryset
+#     paginator = Paginator(userfilters.qs, 10) # Show 10 objects per page
+#     page = request.GET.get('page')
+#     objects = paginator.get_page(page)
+#     context={
+#         # "users": queryset,
+#         "userfilters": userfilters,
+#         "objects":objects
+#     }
+#     if request.user.is_superuser:
+#         return render(request, "accounts/admin/superpage.html", context)
+#     else:
+#         return redirect("main:layout")
+
+def users(request):
+    # Filter active staff users and order by date joined
+    active_users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined")
+    active_staff_users = CustomerUser.objects.filter(is_active=True, is_staff=True).order_by("-date_joined")
+
+    total_users = CustomerUser.objects.all().order_by("-date_joined").count()
+    total_active_users = CustomerUser.objects.filter(is_active=True).order_by("-date_joined").count()
+    
+    # Automatically set is_active to False for staff users who haven't logged in for more than 3 months
+    three_months_ago = timezone.now() - timezone.timedelta(days=90)
+    inactive_staff_users = active_staff_users.filter(last_login__lt=three_months_ago)
+    inactive_staff_users.update(is_active=False)
+    
+    # Apply filters
+    userfilters = UserFilter(request.GET, queryset=active_users)
+    
     # Use the Paginator to paginate the queryset
-    paginator = Paginator(userfilters.qs, 10) # Show 10 objects per page
+    paginator = Paginator(userfilters.qs, 10)  # Show 10 objects per page
     page = request.GET.get('page')
     objects = paginator.get_page(page)
-    context={
-        # "users": queryset,
+    
+    context = {
         "userfilters": userfilters,
-        "objects":objects
+        "objects": objects,
+        "total_users": total_users,
+        "total_active_users": total_active_users,
     }
+    
     if request.user.is_superuser:
         return render(request, "accounts/admin/superpage.html", context)
     else:
         return redirect("main:layout")
-
 
 class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = CustomerUser
@@ -343,6 +278,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         "city",
         "state",
         "country",
+        "zipcode",
         "is_superuser",
         "is_admin",
         "is_client",

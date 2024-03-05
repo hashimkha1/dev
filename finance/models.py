@@ -1,19 +1,20 @@
 from django.db import models
 from datetime import datetime, date
 from decimal import *
-from enum import unique
 from django.shortcuts import redirect, render
-from django.db.models import Q
-from django.db.models import Sum
+from django.db.models import Q,Sum
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save, post_save
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from accounts.models import Department
+from main.models import Company
+from main.utils import dates_functionality
 
 # from finance.utils import get_exchange_rate
+ytd_duration,current_year,first_date = dates_functionality()
+
 User = get_user_model()
 
 # Create your models here.
@@ -101,6 +102,12 @@ class PayslipConfig(models.Model):
     loan_status = models.BooleanField(default=True)
     loan_amount = models.DecimalField(max_digits=10, decimal_places=2, default=20000.00)
     loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
+    
+    installment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000)
+    installment_date = models.DateField(default=first_date,null=True,blank=True)
+    # installment_date = models.DateTimeField(
+    #     help_text=_("Date formart :mm/dd/yyyy"), auto_now=True, editable=True, null=True
+    # )
 
     # configs for laptop service
     laptop_status = models.BooleanField(default=True)
@@ -551,39 +558,25 @@ class DC48_Inflow(models.Model):
             
 
 class Budget(models.Model):
-    CLIENTS_CHOICES = [
-        ("DYC", "Diaspora Youth Caucus"),
-        ("DC48KENYA", "DC48KENYA"),
-        ("Other", "Other"),
-    ]
-    CAT_CHOICES = [
-        ("Conference Facilities","Conference Facilities"),
-        ("Food","Food"),
-        ("Entertainment","Entertainment"),
-        ("Travel","Travel"),
-        ("Accomodation","Accomodation"),
-        ("Awards","Awards"),
-        ("Media Coverage","Media Coverage"),
-        ("Other", "Other"),
-    ]
-
-    clients_category = models.CharField(
-        max_length=25,
-        choices=CLIENTS_CHOICES,
-        default="Other",
-    )
+    company = models.ForeignKey(
+        Company, 
+        on_delete=models.CASCADE, 
+        related_name="company_type",
+        default=1)
+    
+    department = models.ForeignKey(
+        Department, 
+        on_delete=models.CASCADE, 
+        related_name="department_type",
+        default=1)
+    
     budget_lead = models.ForeignKey(
         "accounts.CustomerUser", 
         on_delete=models.CASCADE, 
-        limit_choices_to=(Q(sub_category=6) |Q(sub_category=7)|Q(is_superuser=True)),
+        limit_choices_to=(Q(is_staff=True,is_active=True,category=2)|Q(is_superuser=True)),
         related_name="budget_lead")
 
-    category = models.CharField(
-        max_length=25,
-        choices=CAT_CHOICES,
-        default="Other",
-        
-    )
+    category = models.CharField(max_length=25,default="Other")
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
@@ -667,6 +660,10 @@ class Food(models.Model):
         on_delete=models.RESTRICT,
         limit_choices_to=Q(active=True)
     )
+    office_location = models.CharField(
+        max_length=255,       
+        default= 'makutano'       
+    )
     item = models.CharField(
         max_length=255,
         unique=True,
@@ -702,6 +699,26 @@ class Food(models.Model):
         return additional_amount
 
 
+class FoodHistory(models.Model):
+    item = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='history')
+    supplier = models.ForeignKey(Supplier, on_delete=models.RESTRICT)
+    office_location = models.CharField(max_length=255, default='makutano')
+   # item = models.CharField(max_length=255)
+    unit_amt = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    qty = models.PositiveIntegerField()
+    bal_qty = models.PositiveIntegerField()
+    description = models.TextField()
+    created_at = models.DateTimeField()
+    featured = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
+    history_date = models.DateTimeField(default=timezone.now)   
+
+    def __str__(self):
+        return f"History of {self.item.item} on {self.history_date.strftime('%Y-%m-%d')}"
+
+    class Meta:
+        ordering = ['-history_date']  # Order by most recent changes first
+        
 
 class Field_Expense(models.Model):
     category = models.CharField(max_length=255, blank=True, default="")

@@ -12,23 +12,21 @@ app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
     path('statements/', views.openai_balancesheet, name='open_statements'),
-    # path('statements/', views.balancesheet, name='statements'),
+    path('send_invoice/', views.send_invoice, name='send_invoice'),
     path('finance_report/', views.finance_report, name='finance_report'),
+    path('add_budget_item/', views.add_budget_item, name='add_budget_item'),
     path('budget/', views.budget, name='budget'),
     path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
     path('investment_report/', views.investment_report, name='investment_report'),
     path('transact/', views.transact, name='finance-transact'),
-    # path('transaction/', TransactionListView.as_view(), name='transaction-list'),
     path('transaction/', views.outflows, name='transaction-list'),
     path('transaction/<int:pk>/', TransanctionDetailView.as_view(), name='transaction-detail'),
     path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(template_name="finance/payments/transaction_form.html"), name='transaction-update'),
     path('transaction/<int:pk>/delete/', TransactionDeleteView.as_view(template_name="finance/payments/transaction_confirm_delete.html"), name='transaction-delete'),
      #-----------CASHINFLOW---------------------------------------
     path('inflow_entry/', views.inflow, name='entry_inflow'),
-    #path('inflow/', InflowListView.as_view(), name='inflow-list'),
     path('inflows/', views.inflows, name='inflow-list'),
     path('user_inflow/', UserInflowListView.as_view(), name='user-list'),
-    #path('inflow/new/', InflowCreateView.as_view(), name='inflow-create'),
     path('inflow/<int:pk>/', InflowDetailView.as_view(), name='inflow-detail'),
     path('inflow/<int:pk>/delete/', InflowDeleteView.as_view(), name='inflow-delete'),
     path('inflow/<int:pk>/update/', InflowUpdateView.as_view(), name='inflow-update'),
@@ -62,6 +60,7 @@ urlpatterns = [
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
     path('newpayment/', PaymentCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpayment'),
     path('payment/<int:pk>/update/', DefaultPaymentUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='payment-update'),
+    path('updatepayment/<int:pk>/update/', views.PaymentInformationUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='paymentinfo-update'),
     #Pay configs URLS
     path('newpaymentconfigs/',views.PaymentConfigCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpaymentconfigs'),
     path('paymentconfigs/', views.PaymentConfigListView.as_view(), name='paymentconfigs'),
@@ -70,7 +69,7 @@ urlpatterns = [
     path('loans/', LoanListView.as_view(template_name='finance/payments/loans.html'), name='trainingloans'),
     # path('newpay/', views.loan, name='newpay'),
     path('newpay/', LoanCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpay'),
-    path('loanuser/', views.userLoanListView, name='loanuser'),
+    path('loanuser/', views.userLoanListView.as_view(), name='loanuser'),
     path('loan/<int:pk>/update/', LoanUpdateView.as_view(template_name='finance/payments/payment_form.html'), name='loan-update'),
      #FOOD & SUPPLIERS
     path(
@@ -91,6 +90,6 @@ urlpatterns = [
     path("food/<int:pk>/update",views.FoodUpdateView.as_view(template_name='main/snippets_templates/generalform.html'),name="update-food"),
     path("suppliers/",views.SupplierListView.as_view(),name="suppliers"),    
     path("food/",views.foodlist,name="supplies"),
-
-    #Testing DYC
+    path("foodhistory/",views.food_history_view,name="foodhistory"),
+    path("foodhistoryupdate/<int:pk>/",views.food_history_update,name="foodhistoryupdate"),
 ]
