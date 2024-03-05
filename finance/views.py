@@ -75,7 +75,7 @@ def add_budget_item(request):
 
 def budget(request):
     budget_obj=Budget.objects.all()
-    ytd_duration,current_year=dates_functionality()
+    ytd_duration,current_year,first_date=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
     total_amt = sum(transact.ksh_amount for transact in budget_obj)
     total_usd_amt =float(total_amt)/float(rate)
@@ -594,7 +594,7 @@ def send_invoice(request):
     ###############################
     # due payment userlist
     ###############################
-    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0).distinct('customer_id')
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0,customer__username='coda_info').distinct('customer_id')
     
     successful_user_list = []
     
@@ -617,10 +617,6 @@ def send_invoice(request):
             client_email=client.email
             today = datetime.now()
             date=datetime(today.year, today.month, 1)
-            # debt_amount=payslip_config.loan_amount
-            # repayment_percentage=payslip_config.loan_repayment_percentage
-            # repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
-            # balance_amount=debt_amount-repayment_amount
             debt_amount=customer_payment_information.fee_balance
             repayment_amount=payslip_config.installment_amount
             balance_amount=debt_amount-repayment_amount if debt_amount-repayment_amount > 0 else debt_amount
@@ -901,7 +897,7 @@ def filteroutflowsbydepartment(request):
 def outflows(request):
     outflows,form=filteroutflowsbydepartment(request)
     # print("values========>",outflows,form)
-    ytd_duration,current_year=dates_functionality()
+    ytd_duration,current_year,first_date=dates_functionality()
     webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
     #operations totals
     operations_obj = outflows

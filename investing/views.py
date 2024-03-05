@@ -857,7 +857,7 @@ def subtract_dates(date1, date2):
 @login_required
 def options_returns(request):
     date_today = datetime.now(timezone.utc)
-    ytd_duration,current_year = dates_functionality()
+    ytd_duration,current_year,first_date = dates_functionality()
     
     ytd_weeks=int(ytd_duration/7)
     ytd_bi_weekly=int(ytd_duration/14)
@@ -910,7 +910,7 @@ def options_returns(request):
 
 @login_required
 def cost_basis(request):
-    ytd_duration,current_year = dates_functionality()
+    ytd_duration,current_year,first_date = dates_functionality()
     date_today = datetime.now(timezone.utc)
     ytd_days =ytd_duration
     ytd_weeks=int(ytd_days/7)

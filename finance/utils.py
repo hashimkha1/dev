@@ -190,6 +190,7 @@ def save_breakdown_data(breakdown_data, category_type):
         else:
             BalanceSheetCategory.objects.create(name=category_name, category_type=category_type, amount=float(amount))
             print(f"Saved {category_type}: {category_name} - {amount}")
+            
 def save_balance_sheet_data(data, category_type):
     for item in data:
         for name, amount in item.items():

@@ -18,7 +18,7 @@ from .models import (
     BalanceSheetEntry,
     BalanceSheetSummary,
     Food,
-    FoodHistory,
+    FoodHistory,PayslipConfig
 )  # , DocUpload
 from accounts.models import Department
 
@@ -100,6 +100,7 @@ admin.site.register(Payment_History, Payment_HistoryAdmin)
 admin.site.register(Inflow)
 admin.site.register(Payment_Information)
 admin.site.register(Default_Payment_Fees)
+admin.site.register(PayslipConfig)
 admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
 admin.site.register(BalanceSheetCategory),

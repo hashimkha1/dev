@@ -10,8 +10,11 @@ from django.db.models.signals import pre_save, post_save
 from django.contrib.auth import get_user_model
 from accounts.models import Department
 from main.models import Company
+from main.utils import dates_functionality
 
 # from finance.utils import get_exchange_rate
+ytd_duration,current_year,first_date = dates_functionality()
+
 User = get_user_model()
 
 # Create your models here.
@@ -101,7 +104,10 @@ class PayslipConfig(models.Model):
     loan_repayment_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=0.20)
     
     installment_amount = models.DecimalField(max_digits=10, decimal_places=2, default=1000)
-    installment_date = models.DateField(null=True)
+    installment_date = models.DateField(default=first_date,null=True,blank=True)
+    # installment_date = models.DateTimeField(
+    #     help_text=_("Date formart :mm/dd/yyyy"), auto_now=True, editable=True, null=True
+    # )
 
     # configs for laptop service
     laptop_status = models.BooleanField(default=True)

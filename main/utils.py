@@ -35,12 +35,17 @@ def convert_date(date_string):
 def random_string_generator(size=25, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+# def first_day_of_month():
+#     """Function to return the first day of the current month."""
+#     return date.today().replace(day=1)
+
 def dates_functionality():
     current_year = date_obj.now().year
     current_date = date_obj.now()
+    first_date =current_date.replace(day=1)
     start_of_year = date_obj(current_date.year, 1, 1)  # January 1 of the current year
     ytd_duration = (current_date - start_of_year).days
-    return ytd_duration,current_year
+    return ytd_duration,current_year,first_date
 
 
 # def update_table(request, table_id, model_class):
