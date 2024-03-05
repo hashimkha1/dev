@@ -16,7 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,BalanceSheetCategory
 import logging
 
 
@@ -65,6 +65,10 @@ def balancesheet_list(request):
         logger.erro(f"error fetching balance sheet data: {e}")  
         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+    return render(request,'application/training/balancelist.html',context) 
+
+def category_list(request):
+    categories = BalanceSheetCategory.objects.all()
+    return render(request, 'application/balance_list.html', {'categories': categories})         
 
              
