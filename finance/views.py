@@ -592,7 +592,7 @@ def send_invoice(request):
     ###############################
     # due payment userlist
     ###############################
-    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0,customer__username='coda_info').distinct('customer_id')
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0).distinct('customer_id')
     
     successful_user_list = []
     
@@ -610,47 +610,47 @@ def send_invoice(request):
                 installment_date = datetime.now().date()
             )
 
-        # if payslip_config.installment_date == datetime.today().date():
-        organization = Company.objects.filter(user__username=customer_payment_information.customer.username)
-        client=customer_payment_information.customer
-        client_email=client.email
-        today = datetime.now()
-        date=datetime(today.year, today.month, 1)
-        debt_amount=customer_payment_information.fee_balance
-        repayment_amount=payslip_config.installment_amount
-        balance_amount=debt_amount-repayment_amount if debt_amount-repayment_amount > 0 else debt_amount
+        if payslip_config.installment_date and payslip_config.installment_date.day == datetime.today().date().day:
+            organization = Company.objects.filter(user__username=customer_payment_information.customer.username)
+            client=customer_payment_information.customer
+            client_email=client.email
+            today = datetime.now()
+            date=datetime(today.year, today.month, 1)
+            debt_amount=customer_payment_information.fee_balance
+            repayment_amount=payslip_config.installment_amount
+            balance_amount=debt_amount-repayment_amount if debt_amount-repayment_amount > 0 else debt_amount
 
-        context={
-                    'service': service,
-                    'date': date,
-                    'first_name': client.first_name,
-                    'last_name': client.last_name,
-                    'organization': organization.first().name if organization.exists() else f"{client.first_name} {client.last_name}",
-                    'address':client.address,
-                    'city':client.city,
-                    'state':client.state,
-                    'country':client.country,
-                    'zipcode':client.zipcode,
-                    'account_no':account_no,
-                    'user_email':client.email,
-                    'debt_amount':debt_amount,
-                    'repayment_amount':repayment_amount,
-                    'balance_amount':balance_amount,
-                    'email':email_info,
-                    'message':"sucess",
-                    'error_message':"error_message",
-                    'contact_message':'info@codanalytics.net',
-                }
-        try:
-            send_email( category=request.user.category, 
-                        to_email=[client_email],#[request.user.email,], 
-                        subject=service, html_template=url, 
-                        context=context
-                        )                
-            successful_user_list.append(context)
-            # return render(request, "email/payment/invoice.html",context)
-        except:
-            pass
+            context={
+                        'service': service,
+                        'date': date,
+                        'first_name': client.first_name,
+                        'last_name': client.last_name,
+                        'organization': organization.first().name if organization.exists() else f"{client.first_name} {client.last_name}",
+                        'address':client.address if client.address is not None else '',
+                        'city':client.city if client.city is not None else '',
+                        'state':client.state if client.state is not None else '',
+                        'country':client.country if client.country is not None else '',
+                        'zipcode':client.zipcode if client.zipcode is not None else '',
+                        'account_no':account_no,
+                        'user_email':client.email,
+                        'debt_amount':debt_amount,
+                        'repayment_amount':repayment_amount,
+                        'balance_amount':balance_amount,
+                        'email':email_info,
+                        'message':"sucess",
+                        'error_message':"error_message",
+                        'contact_message':'info@codanalytics.net',
+                    }
+            try:
+                send_email( category=request.user.category, 
+                            to_email=[client_email],#[request.user.email,], 
+                            subject=service, html_template=url, 
+                            context=context
+                            )                
+                successful_user_list.append(context)
+                # return render(request, "email/payment/invoice.html",context)
+            except:
+                pass
 
     return render(request, "finance/payments/sendinvoice.html",{'customer_payment_information': successful_user_list})
     
