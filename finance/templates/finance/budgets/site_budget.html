@@ -1,0 +1,85 @@
+{% extends "main/base_templates/new_base.html" %}
+{% load static %}
+
+{% block title %}
+    {% if department %}{{ department.name }}{% else %}Activities{% endif %}
+{% endblock %}
+
+{% block content %}
+    <!--------------------------Slider Section--------------------------------->
+    <section id="data_training">
+        <h3 class="title text-center">WEB BUDGET FOR {{ company }}</h3>
+        <div class="row padding mb-4">
+            <!-- Subcategory cards -->
+            {% for subcategory, total_amount in subcategory_totals %}
+                <div class="col-md-3 text-center" id="bada">
+                    <div class="card-group">
+                        <div class="card">
+                            <div class="">
+                                <a href="{% url 'finance:site_budget_with_subcategory' category='Web' subcategory=subcategory %}"><p class="display-5 text-center" style="font-size: 24px;">{{ subcategory }} </b></p></a>
+                                <hr>
+                                <!-- Display total amount for the subcategory -->
+                                <p>$ {{ total_amount }}</p>
+                                <!-- Link to filter the table -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <div class="data_training text-center">
+            <h3 class="title">SITE COMPONENTS 
+                <p><a href="{% url 'finance:add_budget_item' %}" class="btn btn-secondary btn-sm">Add item</a></p>
+            </h3>
+            <div class="row text-center">
+                <div class="col-md-12" id="gi">
+                    <table class="table table-borderless" style="width: 100%">
+                        <thead class="border-bottom font-weight-bold">
+                            <tr>
+                                <!-- <th>Company</th>
+                                <th>Category</th> -->
+                                <th>Subcategory</th>
+                                <th>Item</th>
+                                <th>Qty</th>
+                                <th>Unit Price</th>
+                                <th>Amount(USD)</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Days</th>
+                                <th>Reference</th>
+                                {% if user.is_admin or user.is_superuser %}
+                                    <th>Edit</th>
+                                    <th>Delete</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for budget in site_budget %}
+                                <tr>
+                                    <!-- <td>{{ budget.company }}</td>
+                                    <td>{{ budget.category }}</td> -->
+                                    <td>{{ budget.subcategory }}</td>
+                                    <td>
+                                        <a class="text-dark text-decoration-none" data-toggle="tooltip" title="{{ budget.description }}" href="{{ category.get_absolute_url }}">{{ budget.item }}</a>
+                                    </td>
+                                    <td>{{ budget.qty }}</td>
+                                    <td>{{ budget.unit_price }}</td>
+                                    <td>{{ budget.amount|floatformat:2 }}</td>
+                                    <td>{{ budget.start_date|date:"n/d/Y" }}</td>
+                                    <td>{{ budget.end_date|date:"n/d/Y" }}</td>
+                                    <td>{{ budget.days }}</td>
+                                    <td><a class="article-title" href="{{ receipt_url }}">View</a></td>
+                                    {% if user.is_admin or user.is_superuser %}
+                                        <td><a class="article-title" href="{% url 'finance:budget-update' budget.id %}">Edit</a></td>
+                                        <td><a class="article-title" href="#">Delete</a></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock content %}

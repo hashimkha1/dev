@@ -73,34 +73,81 @@ def add_budget_item(request):
         form = BudgetForm()
     return render(request, "finance/budgets/newbudget.html", {"form": form})
 
-def budget(request):
-    budget_obj=Budget.objects.all()
-    ytd_duration,current_year,first_date=dates_functionality()
-    webhour, delta = PayslipConfig.objects.values_list("web_pay_hour", "web_delta").first()
-    total_amt = sum(transact.ksh_amount for transact in budget_obj)
-    total_usd_amt =float(total_amt)/float(rate)
-    # print("Amounts",total_outflows,ytd_outflows,total_field_ouflow_usd,total_web_ouflow,total_field_ouflow_usd)
-    data = [
-        {"title": "Amount(Ksh)", "value": total_amt},
-        {"title": "Amount(usd)", "value": total_usd_amt},
-	]
+
+def budget(request, institution='coda'):
+    # Fetch the list of companies
+    companies = Company.objects.all()
+
+    # Prepare data for all companies
+    data = []
+    for organization in companies:
+        if organization.name == institution.upper():
+            print(organization.name)
+            company_budget = Budget.objects.filter(company__name=institution.upper())
+            site_budget = Budget.objects.filter(company__name=institution.upper(), category__name='Web')
+            # Calculate total budget for this company (example)
+            total_budget = sum(site.amount for site in company_budget)
+            total_site_budget = sum(site.amount for site in site_budget)
+            total_operation = total_budget - total_site_budget
+            # Append data for this company to the list
+            data.append({
+                "company_name": organization.name,
+                "total_budget": total_budget,
+                "total_site_budget": total_site_budget,
+                "total_operation": total_operation,
+                "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'}),
+            })
+
+    # Prepare summary data
+    summary = [
+        {"title": "Total Budget", "value": sum(item['total_budget'] for item in data), "link": ''},
+        {"title": "Operations", "value": sum(item['total_operation'] for item in data), "link": ''},
+        {"title": "Web Development", "value": total_site_budget, "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'})},
+    ]
 
     context = {
-        "budget_obj": budget_obj,
-        "data": data,
-        "webhour": webhour,
-        "delta": delta,
-        "remaining_days": remaining_days,
-        "remaining_seconds ": int(remaining_seconds % 60),
-        "remaining_minutes ": int(remaining_minutes % 60),
-        "remaining_hours": int(remaining_hours % 24),
+        "budget_obj": company_budget,
+        "data": summary,
+        "webhour": PayslipConfig.objects.values_list("web_pay_hour", flat=True).first(),
+        "delta": PayslipConfig.objects.values_list("web_delta", flat=True).first(),
     }
     return render(request, "finance/budgets/budget.html", context)
 
 
+def site_budget(request, category='Web',subcategory='all'):
+    print(category,subcategory)
+    # Fetch site budget objects filtered by category and company
+    site_budget_all = Budget.objects.filter(company__name='CODA', category__name=category)
+    if subcategory =='all':
+        site_budget = Budget.objects.filter(company__name='CODA', category__name=category)
+        print(site_budget)
+    else:
+        site_budget = Budget.objects.filter(company__name='CODA', category__name=category, subcategory=subcategory)
+        print(site_budget)
+
+    # Initialize a dictionary to store subcategory totals
+    subcategory_totals = {}
+
+    # Calculate total amount for each subcategory
+    for budget in site_budget_all:
+        if budget.subcategory not in subcategory_totals:
+            subcategory_totals[budget.subcategory] = 0
+        subcategory_totals[budget.subcategory] += budget.amount
+
+    # Prepare context to pass to template
+    context = {
+        "company": "CODA",
+        "site_budget": site_budget,
+        "subcategory_totals": subcategory_totals.items(),  # Convert dictionary items to list of tuples
+    }
+    # return render(request, "finance/budgets/dynamic_site_budget.html", context)
+    return render(request, "finance/budgets/site_budget.html", context)
+
+
+
 class BudgetUpdateView(UpdateView):
 	model = Budget
-	success_url = "/finance/budget/"
+	success_url = "/finance/budget/coda"
 	template_name="main/snippets_templates/generalform.html"
 	fields ="__all__"
 
@@ -116,7 +163,6 @@ class BudgetUpdateView(UpdateView):
 			return True
 		if self.request.user:
 		    return True
-
 
 
 def investment_report(request):
@@ -520,71 +566,6 @@ def payment(request,method):
         return render(request, "email/payment/payment_method.html",context)
     
 
-# def send_invoice(request):
-#     service='Training and Job Support'
-#     url="email/payment/invoice.html"
-
-#     ###############################
-#     # due payment userlist
-#     ###############################
-#     user_payment_information = Payment_Information.objects.filter(fee_balance__gt=0).distinct('customer_id')
-#     for customer_payment_information in user_payment_information:
-#         if PayslipConfig.objects.filter(user__username=customer_payment_information.customer_id.username).exists():
-#             payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer_id.username)
-#         else:
-#             payslip_config = PayslipConfig.objects.create(
-#                 user = customer_payment_information.customer_id,
-#                 loan_amount = customer_payment_information.payment_fees,
-#                 loan_repayment_percentage = 0,
-#                 installment_amount = customer_payment_information.down_payment,
-#             )
-
-#         organization = Company.objects.filter(user__username=customer_payment_information.customer_id.username)
-#         client=CustomerUser.objects.get(username=customer_payment_information.customer_id.username)
-#         client_email=client.email
-#         today = datetime.now()
-#         date=datetime(today.year, today.month, 1)
-#         # debt_amount=payslip_config.loan_amount
-#         # repayment_percentage=payslip_config.loan_repayment_percentage
-#         # repayment_amount = debt_amount * repayment_percentage if repayment_percentage >0.0 else 1000
-#         # balance_amount=debt_amount-repayment_amount
-#         debt_amount=customer_payment_information.fee_balance
-#         repayment_amount=payslip_config.installment_amount
-#         balance_amount=debt_amount-repayment_amount
-
-#         context={
-#                     'service': service,
-#                     'date': date,
-#                     'first_name': client.first_name,
-#                     'last_name': client.last_name,
-#                     'organization': organization.first().name if organization.exists() else 'CODA',
-#                     'address':client.address,
-#                     'city':client.city,
-#                     'state':client.state,
-#                     'country':client.country,
-#                     'zipcode':client.zipcode,
-#                     'account_no':account_no,
-#                     'user_email':client.email,
-#                     'debt_amount':debt_amount,
-#                     'repayment_amount':repayment_amount,
-#                     'balance_amount':balance_amount,
-#                     'email':email_info,
-#                     'message':"message",
-#                     'error_message':"error_message",
-#                     'contact_message':'info@codanalytics.net',
-#                 }
-#         try:
-#             send_email( category=request.user.category, 
-#                         to_email=[client_email],#[request.user.email,], 
-#                         subject=service, html_template=url, 
-#                         context=context
-#                         )
-#             # return render(request, "email/payment/invoice.html",context)
-#         except:
-#               pass
-#     return render(request, "email/payment/invoice.html",context)
-
-
 def send_invoice(request):
     service='Training and Job Support'
     url="email/payment/invoice.html"
@@ -599,7 +580,6 @@ def send_invoice(request):
     for customer_payment_information in user_payment_information:
         if PayslipConfig.objects.filter(user__username=customer_payment_information.customer.username).exists():
             payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer.username)
-            # print("payslip_config====>",payslip_config)
         else:
             payslip_config = PayslipConfig.objects.create(
                 user = customer_payment_information.customer,
@@ -651,7 +631,6 @@ def send_invoice(request):
                 # return render(request, "email/payment/invoice.html",context)
             except:
                 pass
-
     return render(request, "finance/payments/sendinvoice.html",{'customer_payment_information': successful_user_list})
     
 
@@ -873,6 +852,8 @@ class TransactionListView(ListView):
 	template_name = "finance/payments/transaction.html"
 	context_object_name = "transactions"
 	# ordering=['-transaction_date']
+      
+
 
 def filteroutflowsbydepartment(request):
     all_outflows = Transaction.objects.all().order_by('-id')
@@ -1334,18 +1315,6 @@ class DC48InflowUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = DC48_Inflow
     template_name="finance/payments/inflow_form.html"
     success_url = "/finance/listinflow"
-    # fields=['group','category','employee','activity_name','description','point','mxpoint','mxearning']
-    # fields =("receiver",
-    #         "phone",
-    #         "category",
-    #         "task",
-    #         "method",
-    #         "period",
-    #         "qty",
-    #         "amount",
-    #         "transaction_cost",
-    #         "description",
-	#    )
     fields ="__all__"
     def form_valid(self, form):
         # form.instance.author=self.request.user
@@ -1672,10 +1641,41 @@ def openai_balancesheet(request):
             'saved_outflow_financing': saved_outflow_financing,
             'saved_inflow_financing': saved_inflow_financing,
         })
-    else:
-        # If data does not exist, call OpenAI to generate it
-        cashflow(request)
-        # Handle the response and update the context accordingly
+# Render the template with the 'assets' variable
+    return render(request, "finance/reports/openai.html", context)
 
-    # Render the template with the 'assets' variable
-    return render(request, "finance/reports/openai_statements.html", context)
+
+
+
+def balancesheet(request):
+    try:
+        balance_sheet = BalanceSheetSummary.objects.last()
+        if balance_sheet:
+            # Fetch entries for assets, liabilities, and equity
+            current_assets = balance_sheet.entries.filter(category__category_type='Asset')
+            current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
+            equity = balance_sheet.entries.filter(category__category_type='Equity')
+
+            # Calculate totals
+            total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
+            total_liabilities_and_equity=total_liabilities+total_equity
+            context = {
+                'company_name': 'CODA',
+                'balance_sheet': balance_sheet,
+                'current_assets': current_assets,
+                'current_liabilities': current_liabilities,
+                'equity': equity,
+                'total_liabilities_and_equity': total_liabilities_and_equity,
+                'total_assets': total_assets,
+                'total_liabilities': total_liabilities,
+                'total_equity': total_equity
+            }
+        else:
+            context = {'error_message': 'No balance sheet data available.'}
+    except Exception as e:
+        print(f"Error: {e}")
+        context = {'error_message': 'An error occurred while fetching balance sheet data.'}
+
+    return render(request, "finance/reports/balancesheet.html", context)
