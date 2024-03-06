@@ -93,4 +93,8 @@ urlpatterns = [
     path("food/",views.foodlist,name="supplies"),
     path("foodhistory/",views.food_history_view,name="foodhistory"),
     path("foodhistoryupdate/<int:pk>/",views.food_history_update,name="foodhistoryupdate"),
+
+
+
+    path("coda_budget_estimation",views.coda_budget_estimation, name="coda_budget_estimation")
 ]
