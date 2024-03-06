@@ -9,7 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from django.db.models.signals import pre_save, post_save
 from django.contrib.auth import get_user_model
 from accounts.models import Department
-from main.models import Company
+from main.models import Company,TimeStampedModel
 from main.utils import dates_functionality
 
 # from finance.utils import get_exchange_rate
@@ -557,6 +557,22 @@ class DC48_Inflow(models.Model):
             return total_amt_paid
             
 
+# class Site_Budget(models.Model):
+#     category = models.CharField(max_length=25,default="Other")
+#     subcategory = models.CharField(max_length=25,default="Other")
+#     name = models.CharField(max_length=25,default="Other")
+
+#     def __str__(self):
+#         return self.name
+    
+class Budget_Category(TimeStampedModel):
+    name = models.CharField(max_length=25,null=True,blank=True)
+    description = models.TextField(max_length=1000,null=True,blank=True)
+
+    def __str__(self):
+        return self.name
+    
+    
 class Budget(models.Model):
     company = models.ForeignKey(
         Company, 
@@ -575,8 +591,14 @@ class Budget(models.Model):
         on_delete=models.CASCADE, 
         limit_choices_to=(Q(is_staff=True,is_active=True,category=2)|Q(is_superuser=True)),
         related_name="budget_lead")
+    
+    category = models.ForeignKey(
+        Budget_Category, 
+        on_delete=models.CASCADE, 
+        related_name="category_type",
+        blank=True, null=True)
 
-    category = models.CharField(max_length=25,default="Other")
+    subcategory = models.CharField(max_length=25,null=True,blank=True)
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
@@ -589,8 +611,11 @@ class Budget(models.Model):
     receipt_link = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
-        ordering = ["category"]
+        ordering = ["-start_date"]
 
+    def __str__(self):
+        return self.item
+    
     def get_absolute_url(self):
         return reverse("management:inflow-detail", kwargs={"pk": self.pk})
 
@@ -608,9 +633,10 @@ class Budget(models.Model):
             return redirect('main:layout')
 
     @property
-    def ksh_amount(self):
+    def amount(self):
         try:
-            total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
+            # total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
+            total_amount = round(Decimal(self.unit_price * self.qty), 2)
         except:
             total_amount = 0
         return total_amount

@@ -7,19 +7,7 @@ from datetime import datetime
 # dt_string = "12/11/2018 09:15:32"
 # Register your models here.
 from django.urls import path, reverse
-from .models import (
-    LoanUsers,
-    Payment_History,
-    Default_Payment_Fees,
-    Payment_Information,
-    Transaction,Inflow,
-    TrainingLoan,
-    BalanceSheetCategory,
-    BalanceSheetEntry,
-    BalanceSheetSummary,
-    Food,
-    FoodHistory,PayslipConfig
-)  # , DocUpload
+from .models import *
 from accounts.models import Department
 
 class CsvImportForm(forms.Form):
@@ -108,3 +96,6 @@ admin.site.register(BalanceSheetEntry),
 admin.site.register(BalanceSheetSummary),
 admin.site.register(Food),
 admin.site.register(FoodHistory),
+admin.site.register(Budget),
+# admin.site.register(Site_Budget),
+admin.site.register(Budget_Category),

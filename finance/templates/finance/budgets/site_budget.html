@@ -1,0 +1,121 @@
+{%extends "main/base_templates/new_base.html"%} 
+{% load static %}
+{% block title %}
+{% if department %}{{ department.name }}{% else %}activities{% endif %}
+{% endblock %}
+{% block content %}
+<!--------------------------Slider Section--------------------------------->
+<section id="data_training">
+  <h3 class="title text-center">WEB BUDGET</h3>
+      <div class="row padding mb-4">
+                <div class="col-md-4 text-center" id="bada">
+                  <div class="card-group">
+                    <div class="card">
+                      <div class="">
+                        <p class="display-5 text-center"><b>AUTOMATION</b></p>
+                        <hr>
+                            Here we will automate common tasks such as sending emails, invoices and more to users.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-center" id="bada">
+                  <div class="card-group">
+                    <div class="card">
+                      <div class="">
+                        <p class="display-5 text-center"><b>AI</b></p>
+                        <hr>
+                          We will use OPENAI to generated, collect, and process data,analyze it to help predict future trends and pinpoint new markets.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-4 text-center" id="bada">
+                  <div class="card-group">
+                    <div class="card">
+                      <div class="">
+                        <p class="display-5 text-center"><b>INTEGRATION</b></p>
+                        <hr>
+                        Here we will integrate our site with 3rd party sites such as paypal,Credit Card and Google to enhance our sites.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        </div>
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+          <div class="data_training text-center">
+            <h3 class="title">SITE COMPONENTS </h3>
+                <div class="row text-center">
+                    {% for site in new_site_budget %}
+                    <div class="col-md-3" id="gi">
+                        {% include 'main/snippets_templates/cards/card.html' with instance=site.subcategory %}
+                            <!-- {% for budget in site_budget %}
+                                {% if  site.subcategory == budget.subcategory %}
+                                    {% include 'main/snippets_templates/cards/card.html' with instance=budget.item %}
+                                {% endif %}
+                            {% endfor%} -->
+                    </div>
+                  {% endfor%}
+                  </div>
+            </div>
+            <div class="data_training text-center">
+              <div class="row text-center">
+                <div class="col-md-12" id="gi">
+                                <table class="table table-borderless" style="width: 100%">
+                                  <thead class="border-bottom font-weight-bold">
+                                    <tr>
+                                      <th>Company</th>
+                                      <th>Category</th>
+                                      <th>subcategory</th>
+                                        <th>Item</th>
+                                        <th>qty</th>
+                                        <th>Unit Price</th>
+                                        <th>Amount(usd)</th>
+                                        <th>start_date</th>
+                                        <th>end_date</th>
+                                        <th>Days</th>
+                                        <th>Reference</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  {% for budget in site_budget %}
+                                      <!-- {% include 'main/snippets_templates/cards/card.html' with instance=budget.item %} -->
+                                    <tr>
+                                      <td>
+                                        {{budget.company}}
+                                    </td>
+                                      <td>
+                                        {{budget.category}}
+                                    </td>
+                                      <td>
+                                        {{budget.subcategory}}
+                                    </td>
+                                      <td>
+                                        <a class="text-dark  text-decoration-none" 
+                                        data-toggle="tooltip" title="{{  budget.description  }}"
+                                        href="{{ category.get_absolute_url }}">
+                                        {{budget.item}}
+                                        </a>
+                                    </td>
+                                    <td>{{budget.qty}}</td>
+                                    <td>{{budget.unit_price}}</td>
+                                    <td>{{budget.amount|floatformat:2}}</td>
+                                    <td>{{budget.start_date|date:"n/d/Y"}}</td>
+                                    <td>{{budget.end_date|date:"n/d/Y"}}</td>
+                                    <td>{{budget.days}}</td>
+                                    <td> <a class="article-title" href="{{receipt_url}}">View</a></td>
+                                      {%if user.is_admin or user.is_superuser%}
+                                      <td> <a class="article-title" href="{% url 'finance:budget-update' budget.id %}">Edit</a></td>
+                                      <td> <a class="article-title" href="#">Delete</a></td>
+                                      {%endif%}
+                                    </tr>
+                                {% endfor%}
+                                  </tbody>
+                                  </table>
+                                  
+                </div>
+              </div>
+    
+            </div>
+</section>
+{% endblock content %}

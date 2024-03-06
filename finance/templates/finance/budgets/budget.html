@@ -53,7 +53,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-body">
-                                    <a class="btn btn-primary" href="#" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
+                                    <a class="btn btn-primary" href="{{item.link}}" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
                                     <hr/>
                                     <i><h6>{{ item.value|floatformat:2 }}</h6></i>
                                 </div>
@@ -61,6 +61,25 @@
                         </div>
                     {% endfor %}
                 </div>
+<!--                 
+                <div class="container">
+                  <h1>Budget Overview</h1>
+                  <div class="row">
+                      {% for item in data %}
+                      <div class="col-md-4 mb-4">
+                          <div class="card">
+                              <div class="card-body">
+                                  <h5 class="card-title">{{ item.company_name }}</h5>
+                                  <p class="card-text">Total Budget: ${{ item.total_budget }}</p>
+                                  <p class="card-text">Total Web Budget: ${{ item.total_site_budget }}</p>
+                                  <p class="card-text">Total Operation Budget: ${{ item.total_operation }}</p>
+                                  <a href="{{ item.link }}" class="btn btn-primary">View Budget Details</a>
+                              </div>
+                          </div>
+                      </div>
+                      {% endfor %}
+                  </div>
+              </div> -->
 
                   <hr/>
                   <div class="row text-center">
@@ -98,6 +117,7 @@
               </div>
             </div>
       </div>
+
       <table class="table table-borderless" style="width: 100%">
       <thead class="border-bottom font-weight-bold">
         <tr>
@@ -109,7 +129,6 @@
             <th>start_date</th>
             <th>end_date</th>
             <th>Days</th>
-            <th>Amount(Ksh)</th>
             <th>Amount(usd)</th>
             <th>Receipt</th>
         </tr>
@@ -135,8 +154,7 @@
         <td>{{item.start_date|date:"n/d/Y"}}</td>
         <td>{{item.end_date|date:"n/d/Y"}}</td>
         <td>{{item.days}}</td>
-        <td>{{item.ksh_amount|floatformat:2}}</td>
-        <td>{{item.ksh_amount|mul:0.006|floatformat:2}}</td>
+        <td>{{item.amount|floatformat:2}}</td>
         <td> <a class="article-title" href="{{receipt_url}}">View</a></td>
           {%if user.is_admin or user.is_superuser%}
           <td> <a class="article-title" href="{% url 'finance:budget-update' item.id %}">Edit</a></td>
@@ -146,6 +164,7 @@
         {% endfor %}
       </tbody>
       </table>
+
   </div>
 </section>
 {% endblock content %}
