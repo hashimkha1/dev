@@ -94,14 +94,14 @@ def budget(request, institution='coda'):
                 "total_budget": total_budget,
                 "total_site_budget": total_site_budget,
                 "total_operation": total_operation,
-                "link": reverse('finance:site_budget', kwargs={'title': organization.name}),
+                "link": reverse('finance:site_budget', kwargs={'category': 'Web'}),
             })
 
     # Prepare summary data
     summary = [
         {"title": "Total Budget", "value": sum(item['total_budget'] for item in data), "link": ''},
         {"title": "Operations", "value": sum(item['total_operation'] for item in data), "link": ''},
-        {"title": "Web Development", "value": sum(item['total_site_budget'] for item in data), "link": reverse('finance:site_budget', kwargs={'title': 'Web'})},
+        {"title": "Web Development", "value": sum(item['total_site_budget'] for item in data), "link": reverse('finance:site_budget', kwargs={'category': 'Web'})},
     ]
 
     context = {
