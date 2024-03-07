@@ -73,6 +73,7 @@ def add_budget_item(request):
         form = BudgetForm()
     return render(request, "finance/budgets/newbudget.html", {"form": form})
 
+
 def budget(request, institution='coda'):
     # Fetch the list of companies
     companies = Company.objects.all()
@@ -94,14 +95,14 @@ def budget(request, institution='coda'):
                 "total_budget": total_budget,
                 "total_site_budget": total_site_budget,
                 "total_operation": total_operation,
-                "link": reverse('finance:site_budget', kwargs={'category': 'Web'}),
+                "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'}),
             })
 
     # Prepare summary data
     summary = [
         {"title": "Total Budget", "value": sum(item['total_budget'] for item in data), "link": ''},
         {"title": "Operations", "value": sum(item['total_operation'] for item in data), "link": ''},
-        {"title": "Web Development", "value": sum(item['total_site_budget'] for item in data), "link": reverse('finance:site_budget', kwargs={'category': 'Web'})},
+        {"title": "Web Development", "value": total_site_budget, "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'})},
     ]
 
     context = {
@@ -112,22 +113,34 @@ def budget(request, institution='coda'):
     }
     return render(request, "finance/budgets/budget.html", context)
 
-def site_budget(request, category='Web'):
-        # Fetch the list of companies
-    budget_obj = Budget.objects.all()
-    site_budget = Budget.objects.filter(company__name='CODA', category__name=category)
-    unique_subcategories = set()  # Create an empty set to store unique subcategories
-    site_budget_objects_with_unique_subcategories = []  # Create an empty list to store Budget objects with unique subcategories
-    for x in site_budget:
-        if x.subcategory not in unique_subcategories:
-            unique_subcategories.add(x.subcategory)  # Add the subcategory to the set if it's unique
-            site_budget_objects_with_unique_subcategories.append(x)  # Add the Budget object to the list
 
+def site_budget(request, category='Web',subcategory='all'):
+    print(category,subcategory)
+    # Fetch site budget objects filtered by category and company
+    site_budget_all = Budget.objects.filter(company__name='CODA', category__name=category)
+    if subcategory =='all':
+        site_budget = Budget.objects.filter(company__name='CODA', category__name=category)
+        print(site_budget)
+    else:
+        site_budget = Budget.objects.filter(company__name='CODA', category__name=category, subcategory=subcategory)
+        print(site_budget)
+
+    # Initialize a dictionary to store subcategory totals
+    subcategory_totals = {}
+
+    # Calculate total amount for each subcategory
+    for budget in site_budget_all:
+        if budget.subcategory not in subcategory_totals:
+            subcategory_totals[budget.subcategory] = 0
+        subcategory_totals[budget.subcategory] += budget.amount
+
+    # Prepare context to pass to template
     context = {
-        "budget_obj": budget_obj,
+        "company": "CODA",
         "site_budget": site_budget,
-        "new_site_budget": site_budget_objects_with_unique_subcategories,
+        "subcategory_totals": subcategory_totals.items(),  # Convert dictionary items to list of tuples
     }
+    # return render(request, "finance/budgets/dynamic_site_budget.html", context)
     return render(request, "finance/budgets/site_budget.html", context)
 
 from django.apps import apps
@@ -241,9 +254,10 @@ def coda_budget_estimation(request):
 
     return render(request, "finance/budgets/coda_budget.html", context=context)
 
+
 class BudgetUpdateView(UpdateView):
 	model = Budget
-	success_url = "/finance/budget/"
+	success_url = "/finance/budget/coda"
 	template_name="main/snippets_templates/generalform.html"
 	fields ="__all__"
 
