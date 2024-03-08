@@ -208,6 +208,16 @@ def login_view(request):
                         if client.projectmanagement >= company_qualification['project_management'] or client.requirementsAnalysis >= company_qualification['data_analysis'] or client.reporting >= company_qualification['data_science']:
 
                             if account.profile.section == "A":
+                                subject = "Application Accept"
+                                send_email( category=2,
+                                    to_email=[account.email], #[request.user.email,],
+                                    subject=subject, 
+                                    html_template='email/application_accept.html',
+                                    context={
+                                        'name': f"{account.first_name} {account.last_name}",
+                                        'company_name': 'SIMBA'
+                                    }
+                                )
                                 login(request, account)
                                 return redirect("application:section_a")
                             elif account.profile.section == "B":

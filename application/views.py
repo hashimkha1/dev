@@ -372,18 +372,20 @@ def ratewid(request,pk):
             if form.instance.employeename.is_applicant == True:
                 form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
-                if userprof.section == "D":
-                    return redirect("application:policies")
-                else:   
+                
+                if userprof.section not in ["A", 'a']:
                     send_email(category=request.user.category,
                         to_email=[request.user.email,],
-                        subject='Application FeedBack', 
+                        subject=f"Interview-{userprof.section} FeedBack", 
                         html_template='email/application_feedback.html',
                         context={
                             'name': request.user,
                             'company_name': 'coda'
                             })
 
+                if userprof.section == "D":
+                    return redirect("application:policies")
+                else:
                     return redirect("application:section_"+userprof.section.lower()+"")
 
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
