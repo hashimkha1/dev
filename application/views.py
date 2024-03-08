@@ -310,6 +310,8 @@ def rate(request):
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
 
+from mail.custom_email import send_email
+
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
@@ -317,6 +319,12 @@ def ratewid(request,pk):
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
 
+        send_email(category=request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received', 
+            html_template='email/FI_sectionA.html',
+            context={'user': request.user})
+     
         print(form.is_valid())
         if form.is_valid():
             totalpoints = 0
