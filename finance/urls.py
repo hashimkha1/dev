@@ -97,5 +97,5 @@ urlpatterns = [
 
 
 
-    path("coda_budget_estimation",views.coda_budget_estimation, name="coda_budget_estimation")
+    path("coda_budget_estimation/<str:app>/",views.coda_budget_estimation, name="coda_budget_estimation")
 ]

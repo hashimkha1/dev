@@ -146,7 +146,7 @@ def site_budget(request, category='Web',subcategory='all'):
 from django.apps import apps
 from getdata.models import Editable
 
-def coda_budget_estimation(request):
+def coda_budget_estimation(request, app='all'):
       
 
     # website----->2 hours
@@ -218,15 +218,32 @@ def coda_budget_estimation(request):
     coda_applications = [app.split('.')[0] for app in settings.INSTALLED_APPS if '.apps.' in app]
 
     application_table_dict = []
+    filter_table_dict = []
     for application in coda_applications:
-        app_models = apps.get_app_config(application).get_models()
-        table_names = [{'value': model.__name__, 'display_text': model._meta.verbose_name.replace('_', ' ').capitalize()} for model in app_models]
-        application_table_dict.append({
-            'application_name': application,
-            # 'modle': table_names,
-            'no_of_model': len(table_names)
-        })
-    
+        try:
+            app_models = apps.get_app_config(application).get_models()
+            table_names = [model._meta.verbose_name.replace('_', ' ').capitalize() for model in app_models]
+            if app == 'all':
+                application_table_dict.append({
+                    'application_name': application,
+                    'modle': ', '.join(table_names),
+                    'no_of_model': len(table_names)
+                })
+            else:
+                if application == app:
+                    application_table_dict.append({
+                        'application_name': application,
+                        'modle': ', '.join(table_names),
+                        'no_of_model': len(table_names)
+                    })  
+            filter_table_dict.append({
+                'application_name': application,
+                
+                'no_of_model': len(table_names)
+            })    
+        except:
+            application_table_dict = []
+            filter_table_dict = []
 
     ####################################
     # calculation
@@ -249,7 +266,9 @@ def coda_budget_estimation(request):
 
     context = {
         'application_data_json': application_table_dict,
-        'final_budget_amount': final_budget_amount
+        'final_budget_amount': final_budget_amount,
+        'filter_list': filter_table_dict,
+        'one_model_calculation': one_model_calculation
     }
 
     return render(request, "finance/budgets/coda_budget.html", context=context)

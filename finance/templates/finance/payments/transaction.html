@@ -60,7 +60,7 @@
                           <div class="col-md-3">
                               <div class="card">
                                   <div class="card-body">
-                                      <a class="btn btn-primary" href="#" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
+                                      <a class="btn btn-primary" href="{% url 'finance:coda_budget_estimation' app='all' %}" style="background-color: #4CAF50; border-color: #4CAF50;">{{ item.title }}</a>
                                       <hr/>
                                       <i><h6>USD. {{ item.value|floatformat:2 }}</h6></i>
                                   </div>
