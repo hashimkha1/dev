@@ -33,6 +33,7 @@ from allauth.core.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from data.models import ClientAssessment
+from getdata.models import Editable
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -205,6 +206,21 @@ def login_view(request):
                             'data_science': 5,
                         }
 
+                        company_qualification = Editable.objects.filter(name='company_qualification')
+
+                        if company_qualification.exists():
+                            company_qualification = company_qualification.first().value
+                        else:
+                            company_qualification = {
+                                'project_management': 5,
+                                'data_analysis':5,
+                                'data_science': 5,
+                            }
+                            Editable.objects.create(
+                                name='company_qualification',
+                                value=company_qualification
+                                )
+                            
                         if client.projectmanagement >= company_qualification['project_management'] or client.requirementsAnalysis >= company_qualification['data_analysis'] or client.reporting >= company_qualification['data_science']:
 
                             if account.profile.section == "A":
