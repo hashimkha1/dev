@@ -131,6 +131,13 @@ def FI_sectionA(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+        
+        send_email(category=request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview A', 
+            html_template='email/FI_sectionA.html',
+            context={'user': request.user})
+
         return redirect("application:ratewid", pk="Alteryx")
     
     context={"title": "First Section", "form": form,"link_url":link_url}
@@ -158,6 +165,12 @@ def FI_sectionB(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+
+        send_email(category= request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview B', 
+            html_template='email/FI_sectionB.html',
+            context={'user': request.user})
         return redirect("application:ratewid", pk="Tableau")
 
     return render(
@@ -184,6 +197,11 @@ def FI_sectionC(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+            send_email(category=request.user.category,
+                to_email=[request.user.email,],
+                subject='Application Received for Interview C', 
+                html_template='email/FI_sectionC.html',
+                context={'user': request.user})
             return redirect("application:ratewid", pk="Database")
 
     return render(
@@ -319,12 +337,6 @@ def ratewid(request,pk):
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
 
-        send_email(category=request.user.category,
-            to_email=[request.user.email,],
-            subject='Application Received', 
-            html_template='email/FI_sectionA.html',
-            context={'user': request.user})
-     
         print(form.is_valid())
         if form.is_valid():
             totalpoints = 0
@@ -363,6 +375,15 @@ def ratewid(request,pk):
                 if userprof.section == "D":
                     return redirect("application:policies")
                 else:   
+                    send_email(category=request.user.category,
+                        to_email=[request.user.email,],
+                        subject='Application FeedBack', 
+                        html_template='email/application_feedback.html',
+                        context={
+                            'name': request.user,
+                            'company_name': 'coda'
+                            })
+
                     return redirect("application:section_"+userprof.section.lower()+"")
 
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
