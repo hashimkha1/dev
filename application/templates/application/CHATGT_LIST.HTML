@@ -1,0 +1,59 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">CHATGPT</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="{% url 'management:newcategory'%}" class="btn btn-secondary btn-sm">ADD CATEGORY</a>
+          <a href="{% url 'management:newtaskgroup'%}" class="btn btn-secondary btn-sm">ADD GROUP</a>
+        </p>
+
+      </div>    
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">          
+  <div class="career text-center">
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">  
+        <tr>
+          <th>category</th>
+          <th>prompts</th>
+          <th>context</th>
+          <th>role</th>
+          <th>requirements</th>            
+        </tr>
+      </thead>
+      <tbody id="table_body_data">
+       
+        {% for instances in instances  %}
+
+          <tr>          
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="#"></a>
+              </td>
+              <td>{{tassk.category}}</td>
+              <td>{{tassk.prompts}}</td>
+              <td>{{tassk.context}}</td>
+              <td>{{tassk.role}}</td>
+              <td>{{tassk.requirements}}</td>
+             
+                                 
+              <td>
+                <button>
+                  <a href="#"></a>
+                </button>
+              </td>
+              {%if user.is_admin or user.is_superuser%}
+              <td> <a class="article-title" href="#"></a></td>
+              {%endif%}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="no_data_text" style="width:100%;text-align:center;display:none">No data for the category. </div>
+  </div>
+</section>
+{% endblock content %}
+

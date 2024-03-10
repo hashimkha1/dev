@@ -65,6 +65,11 @@ def balancesheet_list(request):
         logger.erro(f"error fetching balance sheet data: {e}")  
         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+    return render(request,'application/training/balancelist.html',context)  
+
+
+def list_view(request):
+    instances = YourModelName.objects.all()
+    return render(request, 'application/CHATGT_LIST.HTML', {'instances': instances})        
 
              
