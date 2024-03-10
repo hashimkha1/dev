@@ -79,7 +79,18 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
+        return f"{self.category.name}:{self.amount}" 
+
+        # In models.py of your Django app
+
+
+class chatgpt(models.Model):
+    category = models.CharField(max_length=255)
+    prompts = models.TextField()
+    context = models.TextField()
+    role = models.TextField()
+    requirements = models.TextField()
+  
   
 
 
