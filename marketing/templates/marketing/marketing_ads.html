@@ -29,43 +29,41 @@
             <p class="title-sub-pay text-center" style="font-size: xx-large; margin-bottom: 16px;">OUR COURSES</p>
             <ul>
                 {% for course_title, course_infos in courses.items %}
-                <ul style="list-style: none; margin-left: 120px;">
+                <ul style="list-style: none; margin-left: 5%; @media (max-width: 767px) { margin-left: 0%; }">
                     {% for service, price in services.items %}
                     {% if course_title ==  service.title %}
-                    <p style="font-size: 1.7em; color: gray; margin-top: 8px;">Price: $ {{ price }}</p>
+                    <p style="font-size: 1.7em; color: gray; margin-top: 8px; @media (max-width: 767px) { font-size: 1.2em; }">Price: $ {{ price }}</p>
                     {% endif %}
                     {% endfor %}
-                    <div style="border: 1px solid #ccc; width: 55%; display: inline-block; margin-right: 0%; box-sizing: border-box; padding: 20px; border-radius: 7px; background-color: #f5f5f5; transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;">
-                        <h2 style="color: #E7AD4A; font-size: 1.7em; margin-bottom: 16px;">{{ course_title }}</h2>
+                    <div style="border: 1px solid #ccc; width: 90%; display: inline-block; margin-right: 0%; box-sizing: border-box; padding: 20px; border-radius: 7px; background-color: #f5f5f5; transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out; @media (max-width: 767px) { width: 100%; }">
+                        <h2 style="color: #E7AD4A; font-size: 1.7em; margin-bottom: 16px; @media (max-width: 767px) { font-size: 1.0em; }">{{ course_title }}</h2>
                         {% for info in course_infos %}
-                        <p style="font-size: 1.1em; color: #243865; font-weight: 700; margin-bottom: 10px;">{{ info.title }}</p>
-                        <p style="color: wheat; margin-top: 10px; font-size: 1.4em; font-family: Georgia, 'Times New Roman', Times, serif;">{{ info.description|safe }}</p>
+                        <p style="font-size: 1.1em; color: #243865; font-weight: 700; margin-bottom: 10px; @media (max-width: 767px) { font-size: 1em; }">{{ info.title }}</p>
+                        <p style="color: wheat; margin-top: 10px; font-size: 1.4em; font-family: Georgia, 'Times New Roman', Times, serif; @media (max-width: 767px) { font-size: 1.2em; }">{{ info.description|safe }}</p>
                         {% endfor %}
-                        <a href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" style="position: left; bottom: 10px; right: 10px; padding: 5px 10px; text-decoration: none; background-color: #007bff; color: #fff; border-radius: 5px; transition: background-color 0.3s ease-in-out;" class="purchase-button">Purchase Now</a>
+                        <a href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" style="position: left; bottom: 10px; right: 10px; padding: 5px 10px; text-decoration: none; background-color: #007bff; color: #fff; border-radius: 5px; transition: background-color 0.3s ease-in-out; @media (max-width: 767px) { font-size: 0.9em; }" class="purchase-button">Purchase Now</a>
                     </div>
                 </ul>
                 {% endfor %}
             </ul>
             <div style="margin-top: 20px;">
-                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px;">If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px;">Thank you,</p>
-                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px;">Discover More:</p>
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">Thank you,</p>
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">Discover More:</p>
             </div>
-            <div style="display: flex; margin-top: 1%; margin-left: 120px;">
-                <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" style="text-decoration: none; margin-right: 30px; color: #E7AD4A;  font-size: 1.4em;">
+            <div style="display: flex; margin-top: 1%; margin-left: 5%; @media (max-width: 767px) { margin-left: 0%; }">
+                <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" style="text-decoration: none; margin-right: 5%; color: #E7AD4A;  font-size: 1.4em;">
                     <span style="margin-right: 8px;">LinkedIn</span>
                 </a>
-                <a href="https://www.facebook.com/chris.maghas/" target="_blank" style="text-decoration: none; margin-right: 30px; color: #1877F2; font-size: 1.4em;">
+                <a href="https://www.facebook.com/chris.maghas/" target="_blank" style="text-decoration: none; margin-right: 5%; color: #1877F2; font-size: 1.4em;">
                     <span style="margin-right: 8px;">Facebook</span>
                 </a>
-                <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" style="text-decoration: none; margin-right: 30px; color: #FF0000; font-size: 1.4em;">
+                <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" style="text-decoration: none; margin-right: 5%; color: #FF0000; font-size: 1.4em;">
                     <span style="margin-right: 8px;">YouTube</span>
                 </a>
             </div>
-            
         </div>
     </div>
-</div>
 </div>
 
 {% endblock content %}

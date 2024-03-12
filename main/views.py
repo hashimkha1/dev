@@ -292,12 +292,24 @@ def display_service(request, *args, **kwargs):
   
     category_name = 'IT-Project Management'  
     projects = Pricing.objects.filter(category__name=category_name, is_active=True)
-
+    #Description for IT Integrated Solutions & Consultancy 
+    descriptions = InvestmentContent.objects.filter(title='IT Integrated Solutions & Consultancy')
+    if descriptions.exists():
+        descriptioned = descriptions.first().description
+        
+    else:
+        prompt = 'make description that shows that At CODA we help businesses and corporations in developing it solutions for to meet their objectives'
+        response = generate_chatbot_response(prompt)
+        title = 'IT Integrated Solutions & Consultancy'
+        save_response = InvestmentContent.objects.create(title=title,description= response)
+        print (response)
+       
     context = {
         'service_categories': service_categories,
         "title": service_category_title,
         "service_desc": service_description,
         'content': description,
+        'description': descriptioned,
         "General":General,
         "projects": projects,
         "Automation":Automation,

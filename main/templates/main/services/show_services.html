@@ -26,23 +26,42 @@
         <h2 class="mt-4 mt-md-0" style="text-align: left;"> About Coda</h2>
         <hr style="width: 36%; height: 4px; background-color: #E7AD4A;">
           <div class="text-content" id="readMoreContent">
+            {% if title == "Training & Professional Support" %}
               <p class="me-lg-5" id="truncatedText">
                 {{ content|safe|truncatechars:380 }}
               </p>
               <p class="me-lg-5" id="remainingText" style="display: none;">
                 {{ content|safe }}
             </p>
+            {%else%}
+              <p class="me-lg-5" id="truncatedText">
+                {{ description|safe|truncatechars:380 }}
+              </p>
+              <p class="me-lg-5" id="remainingText" style="display: none;">
+                {{ description|safe }}
+              </p>
+            {%endif%}
             <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton">
               Read more
             </a>
           </div>
       </div>
       <div class="col-md-6">
+      
+      {% if title == "Training & Professional Support" %}
       <div class="videocontainers">
         <div class="videocontainer">
           <iframe src="https://drive.google.com/file/d/1rPpzS-_ag2m28korWkWrTemJQbKJ_5uX/preview" width="100%" height="auto"  controls crossorigin playsinline class="plyr"></iframe>
         </div>
-      </div>
+      </div> 
+      {%else%}
+      <div class="videocontainers">
+        <div class="videocontainer">
+          <img class="img-fluid ps-lg-5" 
+          src="{% static 'main/image/marketing.jpg' %}"alt="">
+        </div>
+      </div>  
+      {%endif%}
       </div>
     </div>
   </div> 

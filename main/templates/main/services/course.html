@@ -31,8 +31,8 @@
                     <p class="course-description">
                         <span class="description-short">{{ service.description|slice:":200" }}</span>
                         <span class="description-full" style="display: none;">{{ service.description }}</span>
-                        <a href="#" class="more-link">Read More</a>
-                        <a href="#" class="less-link" style="display: none;">Read Less</a>
+                        <a class="more-link">Read More</a>
+                        <a  class="less-link" style="display: none;">Read Less</a>
                     </p>
                 {% else %}
                     <p class="course-description">{{ service.description }}</p>
@@ -42,7 +42,7 @@
                 {% else %}
                     <a href="{% url 'main:layout' %}"><button type="button" class="btn btn-primary">Proceed</button></a>
                 {% endif %}
-                <!-- <a href="#" class="btn btn-primary enroll-button">Proceed</a> -->
+                <!-- <a  class="btn btn-primary enroll-button">Proceed</a> -->
             </div>
         </div>
         {% endfor %}
