@@ -2,23 +2,35 @@ from data.models import FeaturedCategory
 from main.utils import path_values
 
 def interview_view(sub_title):
-    print(sub_title)
-    title=sub_title
-    if sub_title == "section_t":
-        # title="Data Preparation"
-        # title='Database Management'
-        title="Reporting"
+    title="Data Preparation"
+    if sub_title == "section_a":
+        title="Data Preparation"
     if sub_title == "section_b":
         title="Reporting"
     if sub_title == "section_c":
         title='Database Management'
-    print(title)
-    categories = (
-        FeaturedCategory.objects.prefetch_related("featuredsubcategory_set").all(),
-    )
-    cats = FeaturedCategory.objects.all()
-    return categories,cats,title
+    categories = FeaturedCategory.objects.all()
+    return categories,title
 
+# Interview description data
+interview_description= [
+    {
+        "topic": "Instructions",
+        "description": "1. The ability for a candidate to follow step by step instructions and the requirements given.",
+    },
+    {
+        "topic": "Learning Tool",
+        "description": "2. The ability for a candidate to learn a new tool and the utilization of the tool to meet business requirements.",
+    },
+    {
+        "topic": "Organization",
+        "description": "3. The ability for the candidate to organize deliverables/his or her submissions",
+    },
+    {
+        "topic": "Audibility",
+        "description": "4. The ability for a candidate to be organized, audible and flawless during presentation",
+    },
+]
 # Interview description data
 posts = [
     {

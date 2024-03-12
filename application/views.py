@@ -27,7 +27,13 @@ from .forms import (
 from .models import UserProfile, Application,Rated, Reporting
 from data.models import ActivityLinks
 from management.models import Policy,Task
-from .utils import alteryx_list, dba_list, posts, tableau_list,rewardpoints
+from .utils import (alteryx_list,
+                     dba_list,
+                     posts,
+                     tableau_list,
+                    rewardpoints,
+                    interview_description,
+                    interview_view)
 from datetime import datetime, timedelta
 from main.utils import path_values
 
@@ -110,6 +116,9 @@ def firstinterview(request):
 @csrf_exempt
 @login_required
 def FI_sectionA(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
+
     form = ApplicantProfileFormA(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -131,9 +140,21 @@ def FI_sectionA(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+        
+        # send_email(category=request.user.category,
+        #     to_email=[request.user.email,],
+        #     subject='Application Received for Interview A', 
+        #     html_template='email/application/FI_sectionA.html',
+        #     context={'user': request.user})
+
         return redirect("application:ratewid", pk="Alteryx")
     
-    context={"title": "First Section", "form": form,"link_url":link_url}
+    context={"title": "Section A",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+             "link_url":link_url}
     return render(
         request,
         "application/interview_process/firstinterview/sectionA.html",context
@@ -143,6 +164,8 @@ def FI_sectionA(request):
 
 @login_required
 def FI_sectionB(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
     form = ApplicantProfileFormB(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -158,17 +181,31 @@ def FI_sectionB(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
-        return redirect("application:ratewid", pk="Tableau")
 
+        # send_email(category= request.user.category,
+        #     to_email=[request.user.email,],
+        #     subject='Application Received for Interview B', 
+        #     html_template='email/application/FI_sectionB.html',
+        #     context={'user': request.user})
+        return redirect("application:ratewid", pk="Tableau")
+    
+    context={"title": "First Section",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+            #  "link_url":link_url
+             }
     return render(
         request,
-        "application/interview_process/firstinterview/sectionB.html",
-        {"title": "First Section", "form": form},
+        "application/interview_process/firstinterview/sectionB.html",context
     )
 
 
 @login_required
 def FI_sectionC(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
     form = ApplicantProfileFormC(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -184,12 +221,22 @@ def FI_sectionC(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+            # send_email(category=request.user.category,
+            #     to_email=[request.user.email,],
+            #     subject='Application Received for Interview C', 
+            #     html_template='email/application/FI_sectionC.html',
+            #     context={'user': request.user})
             return redirect("application:ratewid", pk="Database")
-
+    context={"title": "First Section",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+            #  "link_url":link_url
+             }
     return render(
         request,
-        "application/interview_process/firstinterview/sectionC.html",
-        {"title": "First Section", "form": form},
+        "application/interview_process/firstinterview/sectionC.html",context
     )
 
 
@@ -310,6 +357,8 @@ def rate(request):
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
 
+from mail.custom_email import send_email
+
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
@@ -352,9 +401,21 @@ def ratewid(request,pk):
             if form.instance.employeename.is_applicant == True:
                 form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
+                
+                if userprof.section not in ["A", 'a']:
+                    pass
+                    # send_email(category=request.user.category,
+                    #     to_email=[request.user.email,],
+                    #     subject=f"Interview-{userprof.section} FeedBack", 
+                    #     html_template='email/application_feedback.html',
+                    #     context={
+                            # 'name': request.user,
+                            # 'company_name': 'coda'
+                            # })
+
                 if userprof.section == "D":
                     return redirect("application:policies")
-                else:   
+                else:
                     return redirect("application:section_"+userprof.section.lower()+"")
 
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
