@@ -22,39 +22,39 @@ def compute_total_points(instance):
     try:
         pc=instance.projectcharter-delta
     except:
-        pass
+        pc=0
     try:
         ra=instance.requirementsAnalysis-delta
     except:
-        pass
+        ra=0
     try:
         rpt=instance.reporting-delta
     except:
-        pass
+        rpt=0
     try:
         etl=instance.etl-delta
     except:
-        pass
+        etl=0
     try:
         db=instance.database-delta
     except:
-        pass
+        db=0
     try:
         test=instance.testing-delta
     except:
-        pass
+        test=0
     try:
         dep=instance.deployment-delta
     except:
-        pass
+        dep=0
     try:
         frontend=instance.frontend-delta
     except:
-        pass
+        frontend=0
     try:
         backend=instance.backend-delta
     except:
-        pass
+        backend=0
     
     ############################
     # developer points

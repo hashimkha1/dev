@@ -64,6 +64,7 @@ class RequirementFilter(django_filters.FilterSet):
         'category':['icontains'],
         'status':['icontains'],
         'is_active':['icontains'],
+        'app':['icontains']
         }
     
 class FoodFilter(django_filters.FilterSet):

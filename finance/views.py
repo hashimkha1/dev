@@ -143,6 +143,135 @@ def site_budget(request, category='Web',subcategory='all'):
     # return render(request, "finance/budgets/dynamic_site_budget.html", context)
     return render(request, "finance/budgets/site_budget.html", context)
 
+from django.apps import apps
+from getdata.models import Editable
+
+def coda_budget_estimation(request, app='all'):
+      
+
+    # website----->2 hours
+    # f. Link to requirements .....categorize them (number of apps--->models---4 views--->30+45=75)
+    # accounts
+    #     i. How many models/Tables are in accounts
+    #         i. 1 tables----->
+    #             5 views --------->
+    #             3 TEMPLATES,
+    #             1 FORM,
+    #             2 apis
+    #                     i. CRUDE
+    #                         CREATEVIEW(7 HOURS), DETAIL VIEW, LISTVIEW,DELETE VIEW, UPDATEVIEW
+    coda_budget_json = Editable.objects.filter(name='coda_budget')
+
+    if coda_budget_json.exists():
+
+        coda_budget_json = coda_budget_json.get().value
+    
+    else:
+        coda_budget_json = {
+            "createview":{
+                "hour":10,
+                "quntity":1,
+                "unit_price":30
+            },
+            "updateview":{
+                "hour":5,
+                "quntity":1,
+                "unit_price":30
+            },
+            "listview":{
+                "hour":3,
+                "quntity":1,
+                "unit_price":30
+            },
+            "detailview":{
+                "hour":3,
+                "quntity":1,
+                "unit_price":30
+            },
+            "deleteview":{
+                "hour":2,
+                "quntity":1,
+                "unit_price":30
+            },
+            "template":{
+                "hour":5,
+                "quntity":3,
+                "unit_price":30
+            },
+            "form":{
+                "hour":4,
+                "quntity":1,
+                "unit_price":30
+            },
+            "api":{
+                "hour":10,
+                "quntity":3,
+                "unit_price":30
+            }
+        }
+
+        Editable.objects.create(
+              name='coda_budget',
+              value=coda_budget_json
+              )
+
+    coda_applications = [app.split('.')[0] for app in settings.INSTALLED_APPS if '.apps.' in app]
+
+    application_table_dict = []
+    filter_table_dict = []
+    for application in coda_applications:
+        try:
+            app_models = apps.get_app_config(application).get_models()
+            table_names = [model._meta.verbose_name.replace('_', ' ').capitalize() for model in app_models]
+            if app == 'all':
+                application_table_dict.append({
+                    'application_name': application,
+                    'modle': ', '.join(table_names),
+                    'no_of_model': len(table_names)
+                })
+            else:
+                if application == app:
+                    application_table_dict.append({
+                        'application_name': application,
+                        'modle': ', '.join(table_names),
+                        'no_of_model': len(table_names)
+                    })  
+            filter_table_dict.append({
+                'application_name': application,
+                
+                'no_of_model': len(table_names)
+            })    
+        except:
+            application_table_dict = []
+            filter_table_dict = []
+
+    ####################################
+    # calculation
+    ####################################
+
+    one_model_calculation = 0
+    for coda_budget_element_key, coda_budget_element_value  in coda_budget_json.items():
+        one_model_calculation += coda_budget_element_value.get('quntity',1)*coda_budget_element_value.get('hour',1)*coda_budget_element_value.get('unit_price')
+        coda_budget_element_value['amount'] = coda_budget_element_value.get('quntity',1)*coda_budget_element_value.get('hour',1)*coda_budget_element_value.get('unit_price')
+        coda_budget_element_value['name'] = coda_budget_element_key
+
+    final_budget_amount = 0
+    for application in application_table_dict:
+        
+        application['task'] = 'model'
+        application['sub_task'] = coda_budget_json.values()
+        application['total_amount'] = application['no_of_model'] * one_model_calculation
+        application['one_model_calculation'] = one_model_calculation
+        final_budget_amount += application['total_amount']
+
+    context = {
+        'application_data_json': application_table_dict,
+        'final_budget_amount': final_budget_amount,
+        'filter_list': filter_table_dict,
+        'one_model_calculation': one_model_calculation
+    }
+
+    return render(request, "finance/budgets/coda_budget.html", context=context)
 
 
 class BudgetUpdateView(UpdateView):

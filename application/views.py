@@ -131,6 +131,13 @@ def FI_sectionA(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+        
+        send_email(category=request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview A', 
+            html_template='email/FI_sectionA.html',
+            context={'user': request.user})
+
         return redirect("application:ratewid", pk="Alteryx")
     
     context={"title": "First Section", "form": form,"link_url":link_url}
@@ -158,6 +165,12 @@ def FI_sectionB(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+
+        send_email(category= request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview B', 
+            html_template='email/FI_sectionB.html',
+            context={'user': request.user})
         return redirect("application:ratewid", pk="Tableau")
 
     return render(
@@ -184,6 +197,11 @@ def FI_sectionC(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
+            send_email(category=request.user.category,
+                to_email=[request.user.email,],
+                subject='Application Received for Interview C', 
+                html_template='email/FI_sectionC.html',
+                context={'user': request.user})
             return redirect("application:ratewid", pk="Database")
 
     return render(
@@ -310,6 +328,8 @@ def rate(request):
         form = RatingForm(request=request)
     return render(request, "application/orientation/rate.html", {"form": form})
 
+from mail.custom_email import send_email
+
 def ratewid(request,pk):
     if request.method == "POST":
         form = RatingForm(request.POST, request.FILES)
@@ -352,9 +372,20 @@ def ratewid(request,pk):
             if form.instance.employeename.is_applicant == True:
                 form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
+                
+                if userprof.section not in ["A", 'a']:
+                    send_email(category=request.user.category,
+                        to_email=[request.user.email,],
+                        subject=f"Interview-{userprof.section} FeedBack", 
+                        html_template='email/application_feedback.html',
+                        context={
+                            'name': request.user,
+                            'company_name': 'coda'
+                            })
+
                 if userprof.section == "D":
                     return redirect("application:policies")
-                else:   
+                else:
                     return redirect("application:section_"+userprof.section.lower()+"")
 
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.

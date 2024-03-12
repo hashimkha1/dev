@@ -32,6 +32,8 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.core.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
+from data.models import ClientAssessment
+from getdata.models import Editable
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -176,18 +178,99 @@ def login_view(request):
                 # if account.gender == 1:
                 #     login(request, account)
                 #     return redirect("application:interview")
-                if account.profile.section == "A":
+                
+                client = ClientAssessment.objects.filter(email=account.email)
+
+                if account.country != 'US':
+                    
+                    subject = "Application Reject"
+                    send_email( category=2,
+                        to_email=[account.email], #[request.user.email,],
+                        subject=subject, 
+                        html_template='email/application_reject.html',
+                        context={
+                                'name': f"{account.first_name} {account.last_name}",
+                                'company_name': 'SIMBA'
+                            }
+                    )
+                    account.is_active = False
                     login(request, account)
-                    return redirect("application:section_a")
-                elif account.profile.section == "B":
-                    login(request, account)
-                    return redirect("application:section_b")
-                elif account.profile.section == "C":
-                    login(request, account)
-                    return redirect("application:policies")
+                    return redirect("accounts:home")
+                
                 else:
+                    if client.exists():
+                        client = client.first()
+                        company_qualification = {
+                            'project_management': 5,
+                            'data_analysis':5,
+                            'data_science': 5,
+                        }
+
+                        company_qualification = Editable.objects.filter(name='company_qualification')
+
+                        if company_qualification.exists():
+                            company_qualification = company_qualification.first().value
+                        else:
+                            company_qualification = {
+                                'project_management': 5,
+                                'data_analysis':5,
+                                'data_science': 5,
+                            }
+                            Editable.objects.create(
+                                name='company_qualification',
+                                value=company_qualification
+                                )
+                            
+                        if client.projectmanagement >= company_qualification['project_management'] or client.requirementsAnalysis >= company_qualification['data_analysis'] or client.reporting >= company_qualification['data_science']:
+
+                            if account.profile.section == "A":
+                                subject = "Application Accept"
+                                send_email( category=2,
+                                    to_email=[account.email], #[request.user.email,],
+                                    subject=subject, 
+                                    html_template='email/application_accept.html',
+                                    context={
+                                        'name': f"{account.first_name} {account.last_name}",
+                                        'company_name': 'SIMBA'
+                                    }
+                                )
+                                login(request, account)
+                                return redirect("application:section_a")
+                            elif account.profile.section == "B":
+                                login(request, account)
+                                return redirect("application:section_b")
+                            elif account.profile.section == "C":
+                                login(request, account)
+                                return redirect("application:policies")
+                            else:
+                                subject = "Application Accept"
+                                send_email( category=2,
+                                    to_email=[account.email], #[request.user.email,],
+                                    subject=subject, 
+                                    html_template='email/application_accept.html',
+                                    context={
+                                        'name': f"{account.first_name} {account.last_name}",
+                                        'company_name': 'SIMBA'
+                                    }
+                                )
+                                login(request, account)
+                                return redirect("application:interview")
+                            
+
+                    subject = "Application Reject"
+                    send_email( category=2,
+                        to_email=[account.email], #[request.user.email,],
+                        subject=subject, 
+                        html_template='email/application_reject.html',
+                        context={
+                                'name': f"{account.first_name} {account.last_name}",
+                                'company_name': 'SIMBA'
+                            }
+                    )
+                    account.is_active = False
                     login(request, account)
-                    return redirect("application:interview")
+                    return redirect("accounts:home")
+
             elif account is not None and account.profile.section is not None and account.category == 1 and account.sub_category==0:
                     login(request, account)
                     # print("account.category",account.sub_category)
