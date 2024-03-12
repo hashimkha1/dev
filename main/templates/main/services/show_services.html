@@ -99,39 +99,43 @@
     {% endfor %}
   </div>
 {%endif%}
-<div class="testimonials-div">
-  <div class="container">
-      <h1>CLIENT SUCCESS STORIES</h1>
-      <div class="owl-carousel">
-      <div class="row text-center commit"> 
-        {% for post in posts %}
-            <div class="{{ selected_class }}">
-              <div class="carousel-card">
-                <div class="img-div p-3">
-                  <span>
-                    <img onerror="handleImageErrorInsucessStory(this)" {%if post.writer.profile.img_url%} src="{{googledriveurl}}{{post.writer.profile.img_url}}" {%else%} src="{% static '/main/img/service-1.jpg' %}" {%endif%}class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
-                  </span>
+{% if title == "Training & Professional Support" %}
+  <div class="testimonials-div">
+    
+    <div class="container">
+        <h1>CLIENT SUCCESS STORIES</h1>
+        <div class="owl-carousel">
+        <div class="row text-center commit"> 
+          {% for post in posts %}
+              <div class="{{ selected_class }}">
+                <div class="carousel-card">
+                  <div class="img-div p-3">
+                    <span>
+                      <img onerror="handleImageErrorInsucessStory(this)" {%if post.writer.profile.img_url%} src="{{googledriveurl}}{{post.writer.profile.img_url}}" {%else%} src="{% static '/main/img/service-1.jpg' %}" {%endif%}class="team-img" width="115px" height="110px" style="border-radius: 50%;"/>
+                    </span>
+                  </div>
+                    <h3> 
+                      <a href="{% url 'main:post-detail' post.id %}">
+                        {{ post.writer.first_name }},{{post.writer.last_name}}
+                      </a>
+                    </h3>
+                    <h3 style="font-size: 16px;">{{ post.title }} {{ count_to_class.post.count }}</h3>
+
+                    <!-- <h3>{{post.title}} {{ count_to_class.post.count }}</h3> -->
+                    <font size="2">
+                        {{post.content|truncatewords:70}}
+                      </font>
                 </div>
-                  <h3> 
-                    <a href="{% url 'main:post-detail' post.id %}">
-                      {{ post.writer.first_name }},{{post.writer.last_name}}
-                    </a>
-                  </h3>
-                  <h3 style="font-size: 16px;">{{ post.title }} {{ count_to_class.post.count }}</h3>
-
-                  <!-- <h3>{{post.title}} {{ count_to_class.post.count }}</h3> -->
-                  <font size="2">
-                      {{post.content|truncatewords:70}}
-                    </font>
               </div>
-            </div>
-        {% endfor %}
-       </div>
+          {% endfor %}
+        </div>
 
 
-      </div>
+        </div>
+    </div>
+    
   </div>
-</div>
+{%endif%}
  <div class="row text-center">
 
   <div class="col-md-6 back-to-top-btn d-flex justify-content-center">
