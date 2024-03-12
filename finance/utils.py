@@ -118,63 +118,93 @@ def calculate_revenue_and_expenses(request):
     expenses_summary = "\n".join([f"{t['category']}: {t['total_amount']}" for t in expenses_queryset])
     prompt = f"Generate a financial statement based on the following data:\n\n" \
              f"**Revenue Summary:**\n" \
-             f"- Total Payment Fees: {revenue_queryset.get('total_payment_fees') or 0}\n" \
-             f"- Total Down Payments: {revenue_queryset.get('total_down_payments') or 0}\n" \
-             f"- Total Student Bonuses: {revenue_queryset.get('total_student_bonuses') or 0}\n\n" \
-             f"**Total Revenue:**\n" \
+             f"- From students: {revenue_queryset.get('total_payment_fees') or 0}\n" \
+             f"- From Investors: {revenue_queryset.get('total_down_payments') or 0}\n" \
+             f"- From Clients: {revenue_queryset.get('total_student_bonuses') or 0}\n\n" \
              f"{total_revenue}\n\n" \
              f"{expenses_summary}\n\n" \
-             f"**Net Income:**\n" \
-             f"[net_income]\n\n" \
-             f"Please use this data to create a comprehensive financial statement, including total revenue, total expenses, and net income. Ensure the statement is well-organized and provides a clear overview of the financial health. Do not pass any string and make a json response. The generated data should be consistent every time."
+             f"Please use this data to create a comprehensive financial statement include these things Revenue and expanses and do not show net income,also do not show the total expanses and total revenue and do not show _  . Ensure the statement is well-organized and provides a clear overview of the financial health. Do not pass any string and make a json response. The generated data should be consistent every time."
 
-    try:
-        openai_response = generate_chatbot_response(prompt)
-        if openai_response.strip():
-            data_dicts = json.loads(openai_response.replace("'", '"'))
-            financial_statement = data_dicts.get("Financial Statement", {})
-        else:
-            print("OpenAI response is empty.")
-            financial_statement = {}
-    except json.JSONDecodeError as e:
-        print(f"Error parsing OpenAI response: {e}")
-        financial_statement = {}
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        financial_statement = {}
+    
+    openai_response = generate_chatbot_response(prompt)
+    data_dicts = json.loads(openai_response.replace("'", '"'))
 
-    # Process financial statement data
-    total_revenue = financial_statement.get("Total Revenue", 0)
-    total_expenses = financial_statement.get("Total Expenses", 0)
-    net_income = financial_statement.get("Net Income", 0)
-    revenue_breakdown = financial_statement.get("Revenue Breakdown", {})
-    expense_breakdown = financial_statement.get("Expenses Breakdown", {})
-
-    # Save breakdown data
-    save_breakdown_data(revenue_breakdown, 'Revenue')
-    save_breakdown_data(expense_breakdown, 'Expenses')
-
-    # Prepare the JSON response
-    response_data = {
-        "total_revenue": total_revenue,
-        "total_expenses": total_expenses,
-        "net_income": net_income,
-        "revenue_breakdown": revenue_breakdown,
-        "expense_breakdown": expense_breakdown,
-    }
-
-    return JsonResponse(response_data)
+    # Function to save data to the BalanceSheetCategory model
+    def save_to_model(data, category_type):
+        for key, value in data.items():
+                # Create or update BalanceSheetCategory object
+                category, created = BalanceSheetCategory.objects.get_or_create(name=key, category_type=category_type)
+                category.amount = value if isinstance(value, (int, float)) else 0
+                category.save()
+                # Save data in the BalanceSheetCategory model
+    for main_category, subcategories in data_dicts.get("Financial_Statement", {}).items():
+            if main_category in ['Revenue', 'Expenses']:
+                save_to_model(subcategories, main_category) 
+        # Retrieve the data from the database
+    saved_Revenve = BalanceSheetCategory.objects.filter(category_type='Revenue')
+    saved_Expanses = BalanceSheetCategory.objects.filter(category_type='Expenses')
+    total_revenue = saved_Revenve.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = saved_Expanses.aggregate(Sum('amount'))['amount__sum'] or 0
+    net_income = total_revenue - total_expenses
+    return( saved_Revenve,saved_Expanses,total_revenue,total_expenses,net_income )
 
 # Additional utility functions like 'generate_chatbot_response' and 'save_breakdown_data' are assumed to be defined elsewhere in your code.
+def cashflow(request):
+    # Generate a Cash Flow Statement prompt
+    prompt = "Generate a Cash Flow Statement based on the following sections:\n\n" \
+            "      - Cash Inflows for Investing Activities:\n" \
+            "         - Investments from Investors: $[None]\n" \
+            "      - Total Cash Inflows: $[None]\n\n" \
+            "      - Cash Outflows for Investing Activities:\n" \
+            "         - Capital Expenditures: $[None]\n" \
+            "         - Investment made: $[None]\n" \
+            "      - Total Cash Outflows: $[None]\n\n" \
+            "   c. **Net Cash from Investing Activities:** $[None]\n\n" \
+            "      - Cash Inflows for Financing Activities:\n" \
+            "         - Equity Financing: $[None]\n" \
+            "         - Debt Financing: $[None]\n" \
+            "      - Total Cash Inflows: $[None]\n\n" \
+            "      - Cash Outflows for Financing Activities:\n" \
+            "         - Dividend Payments: $[None]\n" \
+            "         - Repayment of Debt: $[None]\n" \
+            "         - Buyback of Shares: $[None]\n" \
+            "         - Interest Payments: $[None]\n" \
+            "      - Total Cash Outflows: $[None]\n\n" \
+            "   c. **Net Cash from Financing Activities:** $[None]\n\n" \
+            "Consider that the user should replace \"[Enter Category Name]\" and \"$[None]\" with relevant information. The model should generate a user-friendly form to collect the necessary data for a Cash Flow Statement. Do not pass any string and make a JSON response."
 
-def get_existing_revenue_expenses_data():
-    existing_revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
-    existing_expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
-    total_revenue = existing_revenue.aggregate(Sum('amount'))['amount__sum'] or 0
-    total_expenses = existing_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
-    net_income = total_revenue - total_expenses
+    # Generate response from OpenAI
+    responsed = generate_chatbot_response(prompt)
+    data_dicts = json.loads(responsed.replace("'", '"'))
 
-    return existing_revenue.exists() and existing_expenses.exists(), existing_revenue, existing_expenses, total_revenue, total_expenses,net_income
+    # Function to save data to the BalanceSheetCategory model
+    def save_to_model(data, category_type):
+        for key, value in data.items():
+            # Create or update BalanceSheetCategory object
+            category, created = BalanceSheetCategory.objects.get_or_create(name=key, category_type=category_type)
+            category.amount = value if isinstance(value, (int, float)) else 0
+            category.save()
+
+    # Save data in the BalanceSheetCategory model
+    for main_category, subcategories in data_dicts.get("Cash Flow Statement Form", {}).items():
+        if main_category in ['Cash Inflows for Investing Activities', 'Cash Outflows for Investing Activities','Cash Inflows for Financing Activities','Cash Outflows for Financing Activities']:
+            save_to_model(subcategories, main_category)
+
+    # Retrieve the data from the database
+    saved_inflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Investing Activities')
+    saved_outflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Investing Activities')
+    saved_inflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Financing Activities')
+    saved_outflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Financing Activities')
+    return(saved_inflow_investing,saved_outflow_investing,saved_inflow_financing,saved_outflow_financing, responsed)
+
+# def get_existing_revenue_expenses_data():
+#     existing_revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
+#     existing_expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
+#     total_revenue = existing_revenue.aggregate(Sum('amount'))['amount__sum'] or 0
+#     total_expenses = existing_expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+#     net_income = total_revenue - total_expenses
+
+#     return existing_revenue.exists() and existing_expenses.exists(), existing_revenue, existing_expenses, total_revenue, total_expenses,net_income
 
 def save_breakdown_data(breakdown_data, category_type):
     for item in breakdown_data:

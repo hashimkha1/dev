@@ -141,11 +141,11 @@ def FI_sectionA(request):
             form.save()
             subject = "Interview Message"
         
-        # send_email(category=request.user.category,
-        #     to_email=[request.user.email,],
-        #     subject='Application Received for Interview A', 
-        #     html_template='email/application/FI_sectionA.html',
-        #     context={'user': request.user})
+        send_email(category=request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview A', 
+            html_template='email/application/FI_sectionA.html',
+            context={'user': request.user})
 
         return redirect("application:ratewid", pk="Alteryx")
     
@@ -182,11 +182,11 @@ def FI_sectionB(request):
             form.save()
             subject = "Interview Message"
 
-        # send_email(category= request.user.category,
-        #     to_email=[request.user.email,],
-        #     subject='Application Received for Interview B', 
-        #     html_template='email/application/FI_sectionB.html',
-        #     context={'user': request.user})
+        send_email(category= request.user.category,
+            to_email=[request.user.email,],
+            subject='Application Received for Interview B', 
+            html_template='email/application/FI_sectionB.html',
+            context={'user': request.user})
         return redirect("application:ratewid", pk="Tableau")
     
     context={"title": "First Section",
@@ -221,12 +221,13 @@ def FI_sectionC(request):
                 data.profile.save()
             form.save()
             subject = "Interview Message"
-            # send_email(category=request.user.category,
-            #     to_email=[request.user.email,],
-            #     subject='Application Received for Interview C', 
-            #     html_template='email/application/FI_sectionC.html',
-            #     context={'user': request.user})
+            send_email(category=request.user.category,
+                to_email=[request.user.email,],
+                subject='Application Received for Interview C', 
+                html_template='email/application/FI_sectionC.html',
+                context={'user': request.user})
             return redirect("application:ratewid", pk="Database")
+        
     context={"title": "First Section",
              "categories": categories,
              "variable_title": variable_title,
@@ -403,15 +404,14 @@ def ratewid(request,pk):
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
                 
                 if userprof.section not in ["A", 'a']:
-                    pass
-                    # send_email(category=request.user.category,
-                    #     to_email=[request.user.email,],
-                    #     subject=f"Interview-{userprof.section} FeedBack", 
-                    #     html_template='email/application_feedback.html',
-                    #     context={
-                            # 'name': request.user,
-                            # 'company_name': 'coda'
-                            # })
+                    send_email(category=request.user.category,
+                        to_email=[request.user.email,],
+                        subject=f"Interview-{userprof.section} FeedBack", 
+                        html_template='email/application_feedback.html',
+                        context={
+                            'name': request.user,
+                            'company_name': 'coda'
+                            })
 
                 if userprof.section == "D":
                     return redirect("application:policies")
