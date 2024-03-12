@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 from django.views.generic import  UpdateView
 from django import template
 from datetime import date,datetime,time,timezone
-from finance.models import Payment_History, Transaction
+from finance.models import Payment_History, Payment_Information, Transaction
 from django.views.generic import ListView
 
 # import pandas as pd
@@ -126,13 +126,13 @@ def InvestmentPlatformOverview(request):
     for year in range(2021, today.year + 1):
         year_data = {
             "year": year,
-            "sales": Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0,
+            "sales": Payment_Information.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0,
             "expenses": Transaction.objects.filter(
-                Q(category__in=["employee", "developer", "other_expense"]),  
+                Q(category__in=["Salary", "developer", "other_expense"]),  
                 activity_date__year=year
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0,
-            "net_income": (Payment_History.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0) - (Transaction.objects.filter(
-                Q(category__in=["employee", "developer", "other_expense"]), 
+            "net_income": (Payment_Information.objects.filter(client_date__contains=str(year)).aggregate(total_amount=Sum('payment_fees'))['total_amount'] or 0) - (Transaction.objects.filter(
+                Q(category__in=["Salary", "developer", "other_expense"]), 
                 activity_date__year=year
             ).aggregate(total_amount=Sum('amount'))['total_amount'] or 0)
         }

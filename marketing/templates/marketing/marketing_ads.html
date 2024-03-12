@@ -1,210 +1,69 @@
- 
 {% load static %}
 {% block content %}
-<style>
-
-    .lead {
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .font-weight-bold {
-        font-weight: bold;
-    }
-
-    .text-warning {
-        color: #fff;
-    }
-
-    @media (max-width: 768px) {
-        .course__content {
-            margin-left: 0;
-        }
-        .course__box {
-            width: 100%;
-            margin-right: 0;
-        }
-
-        .social-icons-container {
-            margin-left: 0;
-        }
-    }
-</style>
-<div class="container-fluid" style="height: 100vh;margin: 0;background-color: #f0f0f0;font-family: 'Roboto', sans-serif;">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-
-        <div class="row">
-            <div class="col-md-12 top-coloumn" style="background-color: #001f3f; padding: 20px;">
-                <p class="lead"><span id="current-date-time" class="font-weight-bold text-warning"></span></p>
-                <tr>
-                    <td>
-                        <table width="100%">
-                            <tr>
-                                <td style="text-align: left;">
-                                    <p style="font-size: 24px; font-weight: bold; color: #fff;">CODA-CROWN DATA ANALYSIS AND CONSULTANCY LLC</p>
-                                    <p style="font-style: italic; color: #fff;">New Courses at CODA.</p>
-                                </td>
-                                <td style="text-align: right;">
-                                    
-                                        <a href="{% url 'accounts:account-login' %}" style="background-color: #E7AD4A; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Sign In</a>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
+<div class="container-fluid">
+    <div style="background-color: #001f3f; padding: 20px;">
+        <p class="lead" style="font-size: 1.5rem; margin-bottom: 20px; text-align: center; color: #fff; font-weight: bold;"><span id="current-date-time"></span></p>
+        <table width="100%">
+            <tr>
+                <td>
+                    <table width="100%">
+                        <tr>
+                            <td style="text-align: left;">
+                                <p style="font-size: 24px; font-weight: bold; color: #fff;">CODA-CROWN DATA ANALYSIS AND CONSULTANCY LLC</p>
+                                <p style="font-style: italic; color: #fff;">New Courses at CODA.</p>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="{% url 'accounts:account-login' %}" style="background-color: #E7AD4A; color: #fff; text-decoration: none; padding: 10px 20px; border-radius: 5px;">Sign In</a>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="row bottom-coloumn">
+    <div class="col-md-12 top-coloumn bottom-coloumn">
+        <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
+            <h3 style="margin-top:0; font-size: 1.7em; color: #333;">Dear {{ user }},</h3>
+            <p class="title-sub-pay text-center" style="font-size: xx-large; margin-bottom: 16px;">OUR COURSES</p>
+            <ul>
+                {% for course_title, course_infos in courses.items %}
+                <ul style="list-style: none; margin-left: 5%; @media (max-width: 767px) { margin-left: 0%; }">
+                    {% for service, price in services.items %}
+                    {% if course_title ==  service.title %}
+                    <p style="font-size: 1.7em; color: gray; margin-top: 8px; @media (max-width: 767px) { font-size: 1.2em; }">Price: $ {{ price }}</p>
+                    {% endif %}
+                    {% endfor %}
+                    <div style="border: 1px solid #ccc; width: 90%; display: inline-block; margin-right: 0%; box-sizing: border-box; padding: 20px; border-radius: 7px; background-color: #f5f5f5; transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out; @media (max-width: 767px) { width: 100%; }">
+                        <h2 style="color: #E7AD4A; font-size: 1.7em; margin-bottom: 16px; @media (max-width: 767px) { font-size: 1.0em; }">{{ course_title }}</h2>
+                        {% for info in course_infos %}
+                        <p style="font-size: 1.1em; color: #243865; font-weight: 700; margin-bottom: 10px; @media (max-width: 767px) { font-size: 1em; }">{{ info.title }}</p>
+                        <p style="color: wheat; margin-top: 10px; font-size: 1.4em; font-family: Georgia, 'Times New Roman', Times, serif; @media (max-width: 767px) { font-size: 1.2em; }">{{ info.description|safe }}</p>
+                        {% endfor %}
+                        <a href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" style="position: left; bottom: 10px; right: 10px; padding: 5px 10px; text-decoration: none; background-color: #007bff; color: #fff; border-radius: 5px; transition: background-color 0.3s ease-in-out; @media (max-width: 767px) { font-size: 0.9em; }" class="purchase-button">Purchase Now</a>
+                    </div>
+                </ul>
+                {% endfor %}
+            </ul>
+            <div style="margin-top: 20px;">
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">Thank you,</p>
+                <p style="margin-bottom: 10px; font-size: 1.1em; color: black; font-size: 20px; font-weight: 70px; @media (max-width: 767px) { font-size: 0.9em; }">Discover More:</p>
             </div>
-        </div>
-        <div class="row bottom-coloumn">
-            <div class="col-md-12 top-coloumn bottom-coloumn">
-                
-                <div class="row">
-                    <div style="background-color:#f8f8f8; border:1px solid #ccc; padding:20px;">
-                        <h3 style="margin-top:0;">Dear {{ user }},</h3>
-                        <p class="title-sub-pay text-center" style="font-size:xx-large;">
-                            OUR COURSES
-                        </p>
-                        <!-- <p>Thank you for choosing {{subtitle}} as your payment method. Please use the following information to complete your payment:</p> -->
-                        <!-- <div class="email-container" > -->
-                            <ul style="list-style: none;padding-left: 0;">
-                                {% for course_title, course_infos in courses.items %}
-                                    <ul style="list-style: none;padding-left: 0;">
-                                        {% for service, price in services.items %}
-                                        {% if course_title ==  service.title %}    
-                                                <p class="course__price">Price: $ {{ price }}</p>
-                                        {% endif %}        
-                                        {% endfor %} 
-                                            <div style="margin-left: 210px;
-                                            padding-bottom: 20px;" class="course__content">
-                                                <div class="course__box" style="border: 1px solid #ccc;
-                                                width: 55%;
-                                                display: inline-block;
-                                                margin-right: 0%;
-                                                box-sizing: border-box;
-                                                padding: 20px;
-                                                border-radius: 7px;
-                                                background-color: #f5f5f5;
-                                                transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-                                                @media (max-width: 768px) {
-                                                    width: 40%;
-                                                    margin-right: 0;
-                                                }"
-                                    
-                                         onmouseover="this.style.transform='scale(1.05)'; this.style.backgroundColor='#e0e0e0'; this.style.color='#333';"
-                                         onmouseout="this.style.transform='scale(1)'; this.style.backgroundColor='#f5f5f5'; this.style.color='#000';"> 
-                                                        <h2 style="color: #E7AD4A;">{{ course_title }}</h2>
-                                                        {% for info in course_infos %}
-                                                            <p style="font-size: 1.1em; color: #243865; font-weight: 700;">{{ info.title }}</p>
-                                                            <p style="color: wheat;
-                                                            margin-top: 10px;
-                                                            font-size: 1.4em;
-                                                            font-family: Georgia, 'Times New Roman', Times, serif;">{{ info.description|safe }}</p>
-                                                        {% endfor %}
-                                                        <a  href="{{ SITEURL }}{% url 'main:service_plans' slug='full-course' %}" style="position: left;
-                                                        bottom: 10px;
-                                                        right: 10px;
-                                                        padding: 5px 10px;
-                                                        text-decoration: none;
-                                                        background-color: #007bff;
-                                                        color: #fff;
-                                                        border-radius: 5px;
-                                                        transition: background-color 0.3s ease-in-out;">Purchase Now</a>
-                                                    </div>
-                                                </div>
-                                            </div>    
-
-                                    </ul>
-                                {% endfor %}
-                            </ul>
-                        <!-- </div> -->
-                                <div style="  margin-top: 20px;">
-                                    <p style="margin-bottom: 10px;
-                                    font-size: 1.1em;
-                                    color: black;
-                                    font-size: 20px;
-                                    font-weight: 70px;">If you have any questions or concerns, please don't hesitate to reach out to our Finance Department.</p>
-                                    <p style="margin-bottom: 10px;
-                                    font-size: 1.1em;
-                                    color: black;
-                                    font-size: 20px;
-                                    font-weight: 70px;">Thank you</p>
-                                    <p style="margin-bottom: 10px;
-                                    font-size: 1.1em;
-                                    color: black;
-                                    font-size: 20px;
-                                    font-weight: 70px;">Discover More:</p>
-                                </div>
-                                <div style="display: flex;
-                                margin-top: 1%;
-                                margin-left: 120px;">
-                    
-                        <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" style="display: flex;
-                                                                                                        align-items: center;
-                                                                                                        justify-content: center;
-                                                                                                        text-decoration: none;
-                                                                                                        margin-right: 30px;
-                                                                                                        height: 40px;
-                                                                                                        width: 40px;
-                                                                                                        border-radius: 50%;
-                                                                                                        overflow: hidden;
-                                                                                                        transition: background-color 0.3s ease;
-                                                                                                        background-color: #0077B5;"
-                           onmouseover="this.style.backgroundColor='#555';"
-                           onmouseout="this.style.backgroundColor='#0077B5';">
-                            <img src="{% static 'admin/image/linkedin.png' %}" alt="LinkedIn" style="width: 100%; height: auto;">
-                        </a>
-                    
-                        <a href="https://www.facebook.com/chris.maghas/" target="_blank" style="display: flex;
-                                                                                                 align-items: center;
-                                                                                                 justify-content: center;
-                                                                                                 text-decoration: none;
-                                                                                                 margin-right: 30px;
-                                                                                                 height: 40px;
-                                                                                                 width: 40px;
-                                                                                                 border-radius: 50%;
-                                                                                                 overflow: hidden;
-                                                                                                 transition: background-color 0.3s ease;
-                                                                                                 background-color: #3b5998;"
-                           onmouseover="this.style.backgroundColor='#555';"
-                           onmouseout="this.style.backgroundColor='#3b5998';">
-                            <img src="{% static 'admin/image/facebook.png' %}" alt="Facebook" style="width: 100%; height: auto;">
-                        </a>
-                    
-                        <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" style="display: flex;
-                                                                                                      align-items: center;
-                                                                                                      justify-content: center;
-                                                                                                      text-decoration: none;
-                                                                                                      margin-right: 30px;
-                                                                                                      height: 40px;
-                                                                                                      width: 40px;
-                                                                                                      border-radius: 50%;
-                                                                                                      overflow: hidden;
-                                                                                                      transition: background-color 0.3s ease;
-                                                                                                      background-color: #ff0000;"
-                           onmouseover="this.style.backgroundColor='#555';"
-                           onmouseout="this.style.backgroundColor='#ff0000';">
-                            <img src="{% static 'admin/image/youtube.png' %}" alt="YouTube" style="width: 100%; height: auto;">
-                        </a>
-                    
-                    </div>
-                    </div>
+            <div style="display: flex; margin-top: 1%; margin-left: 5%; @media (max-width: 767px) { margin-left: 0%; }">
+                <a href="https://www.linkedin.com/in/chris-maghas-06a41944/" target="_blank" style="text-decoration: none; margin-right: 5%; color: #E7AD4A;  font-size: 1.4em;">
+                    <span style="margin-right: 8px;">LinkedIn</span>
+                </a>
+                <a href="https://www.facebook.com/chris.maghas/" target="_blank" style="text-decoration: none; margin-right: 5%; color: #1877F2; font-size: 1.4em;">
+                    <span style="margin-right: 8px;">Facebook</span>
+                </a>
+                <a href="https://www.youtube.com/@AIAutomation-wx5vo" target="_blank" style="text-decoration: none; margin-right: 5%; color: #FF0000; font-size: 1.4em;">
+                    <span style="margin-right: 8px;">YouTube</span>
+                </a>
             </div>
         </div>
     </div>
 </div>
-    <script>
-        function updateDateTime() {
-            var currentDate = new Date();
-            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            var formattedDate = currentDate.toLocaleDateString('en-US', options);
-    
-            document.getElementById('current-date-time').textContent = formattedDate;
-        }
-    
-        // Update the date initially
-        updateDateTime();
-    
-        // Set up a timer to update the date every second (you can adjust the interval as needed)
-        setInterval(updateDateTime, 1000);
-    </script>
 
-    {% endblock content %}
+{% endblock content %}

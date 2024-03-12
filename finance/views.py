@@ -1667,11 +1667,26 @@ def get_existing_data():
         existing_assets, existing_long_term_assets, existing_liabilities, existing_long_term_liabilities,
         total_current_assets, total_long_term_assets, total_current_liabilities, total_long_term_liabilities
     )
+def financial_statements():
+    saved_Revenue = BalanceSheetCategory.objects.filter(category_type='Revenue')
+    saved_Expenses = BalanceSheetCategory.objects.filter(category_type='Expenses')
+    total_revenue = saved_Revenue.aggregate(Sum('amount'))['amount__sum'] or 0
+    total_expenses = saved_Expenses.aggregate(Sum('amount'))['amount__sum'] or 0
+    net_income = total_revenue - total_expenses
+    return saved_Revenue, saved_Expenses, total_revenue, total_expenses, net_income
+def cashflowstatements():
+    saved_inflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Investing Activities')
+    saved_outflow_investing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Investing Activities')
+    saved_inflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Inflows for Financing Activities')
+    saved_outflow_financing = BalanceSheetCategory.objects.filter(category_type='Cash Outflows for Financing Activities')
+    return saved_inflow_investing, saved_outflow_investing, saved_inflow_financing, saved_outflow_financing
+
 
 def openai_balancesheet(request):
     context = {}  # Initialize context variable
 
     try:
+        # Existing data check
         (
             data_exists,
             existing_assets, existing_long_term_assets, existing_liabilities, existing_long_term_liabilities,
@@ -1682,7 +1697,7 @@ def openai_balancesheet(request):
         if data_exists:
             # Use existing data
             print("Using existing data")
-            context = {
+            context.update({
                 'company_name': 'CODA',
                 'assets': existing_assets,
                 'long_term_assets': existing_long_term_assets,
@@ -1694,18 +1709,18 @@ def openai_balancesheet(request):
                 'total_long_term_liabilities': total_long_term_liabilities,
                 'total_assets': total_current_assets + total_long_term_assets,
                 'total_liabilities': total_current_liabilities + total_long_term_liabilities,
-            }
+            })
         else:
             try:
+                # Fetch and process financial data from OpenAI
                 response = fetch_and_process_financial_data(request)
-
                 # Use the newly generated data
-                context = {
+                context.update({
                     'assets': response['assets'],
                     'long_term_assets': response['long_term_assets'],
                     'liabilities': response['liabilities'],
                     'long_term_liabilities': response['long_term_liabilities']
-                }
+                })
 
             except json.JSONDecodeError as e:
                 # Handle JSON parsing error
@@ -1716,31 +1731,44 @@ def openai_balancesheet(request):
         print(f"An unexpected error occurred: {e}")
 
     # Calculate total revenues
-	# Get existing revenue and expenses data
+    # Get existing revenue and expenses data
     (
-        data_exist,
-		existing_revenue,existing_expenses,total_revenue, total_expenses,net_income
+        saved_Revenve, saved_Expanses, total_revenue, total_expenses, net_income
+    ) = financial_statements()
 
-    ) = get_existing_revenue_expenses_data()
-
-    if  data_exist:
+    if (
+        saved_Revenve.exists()
+        and saved_Expanses.exists()
+    ):
         context.update({
-            'existing_revenue_data': existing_revenue,
-            'existing_expenses_data': existing_expenses,
+            'existing_revenue_data': saved_Revenve,
+            'existing_expenses_data': saved_Expanses,
             'total_revenue': total_revenue,
             'total_expenses': total_expenses,
-			"net_income": net_income,
+            'net_income': net_income,
         })
     else:
-        response = calculate_revenue_and_expenses(request)
-        data = response.json() if hasattr(response, 'json') else json.loads(response.content.decode('utf-8'))
+        # Calculate revenue and expenses
+        calculate_revenue_and_expenses(request)
 
+    # Cash flow data
+    (
+        saved_inflow_investing, saved_outflow_investing, saved_inflow_financing, saved_outflow_financing
+    ) = cashflowstatements()
+
+    # Check if data already exists in the model
+    if (
+        saved_inflow_investing.exists()
+        and saved_outflow_investing.exists()
+        and saved_inflow_financing.exists()
+        and saved_outflow_financing.exists()
+    ):
+        # Use the stored data
         context.update({
-            'total_revenue': data.get('total_revenue', 0),
-            'total_expenses': data.get('total_expenses', 0),
-            'net_income': data.get('net_income', 0),
-            'revenue_breakdown': data.get('revenue_breakdown', {}),
-            'expense_breakdown': data.get('expense_breakdown', {}),
+            'saved_inflow_investing': saved_inflow_investing,
+            'saved_outflow_investing': saved_outflow_investing,
+            'saved_outflow_financing': saved_outflow_financing,
+            'saved_inflow_financing': saved_inflow_financing,
         })
 # Render the template with the 'assets' variable
     return render(request, "finance/reports/openai.html", context)

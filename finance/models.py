@@ -787,6 +787,10 @@ class BalanceSheetCategory(models.Model):
         ('Long-term Liability', 'Long-term Liability'),
         ('Revenue', 'Revenue'),
         ('Expenses', 'Expenses'),
+        ('Cash Inflows for Investing Activities', 'Cash Inflows for Investing Activities'),
+        ('Cash Outflows for Investing Activities', 'Cash Outflows for Investing Activities'),
+        ('Cash Inflows for Financing Activities', 'Cash Inflows for Financing Activities'),
+        ('Cash Outflows for Financing Activities', 'Cash Outflows for Financing Activities'),
     ]
 
     name = models.CharField(max_length=255)
