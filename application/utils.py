@@ -1,3 +1,4 @@
+import requests
 # Interview description data
 posts = [
     {
@@ -123,3 +124,13 @@ def rewardpoints(form):
     if form.cleaned_data.get('deployment'):
         total_points += 2
     return total_points
+
+
+def link_validity_check(link):
+    a = requests.get(link)
+    if a.status_code == 200:
+        valid_substrings = ['.zoom.', 'docs.google.', 'drive.google.', 'gotomeeting.']
+        for substring in valid_substrings:
+            if substring in link:
+                return None
+    return "Invalid link"
