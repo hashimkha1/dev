@@ -1,0 +1,222 @@
+/* =======================================================================
+Release             Project        Person           Date          Change Description
+-------            ---------    -------------     ---------       -------------------
+
+24.03               CODA_DB     BRENDA NASIMIYU   3/14/2024      Created tables(EmployeeDetails,Exception,ExceptionTable,OfficerDetails,ST_UserProjectWorkloadDetailTB,)
+
+========================================================================*/
+CREATE TABLE EmployeeDetails (
+    RITSID INT,
+    Empl VARCHAR(255),
+    SOEID VARCHAR(255),
+    GEID INT,
+    LastName VARCHAR(255),
+    FirstName VARCHAR(255),
+    FullName VARCHAR(255),
+    PrimaryLoginID VARCHAR(255),
+    LocationCode VARCHAR(255),
+    Street VARCHAR(255),
+    Street2 VARCHAR(255),
+    City VARCHAR(255),
+    State VARCHAR(255),
+    Zip VARCHAR(255),
+    Country VARCHAR(255),
+    Email VARCHAR(255),
+    Phone1 VARCHAR(255),
+    Phone2 VARCHAR(255),
+    Beeper VARCHAR(255),
+    ManagerGEID INT,
+    ManagerRITSID INT,
+    RITSEmployeeType VARCHAR(255),
+    RITSEmployeeStatus VARCHAR(255),
+    EmployeeStatus VARCHAR(255),
+    OriginalHireDate DATE,
+    StartDate DATE,
+    TerminationDate DATE,
+    BusinessFaxNum VARCHAR(255),
+    FunctionTitle VARCHAR(255),
+    OfficerTitle VARCHAR(255),
+    OfficerTitleID INT,
+    OfficerRankID INT
+);
+USE [CODA]
+GO
+
+/****** Object:  Table [dbo].[Exception]    Script Date: 3/14/2024 12:55:54 PM ******/
+
+
+CREATE TABLE [dbo].[Exception](
+	[ExceptionID] [int] NOT NULL,
+	[ExceptionDate] [date] NULL,
+	[ExceptionWeek] [int] NULL,
+	[Comments] [varchar](255) NULL,
+	[ExceptionTypeID] [int] NULL,
+	[ProjectUserID] [int] NULL,
+	[ProjectUserRTSID] [int] NULL,
+	[ExceptionFlag] [bit] NULL,
+	[PitchFlag] [bit] NULL,
+	[LateNights] [int] NULL,
+	[Vacations] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[ExceptionID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+
+/****** Object:  Table [dbo].[ExceptionTable]    Script Date: 3/14/2024 12:57:49 PM ******/
+CREATE TABLE [dbo].[ExceptionTable](
+	[GEID] [int] NOT NULL,
+	[RTSID] [int] NULL,
+	[RoleID] [int] NULL,
+	[RoleName] [varchar](255) NULL,
+	[WeekOf] [date] NULL,
+	[WeekOfEnd] [date] NULL,
+	[LateNights] [int] NULL,
+	[SatExceptions] [int] NULL,
+	[OooWorkload] [int] NULL,
+	[OooOutlookComments] [varchar](255) NULL,
+	[DeletedFlag] [bit] NULL,
+	[ProjectUserID] [int] NULL,
+	[Workload] [int] NULL,
+	[ClientMeetingAttended] [int] NULL,
+	[FinalPitch30Pages] [int] NULL,
+	[FinalPitch30PagesFlag] [bit] NULL,
+	[OutlookWorkload] [int] NULL,
+	[OutlookComments] [varchar](255) NULL,
+	[ProjectID] [int] NULL,
+	[SubtaskID] [int] NULL,
+	[SubtaskName] [varchar](255) NULL,
+	[SubtaskGroup] [varchar](255) NULL,
+	[SubtaskGroupAbbr] [varchar](255) NULL,
+	[SubtaskWorkload] [int] NULL,
+	[ProjectUserSubtaskID] [int] NULL,
+	[ProjectUserSubtaskWorkloadID] [int] NULL,
+	[Outlook2Workload] [int] NULL,
+	[DeliverableDate] [date] NULL,
+	[WeekID] [int] NULL,
+	[OutlookWeekOf] [date] NULL,
+	[OutlookWeekOfEnd] [date] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[GEID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+/****** Object:  Table [dbo].[OfficerDetails]    Script Date: 3/14/2024 1:00:19 PM ******/
+
+
+CREATE TABLE [dbo].[OfficerDetails](
+	[OfficerTitleID] [int] NULL,
+	[OfficerRankID] [int] NULL,
+	[FloorName] [varchar](255) NULL,
+	[IsCVUser] [bit] NULL,
+	[CVUserType] [varchar](255) NULL,
+	[Deleted] [bit] NULL,
+	[MRUDate] [date] NULL,
+	[RITSTitle] [varchar](255) NULL,
+	[Title] [varchar](255) NULL,
+	[MCModifiedDate] [date] NULL,
+	[GOCode] [varchar](255) NULL,
+	[Building] [varchar](255) NULL,
+	[ManagedSegmentCode] [varchar](255) NULL,
+	[ManagedSegmentName] [varchar](255) NULL,
+	[ManagedGeographyCode] [varchar](255) NULL,
+	[ManagedGeographyName] [varchar](255) NULL,
+	[GOCName] [varchar](255) NULL,
+	[SupervisorGEID] [int] NULL,
+	[CLevel] [varchar](255) NULL,
+	[LastName] [varchar](255) NULL,
+	[JobCode] [varchar](255) NULL,
+	[OfficerTitleCode] [varchar](255) NULL
+) ON [PRIMARY]
+
+
+CREATE TABLE [dbo].[ST_UserProjectWorkloadDetailTB](
+	[GEID] [int] NULL,
+	[RTISID] [int] NULL,
+	[RoleID] [int] NULL,
+	[RoleName] [varchar](255) NULL,
+	[WeekOf] [int] NULL,
+	[WeekEnd] [int] NULL,
+	[LateNights] [int] NULL,
+	[SatExceptions] [int] NULL,
+	[OOWWorkload] [int] NULL,
+	[OOWOutlookWorkload] [int] NULL,
+	[OOWOutlookComments] [varchar](max) NULL,
+	[Deleted] [bit] NULL,
+	[ProjectUserID] [int] NULL,
+	[ClientMtgsAttended] [int] NULL,
+	[FinalPitch30Pgs] [int] NULL,
+	[FinalPitch30PgsFlag] [bit] NULL,
+	[OutlookWorkload] [int] NULL,
+	[OutlookComments] [varchar](max) NULL,
+	[ProjectID] [int] NULL,
+	[SubTaskID] [int] NULL,
+	[SubTaskName] [varchar](255) NULL,
+	[SubTaskGroupAbbr] [varchar](255) NULL,
+	[SubTaskWorkload] [int] NULL,
+	[ProjectUserSubTaskID] [int] NULL,
+	[ProjectUserSubTaskWorkloadID] [int] NULL,
+	[DeliverableDate] [date] NULL,
+	[WeekID] [int] NULL,
+	[OutlookWeekOf] [int] NULL,
+	[OutlookWeekOffEnd] [int] NULL,
+	[OutlookWeekOf2] [int] NULL,
+	[WorkloadOutlook2Flag] [bit] NULL,
+	[UserIndustryDisplayName] [varchar](255) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+/****** Object:  Table [dbo].[Staffing]    Script Date: 3/14/2024 1:09:26 PM ******/
+
+CREATE TABLE [dbo].[Staffing](
+	[Level2_Country] [varchar](255) NULL,
+	[Level2_CountryCode] [varchar](255) NULL,
+	[Level2_Region] [varchar](255) NULL,
+	[Level_FunctionTitle] [varchar](255) NULL,
+	[Level3_RITSID] [int] NULL,
+	[Level3_FullName] [varchar](255) NULL,
+	[Level3_SOEID] [varchar](255) NULL,
+	[Level3_Role] [varchar](255) NULL,
+	[Level3_City] [varchar](255) NULL,
+	[Level3_Segment] [varchar](255) NULL,
+	[Level3_Subsegment] [varchar](255) NULL,
+	[Level3_FunctionTitle] [varchar](255) NULL,
+	[Level3_Country] [varchar](255) NULL,
+	[Level3_CountryCode] [varchar](255) NULL,
+	[Level3_Region] [varchar](255) NULL,
+	[Level1_Title] [varchar](255) NULL,
+	[Level2_Title] [varchar](255) NULL,
+	[Level3_Title] [varchar](255) NULL,
+	[DocRole] [varchar](255) NULL,
+	[Level1_Group] [varchar](255) NULL,
+	[Level2_Group] [varchar](255) NULL,
+	[Level3_Group] [varchar](255) NULL,
+	[Level1_IndustryFlag] [bit] NULL,
+	[Level1_IndustryN] [varchar](255) NULL,
+	[Level2_IndustryFlag] [bit] NULL,
+	[Level2_IndustryN] [varchar](255) NULL,
+	[Level3_IndustryFlag] [bit] NULL,
+	[Level3_IndustryN] [varchar](255) NULL
+) ON [PRIMARY]
+GO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
