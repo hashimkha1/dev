@@ -1672,6 +1672,11 @@ def clientassessment(request):
                 
             form.save()
             
+            next_url = request.GET.get('next', None)
+            print(next_url)
+            if next_url is not None:
+                return redirect(next_url)
+        
             if totalpoints <= 35:
                 post="We highly recommend an end to end project based course. This course will cover(Training:Reporting,Database,Alteryx),Interview(How to pass an interview),and Background Checks)"
                 message = f"Hi Future Client,{post}."
