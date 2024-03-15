@@ -1,3 +1,36 @@
+from data.models import FeaturedCategory
+from main.utils import path_values
+
+def interview_view(sub_title):
+    title="Data Preparation"
+    if sub_title == "section_a":
+        title="Data Preparation"
+    if sub_title == "section_b":
+        title="Reporting"
+    if sub_title == "section_c":
+        title='Database Management'
+    categories = FeaturedCategory.objects.all()
+    return categories,title
+
+# Interview description data
+interview_description= [
+    {
+        "topic": "Instructions",
+        "description": "1. The ability for a candidate to follow step by step instructions and the requirements given.",
+    },
+    {
+        "topic": "Learning Tool",
+        "description": "2. The ability for a candidate to learn a new tool and the utilization of the tool to meet business requirements.",
+    },
+    {
+        "topic": "Organization",
+        "description": "3. The ability for the candidate to organize deliverables/his or her submissions",
+    },
+    {
+        "topic": "Audibility",
+        "description": "4. The ability for a candidate to be organized, audible and flawless during presentation",
+    },
+]
 # Interview description data
 posts = [
     {
@@ -123,3 +156,13 @@ def rewardpoints(form):
     if form.cleaned_data.get('deployment'):
         total_points += 2
     return total_points
+
+
+def link_validity_check(link):
+    a = requests.get(link)
+    if a.status_code == 200:
+        valid_substrings = ['.zoom.', 'docs.google.', 'drive.google.', 'gotomeeting.']
+        for substring in valid_substrings:
+            if substring in link:
+                return None
+    return "Invalid link"

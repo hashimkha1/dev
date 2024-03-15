@@ -10,7 +10,7 @@ from django.db.models import Q
 from accounts.models import CustomerUser
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -27,9 +27,17 @@ from .forms import (
 from .models import UserProfile, Application,Rated, Reporting
 from data.models import ActivityLinks
 from management.models import Policy,Task
-from .utils import alteryx_list, dba_list, posts, tableau_list,rewardpoints
+from .utils import (alteryx_list,
+                     dba_list,
+                     posts,
+                     tableau_list,
+                    rewardpoints,
+                    interview_description,
+                    interview_view)
 from datetime import datetime, timedelta
 from main.utils import path_values
+from application.permission import check_client_assesment
+from django.contrib import messages
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -109,7 +117,11 @@ def firstinterview(request):
 
 @csrf_exempt
 @login_required
+@user_passes_test(lambda user: check_client_assesment(user), login_url='/management/newclient/')
 def FI_sectionA(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
+
     form = ApplicantProfileFormA(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -127,20 +139,29 @@ def FI_sectionA(request):
             data = form.cleaned_data["user"] = request.user
             section = data.profile.section
             if section == "A":
-                data.profile.section = "B"
-                data.profile.save()
+                if request.user.gender == 2:
+                    data.profile.section = "C"
+                    data.profile.save()
+                else:
+                    data.profile.section = "B"
+                    data.profile.save()
             form.save()
-            subject = "Interview Message"
+            # subject = "Interview Message"
         
-        send_email(category=request.user.category,
-            to_email=[request.user.email,],
-            subject='Application Received for Interview A', 
-            html_template='email/FI_sectionA.html',
-            context={'user': request.user})
+        # send_email(category=request.user.category,
+        #     to_email=[request.user.email,],
+        #     subject='Application Received for Interview A', 
+        #     html_template='email/application/FI_sectionA.html',
+        #     context={'user': request.user})
 
         return redirect("application:ratewid", pk="Alteryx")
     
-    context={"title": "First Section", "form": form,"link_url":link_url}
+    context={"title": "Section A",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+             "link_url":link_url}
     return render(
         request,
         "application/interview_process/firstinterview/sectionA.html",context
@@ -149,7 +170,10 @@ def FI_sectionA(request):
 
 
 @login_required
+@user_passes_test(lambda user: check_client_assesment(user), login_url='/management/newclient/')
 def FI_sectionB(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
     form = ApplicantProfileFormB(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -164,24 +188,33 @@ def FI_sectionB(request):
                 data.profile.section = "C"
                 data.profile.save()
             form.save()
-            subject = "Interview Message"
+            # subject = "Interview Message"
 
-        send_email(category= request.user.category,
-            to_email=[request.user.email,],
-            subject='Application Received for Interview B', 
-            html_template='email/FI_sectionB.html',
-            context={'user': request.user})
+        # send_email(category= request.user.category,
+        #     to_email=[request.user.email,],
+        #     subject='Application Received for Interview B', 
+        #     html_template='email/application/FI_sectionB.html',
+        #     context={'user': request.user})
         return redirect("application:ratewid", pk="Tableau")
-
+    
+    context={"title": "First Section",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+            #  "link_url":link_url
+             }
     return render(
         request,
-        "application/interview_process/firstinterview/sectionB.html",
-        {"title": "First Section", "form": form},
+        "application/interview_process/firstinterview/sectionB.html",context
     )
 
 
 @login_required
+@user_passes_test(lambda user: check_client_assesment(user), login_url='/management/newclient/')
 def FI_sectionC(request):
+    path_list,sub_title,pre_sub_title=path_values(request)
+    categories,variable_title=interview_view(sub_title)
     form = ApplicantProfileFormC(
         request.POST, request.FILES, instance=request.user.profile
     )
@@ -196,18 +229,25 @@ def FI_sectionC(request):
                 data.profile.section = "D"
                 data.profile.save()
             form.save()
-            subject = "Interview Message"
-            send_email(category=request.user.category,
-                to_email=[request.user.email,],
-                subject='Application Received for Interview C', 
-                html_template='email/FI_sectionC.html',
-                context={'user': request.user})
-            return redirect("application:ratewid", pk="Database")
 
+            # subject = "Interview Message"
+            # send_email(category=request.user.category,
+            #     to_email=[request.user.email,],
+            #     subject='Application Received for Interview C', 
+            #     html_template='email/application/FI_sectionC.html',
+            #     context={'user': request.user})
+            return redirect("application:ratewid", pk="Database")
+        
+    context={"title": "First Section",
+             "categories": categories,
+             "variable_title": variable_title,
+             "interview_description": interview_description,
+             "form": form,
+            #  "link_url":link_url
+             }
     return render(
         request,
-        "application/interview_process/firstinterview/sectionC.html",
-        {"title": "First Section", "form": form},
+        "application/interview_process/firstinterview/sectionC.html",context
     )
 
 
@@ -336,58 +376,116 @@ def ratewid(request,pk):
         if request.user.is_staff or request.user.is_applicant:
             print("employee or applicant",request.user)
             form.instance.employeename = request.user
-
         print(form.is_valid())
+
+        improvement_area = []
         if form.is_valid():
             totalpoints = 0
+            #link validity check
+            try:
+
+                link_exists = Rated.objects.filter(uploadlinkurl=form.instance.uploadlinkurl).exists()
+
+                if link_exists:
+                    # messages.error(request, "this link was already uploaded.")
+                    return render(request, "application/orientation/rate.html", {"form": form,"error":True, "error_message": "this link was already uploaded."})
+                
+                result = link_validity_check(form.instance.uploadlinkurl)
+                if result is not None:
+                    # messages.error(request, "this link is invalid.")
+                    return render(request, "application/orientation/rate.html", {"form": form,"error":True, "error_message": result})
+                
+            except Exception as e:
+                print(e)
             try:
                 if request.POST["projectDescription"] == "on":
                     totalpoints += 2
+                else:
+                    improvement_area.append('Project Description')
             except:
-                pass
+                improvement_area.append('Project Description')
             try:
                 if request.POST["requirementsAnalysis"] == "on":
                     totalpoints += 3
+                else:
+                    improvement_area.append('Requirements Analysis')
             except:
-                pass
+                improvement_area.append('Requirements Analysis')
             try:
                 if request.POST["development"] == "on":
                     totalpoints += 5
+                else:
+                    improvement_area.append('Development')
             except:
-                pass
+                improvement_area.append('Development')
             try:
                 if request.POST["testing"] == "on":
                     totalpoints += 3
+                else:
+                    improvement_area.append('Testing')
             except:
-                pass
+                improvement_area.append('Testing')
             try:
                 if request.POST["deployment"] == "on":
                     totalpoints += 2
+                else:
+                    improvement_area.append('Deployment')
             except:
-                pass
+                improvement_area.append('Deployment')
 
             form.instance.topic = pk
             form.instance.totalpoints = totalpoints
             # Saving form data to rating table only if the user is applicant
             if form.instance.employeename.is_applicant == True:
-                form.save()
                 userprof = UserProfile.objects.get(user__username=form.instance.employeename)
-                
-                if userprof.section not in ["A", 'a']:
-                    send_email(category=request.user.category,
-                        to_email=[request.user.email,],
-                        subject=f"Interview-{userprof.section} FeedBack", 
-                        html_template='email/application_feedback.html',
-                        context={
-                            'name': request.user,
-                            'company_name': 'coda'
-                            })
+                if totalpoints > 12:
+                    form.save()
 
-                if userprof.section == "D":
-                    return redirect("application:policies")
+                    if userprof.section == "D":
+                        return redirect("application:policies")
+                    else:
+                        #mail for going furthur in interview
+                        subject = f"Congratulations! CODA Interview Next Section-{userprof.section}"
+                        try:
+                            send_email(category=request.user.category,
+                                to_email=[request.user.email,],
+                                subject=subject, 
+                                html_template='email/application/FI_section.html',
+                                context={
+                                    'user': request.user,
+                                    'company_name': 'coda',
+                                    'previous_section': chr(ord(userprof.section.lower()) - 1).upper(),
+                                    'next_section': userprof.section.upper()
+                                    })
+                        except Exception as e:
+                            print(e)
+                            pass
+                        return redirect("application:section_"+userprof.section.lower()+"")
                 else:
-                    return redirect("application:section_"+userprof.section.lower()+"")
-
+                    
+                    user_section = userprof.section.lower()
+                    if 'a' < user_section <= 'z':
+                        
+                        userprof.section =  chr(ord(user_section) - 1).upper()
+                        userprof.save()
+                        #feedback email
+                        try:
+                            send_email(category=request.user.category,
+                                to_email=[request.user.email,],
+                                subject=f"CODA Interview-{userprof.section} FeedBack", 
+                                html_template='email/application/feedback.html',
+                                context={
+                                    'name': request.user,
+                                    'company_name': 'coda',
+                                    'topic': pk,
+                                    'improvement_area': improvement_area,
+                                    })
+                        except Exception as e:
+                            print(e)
+                            pass
+                        return redirect("application:section_"+userprof.section.lower()+"")
+                    else:
+                        return redirect("application:interview")
             # For One on one sessions adding task points and increasing mxpoint if it is equal or near to points.
             try:
                 idval,point, mxpoint = Task.objects.values_list("id","point", "mxpoint").filter(
