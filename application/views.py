@@ -16,9 +16,9 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,Exception
 import logging
-
+from.forms import ExceptionForm
 
 
 def Balancesheet_category_list(request):
@@ -65,6 +65,20 @@ def balancesheet_list(request):
         logger.erro(f"error fetching balance sheet data: {e}")  
         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+    return render(request,'application/training/balancelist.html',context)  
+
+def exception_list(request):
+    exceptions = Exception.objects.all()
+    return render(request, 'application/exceptionlist.html', {'exceptions': exceptions})
+
+def exception_create(request):
+    if request.method == 'POST':
+        form = ExceptionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('aplication:exception_list')
+    else:
+        form = ExceptionForm()
+    return render(request, 'application/applications/exceptioncreate.html', {'form': form})        
 
              
