@@ -6,6 +6,7 @@ from . import views
 app_name = 'main'
 urlpatterns = [
     path('', views.layout, name='layout'),
+    path('upload', views.upload_background_image, name='image_upload'),
     path('get_respos', views.get_respos, name='get_respos'),
     path('fetch_model_table_names/', views.fetch_model_table_names, name='fetch_model_table_names'),
     # path('get_respos/<str:table>', views.get_respos, name='get_respos'),

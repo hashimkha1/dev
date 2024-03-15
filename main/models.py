@@ -147,10 +147,11 @@ class Testimonials(models.Model):
 class Assets(TimeStampedModel):
     name = models.CharField(max_length=200)
     category = models.CharField(default='background',max_length=200,null=True, blank=True)
-    description = models.TextField(null=True, blank=True)
-    service_image =models.ImageField(null=True, blank=True, upload_to="images/")
+    image_string = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True,default='background')
+    service_image =models.ImageField(null=True, blank=True, upload_to="images/",default='background')
 
-    image_url = models.CharField(max_length=1000, null=True, blank=True)
+    image_url = models.CharField(max_length=1000, null=True, blank=True,default='background')
 
     class Meta:
         verbose_name_plural = "Assets"
@@ -455,3 +456,9 @@ pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 pre_save.connect(testimonials_pre_save_receiver,sender=Testimonials)
 
 pre_save.connect(slug_pre_save_receiver,sender=Company)
+class BackgroundImage(models.Model):
+    title = models.CharField(max_length=30)
+    base64_data = models.TextField()
+
+    def __str__(self):
+        return self.title
