@@ -40,7 +40,8 @@ from management.models import Requirement
 from django.views import View
 from .utils import *
 from .mpesa_integration import *
-
+from django.apps import apps
+from getdata.models import Editable
 
 User = get_user_model()
 
@@ -57,7 +58,6 @@ rate = round(Decimal(usd_to_kes), 2)
 def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
-
 @login_required
 def add_budget_item(request):
     if request.method == "POST":
@@ -68,61 +68,61 @@ def add_budget_item(request):
             print(request.user)
             instance.budget_lead=request.user
             instance.save()
-            return redirect("finance:budget")
+            return redirect("finance:budget", company_slug="coda")
     else:
         form = BudgetForm()
     return render(request, "finance/budgets/newbudget.html", {"form": form})
 
+def budget(request, company_slug='coda'):
+    try:
+        # Fetch the company object based on the slug
+        company = Company.objects.get(slug=company_slug)
+    except Company.DoesNotExist:
+        return redirect('some_error_view')  # Redirect to an error page if company doesn't exist
+    
+    # Fetch budgets for the company
+    company_budgets = Budget.objects.filter(company=company)
+    site_budgets = Budget.objects.filter(company=company, category__name='Web')
+    
+    # Calculate total budgets
+    total_budget = sum(site.amount for site in company_budgets)
+    total_site_budget = sum(site.amount for site in site_budgets)
+    total_operation = total_budget - total_site_budget
 
-def budget(request, institution='coda'):
-    # Fetch the list of companies
-    companies = Company.objects.all()
-
-    # Prepare data for all companies
-    data = []
-    for organization in companies:
-        if organization.name == institution.upper():
-            print(organization.name)
-            company_budget = Budget.objects.filter(company__name=institution.upper())
-            site_budget = Budget.objects.filter(company__name=institution.upper(), category__name='Web')
-            # Calculate total budget for this company (example)
-            total_budget = sum(site.amount for site in company_budget)
-            total_site_budget = sum(site.amount for site in site_budget)
-            total_operation = total_budget - total_site_budget
-            # Append data for this company to the list
-            data.append({
-                "company_name": organization.name,
-                "total_budget": total_budget,
-                "total_site_budget": total_site_budget,
-                "total_operation": total_operation,
-                "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'}),
-            })
+    # Construct link URL
+    link_url = reverse('finance:site_budget_with_subcategory', kwargs={'company_slug': company_slug, 'category': 'Web', 'subcategory': 'all'})
 
     # Prepare summary data
     summary = [
-        {"title": "Total Budget", "value": sum(item['total_budget'] for item in data), "link": ''},
-        {"title": "Operations", "value": sum(item['total_operation'] for item in data), "link": ''},
-        {"title": "Web Development", "value": total_site_budget, "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'})},
+        {"title": "Total Budget", "value": total_budget, "link": ''},
+        {"title": "Operations", "value": total_operation, "link": ''},
+        {"title": "Web Development", "value": total_site_budget, "link": link_url},
     ]
 
+    # Fetch other necessary data
+    webhour = PayslipConfig.objects.values_list("web_pay_hour", flat=True).first()
+    delta = PayslipConfig.objects.values_list("web_delta", flat=True).first()
+
     context = {
-        "budget_obj": company_budget,
+        "company_name": company.name,
+        "budget_obj": company_budgets,
         "data": summary,
-        "webhour": PayslipConfig.objects.values_list("web_pay_hour", flat=True).first(),
-        "delta": PayslipConfig.objects.values_list("web_delta", flat=True).first(),
+        "webhour": webhour,
+        "delta": delta,
     }
     return render(request, "finance/budgets/budget.html", context)
 
-
-def site_budget(request, category='Web',subcategory='all'):
-    print(category,subcategory)
+def site_budget(request,company_slug='CODA', category='Web',subcategory='all'):
+    # cat=category
+    company_name = Company.objects.filter(slug=company_slug).first()
+    print(company_name,company_slug,category,subcategory)
+    # institution=Company.objects.filter(slug=company_slug)
     # Fetch site budget objects filtered by category and company
-    site_budget_all = Budget.objects.filter(company__name='CODA', category__name=category)
+    site_budget_all = Budget.objects.filter(company__slug=company_slug, category__name=category)
     if subcategory =='all':
-        site_budget = Budget.objects.filter(company__name='CODA', category__name=category)
-        print(site_budget)
+        site_budget = Budget.objects.filter(company__slug=company_slug, category__name=category)
     else:
-        site_budget = Budget.objects.filter(company__name='CODA', category__name=category, subcategory=subcategory)
+        site_budget = Budget.objects.filter(company__slug=company_slug, category__name=category, subcategory=subcategory)
         print(site_budget)
 
     # Initialize a dictionary to store subcategory totals
@@ -136,36 +136,23 @@ def site_budget(request, category='Web',subcategory='all'):
 
     # Prepare context to pass to template
     context = {
-        "company": "CODA",
+        "companies":Company.objects.filter(is_featured=True) ,
+        "company_name":company_name,
+        "institution_slug":company_slug,
+        "subcat":subcategory.upper(),
         "site_budget": site_budget,
         "subcategory_totals": subcategory_totals.items(),  # Convert dictionary items to list of tuples
     }
     # return render(request, "finance/budgets/dynamic_site_budget.html", context)
     return render(request, "finance/budgets/site_budget.html", context)
 
-from django.apps import apps
-from getdata.models import Editable
+
 
 def coda_budget_estimation(request, app='all'):
-      
-
-    # website----->2 hours
-    # f. Link to requirements .....categorize them (number of apps--->models---4 views--->30+45=75)
-    # accounts
-    #     i. How many models/Tables are in accounts
-    #         i. 1 tables----->
-    #             5 views --------->
-    #             3 TEMPLATES,
-    #             1 FORM,
-    #             2 apis
-    #                     i. CRUDE
-    #                         CREATEVIEW(7 HOURS), DETAIL VIEW, LISTVIEW,DELETE VIEW, UPDATEVIEW
     coda_budget_json = Editable.objects.filter(name='coda_budget')
-
     if coda_budget_json.exists():
 
         coda_budget_json = coda_budget_json.get().value
-    
     else:
         coda_budget_json = {
             "createview":{

@@ -14,11 +14,9 @@ urlpatterns = [
     path('statements/', views.openai_balancesheet, name='open_statements'),
     path('send_invoice/', views.send_invoice, name='send_invoice'),
     path('finance_report/', views.finance_report, name='finance_report'),
-    path('add_budget_item/', views.add_budget_item, name='add_budget_item'),
-    path('budget/<str:institution>/', views.budget, name='company_budget'),
-    path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
+   
     # path('category_budget/<str:category>/', views.site_budget, name='site_budget'),
-    path('category_budget/<str:category>/<str:subcategory>/', views.site_budget, name='site_budget_with_subcategory'),
+    path('category_budget/<str:company_slug>/<str:category>/<str:subcategory>/', views.site_budget, name='site_budget_with_subcategory'),
     path('investment_report/', views.investment_report, name='investment_report'),
     path('transact/', views.transact, name='finance-transact'),
     path('transaction/', views.outflows, name='transaction-list'),
@@ -96,6 +94,9 @@ urlpatterns = [
     path("foodhistoryupdate/<int:pk>/",views.food_history_update,name="foodhistoryupdate"),
 
 
-
+    path('add_budget_item/', views.add_budget_item, name='add_budget_item'),
+    path('budget/<str:company_slug>/', views.budget, name='company_budget'),
+    path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
     path("coda_budget_estimation/<str:app>/",views.coda_budget_estimation, name="coda_budget_estimation")
+   
 ]

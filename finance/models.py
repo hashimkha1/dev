@@ -602,6 +602,7 @@ class Budget(models.Model):
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
+    cases = models.PositiveIntegerField(default=1,null=True,blank=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
     unit_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, default=None
@@ -636,7 +637,7 @@ class Budget(models.Model):
     def amount(self):
         try:
             # total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
-            total_amount = round(Decimal(self.unit_price * self.qty), 2)
+            total_amount = round(Decimal(self.unit_price * self.cases* self.qty), 2)
         except:
             total_amount = 0
         return total_amount

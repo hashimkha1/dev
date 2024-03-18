@@ -395,6 +395,9 @@ class Company(TimeStampedModel):
 
     def __str__(self):
         return self.name
+    
+    # def get_absolute_url(self):
+    #     return "/services/{slug}/".format(slug=self.slug)
 
 
 class WCAGStandardWebsite(models.Model):

@@ -1628,7 +1628,7 @@ def assess(request):
                 form = ManagementForm(request.POST, request.FILES)
                 if form.is_valid():
                     form.save()
-                    return redirect("management:assessment")
+                    return redirect("management:assessment", user_type='client')
         else:
             form = ManagementForm()
     else:
@@ -1636,15 +1636,47 @@ def assess(request):
                 form = ManagementForm(request.POST, request.FILES)
                 if form.is_valid():
                     form.save()
-                    return redirect("management:assessment")
+                    return redirect("management:assessment", user_type='client')
         else:
             form = ManagementForm()
     return render(request, "management/departments/hr/assess_form.html", {"form": form})
 
-class AssessListView(ListView):
-    # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-    queryset=DSU.objects.all().order_by("-created_at")
-    template_name = "management/departments/hr/assessment.html"
+# class AssessListView(ListView):
+#     model = DSU  # Set the model for the ListView
+#     context_object_name = 'dsu_list'  # Set the name for the context variable containing the queryset
+#     template_name = "management/departments/hr/assessment.html"  # Specify the template name
+
+#     def get_queryset(self):
+#         # Filter queryset based on user role
+#         if self.request.user.is_client or self.request.user.is_superuser:
+#             queryset = DSU.objects.filter(type="client").order_by("-created_at")
+#         elif self.request.user.is_staff or self.request.user.is_superuser:
+#             queryset = DSU.objects.filter(type="staff").order_by("-created_at")
+#         else:
+#             # queryset = DSU.objects.none()  # Return an empty queryset for unauthorized users
+#             queryset = DSU.objects.all()  
+#         return queryset
+    
+def dsulist(request,user_type="staff"):
+    template = "management/departments/hr/assessment.html"  # Specify the template name
+    dsu_list = DSU.objects.filter(type=user_type).order_by("-created_at")
+    context={"dsu_list":dsu_list}
+    return render(request,template,context)
+
+
+class AssessUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = DSU
+    success_url = "/management/assessment/client"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
 
 # ================================POTENTIAL CLIENTS==========================================
 def clientassessment(request):
