@@ -55,7 +55,7 @@ urlpatterns = [
     path('otp-confirmation/', views.verify_otp, name='otp_confirmation'),
     path('payment-success/', views.payment_success, name='payment_success'),
     path('payment-failed/', views.payment_failed, name='payment_failed'),
-    path('pay/<int:pk>/', views.PaymentInformationUpdateView.as_view(), name='updatepay'),
+    path('pay/<int:pk>/', views.UserPayUpdateView.as_view(), name='updatepay'),
     
     path('defaultpayments/', DefaultPaymentListView.as_view(template_name='finance/payments/defaultpayments.html'), name='defaultpayments'),
     path('newpayment/', PaymentCreateView.as_view(template_name='finance/payments/payment_form.html'), name='newpayment'),
