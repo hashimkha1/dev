@@ -67,6 +67,8 @@ from management.utils import (email_template,paytime,payinitial,paymentconfigura
                         )
 from main.utils import countdown_in_month, generate_chatbot_response,path_values
 import logging
+from django.contrib.auth.decorators import login_required, user_passes_test
+from management.permission import check_payment_history_permission_job_support, check_payment_history_permission_student
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +124,9 @@ class DepartmentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         if self.request.user.is_admin or self.request.user.is_superuser:
             return True
         return False
-
+    
+@user_passes_test(lambda user: check_payment_history_permission_student(user), login_url='/display_plans/full-course/')
+@user_passes_test(lambda user: check_payment_history_permission_job_support(user), login_url='/display_plans/job-support/')
 def meetings(request,status):
     emp_obj = User.objects.filter(
                                             # Q(sub_category=3),
@@ -304,6 +308,8 @@ tasksummary = [
 
 # ----------------------REPORTS--------------------------------
 @login_required
+@user_passes_test(lambda user: check_payment_history_permission_student(user), login_url='/display_plans/full-course/')
+@user_passes_test(lambda user: check_payment_history_permission_job_support(user), login_url='/display_plans/job-support/')
 def companyagenda(request):
     request.session["siteurl"] = settings.SITEURL
     meeting_id = request.GET.get('meeting_id', None)

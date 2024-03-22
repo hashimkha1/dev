@@ -11,16 +11,10 @@ from django.utils.translation import gettext_lazy as _
 from accounts.modelmanager import DepartmentManager
 from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
-
+from accounts.choices import CategoryChoices
 # Create your models here.
 class CustomerUser(AbstractUser):
-    class Category(models.IntegerChoices):
-        Job_Applicant = 1
-        Coda_Staff_Member = 2
-        Jobsupport = 3
-        Student = 4
-        investor = 5
-        General_User = 6
+    
     def get_category_display_name(self):
         return dict(CustomerUser.Category.choices).get(self.category, 'Unknown')    
 
@@ -50,7 +44,7 @@ class CustomerUser(AbstractUser):
     state = models.CharField(blank=True, null=True, max_length=255)
     zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
-    category = models.IntegerField(choices=Category.choices, default=999)
+    category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
     sub_category = models.IntegerField(
         choices=SubCategory.choices, blank=True, null=True

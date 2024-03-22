@@ -689,7 +689,7 @@ def send_invoice(request):
     ###############################
     # due payment userlist
     ###############################
-    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0).distinct('customer_id')
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0, customer__is_client=True).distinct('customer_id')
     
     successful_user_list = []
     

@@ -34,6 +34,7 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 from data.models import ClientAssessment
 from getdata.models import Editable
+from accounts.choices import CategoryChoices
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -59,7 +60,7 @@ def join(request):
             contract_data, contract_date = agreement_data(request)
             form = UserForm(request.POST)  # Assign form with request.POST data
             if form.is_valid():
-                if form.cleaned_data.get('category') in [3,4,5,6]:
+                if form.cleaned_data.get('category') in [CategoryChoices.Jobsupport,CategoryChoices.Student,CategoryChoices.investor,CategoryChoices.General_User]:
 
                     random_password = generate_random_password(8)
                     form.instance.username = form.cleaned_data.get('email')
@@ -68,16 +69,16 @@ def join(request):
                     form.instance.gender = None
                     # form.instance.phone = "0000000000"
 
-                if form.cleaned_data.get("category") == 2:
+                if form.cleaned_data.get("category") == CategoryChoices.Coda_Staff_Member:
                     form.instance.is_staff = True
-                elif form.cleaned_data.get("category") == 3 or form.cleaned_data.get("category") == 4 or form.cleaned_data.get("category") == 5:
+                elif form.cleaned_data.get("category") == CategoryChoices.Jobsupport or form.cleaned_data.get("category") == CategoryChoices.Student or form.cleaned_data.get("category") == CategoryChoices.investor:
                     form.instance.is_client = True
                 else:
                     form.instance.is_applicant = True
 
                 form.save()
 
-                if form.cleaned_data.get('category') in [3,4,5,6]:
+                if form.cleaned_data.get('category') in [CategoryChoices.Jobsupport,CategoryChoices.Student,CategoryChoices.investor,CategoryChoices.General_User]:
 
                     subject = "Coda Credential"
                     send_email( category=2,
@@ -129,153 +130,30 @@ def login_view(request):
             password = form.cleaned_data.get("password")
             account = authenticate(username=username, password=password)
             create_profile()
-            
             # If Category is Staff/employee
-            if account is not None and account.category == 2:
+            if account is not None and account.category == CategoryChoices.Coda_Staff_Member:
                 if account.is_staff and not account.is_employee_contract_signed:
                     login(request, account)
                     return redirect("management:employee_contract")
-                
-                # if account.is_staff and account.is_employee_contract_signed:
-                #     login(request, account)
-                #     return redirect("management:companyagenda")
-
-                # if account.sub_category == 2 or account.sub_category == 3:  # contractual
-                #     login(request, account)
-                #     return redirect("management:requirements-active")
                 
                 else:  # parttime (agents) & Fulltime
                     login(request, account)
                     return redirect("management:companyagenda")
 
             # If Category is client/customer:# Student # Job Support
-            elif account is not None and (account.category == 3 or account.category == 4) :
+            elif account is not None and (account.category == CategoryChoices.Jobsupport or account.category == CategoryChoices.Student) :
                 login(request, account)
+                # if Payment_History.objects.filter(customer=account).exists():
                 return redirect('management:companyagenda')
             
-            elif account is not None and (account.category == 5) :
+            elif account is not None and (account.category == CategoryChoices.investor) :
                 login(request, account)
                 print("category,subcat",account.category,account.sub_category)
                 # url = reverse('management:meetings', kwargs={'status': 'company'})
                 return redirect('management:companyagenda')
-           
-            # If Category is applicant
-            # elif account is not None and account.profile.section is not None:
-            #     if account.profile.section == "A":
-            #         login(request, account)
-            #         return redirect("application:section_a")
-            #     elif account.profile.section == "B":
-            #         login(request, account)
-            #         return redirect("application:section_b")
-            #     elif account.profile.section == "C":
-            #         login(request, account)
-            #         return redirect("application:policies")
-            #     else:
-            #         login(request, account)
-            #         return redirect("application:interview")
-            elif account is not None and account.profile.section is not None and account.category == 1:
-                # if account.country in ("KE", "UG", "RW", "TZ"):  # Male
-                # if account.gender == 1:
-                #     login(request, account)
-                #     return redirect("application:interview")
-                
-                client = ClientAssessment.objects.filter(email=account.email)
-
-                # if account.country != 'US':
-                    
-                #     subject = "Application Reject"
-                #     send_email( category=2,
-                #         to_email=[account.email], #[request.user.email,],
-                #         subject=subject, 
-                #         html_template='email/application_reject.html',
-                #         context={
-                #                 'name': f"{account.first_name} {account.last_name}",
-                #                 'company_name': 'SIMBA'
-                #             }
-                #     )
-                #     account.is_active = False
-                #     login(request, account)
-                #     return redirect("accounts:home")
-                
-                # else:
-                #     if client.exists():
-                #         client = client.first()
-                #         company_qualification = {
-                #             'project_management': 5,
-                #             'data_analysis':5,
-                #             'data_science': 5,
-                #         }
-
-                #         company_qualification = Editable.objects.filter(name='company_qualification')
-
-                #         if company_qualification.exists():
-                #             company_qualification = company_qualification.first().value
-                #         else:
-                #             company_qualification = {
-                #                 'project_management': 5,
-                #                 'data_analysis':5,
-                #                 'data_science': 5,
-                #             }
-                #             Editable.objects.create(
-                #                 name='company_qualification',
-                #                 value=company_qualification
-                #                 )
-                            
-                #         if client.projectmanagement >= company_qualification['project_management'] or client.requirementsAnalysis >= company_qualification['data_analysis'] or client.reporting >= company_qualification['data_science']:
-
-                #             if account.profile.section == "A":
-                #                 subject = "Application Accept"
-                #                 send_email( category=2,
-                #                     to_email=[account.email], #[request.user.email,],
-                #                     subject=subject, 
-                #                     html_template='email/application_accept.html',
-                #                     context={
-                #                         'name': f"{account.first_name} {account.last_name}",
-                #                         'company_name': 'SIMBA'
-                #                     }
-                #                 )
-                #                 login(request, account)
-                #                 return redirect("application:section_a")
-                #             elif account.profile.section == "B":
-                #                 login(request, account)
-                #                 return redirect("application:section_b")
-                #             elif account.profile.section == "C":
-                #                 login(request, account)
-                #                 return redirect("application:policies")
-                #             else:
-                #                 subject = "Application Accept"
-                #                 send_email( category=2,
-                #                     to_email=[account.email], #[request.user.email,],
-                #                     subject=subject, 
-                #                     html_template='email/application_accept.html',
-                #                     context={
-                #                         'name': f"{account.first_name} {account.last_name}",
-                #                         'company_name': 'SIMBA'
-                #                     }
-                #                 )
-                #                 login(request, account)
-                #                 return redirect("application:interview")
-                            
-
-                #     subject = "Application Reject"
-                #     send_email( category=2,
-                #         to_email=[account.email], #[request.user.email,],
-                #         subject=subject, 
-                #         html_template='email/application_reject.html',
-                #         context={
-                #                 'name': f"{account.first_name} {account.last_name}",
-                #                 'company_name': 'SIMBA'
-                #             }
-                #     )
-                #     account.is_active = False
-                #     login(request, account)
-                #     return redirect("accounts:home")
-                
-
-                # if account.gender == 1 and not client.exists():
-                #     login(request, account)
-                #     return redirect("management:newclient")
-
+        
+            elif account is not None and account.profile.section is not None and account.category == CategoryChoices.Job_Applicant:
+              
                 if account.profile.section == "A":
                     login(request, account)
                     return redirect("application:section_a")
@@ -289,11 +167,15 @@ def login_view(request):
                     login(request, account)
                     return redirect("application:interview")
 
-            elif account is not None and account.profile.section is not None and account.category == 1 and account.sub_category==0:
-                    login(request, account)
-                    # print("account.category",account.sub_category)
-                    return redirect("application:policies")
+            elif account is not None and account.profile.section is not None and account.category == CategoryChoices.Job_Applicant and account.sub_category==0:
+                login(request, account)
+                # print("account.category",account.sub_category)
+                return redirect("application:policies")
             
+            elif account is not None and account.category == CategoryChoices.General_User:
+                login(request, account)
+                return redirect("main:layout")
+
             elif account is not None and account.is_admin:
                 login(request, account)
                 # return redirect("main:layout")
@@ -307,6 +189,205 @@ def login_view(request):
     return render(
         request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
     )
+
+
+
+# def login_view(request):
+#     form = LoginForm(request.POST or None)
+#     msg = None
+
+#     #when error occur while login/signup with social account, we are redirecting it to login page of website
+#     if request.method == 'GET':
+#         sociallogin = request.session.pop("socialaccount_sociallogin", None)
+        
+#         if sociallogin is not None:
+#             msg = 'Error with social login. check your credential or try to sing up manually.'
+    
+#     if request.method == "POST":
+#         if form.is_valid():
+#             request.session["siteurl"] = settings.SITEURL
+#             username = form.cleaned_data.get("username")
+#             password = form.cleaned_data.get("password")
+#             account = authenticate(username=username, password=password)
+#             create_profile()
+            
+#             # If Category is Staff/employee
+#             if account is not None and account.category == 2:
+#                 if account.is_staff and not account.is_employee_contract_signed:
+#                     login(request, account)
+#                     return redirect("management:employee_contract")
+                
+#                 # if account.is_staff and account.is_employee_contract_signed:
+#                 #     login(request, account)
+#                 #     return redirect("management:companyagenda")
+
+#                 # if account.sub_category == 2 or account.sub_category == 3:  # contractual
+#                 #     login(request, account)
+#                 #     return redirect("management:requirements-active")
+                
+#                 else:  # parttime (agents) & Fulltime
+#                     login(request, account)
+#                     return redirect("management:companyagenda")
+
+#             # If Category is client/customer:# Student # Job Support
+#             elif account is not None and (account.category == 3 or account.category == 4) :
+#                 login(request, account)
+#                 return redirect('management:companyagenda')
+            
+#             elif account is not None and (account.category == 5) :
+#                 login(request, account)
+#                 print("category,subcat",account.category,account.sub_category)
+#                 # url = reverse('management:meetings', kwargs={'status': 'company'})
+#                 return redirect('management:companyagenda')
+           
+#             # If Category is applicant
+#             # elif account is not None and account.profile.section is not None:
+#             #     if account.profile.section == "A":
+#             #         login(request, account)
+#             #         return redirect("application:section_a")
+#             #     elif account.profile.section == "B":
+#             #         login(request, account)
+#             #         return redirect("application:section_b")
+#             #     elif account.profile.section == "C":
+#             #         login(request, account)
+#             #         return redirect("application:policies")
+#             #     else:
+#             #         login(request, account)
+#             #         return redirect("application:interview")
+#             elif account is not None and account.profile.section is not None and account.category == 1:
+#                 # if account.country in ("KE", "UG", "RW", "TZ"):  # Male
+#                 # if account.gender == 1:
+#                 #     login(request, account)
+#                 #     return redirect("application:interview")
+                
+#                 client = ClientAssessment.objects.filter(email=account.email)
+
+#                 # if account.country != 'US':
+                    
+#                 #     subject = "Application Reject"
+#                 #     send_email( category=2,
+#                 #         to_email=[account.email], #[request.user.email,],
+#                 #         subject=subject, 
+#                 #         html_template='email/application_reject.html',
+#                 #         context={
+#                 #                 'name': f"{account.first_name} {account.last_name}",
+#                 #                 'company_name': 'SIMBA'
+#                 #             }
+#                 #     )
+#                 #     account.is_active = False
+#                 #     login(request, account)
+#                 #     return redirect("accounts:home")
+                
+#                 # else:
+#                 #     if client.exists():
+#                 #         client = client.first()
+#                 #         company_qualification = {
+#                 #             'project_management': 5,
+#                 #             'data_analysis':5,
+#                 #             'data_science': 5,
+#                 #         }
+
+#                 #         company_qualification = Editable.objects.filter(name='company_qualification')
+
+#                 #         if company_qualification.exists():
+#                 #             company_qualification = company_qualification.first().value
+#                 #         else:
+#                 #             company_qualification = {
+#                 #                 'project_management': 5,
+#                 #                 'data_analysis':5,
+#                 #                 'data_science': 5,
+#                 #             }
+#                 #             Editable.objects.create(
+#                 #                 name='company_qualification',
+#                 #                 value=company_qualification
+#                 #                 )
+                            
+#                 #         if client.projectmanagement >= company_qualification['project_management'] or client.requirementsAnalysis >= company_qualification['data_analysis'] or client.reporting >= company_qualification['data_science']:
+
+#                 #             if account.profile.section == "A":
+#                 #                 subject = "Application Accept"
+#                 #                 send_email( category=2,
+#                 #                     to_email=[account.email], #[request.user.email,],
+#                 #                     subject=subject, 
+#                 #                     html_template='email/application_accept.html',
+#                 #                     context={
+#                 #                         'name': f"{account.first_name} {account.last_name}",
+#                 #                         'company_name': 'SIMBA'
+#                 #                     }
+#                 #                 )
+#                 #                 login(request, account)
+#                 #                 return redirect("application:section_a")
+#                 #             elif account.profile.section == "B":
+#                 #                 login(request, account)
+#                 #                 return redirect("application:section_b")
+#                 #             elif account.profile.section == "C":
+#                 #                 login(request, account)
+#                 #                 return redirect("application:policies")
+#                 #             else:
+#                 #                 subject = "Application Accept"
+#                 #                 send_email( category=2,
+#                 #                     to_email=[account.email], #[request.user.email,],
+#                 #                     subject=subject, 
+#                 #                     html_template='email/application_accept.html',
+#                 #                     context={
+#                 #                         'name': f"{account.first_name} {account.last_name}",
+#                 #                         'company_name': 'SIMBA'
+#                 #                     }
+#                 #                 )
+#                 #                 login(request, account)
+#                 #                 return redirect("application:interview")
+                            
+
+#                 #     subject = "Application Reject"
+#                 #     send_email( category=2,
+#                 #         to_email=[account.email], #[request.user.email,],
+#                 #         subject=subject, 
+#                 #         html_template='email/application_reject.html',
+#                 #         context={
+#                 #                 'name': f"{account.first_name} {account.last_name}",
+#                 #                 'company_name': 'SIMBA'
+#                 #             }
+#                 #     )
+#                 #     account.is_active = False
+#                 #     login(request, account)
+#                 #     return redirect("accounts:home")
+                
+
+#                 # if account.gender == 1 and not client.exists():
+#                 #     login(request, account)
+#                 #     return redirect("management:newclient")
+
+#                 if account.profile.section == "A":
+#                     login(request, account)
+#                     return redirect("application:section_a")
+#                 elif account.profile.section == "B":
+#                     login(request, account)
+#                     return redirect("application:section_b")
+#                 elif account.profile.section == "C":
+#                     login(request, account)
+#                     return redirect("application:policies")
+#                 else:
+#                     login(request, account)
+#                     return redirect("application:interview")
+
+#             elif account is not None and account.profile.section is not None and account.category == 1 and account.sub_category==0:
+#                     login(request, account)
+#                     # print("account.category",account.sub_category)
+#                     return redirect("application:policies")
+            
+#             elif account is not None and account.is_admin:
+#                 login(request, account)
+#                 # return redirect("main:layout")
+#                 return redirect("management:companyagenda")
+#             else:
+#                 # messages.success(request, f"Invalid credentials.Kindly Try again!!")
+#                 msg=f"Invalid credentials.Kindly Try again!!"
+#                 return render(
+#                         request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
+#                     )
+#     return render(
+#         request, "accounts/registration/login_page.html", {"form": form, "msg": msg}
+#     )
 
 
 # ================================USERS SECTION================================
