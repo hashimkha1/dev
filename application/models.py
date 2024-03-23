@@ -82,6 +82,21 @@ class Balancesheet_entry(models.Model):
         return f"{self.category.name}:{self.amount}"   
   
 
+class exception_clients(models.Model):
+    exception_id =models.AutoField(primary_key=True)
+    exception_date = models.DateField()
+    exception_week = models.IntegerField()
+    comments =models.CharField(max_length=255)
+    exception_type_id = models.IntegerField()
+    project_user_id = models.IntegerField()
+    project_user_rts = models.IntegerField()
+    exception_flag = models.BooleanField(default=False)
+    pitch_flag = models.BooleanField(default=False)
+    late_nights = models.IntegerField()
+    vacation = models.IntegerField()
+
+    def __str__(self):
+        return 'exception_ID:{self.exception_id}'
 
 
 
