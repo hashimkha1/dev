@@ -98,6 +98,6 @@ urlpatterns = [
     path('add_budget_item/', views.add_budget_item, name='add_budget_item'),
     path('budget/<str:company_slug>/', views.budget, name='company_budget'),
     path('budget/<int:pk>/update/', views.BudgetUpdateView.as_view(), name='budget-update'),
-    path("coda_budget_estimation/<str:app>/",views.coda_budget_estimation, name="coda_budget_estimation")
-   
+    path("coda_budget_estimation/<str:app>/",views.coda_budget_estimation, name="coda_budget_estimation"),
+    path('delete_payment_history/', views.delete_bad_entry_in_payment_history, name="delete_bad_entry_in_payment_history")
 ]

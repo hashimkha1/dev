@@ -42,7 +42,8 @@ from .utils import *
 from .mpesa_integration import *
 from django.apps import apps
 from getdata.models import Editable
-
+from django.db.models import F
+from finance.models import DeletedPaymentHistory
 User = get_user_model()
 
 # payment details
@@ -1841,3 +1842,31 @@ class StatementsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif self.request.user == policy.staff:
             return True
         return False
+def delete_bad_entry_in_payment_history(request):
+
+    if request.user and request.user.is_superuser:
+        delete_payment_history = Payment_History.objects.filter(customer__is_staff=True)
+        for payment in delete_payment_history:
+            DeletedPaymentHistory.objects.create(
+                customer=payment.customer,
+                payment_fees=payment.payment_fees,
+                down_payment=payment.down_payment,
+                student_bonus=payment.student_bonus,
+                fee_balance=payment.fee_balance,
+                plan=payment.plan,
+                subplan=payment.subplan,
+                pricing_plan=payment.pricing_plan,
+                payment_method=payment.payment_method,
+                contract_submitted_date=payment.contract_submitted_date,
+                client_signature=payment.client_signature,
+                company_rep=payment.company_rep,
+                client_date=payment.client_date,
+                rep_date=payment.rep_date
+            )
+            payment.delete()
+
+    previous_path = request.META.get('HTTP_REFERER', '')
+    if previous_path:
+        return redirect(previous_path)
+    else:
+        return redirect("main:layout")
