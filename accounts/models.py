@@ -16,7 +16,7 @@ from accounts.choices import CategoryChoices
 class CustomerUser(AbstractUser):
     
     def get_category_display_name(self):
-        return dict(CustomerUser.Category.choices).get(self.category, 'Unknown')    
+        return dict(CategoryChoices.choices).get(self.category, 'Unknown')    
 
     # added this column here
     class SubCategory(models.IntegerChoices):
