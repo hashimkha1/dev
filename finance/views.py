@@ -1820,3 +1820,24 @@ def balancesheet(request):
         context = {'error_message': 'An error occurred while fetching balance sheet data.'}
 
     return render(request, "finance/reports/balancesheet.html", context)
+
+
+class StatementsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = BalanceSheetCategory
+    # success_url="/management/transaction"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("finance:open_statements")
+
+    def test_func(self):
+        policy = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == policy.staff:
+            return True
+        return False
