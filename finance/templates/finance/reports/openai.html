@@ -30,6 +30,13 @@
                         <tr>
                             <td>{{ asset.name }}</td>
                             <td>{{ asset.amount }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                                    {% if request.user.is_superuser or request.user.is_admin %}
+                                        <a href="{% url 'finance:update_statements' pk=asset.id %}" class="edit-btn">&#10004;</a>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -55,6 +62,13 @@
                         <tr>
                             <td>{{ liabilitie.name }}</td>
                             <td>{{ liabilitie.amount }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                                    {% if request.user.is_superuser or request.user.is_admin %}
+                                        <a href="{% url 'finance:update_statements' pk=liabilitie.id %}" class="edit-btn">&#10004;</a>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -83,6 +97,13 @@
                         <tr>
                             <td>{{ asset.name }}</td>
                             <td>{{ asset.amount }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                                    {% if request.user.is_superuser or request.user.is_admin %}
+                                        <a href="{% url 'finance:update_statements' pk=asset.id %}" class="edit-btn">&#10004;</a>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -108,6 +129,13 @@
                         <tr>
                             <td>{{ liabilitie.name }}</td>
                             <td>{{ liabilitie.amount }}</td>
+                            <td>
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                                    {% if request.user.is_superuser or request.user.is_admin %}
+                                        <a href="{% url 'finance:update_statements' pk=liabilitie.id %}" class="edit-btn">&#10004;</a>
+                                    {% endif %}
+                                </div>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -156,6 +184,13 @@
                 <tr>
                     <td>{{ asset.name }}</td>
                     <td>{{ asset.amount }}</td>
+                    <td>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                            {% if request.user.is_superuser or request.user.is_admin %}
+                                <a href="{% url 'finance:update_statements' pk=asset.id %}" class="edit-btn">&#10004;</a>
+                            {% endif %}
+                        </div>
+                    </td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -175,6 +210,13 @@
                     <tr>
                         <td>{{ expense.name }}</td>
                         <td>{{ expense.amount }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 5px;">
+                                {% if request.user.is_superuser or request.user.is_admin %}
+                                    <a href="{% url 'finance:update_statements' pk=expense.id %}" class="edit-btn">&#10004;</a>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
                     {% endfor %}
                     

@@ -12,6 +12,7 @@ app_name = 'finance'
 urlpatterns = [
     #=============================FINANCES=====================================
     path('statements/', views.openai_balancesheet, name='open_statements'),
+    path('update_statements/<int:pk>', views.StatementsUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_statements'),
     path('send_invoice/', views.send_invoice, name='send_invoice'),
     path('finance_report/', views.finance_report, name='finance_report'),
    
