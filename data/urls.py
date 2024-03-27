@@ -69,7 +69,7 @@ urlpatterns = [
     path("responses/", views.TrainingResponseListView.as_view(), name="responses"),
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     path('prepquestions/', views.prepquestions, name='prepquestions'),
-    path("useruploads/", views.useruploads, name="user-list"),
+    path("useruploads/<str:username>", views.useruploads, name="user-list"),
     path('prepresponses/', views.prep_responses, name='prep_reponses'),
     # ----------------------DETAIL----------------------------------------------------
     path(

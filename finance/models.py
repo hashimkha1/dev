@@ -21,7 +21,6 @@ User = get_user_model()
 
 
 class Payment_Information(models.Model):
-    # id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=("Client Name"),
@@ -32,15 +31,21 @@ class Payment_Information(models.Model):
     student_bonus=models.IntegerField(null=True,blank=True)
     fee_balance=models.IntegerField(default=None)
     plan = models.IntegerField() # assuming service_category id
-    subplan = models.IntegerField(null=True)
-    pricing_plan = models.IntegerField(null=True)
+    subplan = models.IntegerField(default=1,null=True, blank=True)
+    pricing_plan = models.IntegerField(default=1,null=True, blank=True)
     payment_method = models.CharField(max_length=100)
     contract_submitted_date = models.DateTimeField(default=timezone.now)
     client_signature = models.CharField(max_length=1000)
     company_rep = models.CharField(max_length=1000)
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(max_length=1000, default=None,null=True, blank=True)
+    is_active = models.BooleanField('active', default=True)
+    is_featured = models.BooleanField('featured', default=True)
 
+    def __str__(self):
+        return str(self.customer_id)
+    
     @property
     def student_balance(self):
         try:
@@ -73,14 +78,20 @@ class Payment_History(models.Model):
     student_bonus = models.IntegerField(null=True, blank=True)
     fee_balance = models.IntegerField(default=None)
     plan = models.IntegerField()
-    subplan = models.IntegerField(null=True)
-    pricing_plan = models.IntegerField(null=True)
+    subplan = models.IntegerField(default=1,null=True, blank=True)
+    pricing_plan = models.IntegerField(default=1,null=True, blank=True)
     payment_method = models.CharField(max_length=100)
     contract_submitted_date = models.DateTimeField(default=timezone.now)
     client_signature = models.CharField(max_length=1000)
     company_rep = models.CharField(max_length=1000)
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(max_length=1000, default=None,null=True, blank=True)
+    is_active = models.BooleanField('active', default=True)
+    is_featured = models.BooleanField('featured', default=True)
+
+    def __str__(self):
+        return str(self.customer)
 
 class DeletedPaymentHistory(models.Model):
     # id = models.AutoField(primary_key=True)
