@@ -47,6 +47,7 @@ from main.permission import check_payment_history_permission
 
 from .models import Location
 import requests
+from accounts.choices import CategoryChoices
 
 User=get_user_model()
 
@@ -278,9 +279,9 @@ def display_service(request, *args, **kwargs):
     testimonials, selected_class = get_testimonials()
 
     # Calculate the number of students and other users
-    students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
+    students_count = CustomerUser.objects.filter(category=CategoryChoices.Student).count()
     teachers_count = 8  # Set the desired count
-    teachers = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member)[:teachers_count].count()
+    teachers = CustomerUser.objects.filter(category=CategoryChoices.Coda_Staff_Member)[:teachers_count].count()
     # Calculate the total number of courses
     title1 = "IT-Training"
     title2 = "Interview"

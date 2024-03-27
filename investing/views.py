@@ -50,6 +50,7 @@ from django.utils import timezone
 from getdata.models import Editable
 from .filters import PortfolioFilter
 import json
+from accounts.choices import CategoryChoices
 
 register = template.Library()
 User=get_user_model
@@ -145,7 +146,7 @@ def InvestmentPlatformOverview(request):
     active_user_counts = CustomerUser.objects.filter(is_active=True).values('category').annotate(count=Count('id'))
 
     # Creating a mapping from numerical values to English names
-    category_mapping = dict(CustomerUser.Category.choices, Unknown="Unknown")
+    category_mapping = dict(CategoryChoices.choices, Unknown="Unknown")
 
     active_user_counts_with_names = [
         {'category': category_mapping.get(entry['category'], 'Unknown'), 'count': entry['count']} 
