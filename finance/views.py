@@ -638,10 +638,13 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 		return super().form_valid(form)
 
 def payments(request):
-	payment_history=Payment_History.objects.all()
-	Payment_Info=Payment_Information.objects.all()
-	# payment_history=Payment_History.objects.filter(customer__is_client=True)
-	# Payment_Info=Payment_Information.objects.filter(customer_id__is_client=True)
+	payment_history=Payment_History.objects.filter(is_active=True,is_featured=True)
+	Payment_Info=Payment_Information.objects.filter(is_active=True,is_featured=True)
+	# payment_history_counts=Payment_History.objects.all().count()
+	# Payment_Info_counts=Payment_Information.objects.all().count()
+	# payment_history_count=Payment_History.objects.filter(customer__is_active=True).count()
+	# Payment_Info_count=Payment_Information.objects.filter(customer_id__is_active=True).count()
+	# print(f'{payment_history_counts},{payment_history_count},{Payment_Info_counts},{Payment_Info_count}')
 	context={
 		"title":"Payments",
 		"payment_history":payment_history,
@@ -689,7 +692,10 @@ def send_invoice(request):
     ###############################
     # due payment userlist
     ###############################
-    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0, customer__is_client=True).distinct('customer_id')
+    # user_payment_information = Payment_History.objects.filter(fee_balance__gt=0, customer__is_client=True).distinct('customer_id')
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0,is_active=True,is_featured=True).distinct('customer_id')
+    # user_payment_count= Payment_History.objects.filter(fee_balance__gt=0,is_active=True,is_featured=True).distinct('customer_id').count()
+    # print(user_payment_count)
     
     successful_user_list = []
     
@@ -697,14 +703,15 @@ def send_invoice(request):
         if PayslipConfig.objects.filter(user__username=customer_payment_information.customer.username).exists():
             payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer.username)
         else:
-            payslip_config = PayslipConfig.objects.create(
-                user = customer_payment_information.customer,
-                loan_amount = customer_payment_information.payment_fees,
-                loan_repayment_percentage = 0,
-                rp_starting_period= customer_payment_information.contract_submitted_date.strftime("%Y-%m-%d"),
-                installment_amount = customer_payment_information.down_payment,
-                installment_date = datetime.now().date()
-            )
+            payslip_config = PayslipConfig.objects.get(user__username='coda_info')
+            # payslip_config = PayslipConfig.objects.create(
+            #     user = customer_payment_information.customer,
+            #     loan_amount = customer_payment_information.payment_fees,
+            #     loan_repayment_percentage = 0,
+            #     rp_starting_period= customer_payment_information.contract_submitted_date.strftime("%Y-%m-%d"),
+            #     installment_amount = customer_payment_information.down_payment,
+            #     installment_date = datetime.now().date()
+            # )
 
         if payslip_config.installment_date and payslip_config.installment_date.day == datetime.today().date().day:
             organization = Company.objects.filter(user__username=customer_payment_information.customer.username)
@@ -738,11 +745,11 @@ def send_invoice(request):
                         'contact_message':'info@codanalytics.net',
                     }
             try:
-                send_email( category=request.user.category, 
-                            to_email=[client_email],#[request.user.email,], 
-                            subject=service, html_template=url, 
-                            context=context
-                            )                
+                # send_email( category=request.user.category, 
+                #             to_email=[client_email],#[request.user.email,], 
+                #             subject=service, html_template=url, 
+                #             context=context
+                #             )                
                 successful_user_list.append(context)
                 # return render(request, "email/payment/invoice.html",context)
             except:
@@ -910,7 +917,7 @@ class DefaultPaymentUpdateView(UpdateView):
 
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
-	success_url = "/finance/pay/"
+	success_url = "/finance/payments/"
 	template_name="main/snippets_templates/generalform.html"
 	
 	fields ="__all__"
@@ -932,6 +939,29 @@ class PaymentInformationUpdateView(UpdateView):
 		if self.request.user:
 		    return True
 
+class PaymentHistoryUpdateView(UpdateView):
+	model = Payment_History
+	success_url = "/finance/payments/"
+	template_name="main/snippets_templates/generalform.html"
+	
+	fields ="__all__"
+	# fields=['customer_id','down_payment']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		# if self.request.user.is_superuser or self.request.user:
+		if self.request.user is not None:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		task = self.get_object()
+		# if self.request.user.is_superuser:
+		# 	return True
+		# elif self.request.user == task.employee:
+		if self.request.user:
+		    return True
 
 class UserPayUpdateView(UpdateView):
 	model = Payment_Information

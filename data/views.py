@@ -147,13 +147,18 @@ def prepquestions(request):
     context = {"questions": questions, "myFilter": QuestionsFilter}
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
 
-def useruploads(request, pk=None, *args, **kwargs):
-    useruploads = Interviews.objects.filter(client=request.user).order_by("-upload_date")
+def useruploads(request, username=None, *args, **kwargs):
+    if username is None:
+        # Handle the case where username is None
+        useruploads = Interviews.objects.none()
+    else:
+        useruploads = Interviews.objects.filter(client__username=username).order_by("-upload_date")
+
     context = {
         "useruploads": useruploads,
     }
-    # return render(request, "data/interview/interview_progress/prepresponses.html", context_b)
     return render(request, "data/interview/useruploads.html", context)
+
 
 def prep_responses(request):
     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
