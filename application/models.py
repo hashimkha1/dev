@@ -82,6 +82,37 @@ class Balancesheet_entry(models.Model):
         return f"{self.category.name}:{self.amount}"   
   
 
+class items_entry(models.Model):
+    items_id = models.AutoField(primary_key=True)
+    items_name = models.CharField(max_length=255)
+    items_category = models.CharField(max_length=255)
+    items_purchase_date = models.DateField()
+    items_Quantity = models.IntegerField()
+    items_price = models.IntegerField()
+    items_itemName = models.CharField(max_length=255)
+    items_flag = models.BooleanField(max_length=255)
+
+
+    def __str__(self) -> str:
+        return f'items_ID: (self.items_id)'
+
+class exception_user(models.Model):
+    exception_id = models.AutoField(primary_key=True)
+    exception_date = models.DateTimeField()
+    exception_week = models.IntegerField()
+    comments = models.CharField(max_length=255)
+    exception_type_id = models.IntegerField()
+    project_user_id = models.IntegerField()
+    project_user_rts_id = models.IntegerField()
+    exception_flag = models.BooleanField(default=False)
+    pitch_flag = models.BooleanField(default=False)
+    late_night = models.IntegerField()
+    vacations = models.IntegerField()
+
+    def __str__(self) :
+        return f"exception_id: {self.exception_id}"
+    
+
 
 
 
