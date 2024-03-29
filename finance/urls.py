@@ -20,7 +20,7 @@ urlpatterns = [
     path('category_budget/<str:company_slug>/<str:category>/<str:subcategory>/', views.site_budget, name='site_budget_with_subcategory'),
     path('investment_report/', views.investment_report, name='investment_report'),
     path('transact/', views.transact, name='finance-transact'),
-    path('transaction/', views.outflows, name='transaction-list'),
+    path('transaction/<str:transaction_type>', views.outflows, name='transaction-list'),
     path('transaction/<int:pk>/', TransanctionDetailView.as_view(), name='transaction-detail'),
     path('transaction/<int:pk>/update/', TransactionUpdateView.as_view(template_name="finance/payments/transaction_form.html"), name='transaction-update'),
     path('transaction/<int:pk>/delete/', TransactionDeleteView.as_view(template_name="finance/payments/transaction_confirm_delete.html"), name='transaction-delete'),

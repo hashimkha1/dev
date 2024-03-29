@@ -1035,7 +1035,7 @@ def filteroutflowsbydepartment(request):
             department = form.cleaned_data['name']
             # print("department=====>",department)
             filtered_outflows = Transaction.objects.filter(department__name=department).order_by('-id')
-            count_filtered_outflows = Transaction.objects.filter(department__name=department).count()
+            # count_filtered_outflows = Transaction.objects.filter(department__name=department).count()
             # print("filtered_outflows=====>",count_filtered_outflows)
 	    
             outflows=filtered_outflows
@@ -1046,7 +1046,8 @@ def filteroutflowsbydepartment(request):
         return outflows,form
 
 
-def outflows(request):
+def outflows(request,transaction_type=None):
+    path_list, sub_title, pre_sub_title = path_values(request)
     outflows,form=filteroutflowsbydepartment(request)
     # print("values========>",outflows,form)
     ytd_duration,current_year,first_date=dates_functionality()
@@ -1088,20 +1089,31 @@ def outflows(request):
     avg_quarterly_expenditure=avg_monthly_expenditure*3
     
     data = [
-        {"title": "Operations", "value": total_op_outflows_usd},
-        {"title": "Web Development", "value": total_web_ouflow},
-        {"title": "Makutano Office", "value": total_field_ouflow_usd},
-        {"title": "Year_To_Date", "value": ytd_outflows},
-        {"title": "Quarterly", "value": avg_quarterly_expenditure},
-        {"title": "Monthly", "value": avg_monthly_expenditure},
-        {"title": "Daily", "value": avg_daily_expenditure},
-        {"title": "Hourly", "value": avg_hourly_expenditure},
+        {"title": "Operations","link": "/finance/transaction/operations", "value": total_op_outflows_usd},
+        {"title": "Web Development","link": "/finance/coda_budget_estimation/all/", "value": total_web_ouflow},
+        {"title": "Makutano Office","link": "/finance/transaction/field", "value": total_field_ouflow_usd},
+        {"title": "Year_To_Date","link": "all", "value": ytd_outflows},
+        {"title": "Quarterly","link": "all", "value": avg_quarterly_expenditure},
+        {"title": "Monthly","link": "all", "value": avg_monthly_expenditure},
+        {"title": "Daily","link": "all", "value": avg_daily_expenditure},
+        {"title": "Hourly","link": "all", "value": avg_hourly_expenditure},
 	]
 
+    if sub_title=='field':
+        transactions=field_obj
+    elif sub_title=='operations':
+        transactions=Transaction.objects.all().order_by('-id')
+    elif sub_title=='web':
+        transactions=web_obj ,
+    else:
+        transactions=None
+
     outflow_context = {
-        "transactions": operations_obj,
-        "web_transactions": web_obj,
-        "field_transactions": field_obj,
+        
+        # "transactions": operations_obj ,
+        # "web_transactions": web_obj,
+        # "field_transactions": field_obj,
+        "transactions": transactions ,
         "total_amt": total_outflows,
         "data": data,
         # "balance": balance,
@@ -1598,8 +1610,6 @@ def dcinflows(request):
     return render(request, "finance/payments/dcinflows.html", context)
 
 
-
-
 # views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -1817,41 +1827,38 @@ def openai_balancesheet(request):
     return render(request, "finance/reports/openai.html", context)
 
 
+# def balancesheet(request):
+#     try:
+#         balance_sheet = BalanceSheetSummary.objects.last()
+#         if balance_sheet:
+#             # Fetch entries for assets, liabilities, and equity
+#             current_assets = balance_sheet.entries.filter(category__category_type='Asset')
+#             current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
+#             equity = balance_sheet.entries.filter(category__category_type='Equity')
 
+#             # Calculate totals
+#             total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_liabilities_and_equity=total_liabilities+total_equity
+#             context = {
+#                 'company_name': 'CODA',
+#                 'balance_sheet': balance_sheet,
+#                 'current_assets': current_assets,
+#                 'current_liabilities': current_liabilities,
+#                 'equity': equity,
+#                 'total_liabilities_and_equity': total_liabilities_and_equity,
+#                 'total_assets': total_assets,
+#                 'total_liabilities': total_liabilities,
+#                 'total_equity': total_equity
+#             }
+#         else:
+#             context = {'error_message': 'No balance sheet data available.'}
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         context = {'error_message': 'An error occurred while fetching balance sheet data.'}
 
-def balancesheet(request):
-    try:
-        balance_sheet = BalanceSheetSummary.objects.last()
-        if balance_sheet:
-            # Fetch entries for assets, liabilities, and equity
-            current_assets = balance_sheet.entries.filter(category__category_type='Asset')
-            current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
-            equity = balance_sheet.entries.filter(category__category_type='Equity')
-
-            # Calculate totals
-            total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_liabilities_and_equity=total_liabilities+total_equity
-            context = {
-                'company_name': 'CODA',
-                'balance_sheet': balance_sheet,
-                'current_assets': current_assets,
-                'current_liabilities': current_liabilities,
-                'equity': equity,
-                'total_liabilities_and_equity': total_liabilities_and_equity,
-                'total_assets': total_assets,
-                'total_liabilities': total_liabilities,
-                'total_equity': total_equity
-            }
-        else:
-            context = {'error_message': 'No balance sheet data available.'}
-    except Exception as e:
-        print(f"Error: {e}")
-        context = {'error_message': 'An error occurred while fetching balance sheet data.'}
-
-    return render(request, "finance/reports/balancesheet.html", context)
-
+#     return render(request, "finance/reports/balancesheet.html", context)
 
 class StatementsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = BalanceSheetCategory
@@ -1872,8 +1879,9 @@ class StatementsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif self.request.user == policy.staff:
             return True
         return False
-def delete_bad_entry_in_payment_history(request):
+    
 
+def delete_bad_entry_in_payment_history(request):
     if request.user and request.user.is_superuser:
         delete_payment_history = Payment_History.objects.filter(customer__is_staff=True)
         for payment in delete_payment_history:

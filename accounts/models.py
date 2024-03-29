@@ -11,27 +11,20 @@ from django.utils.translation import gettext_lazy as _
 from accounts.modelmanager import DepartmentManager
 from management.utils import unique_slug_generator
 from django_countries.fields import CountryField
-from accounts.choices import CategoryChoices
+from accounts.choices import CategoryChoices,SubCategoryChoices
+
 # Create your models here.
 class CustomerUser(AbstractUser):
-    
     def get_category_display_name(self):
         return dict(CategoryChoices.choices).get(self.category, 'Unknown')    
 
     # added this column here
-    class SubCategory(models.IntegerChoices):
-        No_selection = 0
-        Full_time = 1
-        Contractual = 2
-        Agent = 3
-        Short_Term = 4
-        Long_Term = 5
-        Other = 6
+    def get_subcategory_display_name(self):
+        return dict(SubCategoryChoices.choices).get(self.subcategory, 'Unknown')    
 
     class Score(models.IntegerChoices):
         Male = 1
         Female = 2
-
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -47,7 +40,7 @@ class CustomerUser(AbstractUser):
     category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
     sub_category = models.IntegerField(
-        choices=SubCategory.choices, blank=True, null=True
+        choices=SubCategoryChoices.choices, blank=True, null=True
     )
     is_admin = models.BooleanField("Is admin", default=False)
     is_staff = models.BooleanField("Is employee", default=False)

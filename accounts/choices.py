@@ -6,4 +6,15 @@ class CategoryChoices(models.IntegerChoices):
     Jobsupport = 3
     Student = 4
     investor = 5
-    General_User = 6
+    Vendor=6
+    General_User = 7
+
+    
+class SubCategoryChoices(models.IntegerChoices):
+    No_selection = 0
+    Full_time = 1
+    Contractual = 2
+    Agent = 3
+    Short_Term = 4
+    Long_Term = 5
+    Other = 6
