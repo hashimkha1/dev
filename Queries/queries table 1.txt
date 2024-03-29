@@ -1,0 +1,35 @@
+USE [CROWN]
+GO
+
+/****** Object:  Table [dbo].[clientstbl]    Script Date: 29/03/2024 04:19:04 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[clientstbl](
+	[RITSID] [int] NULL,
+	[ProjectUserID] [int] NULL,
+	[ClientName] [varchar](255) NULL,
+	[ClientNameChild] [varchar](255) NULL,
+	[Region] [varchar](255) NULL,
+	[Country] [varchar](255) NULL,
+	[Products] [varchar](255) NULL,
+	[ProjectType] [varchar](255) NULL,
+	[MidIndustry] [varchar](255) NULL,
+	[DirectTeam] [varchar](255) NULL,
+	[ProjectName] [varchar](255) NULL,
+	[StartDate] [date] NULL,
+	[WorkType] [varchar](255) NULL,
+	[Industry] [varchar](255) NULL,
+	[WorkLoad] [int] NULL,
+	[ClientMtgAttended] [bit] NULL,
+	[FinalPitch30pgsFlag] [bit] NULL,
+	[LateNights] [int] NULL,
+	[LatestProjectContributions] [varchar](max) NULL,
+	[Office] [varchar](255) NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
