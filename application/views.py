@@ -16,7 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import exception_Worker,Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
 import logging
 
 
@@ -67,4 +67,7 @@ def balancesheet_list(request):
 
     return render(request,'application/training/balancelist.html',context)          
 
+def workers_exceptionListView(request):
+    model = exception_Worker
+    return render(request,"application/worker.html") 
              

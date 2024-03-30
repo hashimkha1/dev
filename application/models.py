@@ -80,7 +80,26 @@ class Balancesheet_entry(models.Model):
 
     def __str__(self):
         return f"{self.category.name}:{self.amount}"   
-  
+
+
+
+class exception_Worker(models.Model):
+    exception_id = models.AutoField(primary_key=True)
+    exception_date = models.DateField()
+    exception_week = models.IntegerField()
+    exception_year = models.IntegerField()
+    comments = models.TextField(max_length=255)
+    exception_type_id = models.IntegerField()
+    project_user_id = models.IntegerField()
+    project_user_rts_id = models.IntegerField()  # Corrected field name
+    late_night = models.IntegerField()
+    vacation = models.IntegerField()
+
+
+    def __str__(self):
+        return f"exception_id:{self.exception_id}"
+
+
 
 
 
