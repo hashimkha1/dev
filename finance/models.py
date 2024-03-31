@@ -19,9 +19,24 @@ User = get_user_model()
 
 # Create your models here.
 
+class TransactionCategory(models.Model):
+    sender = models.ForeignKey(
+        User,
+        verbose_name=_("Sender"),
+        related_name="%(class)s_sender", 
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+        limit_choices_to={"is_staff": True, "is_active": True},
+    )
+    qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    date = models.DateTimeField(default=timezone.now)
+    description = models.TextField(max_length=1000, blank=True, default="")
+
+    class Meta:
+        abstract = True
 
 class Payment_Information(models.Model):
-    # id = models.AutoField(primary_key=True)
     customer_id = models.ForeignKey(
         "accounts.CustomerUser",
         verbose_name=("Client Name"),
@@ -32,15 +47,21 @@ class Payment_Information(models.Model):
     student_bonus=models.IntegerField(null=True,blank=True)
     fee_balance=models.IntegerField(default=None)
     plan = models.IntegerField() # assuming service_category id
-    subplan = models.IntegerField(null=True)
-    pricing_plan = models.IntegerField(null=True)
+    subplan = models.IntegerField(default=1,null=True, blank=True)
+    pricing_plan = models.IntegerField(default=1,null=True, blank=True)
     payment_method = models.CharField(max_length=100)
     contract_submitted_date = models.DateTimeField(default=timezone.now)
     client_signature = models.CharField(max_length=1000)
     company_rep = models.CharField(max_length=1000)
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(max_length=1000, default=None,null=True, blank=True)
+    is_active = models.BooleanField('active', default=True)
+    is_featured = models.BooleanField('featured', default=True)
 
+    def __str__(self):
+        return str(self.customer_id)
+    
     @property
     def student_balance(self):
         try:
@@ -73,6 +94,35 @@ class Payment_History(models.Model):
     student_bonus = models.IntegerField(null=True, blank=True)
     fee_balance = models.IntegerField(default=None)
     plan = models.IntegerField()
+    subplan = models.IntegerField(default=1,null=True, blank=True)
+    pricing_plan = models.IntegerField(default=1,null=True, blank=True)
+    payment_method = models.CharField(max_length=100)
+    contract_submitted_date = models.DateTimeField(default=timezone.now)
+    client_signature = models.CharField(max_length=1000)
+    company_rep = models.CharField(max_length=1000)
+    client_date = models.CharField(max_length=100, null=True, blank=True)
+    rep_date = models.CharField(max_length=100, null=True, blank=True)
+    description = models.TextField(max_length=1000, default=None,null=True, blank=True)
+    is_active = models.BooleanField('active', default=True)
+    is_featured = models.BooleanField('featured', default=True)
+
+    def __str__(self):
+        return str(self.customer)
+
+class DeletedPaymentHistory(models.Model):
+    # id = models.AutoField(primary_key=True)
+    customer = models.ForeignKey(
+        User,
+        verbose_name=("Client Name"),
+        on_delete=models.CASCADE,)
+    payment_fees=models.IntegerField()
+    down_payment=models.IntegerField(default=500)
+    student_bonus=models.IntegerField(null=True,blank=True)
+    fee_balance=models.IntegerField(default=None)
+    down_payment = models.IntegerField(default=500)
+    student_bonus = models.IntegerField(null=True, blank=True)
+    fee_balance = models.IntegerField(default=None)
+    plan = models.IntegerField()
     subplan = models.IntegerField(null=True)
     pricing_plan = models.IntegerField(null=True)
     payment_method = models.CharField(max_length=100)
@@ -81,6 +131,10 @@ class Payment_History(models.Model):
     company_rep = models.CharField(max_length=1000)
     client_date = models.CharField(max_length=100, null=True, blank=True)
     rep_date = models.CharField(max_length=100, null=True, blank=True)
+    
+    def __str__(self):
+        return self.customer
+
 
 class Default_Payment_Fees(models.Model):
     # id = models.AutoField(primary_key=True)
@@ -602,6 +656,7 @@ class Budget(models.Model):
     item = models.CharField(max_length=100, null=True, default=None)
     start_date = models.DateTimeField(default=timezone.now)
     end_date = models.DateTimeField(default=timezone.now)
+    cases = models.PositiveIntegerField(default=1,null=True,blank=True)
     qty = models.DecimalField(max_digits=10, decimal_places=2, null=True, default=None)
     unit_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, default=None
@@ -636,7 +691,7 @@ class Budget(models.Model):
     def amount(self):
         try:
             # total_amount = round(Decimal(self.unit_price * self.qty * self.days), 2)
-            total_amount = round(Decimal(self.unit_price * self.qty), 2)
+            total_amount = round(Decimal(self.unit_price * self.cases* self.qty), 2)
         except:
             total_amount = 0
         return total_amount
@@ -724,7 +779,6 @@ class Food(models.Model):
         additional_amount=Decimal(self.qty-self.bal_qty)*self.unit_amt
         return additional_amount
 
-
 class FoodHistory(models.Model):
     item = models.ForeignKey(Food, on_delete=models.CASCADE, related_name='history')
     supplier = models.ForeignKey(Supplier, on_delete=models.RESTRICT)
@@ -762,14 +816,19 @@ class Field_Expense(models.Model):
     cost_type = models.CharField(max_length=100, blank=True, default="")
     date = models.DateTimeField(default=timezone.now)
     qty = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
-    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    # unit_cost = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, blank=True, default=0)
+    transaction_cost = models.DecimalField(
+        max_digits=10, decimal_places=2, null=True, default=0
+    )
     description = models.TextField(max_length=1000, blank=True, default="")
 
     @property
     def transactions_amt(self):
-        unit_cost = self.unit_cost if self.unit_cost is not None else 0.0
+        amount = self.amount if self.amount is not None else 0.0
+        transaction_cost = self.transaction_cost if self.transaction_cost is not None else 0.0
         qty = self.qty if self.qty is not None else 0.0
-        return unit_cost * qty
+        return (amount * qty)
     
     class Meta:
         verbose_name_plural = "Field Expenses"
@@ -796,6 +855,7 @@ class BalanceSheetCategory(models.Model):
     name = models.CharField(max_length=255)
     category_type = models.CharField(max_length=50, choices=CATEGORY_TYPES, default='Asset')
     amount = models.DecimalField(max_digits=20, decimal_places=2,null=True)
+    description = models.TextField(max_length=1000, default=None,null=True, blank=True)
 
     class Meta:
         unique_together = ('name', 'category_type')
@@ -838,25 +898,3 @@ class BalanceSheetEntry(models.Model):
     def __str__(self):
         return f"{self.category.name}: {self.amount}"
     
-
-# class BalanceSheetEntry(models.Model):
-#     CATEGORY_TYPES = [
-#         ('Asset', 'Asset'),
-#         ('Liability', 'Liability'),
-#         ('Equity', 'Equity'),
-#     ]
-
-#     name = models.CharField(max_length=255)
-#     category_type = models.CharField(max_length=50, choices=CATEGORY_TYPES, default='Asset')
-
-#     # balance_sheet = models.ForeignKey('BalanceSheetSummary', on_delete=models.CASCADE, related_name='entries')
-#     # category = models.ForeignKey('BalanceSheetCategory', on_delete=models.CASCADE)
-#     amount = models.DecimalField(max_digits=20, decimal_places=2)
-#     date = models.DateField(default=timezone.now)
-
-#     class Meta:
-#         verbose_name_plural = "Balance Sheet Entries"
-
-#     def __str__(self):
-#         return f"{self.category.name}: {self.amount}"
-

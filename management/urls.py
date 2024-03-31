@@ -4,7 +4,8 @@ from management.views import (
                         # TaskListView,
                         TaskDetailView,
                         TaskUpdateView,TaskDeleteView,UsertaskUpdateView,
-                        AssessListView,TaskCategoryCreateView,TaskGroupCreateView,
+                        # AssessListView,
+                        TaskCategoryCreateView,TaskGroupCreateView,
                         DepartmentUpdateView, add_requirement_justification,
                         RequirementUpdateView,RequirementDetailView,RequirementDeleteView
                      )
@@ -65,7 +66,9 @@ urlpatterns = [
     # path('clientassessment/', views.clientassessment, name='clientassessment'),
     path('update_assessment/<int:pk>/', views.AssessmentUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_assessment'),
     path('assess/', views.assess, name='assess'),
-    path('assessment/', AssessListView.as_view(), name='assessment'),
+    # path('assessment/', AssessListView.as_view(), name='assessment'),
+    path('assessment/<str:user_type>', views.dsulist, name='assessment'),
+    path('update_dsu/<int:pk>/', views.AssessUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_dsu'),
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),
     path('session/<int:pk>/', views.SessionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='updatesession'),
     path('sessions/', views.sessions, name='sessions'),

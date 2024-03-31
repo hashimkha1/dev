@@ -103,7 +103,7 @@
                   <a class="dropdown-item" href="https://public.tableau.com/app/profile/coda2331/viz/EmployeeProductivityVersion08/LandingPageReport?publish=yes"
                       target="_blank" >Human Resource Report</a>
                       <div class="dropdown-divider"></div>
-                      <a class="dropdown-item" href="{% url 'management:assess' %}"
+                      <a class="dropdown-item" href="{% url 'management:assessment' user_type='client' %}"
                       target="" >Weekly Assessment </a>
                       <div class="dropdown-divider"></div>
                       <a class="dropdown-item" href="{% url 'main:it' %}"
@@ -126,6 +126,11 @@
                           <a class="dropdown-item" href="{% url 'accounts:accounts-users'%}" target="" >Users</a>
                             <div class="dropdown-divider"></div>
                           <a class="dropdown-item" href="{% url 'account-logout' %}" target="" >Logout</a>
+                    {% elif user.category == 6 %}
+                        <a class="dropdown-item" href="{% url 'management:meetings' status='other'%}" target="" >My Account</a >
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{% url 'account-logout'%}" target="" >Logout</a>
+                        <div class="dropdown-divider"></div>
                     {% else %}
                       <a class="dropdown-item" href="{% url 'management:meetings' status='company'%}" target="" >My Account</a >
                         <div class="dropdown-divider"></div>

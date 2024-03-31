@@ -40,8 +40,10 @@ from management.models import Requirement
 from django.views import View
 from .utils import *
 from .mpesa_integration import *
-
-
+from django.apps import apps
+from getdata.models import Editable
+from django.db.models import F
+from finance.models import DeletedPaymentHistory
 User = get_user_model()
 
 # payment details
@@ -57,7 +59,6 @@ rate = round(Decimal(usd_to_kes), 2)
 def finance_report(request):
     return render(request, "finance/reports/finance.html", {"title": "Finance"})
 
-
 @login_required
 def add_budget_item(request):
     if request.method == "POST":
@@ -68,61 +69,61 @@ def add_budget_item(request):
             print(request.user)
             instance.budget_lead=request.user
             instance.save()
-            return redirect("finance:budget")
+            return redirect("finance:budget", company_slug="coda")
     else:
         form = BudgetForm()
     return render(request, "finance/budgets/newbudget.html", {"form": form})
 
+def budget(request, company_slug='coda'):
+    try:
+        # Fetch the company object based on the slug
+        company = Company.objects.get(slug=company_slug)
+    except Company.DoesNotExist:
+        return redirect('some_error_view')  # Redirect to an error page if company doesn't exist
+    
+    # Fetch budgets for the company
+    company_budgets = Budget.objects.filter(company=company)
+    site_budgets = Budget.objects.filter(company=company, category__name='Web')
+    
+    # Calculate total budgets
+    total_budget = sum(site.amount for site in company_budgets)
+    total_site_budget = sum(site.amount for site in site_budgets)
+    total_operation = total_budget - total_site_budget
 
-def budget(request, institution='coda'):
-    # Fetch the list of companies
-    companies = Company.objects.all()
-
-    # Prepare data for all companies
-    data = []
-    for organization in companies:
-        if organization.name == institution.upper():
-            print(organization.name)
-            company_budget = Budget.objects.filter(company__name=institution.upper())
-            site_budget = Budget.objects.filter(company__name=institution.upper(), category__name='Web')
-            # Calculate total budget for this company (example)
-            total_budget = sum(site.amount for site in company_budget)
-            total_site_budget = sum(site.amount for site in site_budget)
-            total_operation = total_budget - total_site_budget
-            # Append data for this company to the list
-            data.append({
-                "company_name": organization.name,
-                "total_budget": total_budget,
-                "total_site_budget": total_site_budget,
-                "total_operation": total_operation,
-                "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'}),
-            })
+    # Construct link URL
+    link_url = reverse('finance:site_budget_with_subcategory', kwargs={'company_slug': company_slug, 'category': 'Web', 'subcategory': 'all'})
 
     # Prepare summary data
     summary = [
-        {"title": "Total Budget", "value": sum(item['total_budget'] for item in data), "link": ''},
-        {"title": "Operations", "value": sum(item['total_operation'] for item in data), "link": ''},
-        {"title": "Web Development", "value": total_site_budget, "link": reverse('finance:site_budget_with_subcategory', kwargs={'category': 'Web', 'subcategory': 'all'})},
+        {"title": "Total Budget", "value": total_budget, "link": ''},
+        {"title": "Operations", "value": total_operation, "link": ''},
+        {"title": "Web Development", "value": total_site_budget, "link": link_url},
     ]
 
+    # Fetch other necessary data
+    webhour = PayslipConfig.objects.values_list("web_pay_hour", flat=True).first()
+    delta = PayslipConfig.objects.values_list("web_delta", flat=True).first()
+
     context = {
-        "budget_obj": company_budget,
+        "company_name": company.name,
+        "budget_obj": company_budgets,
         "data": summary,
-        "webhour": PayslipConfig.objects.values_list("web_pay_hour", flat=True).first(),
-        "delta": PayslipConfig.objects.values_list("web_delta", flat=True).first(),
+        "webhour": webhour,
+        "delta": delta,
     }
     return render(request, "finance/budgets/budget.html", context)
 
-
-def site_budget(request, category='Web',subcategory='all'):
-    print(category,subcategory)
+def site_budget(request,company_slug='CODA', category='Web',subcategory='all'):
+    # cat=category
+    company_name = Company.objects.filter(slug=company_slug).first()
+    print(company_name,company_slug,category,subcategory)
+    # institution=Company.objects.filter(slug=company_slug)
     # Fetch site budget objects filtered by category and company
-    site_budget_all = Budget.objects.filter(company__name='CODA', category__name=category)
+    site_budget_all = Budget.objects.filter(company__slug=company_slug, category__name=category)
     if subcategory =='all':
-        site_budget = Budget.objects.filter(company__name='CODA', category__name=category)
-        print(site_budget)
+        site_budget = Budget.objects.filter(company__slug=company_slug, category__name=category)
     else:
-        site_budget = Budget.objects.filter(company__name='CODA', category__name=category, subcategory=subcategory)
+        site_budget = Budget.objects.filter(company__slug=company_slug, category__name=category, subcategory=subcategory)
         print(site_budget)
 
     # Initialize a dictionary to store subcategory totals
@@ -136,36 +137,23 @@ def site_budget(request, category='Web',subcategory='all'):
 
     # Prepare context to pass to template
     context = {
-        "company": "CODA",
+        "companies":Company.objects.filter(is_featured=True) ,
+        "company_name":company_name,
+        "institution_slug":company_slug,
+        "subcat":subcategory.upper(),
         "site_budget": site_budget,
         "subcategory_totals": subcategory_totals.items(),  # Convert dictionary items to list of tuples
     }
     # return render(request, "finance/budgets/dynamic_site_budget.html", context)
     return render(request, "finance/budgets/site_budget.html", context)
 
-from django.apps import apps
-from getdata.models import Editable
+
 
 def coda_budget_estimation(request, app='all'):
-      
-
-    # website----->2 hours
-    # f. Link to requirements .....categorize them (number of apps--->models---4 views--->30+45=75)
-    # accounts
-    #     i. How many models/Tables are in accounts
-    #         i. 1 tables----->
-    #             5 views --------->
-    #             3 TEMPLATES,
-    #             1 FORM,
-    #             2 apis
-    #                     i. CRUDE
-    #                         CREATEVIEW(7 HOURS), DETAIL VIEW, LISTVIEW,DELETE VIEW, UPDATEVIEW
     coda_budget_json = Editable.objects.filter(name='coda_budget')
-
     if coda_budget_json.exists():
 
         coda_budget_json = coda_budget_json.get().value
-    
     else:
         coda_budget_json = {
             "createview":{
@@ -651,10 +639,13 @@ class PaymentCreateView(LoginRequiredMixin, CreateView):
 		return super().form_valid(form)
 
 def payments(request):
-	payment_history=Payment_History.objects.all()
-	Payment_Info=Payment_Information.objects.all()
-	# payment_history=Payment_History.objects.filter(customer__is_client=True)
-	# Payment_Info=Payment_Information.objects.filter(customer_id__is_client=True)
+	payment_history=Payment_History.objects.filter(is_active=True,is_featured=True)
+	Payment_Info=Payment_Information.objects.filter(is_active=True,is_featured=True)
+	# payment_history_counts=Payment_History.objects.all().count()
+	# Payment_Info_counts=Payment_Information.objects.all().count()
+	# payment_history_count=Payment_History.objects.filter(customer__is_active=True).count()
+	# Payment_Info_count=Payment_Information.objects.filter(customer_id__is_active=True).count()
+	# print(f'{payment_history_counts},{payment_history_count},{Payment_Info_counts},{Payment_Info_count}')
 	context={
 		"title":"Payments",
 		"payment_history":payment_history,
@@ -702,7 +693,10 @@ def send_invoice(request):
     ###############################
     # due payment userlist
     ###############################
-    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0).distinct('customer_id')
+    # user_payment_information = Payment_History.objects.filter(fee_balance__gt=0, customer__is_client=True).distinct('customer_id')
+    user_payment_information = Payment_History.objects.filter(fee_balance__gt=0,is_active=True,is_featured=True).distinct('customer_id')
+    # user_payment_count= Payment_History.objects.filter(fee_balance__gt=0,is_active=True,is_featured=True).distinct('customer_id').count()
+    # print(user_payment_count)
     
     successful_user_list = []
     
@@ -710,14 +704,15 @@ def send_invoice(request):
         if PayslipConfig.objects.filter(user__username=customer_payment_information.customer.username).exists():
             payslip_config = PayslipConfig.objects.get(user__username=customer_payment_information.customer.username)
         else:
-            payslip_config = PayslipConfig.objects.create(
-                user = customer_payment_information.customer,
-                loan_amount = customer_payment_information.payment_fees,
-                loan_repayment_percentage = 0,
-                rp_starting_period= customer_payment_information.contract_submitted_date.strftime("%Y-%m-%d"),
-                installment_amount = customer_payment_information.down_payment,
-                installment_date = datetime.now().date()
-            )
+            payslip_config = PayslipConfig.objects.get(user__username='coda_info')
+            # payslip_config = PayslipConfig.objects.create(
+            #     user = customer_payment_information.customer,
+            #     loan_amount = customer_payment_information.payment_fees,
+            #     loan_repayment_percentage = 0,
+            #     rp_starting_period= customer_payment_information.contract_submitted_date.strftime("%Y-%m-%d"),
+            #     installment_amount = customer_payment_information.down_payment,
+            #     installment_date = datetime.now().date()
+            # )
 
         if payslip_config.installment_date and payslip_config.installment_date.day == datetime.today().date().day:
             organization = Company.objects.filter(user__username=customer_payment_information.customer.username)
@@ -751,11 +746,11 @@ def send_invoice(request):
                         'contact_message':'info@codanalytics.net',
                     }
             try:
-                send_email( category=request.user.category, 
-                            to_email=[client_email],#[request.user.email,], 
-                            subject=service, html_template=url, 
-                            context=context
-                            )                
+                # send_email( category=request.user.category, 
+                #             to_email=[client_email],#[request.user.email,], 
+                #             subject=service, html_template=url, 
+                #             context=context
+                #             )                
                 successful_user_list.append(context)
                 # return render(request, "email/payment/invoice.html",context)
             except:
@@ -923,11 +918,59 @@ class DefaultPaymentUpdateView(UpdateView):
 
 class PaymentInformationUpdateView(UpdateView):
 	model = Payment_Information
-	success_url = "/finance/pay/"
+	success_url = "/finance/payments/"
 	template_name="main/snippets_templates/generalform.html"
 	
 	fields ="__all__"
 	# fields=['customer_id','down_payment']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		# if self.request.user.is_superuser or self.request.user:
+		if self.request.user is not None:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		task = self.get_object()
+		# if self.request.user.is_superuser:
+		# 	return True
+		# elif self.request.user == task.employee:
+		if self.request.user:
+		    return True
+
+class PaymentHistoryUpdateView(UpdateView):
+	model = Payment_History
+	success_url = "/finance/payments/"
+	template_name="main/snippets_templates/generalform.html"
+	
+	fields ="__all__"
+	# fields=['customer_id','down_payment']
+	def form_valid(self, form):
+		# form.instance.author=self.request.user
+		# if self.request.user.is_superuser or self.request.user:
+		if self.request.user is not None:
+			return super().form_valid(form)
+		else:
+			# return redirect("management:tasks")
+			return render(request,"main/snippets_templates/generalform.html")
+
+	def test_func(self):
+		task = self.get_object()
+		# if self.request.user.is_superuser:
+		# 	return True
+		# elif self.request.user == task.employee:
+		if self.request.user:
+		    return True
+
+class UserPayUpdateView(UpdateView):
+	model = Payment_Information
+	success_url = "/finance/pay/"
+	template_name="main/snippets_templates/generalform.html"
+	
+	# fields ="__all__"
+	fields=['customer_id','down_payment']
 	def form_valid(self, form):
 		# form.instance.author=self.request.user
 		# if self.request.user.is_superuser or self.request.user:
@@ -992,7 +1035,7 @@ def filteroutflowsbydepartment(request):
             department = form.cleaned_data['name']
             # print("department=====>",department)
             filtered_outflows = Transaction.objects.filter(department__name=department).order_by('-id')
-            count_filtered_outflows = Transaction.objects.filter(department__name=department).count()
+            # count_filtered_outflows = Transaction.objects.filter(department__name=department).count()
             # print("filtered_outflows=====>",count_filtered_outflows)
 	    
             outflows=filtered_outflows
@@ -1003,7 +1046,8 @@ def filteroutflowsbydepartment(request):
         return outflows,form
 
 
-def outflows(request):
+def outflows(request,transaction_type=None):
+    path_list, sub_title, pre_sub_title = path_values(request)
     outflows,form=filteroutflowsbydepartment(request)
     # print("values========>",outflows,form)
     ytd_duration,current_year,first_date=dates_functionality()
@@ -1045,20 +1089,31 @@ def outflows(request):
     avg_quarterly_expenditure=avg_monthly_expenditure*3
     
     data = [
-        {"title": "Operations", "value": total_op_outflows_usd},
-        {"title": "Web Development", "value": total_web_ouflow},
-        {"title": "Makutano Office", "value": total_field_ouflow_usd},
-        {"title": "Year_To_Date", "value": ytd_outflows},
-        {"title": "Quarterly", "value": avg_quarterly_expenditure},
-        {"title": "Monthly", "value": avg_monthly_expenditure},
-        {"title": "Daily", "value": avg_daily_expenditure},
-        {"title": "Hourly", "value": avg_hourly_expenditure},
+        {"title": "Operations","link": "/finance/transaction/operations", "value": total_op_outflows_usd},
+        {"title": "Web Development","link": "/finance/coda_budget_estimation/all/", "value": total_web_ouflow},
+        {"title": "Makutano Office","link": "/finance/transaction/field", "value": total_field_ouflow_usd},
+        {"title": "Year_To_Date","link": "all", "value": ytd_outflows},
+        {"title": "Quarterly","link": "all", "value": avg_quarterly_expenditure},
+        {"title": "Monthly","link": "all", "value": avg_monthly_expenditure},
+        {"title": "Daily","link": "all", "value": avg_daily_expenditure},
+        {"title": "Hourly","link": "all", "value": avg_hourly_expenditure},
 	]
 
+    if sub_title=='field':
+        transactions=field_obj
+    elif sub_title=='operations':
+        transactions=Transaction.objects.all().order_by('-id')
+    elif sub_title=='web':
+        transactions=web_obj ,
+    else:
+        transactions=None
+
     outflow_context = {
-        "transactions": operations_obj,
-        "web_transactions": web_obj,
-        "field_transactions": field_obj,
+        
+        # "transactions": operations_obj ,
+        # "web_transactions": web_obj,
+        # "field_transactions": field_obj,
+        "transactions": transactions ,
         "total_amt": total_outflows,
         "data": data,
         # "balance": balance,
@@ -1555,8 +1610,6 @@ def dcinflows(request):
     return render(request, "finance/payments/dcinflows.html", context)
 
 
-
-
 # views.py
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -1774,37 +1827,84 @@ def openai_balancesheet(request):
     return render(request, "finance/reports/openai.html", context)
 
 
+# def balancesheet(request):
+#     try:
+#         balance_sheet = BalanceSheetSummary.objects.last()
+#         if balance_sheet:
+#             # Fetch entries for assets, liabilities, and equity
+#             current_assets = balance_sheet.entries.filter(category__category_type='Asset')
+#             current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
+#             equity = balance_sheet.entries.filter(category__category_type='Equity')
 
+#             # Calculate totals
+#             total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
+#             total_liabilities_and_equity=total_liabilities+total_equity
+#             context = {
+#                 'company_name': 'CODA',
+#                 'balance_sheet': balance_sheet,
+#                 'current_assets': current_assets,
+#                 'current_liabilities': current_liabilities,
+#                 'equity': equity,
+#                 'total_liabilities_and_equity': total_liabilities_and_equity,
+#                 'total_assets': total_assets,
+#                 'total_liabilities': total_liabilities,
+#                 'total_equity': total_equity
+#             }
+#         else:
+#             context = {'error_message': 'No balance sheet data available.'}
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         context = {'error_message': 'An error occurred while fetching balance sheet data.'}
 
-def balancesheet(request):
-    try:
-        balance_sheet = BalanceSheetSummary.objects.last()
-        if balance_sheet:
-            # Fetch entries for assets, liabilities, and equity
-            current_assets = balance_sheet.entries.filter(category__category_type='Asset')
-            current_liabilities = balance_sheet.entries.filter(category__category_type='Liability')
-            equity = balance_sheet.entries.filter(category__category_type='Equity')
+#     return render(request, "finance/reports/balancesheet.html", context)
 
-            # Calculate totals
-            total_assets = current_assets.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_liabilities = current_liabilities.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_equity = equity.aggregate(Sum('amount'))['amount__sum'] or 0
-            total_liabilities_and_equity=total_liabilities+total_equity
-            context = {
-                'company_name': 'CODA',
-                'balance_sheet': balance_sheet,
-                'current_assets': current_assets,
-                'current_liabilities': current_liabilities,
-                'equity': equity,
-                'total_liabilities_and_equity': total_liabilities_and_equity,
-                'total_assets': total_assets,
-                'total_liabilities': total_liabilities,
-                'total_equity': total_equity
-            }
-        else:
-            context = {'error_message': 'No balance sheet data available.'}
-    except Exception as e:
-        print(f"Error: {e}")
-        context = {'error_message': 'An error occurred while fetching balance sheet data.'}
+class StatementsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = BalanceSheetCategory
+    # success_url="/management/transaction"
+    fields = "__all__"
 
-    return render(request, "finance/reports/balancesheet.html", context)
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse("finance:open_statements")
+
+    def test_func(self):
+        policy = self.get_object()
+        if self.request.user.is_superuser:
+            return True
+        elif self.request.user == policy.staff:
+            return True
+        return False
+    
+
+def delete_bad_entry_in_payment_history(request):
+    if request.user and request.user.is_superuser:
+        delete_payment_history = Payment_History.objects.filter(customer__is_staff=True)
+        for payment in delete_payment_history:
+            DeletedPaymentHistory.objects.create(
+                customer=payment.customer,
+                payment_fees=payment.payment_fees,
+                down_payment=payment.down_payment,
+                student_bonus=payment.student_bonus,
+                fee_balance=payment.fee_balance,
+                plan=payment.plan,
+                subplan=payment.subplan,
+                pricing_plan=payment.pricing_plan,
+                payment_method=payment.payment_method,
+                contract_submitted_date=payment.contract_submitted_date,
+                client_signature=payment.client_signature,
+                company_rep=payment.company_rep,
+                client_date=payment.client_date,
+                rep_date=payment.rep_date
+            )
+            payment.delete()
+
+    previous_path = request.META.get('HTTP_REFERER', '')
+    if previous_path:
+        return redirect(previous_path)
+    else:
+        return redirect("main:layout")
