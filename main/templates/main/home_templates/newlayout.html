@@ -1,11 +1,11 @@
 {%extends "main/base_templates/new_base.html"%} 
+{% block title %}Home{% endblock %}
 {% load static %}
 {% block content %}
-<div class="banner-div" style="background-image: url('data:image/jpeg;base64,{{ base64_data }}'); background-repeat: no-repeat; background-size: cover;">
+<div class="banner-div" style="background-image: url('{{googledriveurl}}{{banner_url}}'); background-repeat: no-repeat; background-size: cover;">
   <div class="container-md">
-    
       <h2>services</h2>
-      <h1>Get help with career, business, and personal projects.</h1>
+      <p>Get help with career, business, and personal projects.</p>
   </div>
 </div>
 <!-- <div class="banner-div">

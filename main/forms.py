@@ -9,14 +9,6 @@ from data.models import DSU
 from .models import *
 # from django.db import transaction
 # from multiupload.fields import MultiFileField
-class BackgroundImageForm(forms.ModelForm):
-    image = forms.ImageField(label='Upload Image')  # Add this line
-    title = forms.CharField(max_length=30)
-
-    class Meta:
-        model = BackgroundImage
-        fields = ['image','title']  # Change fields to include the 'image' field
-
 
 class ContactForm(forms.ModelForm):
     class Meta:

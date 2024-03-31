@@ -1,15 +1,17 @@
 {%extends "main/base_templates/new_base.html"%} 
+{% block title %}Services{% endblock %}
 {% load static %}
 {% block content %}
 <div class="banner-div">
-  {% if asset_image_url %}
-  <img class="banner-div" style="position: absolute; width: 100%; height: 100%;" src="{{ asset_image_url }}" alt="Service Image">
+{% if base64_data_dict.services == Training %}
+  <img src="data:image/jpeg;base64,{{ base64_data_dict.services }}" alt="Services Image">
 {% else %}
-  <img class="banner-div" style="position: absolute; width: 100%; height: 100%;" src="{% static 'main/image/default_image.jpg' %}" alt="Default Image">
-{% endif %}
+  <img src="data:image/jpeg;base64,{{ base64_data_dict.services }}" alt="Services Image">
+{% endif %}  
+
   <div class="container-md" >
       <h2 id="truncatedTitle">{{title }}</h2>
-    <h1 style="font-size: 64px;">{{sub_titles}}</h1>
+    <p style="color: white;font-size: 90px;text-shadow: 0px 0px 22px black;" >{{sub_titles}}</p>
   </div>
 </div>
 <div class="stripdiv">
@@ -51,14 +53,14 @@
       {% if title == "Training & Professional Support" %}
       <div class="videocontainers">
         <div class="videocontainer">
-          <iframe src="https://drive.google.com/file/d/1rPpzS-_ag2m28korWkWrTemJQbKJ_5uX/preview" width="100%" height="auto"  controls crossorigin playsinline class="plyr"></iframe>
+          <iframe src="https://drive.google.com/file/d/1rPpzS-_ag2m28korWkWrTemJQbKJ_5uX/preview" alt="about coda" width="100%" height="auto"  controls crossorigin playsinline class="plyr"></iframe>
         </div>
       </div> 
       {%else%}
       <div class="videocontainers">
         <div class="videocontainer">
           <img class="img-fluid ps-lg-5" 
-          src="{% static 'main/image/marketing.jpg' %}"alt="">
+          src="{% static 'main/image/marketing.jpg' %}"alt="about coda" >
         </div>
       </div>  
       {%endif%}

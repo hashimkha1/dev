@@ -1,4 +1,3 @@
-import base64
 import os
 import webbrowser
 import datetime, json
@@ -48,6 +47,7 @@ from main.permission import check_payment_history_permission
 
 from .models import Location
 import requests
+from accounts.choices import CategoryChoices
 
 User=get_user_model()
 
@@ -96,39 +96,14 @@ def get_testimonials():
 
     return testimonials, selected_class
 
-def upload_background_image(request):
-    if request.method == 'POST':
-        form = BackgroundImageForm(request.POST, request.FILES)
-        if form.is_valid():
-            # Get the image file and title from the form
-            image_file = request.FILES['image']
-            title = form.cleaned_data['title']  # Use form.cleaned_data to access form fields
-
-            # Convert image to base64
-            base64_data = base64.b64encode(image_file.read()).decode('utf-8')
-
-            # Save base64 data and title to the database
-            Assets.objects.create(image_string=base64_data, name=title)
-            return redirect(request.path)  # Redirect to the same page
-    else:
-        form = BackgroundImageForm()
-    return render(request, 'main/home_templates/upload_background_image.html', {'form': form})
 
 def layout(request):
     testimonials, selected_class = get_testimonials()
 
     services = Service.objects.filter(is_active=True).order_by('serial')
-    title_value ='home'
-    background_image = BackgroundImage.objects.filter(title=title_value).last()
-
-    if background_image:
-        base64_data = background_image.base64_data
-    else:
-        base64_data = ""
     context = {
         "services": services,
         "posts": testimonials,
-        'base64_data': base64_data,
         "title": "layout",
         "selected_class": selected_class,
     }
@@ -304,9 +279,9 @@ def display_service(request, *args, **kwargs):
     testimonials, selected_class = get_testimonials()
 
     # Calculate the number of students and other users
-    students_count = CustomerUser.objects.filter(category=CustomerUser.Category.Student).count()
+    students_count = CustomerUser.objects.filter(category=CategoryChoices.Student).count()
     teachers_count = 8  # Set the desired count
-    teachers = CustomerUser.objects.filter(category=CustomerUser.Category.Coda_Staff_Member)[:teachers_count].count()
+    teachers = CustomerUser.objects.filter(category=CategoryChoices.Coda_Staff_Member)[:teachers_count].count()
     # Calculate the total number of courses
     title1 = "IT-Training"
     title2 = "Interview"
@@ -1316,5 +1291,3 @@ class CompanyCreateView(LoginRequiredMixin, CreateView):
 #             return render(request, 'location.html', {'error': 'Invalid zipcode'})
 #     else:
 #         return render(request, 'location.html')
-
-    

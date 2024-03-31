@@ -182,6 +182,11 @@ body {
   color: white;
   text-shadow: 0px 0px 22px black;
 }
+.banner-div p {
+  font-size: 90px;
+  color: white;
+  text-shadow: 0px 0px 22px black;
+}
 
 .strip-div {
   color: #2f2f30;
@@ -264,6 +269,9 @@ body {
 
 @media screen and (max-width: 768px) {
   .banner-div h1 {
+    margin-bottom: 2rem; 
+  }
+  .banner-div p {
     margin-bottom: 2rem; 
   }
 
@@ -667,6 +675,9 @@ body {
   .banner-div h1 {
     font-size: 56px;
   }
+  .banner-div p {
+    font-size: 56px;
+  }
 
   .strip-div p {
     width: 100%;
@@ -697,6 +708,9 @@ body {
 
 @media (max-width: 768px) {
   .banner-div h1 {
+    font-size: 52px;
+  }
+  .banner-div p {
     font-size: 52px;
   }
 
@@ -731,6 +745,9 @@ body {
   }
 
   .banner-div h1 {
+    font-size: 36px;
+  }
+  .banner-div p {
     font-size: 36px;
   }
 
