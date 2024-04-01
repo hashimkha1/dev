@@ -81,7 +81,9 @@ class Balancesheet_entry(models.Model):
     def __str__(self):
         return f"{self.category.name}:{self.amount}"   
 
+
 class ExcepUser(models.Model):
+    id = models.AutoField(primary_key=True)
     date = models.DateField()
     week = models.IntegerField()
     year = models.IntegerField()
@@ -92,7 +94,10 @@ class ExcepUser(models.Model):
     vacation = models.IntegerField()
 
     def __str__(self):
-        return f"Exception User ID: {self.id} - Date: {self.date}"
+        return f"ID: {self.id}"
+
+
+
 
 
 
