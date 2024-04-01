@@ -80,6 +80,22 @@ class Balancesheet_entry(models.Model):
 
     def __str__(self):
         return f"{self.category.name}:{self.amount}"   
+
+class ExcepUser(models.Model):
+    date = models.DateField()
+    week = models.IntegerField()
+    year = models.IntegerField()
+    comments = models.TextField(max_length=255)
+    exception_type_id = models.IntegerField()  # Consider using ForeignKey if this references another model
+    project_user_id = models.IntegerField()  # Consider using ForeignKey if this references another model
+    late_night = models.IntegerField()
+    vacation = models.IntegerField()
+
+    def __str__(self):
+        return f"Exception User ID: {self.id} - Date: {self.date}"
+
+
+
   
 
 
