@@ -1,0 +1,36 @@
+USE [CODA]
+GO
+
+/****** Object:  Table [dbo].[clients data]    Script Date: 4/3/2024 4:16:52 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[clients data](
+	[RITSID] [int] NOT NULL,
+	[ProjectUserID] [int] NOT NULL,
+	[ClientName] [nvarchar](50) NOT NULL,
+	[ClientNameChild] [nvarchar](50) NOT NULL,
+	[Region] [nvarchar](50) NOT NULL,
+	[Country] [nvarchar](50) NOT NULL,
+	[Products] [nvarchar](50) NOT NULL,
+	[ProjectType] [nvarchar](50) NOT NULL,
+	[MidIndustry] [nvarchar](50) NOT NULL,
+	[DirectTeam] [nvarchar](50) NOT NULL,
+	[ProjectName] [nvarchar](50) NOT NULL,
+	[StartDate] [date] NOT NULL,
+	[WorkType] [nvarchar](50) NOT NULL,
+	[Industry] [nvarchar](50) NOT NULL,
+	[WorkLoad] [tinyint] NOT NULL,
+	[ClientMtgAttended] [tinyint] NOT NULL,
+	[FinalPitch30pgsFlag] [tinyint] NOT NULL,
+	[LateNights] [tinyint] NOT NULL,
+	[L2SuperIdustryN] [nvarchar](50) NOT NULL,
+	[LatestProjectContributions] [nvarchar](1) NULL,
+	[Office] [nvarchar](50) NOT NULL
+) ON [PRIMARY]
+GO
+
+

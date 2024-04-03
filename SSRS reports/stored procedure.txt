@@ -1,0 +1,45 @@
+USE [CODA]
+GO
+
+/****** Object:  StoredProcedure [dbo].[clientdetailsp]    Script Date: 4/3/2024 4:15:39 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+
+CREATE PROCEDURE [dbo].[clientdetailsp]
+    @RITSID INT
+AS
+BEGIN
+    SELECT 
+        RITSID, 
+        ProjectUserID, 
+        ClientName, 
+        ClientNameChild, 
+        Region, 
+        Country, 
+        Products, 
+        ProjectType, 
+        MidIndustry, 
+        DirectTeam, 
+        ProjectName, 
+        StartDate, 
+        WorkType, 
+        Industry, 
+        WorkLoad, 
+        ClientMtgAttended, 
+        FinalPitch30pgsFlag, 
+        LateNights, 
+        L2SuperIdustryN, 
+        LatestProjectContributions, 
+        Office
+    FROM 
+        [CODA].[dbo].[clients data] -- Replace with your actual table name
+    WHERE 
+        RITSID = @RITSID;
+END
+GO
+
+

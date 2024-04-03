@@ -1,0 +1,46 @@
+IF OBJECT_ID('[CODA].[dbo].[clientstbl]', 'U') IS NOT NULL
+    DROP TABLE [CODA].[dbo].[clientstbl];
+
+CREATE TABLE [CODA].[dbo].[clientstbl]
+(        
+    RITSID INT,
+    ProjectUserID INT,
+    ClientName VARCHAR(255), -- Define the length for VARCHAR fields
+    ClientNameChild VARCHAR(255),
+    Region VARCHAR(255),
+    Country VARCHAR(255),
+    Products VARCHAR(255),
+    ProjectType VARCHAR(255),
+    MidIndustry VARCHAR(255),
+    DirectTeam VARCHAR(255),
+    ProjectName VARCHAR(255),
+    StartDate DATE,
+    WorkType VARCHAR(255),
+    Industry VARCHAR(255),
+    WorkLoad INT,
+    ClientMtgAttended BIT,
+    FinalPitch30pgsFlag BIT,
+    LateNights INT,
+    L2SuperIdustryN VARCHAR(255), -- Uncomment and correct this line if needed
+    LatestProjectContributions VARCHAR(MAX), -- Changed to VARCHAR(MAX) for potential large text fields
+    Office VARCHAR(255)
+);
+
+-- Assuming clientdetailsp is a stored procedure that you've already created 
+-- and it returns a result set with columns that exactly match those defined in clientstbl.
+-- The EXEC command will insert the result set from clientdetailsp into clientstbl.
+
+BEGIN
+    -- Insert data into clientstbl by executing the stored procedure clientdetailsp.
+    INSERT INTO [CODA].[dbo].[clientstbl]
+        EXEC clientdetailsp @RITSID = 1011264731;
+
+    -- Select the top 10 clients based on workload.
+    -- This query assumes that the stored procedure has already populated clientstbl.
+    SELECT TOP 10
+        ClientName,
+        SUM(WorkLoad) AS WorkLoad
+    FROM [CODA].[dbo].[clientstbl]
+    GROUP BY ClientName
+    ORDER BY WorkLoad DESC;
+END
