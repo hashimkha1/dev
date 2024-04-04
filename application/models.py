@@ -79,7 +79,8 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
+        return f"{self.category.name}:{self.amount}" 
+  
   
 
 

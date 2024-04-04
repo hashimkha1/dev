@@ -1,0 +1,56 @@
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">Registered Requirements</h3>
+    <p class="p text-center"><b>{{ requirements.count }}</b></p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="#" class="btn btn-secondary btn-sm">Register New Requirement</a>
+        </p>
+      </div>    
+    </div>
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">
+        <div class="career text-center">
+          <table class="table table-borderless" style="width: 100%">
+            <thead class="border-bottom font-weight-bold">  
+              <tr>
+                <th>User ID</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Age</th>
+                <th>Location</th>
+                <th>Date</th>
+                <th>Description</th>
+                <th>Actions</th> <!-- Changed to 'Actions' -->
+              </tr>
+            </thead>
+            <tbody id="table_body_data">
+              {% for Requirement in Requirements %}
+                <tr>          
+                  <td>{{ Requirement.user_id }}</td>
+                  <td>{{ Requirement.first_name }}</td>
+                  <td>{{ Requirement.last_name }}</td>
+                  <td>{{ Requirement.age }}</td>
+                  <td>{{ Requirement.location }}</td>
+                  <td>{{ Requirement.date }}</td>
+                  <td>{{ Requirement.description }}</td>
+                  <td>
+                    {% if user.is_admin or user.is_superuser %}
+                      <!-- Edit and Delete links -->
+                      <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                      <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    {% endif %}
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock content %}
