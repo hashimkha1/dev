@@ -58,8 +58,8 @@ class shopping(models.Model):
     pay_type =  models.CharField(max_length=50)
     date = models.DateField()
 
-    def __str__(self):
-        return self.item_id
+   # def __str__(self):
+    #    return self.item_id
        
 
 
