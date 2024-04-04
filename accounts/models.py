@@ -331,3 +331,12 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+
+class shopping(models.Model):
+    item_id = models.AutoField(primary_key=True)
+    item = models.CharField(max_length=255)
+    quantity = models.PositiveIntegerField()
+    cost_price = models.PositiveIntegerField()
+    pay_type =  models.CharField(max_length=50)
+    date = models.DateField()

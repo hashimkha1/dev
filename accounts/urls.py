@@ -7,6 +7,8 @@ app_name = 'accounts'
 urlpatterns = [
     #=============================USERS VIEWS=====================================
     path('', views.home, name='home'),
+    path('shoppingList/', views.shoppinglist, name='shoppingList'),
+    path('shopingCreate/', views.shoppingCreate, name='shopingCreate'),
     # path('join/', views.join, name='join'),
     # path('payments/', views.payments, name='payments'),
     # # #path('changepassword/',PasswordsChangeView.as_view(template_name='accounts/registration/password_Change_Form.html'), name='password_Change_Form'),

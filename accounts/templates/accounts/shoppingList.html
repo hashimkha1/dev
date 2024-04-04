@@ -1,0 +1,42 @@
+{% extends "main/base_templates/new_base.html"%} {%load crispy_forms_tags%}
+ {%load crispy_forms_tags%} 
+ {%block content %}
+<section id="career">
+  <div class="career text-center">
+    <h2>Shopping List</h2>
+    <div class="table-responsive">
+      <!-- <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%"> -->
+      <table class="table table-striped table-bordered" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">
+        <tr>
+          <!-- <th>Applicant_Id</th> -->
+          <th>NO.</th>
+          <th>item</th>
+          <th>quantity</th>
+          <th>cost price</th>
+          <th>pay of type</th>
+          <th>date</th>
+         
+        </tr>
+      </thead>
+      <tbody>
+        {% for shopping in shoppings %}
+        <tr>
+            <td>{{shopping.item_id}}</td>
+          <td>{{shopping.item}}</td>
+          <td>{{shopping.quantity}}</td>
+          <td>{{shopping.cost_price}}</td>
+          <td>{{shopping.pay_type}}</td>
+          <td>{{shopping.date}}</td>
+         
+         
+          
+         <td><h4 ><a href="#">❌</H4></a></p></td>  
+      </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  </div>
+</section>
+{%endblock content %}
