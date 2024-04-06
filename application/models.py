@@ -81,9 +81,16 @@ class Balancesheet_entry(models.Model):
     def __str__(self):
         return f"{self.category.name}:{self.amount}"   
   
-
-
-
-
-
+class exception_client(models.Model):
+    exception_id = models.AutoField(primary_key=True)
+    exception_date = models.DateField()
+    exception_year = models.PositiveIntegerField()
+    comments = models.TextField(max_length=500)
+    exception_type_id = models.IntegerField()
+    project_user_id =models.IntegerField()
+    project_user_rts_id = models.IntegerField()
+    exception_flag = models.BooleanField()
+    pitch_flag = models.BooleanField()
+    late_nights = models.IntegerField()
+    vacations = models.IntegerField()
 
