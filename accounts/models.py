@@ -331,3 +331,11 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+class xuser(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    user_name = models.CharField(max_length=30)
+    password = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.user_id
