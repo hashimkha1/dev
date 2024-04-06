@@ -94,3 +94,7 @@ class exception_client(models.Model):
     late_nights = models.IntegerField()
     vacations = models.IntegerField()
 
+    def __str__(self):
+        return self.exception_id
+
+
