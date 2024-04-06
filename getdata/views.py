@@ -2,6 +2,9 @@
 import os
 import json
 import requests
+from decimal import *
+from datetime import datetime
+from pytz import utc
 from django.http import JsonResponse
 from selenium import webdriver
 from django.shortcuts import get_object_or_404, redirect, render
@@ -17,11 +20,12 @@ from main.utils import App_Categories,Automation,Stocks,General
 from finance.utils import update_link
 
 from getdata.utils import (
-					fetch_and_insert_data,populate_table_from_json_file
+					fetch_and_insert_data,populate_table_from_json_file,
+					convert_excel_dates
 )
 from finance.models import (Transaction, Payment_History)
 
-from investing.models import OverBoughtSold
+from investing.models import OverBoughtSold,Daily_Trades
 from marketing.models import Whatsapp_Groups
 from main.models import Pricing
 
@@ -284,8 +288,7 @@ def getmeetingresponse(startDate , endDate):
 	}
 	urlGotoMeeting = "https://api.getgo.com/G2M/rest/historicalMeetings?startDate={}&endDate={}"
 	# print("2. getting meetings from {} to {}\n".format(startDate , endDate))
-	from datetime import datetime
-	from pytz import utc
+
 	urlMeeting = urlGotoMeeting.format(startDateTime,endDateTime)
 
 	# print("3. request made : ",urlMeeting)
@@ -608,6 +611,89 @@ def upload_csv(request):
 				description=fields[10],
 				receipt_link=fields[11],
 			)
+		url = reverse("main:layout")
+		return HttpResponseRedirect(url)
+	form = CsvImportForm()
+	data = {"form": form}
+	return render(request, "getdata/uploaddata.html", data)
+
+import decimal
+from datetime import datetime, date
+
+# Define the date formats to try
+date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y", "%m/%d/%Y"] 
+
+def upload_daily_trades(request):
+	if request.method == "POST":
+		csv_file = request.FILES["csv_upload"]
+
+		if not csv_file.name.endswith(".csv"):
+			messages.warning(
+				request, "The wrong file type was uploaded, it should be a csv file"
+			)
+			return render(request, "getdata/uploaddata.html")
+			# return HttpResponseRedirect(request.path_info)
+
+		# file= csv_file.read().decode("utf-8")
+		file = csv_file.read().decode("ISO-8859-1")
+		file_data = file.split("\n")
+		csv_data = [line for line in file_data if line.strip() != ""]
+
+		for x in csv_data:
+			fields = x.split(",") 
+			date_str = fields[4].strip() if fields[4] else None
+			expiry_str = fields[5].strip() if fields[5] else None
+			final_date,expiry_date=convert_excel_dates(date_str,expiry_str)
+			print("Dates=====>", final_date,expiry_date)
+
+			# Convert decimal fields to Decimal objects
+			price = decimal.Decimal(fields[1]) if fields[1] else decimal.Decimal('0.00')
+			strike_price = decimal.Decimal(fields[2]) if fields[2] else decimal.Decimal('0.00')
+			credit = decimal.Decimal(fields[8]) if fields[8] else decimal.Decimal('0.00')
+			debit = decimal.Decimal(fields[9]) if fields[9] else decimal.Decimal('0.00')
+
+   			# Convert date fields to datetime objects or set default to today
+			date = None
+			expiry = None
+			
+			for format in date_formats:
+				try:
+
+					date = datetime.strptime(date_str, format).date() if date_str else date.today()
+					expiry = datetime.strptime(expiry_str, format).date() if expiry_str else date.today()
+					print(date,expiry)
+					break  # Break the loop if parsing succeeds
+				except ValueError:
+					pass  # Continue to the next format if parsing fails
+
+			# Convert integer fields to integers or set default to 0
+			qty = int(fields[10]) if fields[10] else 0
+			page_number = int(fields[11]) if fields[11] else 0
+
+			# Truncate string fields to 255 characters
+			symbol = fields[0][:255] if fields[0] else None
+			action = fields[3][:255] if fields[3] else None
+			transaction = fields[6][:255] if fields[6] else None
+			account_type = fields[7][:255] if fields[7] else None
+
+			
+
+			created = Daily_Trades.objects.update_or_create(
+				symbol=symbol,
+				price=price,
+				strike_price=strike_price,
+				action=action,
+				date=date,
+				expiry=expiry,
+				transaction=transaction,
+				account_type=account_type,
+				credit=credit,
+				debit=debit,
+				qty=qty,
+				page_number=page_number,
+				# description=fields[12],
+			)
+
 		url = reverse("main:layout")
 		return HttpResponseRedirect(url)
 	form = CsvImportForm()

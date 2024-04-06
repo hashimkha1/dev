@@ -611,21 +611,26 @@ class DC48_Inflow(models.Model):
             return total_amt_paid
             
 
-# class Site_Budget(models.Model):
-#     category = models.CharField(max_length=25,default="Other")
-#     subcategory = models.CharField(max_length=25,default="Other")
-#     name = models.CharField(max_length=25,default="Other")
-
-#     def __str__(self):
-#         return self.name
     
 class Budget_Category(TimeStampedModel):
     name = models.CharField(max_length=25,null=True,blank=True)
+    # subcategory = models.CharField(max_length=25,null=True,blank=True)
     description = models.TextField(max_length=1000,null=True,blank=True)
 
     def __str__(self):
         return self.name
     
+class Web_Components(TimeStampedModel):
+    name = models.CharField(max_length=25,null=True,blank=True)
+    category = models.ForeignKey(
+        Budget_Category, 
+        on_delete=models.CASCADE, 
+        related_name="web_category",
+        blank=True, null=True)
+    description = models.TextField(max_length=1000,null=True,blank=True)
+
+    def __str__(self):
+        return self.name  
     
 class Budget(models.Model):
     company = models.ForeignKey(
@@ -651,6 +656,12 @@ class Budget(models.Model):
         on_delete=models.CASCADE, 
         related_name="category_type",
         blank=True, null=True)
+    
+    # component = models.ForeignKey(
+    #     Web_Components, 
+    #     on_delete=models.CASCADE, 
+    #     related_name="category_type",
+    #     blank=True, null=True)
 
     subcategory = models.CharField(max_length=25,null=True,blank=True)
     item = models.CharField(max_length=100, null=True, default=None)
@@ -865,36 +876,135 @@ class BalanceSheetCategory(models.Model):
         return f"{self.name} ({self.category_type})"
 
 
-class BalanceSheetSummary(models.Model):
-    date = models.DateField(default=timezone.now)
+# ==================================FINANCE====================================
+    
+# class FeaturedBudgetCategory(TimeStampedModel):
+#     CAT_CHOICES = [
+#         ("Course_Overview", "Course Overview"),
+#         ("Planning", "Initiation & Planning"),
+#         ("Development", "Development"),
+#         ("Testing", "Testing"),
+#         ("Other", "Other"),
+#     ]
+#     name = models.CharField(
+#         max_length=25,
+#         choices=CAT_CHOICES,
+#         unique=True,
+#         default="Other",
+#     )
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+#     description = models.TextField()
+#     # objects=CategoryManager()
 
-    @property
-    def total_assets(self):
-        return self.entries.filter(category__category_type='Asset').aggregate(models.Sum('amount'))['amount__sum'] or 0
+#     class Meta:
+#         verbose_name_plural = "Categories"
 
-    @property
-    def total_liabilities(self):
-        return self.entries.filter(category__category_type='Liability').aggregate(models.Sum('amount'))['amount__sum'] or 0
+#     @classmethod
+#     def get_default_pk(cls):
+#         cat, created = cls.objects.get_or_create(
+#             title=" ", defaults=dict(description="this is not an cat")
+#         )
+#         return cat.pk
 
-    @property
-    def total_equity(self):
-        return self.entries.filter(category__category_type='Equity').aggregate(models.Sum('amount'))['amount__sum'] or 0
+#     def get_url(self):
+#         return reverse("data:category-detail", args=[self.title])
 
-    class Meta:
-        verbose_name_plural = "Balance Sheets"
-        ordering = ["-date"]
+#     def __str__(self):
+#         return self.title
 
-    def __str__(self):
-        return f"Balance Sheet as of {self.date}"
+# class FeaturedSubCategory(models.Model):
+#     featuredcategory = models.ForeignKey(
+#         to=FeaturedCategory,
+#         on_delete=models.CASCADE,
+#         default=FeaturedCategory.get_default_pk,
+#     )
+#     order = models.IntegerField(blank=True, null=True)
+#     # category = models.ManyToManyField(Cat, blank=True,related_name='cats')
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     description = models.TextField(default="General")
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     title = models.CharField(max_length=255)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     is_active = models.IntegerField(default=1)
 
-class BalanceSheetEntry(models.Model):
-    balance_sheet = models.ForeignKey('BalanceSheetSummary', on_delete=models.CASCADE, related_name='entries')
-    category = models.ForeignKey('BalanceSheetCategory', on_delete=models.CASCADE)
-   
+#     objects=SubCategoryManager()
 
-    class Meta:
-        verbose_name_plural = "Balance Sheet Entries"
+#     class Meta:
+#         verbose_name_plural = "Subcategories"
 
-    def __str__(self):
-        return f"{self.category.name}: {self.amount}"
+#     # def get_absolute_url(self):
+#         # return reverse('data:subcategory-detail', kwargs={'title': self.title})
+    
+#     def subcat_url(self):
+#         return reverse("data:subcategory-detail", args=[self.title])
+
+#     def __str__(self):
+#         return self.title
+#     def __str__(self):
+#         return f"{self.title} - {self.featuredcategory}"
+    
+# class FeaturedActivity(models.Model):
+#     # SubCategory = models.ForeignKey(to=SubCategory, on_delete=models.CASCADE,default=SubCategory.get_default_pk)
+#     featuredsubcategory = models.ManyToManyField(
+#         FeaturedSubCategory, blank=True, related_name="subcategories_fetured"
+#     )
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     activity_name = models.CharField(max_length=255)
+#     # slug = models.SlugField(max_length=255, blank=True, default="slug")
+#     description = models.TextField()
+#     guiding_question = models.TextField(blank=True,null=True)
+#     interview_question = models.TextField(blank=True,null=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     is_active = models.IntegerField(default=1)
+
+#     objects=ActivityManager()
+
+#     class Meta:
+#         verbose_name_plural = "activities"
+    
+#     def activity_url(self):
+#         return reverse("data:activity-detail", args=[self.slug])
+
+#     @property
+#     def question(self):
+#         if self.guiding_question != None:
+#             available_question=self.guiding_question
+#             return available_question
+
+#     def __str__(self):
+#         return self.activity_name
+
+# class ActivityLinks(models.Model):
+#     Activity = models.ManyToManyField(
+#         FeaturedActivity, blank=True, related_name="activity_featured"
+#     )
+#     Featuredsubcategory = models.ForeignKey(
+#         FeaturedSubCategory, 
+#         blank=True, 
+#         null=True, 
+#         on_delete=models.SET_NULL,
+#         related_name="subcategorie_fetured"
+#     )
+#     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+#     link_name = models.CharField(max_length=255, default="General")
+#     # description=models.TextField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+#     doc = models.FileField(default="None", upload_to="training/docs/")
+#     link = models.CharField(max_length=1000, blank=True, null=True)
+#     is_active = models.IntegerField(default=1)
+
+#     class Meta:
+#         verbose_name_plural = "links"
+
+#     def get_absolute_url(self):
+#         return reverse("bitraining")
+
+#     def get_link_url(self):
+#         return self.link
+
+#     def __str__(self):
+#         return self.link_name
     

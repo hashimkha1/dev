@@ -28,22 +28,7 @@ from .forms import (
     InvestmentsStrategyForm
 )
 from django.utils.decorators import method_decorator
-from .models import (
-    InvestmentContent,
-    ShortPut,
-    covered_calls,
-    credit_spread,
-    Investments,
-    Investment_rates,
-    Portifolio,
-    OverBoughtSold,
-    Options_Returns,
-    Cost_Basis,
-    Ticker_Data,
-    Investor_Information,
-    InvestmentsStrategy
-    
-)
+from .models import *
 from accounts.models import CustomerUser
 from django.utils import timezone
 # from getdata.utils import fetch_data_util
@@ -855,44 +840,128 @@ class oversold_update(UpdateView):
 def subtract_dates(date1, date2):
     return date1 - date2
 
+# @login_required
+# def options_returns(request):
+#     date_today = datetime.now(timezone.utc)
+#     ytd_duration,current_year,first_date = dates_functionality()
+#     ytd_weeks=int(ytd_duration/7)
+#     ytd_bi_weekly=int(ytd_duration/14)
+#     ytd_month=int(ytd_duration/30)
+
+
+#     stockdata=Options_Returns.objects.all()
+#     washdata=Options_Returns.objects.filter(event='Wash')
+#     ReturnsFilters=ReturnsFilter(request.GET,queryset=stockdata)
+#     total_returns_on_options=0
+#     total_returns_on_stocks=0
+#     transactions=0
+#     total_proceeds=0
+#     wash_amount=0
+#     days_to_expiration=0
+#     for amt in stockdata:
+#         total_proceeds += amt.proceeds
+#         transactions += amt.qty
+#         total_returns_on_options += amt.ST_GL 
+#         total_returns_on_stocks += amt.LT_GL
+
+#     total_proceeds = float(total_proceeds)
+#     total_returns_on_options = float(total_returns_on_options)
+#     total_returns_on_stocks = float(total_returns_on_stocks)
+#     net_returns=total_returns_on_options + total_returns_on_stocks
+#     monthly_returns=net_returns/ytd_month
+#     ytd_bi_weekly_returns=net_returns/ytd_bi_weekly
+#     weekly_returns=net_returns/ytd_weeks
+
+#     for amt in washdata:
+#         wash_amount += amt.ST_GL
+#     context = { 
+#         'title': "CODA INVESTMENT PORTAL",
+#         # "data": stockdata,
+#         "data": ReturnsFilters,
+#         "days_to_expiration": days_to_expiration,
+#         "total_proceeds": total_proceeds,
+#         "transactions": transactions,
+#         "options_amount": total_returns_on_options,
+#         "stocks_amount": total_returns_on_stocks,
+#         "wash_amount": wash_amount,
+#         "net_returns": net_returns,
+#         "monthly_returns": monthly_returns,
+#         "bi_weekly_returns": ytd_bi_weekly_returns,
+#         "weekly_returns": weekly_returns,
+#         "duration": ytd_month,
+
+#     }
+#     return render(request, "investing/company_returns.html", context)
+
+
+
 @login_required
-def options_returns(request):
+def options_returns(request,title ='daily_trades'):
+    values, sub_title, pre_sub_title = path_values(request)
     date_today = datetime.now(timezone.utc)
-    ytd_duration,current_year,first_date = dates_functionality()
-    
-    ytd_weeks=int(ytd_duration/7)
-    ytd_bi_weekly=int(ytd_duration/14)
-    ytd_month=int(ytd_duration/30)
+    ytd_duration, current_year, first_date = dates_functionality()
+    ytd_weeks = int(ytd_duration / 7)
+    ytd_bi_weekly = int(ytd_duration / 14)
+    ytd_month = int(ytd_duration / 30)
 
+    total_returns_on_options = 0
+    total_returns_on_stocks = 0
+    transactions = 0
+    total_proceeds = 0
+    wash_amount = 0
+    days_to_expiration = 0
+    total_credit = 0
+    total_debit = 0
+    total_returns = 0
+    opening_balance = 0
+    closing_balance = 0
+    options_returns=0
+    percentage_returns=0
+    date=date_today
+    # Extract the selected date from the request
+    selected_date = request.GET.get('date')
+    print(selected_date)
 
-    stockdata=Options_Returns.objects.all()
-    washdata=Options_Returns.objects.filter(event='Wash')
-    ReturnsFilters=ReturnsFilter(request.GET,queryset=stockdata)
-    total_returns_on_options=0
-    total_returns_on_stocks=0
-    transactions=0
-    total_proceeds=0
-    wash_amount=0
-    days_to_expiration=0
-    for amt in stockdata:
-        total_proceeds += amt.proceeds
-        transactions += amt.qty
-        total_returns_on_options += amt.ST_GL 
-        total_returns_on_stocks += amt.LT_GL
+    if sub_title == 'daily_trades':
+        stockdata = Daily_Trades.objects.all()
+        balances = Returns_Balances.objects.all()
+        ReturnsFilters = ReturnsFilter(request.GET, queryset=stockdata)
+        # balances = Returns_Balances.objects.filter(closing_date=selected_date)
+        balances = Returns_Balances.objects.filter(closing_date='2024-02-29')
+        if balances.exists():
+            single_balance = balances.first()
+            date=single_balance.closing_date
+            opening_balance = float(single_balance.opening)
+            closing_balance = float(single_balance.closing)
+            options_returns = float(single_balance.balances)
+            percentage_returns=float(options_returns/opening_balance)*100
 
+        # print("Balances=====>",date,closing_balance,opening_balance,options_returns,percentage_returns)
+
+    else:
+        washdata = Options_Returns.objects.filter(event='Wash')
+        stockdata = Options_Returns.objects.all()
+        ReturnsFilters = ReturnsFilter(request.GET, queryset=stockdata)
+        for amt in stockdata:
+            total_proceeds += amt.proceeds
+            transactions += amt.qty
+            total_returns_on_options += amt.ST_GL
+            total_returns_on_stocks += amt.LT_GL
+        for amt in washdata:
+            wash_amount += amt.ST_GL
+
+        # Formatting
     total_proceeds = float(total_proceeds)
     total_returns_on_options = float(total_returns_on_options)
     total_returns_on_stocks = float(total_returns_on_stocks)
-    net_returns=total_returns_on_options + total_returns_on_stocks
-    monthly_returns=net_returns/ytd_month
-    ytd_bi_weekly_returns=net_returns/ytd_bi_weekly
-    weekly_returns=net_returns/ytd_weeks
+    net_returns = total_returns_on_options + total_returns_on_stocks
+    monthly_returns = net_returns / ytd_month
+    ytd_bi_weekly_returns = net_returns / ytd_bi_weekly
+    weekly_returns = net_returns / ytd_weeks
 
-    for amt in washdata:
-        wash_amount += amt.ST_GL
-    context = { 
+    context = {
         'title': "CODA INVESTMENT PORTAL",
-        # "data": stockdata,
+        'sub_title': sub_title,
         "data": ReturnsFilters,
         "days_to_expiration": days_to_expiration,
         "total_proceeds": total_proceeds,
@@ -905,9 +974,18 @@ def options_returns(request):
         "bi_weekly_returns": ytd_bi_weekly_returns,
         "weekly_returns": weekly_returns,
         "duration": ytd_month,
-
+        "opening_balance" : opening_balance,
+        "closing_balance" : closing_balance,
+        "options_returns" : options_returns,
+        "percentage_returns" : percentage_returns,
+        # "total_credit": total_credit,
+        # "total_debit": total_debit,
+        # "total_returns": total_returns,
     }
+
     return render(request, "investing/company_returns.html", context)
+
+
 
 @login_required
 def cost_basis(request):

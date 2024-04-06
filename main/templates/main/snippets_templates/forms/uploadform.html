@@ -1,4 +1,4 @@
-<form method="post" enctype="multipart/form-data" action="/getdata/datauploadcsv/">
+<form method="post" enctype="multipart/form-data" action="/getdata/{{instance}}/">
     {%csrf_token%}
     &nbsp <input type="file" id="myfile" name="csv_upload"> <br>
     <button type="submit">upload csv</button>

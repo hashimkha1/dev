@@ -747,16 +747,19 @@ App_Categories = {
     "Finance": [
         {
             "table_name": "Transaction",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Payment Information",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Payment History",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
@@ -764,16 +767,19 @@ App_Categories = {
     "Data": [
         {
             "table_name": "Category",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "SubCategory",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Links",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
@@ -781,16 +787,19 @@ App_Categories = {
     "Management": [
         {
             "table_name": "Task",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Task History",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Other",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
@@ -798,17 +807,20 @@ App_Categories = {
     "Investing": [
         {
             "table_name": "Returns",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
             
         },
         {
             "table_name": "OverBoughtSold",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
-            "table_name": "Other",
+            "table_name": "Daily_Trades",
+            "url": "upload_daily_trades",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }
@@ -816,17 +828,20 @@ App_Categories = {
     "Marketing": [
         {
             "table_name": "Whatsapp_Dev",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
             
         },
         {
             "table_name": "Whatsapp_Group",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         },
         {
             "table_name": "Ads",
+            "url": "",
             "description": "Upload only a CSV File, Check field formats to minimize errors during upload.",
              "sample_file":"https://drive.google.com/file/d/1OHsc5R63uqdp8jkbiPcxDw2goJ2PstIC/view?usp=sharing"
         }

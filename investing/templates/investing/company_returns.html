@@ -13,6 +13,32 @@
                 </div>
               </div>
             </div>
+        
+            {% if sub_title == 'daily_trades' %}
+            <div class="col-md-7" id="bada">
+              <div class="card">
+                <div class="card-body">
+                  <h5><b>{{title}}</b></h5>
+                  <hr/>
+                  <div class="row text-center">
+                    <div class="col-md-3">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Opening Balance</br> <i>$ {{opening_balance|floatformat:2}}</i></a>
+                    </div>
+                    <div class="col-md-3">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Closing Balance</br> <i>$ {{closing_balance|floatformat:2}}</i></a>
+                    </div>
+                    <div class="col-md-3">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Option Returns</br> <i>$ {{options_returns|floatformat:2}}</i></a>
+                    </div>
+                    <div class="col-md-3">
+                      <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Percentage Returns</br> <i> {{percentage_returns|floatformat:2}} %</i></a>
+                    </div>
+                </div>
+                  </b></i>
+                </div>
+              </div>
+            </div>
+            {% else%}
             <div class="col-md-7" id="bada">
               <div class="card">
                 <div class="card-body">
@@ -32,7 +58,6 @@
                       <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Wash Amount</br> <i>$ {{wash_amount}}</i></a>
                     </div>
                 </div>
-                
                   <hr/>
                   <div class="row text-center">
                   <div class="col-md-3">
@@ -47,23 +72,37 @@
                   <div class="col-md-3">
                     <a class="btn btn-primary" href="#"  style="background-color: #4CAF50; border-color: #4CAF50;">Monthly Returns</br> <i>$ {{monthly_returns|floatformat:2}}</i></a>
                   </div>
-
                 </div>
                   </b></i>
                 </div>
               </div>
             </div>
+            {% endif %}
             <div class="col-md-2" id="bada">
               <div class="card">
                 <div class="card-body">
                   <h5><b>PAY DAY</b></h5>
                   <hr/>
                   <i><h6>{{payday}}</h6></i>
-                  <hr/>
                   <div class="col-md-12" id="gi">
                     <p><a href="{% url 'investing:newinvestment' %}" class="btn btn-secondary btn-sm"
-                      >New Investment
+                      >Upload New Data
                   </a></p>
+                  </div>
+                  <hr/>
+                  <div class="col-md-12" id="gi">
+                    <div class="row text-center">
+                      <div class="col-md-6" id="gi">
+                        <p><a href="{% url 'investing:companyreturns' title='option_returns' %}" class="btn btn-secondary btn-sm"
+                          >Overal Returns
+                      </a></p>
+                      </div>
+                      <div class="col-md-6" id="gi">
+                          <p><a href="{% url 'investing:companyreturns' title='daily_trades' %}" class="btn btn-secondary btn-sm"
+                            >Daily Trades
+                        </a></p>
+                        </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -75,24 +114,26 @@
           <table class="table table-striped table-bordered" style="width: 100%">
           <thead class="border-bottom font-weight-bold">
             <tr>
-              <!-- <th>ID</th> -->
               <th>symbol</th>
-              <!-- <th>expiration_date</th> -->
               <th>Option Type</th>
               <th>action</th>
-              <!-- <th>qty</th> -->
               <th>strike_price</th>
+              <th>qty</th>
+              <th>ST_GL/Credit</th>
+              <th>LT_GL/Debit</th>
+              <th>proceeds</th>
+              {% if sub_title == 'daily_trades' %}
+              <!-- <th>stock_price</th> -->
+              <th>Transaction</th>
+              <th>Date</th>
+              <th>Expiry Date</th>
+              {% else %}
+              <th>cost</th>
               <th>open_date</th>
               <th>closed_date</th>
-              <th>cost</th>
-              <th>ST_GL</th>
-              <th>LT_GL</th>
-              <th>proceeds</th>
               <th>Wait Days</th>
               <th>Wash Rule</th>
-              <!-- <th>covered</th> -->
-              <!-- <th>cbm</th> -->
-              <!-- <th>other</th> -->
+              {% endif %}
               <!-- <th>description</th> -->
               <!-- <th>Edit</th> -->
             </tr>
@@ -100,21 +141,27 @@
           <tbody>
             {% for record in data.qs %}
               <tr>
-                <!-- <td>{{record.security_number}}</td> -->
                 <td>{{record.symbol}}</td>
-                <!-- <td>{{record.expiration_date}}</td> -->
                 <td>{{record.action}}</td>
-                <td>{{record.event}}</td>
-                <!-- <td>{{record.qty}}</td> -->
+                <td>{{record.event}}{{record.account_type}}</td>
                 <td>{{record.strike_price}}</td>
+                <td>{{record.qty}}</td>
+                <td>{{record.ST_GL}}{{record.credit}}</td>
+                <td>{{record.LT_GL}}{{record.debit}}</td>
+                <td>{{record.proceeds}}{{record.returns}}</td>
+                {% if sub_title == 'daily_trades' %}
+                <!-- <td>{{record.stock_price}}</td> -->
+                <td>{{record.transaction}}</td>
+                <td>{{record.date}}</td>
+                <td>{{record.expiry}}</td>
+                {% else %}
+                <td>{{record.cost}}</td>
                 <td>{{record.open_date}}</td>
                 <td>{{record.closed_date}}</td>
-                <td>{{record.cost}}</td>
-                <td>{{record.ST_GL}}</td>
-                <td>{{record.LT_GL}}</td>
-                <td>{{record.proceeds}}</td>
                 <td>{{record.wait_time}}</td>
                 <td>{{record.wash_days}}</td>
+                {% endif %}
+                <!-- <td>{{record.closed_date}}{{record.expiry}}</td> -->
                 <!-- <td>{{record.covered}}</td> -->
                 <!-- <td>{{record.cbm}}</td> -->
                 <!-- <td>{{record.other}}</td> -->

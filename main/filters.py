@@ -79,7 +79,7 @@ class ReturnsFilter(django_filters.FilterSet):
     symbol = django_filters.CharFilter(label='Symbol', lookup_expr='icontains')
     action = django_filters.CharFilter(label='Type', lookup_expr='icontains')
     event = django_filters.CharFilter(label='Action', lookup_expr='icontains')
+    date = django_filters.DateFilter(label='Date', field_name='date')
 
     class Meta:
-        model = CustomerUser
-        fields = ['symbol', 'action', 'event']
+        fields = ['symbol', 'action', 'event','date']

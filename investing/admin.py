@@ -1,17 +1,5 @@
 from django.contrib import admin
-from .models import (
-	InvestmentContent,
-	Ticker_Data,
-	credit_spread,
-	ShortPut,
-	covered_calls,
-    Investments,
-    Investment_rates,
-    Investor_Information,
-    Portifolio,
-    OverBoughtSold,
-    InvestmentsStrategy
-)
+from .models import *
 
 # Register your models here.
 admin.site.register(Ticker_Data)
@@ -25,6 +13,10 @@ admin.site.register(Investment_rates)
 admin.site.register(Investor_Information)
 admin.site.register(InvestmentContent)
 admin.site.register(InvestmentsStrategy)
+admin.site.register(Cost_Basis)
+admin.site.register(Daily_Trades)
+admin.site.register(Returns_Balances)
+
 # class InvestmentContentAdmin(admin.ModelAdmin):
 #     list_display = ('title', 'slug', 'description')
 

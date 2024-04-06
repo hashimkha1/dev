@@ -1,5 +1,6 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from decimal import *
 from django.utils import timezone
 from django.db import models
 from datetime import datetime,date
@@ -368,6 +369,45 @@ class InvestmentsStrategy(models.Model):
     
     def __str__(self):
         return f"{self.symbol}-{self.get_type_display()}"
+    
+class Returns_Balances(TimeStampedModel):
+    opening = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
+    closing = models.DecimalField(max_digits=10,decimal_places=2,blank=True,null=True)
+    closing_date = models.DateField(blank=True,null=True)
 
+    def __str__(self):
+        return f"Closing Balance of {self.closing} as of {self.created_at}"
 
- 
+    @property
+    def balances(self):
+        try:
+            net_balance = round(Decimal(self.closing - self.opening), 2)
+        except:
+            net_balance = 0
+        return net_balance
+    
+class Daily_Trades(TimeStampedModel):  
+    symbol = models.CharField(max_length=255,blank=True,null=True)
+    price = models.DecimalField(max_digits=10,decimal_places=2)
+    strike_price = models.DecimalField(max_digits=10,decimal_places=2)
+    action = models.CharField(max_length=255,blank=True,null=True)
+    date = models.DateField(blank=True,null=True)
+    expiry = models.DateField(blank=True,null=True)
+    transaction = models.CharField(max_length=255,blank=True,null=True)
+    account_type = models.CharField(max_length=255,blank=True,null=True)
+    credit = models.DecimalField(max_digits=10,decimal_places=2)
+    debit = models.DecimalField(max_digits=10,decimal_places=2)
+    qty = models.IntegerField(blank=True,null=True)
+    page_number = models.CharField(max_length=255,blank=True,null=True)
+    description = models.TextField(blank=True,null=True)
+
+    def __str__(self):
+        return f"{self.symbol}-{self.date}"
+
+    @property
+    def returns(self):
+        try:
+            raw_returns = round(Decimal(self.credit - self.debit), 2)
+        except:
+            raw_returns = 0
+        return raw_returns
