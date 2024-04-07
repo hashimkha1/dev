@@ -926,8 +926,8 @@ def options_returns(request,title ='daily_trades'):
         stockdata = Daily_Trades.objects.all()
         balances = Returns_Balances.objects.all()
         ReturnsFilters = ReturnsFilter(request.GET, queryset=stockdata)
-        # balances = Returns_Balances.objects.filter(closing_date=selected_date)
-        balances = Returns_Balances.objects.filter(closing_date='2024-02-29')
+        balances = Returns_Balances.objects.filter(closing_date=selected_date)
+        # balances = Returns_Balances.objects.filter(closing_date='2024-02-29')
         if balances.exists():
             single_balance = balances.first()
             date=single_balance.closing_date
