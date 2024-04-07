@@ -1,0 +1,119 @@
+
+{%extends "main/base_templates/new_base.html"%} 
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .custom-form-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<main class="mn-inner">
+    <div class="custom-form-container">
+        <h5 style="color: blue; padding-top: 10px;">Add to Vistors</h5>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="#" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Form Fields -->
+            <div class="form-group row">
+                <label for="inputNo" class="col-sm-2 col-form-label">FIRST NAME.</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="firt_name" required placeholder="Enter Number">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="inputItem" class="col-sm-2 col-form-label">lAST NAME.</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="last_name" required placeholder="Enter Item Name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputDate" class="col-sm-2 col-form-label">Date.</label>
+                <div class="col-sm-10">
+                    <input type="date" class="form-control" id="inputDate" name="date" required placeholder="Select Date">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="inputNo" class="col-sm-2 col-form-label">OFFICE.</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="office" required placeholder="Enter Number">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="inputNo" class="col-sm-2 col-form-label">REASON.</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="reason" required placeholder="Enter Number">
+                </div>
+            </div>
+          
+<div class="form-group row">
+    <label for="inputDateTime" class="col-sm-2 col-form-label">TIME IN</label>
+    <div class="col-sm-10">
+        <input type="datetime-local" class="form-control" id="inputDateTime" name="time_in" required placeholder="Enter Date and Time">
+    </div>
+</div>
+
+           
+<!-- Date Field 
+<div class="form-group row">
+    <label for="inputDate" class="col-sm-2 col-form-label">Date</label>
+    <div class="col-sm-10">
+        <input type="date" class="form-control" id="inputDate" name="date" required placeholder="Select Date">
+    </div>
+</div>
+
+Gender Dropdown
+<div class="form-group row">
+    <label for="inputGender" class="col-sm-2 col-form-label">Gender</label>
+    <div class="col-sm-10">
+        <select class="form-control" id="inputGender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+</div>
+-->
+
+          
+            <!-- Uncomment if message box is required
+            <div class="form-group row">
+                <label for="inputMessage" class="col-sm-2 col-form-label">Message</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="inputMessage" name="message_field" required rows="5" placeholder="Enter Message"></textarea>
+                </div>
+            </div>
+            -->
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-dark">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+{% endblock content %}
+

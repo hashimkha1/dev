@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import  Textarea
-from .models import CustomerUser,Transaction
+from .models import CustomerUser,Transaction,vista
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import  RegexValidator
 import re
@@ -112,35 +112,10 @@ class UserForm(forms.ModelForm):
             user.save()
         return user
 
-# # #==========================CREDENTIAL FORM================================
-# # class CredentialCategoryForm(forms.ModelForm):  
-# #     class Meta:  
-# #         model = CredentialCategory  
-# #         fields = ['department','category', 'slug','description', 'is_active','is_featured']
-# #         widgets = {
-# #             # Use SelectMultiple below
-# #             "category":forms.SelectMultiple(attrs={'class':'form-control', 'category':'category'}),
-# #             "description": Textarea(attrs={"cols": 40, "rows": 2})
-# #             }
-
-# # class CredentialForm(forms.ModelForm):  
-# #     class Meta:  
-# #         model = Credential
-# #         fields = ['category','name', 'added_by','slug','user_types','description','password','link_name','link','is_active','is_featured']
-# #         labels={
-# #                 'link_name':'username/email',
-# #                 'link':'Link/url',
-# #                 'user_types':'Specify Who Can Access this Credential?'
-# #         }
-# #         widgets = {
-# #             # Use SelectMultiple below
-# #             "category":forms.SelectMultiple(attrs={'class':'form-control', 'id':'category'}),
-# #             "description": Textarea(attrs={"cols": 40, "rows": 2})
-# #             }
 
 
-# class LoginForm(forms.Form):
-#     username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-#     password = forms.CharField(
-#         widget=forms.PasswordInput(attrs={"class": "form-control"})
-#     )
+class vForm(forms.ModelForm):  
+     class Meta:  
+         model = vista
+         fields = ['user_id','firt_name','last_name','date','office','reason','time_in']
+

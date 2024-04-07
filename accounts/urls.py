@@ -1,12 +1,18 @@
 from django.urls import path
 from . import views
-# from .views import (
+from .views import (vListView,List,vCreateView,vUpdateView,vDeleteView
                 #    customer_user_list,transaction_create_view,payments ,Transaction_list ,transaction_create               
-                #    )
+                  )
 app_name = 'accounts'
 urlpatterns = [
     #=============================USERS VIEWS=====================================
     path('', views.home, name='home'),
+    path('List', views.vListView, name='List'),
+    path('List', views.List.as_view(), name='lt'),
+    path('Create', views.vCreateView.as_view(), name='Create'),
+    path('update/<int:pk>/', vUpdateView.as_view(), name='update'),
+    path('delete/<int:pk>/', vDeleteView.as_view(), name='delete'),
+    
     # path('join/', views.join, name='join'),
     # path('payments/', views.payments, name='payments'),
     # # #path('changepassword/',PasswordsChangeView.as_view(template_name='accounts/registration/password_Change_Form.html'), name='password_Change_Form'),

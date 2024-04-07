@@ -331,3 +331,12 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+class vista(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    firt_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    date = models.DateField()
+    office = models.CharField(max_length=20)
+    reason = models.TextField(max_length=200)
+    time_in = models.DateTimeField()

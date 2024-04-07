@@ -1,0 +1,389 @@
+==============secret key===========================
+
+
+!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf
+
+
+
+
+======== simple model=============
+class xuser(models.Model):
+    user_id = models.AutoField(primary_key=True)
+    user_name = models.CharField(max_length=30)
+    password = models.CharField(max_length=50)
+
+
+
+
+
+=========== for all views==================
+
+
+
+def xListView(request):
+    xusers = xuser.objects.all()
+    return render(request, "accounts/ListView.html", {"xusers":xusers})
+
+class List(ListView): 
+      model = xuser
+  
+      template_name = 'accounts/ListView.html'
+
+
+class xCreateView(CreateView): 
+      model = xuser
+      form_class = xForm
+      template_name = 'accounts/CreateView.html'
+      success_url = reverse_lazy('accounts:lt')
+      
+      def form_valid(self,form):
+            return super().form_valid(form)
+  
+class xUserUpdateView(UpdateView):
+    model = xuser
+    form_class = xForm  # Assuming you have a form xForm for xuser
+    template_name = 'accounts/updateview.html'
+    success_url = reverse_lazy('accounts:lt')  # URL to redirect after updating
+
+
+class xUserDeleteView(DeleteView):
+    model = xuser
+    template_name = 'accounts/deleteview.html'
+    success_url = reverse_lazy('accounts:lt')  # URL to redirect after deleting
+
+
+
+
+
+============= for form===================
+
+class xForm(forms.ModelForm):  
+     class Meta:  
+         model = xuser
+         fields = ['user_id','user_name','password']
+
+
+==================for urls================
+
+
+ path('', views.home, name='home'),
+    path('List', views.xListView, name='List'),
+    path('Create', views.xCreateView.as_view(), name='Create'),
+    path('List', views.List.as_view(), name='lt'),
+    #path('update/<int:pk>/', xUpdateView.as_view(), name='update'),
+    path('update/<int:pk>/', xUserUpdateView.as_view(), name='update'),
+    path('delete/<int:pk>/', xUserDeleteView.as_view(), name='delete'),
+    
+ =====================views =======================================
+===================list view =================
+
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    .custom-table-container {
+        max-width: 90%;
+        margin: auto;
+        overflow-x: auto;
+    }
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .user-table th, .user-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eaecef;
+    }
+    .user-table th {
+        background-color: #007bff;
+        color: white;
+    }
+    .user-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .user-table tr:hover {
+        background-color: #f1f1f1;
+    }
+    .icon-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .icon-buttons a {
+        color: #007bff; /* Color for icons */
+        text-decoration: none;
+    }
+    .icon-buttons a:hover {
+        color: #0056b3;
+    }
+</style>
+
+<main class="mn-inner">
+    <h5 style="color: #007bff; padding-top: 10px; padding-left: 50px;">User List</h5>
+    <div class="custom-table-container">
+        <!-- Display Messages -->
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+
+        <!-- User Table -->
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>User Name</th>
+                    <th>Password</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for xuser in xusers %}
+                    <tr>
+                        <td>{{ xuser.user_id }}</td>
+                        <td>{{ xuser.user_name }}</td>
+                        <td>{{ xuser.password }}</td>
+                        <td class="icon-buttons">
+                            <a href="{% url 'accounts:update' pk=xuser.pk %}">
+                                <i class="material-icons">edit</i>
+                            </a>
+                            <a href="{% url 'accounts:delete' pk=xuser.pk %}">
+                                <i class="material-icons">delete</i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No users.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+{% endblock content %}
+
+
+==============================crerate view ============================
+
+
+
+{%extends "main/base_templates/new_base.html"%} 
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    .custom-form-container {
+        max-width: 600px;
+        margin: auto;
+        padding: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<main class="mn-inner">
+    <div class="custom-form-container">
+        <h5 style="color: blue; padding-top: 10px;">Add to model</h5>
+
+        <!-- Display Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="POST" action="#" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Form Fields -->
+            <div class="form-group row">
+                <label for="inputNo" class="col-sm-2 col-form-label">USER_NAME.</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="user_name" required placeholder="Enter Number">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="inputItem" class="col-sm-2 col-form-label">PASSWORD</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="inputItem" name="password" required placeholder="Enter Item Name">
+                </div>
+            </div>
+
+           
+<!-- Date Field 
+<div class="form-group row">
+    <label for="inputDate" class="col-sm-2 col-form-label">Date</label>
+    <div class="col-sm-10">
+        <input type="date" class="form-control" id="inputDate" name="date" required placeholder="Select Date">
+    </div>
+</div>
+
+Gender Dropdown
+<div class="form-group row">
+    <label for="inputGender" class="col-sm-2 col-form-label">Gender</label>
+    <div class="col-sm-10">
+        <select class="form-control" id="inputGender" name="gender" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+</div>
+-->
+
+          
+            <!-- Uncomment if message box is required
+            <div class="form-group row">
+                <label for="inputMessage" class="col-sm-2 col-form-label">Message</label>
+                <div class="col-sm-10">
+                    <textarea class="form-control" id="inputMessage" name="message_field" required rows="5" placeholder="Enter Message"></textarea>
+                </div>
+            </div>
+            -->
+
+            <!-- Submit Button -->
+            <div class="form-group row">
+                <div class="col-sm-10">
+                    <button type="submit" class="btn btn-dark">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</main>
+
+{% endblock content %}
+
+
+
+=======================delete view ===============================
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+
+<style>
+    .confirmation-container {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        max-width: 400px;
+        margin: 50px auto;
+        text-align: center;
+    }
+    .confirmation-title {
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        flex-grow: 1;
+        text-decoration: none; /* Removes underline from links */
+    }
+    .confirmation-button {
+        background-color: #007bff; /* Changed to a blue color */
+        color: white;
+    }
+    .confirmation-button:hover {
+        background-color: #0056b3;
+    }
+    .cancel-button {
+        background-color: #6c757d; /* Kept as a neutral grey */
+        color: white;
+    }
+    .cancel-button:hover {
+        background-color: #5a6268;
+        text-decoration: none; /* Specifically remove underline on hover */
+    }
+</style>
+
+<div class="confirmation-container">
+    <h2 class="confirmation-title">Deleting user</h2>
+    <p>Are you sure you want to delete?</p>
+    <div class="button-container">
+        <form method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="button confirmation-button">Delete</button>
+        </form>
+        <a href="{% url 'accounts:lt' %}" class="button cancel-button">Cancel</a>
+    </div>
+</div>
+
+{% endblock %}
+
+
+
+=============================update===========================
+
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    .form-container {
+        background-color: #f8f9fa;
+        border: 1px solid #ddd;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        max-width: 600px;
+        margin: 40px auto;
+    }
+    .form-title {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+    .submit-button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        display: block;
+        width: 100%;
+        transition: background-color 0.3s ease;
+    }
+    .submit-button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="form-container">
+    <h2 class="form-title">Update User</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="submit-button">Save Changes</button>
+    </form>
+</div>
+
+{% endblock %}
