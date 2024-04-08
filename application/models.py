@@ -13,6 +13,24 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 #------------create models here----------------
+class exception_client(models.Model):
+    id = models.AutoField(primary_key=True)
+    date = models.DateField()
+    week = models.IntegerField()
+    year = models.IntegerField()
+    comments = models.TextField(max_length=500)
+    type_id = models.IntegerField()
+    user_id = models.IntegerField()
+    user_rts_id = models.IntegerField()
+    flag = models.BooleanField()
+    pitch_flag = models.BooleanField()
+    late_nights = models.IntegerField()
+    vacation = models.IntegerField()
+
+
+
+
+
 class Balancesheet_categories(models.Model):
     CATEGORY_TYPES = [
         ("assets", 'Asset'),
