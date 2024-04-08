@@ -127,6 +127,40 @@ def fetch_and_insert_data():
     source_conn.close()
     target_conn.close()
 
+# def process_file(csv_file,url):
+# 	if not csv_file.name.endswith(".csv"):
+# 		return url
+# 		# messages.warning(
+# 		# 	request, "The wrong file type was uploaded, it should be a csv file"
+# 		# )
+# 		# return render(request, "getdata/uploaddata.html")
+# 		# return HttpResponseRedirect(request.path_info)
+# 	else:
+# 		file = csv_file.read().decode("ISO-8859-1")
+# 		file_data = file.split("\n")
+# 		csv_data = [line for line in file_data if line.strip() != ""]
+    # Define the date formats to try
+    # date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y"]  # Add more formats as needed
+
+# 	return csv_data,date_formats
+def convert_excel_dates(date_str, expiry_str):
+    # Define the date formats to try
+    date_formats = ["%Y-%m-%d", "%m/%d/%Y", "%d/%m/%Y", "%m/%d/%Y"]
+    
+    # Iterate over the date formats
+    for format in date_formats:
+        try:
+            # Parse the Excel date strings using the current format
+            entry_date = datetime.strptime(date_str, format).strftime("%Y-%m-%d")
+            expiry_date = datetime.strptime(expiry_str, format).strftime("%Y-%m-%d")
+            # Return the formatted dates if parsing succeeds
+            return entry_date, expiry_date
+        except ValueError:
+            pass  # Continue to the next format if parsing fails
+    
+    # Return None for both dates if parsing fails for all formats
+    return None, None
+
 
 def compute_stock_values(stockdata):
     date_today = date.today()

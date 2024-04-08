@@ -68,10 +68,14 @@ class RequirementFilter(django_filters.FilterSet):
         }
     
 class FoodFilter(django_filters.FilterSet):
+    office_location = django_filters.CharFilter(label='Location', lookup_expr='icontains')
+    supplier = django_filters.CharFilter(label='Supplier', lookup_expr='icontains')
+    item = django_filters.CharFilter(label='Item', lookup_expr='icontains')
+
     class Meta:
         model=Food
         # fields='__all__'
-        fields ={'supplier','item'}
+        fields ={'office_location','supplier','item','created_at'}
     
 # ==================================INVESTING MODELS==================================================
 
@@ -79,7 +83,7 @@ class ReturnsFilter(django_filters.FilterSet):
     symbol = django_filters.CharFilter(label='Symbol', lookup_expr='icontains')
     action = django_filters.CharFilter(label='Type', lookup_expr='icontains')
     event = django_filters.CharFilter(label='Action', lookup_expr='icontains')
+    date = django_filters.DateFilter(label='Date', field_name='date')
 
     class Meta:
-        model = CustomerUser
-        fields = ['symbol', 'action', 'event']
+        fields = ['symbol', 'action', 'event','date']

@@ -92,8 +92,8 @@ admin.site.register(PayslipConfig)
 admin.site.register(TrainingLoan)
 admin.site.register(LoanUsers)
 admin.site.register(BalanceSheetCategory),
-admin.site.register(BalanceSheetEntry),
-admin.site.register(BalanceSheetSummary),
+# admin.site.register(BalanceSheetEntry),
+# admin.site.register(BalanceSheetSummary),
 admin.site.register(Food),
 admin.site.register(FoodHistory),
 admin.site.register(Budget),

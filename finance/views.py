@@ -23,7 +23,7 @@ from .models import (
 		Default_Payment_Fees,TrainingLoan,
 		Inflow,Transaction,PayslipConfig,Supplier,Food,FoodHistory,
 		DC48_Inflow,Field_Expense,Budget,
-        BalanceSheetCategory,BalanceSheetEntry,BalanceSheetSummary
+        BalanceSheetCategory
 	)
 from .forms import (LoanForm,TransactionForm,InflowForm,
 					DepartmentFilterForm,FoodHistoryForm,BudgetForm)
@@ -1403,21 +1403,21 @@ class SupplierListView(ListView):
 
 def foodlist(request):
     supplies = Food.objects.all().order_by("-id")
-    food_filters=FoodFilter(request.GET,queryset=supplies)
+    supplies_Fs=FoodFilter(request.GET,queryset=supplies)
 
     total_amt = 0
-    for supply in supplies:
+    for supply in supplies_Fs.qs:
         total_amt = total_amt + supply.total_amount
 
     total_add_amount = 0
-    for supply in supplies:
+    for supply in supplies_Fs.qs:
         total_add_amount = total_add_amount + supply.additional_amount
 
     context={
         "total_add_amount": total_add_amount,
         "total_amt": total_amt,
         "supplies": supplies,
-        "food_filters": food_filters
+        "supplies_Fs": supplies_Fs,
     }
     return render(request,"finance/payments/food.html",context)
 

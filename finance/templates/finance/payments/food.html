@@ -16,56 +16,42 @@
 
 <section id="career text-center">
     <h3 class="title text-center">FOOD/SUPPLIER LIST</h3>
-    <div class="form-row">
-      <div class="col-md-6">
-          <form method="get" class="form-inline">   
-              <div class="form-group mr-2">
-                  <label for="office_location" class="mr-2">Office:</label>
-                  <select name="office_location" id="office_location" class="form-control">
-                      <option value="">All Offices</option>
-                      {% for location in unique_office_locations %}
-                      <option value="{{ location }}" {% if location == selected_office_location %}selected{% endif %}>
-                          {{ location }}
-                      </option>
-                      {% endfor %}
-                  </select>
-              </div>      
-              <button type="submit" class="btn small-button">Search</button>
-          </form>
-      </div>
-
-      <div class="col-md-6">
-          <form method="get" class="form-inline">   
-              <div class="form-group mr-2">
-                  <label for="month" class="mr-2">Select Month:</label>
-                  <select name="month" id="month" class="form-control">
-                      <option value="">Select Month</option>
-                      {% for month_num, month_name in months %}
-                      <option value="{{ month_num }}" {% if month_num|stringformat:"02" == selected_month %}selected{% endif %}>
-                          {{ month_name }}
-                      </option>
-                      {% endfor %}
-                  </select>
-              </div>         
-              <div class="form-group mr-2">
-                  <label for="year" class="mr-2">Select Year:</label>
-                  <select name="year" id="year" class="form-control">
-                      <option value="" {% if not selected_year %}selected{% endif %}>All Years</option>
-                      {% for yr in years %}
-                      <option value="{{ yr }}" {% if yr|stringformat:"04" == selected_year %}selected{% endif %}>
-                          {{ yr }}
-                      </option>
-                      {% endfor %}
-                  </select>
-              </div>      
-              <button type="submit" class="btn small-button">Search</button>
-          </form>
-      </div>
-  </div>
-    
-    
       <div class="row text-center">
-        <div class="col-md-4" id="bada">
+        <div class="col-md-3" id="bada">
+          <div class="card">          
+            <div class="card-body">
+              <h5><b>FILTERS</b></h5>
+              <div class="content-section">
+                <form method="get">
+                  {% csrf_token %}
+                  <fieldset class="form-group">
+                      <legend class="border-bottom mb-4">{{ message }}</legend>
+                      <!-- Render the 'symbol' filter field -->
+                      <div class="form-field">
+                          {{ supplies_Fs.form.office_location.label_tag }}
+                          {{ supplies_Fs.form.office_location }}
+                      </div>
+                      <!-- Render the 'action' filter field -->
+                      <div class="form-field">
+                          {{ supplies_Fs.form.item.label_tag }}
+                          {{ supplies_Fs.form.item }}
+                      </div>
+                      <div class="form-field">
+                          {{ supplies_Fs.form.created_at.label_tag }}
+                          {{ supplies_Fs.form.created_at }}
+                      </div>
+                  </fieldset>
+                  <div class="form-group">
+                      <button class="btn btn-outline-info" type="submit">
+                          Submit
+                      </button>
+                  </div>
+              </form>
+            </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3" id="bada">
           <div class="card">          
             <div class="card-body">
               <h5><b>Total Supplies</b></h5>
@@ -75,39 +61,37 @@
             </div>
           </div>
         </div>
-                    <div class="col-md-4" id="bada">
-                      <div class="card">                  
-                        <div class="card-body">
-                          <h5><b>Additional Supplies</b></h5>
-                          <hr/>
-                          <i><h6>{{total_add_amount}}</h6></i>                      
-                          <hr/>
-                        </div>                    
-                      </div>
-                    </div>
 
+        <div class="col-md-3" id="bada">
+          <div class="card">                  
+            <div class="card-body">
+              <h5><b>Additional Supplies</b></h5>
+              <hr/>
+              <i><h6>{{total_add_amount}}</h6></i>                      
+              <hr/>
+            </div>                    
+          </div>
+        </div>
 
-                    <div class="col-md-4 point_msg" id="bada" data-toggle="tooltip">
-                      <div class="card">
-                          {% if request.path == '/finance/suppliers/' %}
-                              <p><a href="{% url 'finance:newsupplier'%}" class="btn btn-primary btn-sm"
-                              >NEW SUPPLIER
-                            </a></p>
-                            <p><a href="{% url 'finance:supplies'%}" class="btn btn-primary btn-sm"
-                              >GO TO FOOD LIST
-                            </a></p>
-                          {% elif request.path == '/finance/food/' %}
-                            <p><a href="{% url 'finance:newsupplies'%}" class="btn btn-primary btn-sm"
-                              >NEW FOOD ITEM
-                            </a></p>
-                            <p><a href="{% url 'finance:suppliers'%}" class="btn btn-primary btn-sm"
-                              >GO TO SUPPLIERS
-                            </a></p>
-                          {% endif %}
-                      </div>
-                    </div>
-                
-  
+          <div class="col-md-3 point_msg" id="bada" data-toggle="tooltip">
+            <div class="card">
+                {% if request.path == '/finance/suppliers/' %}
+                    <p><a href="{% url 'finance:newsupplier'%}" class="btn btn-primary btn-sm"
+                    >NEW SUPPLIER
+                  </a></p>
+                  <p><a href="{% url 'finance:supplies'%}" class="btn btn-primary btn-sm"
+                    >GO TO FOOD LIST
+                  </a></p>
+                {% elif request.path == '/finance/food/' %}
+                  <p><a href="{% url 'finance:newsupplies'%}" class="btn btn-primary btn-sm"
+                    >NEW FOOD ITEM
+                  </a></p>
+                  <p><a href="{% url 'finance:suppliers'%}" class="btn btn-primary btn-sm"
+                    >GO TO SUPPLIERS
+                  </a></p>
+                {% endif %}
+            </div>
+          </div>
 
     <div class="col-md-12">
         {% if request.path == '/finance/suppliers/' %}
@@ -169,7 +153,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for food in food_filters.qs %}
+            {% for food in supplies_Fs.qs %}
                 <tr>
                     <td>{{ food.supplier }}</td>
                     <td>{{ food.office_location }}</td>

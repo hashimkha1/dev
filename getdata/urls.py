@@ -9,6 +9,7 @@ urlpatterns = [
     path('groups/', views.fetch_whatsapp_groups, name='whatsappgroups'),
     path('index/', views.index, name='data-index'),
     path('upload/', views.upload_csv, name='upload'),
+    path('upload_daily_trades/', views.upload_daily_trades, name='upload_daily_trades'),
     path('dataupload/', views.uploaddata, name='upload-data'),
     path('bigdata/', views.bigdata, name='generate-data'),
     # path('datauploadcsv/', views.upload_csv, name='upload-data'),

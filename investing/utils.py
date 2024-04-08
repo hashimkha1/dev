@@ -226,3 +226,23 @@ risk_ratios = [
         # }
 
 ]
+
+packages = [
+    {
+        "title": "ETL-Alteryx",
+        "description1":"Project Based Training",
+        "description2":"Hands on experience",
+        "description2":"Learn how to create this workflow",
+    },
+    {
+        "title": "Database |SQL or Snowflake",
+        "description1":"Project Based Training",
+        "description2":"Review of complex store procedures",
+    },
+    {
+        "title": "Reporting",
+        "description1":"Project Based Training",
+        "description2":"Learn how to create High level Detail Reports",
+    },
+
+]
