@@ -2,11 +2,16 @@ from django import forms
 from django.forms import  Textarea
 from .models import CustomerUser,CredentialCategory,Credential
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import  RegexValidator
+from django.core.validators import  RegexValidator,validate_email
+from django.core.exceptions import ValidationError
 import re
 # from django.db import transaction
 
 phone_regex = r'^\d{10}$'
+class AutocompleteEmailField(forms.EmailField):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget.attrs['autocomplete'] = 'email'
 
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
@@ -14,7 +19,7 @@ class UserForm(forms.ModelForm):
     phone = forms.CharField(label="Phone",max_length=10,validators=[RegexValidator(
                 regex=phone_regex,
                 message="Phone number must be 10 digits (e.g., 5551234567).",),],)
-    email = forms.EmailField()
+    email = AutocompleteEmailField()
 
     class Meta:
         model = CustomerUser
@@ -77,6 +82,14 @@ class UserForm(forms.ModelForm):
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords don't match")
         return password2
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email:
+            try:
+                validate_email(email)
+            except ValidationError:
+                raise forms.ValidationError("Invalid email address")
+        return email    
 
     def clean(self):        
         cleaned_data = super().clean()

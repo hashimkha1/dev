@@ -39,7 +39,7 @@
             <p class="me-lg-5 remaining-text" id="remainingText{{ forloop.counter }}" style="display: none;">
               {{ service.description|safe }}
             </p>
-            <button class="reead-more-button" data-index="{{ forloop.counter }}">
+            <button class="reead-more-button"aria-label="Read more on for services" data-index="{{ forloop.counter }}" tabindex="0">
               Read more
             </button>
             
@@ -50,8 +50,8 @@
             <a class="btn btn-primary read-more-button" href="{% url 'main:display_service' slug=service.slug %}">Proceed</a>
           {% endif %}
           {% if request.user.is_superuser or  request.user.is_staff %}
-            <a class="btn btn-primary read-more-button" onclick="toggleContent('more-content', '{{service.description}}','{{forloop.counter}}') ">Long</a>
-            <a class="btn btn-primary read-more-button" onclick="toggleContent('less-content', '{{service.description}}', '{{forloop.counter}}')">Short</a>
+            <a class="btn btn-primary read-more-button" onclick="toggleContent('more-content', '{{service.description}}','{{forloop.counter}}') " tabindex="0">Long</a>
+            <a class="btn btn-primary read-more-button" onclick="toggleContent('less-content', '{{service.description}}', '{{forloop.counter}}')" tabindex="0">Short</a>
           {% endif %}
         </div>
         <div class="col-md-6">
@@ -59,9 +59,11 @@
             {% for image in images %}
               {% if image.name == service.slug and image.image_url != 'None' %}
                 src="{{ googledriveurl }}{{ image.image_url }}"
+                alt="Services Image"
                 onerror="handleImageError(this, '{{service.slug}}')"
               {% else %}
               src="{% static 'main/img/home/' %}{{service.slug}}.jpeg"
+              alt="Services Image"
               onerror="handleImageError(this, '{{service.slug}}'); this.onerror='null';"
 
               {% endif %}

@@ -1,11 +1,12 @@
 {%extends "main/base_templates/new_base.html"%} 
+{% block title %}investment{% endblock %}
 {% load static %}
 {% block content %}
 <div class="banner-div">
   <img class="banner-div" style=" position: absolute; width: 100%;height: 100%;" src="{% static 'main/image/invest3.jpg' %}" alt="Investment Image">
   <div class="container-md" >
     <h2>Investment</h2>
-    <h1>Start Your Investment With US</h1>
+    <p style="color: white;font-size: 90px;text-shadow: 0px 0px 22px black;">Start Your Investment With US</p>
   </div>
 </div>
 <div class="stripdiv">
@@ -30,7 +31,7 @@
           <p class="me-lg-5" id="remainingText" style="display: none;">
             {{ generated_content|safe }}
           </p>
-          <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton">
+          <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton" tabindex="0">
             Read more
           </a>
         </div>
@@ -38,7 +39,7 @@
       <div class="col-md-6">
         <img class="img-fluid ps-lg-5" 
           src="{% static 'main/img/background/home2.jpg' %}"
-          alt="">
+          alt="EXECUTIVE SUMMARY Image">
       </div>
     </div>
   </div> 
@@ -69,7 +70,7 @@
               
               src="{% static 'main/image/about.jpg' %}"
                 
-              alt="">
+              alt="Market Opportunity Image"role="presentation">
           </div>
       </div>
   </div> 

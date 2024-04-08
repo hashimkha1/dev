@@ -11,7 +11,7 @@
 
   <div class="container-md" >
       <h2 id="truncatedTitle">{{title }}</h2>
-    <p style="color: white;font-size: 90px;text-shadow: 0px 0px 22px black;" >{{sub_titles}}</p>
+    <p>{{sub_titles}}</p>
   </div>
 </div>
 <div class="stripdiv">
@@ -43,7 +43,7 @@
                 {{ description|safe }}
               </p>
             {%endif%}
-            <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton">
+            <a onclick="toggleReadMore()" class="btn btn-primary" id="readMoreButton" tabindex="0">
               Read more
             </a>
           </div>
@@ -53,7 +53,7 @@
       {% if title == "Training & Professional Support" %}
       <div class="videocontainers">
         <div class="videocontainer">
-          <iframe src="https://drive.google.com/file/d/1rPpzS-_ag2m28korWkWrTemJQbKJ_5uX/preview" alt="about coda" width="100%" height="auto"  controls crossorigin playsinline class="plyr"></iframe>
+          <iframe src="https://drive.google.com/file/d/1rPpzS-_ag2m28korWkWrTemJQbKJ_5uX/preview" alt="about coda"title="video player" width="100%" height="auto"  controls crossorigin playsinline class="plyr"></iframe>
         </div>
       </div> 
       {%else%}

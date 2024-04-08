@@ -175,6 +175,7 @@ body {
   text-transform: uppercase;
   font-size: 52px;
   font-weight: 800;
+  min-width: 100px;
 }
 
 .banner-div h1 {
