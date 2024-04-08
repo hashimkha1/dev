@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
 from accounts.models import Transaction,Payment_History,Payment_Information
 from coda_project import settings
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.db.models import Q
 from django.shortcuts import get_object_or_404, redirect, render
@@ -16,8 +17,50 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from django.urls import reverse,reverse_lazy
+from.models import exception_client,Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from .forms import xForm
 import logging
+from main.filters import UserFilter
+
+
+
+
+def clientListView(request):
+    exception_clients = exception_client.objects.all()
+    return render(request, "application/ListView.html", {"exception_clients":exception_clients})
+
+class clientList(ListView): 
+      model = exception_client
+  
+      template_name = 'application/ListView.html'
+
+
+class clientCreateView(CreateView): 
+      model = exception_client
+      form_class = xForm
+      template_name = 'application/CreateView.html'
+      success_url = reverse_lazy('application:lt')
+      
+      def form_valid(self,form):
+            return super().form_valid(form)
+  
+class clientUpdateView(UpdateView):
+    model = exception_client
+    form_class = xForm  # Assuming you have a form xForm for xuser
+    template_name = 'application/updateview.html'
+    success_url = reverse_lazy('application:lt')  # URL to redirect after updating
+
+
+class clientDeleteView(DeleteView):
+    model = exception_client
+    template_name = 'application/deleteview.html'
+    success_url = reverse_lazy('application:lt')  # URL to redirect after deleting
+
+
+
+
+
 
 
 
