@@ -176,6 +176,11 @@ body {
   font-size: 52px;
   font-weight: 800;
 }
+.banner-div p {
+  font-size: 90px;
+  color: white;
+  text-shadow: 0px 0px 22px black;
+}
 
 .banner-div h1 {
   font-size: 90px;
