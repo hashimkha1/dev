@@ -338,6 +338,9 @@ body {
   .banner-div h1 {
     font-size: 56px;
   }
+  .banner-div p {
+    font-size: 56px;
+  }
 
   .strip-div p {
     width: 100%;
@@ -368,6 +371,9 @@ body {
 
 @media (max-width: 768px) {
   .banner-div h1 {
+    font-size: 52px;
+  }
+  .banner-div p {
     font-size: 52px;
   }
 
@@ -402,6 +408,9 @@ body {
   }
 
   .banner-div h1 {
+    font-size: 36px;
+  }
+  .banner-div p {
     font-size: 36px;
   }
 

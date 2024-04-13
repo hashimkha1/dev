@@ -271,6 +271,9 @@ body {
   .banner-div h1 {
     margin-bottom: 2rem; 
   }
+  .banner-div p {
+    margin-bottom: 2rem; 
+  }
 
   .banner-div div {
     bottom: 1rem; 
@@ -669,7 +672,7 @@ body {
     font-size: 40px;
   }
 
-  .banner-div h1 {
+  .banner-div p {
     font-size: 56px;
   }
 
@@ -704,6 +707,9 @@ body {
   .banner-div h1 {
     font-size: 52px;
   }
+  .banner-div p {
+    font-size: 52px;
+  }
 
   .services-div .row {
     margin-top: 5rem;
@@ -736,6 +742,9 @@ body {
   }
 
   .banner-div h1 {
+    font-size: 36px;
+  }
+  .banner-div p {
     font-size: 36px;
   }
 
