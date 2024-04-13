@@ -472,7 +472,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def form_valid(self, form):
         # form.instance.username=self.request.user
         # if request.user.is_authenticated:
-        if self.request.user.is_superuser:  # or self.request.user.is_authenticated :
+        if self.request.user.is_superuser or self.request.user.is_admin :
             return super().form_valid(form)
         #  elif self.request.user.is_authenticated:
         #      return super().form_valid(form)
@@ -482,7 +482,7 @@ class SuperuserUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         user = self.get_object()
         # if self.request.user == client.username:
         #     return True
-        if self.request.user.is_superuser:  # or self.request.user == user.username:
+        if self.request.user.is_superuser or self.request.user.is_admin :  # or self.request.user == user.username:
             return True
         return False
 
