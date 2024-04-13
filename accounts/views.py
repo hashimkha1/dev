@@ -126,9 +126,9 @@ def login_view(request):
     if request.method == "POST":
         if form.is_valid():
             request.session["siteurl"] = settings.SITEURL
-            username = form.cleaned_data.get("username")
-            password = form.cleaned_data.get("password")
-            account = authenticate(username=username, password=password)
+            username_or_email = form.cleaned_data.get("enter_your_username_or_email")
+            enter_your_password = form.cleaned_data.get("enter_your_password")
+            account = authenticate(username=username_or_email, password=enter_your_password)
             create_profile()
             # If Category is Staff/employee
             if account is not None and account.category == CategoryChoices.Coda_Staff_Member:
