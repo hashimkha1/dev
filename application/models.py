@@ -79,7 +79,16 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
+        return f"{self.category.name}:{self.amount}"
+
+class CompanyAssetdata(models.Model):
+    name = models.CharField(max_length=225)
+    category = models.CharField(max_length=225, null=True)
+    quantity = models.PositiveIntegerField()
+    unit_value = models.DecimalField(max_digits=9999, decimal_places=2)
+    serial_number = models.CharField(max_length=50, null=True)
+    purchase_date = models.DateTimeField()
+    description = models.TextField()           
   
 
 
