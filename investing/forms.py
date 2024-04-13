@@ -71,7 +71,7 @@ class PortfolioForm(forms.ModelForm):
             self.fields['symbol'].widget.attrs['readonly'] = False
             self.fields['industry'].widget.attrs['readonly'] = False
             self.fields['condition'].widget.attrs['readonly'] = False
-            self.fields['strategy'].widget.attrs['readonly'] = False
+            # self.fields['strategy'].widget.attrs['readonly'] = False
             
             condition_CHOICES = [
                 ('neutral','neutral'),

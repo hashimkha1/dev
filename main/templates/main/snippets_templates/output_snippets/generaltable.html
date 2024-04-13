@@ -37,6 +37,13 @@
         More 
         </a>
     </td>
+    <td>
+        <a class=" article-title target="_blank" 
+        data-toggle="tooltip" title="{{ row.comment }}"
+        href="https://finance.yahoo.com/chart/{{row.symbol}}?">
+        Chart 
+        </a>
+    </td>
     <td><a class="article-title" href="{% url 'investing:portfolioupdate' row.symbol %}?model={{subtitle}}">Edit</a></td>
     <!-- {% if subtitle == 'shortputdata' %}
     <td><a class="article-title" href="{% url 'investing:shortputupdate' row.id %}">Edit</a></td>
