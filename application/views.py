@@ -16,8 +16,10 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,InvestmentStrat
 import logging
+from django.urls import reverse,reverse_lazy
+from .forms import investForm
 
 
 
@@ -65,6 +67,46 @@ def balancesheet_list(request):
         logger.erro(f"error fetching balance sheet data: {e}")  
         context = {'error_message': 'An error occured while fetching balance_sheet data'} 
 
-    return render(request,'application/training/balancelist.html',context)          
+    return render(request,'application/training/balancelist.html',context)  
+
+
+def investList(request):
+    investment_strats = InvestmentStrat.objects.all()
+    return render(request, "application/ListView.html", {"investment_strats":investment_strats})
+
+class List(ListView): 
+      model = InvestmentStrat
+  
+      template_name = 'application/ListView.html'
+
+
+class investCreat(CreateView): 
+      model = InvestmentStrat
+      form_class = investForm
+      template_name = 'application/Creat.html'
+      success_url = reverse_lazy('application:lt')
+      
+      def form_valid(self,form):
+            return super().form_valid(form)
+
+  
+class investUp(UpdateView):
+    model = InvestmentStrat
+    form_class = investForm  # Assuming you have a form xForm for xuser
+    template_name = 'application/updateview.html'
+    success_url = reverse_lazy('application:lt')  # URL to redirect after updating
+
+
+class investDel(DeleteView):
+    model = InvestmentStrat
+    template_name = 'application/deleteview.html'
+    success_url = reverse_lazy('application:lt')  # URL to redirect after deleting
+
+
+class investDet(DetailView):
+    model = InvestmentStrat
+    template_name = 'application/investmentstrat_detail.html'
+    context_object_name = 'investment_strats'
+
 
              

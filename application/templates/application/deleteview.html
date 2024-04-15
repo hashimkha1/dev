@@ -1,0 +1,63 @@
+
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+<style>
+    .confirmation-container {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        max-width: 400px;
+        margin: 50px auto;
+        text-align: center;
+    }
+    .confirmation-title {
+        font-size: 22px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        flex-grow: 1;
+        text-decoration: none; /* Removes underline from links */
+    }
+    .confirmation-button {
+        background-color: #007bff; /* Changed to a blue color */
+        color: white;
+    }
+    .confirmation-button:hover {
+        background-color: #0056b3;
+    }
+    .cancel-button {
+        background-color: #6c757d; /* Kept as a neutral grey */
+        color: white;
+    }
+    .cancel-button:hover {
+        background-color: #5a6268;
+        text-decoration: none; /* Specifically remove underline on hover */
+    }
+</style>
+<div class="confirmation-container">
+    <h2 class="confirmation-title">Deleting user</h2>
+    <p>Are you sure you want to delete?</p>
+    <div class="button-container">
+        <form method="post" style="margin: 0;">
+            {% csrf_token %}
+            <button type="submit" class="button confirmation-button">Delete</button>
+        </form>
+        <a href="{% url 'application:lt' %}" class="button cancel-button">Cancel</a>
+    </div>
+</div>
+
+{% endblock %}

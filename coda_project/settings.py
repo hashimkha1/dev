@@ -8,7 +8,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # print(BASE_DIR)
 # SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = ('!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf')
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
@@ -127,6 +127,8 @@ def dba_values():
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')
         # password = os.environ.get('POSTGRESSPASS') 
+
+
         
     return host,dbname,user,password  
 
@@ -149,45 +151,18 @@ host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #h
 #         "HOST": host
 #     }
 # }
-'''=========== Heroku DB ================'''
+'''=========== LOCAL DB ================'''
 DATABASES = {
     'default': {
-        "ENGINE": 'django.db.backends.postgresql',
-        "NAME": 'd8liqmn44tm61v',
-        "USER": 'ylzxqlnsngttgn',
-        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
-        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'codex', 
+        'USER': 'postgres', 
+        'PASSWORD': '3osco',  
+        'HOST': 'localhost', 
+        'PORT': '5432', 
     }
 }
 
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES["default"].update(db_from_env)
-
-import sys
-if 'test' in sys.argv:
-    DATABASES['default'] = {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'coda_analytics'
-    }
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
-]
-
-PASSWORD_HASHERS = [
-    "django.contrib.auth.hashers.MD5PasswordHasher",
-]
 
 # Internationalization
 

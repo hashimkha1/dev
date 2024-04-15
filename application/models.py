@@ -79,8 +79,42 @@ class Balancesheet_entry(models.Model):
         verbose_name_plural='Balance Sheet Entries'
 
     def __str__(self):
-        return f"{self.category.name}:{self.amount}"   
-  
+        return f"{self.category.name}:{self.amount}"  
+
+
+
+
+class InvestmentStrat(models.Model):
+    symbol = models.AutoField(primary_key=True)
+    action = models.CharField(max_length=50)
+    expiry = models.DateField()
+   
+    strike_price = models.DecimalField(max_digits=10, decimal_places=2)
+    mid_price = models.DecimalField(max_digits=10, decimal_places=2)
+    ask_price = models.DecimalField(max_digits=10, decimal_places=2)
+    implied_volatility_rank = models.DecimalField(max_digits=5, decimal_places=2)  # Assuming it should be a decimal
+    earnings_date = models.DateField(null=True, blank=True)  # Nullable if not always applicable
+    earning_flag = models.BooleanField(default=True)  # Default provided
+    stock_price = models.DecimalField(max_digits=10, decimal_places=2)  # Assuming it should be a decimal
+    raw_return = models.DecimalField(max_digits=10, decimal_places=2)  # Assuming it should be a decimal
+    annualized_return = models.DecimalField(max_digits=10, decimal_places=2)  # Assuming it should be a decimal
+    on_date = models.DateField()
+    comment = models.TextField(max_length=200, blank=True)  # Optional field
+    is_active = models.BooleanField(default=True)  # Default provided
+    is_featured = models.BooleanField(default=False)  # Default provided
+    
+    def __str__(self):
+        return f"{self.symbol} - {self.action}"
+    
+    @property
+    def days_to_expiry(self):
+        # This property will calculate the days to expiry dynamically.
+        # You'll need to import datetime or date from datetime module
+        # to use in the calculation.
+        if self.expiry and self.on_date:
+            return (self.expiry - self.on_date).days
+        return None
+
 
 
 

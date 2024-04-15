@@ -1,0 +1,28 @@
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+
+<main class="mn-inner">
+    <h2>Investment Strategy Detail</h2>
+    <div class="detail-container">
+        <h3>{{ investmentstrat.symbol }}</h3>
+        <p><strong>Action:</strong> {{ investmentstrat.action }}</p>
+        <p><strong>Expiry Date:</strong> {{ investmentstrat.expiry|date:"Y-m-d" }}</p>
+        <p><strong>Strike Price:</strong> {{ investmentstrat.strike_price }}</p>
+        <p><strong>Mid Price:</strong> {{ investmentstrat.mid_price }}</p>
+        <p><strong>Ask Price:</strong> {{ investmentstrat.ask_price }}</p>
+        <p><strong>Implied Volatility Rank:</strong> {{ investmentstrat.implied_volatility_rank }}</p>
+        <p><strong>Earnings Date:</strong> {{ investmentstrat.earnings_date|date:"Y-m-d" }}</p>
+        <p><strong>Earning Flag:</strong> {{ investmentstrat.earning_flag }}</p>
+        <p><strong>Stock Price:</strong> {{ investmentstrat.stock_price }}</p>
+        <p><strong>Raw Return:</strong> {{ investmentstrat.raw_return }}</p>
+        <p><strong>Annualized Return:</strong> {{ investmentstrat.annualized_return }}</p>
+        <p><strong>On Date:</strong> {{ investmentstrat.on_date|date:"Y-m-d" }}</p>
+        <p><strong>Comment:</strong> {{ investmentstrat.comment }}</p>
+        <p><strong>Is Active:</strong> {{ investmentstrat.is_active }}</p>
+        <p><strong>Is Featured:</strong> {{ investmentstrat.is_featured }}</p>
+        <a href="{% url 'application:update' pk=investmentstrat.pk %}">Edit</a> |
+        <a href="{% url 'application:delete' pk=investmentstrat.pk %}">Delete</a>
+    </div>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,134 @@
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<style>
+    body {
+        font-family: Arial, sans-serif; /* Ensures font consistency */
+        background-color: #f4f7f6; /* Soft background color */
+    }
+    .custom-table-container {
+        max-width: 95%;
+        margin: 40px auto;
+        overflow-x: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .user-table th, .user-table td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 2px solid #eaecef;
+    }
+    .user-table th {
+        background-color: #007bff; /* Keeps the header color */
+        color: white;
+        font-size: 16px;
+    }
+    .user-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .user-table tr:hover {
+        background-color: #f1f1f1; /* Subtle hover effect */
+    }
+    .icon-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+    .icon-buttons a {
+        color: #007bff; /* Blue icons */
+        font-size: 24px; /* Larger icons */
+    }
+    .icon-buttons a:hover {
+        color: #0056b3; /* Darker blue on hover */
+    }
+    h5 {
+        text-align: center;
+        color: #007bff; /* Header color matching the table headers */
+        margin-bottom: 20px;
+    }
+</style>
+
+<main class="mn-inner">
+    <h5>Investment Strategy List</h5>
+    <div class="custom-table-container">
+        <!-- Display Messages -->
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+
+        <!-- Investment Strategy Table -->
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th>Symbol</th>
+                    <th>Action</th>
+                    <th>Expiry</th>
+                    <th>Strike Price</th>
+                    <th>Mid Price</th>
+                    <th>Ask Price</th>
+                    <th>Implied Volatility Rank</th>
+                    <th>Earnings Date</th>
+                    <th>Earning Flag</th>
+                    <th>Stock Price</th>
+                    <th>Raw Return</th>
+                    <th>Annualized Return</th>
+                    <th>On Date</th>
+                    <th>Comment</th>
+                    <th>Is Active</th>
+                    <th>Is Featured</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for InvestmentStrat in investment_strats %}
+                    <tr>
+                        <td>{{ InvestmentStrat.symbol }}</td>
+                        <td>{{ InvestmentStrat.action }}</td>
+                        <td>{{ InvestmentStrat.expiry }}</td>
+                        <td>{{ InvestmentStrat.strike_price }}</td>
+                        <td>{{ InvestmentStrat.mid_price }}</td>
+                        <td>{{ InvestmentStrat.ask_price }}</td>
+                        <td>{{ InvestmentStrat.implied_volatility_rank }}</td>
+                        <td>{{ InvestmentStrat.earnings_date }}</td>
+                        <td>{{ InvestmentStrat.earning_flag }}</td>
+                        <td>{{ InvestmentStrat.stock_price }}</td>
+                        <td>{{ InvestmentStrat.raw_return }}</td>
+                        <td>{{ InvestmentStrat.annualized_return }}</td>
+                        <td>{{ InvestmentStrat.on_date }}</td>
+                        <td>{{ InvestmentStrat.comment }}</td>
+                        <td>{{ InvestmentStrat.is_active }}</td>
+                        <td>{{ InvestmentStrat.is_featured }}</td>
+                        <td class="icon-buttons">
+                            <a href="{% url 'application:update' pk=InvestmentStrat.pk %}">
+                                <i class="material-icons">edit</i>
+                            </a>
+                            <a href="{% url 'application:delete' pk=InvestmentStrat.pk %}">
+                                <i class="material-icons">delete</i>
+                            </a>       
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="17">No investment strategies found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,54 @@
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    body {
+        background-color: #f4f7f6;  /* Light grey background */
+        font-family: Arial, sans-serif;
+    }
+    .custom-form-container {
+        max-width: 600px;
+        margin: 50px auto;  /* Increased top margin for better visual separation */
+        padding: 25px;
+        background: #ffffff;  /* White background for the form */
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;  /* Rounded corners */
+    }
+    .custom-form-container h5 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+    .custom-form-container form {
+        display: flex;
+        flex-direction: column;
+    }
+    .custom-form-container .btn {
+        width: auto;
+        padding: 10px 30px;
+        margin-top: 20px;
+        color: #fff;
+        background-color: #007bff;  /* Bootstrap primary color */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    .custom-form-container .btn:hover {
+        background-color: #0056b3;  /* Darken button on hover */
+    }
+</style>
+
+<main class="mn-inner">
+    <div class="custom-form-container">
+        <h5>Create Investment Strategy</h5>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+</main>
+
+{% endblock content %}
