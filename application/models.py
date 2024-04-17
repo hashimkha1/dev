@@ -114,6 +114,18 @@ class InvestmentStrat(models.Model):
         if self.expiry and self.on_date:
             return (self.expiry - self.on_date).days
         return None
+    
+from django.db import models
+
+class CompanyAsset_Data(models.Model):
+    name = models.CharField(max_length=225)
+    category = models.CharField(max_length=225, null=True, blank=True)
+    quantity = models.PositiveIntegerField()
+    unit_value = models.DecimalField(max_digits=10, decimal_places=2)
+    serial_number = models.CharField(max_length=50, null=True, blank=True)
+    purchase_date = models.DateTimeField()
+    description = models.TextField()
+
 
 
 
