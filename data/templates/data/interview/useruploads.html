@@ -1,66 +1,47 @@
-{%extends "main/base_templates/analysis_index.html"%} {% load custom_tags %} {% load mathfilters %} {% block content %}
+{% extends "main/base_templates/analysis_index.html" %}
+{% load custom_tags %}
+{% load mathfilters %}
 
+{% block content %}
 <section id="career">
   <div class="career text-center">
-
-<section id="data_training">
-<div class="data_training text-center">
-        <h3 class="title">WELCOME BACK {{user.first_name|upper }}</h3>
+    <section id="data_training">
+      <div class="data_training text-center">
+        <h3 class="title">WELCOME BACK {{ user.first_name|upper }}</h3>
         <p class="p text-center">Keep Working Hard!</p>
-        <a
-        class="btn btn-secondary btn-md mt-1 mb-1"
-        href="#"
-        >
-        Reupload Your Work? </a
-        >
-</div> 
-</section>
+        <a class="btn btn-secondary btn-md mt-1 mb-1" href="{% url 'data:start_training' slug='interview' %}">Reupload Your Work?</a>
+      </div>
+    </section>
 
-<section id="career">
-  <div class="data_training text-center">
-    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-    <p class="p text-center"> </p>
-    <!-- <p class="gi">
-      This is requirements that need to be worked on and they will be assigned to different developers. Kindly restrict yourself with your assigned requirements.
-  </p> -->
-    {% if useruploads%}
-    <div class="row text-center">
-      {% for useruploads in  useruploads  %}
-        <div class="col-md-6" id="gi">
+    <section id="career">
+      <div class="data_training text-center">
+        <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+        <p class="p text-center"> </p>
+        {% if useruploads %}
+        <div class="row text-center">
+          {% for upload in useruploads %}
+          <div class="col-md-6" id="gi">
             <div class="card">
               <!-- <img src="\media\home\project2.jpg" class="card-img-top">--->
-                <div class="card-body">
-                  <b> Category: {{useruploads.category}} | Question Type: {{useruploads.question_type}}</b>
-                    <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
-                    <p class="gi">
-                      {{ useruploads.dynamic_fields|format_dynamic_fields|safe }}
-                    </p>
-                    <hr/>
-                    <a class="btn btn-primary" href="{% url 'data:question-detail' useruploads.question_type %}?source=userupllad" target="__blank">Edit</a>
-                    {%comment%}<div class="row">
-                      {% if useruploads.doc_url is none %}
-                      <div class="col-md-12">
-                        <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' useruploads.id %}">EXAMINE</a></p>
-                      </div>
-                      {% else %}
-                      <div class="col-md-6">
-                        <p> <a class="article-title target="_blank" href="{% url 'management:RequirementDetail' useruploads.id %}">EXAMINE</a></p>
-                      </div>
-                      <div class="col-md-6">
-                        <p> <a class="article-title target="_blank" href="{{useruploads.doc_url|default_if_none:'#'}}">WIREFRAME</a></p>
-                      </div>
-                      {% endif %}
-                    </div> {% endcomment %}
-                </div>
+              <div class="card-body">
+                <b> Category: {{ upload.category }} | Question Type: {{ upload.question_type }}</b>
+                <hr style="height:1px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+                <p class="gi">
+                  {{ upload.dynamic_fields|format_dynamic_fields|safe }}
+                </p>
+                <hr/>
+                <a class="btn btn-primary" href="{% url 'data:question-detail' upload.question_type %}?source=userupload" target="_blank">Edit</a>
+                <!-- Adjusted the target attribute value -->
               </div>
-           </div>
-          {%endfor%}
-    </div><br>
-    <br>
-    <br>
-    {%else%}
-    <p>No any record</p>
-    {%endif%}
-</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div><br><br><br>
+        {% else %}
+        <p>No records found</p>
+        {% endif %}
+      </div>
+    </section>
+  </div>
 </section>
 {% endblock content %}

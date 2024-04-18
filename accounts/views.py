@@ -733,9 +733,10 @@ def Employeelist(request):
     employee_subcategories,active_employees=employees()
     context={
         "employee_subcategories":employee_subcategories,
-        "active_employees":active_employees,
+        "active_employees":active_employees
     }
     return render(request, 'accounts/employees/employeelist.html', context)
+
 # ================================CLIENT SECTION================================
 def clientlist(request):
     clients = {

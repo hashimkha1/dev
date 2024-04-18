@@ -26,8 +26,12 @@
                         </div>
                         <div class="member-info">
                           <a href="#" class="member-link">
-                            <h3 class="display-6" style="font-size: 18px;">{{ member.user.first_name }}, {{ member.user.last_name }}</h3>
-                            <h5  style="font-size: 18px;">{{ member.position }}</h5>
+                            <h3 class="display-6" style="font-size: 18px;">{{ member.user.first_name|capfirst }}, {{ member.user.last_name|capfirst }}</h3>
+                            <h5  style="font-size: 18px;">{{ member.position }}
+                              {% if request.user.is_admin or request.user.is_superuser or request.user.is_staff %}
+                              {{ member.total_points }}
+                              {% endif %}
+                            </h5>
                           </a>
                           <div class="responsive">
                             <p class="description" id="description{{ forloop.counter }}">

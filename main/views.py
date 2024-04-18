@@ -659,6 +659,7 @@ def generate_openai_description(user_profile):
     response=generate_chatbot_response(user_message)
     return response.strip()
 
+
 def team(request,title):
     path_list, sub_title, pre_sub_title = path_values(request)
     if sub_title != 'client_profiles':
@@ -692,7 +693,8 @@ def team(request,title):
         #from clientassesment model(takeing latest totalpoints for that user)
         employee_clientassesment = ClientAssessment.objects.filter(email=OuterRef('user__email')).order_by('-rating_date')[:1]
         
-        all_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
+        # all_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True, user__category=2).annotate(
+        all_member = UserProfile.objects.filter(user__is_active=True, user__is_staff=True).annotate(
             
             taskhistory_points=Coalesce(employee_taskhistory_subquery, Value(0)),
             requirement_points=Coalesce(employee_requiremet_subquery, Value(0)),
@@ -702,7 +704,8 @@ def team(request,title):
         
         ).order_by("user__date_joined")
 
-        all_staff_member = all_member.exclude(Q(user__sub_category=2) |Q(user__sub_category=6)|Q(user__username='c_maghas'))
+
+        all_staff_member = all_member.exclude(Q(user__sub_category=2) |Q(user__sub_category=0)|Q(user__username='c_maghas'))
         all_staff_contractor = all_member.filter(user__sub_category=2)
         
         # all_staff_member.values_list('user__username','user__email', 'taskhistory_points', 'requirement_points', 'training_points', 'clientassesment_points', 'total_points')
@@ -757,7 +760,7 @@ def team(request,title):
         'Elite Team': list(elite_team_member),
         'Lead Team': lead_team,
         'Support Team': list(support_team),
-        # 'Senior Analysts': senior_analysts,
+        'Senior Analysts': senior_analysts,
         }
         user_group = team_members
         heading = "THE BEST TEAM IN ANALYTICS AND WEB DEVELOPMENT"
@@ -795,21 +798,23 @@ def team(request,title):
     if sub_title == 'future_talents':
         team_categories = {
             'Junior Analysts': junior_analysts,
-            # 'Senior Trainee Team': senior_trainee,
+            'Senior Trainee Team': senior_trainee,
             'Junior Trainee Team': junior_trainee,
-            'Elementary': elementry
+            'Elementary': elementry,
         }
+
         user_group=future_talents
         heading="MINDS OF TOMORROW: LEADING DATA ANALYTICS AND WEB DEVELOPMENT"
 
     if sub_title == 'board':
-        BOG_members = UserProfile.objects.filter(user__is_staff=True, user__is_active=True,user__sub_category=6).order_by("user__date_joined")
+
+        BOG_members = UserProfile.objects.filter(user__is_staff=True, user__is_active=True,user__sub_category=0).order_by("user__date_joined")
         team_categories = {
             'Board Members': list(BOG_members),
         }
         user_group=board_members
         heading="THE BOG"
-    
+
     context = {
         "team_categories": team_categories,
         "team_members": user_group,
@@ -817,7 +822,6 @@ def team(request,title):
         # "selected_class":selected_class
     }
     return render(request, "main/team_profiles.html", context)
-
 
 #========================Internal documents==============================  
 def letters(request):

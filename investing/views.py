@@ -391,8 +391,6 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
             print(e)
             description = "try again!!!"
         
-
-
     context.update({
         # "data": filtered_stockdata_by_oversold,
         
@@ -474,6 +472,12 @@ def optiondata(request, title=None,symbol=None, *arg, **kwargs):
                 
             })
 
+    #add Last Report Earnings,Sales Growth,Price,Volume
+    # Earnings(Quarterly Earnings)
+    #MAEE:Market Structure: 
+        #   Up:     (Bullish,Bullish,Bullish)
+        #   Down:   (Bearish,Bearish,Bearish),
+        #   Side
 
     return render(request, "main/snippets_templates/output_snippets/option_data.html", context)
     # else:
@@ -611,7 +615,7 @@ def portfolioCreate(request):
                 success_url = reverse('investing:my_portfolio')
             else:
 
-                form.add_error(None, f"you exceed your limit of investment(max limit:{threshold_amount}). try to reduce this investment amount or close another investment.")
+                form.add_error(None, f"You exceed your limit of investment(max limit:{threshold_amount}). try to reduce this investment amount or close another investment.")
                 return render(request, 'main/snippets_templates/generalform.html', {'form': form})
 
         else:
@@ -630,9 +634,7 @@ def portfolioCreate(request):
 
 @login_required
 def portfolio(request, symbol):
-
     model = request.GET.get('model')
-    
     model_mapping = {
         'covered_calls': {
             'model': covered_calls
@@ -644,7 +646,6 @@ def portfolio(request, symbol):
             'model': credit_spread
         }
     }
-
     stock_model = model_mapping.get(model, None)
     symbol_in_portfolio = Portifolio.objects.filter(user=request.user, symbol=symbol)
     initial_values=None

@@ -147,12 +147,34 @@ def prepquestions(request):
     context = {"questions": questions, "myFilter": QuestionsFilter}
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
 
+# def useruploads(request, username=None, *args, **kwargs):
+#     if username is None:
+#         # Handle the case where username is None
+#         useruploads = Interviews.objects.none()
+#     else:
+#         useruploads = Interviews.objects.filter(client__username=username).order_by("-upload_date")
+
+#     context = {
+#         "useruploads": useruploads,
+#     }
+#     return render(request, "data/interview/useruploads.html", context)
+
+from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.models import User
+
+import logging
+
+logger = logging.getLogger(__name__)
+
+# @user_passes_test(lambda u: u.is_superuser)
 def useruploads(request, username=None, *args, **kwargs):
     if username is None:
-        # Handle the case where username is None
-        useruploads = Interviews.objects.none()
+        useruploads = Interviews.objects.all().order_by("-upload_date")
     else:
         useruploads = Interviews.objects.filter(client__username=username).order_by("-upload_date")
+
+    # Log the value of useruploads for debugging
+    logger.debug("Value of useruploads: %s", useruploads)
 
     context = {
         "useruploads": useruploads,
