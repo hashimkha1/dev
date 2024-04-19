@@ -129,13 +129,7 @@ def dsu_entry(request):
     return render(request, "data/training/form_templates/dsu_form.html", {"form": form})
 # for uploading interviews
 
-@login_required
-def iuploads(request):
-    uploads = Interviews.objects.all().order_by("-upload_date")
-    myFilter = InterviewFilter(request.GET, queryset=uploads)
-    uploads = myFilter.qs
-    context = {"uploads": uploads, "myFilter": myFilter}
-    return render(request, "data/interview/interviewuploads.html", context)
+
     
 
     
@@ -282,6 +276,21 @@ class InterviewListView(ListView):
     queryset = Interviews.objects.all()
     template_name = "data/interview/interviewuploads.html"
     ordering = ["-upload_date"]
+
+@login_required
+def iuploads(request):
+    print("HERE",request.user.is_client)
+    # uploads={}
+    if request.user.is_client:
+        usernames = ['coda','makied', 'Sipho','JudyG', 'coda_info']  # Add as many usernames as needed
+        uploads = Interviews.objects.filter(client__username__in=usernames).order_by("-upload_date")
+    else:
+        uploads = Interviews.objects.all().order_by("-upload_date")
+    # uploads = Interviews.objects.all().order_by("-upload_date")
+    myFilter = InterviewFilter(request.GET, queryset=uploads)
+    uploads = myFilter.qs
+    context = {"uploads": uploads, "myFilter": myFilter}
+    return render(request, "data/interview/interviewuploads.html", context)
 
 @method_decorator(login_required, name="dispatch")
 class TrainingResponseListView(ListView):

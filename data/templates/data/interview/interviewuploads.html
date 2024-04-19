@@ -20,7 +20,8 @@
           <th>Update</th>
         </tr>
       </thead>
-      {% for upload in  object_list   %}
+      <!-- object_list -->
+      {% for upload in   uploads  %}  
       <tr>
       <td><a class="mr-2" href="{% url 'data:interviewlist' %}">{{upload.client}}</a></td>
         {% if upload.client.first_name == "" or  upload.client.last_name == "" %}

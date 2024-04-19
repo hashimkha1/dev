@@ -386,7 +386,7 @@ data_interview = [
         "Description": "Write Your Responses to 8 Topics",
         "Duration": "5 Days/3 Runs",
         "Lead": "Self/Coach",
-        "Link": SITEURL+"/data/iuploads/",
+        "Link": SITEURL+"/data/interviewuploads/",
     },
     
     {

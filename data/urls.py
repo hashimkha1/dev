@@ -66,6 +66,7 @@ urlpatterns = [
     # path('upload/', views.uploadinterview, name='upload'),
     # ----------------------LISTING----------------------------------------------------
     path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
+    # path("iuploads/", InterviewListView.as_view(), name="interviewlist"),
     path("responses/", views.TrainingResponseListView.as_view(), name="responses"),
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     path('prepquestions/', views.prepquestions, name='prepquestions'),
