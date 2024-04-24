@@ -19,9 +19,10 @@ phone_regex = r'^\d{10}$'
 class UserForm(forms.ModelForm):
     password1 = forms.CharField(label="Password", widget=forms.PasswordInput)
     password2 = forms.CharField(label="Repeat Password", widget=forms.PasswordInput)
-    phone = forms.CharField(label="Phone",max_length=10,validators=[RegexValidator(
-                regex=phone_regex,
-                message="Phone number must be 10 digits (e.g., 5551234567).",),],)
+    phone = forms.CharField(label="Phone", max_length=10, validators=[RegexValidator(
+        regex=r'^\d{10}$',
+        message="Phone number must be 10 digits (e.g., 5551234567).",
+    )])
     email = forms.EmailField()
 
     class Meta:
@@ -59,23 +60,6 @@ class UserForm(forms.ModelForm):
             "country": "",
         }
 
-    def __init__(self, *args, **kwargs):
-        super(UserForm, self).__init__(*args, **kwargs)
-        # self.fields['category'].required= True
-        # set category initial=1 and added category
-        self.fields["category"].initial = 1
-        self.fields["sub_category"].initial = 1
-        self.fields["gender"].required = True
-        self.fields["country"].required = True
-        if self.data.get('category') in ['3', '4', '5', '6']:
-
-            self.fields['username'].required = False
-            self.fields['password1'].required = False
-            self.fields['password2'].required = False
-            self.fields['gender'].required = False
-            self.fields['phone'].required = False
-        
-
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
@@ -84,63 +68,39 @@ class UserForm(forms.ModelForm):
             raise forms.ValidationError("Passwords don't match")
         return password2
 
-    def clean(self):        
-        cleaned_data = super().clean()
-        first_name = cleaned_data.get("first_name")
-        last_name = cleaned_data.get("last_name")
-        username = cleaned_data.get("username")
+    def clean_username(self):
+        username = self.cleaned_data.get("username")
 
         # List of disallowed usernames
         disallowed_usernames = ["test", "testing"]
 
-        if first_name in disallowed_usernames:
-            self.add_error("first_name", "This first name is not allowed.")
-        if last_name in disallowed_usernames:
-            self.add_error("last_name", "This last name is not allowed.")
         if username in disallowed_usernames:
-            self.add_error("username", "This username is not allowed.")
+            raise forms.ValidationError("This username is not allowed.")
+        return username
+
+    def clean_first_name(self):
+        first_name = self.cleaned_data.get("first_name")
+
+        # List of disallowed first names
+        disallowed_first_names = ["test", "testing"]
+
+        if first_name in disallowed_first_names:
+            raise forms.ValidationError("This first name is not allowed.")
+        return first_name
+
+    def clean_last_name(self):
+        last_name = self.cleaned_data.get("last_name")
+
+        # List of disallowed last names
+        disallowed_last_names = ["test", "testing"]
+
+        if last_name in disallowed_last_names:
+            raise forms.ValidationError("This last name is not allowed.")
+        return last_name
 
     def save(self, commit=True):
-        
         user = super(UserForm, self).save(commit=False)
-        
-        if self.cleaned_data.get('password2'):
-            user.set_password(self.cleaned_data["password2"])
-        else:
-            user.set_password(user.password2)
+        user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
-
-# # #==========================CREDENTIAL FORM================================
-# # class CredentialCategoryForm(forms.ModelForm):  
-# #     class Meta:  
-# #         model = CredentialCategory  
-# #         fields = ['department','category', 'slug','description', 'is_active','is_featured']
-# #         widgets = {
-# #             # Use SelectMultiple below
-# #             "category":forms.SelectMultiple(attrs={'class':'form-control', 'category':'category'}),
-# #             "description": Textarea(attrs={"cols": 40, "rows": 2})
-# #             }
-
-# # class CredentialForm(forms.ModelForm):  
-# #     class Meta:  
-# #         model = Credential
-# #         fields = ['category','name', 'added_by','slug','user_types','description','password','link_name','link','is_active','is_featured']
-# #         labels={
-# #                 'link_name':'username/email',
-# #                 'link':'Link/url',
-# #                 'user_types':'Specify Who Can Access this Credential?'
-# #         }
-# #         widgets = {
-# #             # Use SelectMultiple below
-# #             "category":forms.SelectMultiple(attrs={'class':'form-control', 'id':'category'}),
-# #             "description": Textarea(attrs={"cols": 40, "rows": 2})
-# #             }
-
-
-# class LoginForm(forms.Form):
-#     username = forms.CharField(widget=forms.TextInput(attrs={"class": "form-control"}))
-#     password = forms.CharField(
-#         widget=forms.PasswordInput(attrs={"class": "form-control"})
-#     )

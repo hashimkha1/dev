@@ -331,3 +331,24 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+    
+from django.db import models
+
+class Transaction(models.Model):
+    department = models.ForeignKey('Department', on_delete=models.CASCADE, null=True)
+    receiver = models.CharField(max_length=100, null=True)
+    phone = models.CharField(max_length=50, null=True)
+    type = models.CharField(max_length=100, null=True)
+    activity_date = models.DateTimeField(null=False)
+    receipt_link = models.CharField(max_length=100, null=True)
+    qty = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    transaction_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    description = models.TextField(max_length=100, null=True)
+    payment_method = models.CharField(max_length=50, null=False)
+    category = models.CharField(max_length=50, null=False)
+
+class Department(models.Model):
+    # Define fields for the Department model if not already defined
+    pass
+
