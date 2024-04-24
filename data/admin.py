@@ -1,10 +1,6 @@
 from django.contrib import admin
 
-from .models import (
-                        FeaturedCategory,FeaturedSubCategory, 
-                        ActivityLinks, FeaturedActivity,Interviews, ClientAssessment,
-                        Training_Responses,Prep_Questions,JobRole, TrainingResponsesTracking
-                    )
+from .models import *
 
 
 class FeaturedSubCategoryAdmin(admin.ModelAdmin):
@@ -30,6 +26,8 @@ admin.site.register(FeaturedCategory)
 admin.site.register(FeaturedSubCategory, FeaturedSubCategoryAdmin)
 admin.site.register(TrainingResponsesTracking, TrainingResponsesTrackingAdmin)
 admin.site.register(FeaturedActivity)
+admin.site.register(Tool_Catogory)
+admin.site.register(Analytics_Tools)
 admin.site.register(Training_Responses)
 admin.site.register(Interviews)
 admin.site.register(Prep_Questions)

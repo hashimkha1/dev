@@ -13,15 +13,13 @@ from django.db.models.signals import pre_save
 from management.utils import unique_slug_generator,split_num_str
 from django.contrib.auth import get_user_model
 from accounts.models import TaskGroups,Department
-from data.models import FeaturedCategory,FeaturedSubCategory,FeaturedActivity
+from data.models import Analytics_Tools,Tool_Catogory, FeaturedCategory,FeaturedSubCategory,FeaturedActivity
 from main.models import TimeStampedModel
 
 # User=settings.AUTH_USER_MODEL
 User = get_user_model()
 
 # --------------------------------------
-
-
 class Training(models.Model):
     class Level(models.IntegerChoices):
         Level_1 = 1
@@ -29,33 +27,56 @@ class Training(models.Model):
         Level_3 = 3
         Level_4 = 4
         Level_5 = 5
+
     presenter = models.ForeignKey(
         User,
         verbose_name=("presenter name"),
         on_delete=models.CASCADE,
-        # limit_choices_to={"is_staff": True,"is_client": True, "is_active": True},
         limit_choices_to=Q(is_staff=True)|Q(is_client=True)|Q(is_admin=True) | Q(is_superuser=True) and Q(is_active=True),
         related_name="employee_name")
+    
     department = models.ForeignKey(
         Department,
         verbose_name=("departments"),
         on_delete=models.CASCADE,
         related_name="department_name")
+    
+    # category = models.ForeignKey(
+    #     Tool_Catogory,
+    #     verbose_name=("categories"),
+    #     on_delete=models.CASCADE,
+    #     related_name="category_name"
+    #     )
+
     category = models.ForeignKey(
         FeaturedCategory,
         verbose_name=("categories"),
         on_delete=models.CASCADE,
+        
+        limit_choices_to=Q(title='Development')|Q(title='Testing')|Q(title='Course Overview'),
         related_name="category_name")
+    
     subcategory = models.ForeignKey(
         FeaturedSubCategory,
         verbose_name=("Subcategory"),
         on_delete=models.CASCADE,
+        limit_choices_to=Q(title='Database Management')|Q(title='Reporting')|Q(title='website')|Q(title='Data Preparation')|Q(title='INTERVIEW QUESTIONS'),
         related_name="subcategory_name")
+    
+    # analytics_subcategory = models.ForeignKey(
+    #     Analytics_Tools,
+    #     verbose_name=("Analytics_Subcategory"),
+    #     on_delete=models.CASCADE,
+    #     related_name="Tools_subcategory_name",
+    #     default=1)
+
     topic = models.ForeignKey(
         FeaturedActivity,
         verbose_name=("topic"),
         on_delete=models.CASCADE,
+        limit_choices_to=Q(activity_name='Data(Database)')|Q(activity_name='Introduction to snowflakes')|Q(activity_name='Data Preparation(ETL)')|Q(activity_name='Requirements'),
         related_name="title")
+    
     level = models.IntegerField(choices=Level.choices)
     session=models.PositiveIntegerField()
     session_link = models.CharField(max_length=500, blank=True, null=True)
@@ -65,6 +86,15 @@ class Training(models.Model):
     is_active = models.BooleanField(default=True)
     featured= models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"{self.id-self.name}"
+    
+    @property
+    def expiry_date(self):
+        today = datetime.today()
+        date = today + 365
+        return date
+    
 # -------------------------------------COMPANY POLICIES---------------------------------------
 class Policy(models.Model):
     # Department

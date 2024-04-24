@@ -8,42 +8,17 @@ from django.shortcuts import get_object_or_404, redirect, render
 from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from data.modelmanager import(
-                                InterviewQuerySet,InterviewManager,
-                                RoleQuerySet,RoleManager,
-                                CategoryManager,SubCategoryManager,ActivityManager
+from data.modelmanager import(InterviewQuerySet,RoleQuerySet,InterviewManager,RoleManager,
+                              CategoryManager,SubCategoryManager,ActivityManager)
+from main.models import TimeStampedModel
 
-                             )
 # User=settings.AUTH_USER_MODEL
 from accounts.models import CustomerUser
 
 User = get_user_model()
 
-# class HighLevel(models.Model):
-#         CAT_CHOICES = [
-#         ("Project_Management", 'Project Management'),
-#         ("Business_Analysis", 'Business Analysis'),
-#         ("Quality_Assurance", 'Quality Assurance'),
-#         ("User_Experience", 'User Experience'),
-#         ("Reporting", 'Reporting'),
-#         ("ETL", 'ETL'),
-#         ("Database", 'Database'),
-#         ("Python", 'Python'),
-#         ("Other", 'Other'),
-#     ]
-    
-#         QUESTION_CHOICES = [
-#         ("Introduction" , 'introduction'),
-#         ("Project_Story" , 'project story'),
-#         ("Performance" , 'performance'),
-#         ("Methodology" , 'methodology'),
-#         ("SDLC" , 'sdlc'),
-#         ("Testing" , 'testing'),
-#         ("Environment" , 'environment'),
-#         ("Resume" , 'resume'),
-#         ("Other", 'Other'),
-#         ]
 
+    
 #Interview Model
 class JobRole(models.Model):
     # Job Category.
@@ -132,9 +107,7 @@ class JobRole(models.Model):
 
     def get_url(self):
         return reverse("data:question-detail", args=[self.question_type])
-    # def __str__(self):
-    #     return f'{self.question_type}'
-
+    
 
 # Interviews Model
 class Interviews(models.Model):
@@ -274,6 +247,27 @@ class Prep_Questions(models.Model):
         return f'{self.id} prep_questions'
 
 # ==================================TRAINING====================================
+class Tool_Catogory(TimeStampedModel):
+    #Reporting,Database,ETL,Website,
+    name=models.CharField(max_length=255,blank=True, null=True)
+    description=models.TextField(max_length=255,blank=True, null=True)
+
+    def __str__(self):
+        return f'{self.name}'
+    
+class Analytics_Tools(TimeStampedModel):
+    category = models.ForeignKey(
+        Tool_Catogory,
+        verbose_name=("categories"),
+        on_delete=models.CASCADE,
+        related_name="Tool_category_name",
+        default=1)
+    name=models.CharField(max_length=255,blank=True, null=True)
+    description=models.TextField(max_length=255,blank=True, null=True)
+    
+    def __str__(self):
+        return f'{self.name}'
+    
 class FeaturedCategory(models.Model):
     # Job Category.
     Course_Overview = "Course Overview"
@@ -281,8 +275,8 @@ class FeaturedCategory(models.Model):
     Development = "Development"
     Testing = "Testing"
     Deployment = "Deployment"
-    VIDEOS = "VIDEOS"
-    POWER_POINTS = "POWER POINTS"
+    # VIDEOS = "VIDEOS"
+    # POWER_POINTS = "POWER POINTS"
     Other = "Other"
 
     CAT_CHOICES = [
@@ -290,8 +284,8 @@ class FeaturedCategory(models.Model):
         (Planning, "Initiation & Planning"),
         (Development, "Development"),
         (Testing, "Testing"),
-        (VIDEOS, "VIDEOS"),
-        (POWER_POINTS, "POWER POINTS"),
+        # (VIDEOS, "VIDEOS"),
+        # (POWER_POINTS, "POWER POINTS"),
         (Deployment, "Deployment"),
         (Other, "Other"),
     ]

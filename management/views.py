@@ -712,6 +712,8 @@ def filterbycategory(request):
     return JsonResponse({"result": result}, safe=False)
 
 def historytasks(request):
+
+    historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
     historytask=TaskHistory.objects.filter(employee__is_staff=True,employee__is_active=True)
     # historytasks=TaskHistory.objects.all().order_by('-submission')
     myfilter=TaskHistoryFilter(request.GET,queryset=historytask)
@@ -1549,11 +1551,12 @@ class SessionCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.presenter = self.request.user
         return super().form_valid(form)
-
+    
+@login_required
 def sessions(request):
     # total_sessions=Training.objects.all().count()
     sessions=Training.objects.all()
-    client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True).order_by("-created_date")
+    client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True,is_active=True,featured=True).order_by("-created_date")
     employee_sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
     # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
     context_a={
@@ -1564,12 +1567,12 @@ def sessions(request):
         "object_list":employee_sessions,
         "title":"Employee_Sessions"
     }
-    if request.user.is_client :
-        return render(request,"management/departments/hr/sessions.html", context_a)
-    elif request.user.is_staff :
-        return render(request,"management/departments/hr/sessions.html", context_b)
-    else:
+    if  request.user.is_superuser and request.user.is_admin :
         return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
+    elif request.user.is_client :
+        return render(request,"management/departments/hr/sessions.html", context_a)
+    else :
+        return render(request,"management/departments/hr/sessions.html", context_b)
 
 
 class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -1595,7 +1598,7 @@ def usersession(request, user=None, *args, **kwargs):
     employee = get_object_or_404(User, username=kwargs.get("username"))
     days_since_joined = employee.days_since_joined
     sessions = Training.objects.all().filter(presenter=employee).order_by('-created_date')
-    emp_target_sessions =75
+    emp_target_sessions =150
     client_target_sessions =27
     num_sessions = sessions.count()
     # points = sessions.aggregate(Your_Total_Points=Sum("point"))
@@ -1663,9 +1666,10 @@ def assess(request):
 #             queryset = DSU.objects.all()  
 #         return queryset
     
-def dsulist(request,user_type="staff"):
+def dsulist(request,user_type="Staff"):
+    print("HERE======>",user_type)
     template = "management/departments/hr/assessment.html"  # Specify the template name
-    dsu_list = DSU.objects.filter(type=user_type).order_by("-created_at")
+    dsu_list = DSU.objects.filter(type__iexact=user_type.lower()).order_by("-created_at")
     context={"dsu_list":dsu_list}
     return render(request,template,context)
 
