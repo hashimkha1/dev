@@ -331,3 +331,23 @@ class Ticker_Data(models.Model):
 
     def __str__(self):
         return self.symbol
+
+from django.db import models
+
+class PaymentsInformations(models.Model):
+    customer_id = models.IntegerField()
+    payment_fees = models.IntegerField()
+    down_payment = models.IntegerField(default=500)
+    student_bonus = models.IntegerField(null=True)
+    fee_balance = models.IntegerField()
+    plan = models.IntegerField()
+    subplan = models.IntegerField()
+    payment_method = models.CharField(max_length=100)
+    contract_submitted_date = models.DateField()
+    client_signature = models.CharField(max_length=1000)
+    company_rep = models.CharField(max_length=1000)
+    client_date = models.CharField(max_length=100, null=True)
+    rep_date = models.CharField(max_length=100, null=True)
+
+    def __str__(self):
+        return f"PaymentsInformations for Customer ID: {self.customer_id}"        
