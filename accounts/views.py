@@ -17,7 +17,7 @@ from django.views.generic import (
     UpdateView,
 )
 from django.urls import reverse
-from .models import CustomerUser
+from .models import CustomerUser,PaymentsInformations
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
 from main.filters import UserFilter
 # from management.models import Task
@@ -438,3 +438,9 @@ def home(request):
 #     #form = PasswordResetForm({'email':'sample@sample.com'})
 #     return form.save(from_email=from_email, email_template_name=template)
 # ''' 
+
+
+def list(request):
+    PaymentsInformations=PaymentsInformations.object.all
+    return render(request,"accounts\admin\list.html",{"PaymentsInformations":PaymentsInformations})
+
