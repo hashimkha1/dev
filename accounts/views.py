@@ -16,6 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
+from .forms import paymentForm
 from django.urls import reverse
 from .models import CustomerUser,PaymentsInformations
 from .utils import agreement_data,employees,compute_default_fee,get_clients_time
@@ -439,8 +440,33 @@ def home(request):
 #     return form.save(from_email=from_email, email_template_name=template)
 # ''' 
 
-
 def list(request):
-    PaymentsInformations=PaymentsInformations.object.all
-    return render(request,"accounts\admin\list.html",{"PaymentsInformations":PaymentsInformations})
+    # Retrieve all entries from PaymentsInformations model
+    info = PaymentsInformations.objects.all()  # Corrected the method call and class attribute
+    print("info=====================", info)  # Improved the print statement for debugging
+    
+    # Correct the path and pass the correct context variable
+    return render(request, "accounts/admin/list.html", {"PaymentsInformations": info})
+
+from django.shortcuts import render, redirect
+from .forms import paymentForm  # Ensure you import your form correctly
+
+from django.shortcuts import render, redirect
+from .forms import paymentForm  # replace with your actual form
+
+def create_view(request):
+    if request.method == 'POST':
+        form = paymentForm(request.POST)
+        if form.is_valid():
+            obj = form.save()  # save the form and get the instance back
+            # Do something with obj if necessary
+            return redirect('accounts:list')  # Redirect to a URL resolved by a view name
+        else:
+            # The form is not valid, re-render the page with existing form data
+            return render(request, r'accounts/admin/creat.html', {'form': form})
+    else:
+        # GET request, so create a new blank form
+        form = paymentForm()
+        return render(request, 'accounts/admin/creat.html', {'form': form})
+
 

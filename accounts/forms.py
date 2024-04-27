@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import  Textarea
-from .models import CustomerUser,Transaction
+from .models import CustomerUser,Transaction,PaymentsInformations
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import  RegexValidator
 import re
@@ -144,3 +144,10 @@ class UserForm(forms.ModelForm):
 #     password = forms.CharField(
 #         widget=forms.PasswordInput(attrs={"class": "form-control"})
 #     )
+
+
+
+class paymentForm(forms.ModelForm):
+    class Meta:
+        model = PaymentsInformations
+        fields = '__all__'

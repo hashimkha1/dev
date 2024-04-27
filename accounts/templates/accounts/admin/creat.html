@@ -1,0 +1,39 @@
+{% extends "main/base_templates/new_base.html"%} {%load crispy_forms_tags%}{% block content %}
+<div class="content-section">
+  <form method="POST">
+    {% csrf_token %}
+    <fieldset class="form-group">
+      <legend class="border-bottom mb-4">Review</legend>
+      {{ form|crispy }}
+    </fieldset>
+    <div class="form-group">
+      <button class="btn btn-outline-info" type="submit">Submit</button>
+      <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end; /* Pushes content to the bottom */
+      min-height: 100%; /* Ensures at least the viewport height */
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Your table/form content here -->
+</div>
+</body>
+</html>
+
+    </div>
+  </form>
+</div>
+{% endblock content%}
