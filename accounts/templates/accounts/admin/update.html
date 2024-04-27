@@ -1,0 +1,18 @@
+{% extends "main/base_templates/new_base.html" %}
+{% load crispy_forms_tags %}  <!-- This line is crucial -->
+{% block content %}
+...
+<form method="POST">
+  {% csrf_token %}
+  <fieldset class="form-group">
+    <legend class="border-bottom mb-4">Review</legend>
+    {{ form|crispy }}  <!-- This uses the 'crispy' filter -->
+  </fieldset>
+  <div class="form-group">
+    <button class="btn btn-outline-info" type="submit">Submit</button>
+  </div>
+</form>
+...
+{% endblock content %}
+
+  

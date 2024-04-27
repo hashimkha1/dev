@@ -468,5 +468,21 @@ def create_view(request):
         # GET request, so create a new blank form
         form = paymentForm()
         return render(request, 'accounts/admin/creat.html', {'form': form})
+    
+from django.shortcuts import render, get_object_or_404, redirect
+# from .forms import PaymentForm  # Ensure correct form name
+from .models import PaymentsInformations  # Ensure correct model name
 
+def update_payments(request, pk):  # The 'pk' parameter here is essential
+    payment_info = get_object_or_404(PaymentsInformations, pk=pk)
+    if request.method == 'POST':
+        form = paymentForm(request.POST, instance=payment_info)
+        if form.is_valid():
+            form.save()
+            # Redirect to a specific view after the payment is updated
+            return redirect( r'accounts/admin/update.html',{'pk': pk})
+    else:
+        form = paymentForm(instance=payment_info)
+
+    return render(request, 'accounts/admin/update.html', {'form': form})
 
