@@ -823,5 +823,100 @@ class Link(TimeStampedModel):
     # def __str__(self):
     #     # return f"{self.name} - {str(self.subcategory)}-{str(self.meeting)}"
     #     return self.name if self.name is not None else "Unnamed Link"
+
     def __str__(self):
         return self.name or ""
+    
+
+class Grievance(models.Model):
+    ISSUE_CHOICES = [
+        ('threats', 'Threats'),
+        ('insults', 'Insults'),
+        ('stealing', 'Stealing'),
+        ('other', 'other'),
+    ]
+    STATUS_CHOICES = [
+            ('pending', 'Pending'), 
+            ('in_progress', 'In Progress'), 
+            ('resolved', 'Resolved')
+    ]
+    reporter = models.ForeignKey(
+        User,
+        verbose_name=_("reporting_person"),
+        related_name="reporting_person",
+        null=True,
+        blank=True,
+        default=1,
+        on_delete=models.SET_NULL,
+        limit_choices_to=Q(is_active=True)
+        and (Q(is_staff=True)| Q(is_admin=True) | Q(is_superuser=True)),
+    )
+    issue = models.CharField(max_length=50, choices=ISSUE_CHOICES)
+    date = models.DateField()
+    time = models.TimeField()
+    location = models.CharField(max_length=100,null=True, blank=True)
+    amount = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    description = models.TextField()
+    members_involved = models.CharField(max_length=100)
+    witnesses = models.CharField(max_length=100,null=True, blank=True)
+    proposed_solution = models.TextField()
+    reference_link = models.URLField(default='No Link')
+
+    confidentiality = models.BooleanField(
+        help_text=_("Keep Identity Confidential"),
+        default=False)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES,default='Pending')
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Grievance Form - {self.issue}"
+
+
+
+class Conflict_Resolution(models.Model):
+    SEVERITY_CHOICES = [
+       ('low', 'Low'),
+       ('medium', 'Medium'),
+       ('high', 'High')
+    ]
+    assigned_person = models.ForeignKey(
+        User,
+        verbose_name=_("assigned_person"),
+        related_name="assigned_person",
+        null=True,
+        blank=True,
+        default=1,
+        on_delete=models.SET_NULL,
+        limit_choices_to=Q(is_active=True)
+        and (Q(is_staff=True)| Q(is_admin=True) | Q(is_superuser=True)),
+    )
+    accountable_person = models.ForeignKey(
+        User,
+        verbose_name=_("accountable_person"),
+        related_name="accountable_person",
+        null=True,
+        blank=True,
+        default=1,
+        on_delete=models.SET_NULL,
+        limit_choices_to=Q(is_active=True)
+        and (Q(is_staff=True)| Q(is_admin=True) | Q(is_superuser=True)),
+    )
+    issue = models.ForeignKey(
+        Grievance,
+        null=True,
+        blank=True,
+        default=1,
+        on_delete=models.SET_NULL,
+        limit_choices_to=Q(is_active=True)
+    )
+    severity_level = models.CharField(max_length=50, choices=SEVERITY_CHOICES)
+    previous_actions = models.TextField(max_length=1000,null=True, blank=True)
+    resolution_deadline = models.DateField()
+    fine = models.DecimalField(max_digits=10, decimal_places=2,null=True, blank=True)
+    additional_comments = models.TextField(null=True, blank=True)
+    # reference_link = models.URLField(default='No Link',null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"Conflict_Resolution - {self.issue}"
+

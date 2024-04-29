@@ -1,12 +1,16 @@
 from django import forms
 from django.forms import Textarea
 from data.models import DSU,ClientAssessment
-from management.models import TaskLinks, Policy, Requirement, Task,Meetings,TaskCategory
+from management.models import Grievance, TaskLinks, Policy, Requirement, Task,Meetings,TaskCategory
 from finance.models import Transaction, Inflow
 from accounts.models import Department
 from application.models import UserProfile
 
-
+class GrievanceForm(forms.ModelForm):
+    class Meta:
+        model = Grievance
+        fields = '__all__'
+        
 class MeetingForm(forms.ModelForm):
     class Meta:
         model = Meetings

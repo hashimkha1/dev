@@ -62,8 +62,10 @@ urlpatterns = [
 
     path('newclient/', views.clientassessment, name='newclient'),
     path('clientassessment/', views.ClientAssessmentListView.as_view(), name='clientassessment'),
-    # path('clientassessment/', views.clientassessment, name='clientassessment'),
-    # path('clientassessment/', views.clientassessment, name='clientassessment'),
+    path('new_grievance/', views.grievance_form, name='new_grievance'),
+    path('grievance_file/<str:slug>', views.grievance_file, name='grievance_file'),
+    path('update_grievance/<int:pk>/', views.GrievanceUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_grievance'),
+    path('update_resolution/<int:pk>/', views.ResolutionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_resolution'),
     path('update_assessment/<int:pk>/', views.AssessmentUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_assessment'),
     path('assess/', views.assess, name='assess'),
     # path('assessment/', AssessListView.as_view(), name='assessment'),

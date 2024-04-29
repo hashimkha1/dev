@@ -27,7 +27,8 @@ from management.forms import (
     MonthForm,
     MeetingForm,
     TagFilterForm,
-    dynamic_agenda_form
+    dynamic_agenda_form,
+    GrievanceForm
 )
 from django.views.generic import (
     CreateView,
@@ -50,7 +51,7 @@ from management.models import (
     ProcessJustification,
     ProcessBreakdown,
     Meetings,
-    Link
+    Link,Grievance,Conflict_Resolution
 )
 from data.models import DSU,ClientAssessment
 from finance.models import LoanUsers,LBandLS, TrainingLoan,PayslipConfig
@@ -1669,6 +1670,7 @@ def assess(request):
 def dsulist(request,user_type="Staff"):
     print("HERE======>",user_type)
     template = "management/departments/hr/assessment.html"  # Specify the template name
+ 
     dsu_list = DSU.objects.filter(type__iexact=user_type.lower()).order_by("-created_at")
     context={"dsu_list":dsu_list}
     return render(request,template,context)
@@ -2240,3 +2242,58 @@ def add_requirement_justification(request):
         "total_duration": updated_duration
     }
     return render(request, "management/doc_templates/active_requirements.html", context)
+
+
+def grievance_form(request):
+    if request.method == 'POST':
+        form = GrievanceForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('management:grievance_file', status='all')  # Redirect to success page after form submission
+    else:
+        form = GrievanceForm()
+    return render(request, "main/snippets_templates/generalform.html",{"form": form})
+
+def grievance_file(request, slug="active"):
+    grievances=None
+    resolutions=None
+    if slug=="active":
+        grievances = Grievance.objects.filter(is_active=True)
+    elif slug=="resolution":
+        resolutions = Conflict_Resolution.objects.filter(is_active=True)
+    else:
+        grievances = Grievance.objects.all()
+    context ={
+        "grievances": grievances,
+        "resolutions": resolutions,
+        "slug": slug,
+        }
+    return render(request, "management/departments/hr/grievances.html",context)
+
+class GrievanceUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Grievance
+    success_url = "/management/grievance_file/all"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False
+    
+class ResolutionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Conflict_Resolution
+    success_url = "/management/grievance_file/resolution"
+    fields = "__all__"
+
+    def form_valid(self, form):
+        form.instance.username = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        if  self.request.user or self.request.user.is_admin or self.request.user.is_superuser:
+            return True
+        return False

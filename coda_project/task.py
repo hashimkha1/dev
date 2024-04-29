@@ -28,6 +28,7 @@ User = get_user_model()
 JOB_SUPPORTS = ["job support", "job_support", "jobsupport"]
 ACTIVITY_LIST = ['BOG', 'BI Sessions', 'DAF Sessions', 'Project', 'web sessions']
 
+
 @shared_task(name="task_history")
 def dump_data(request):
     try:

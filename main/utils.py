@@ -149,6 +149,7 @@ def slug_pre_save_receiver(sender, instance, *args, **kwargs):
 
 
 """ =============open_ai chat bot===========   """
+
 def generate_chatbot_response(user_message, user_message_dict=None):
     if user_message_dict is None:
         messages = [

@@ -3,22 +3,8 @@ from django.contrib import admin, messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from accounts.models import CustomerUser, TaskGroups
-from management.models import (
-    Requirement,
-    Policy,
-    TaskCategory,
-    Task,
-    TaskLinks,
-    TaskHistory,
-    Advertisement,
-    Training,ProcessJustification,ProcessBreakdown,
-    Meetings,
-    SubCategory,Link
-
-)
-
+from management.models import *
 from django.contrib import messages
-
 
 # Register your models here.
 class CsvImportForm(forms.Form):
@@ -90,7 +76,6 @@ class TrainingAdmin(admin.ModelAdmin):
         except:
             pass
 
-
 admin.site.register(Training, TrainingAdmin)
 admin.site.register(Policy)
 admin.site.register(Meetings)
@@ -103,6 +88,8 @@ admin.site.register(Advertisement, AdsAdmin)
 admin.site.register(ProcessJustification)
 admin.site.register(ProcessBreakdown)
 admin.site.register(TaskGroups)
+admin.site.register(Grievance)
+admin.site.register(Conflict_Resolution)
 
 
 class LinkInline(admin.TabularInline):
