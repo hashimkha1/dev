@@ -53,14 +53,14 @@ class Training(models.Model):
         verbose_name=("categories"),
         on_delete=models.CASCADE,
         
-        limit_choices_to=Q(title='Development')|Q(title='Testing')|Q(title='Course Overview'),
+        limit_choices_to=Q(title='Development')|Q(title='Testing')|Q(title='Course Overview')|Q(title='Other'),
         related_name="category_name")
     
     subcategory = models.ForeignKey(
         FeaturedSubCategory,
         verbose_name=("Subcategory"),
         on_delete=models.CASCADE,
-        limit_choices_to=Q(title='Database Management')|Q(title='Reporting')|Q(title='website')|Q(title='Data Preparation')|Q(title='INTERVIEW QUESTIONS'),
+        limit_choices_to=Q(title='Database Management')|Q(title='Reporting')|Q(title='website')|Q(title='Data Preparation')|Q(title='INTERVIEW QUESTIONS')|Q(title='Business Analysis'),
         related_name="subcategory_name")
     
     # analytics_subcategory = models.ForeignKey(
@@ -74,7 +74,7 @@ class Training(models.Model):
         FeaturedActivity,
         verbose_name=("topic"),
         on_delete=models.CASCADE,
-        limit_choices_to=Q(activity_name='Data(Database)')|Q(activity_name='Introduction to snowflakes')|Q(activity_name='Data Preparation(ETL)')|Q(activity_name='Requirements'),
+        limit_choices_to=Q(activity_name='Data(Database)')|Q(activity_name='Introduction to snowflakes')|Q(activity_name='Data Preparation(ETL)')|Q(activity_name='Requirements')|Q(activity_name='Tableau')|Q(activity_name='Python')|Q(activity_name='BA Interview'),
         related_name="title")
     
     level = models.IntegerField(choices=Level.choices)

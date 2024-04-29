@@ -68,8 +68,8 @@ def training(request):
 @login_required
 def start_training(request, slug=None, *args, **kwargs):
     # activities = FeaturedActivity.objects.values_list("id", "activity_name")
-    # for id, title in activities:
-    #     print(f"ID: {id}, Title: {title}")
+    # for id, activity_name in activities:
+    #     print(f"ID: {id}, Title: {activity_name}")
     path_list, sub_title, pre_sub_title = path_values(request)
     try:
         service_shown = Service.objects.get(slug="data_analysis")
