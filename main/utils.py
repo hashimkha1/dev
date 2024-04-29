@@ -396,7 +396,7 @@ data_interview = [
         "Description": "Self recorded practice sessions for all 8 questions",
         "Duration": "5 Days/24 sessions",
         "Lead": "Self/Coach",
-        "Link": SITEURL+"/management/sessions",
+        "Link": SITEURL+"/management/sessions/interview",
     },
     {
         "Inteview": "3. Role-Concentration",
