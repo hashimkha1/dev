@@ -861,7 +861,7 @@ class Grievance(models.Model):
     members_involved = models.CharField(max_length=100)
     witnesses = models.CharField(max_length=100,null=True, blank=True)
     proposed_solution = models.TextField()
-    reference_link = models.URLField(default='No Link')
+    reference_link = models.URLField(default='No Link',null=True, blank=True)
 
     confidentiality = models.BooleanField(
         help_text=_("Keep Identity Confidential"),
