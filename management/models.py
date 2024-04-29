@@ -85,6 +85,7 @@ class Training(models.Model):
     description = models.TextField(default='No Comment',null=True, blank=True)
     is_active = models.BooleanField(default=True)
     featured= models.BooleanField(default=True)
+    is_mock= models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.id-self.name}"

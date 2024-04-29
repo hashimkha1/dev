@@ -73,7 +73,8 @@ urlpatterns = [
     path('update_dsu/<int:pk>/', views.AssessUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='update_dsu'),
     path('session/', views.SessionCreateView.as_view(template_name="main/snippets_templates/generalform.html"), name='session'),
     path('session/<int:pk>/', views.SessionUpdateView.as_view(template_name="main/snippets_templates/generalform.html"), name='updatesession'),
-    path('sessions/', views.sessions, name='sessions'),
+    # path('sessions/', views.sessions, name='sessions'),
+    path('sessions/<str:slug>', views.sessions, name='sessions'),
     path('usersession/<str:username>/',views.usersession, name='user_session'),
 
     path('newdepartment/', views.newdepartment, name='newdepartment'),

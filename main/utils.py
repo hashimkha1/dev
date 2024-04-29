@@ -411,7 +411,8 @@ data_interview = [
         "Description": "Real Life simulation of mock interview with coach of analytics",
         "Duration": "2 Mock/4 Past Interviews",
         "Lead": "Coach",
-        "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
+        "Link": SITEURL+"/management/sessions/mock",
+        # "Link": "https://drive.google.com/file/d/1-R6R-CyHNo6b-MIN33wYwWfsDQP1NB1L/view",
     },
     {
         "Inteview": "5. Job Application & Salary Negotiation",

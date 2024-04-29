@@ -1545,7 +1545,7 @@ def evidence_update_view(request, id, *args, **kwargs):
 # =============================EMPLOYEE SESSIONS========================================
 class SessionCreateView(LoginRequiredMixin, CreateView):
     model=Training
-    success_url = "/management/sessions"
+    success_url = "/management/sessions/training"
     # fields= "__all__"
     fields = ["department","category","subcategory","topic","level","session","session_link","expiration_date","description","is_active","featured"]
 
@@ -1554,31 +1554,48 @@ class SessionCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
     
 @login_required
-def sessions(request):
-    # total_sessions=Training.objects.all().count()
-    sessions=Training.objects.all()
-    client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True,is_active=True,featured=True).order_by("-created_date")
-    employee_sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
-    # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
-    context_a={
-       "object_list":client_sessions,
-        "title":"Client_Sessions"
+def sessions(request,slug="training"):
+    if slug=="training":
+        sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
+    elif slug=="interview":
+        sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True,is_active=True,featured=True).order_by("-created_date")
+    elif slug=="mock":
+        sessions=Training.objects.filter(is_active=True,featured=True,is_mock=True).order_by("-created_date")
+    else:
+        sessions=Training.objects.all()
+
+    context={
+       "object_list":sessions,
+        "title":"Sessions"
     }
-    context_b={
-        "object_list":employee_sessions,
-        "title":"Employee_Sessions"
-    }
-    if  request.user.is_superuser and request.user.is_admin :
-        return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
-    elif request.user.is_client :
-        return render(request,"management/departments/hr/sessions.html", context_a)
-    else :
-        return render(request,"management/departments/hr/sessions.html", context_b)
+    return render(request,"management/departments/hr/sessions.html",context)
+    
+# @login_required
+# def sessions(request):
+#     # total_sessions=Training.objects.all().count()
+#     sessions=Training.objects.all()
+#     client_sessions=Training.objects.filter(presenter__is_client=True,presenter__is_active=True,is_active=True,featured=True).order_by("-created_date")
+#     employee_sessions=Training.objects.filter(presenter__is_staff=True).order_by("-created_date")
+#     # myfilter=TaskHistoryFilter(request.GET,queryset=historytasks)
+#     context_a={
+#        "object_list":client_sessions,
+#         "title":"Client_Sessions"
+#     }
+#     context_b={
+#         "object_list":employee_sessions,
+#         "title":"Employee_Sessions"
+#     }
+#     if  request.user.is_superuser and request.user.is_admin :
+#         return render(request,"management/departments/hr/sessions.html", {"object_list":sessions})
+#     elif request.user.is_client :
+#         return render(request,"management/departments/hr/sessions.html", context_a)
+#     else :
+#         return render(request,"management/departments/hr/sessions.html", context_b)
 
 
 class SessionUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Training
-    success_url = "/management/sessions"
+    success_url = "/management/sessions/training"
     # fields = ["name", "slug", "description", "is_active", "is_featured"]
     fields = "__all__"
     # form = DepartmentForm()
