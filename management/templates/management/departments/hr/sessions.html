@@ -29,8 +29,8 @@
             <th>level</th>
             <th>Expires</th>
             <th>Session </th>
-            <th>featured</th>
-            <th>active</th>
+            <!-- <th>featured</th>
+            <th>active</th> -->
             <th>Edit</th>
             <th>Delete</th>
         </tr>
@@ -50,7 +50,7 @@
             <td>{{session.subcategory}}</td>
             <td>
                 <a class="text-dark  text-decoration-none" 
-                data-toggle="tooltip" title="{{  session.description  }}"
+                data-toggle="tooltip" title="{{  session.description  }}->Click Here To Watch"
                 href=" {{  session.session_link  }}">
                 {{session.topic}}
                 </a>
@@ -60,10 +60,12 @@
             <td>{{session.level}}</td>
             <td>{{session.expiration_date|date:"F d, Y"}}</td>
             <td>{{session.session }}</td>
-            <td>{{session.featured}}</td>
-            <td>{{session.is_active}}</td>
-              <td> <a class="article-title" href="{% url 'management:updatesession' session.id %}">Edit</a></td>
-              <td> <a class="article-title" href="#">Delete</a></td>
+            <!-- <td>{{session.featured}}</td>
+            <td>{{session.is_active}}</td> -->
+            {% if request.user.is_superuser %}
+            <td> <a class="article-title" href="{% url 'management:updatesession' session.id %}">Edit</a></td>
+            <td> <a class="article-title" href="#">Delete</a></td>
+            {% endif %}
             </tr>
          
         {% endfor %}
