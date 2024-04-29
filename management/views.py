@@ -2266,7 +2266,7 @@ def grievance_form(request):
         form = GrievanceForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('management:grievance_file', status='all')  # Redirect to success page after form submission
+            return redirect('management:grievance_file', slug='all')  # Redirect to success page after form submission
     else:
         form = GrievanceForm()
     return render(request, "main/snippets_templates/generalform.html",{"form": form})
