@@ -126,6 +126,21 @@ class CompanyAsset_Data(models.Model):
     purchase_date = models.DateTimeField()
     description = models.TextField()
 
+ 
+class Application_user(models.Model):
+    username = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    gender = models.IntegerField()  
+    phone = models.CharField(max_length=100)
+    application_date = models.DateTimeField()
+    country = models.CharField(max_length=100)
+    resume = models.FileField(upload_to='resumes/')  
+    type = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.application_date}"
+
 
 
 

@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-                   Balancesheet_category_list,balancesheet_list,investList,investUp,investDel,investDet            
+                   Balancesheet_category_list,balancesheet_list,investList,investUp,investDel,investDet,Application_user_list           
                    )
 app_name = 'application'
 urlpatterns = [
@@ -19,4 +19,5 @@ urlpatterns = [
     path('investmentstrat/<int:pk>/', investDet.as_view(), name='detail'),
 
     # path('join/', views.join, name='join'),
+    path('userlist/', views.Application_user_list, name='userlist'),
 ]

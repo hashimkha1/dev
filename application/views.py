@@ -16,7 +16,7 @@ from django.views.generic import (
     ListView,
     UpdateView,
 )
-from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,InvestmentStrat
+from.models import Balancesheet_category,Balancesheet_entry,BalanceSheet_Summary,InvestmentStrat,Application_user
 import logging
 from django.urls import reverse,reverse_lazy
 from .forms import investForm
@@ -107,6 +107,11 @@ class investDet(DetailView):
     model = InvestmentStrat
     template_name = 'application/investmentstrat_detail.html'
     context_object_name = 'investment_strats'
+
+def Application_user_list(request):
+    categories = Application_user.objects.all()
+    return render(request, 'application/application_list.html', {'categories': categories})
+
 
 
              

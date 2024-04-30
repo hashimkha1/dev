@@ -1,0 +1,65 @@
+
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">APPLICATION_ USER</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="#" class="btn btn-secondary btn-sm"></a>
+          <a href="#" class="btn btn-secondary btn-sm"></a>
+        </p>
+
+      </div>    
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">          
+  <div class="career text-center">
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">  
+        <tr>
+          <th>username</th>
+          <th>first_name</th>
+          <th>last_name</th>
+          <th>gender</th>
+          <th>phone</th>
+          <th>application_date</th>
+          <th>country</th>
+          <th>resume</th>
+          <th>type</th>         
+        </tr>
+      </thead>
+      <tbody id="table_body_data">
+       
+        {% for categories in categories  %}
+
+          <tr>          
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="#"></a>
+              </td>
+              <td>{{categories.username}}</td>
+              <td>{{categories.first_name}}</td>
+              <td>{{categories.last_name}}</td>
+              <td>{{categories.gender}}</td>
+              <td>{{categories.phone}}</td>
+              <td>{{categories.application_date}}</td>
+              <td>{{categories.country}}</td>
+              <td>{{categories.resume}}</td>
+              <td>{{categories.type}}</td>                                 
+              <td>
+                <button>
+                  <a href="#"></a>
+                </button>
+              </td>
+              {%if user.is_admin or user.is_superuser%}
+              <td> <a class="article-title" href="#"></a></td>
+              {%endif%}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="no_data_text" style="width:100%;text-align:center;display:none">No data for the category. </div>
+  </div>
+</section>
+{% endblock content %}
