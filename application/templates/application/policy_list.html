@@ -1,0 +1,60 @@
+{%extends "main/base_templates/new_base.html"%} {% block content %}
+<section id="career">
+  <div class="data_training text-center">
+    <h3 class="title">CODA POLICY</h3>
+    <p class="p text-center">Click on your name to access your monthly tasks <b>{{num_tasks}}</b> activities this month</p>
+    <div class="row">
+      <div class="col-md-4">
+        <p>
+          <a href="#" class="btn btn-secondary btn-sm"></a>
+          <a href="#" class="btn btn-secondary btn-sm"></a>
+        </p>
+
+      </div>    
+    <div class="container-fluid mr-auto">
+      <div class="row text-center">          
+  <div class="career text-center">
+    <table class="table table-borderless" style="width: 100%">
+      <thead class="border-bottom font-weight-bold">  
+        <tr>
+          <th>id</th>
+          <th>first_name</th>
+          <th>last_name</th>
+          <th>upload_date</th>                  
+        </tr>
+      </thead>
+      <tbody id="table_body_data">
+       
+        {% for policies in policies  %}
+
+          <tr>          
+                  <a class="text-dark  text-decoration-none" 
+                  data-toggle="tooltip" title="{{  task.description  }}"
+                  href="#"></a>
+              </td>
+              <td>{{policies.id}}</td>
+              <td>{{policies.first_name}}</td>
+              <td>{{policies.last_name}}</td>
+              <td>{{policies.upload_date}}</td>                         
+              <td>
+                <button>
+                  <a href="#"></a>
+                </button>
+              </td>
+              {%if user.is_admin or user.is_superuser%}
+              <td> <a class="article-title" href="#"></a></td>
+              {%endif%}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div class="no_data_text" style="width:100%;text-align:center;display:none">No data for the category. </div>
+  </div>
+</section>
+{% endblock content %}
+
+
+
+
+
+

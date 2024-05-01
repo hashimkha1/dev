@@ -1,7 +1,7 @@
 from django.urls import path
 from . import views
 from .views import (
-                   Balancesheet_category_list,balancesheet_list,investList,investUp,investDel,investDet            
+                   Balancesheet_category_list,balancesheet_list,investList,investUp,investDel,investDet,policy_list            
                    )
 app_name = 'application'
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     path('update/<int:pk>/', investUp.as_view(), name='update'),
     path('delete/<int:pk>/', investDel.as_view(), name='delete'),
     path('investmentstrat/<int:pk>/', investDet.as_view(), name='detail'),
+    path('codalist', views.policy_list, name='codalist'),
 
     # path('join/', views.join, name='join'),
 ]
