@@ -126,6 +126,15 @@ class CompanyAsset_Data(models.Model):
     purchase_date = models.DateTimeField()
     description = models.TextField()
 
+class Policy(models.Model):
+    id = models.AutoField(primary_key=True)
+    first_name = models.CharField(max_length=100, null=True)
+    last_name = models.CharField(max_length=100, null=True)
+    upload_date = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return f"Policy {self.id}: {self.first_name} {self.last_name}"
+
 
 
 
