@@ -186,10 +186,10 @@ class Interviews(models.Model):
     objects = InterviewManager()
 
     class Meta:
-        verbose_name_plural = "InterviewUploaded"
+        verbose_name_plural = "Interview_Responses"
 
     def __str__(self):
-        return f"{self.client} upload"
+        return f"{self.client}-{self.question_type}"
 
 
 class Training_Responses(models.Model):
@@ -245,6 +245,21 @@ class Prep_Questions(models.Model):
 
     def __str__(self):
         return f'{self.id} prep_questions'
+
+class UserAnswerStatus(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Prep_Questions, on_delete=models.CASCADE)
+    role = models.CharField(
+                                max_length=500,
+                                blank=True, null=True,
+                                default="Data Analyst"
+                             )
+    answer = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(default=datetime.now)
+    is_answered = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.username}'s answer for Question {self.question.id}"
 
 # ==================================TRAINING====================================
 class Tool_Catogory(TimeStampedModel):

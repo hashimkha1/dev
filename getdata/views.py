@@ -18,10 +18,11 @@ from django.views.generic import (
 )
 from main.utils import App_Categories,Automation,Stocks,General
 from finance.utils import update_link
+from getdata.forms import OpenaiForm
 
 from getdata.utils import (
 					fetch_and_insert_data,populate_table_from_json_file,
-					convert_excel_dates
+					convert_excel_dates,move_questions_to_user_answer_status
 )
 from finance.models import (Transaction, Payment_History)
 
@@ -47,7 +48,27 @@ def index(request):
 	return render(request, 'getdata/index.html', {'title': 'index'})
 
 def getrating(request):
+	# username = User.objects.filter(username="coda_info").first()
+	# move_questions_to_user_answer_status(username)
+	# return redirect('data:userresponse')
     return render(request, 'getdata/getrating.html', {'title': 'getrating'})
+
+@login_required
+def enter_prompt(request):
+    if request.method == "POST":
+        form = OpenaiForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+        else:
+            # Form is not valid, print errors
+            print("Form is not valid. Errors:")
+            for field, errors in form.errors.items():
+                print(f"Field: {field}")
+                for error in errors:
+                    print(f"- {error}")
+    else:
+        form = OpenaiForm()
+    return render(request, "getdata/openai_form.html", {"form": form})
 
 @login_required
 def fetch_whatsapp_groups(request):

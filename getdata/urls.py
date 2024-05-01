@@ -6,6 +6,7 @@ from mail.search_mail import parse_mail, search_job_mail
 app_name = 'getdata'
 urlpatterns = [
     path('getrating/', views.getrating, name='data-getrating'),
+    path('enter_question/', views.enter_prompt, name='enter_prompt'),
     path('groups/', views.fetch_whatsapp_groups, name='whatsappgroups'),
     path('index/', views.index, name='data-index'),
     path('upload/', views.upload_csv, name='upload'),

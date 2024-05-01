@@ -71,7 +71,20 @@ urlpatterns = [
     path("interviewuploads/", views.iuploads, name="interviewuploads"),
     path('prepquestions/', views.prepquestions, name='prepquestions'),
     path("useruploads/<str:username>", views.useruploads, name="user-list"),
+    path(
+        "responseupdate/<int:pk>/update",
+        views.user_response_update_view,
+        name="user_response_update",
+    ),
+    # path(
+    #     "responseupdate/<int:pk>/update",
+    #     views.UserResponseUpdateView.as_view(template_name="data/interview/interview_form.html"),
+    #     name="user_response_update",
+    # ),
+    # ----------------------DELETING----------------------------------------------------
     path('prepresponses/', views.prep_responses, name='prep_reponses'),
+        # -----------------Genrate response from openai--------------------
+    path('userresponse/<int:question_id>/', views.userresponse, name='userresponse'),
     # ----------------------DETAIL----------------------------------------------------
     path(
         "upload/<int:pk>/",

@@ -4,7 +4,6 @@ from django_filters import DateFilter
 from .forms import *
 from .models import *
 from django.contrib.auth import get_user_model,login,authenticate
-from django.views.generic import (CreateView,DeleteView,ListView,TemplateView, DetailView,UpdateView)
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
@@ -38,6 +37,7 @@ class ResponseFilter(django_filters.FilterSet):
     #end_date=DateFilter(field_name="upload_date",lookup_expr='lte')
     class Meta:
         model=Prep_Questions
+        # model=UserAnswerStatus
         # fields='__all__'
         fields ={
         'company':['icontains'],

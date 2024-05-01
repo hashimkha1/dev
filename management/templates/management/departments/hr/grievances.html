@@ -6,7 +6,7 @@
     <div class="row">
       {% if slug == 'resolution' %}
       <div class="col-md-4">
-        <p><a href="www.codanalytics.net/admin/management/conflict_resolution/add/" class="btn btn-primary btn-sm"
+        <p><a href="{% url 'management:new_grievance'%}" class="btn btn-primary btn-sm"
           >NEW RESOLUTION
         </a></p>
       </div>

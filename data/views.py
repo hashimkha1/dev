@@ -1,13 +1,16 @@
+import logging
+import json
 from django.db.models import Q
 from django.utils.text import capfirst
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist,PermissionDenied
 from django.shortcuts import get_object_or_404, redirect, render
-from django.contrib import messages
 from django.http import Http404, HttpResponse, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.utils.decorators import method_decorator
 from django.contrib.auth import get_user_model
 from main.models import Service,ServiceCategory, Pricing
+from getdata.models import OpenaiPrompt
 from django.views.generic import (
         CreateView,
         DeleteView,
@@ -15,37 +18,30 @@ from django.views.generic import (
         DetailView,
         UpdateView,
     )
+
 from data.forms import (
     PrepQuestionsForm,TrainingResponseForm,
-    InterviewForm, DSUForm ,RoleForm,
+    InterviewForm, DSUForm ,RoleForm,UserAnswerForm
 )
 from main.utils import data_interview,Meetings,path_values,job_support,split_sentences
-from main.context_processors import image_view
 from data.models import (
-    Interviews,
-    FeaturedCategory,
-    FeaturedSubCategory,
-    FeaturedActivity,
-    ActivityLinks,
-    DSU,
-    Job_Tracker,
-    JobRole,
-    Training_Responses,
-    Prep_Questions,
-    TrainingResponsesTracking
+    FeaturedCategory,FeaturedSubCategory,FeaturedActivity,ActivityLinks,
+    Interviews,Prep_Questions,UserAnswerStatus,
+    Training_Responses,TrainingResponsesTracking,
+    DSU,Job_Tracker,JobRole,
 )
 from data.filters import InterviewFilter, BitrainingFilter,QuestionFilter,ResponseFilter
+from main.utils import generate_chatbot_response
 
 # User=settings.AUTH_USER_MODEL
-import json
+
 from coda_project import settings
 User = get_user_model()
-
+logger = logging.getLogger(__name__)
 def analysis(request):
     return render(
         request, "main/home_templates/analysis_home.html", {"title": "analysis"}
     )
-
 
 def payroll(request):
     return render(request, "data/deliverable/payroll.html", {"title": "payroll"})
@@ -63,7 +59,6 @@ def deliverable(request):
 @login_required
 def training(request):
     return render(request, "data/training/training_progress/train.html", {"title": "training"})
-
 
 @login_required
 def start_training(request, slug=None, *args, **kwargs):
@@ -132,10 +127,123 @@ def dsu_entry(request):
     return render(request, "data/training/form_templates/dsu_form.html", {"form": form})
 # for uploading interviews
 
-
+"""================================My code=============================================================="""
+def generate_question_response(request, question_id, new_prompt=None):
+    question = get_object_or_404(Prep_Questions, id=question_id)
     
+    # Use new_prompt if provided, otherwise generate message based on the question
+    if new_prompt:
+        user_message = new_prompt
+    else:
+        # Get resume information
+        try:
+            interview = Interviews.objects.filter(client=request.user, question_type="resume").latest('upload_date')
+            user_resume_data = interview.dynamic_fields
+        except ObjectDoesNotExist:
+            user_resume_data = ""
 
+        # Retrieve the context, clarification, and role from the OpenAI prompt
+        try:
+            prompt_obj = OpenaiPrompt.objects.get(category=question.category)
+            context = prompt_obj.context_description
+            clarification = prompt_obj.clarification_description
+            role = prompt_obj.role
+        except ObjectDoesNotExist:
+            context = user_resume_data
+            clarification = 'For above topic, generate a general response for data analysis|Business Analysis Interview'
+            role = 'Data Analyst|IT Specialist|Business Analyst'
+        except AttributeError:
+            context = user_resume_data
+            clarification = 'For above topic, generate a general response for data analysis|Business Analysis Interview'
+            role = 'Data Analyst|IT Specialist|Business Analyst'
+        
+        # Prepare the prompt text
+        user_message = f"Question: {question.question}\n\nContext:\n{context}\n\nClarification:\n{clarification}\n\nRole: {role}"
     
+    # Generate response from OpenAI
+    generated_response = generate_chatbot_response(user_message)
+
+    # Check if response was generated successfully
+    if generated_response:
+        # Update or create UserAnswerStatus entry
+        user_answer_status, created = UserAnswerStatus.objects.update_or_create(
+            user=request.user,
+            question=question,
+            defaults={'is_answered': True, 'answer': generated_response}
+        )
+    
+    return generated_response
+
+@login_required
+def userresponse(request, question_id):
+    title = 'CODA: AN AI POWERED INTERVIEW PLATFORM'
+    ad_title = 'Business Intelligence To Skyrocket\nYour Career Even If You Don’t Have Any Experience.'
+    try:
+        user_response = UserAnswerStatus.objects.filter(question=question_id, is_answered=True).order_by('-created_at').first()
+        print("Response==============>", user_response)
+
+        if user_response:
+            context = {
+                "title": title,
+                "ad_title": ad_title,
+                "category": user_response.question.category,
+                "question": user_response.question,
+                "date": user_response.created_at,
+                "id": user_response.id,
+                "user_response": user_response,
+                "paragraphs": user_response.answer.split('\n') if user_response.answer else None
+            }
+            return render(request, "data/interview/interview_progress/user_response.html", context)
+    except UserAnswerStatus.DoesNotExist:
+        pass
+
+    # If no existing user response, generate a new one
+    user_response = generate_question_response(request, question_id)
+    latest_response = UserAnswerStatus.objects.filter().latest('created_at')
+    print("latest_response======>",latest_response)
+    context = {
+        "title": title,
+        "ad_title": ad_title,
+        "category": latest_response.question.category if latest_response else None,
+        "question": latest_response.question if latest_response else None,
+        "date": latest_response.created_at if latest_response else None,
+        "id": latest_response.id if latest_response else None,
+        # "user_response": user_response,
+        "response": user_response if user_response else None,
+        "paragraphs": latest_response.answer.split('\n') if latest_response and latest_response.answer else None
+    }
+    return render(request, "data/interview/interview_progress/user_response.html", context)
+
+@login_required
+def user_response_update_view(request, pk):
+    user_answer = get_object_or_404(UserAnswerStatus, pk=pk)
+
+    if request.method == 'POST':
+        form = UserAnswerForm(request.POST, instance=user_answer)
+        if form.is_valid():
+            if 'regenerate' in request.POST:  # Check if "regenerate" flag is present
+                print("regenerate")
+                # Construct new prompt based on form data
+                new_prompt = f'Based on the question: {form.instance.question.question} and the role: {form.instance.role}, please provide a detailed response.'
+                # Generate response with new_prompt
+                generate_question_response(request, form.instance.question.pk, new_prompt=new_prompt)
+                # Redirect to userresponse view without passing new_prompt
+                return redirect('data:userresponse', question_id=user_answer.question.pk)
+            else:
+                print("regenerate")
+                form.save()
+                return redirect('data:prepresponses')  # Redirect to success URL
+    else:
+        form = UserAnswerForm(instance=user_answer)
+
+    context = {
+        'form': form,
+        'question': user_answer.question,
+    }
+    return render(request, 'data/interview/interview_form.html', context)
+
+
+# """================================User Response=============================================================="""
 @login_required
 def prepquestions(request):
     questions= Prep_Questions.objects.filter(Q(is_answered=None) | Q(is_answered=False)).order_by("date")
@@ -143,25 +251,6 @@ def prepquestions(request):
     questions = QuestionFilter.qs
     context = {"questions": questions, "myFilter": QuestionsFilter}
     return render(request, "data/interview/interview_progress/prepquestions.html", context)
-
-# def useruploads(request, username=None, *args, **kwargs):
-#     if username is None:
-#         # Handle the case where username is None
-#         useruploads = Interviews.objects.none()
-#     else:
-#         useruploads = Interviews.objects.filter(client__username=username).order_by("-upload_date")
-
-#     context = {
-#         "useruploads": useruploads,
-#     }
-#     return render(request, "data/interview/useruploads.html", context)
-
-from django.contrib.auth.decorators import user_passes_test
-from django.contrib.auth.models import User
-
-import logging
-
-logger = logging.getLogger(__name__)
 
 # @user_passes_test(lambda u: u.is_superuser)
 def useruploads(request, username=None, *args, **kwargs):
@@ -178,36 +267,52 @@ def useruploads(request, username=None, *args, **kwargs):
     }
     return render(request, "data/interview/useruploads.html", context)
 
-
+@login_required
 def prep_responses(request):
-    companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
-    responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-updated_at")
-    client_responses = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).order_by("-updated_at")
-    ResFilter = ResponseFilter(request.GET, queryset=responses)
-
-    context_a = {                
-            "companies": companies, 
-            "responses": responses, 
-            "ResFilter": ResponseFilter(request.GET, queryset=responses),
-    }
-    context_b = {                
-            "companies": companies, 
-            "responses": client_responses,
-            "ResFilter": ResponseFilter(request.GET, queryset=client_responses),
-    }
-    # return render(request, "data/interview/interview_progress/test.html", context)
+    # user_response.answer.split('\n')
     if request.user.is_superuser or request.user.is_staff:
-        return render(request, "data/interview/interview_progress/prepresponses.html", context_a)
-    if request.user.is_client:
-        return render(request, "data/interview/interview_progress/prepresponses.html", context_b)
+        responses = UserAnswerStatus.objects.all().order_by("-created_at")
     else:
-        context={
-            "title":"ARE YOU A CLIENT/STUDENT?",
-            "contact":f'Kindly,contact admin at info@codanalytics.net!',
-            "message":f'Hi,{request.user}, you are currently not authorized to access this page.'
-        }
-        return render(request, "main/errors/generalerrors.html", context)
+        responses = UserAnswerStatus.objects.filter(user=request.user).order_by("-created_at")
+    ResFilter = ResponseFilter(request.GET, queryset=responses)
+    context = {                
+            # "companies": companies, 
+            "responses": responses, 
+            # "ResFilter": ResponseFilter(request.GET, queryset=responses),
+    }
+    return render(request, "data/interview/interview_progress/prepresponses.html", context)
     
+
+# def prep_responses(request):
+#     companies=Prep_Questions.objects.values_list('company', flat=True).distinct()
+#     responses = Prep_Questions.objects.filter(Q(is_answered=True)).order_by("-updated_at")
+#     client_responses = Prep_Questions.objects.filter(Q(is_answered=True),Q(questioner=request.user)).order_by("-updated_at")
+#     ResFilter = ResponseFilter(request.GET, queryset=responses)
+
+#     context_a = {                
+#             "companies": companies, 
+#             "responses": responses, 
+#             "ResFilter": ResponseFilter(request.GET, queryset=responses),
+#     }
+#     context_b = {                
+#             "companies": companies, 
+#             "responses": client_responses,
+#             "ResFilter": ResponseFilter(request.GET, queryset=client_responses),
+#     }
+#     # return render(request, "data/interview/interview_progress/test.html", context)
+#     if request.user.is_superuser or request.user.is_staff:
+#         return render(request, "data/interview/interview_progress/prepresponses.html", context_a)
+#     if request.user.is_client:
+#         return render(request, "data/interview/interview_progress/prepresponses.html", context_b)
+#     else:
+#         context={
+#             "title":"ARE YOU A CLIENT/STUDENT?",
+#             "contact":f'Kindly,contact admin at info@codanalytics.net!',
+#             "message":f'Hi,{request.user}, you are currently not authorized to access this page.'
+#         }
+#         return render(request, "main/errors/generalerrors.html", context)
+    
+
 class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
@@ -217,6 +322,7 @@ class PrepQuestionsCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.questioner = self.request.user
         return super().form_valid(form)
+    
 class PrepQuestionsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Prep_Questions
     success_url = "/data/prepquestions/"
@@ -241,6 +347,7 @@ def courseoverivew(request): #, question_type=None, *args, **kwargs):
         return render(request, "main/errors/404.html")
     else:
         return render(request, "data/training/training_progress/courseoverview.html", context)
+
 class TrainingView(LoginRequiredMixin, ListView):
     model = Interviews
     template_name = "data/training/training_progress/train.html"
@@ -258,6 +365,7 @@ class CourseView(LoginRequiredMixin, ListView):
     model = Interviews
     template_name = "data/training/training_progress/course.html"
     # success_url = "/data/course"
+
 # ==================================INTERVIEW VIEWS====================================
 class RoleListView(LoginRequiredMixin, ListView):
     queryset = JobRole.objects.all()
@@ -432,9 +540,6 @@ class InterviewDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Interviews
     success_url = "/data/iuploads"
     def test_func(self):
-        # timer = self.get_object()
-        # if self.request.user == timer.author:
-        # if self.request.user.is_superuser:
         if self.request.user.is_superuser:
             return True
         return False
@@ -448,10 +553,12 @@ class RoleCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+    
 @method_decorator(login_required, name="dispatch")
 class RolesView(LoginRequiredMixin, ListView):
     queryset  = JobRole.objects.all()
     template_name = "data/jobroles/roles.html"
+
 @method_decorator(login_required, name="dispatch")
 class RoleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = JobRole
@@ -470,6 +577,7 @@ class RoleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         elif editor == JobRole.user:
             return True
         return redirect("data:jobroles")
+    
 @method_decorator(login_required, name="dispatch")
 class RoleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = JobRole
@@ -692,6 +800,7 @@ class FeaturedActivityLinksUpdateView(
         elif self.request.user == ActivityLinks.created_by:
             return True
         return redirect("data:training-list")
+    
 # ========================3. DELETE VIEWS============================
 @method_decorator(login_required, name="dispatch")
 class FeaturedCategoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -704,6 +813,7 @@ class FeaturedCategoryDeleteView(LoginRequiredMixin, UserPassesTestMixin, Delete
         if self.request.user.is_superuser:
             return True
         return False
+    
 @method_decorator(login_required, name="dispatch")
 class FeaturedSubCategoryDeleteView(
     LoginRequiredMixin, UserPassesTestMixin, DeleteView
@@ -717,6 +827,7 @@ class FeaturedSubCategoryDeleteView(
         if self.request.user.is_superuser:
             return True
         return False
+    
 @method_decorator(login_required, name="dispatch")
 class FeaturedActivityDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = FeaturedActivity
@@ -787,10 +898,6 @@ def feedback(request):
     }
     return render(request, "data/training/feedback.html" ,context)
 
-# class (ListView):
-#     # queryset = DSU.objects.all(type="Staff").order_by("-created_at")
-#     queryset=DSU.objects.all().order_by("-created_at")
-#     template_name = "management/departments/hr/assessment.html"
 # =============================Job===================
 @method_decorator(login_required, name="dispatch")
 class JobCreateView(LoginRequiredMixin, CreateView):
@@ -821,9 +928,7 @@ def userjobtracker(request, user=None, *args, **kwargs):
     user = get_object_or_404(User, username=kwargs.get("username"))
     jobs = Job_Tracker.objects.all().filter(created_by=user).order_by("-created_at")
     num = jobs.count()
-    # my_time=jobs.aggregate(Assigned_Time=Avg('time'))
-    # Used=jobs.aggregate(Used_Time=Sum('duration'))
-    # Usedtime=Used.get('Used_Time')
+
     Usedtime = 1
     # plantime=my_time.get('Assigned_Time')
     plantime = 1

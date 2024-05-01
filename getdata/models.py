@@ -1,10 +1,34 @@
 from django.db import models
 from datetime import datetime,date
+from main.models import TimeStampedModel
+from data.models import Prep_Questions,JobRole
+from django.utils.translation import gettext_lazy as _
+
 from django.contrib.auth import get_user_model
 
 #User=settings.AUTH_USER_MODEL
 User = get_user_model()
-# Create your models here.
+
+class OpenaiPrompt(models.Model):
+    DEFAULT_CONTEXT_DESCRIPTION = "Domain such as IT Project Experice on roles such as Project Manager, Business Analysis"
+    DEFAULT_ROLE = "Expert in IT Field"
+    DEFAULT_CLARIFICATION_DESCRIPTION = "Utilize professional diction,Maintain a formal,friendly and helpful tone and Keep the response concise to maintain the reader's engagement"
+
+    category=models.CharField(
+          						max_length=100,
+                                choices=JobRole.QUESTION_CHOICES,
+                                default=1,
+                                null=True,blank=True)
+    expert_question = models.CharField(max_length=250, help_text="Describe your question", null=True, blank=True)
+    context_description = models.TextField(help_text="Provide context if possible", null=True, blank=True,
+                                            default=DEFAULT_CONTEXT_DESCRIPTION)
+    role = models.CharField(max_length=250, help_text="Explain your role", default=DEFAULT_ROLE, null=True, blank=True)
+    clarification_description = models.TextField(help_text="Provide clarification or use default", null=True, blank=True,
+                                                  default=DEFAULT_CLARIFICATION_DESCRIPTION)
+
+    def __str__(self):
+        return f"{self.category} - {self.expert_question}"
+
 class CashappMail(models.Model):
 	id = models.CharField(max_length=30, unique=True, primary_key=True)
 	from_mail = models.CharField(max_length=255)
@@ -90,6 +114,7 @@ class upwork_Transanctions(models.Model):
 
     def __str__(self):
         return self.ref_Id
+	
 
 class Logs(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_in_logs", null=True, blank=True)

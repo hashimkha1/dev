@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import Textarea
 from django.db.models import Q
-from .models import Interviews, DSU, JobRole, Training_Responses,Prep_Questions
+from .models import Interviews, DSU, JobRole, Training_Responses,Prep_Questions,UserAnswerStatus
 
 class InterviewForm(forms.ModelForm):
     '''========== Performance ============='''
@@ -107,6 +107,23 @@ class PrepQuestionsForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         # first call parent's constructor
         super(PrepQuestionsForm, self).__init__(*args, **kwargs)
+        self.fields['question'].required = False
+
+class UserAnswerForm(forms.ModelForm):
+    class Meta:
+        model = UserAnswerStatus
+        fields = ["question", "answer",'role',"is_answered"]
+        labels={
+                'user':'Client/User', 
+                'role':'My Role:What are you applying as BA,PM,Data Analyst?',
+                'category':'Topic i.e Methodology,Intro..',
+                'question':'Question ID',
+                'answer':'Current Response',
+                }
+
+    def __init__(self, *args, **kwargs):
+        # first call parent's constructor
+        super(UserAnswerForm, self).__init__(*args, **kwargs)
         self.fields['question'].required = False
 
 class TrainingResponseForm(forms.ModelForm):

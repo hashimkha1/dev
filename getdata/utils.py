@@ -2,8 +2,10 @@ from __future__ import print_function
 import os
 import re
 from bs4 import BeautifulSoup
+import json
 import psycopg2
 import requests
+from django.http import JsonResponse
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,18 +13,14 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 from datetime import date,datetime, timedelta
 from marketing.models import Whatsapp_Groups,Whatsapp_dev
+from data.models import UserAnswerStatus,Prep_Questions
 from django.core.management.base import BaseCommand
-from marketing.models import Whatsapp_dev  # Replace 'your_app' with the actual name of your app
 
 # To encode the data
 from base64 import urlsafe_b64decode
 import logging
 logger = logging.getLogger(__name__)
 #libraries for Options_play data extraction
-import psycopg2
-from django.http import JsonResponse
-import json
-import os
 
 from coda_project.settings import dba_values ,source_target #dblocal,herokudev,herokuprod
 # from testing.utils import dblocal,herokudev,herokuprod
@@ -35,6 +33,8 @@ host,dbname,user,password=dba_values() #herokudev() #dblocal() #,herokuprod()
 
 #DB VARIABLES
 (source_host, source_dbname, source_user, source_password,target_db_path) = source_target()
+
+
 
 def fetch_and_insert_data():
     (source_host, source_dbname, source_user, source_password, target_db_path) = source_target()
@@ -491,3 +491,24 @@ class Run_Command(BaseCommand):
                 type=group_data.get("type"),
             )
             self.stdout.write(self.style.SUCCESS(f"Added new group with ID {group_id} to the database."))
+
+def move_questions_to_user_answer_status(username):
+    # Step 1: Identify the records in the Prep_Questions table
+    prep_questions_to_move = Prep_Questions.objects.filter(is_answered=True)
+
+    # Step 2: Create new UserAnswerStatus objects for each identified record
+    for prep_question in prep_questions_to_move:
+        # Determine the user for the UserAnswerStatus object
+        user = prep_question.questioner if prep_question.questioner else username
+        # Create a new UserAnswerStatus object
+        user_answer_status = UserAnswerStatus.objects.create(
+            user=user,
+            question=prep_question,
+            role=prep_question.position,
+            answer=prep_question.response,
+            is_answered=True
+        )
+
+        # Optionally, update the is_answered field in the Prep_Questions table
+        prep_question.is_answered = False
+        prep_question.save()

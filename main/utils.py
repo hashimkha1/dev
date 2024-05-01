@@ -161,7 +161,8 @@ def generate_chatbot_response(user_message, user_message_dict=None):
 
     response = client.chat.completions.create(
     # response = openai.completions.create(
-            model = os.environ.get('OPENAI_MODEL'),
+            # model = os.environ.get('OPENAI_MODEL'),
+            model="gpt-4-1106-preview",
             messages=messages,
             # response_format="json"
             # temperature=0.4,
