@@ -14,14 +14,7 @@ AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend
 INSTALLED_APPS = [
     "main.apps.MainConfig",
     "accounts.apps.AccountsConfig",
-    "data.apps.DataConfig",
     "application.apps.ApplicationConfig",
-    "getdata.apps.GetdataConfig",
-    "projectmanagement.apps.ProjectmanagementConfig",
-    "investing.apps.InvestingConfig",
-    "management.apps.ManagementConfig",
-    "finance.apps.FinanceConfig",
-    "marketing.apps.MarketingConfig",
     "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -39,10 +32,10 @@ INSTALLED_APPS = [
     "django_crontab",
     "django.contrib.sites",
     "allauth",
-    "allauth.account",
-    "allauth.socialaccount",
-    "allauth.socialaccount.providers.google",
-    "allauth.socialaccount.providers.facebook"
+    # "allauth.account",
+    # "allauth.socialaccount",
+    # "allauth.socialaccount.providers.google",
+    # "allauth.socialaccount.providers.facebook"
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -87,20 +80,12 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "main.context_processors.images",
                 "main.context_processors.googledriveurl",
-                "management.context_processors.categories",
-                "management.context_processors.departments",
-                "data.context_processors.roles",
-                "data.context_processors.categories",
-                "data.context_processors.subcategories",
                 "main.context_processors.services",
             ],
-            'libraries': {
-                'customfilters': 'application.templatetags.customfilters',
-            }
+          
         },
     },
 ]
-
 
 #  ==============DBFUNCTIONS=====================================
 def dba_values():
@@ -116,10 +101,15 @@ def dba_values():
         user = os.environ.get('HEROKU_DEV_USER')
         password = os.environ.get('HEROKU_DEV_PASS')
     else:
-        host = os.environ.get('POSTGRES_DB_NAME')
-        dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
-        user = os.environ.get('POSTGRESDB_USER')
-        password = os.environ.get('POSTGRESSPASS') 
+        host = "localhost"
+        dbname = "CODA_PRAC"
+        user = "postgres"
+        password = "MANAGER2030"
+        
+        # host = os.environ.get('POSTGRES_DB_NAME')
+        # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
+        # user = os.environ.get('POSTGRESDB_USER')
+        # password = os.environ.get('POSTGRESSPASS') 
     return host,dbname,user,password  
 
 WSGI_APPLICATION = "coda_project.wsgi.application"

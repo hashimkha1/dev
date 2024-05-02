@@ -18,7 +18,6 @@
                             {% if user.is_authenticated %}
                             <ul>
                                 <li><a href="{% url 'account-logout'%}">Log Out</a></li>
-                                <li><a href="{% url 'application:userscores' request.user %}">My Progress</a></li>
                             </ul>
                             {% else %}
                             <ul>

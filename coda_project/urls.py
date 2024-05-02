@@ -25,9 +25,6 @@ from django.contrib.auth import views as auth_views
 from accounts import views as account_views
 from coda_project import settings
 
-
-
-from mail.search_mail import parse_mail
 from . import views
 
 # ===========ERROR HANDLING SECTION================
@@ -38,7 +35,6 @@ handler500 = "main.views.hendler500"
 
 
 urlpatterns = [
-    path('parse_cashapp_mails/', parse_mail),
     path("admin/", admin.site.urls),
     re_path(r"^static/(?P<path>.*)$", serve, {"document_root": settings.STATIC_ROOT}),
     re_path(r"^media/(?P<path>.*)$", serve, {"document_root": settings.MEDIA_ROOT}),
@@ -78,21 +74,6 @@ urlpatterns = [
     ),
     path("", include("main.urls", namespace="main")),
     path("accounts/", include("accounts.urls")),
-    path("data/", include("data.urls", namespace="data")),
-    path("getdata/", include("getdata.urls", namespace="getdata")),
-    path("application/", include("application.urls", namespace="application")),
-    path(
-        "projectmanagement/",
-        include("projectmanagement.urls", namespace="projectmanagement"),
-    ),
-    path("investing/", include("investing.urls", namespace="investing")),
-    path("management/", include("management.urls", namespace="management")),
-    path("marketing/", include("marketing.urls", namespace="marketing")),
-    # path("globalsearch/", include("globalsearch.urls"), name="search"),
-    path("finance/", include("finance.urls"), name="finance"),
-    # path('testing/', include("testing.urls"))
-    
-    
     #redirect and custom url for social login
     path('accounts/social/custom_login/', account_views.custom_social_login, name='custom_social_login'),
     path('social_accounts/signup/', account_views.join),

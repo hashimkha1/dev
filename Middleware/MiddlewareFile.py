@@ -1,7 +1,7 @@
 import traceback
 from django.http import Http404
 
-from getdata.models import Logs
+# from getdata.models import Logs
 
 
 class MailMiddleware:
@@ -27,7 +27,7 @@ class MailMiddleware:
                         break
                     error_line_no = line
                     flag = 1
-            Logs.objects.create(api=request.path, location_in_code=error_line_no, reason_code_crash=reason_error,
-                                user_id=request.user.id, exception=exception.args)
+            # Logs.objects.create(api=request.path, location_in_code=error_line_no, reason_code_crash=reason_error,
+            #                     user_id=request.user.id, exception=exception.args)
 
         return          # no return anything

@@ -1,7 +1,4 @@
-from django.db.models import Q
-from django.db.models.aggregates import  Sum
 from datetime import date
-from accounts.models import CustomerUser
 import string
 import secrets
 
@@ -42,47 +39,6 @@ def compute_default_fee(category, default_amounts, Default_Payment_Fees):
             student_bonus_payment_per_month=100,
             )
     return default_fee
-
-# ================================USERS========================================
-def employees():
-    active_employees = CustomerUser.objects.filter(
-                                             Q(is_staff=True),Q(is_active=True)
-                                          ).order_by("-date_joined")
-    
-    # former_employees = CustomerUser.objects.filter(
-    #                                          Q(is_staff=True),Q(is_active=True),Q(sub_category=5)
-    #                                       ).order_by("-date_joined")
-    
-    employees_categories_list = CustomerUser.objects.values_list(
-                    'sub_category', flat=True).distinct()
-    
-    # print(employees_categories_list)
-    
-    # employees_categories = [subcat for subcat in employees_categories_list if subcat in (1,2,3)]
-    # employees_categories = [subcat for subcat in employees_categories_list]
-    employees_categories = [subcat for subcat in employees_categories_list if subcat in (0,1,2,3,4,5,6)]
-    print(employees_categories)
-    employee_subcategories=list(set(employees_categories))
-    return (employee_subcategories,active_employees)
-
-# ================================USERS========================================
-def get_clients_time(current_info,history_info,trackers):
-	# Payment Infor
-	payment_latest_record = current_info
-	first_history_record = history_info
-	history_time = first_history_record.plan if first_history_record else 0
-	added_time = payment_latest_record.plan if payment_latest_record else 0
-	
-	# Examining Tracker
-	num = trackers.count()
-	Used = trackers.aggregate(Used_Time=Sum("duration"))
-	Usedtime = Used.get("Used_Time") if Used.get("Used_Time") else 0
-	plantime=history_time+added_time
-	try:
-		delta = round(plantime - Usedtime)
-	except (TypeError, AttributeError):
-		delta = 0
-	return plantime,history_time,added_time,Usedtime,delta,num
 
 
 JOB_SUPPORT_CATEGORIES = [

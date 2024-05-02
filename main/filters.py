@@ -1,7 +1,5 @@
 import django_filters 
 from accounts.models import Credential,CustomerUser
-from management.models import Requirement,TaskHistory,Task
-from finance.models import Food
 
 
 class UserFilter(django_filters.FilterSet):
@@ -29,53 +27,7 @@ class CredentialFilter(django_filters.FilterSet):
                 'link_name':'username/email',
         }
 
-class TaskHistoryFilter(django_filters.FilterSet):
-    class Meta:
-        model=TaskHistory
-        # fields= '__all__'
-        fields ={
-                'group':['icontains'],
-                'activity_name':['icontains']
-        }
-        labels={
-                'employee'
-                'activity_name':'Task',
-                'group':'Group',
-        }
 
-class TaskFilter(django_filters.FilterSet):
-    class Meta:
-        model=Task
-        # fields= '__all__'
-        fields ={
-                'group':['icontains'],
-                'activity_name':['icontains']
-        }
-        labels={
-                'activity_name':'Task',
-                'group':'Group',
-        }
-
-class RequirementFilter(django_filters.FilterSet):
-    class Meta:
-        model=Requirement
-        # fields= '__all__'
-        fields ={
-        'category':['icontains'],
-        'status':['icontains'],
-        'is_active':['icontains'],
-        'app':['icontains']
-        }
-    
-class FoodFilter(django_filters.FilterSet):
-    office_location = django_filters.CharFilter(label='Location', lookup_expr='icontains')
-    supplier = django_filters.CharFilter(label='Supplier', lookup_expr='icontains')
-    item = django_filters.CharFilter(label='Item', lookup_expr='icontains')
-
-    class Meta:
-        model=Food
-        # fields='__all__'
-        fields ={'office_location','supplier','item','created_at'}
     
 # ==================================INVESTING MODELS==================================================
 

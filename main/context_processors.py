@@ -1,17 +1,16 @@
 from .models import Service,Assets
-from data.models import FeaturedCategory,FeaturedSubCategory
 # from .utils import image_view
 
 #availabity of images in this app
 
 def categories (request):
     return {
-        'categories': FeaturedCategory.objects.all()
+        'categories': {}
     }
     
 def subcategories (request):
     return {
-        'subcategories': FeaturedSubCategory.objects.all()
+        'subcategories': {}
     }
 
 def image_view(request):

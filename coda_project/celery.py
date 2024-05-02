@@ -35,25 +35,6 @@ app.conf.beat_schedule = {
         'schedule': crontab(0, 0, day_of_month='1'),
     },
 
-    # 'run-whatsapp-every-1-minute': {
-    #     'task': 'advertisement_whatsapp',
-    #     'schedule': 60.0,  # in seconds
-    # },
-
-    # 'advertisement_whatsapp': {
-    #     'task': 'advertisement_whatsapp',
-    #     # 'schedule': crontab(minute='*/1'),
-    #     'schedule': crontab(minute='*'),
-    #     # 'schedule': crontab(0, 0, day_of_month='5'),
-    # },
-
-
-    'replies_mails': {
-        'task': 'replies_job_mail',
-        # 'schedule': crontab(minute='*/1'),
-        # 'schedule': crontab(hour=23),
-        'schedule': crontab(0, 0, day_of_month='1'),
-    },
     'auto_upload_evidence': {
         'task': 'auto_uplaod_evidence',
         # 'schedule': crontab(minute='*/1'),
