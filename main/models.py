@@ -42,21 +42,6 @@ class Service(models.Model):
     def get_absolute_url(self):
         return "/services/{slug}/".format(slug=self.slug)
 
-# class ServiceCategory(models.Model):
-#     pass
-#     service = models.ForeignKey(Service, on_delete=models.CASCADE, default=Service.objects.get_or_create(serial=1)[0].id)
-#     name = models.CharField(max_length=254)
-#     slug = models.SlugField(null=True, blank=True,unique=True)
-#     description = models.TextField(null=True, blank=True)
-#     is_active = models.BooleanField(default=True)
-#     is_featured = models.BooleanField(default=False)
-
-#     class Meta:
-#         verbose_name_plural = "Service Categories"
-
-#     def __str__(self):
-#         return self.name
-
 class Assets(TimeStampedModel):
     name = models.CharField(max_length=200)
     category = models.CharField(default='background',max_length=200,null=True, blank=True)
@@ -79,11 +64,4 @@ class Assets(TimeStampedModel):
 
     def __str__(self):
         return self.name
-
-# def servicecategory_pre_save_receiver(sender, instance, *args, **kwargs):
-#     if not instance.slug:
-#         if instance.name:
-#             instance.slug = unique_slug_generator(instance)
-
-# pre_save.connect(servicecategory_pre_save_receiver, sender=ServiceCategory)
 

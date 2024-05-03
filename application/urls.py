@@ -1,12 +1,6 @@
 from django.urls import path
 from . import views
-from .views import (
-    ApplicantDeleteView,
-    TraineeDeleteView,
-    TraineeUpdateView,
-    TraineeAssessmentCreateView,
-    TraineeAssessmentUpdateView
-)
+from .views import ApplicantDeleteView
 app_name = "application"
 urlpatterns = [
     # =============================APPLICATIONS VIEWS=====================================

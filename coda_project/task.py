@@ -2,7 +2,6 @@ import tweepy
 import logging
 
 from celery import shared_task
-from mail.custom_email import send_email
 from datetime import datetime, timedelta
 from decimal import Decimal
 from django.contrib.auth import get_user_model

@@ -104,7 +104,7 @@ def dba_values():
         host = "localhost"
         dbname = "CODA_PRAC"
         user = "postgres"
-        password = "MANAGER2030"
+        password = "*******"
         
         # host = os.environ.get('POSTGRES_DB_NAME')
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
@@ -115,7 +115,7 @@ def dba_values():
 WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
 
-host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
+host,dbname,user,password=dba_values()
 
 
 

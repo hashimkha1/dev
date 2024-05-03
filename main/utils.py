@@ -24,8 +24,6 @@ from google.auth import exceptions
 
 """ ========End of Code======== """
 
-
-
 register = template.Library()
 
 @register.filter

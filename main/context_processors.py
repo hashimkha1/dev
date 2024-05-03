@@ -57,10 +57,6 @@ def services(request):
     return {
         'main_services': services,
     }
-# def googledriveurl(request):
-#     return {
-#         'googledriveurl':'http://drive.google.com/uc?export=view&id'
-#     }
 
 def googledriveurl(request):
     return {
