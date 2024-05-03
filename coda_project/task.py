@@ -10,7 +10,6 @@ from accounts.models import CustomerUser, TaskGroups
 from application.models import UserProfile
 
 # importing utils & Views
-from main.utils import download_image
 # from main.context_processors import image_view
 
 logger = logging.getLogger(__name__)

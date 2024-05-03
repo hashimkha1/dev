@@ -65,3 +65,30 @@ class Assets(TimeStampedModel):
     def __str__(self):
         return self.name
 
+class Readme(TimeStampedModel):
+    title = models.CharField(max_length=100, blank=True, null=True)
+    slug = models.SlugField(default='slug',max_length=255)
+    description = models.TextField(blank=True, null=True)
+    installation = models.TextField(blank=True, null=True)
+    usage = models.TextField(blank=True, null=True)
+    configuration = models.TextField(blank=True, null=True)
+    deployment = models.TextField(blank=True, null=True)
+    contributing = models.TextField(blank=True, null=True)
+    license = models.TextField(blank=True, null=True)
+    credits = models.TextField(blank=True, null=True)
+    contact = models.TextField(blank=True, null=True)
+    additional_sections = models.TextField(blank=True, null=True)
+    links = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = "Readme"
+    def __str__(self):
+        return self.title or "Readme Entry"
+
+# ==============================PRESAVE SLUG GENERATORS====================================
+def readme_pre_save_receiver(sender, instance, *args, **kwargs):
+    if not instance.slug:
+        if instance.title:
+            instance.slug = unique_slug_generator(instance)
+
+pre_save.connect(readme_pre_save_receiver, sender=Readme)

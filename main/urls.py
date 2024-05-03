@@ -20,9 +20,9 @@ urlpatterns = [
         #--------------------------MANAGEMENT--------------------#
     #----------------------------IT-------------------------#
         path('it/', views.it, name='it'),
-    #-----------------------finance-------------------------#
-        path('finance/', views.finance, name='finance'),
-        # path('marketing/', views.marketing, name='marketing'),
+    #-----------------------README-------------------------#
+    path('newusecase/', views.UseCaseCreateView.as_view(template_name='main/form.html'), name='newusecase'),
+    path('display_usecases/', views.display_usecases, name='display_usecases'),
 
    #==============ERRORS==============================================
     path('400Error/', views.error400, name='400error'),

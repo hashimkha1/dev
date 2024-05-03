@@ -33,10 +33,6 @@ def convert_date(date_string):
 def random_string_generator(size=25, chars=string.ascii_lowercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
-# def first_day_of_month():
-#     """Function to return the first day of the current month."""
-#     return date.today().replace(day=1)
-
 def dates_functionality():
     current_year = date_obj.now().year
     current_date = date_obj.now()
@@ -1096,3 +1092,24 @@ def langchainModelForAnswer(question):
         print(e)
         response = "some error were there, try again!"
     return response
+
+table_contents=[
+    {
+        "topic": "Overview",
+        "description": "Project Description |What the Use case is about"
+    },
+    {
+        "topic": "Practical Demonstration",
+        "description":  "Hardware/Software Requirements,Business Requirements,Technical Requirements"
+    },
+   
+    {
+        "topic": "Development",
+        "description": "Modeling/Data Dictionary, Functional Components,Implementing Functional Components,Testing Functional Components"
+    },
+    
+    {
+        "topic": "Deployment",
+        "description": "Heroku Environment,Github/Version Control"
+    }
+]

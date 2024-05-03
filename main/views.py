@@ -9,7 +9,7 @@ from datetime import datetime,date,timedelta
 from dateutil.relativedelta import relativedelta
 import openai
 from django.db.models import Sum
-from .models import Service,Assets
+from .models import Service,Assets,Readme
 from .utils import *
 from coda_project import settings
 from application.models import UserProfile
@@ -218,8 +218,30 @@ def service_plans(request, *args, **kwargs):
     return render(request, "main/services/service_plan.html", context)
 
 
-# =====================TESTIMONIALS  VIEWS=======================================
+# =====================README VIEWS=======================================
+class UseCaseCreateView(LoginRequiredMixin, CreateView):
+    model = Readme
+    success_url = "/usecases/"
+    fields = "__all__"
 
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
+
+def display_usecases(request, *args, **kwargs):
+    try:
+        usecases = Readme.objects.all()
+    except Readme.DoesNotExist:
+        return redirect('main:layout')
+    
+    context = {
+        "title": "USE CASE",
+        "table_contents": table_contents,
+        "usecases": usecases,
+    }
+    return render(request, "main/snippets_templates/readme_usecases.html", context)
+    
 #========================Internal Team & Clients==============================
 
 def it(request):

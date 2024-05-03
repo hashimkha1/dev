@@ -1,0 +1,80 @@
+{%extends "main/base_templates/new_base.html"%} 
+{% load static %}
+{% block title %}
+{% if department %}{{ department.name }}{% else %}activities{% endif %}
+{% endblock %}
+{% block content %}
+<!--------------------------Slider Section--------------------------------->
+<section id="data_training">
+  <h3 class="title text-center">ALL USE CASES</h3>
+  <div class="row text-center">
+    <div class="col-md-10 mx-auto mb-4" id="gi">
+        <div class="card">
+            <div class="card-body">
+                <p class="gi">
+                  Big data refers to extremely large and complex sets of data that exceed the capabilities of 
+                  traditional data processing methods to efficiently capture, store, manage, and analyze. 
+                  These datasets are typically characterized by the "3Vs": volume, velocity, and variety.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+  <div class="row padding mb-4">
+    {% for content in table_contents %}
+            <div class="col-md-4 text-center" id="bada">
+              <div class="card-group">
+                <div class="card">
+                  <div class="">
+                    <p class="display-5 text-center"><b>{{content.topic}}</b></p>
+                    <hr>
+                    {{content.description}}
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor%}
+    </div>
+    <hr style="height:3px;border:none;color:rgb(102, 102, 105);background-color:rgb(106, 106, 155);" />
+  <div class="data_training">
+    <h3 class="title">USE CASE</h3>
+        <div class="row">
+                {% for usecase in usecases %}
+                    <div class="col-md-3 hover">
+                            <h5 class="text-center text-dark">{{usecase.title}}</h5>
+                            <div style="border: 1px solid black;padding:20px;">
+                                    <p>Kindly,select an item to proceed</p>
+                            </div>
+                            <div style="border: 1px solid black;padding:20px;">
+                                <a class="dropdown-item" href="#" target="__blank" >Usecase: {{usecase.title}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Description: {{usecase.description}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Tools:{{usecase.installation}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Usage:{{usecase.usage}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >configuration:{{usecase.configuration}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >deployment:{{usecase.deployment}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Contributors: {{usecase.contributing}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >License: {{usecase.license}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >credits: {{usecase.credits}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Contacts: {{usecase.contact}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Comments: {{usecase.additional_sections}}</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" target="__blank" >Links: {{usecase.links}}</a>
+                                <div class="dropdown-divider"></div>
+                            </div>
+                    </div>
+                {% endfor%}
+          </div>
+    </div>
+    </div>
+</section>
+{% endblock content %}
