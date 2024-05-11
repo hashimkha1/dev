@@ -64,3 +64,17 @@ class CustomerUser(AbstractUser):
     def days_since_joined(self):
         return (timezone.now().date() - self.date_joined.date()).days
     
+
+class CredentialCategoryy(models.Model):
+    department = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+    description = models.TextField(max_length=1000)
+    entry_date = models.DateTimeField()
+    is_active = models.BooleanField()
+    is_featured = models.BooleanField()
+
+    def __str__(self):
+        return self.category  # You can return any field that represents the object in the admin interface
+
+    
