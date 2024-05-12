@@ -30,7 +30,7 @@ class CustomerUser(AbstractUser):
     address = models.CharField(blank=True, null=True, max_length=255)
     city = models.CharField(blank=True, null=True, max_length=255)
     state = models.CharField(blank=True, null=True, max_length=255)
-    zipcode = models.CharField(blank=True, null=True, max_length=255)
+    # zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
@@ -63,4 +63,16 @@ class CustomerUser(AbstractUser):
     @property
     def days_since_joined(self):
         return (timezone.now().date() - self.date_joined.date()).days
+    
+    from django.db import models
+
+class Credentialusers(models.Model):
+    department = models.CharField(max_length=255, null=False)
+    category = models.CharField(max_length=255, null=False)
+    slug = models.SlugField(max_length=255, null=False)
+    description = models.TextField(max_length=1000, null=False)
+    entry_date = models.DateTimeField(auto_now_add=True, null=False)
+    is_active = models.BooleanField(default=True, null=False)
+    is_featured = models.BooleanField(default=False, null=False)
+
     

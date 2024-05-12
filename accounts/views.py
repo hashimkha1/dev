@@ -18,6 +18,7 @@ from allauth.core.exceptions import ImmediateHttpResponse
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 from accounts.choices import CategoryChoices
+from .models import Credentialusers
 # Create your views here..
 
 # @allowed_users(allowed_roles=['admin'])
@@ -257,3 +258,7 @@ def custom_social_login(request):
     except:
     
         return render(request, "accounts/registration/coda/join.html", {"form": UserForm()})
+    
+def Credentialusers_list(request):
+    categories = Credentialusers.objects.all()
+    return render(request, 'accounts/credention_list.html', {'categories': categories})
