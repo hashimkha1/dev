@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm, UserCreationForm
-from .models import CustomerUser
+from .models import CustomerUser,employees_tracker
 
 
 # admin.site.register(CustomerUser)
@@ -61,6 +61,7 @@ class CustomerAdmin(UserAdmin):
 
 # Now register the new UserAdmin...
 admin.site.register(CustomerUser, CustomerAdmin)
+admin.site.register(employees_tracker)
 # admin.site.register(CustomerUser)
 
 # Register your models here.

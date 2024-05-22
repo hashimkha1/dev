@@ -30,7 +30,7 @@ class CustomerUser(AbstractUser):
     address = models.CharField(blank=True, null=True, max_length=255)
     city = models.CharField(blank=True, null=True, max_length=255)
     state = models.CharField(blank=True, null=True, max_length=255)
-    zipcode = models.CharField(blank=True, null=True, max_length=255)
+    # zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
@@ -63,4 +63,19 @@ class CustomerUser(AbstractUser):
     @property
     def days_since_joined(self):
         return (timezone.now().date() - self.date_joined.date()).days
+    
+  
+class employees_tracker(models.Model):
+    category = models.CharField(max_length=25, null=False)
+    sub_category = models.CharField(max_length=25, null=False) # ForeignKey to another model
+    task = models.CharField(max_length=25, null=False)
+    plan = models.CharField(max_length=255, null=False)
+    empname = models.IntegerField(null=False) # ForeignKey to another model
+    author = models.IntegerField(null=False) # ForeignKey to another model
+    employee = models.CharField(max_length=255, null=False)
+    login_date = models.DateTimeField(null=False)
+    start_time = models.TimeField(null=True)
+    duration = models.IntegerField(null=True)
+    time = models.PositiveIntegerField(null=True)
+
     
