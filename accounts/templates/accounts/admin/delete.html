@@ -1,0 +1,30 @@
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+<!-- delete_confirm.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Confirmation</title>
+</head>
+<body>
+    <h2>Delete Confirmation</h2>
+    <p></p>
+    <ul>
+        <li>Description: {{ departments_id_instance.description }}</li>
+        <li>Slug: {{ departments_id_instance.slug }}</li>
+        <li>Is Featured: {% if departments_id_instance.is_featured %} Yes {% else %} yes {% endif %}</li>
+        <li>Is Active: {% if departments_id_instance.is_active %} Yes {% else %} No {% endif %}</li>
+    </ul>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="eddit">
+        <a href="#">"submit"</a>
+        <a href="#">"eddit"</a>
+
+    </form>
+</body>
+</html>
+{%  endblock content %}

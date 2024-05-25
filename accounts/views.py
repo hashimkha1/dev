@@ -299,4 +299,25 @@ def update_departments_id(request, pk):
     return render(request, 'accounts/admin/update.html', {'form': form})
 
 
+
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Departments_id
+from .forms import DepartmentsIdForm
+
+def delete_departments_id(request, pk):
+    departments_id_instance = get_object_or_404(Departments_id, pk=pk)
+    if request.method == "POST":
+        departments_id_instance.delete()
+        return redirect("accounts:departments_id_list")
+    return render(request, "accounts/admin/delete.html", {'departments_id_instance': departments_id_instance})
+
+
+
+    
+
+
+
       
