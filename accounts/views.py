@@ -273,8 +273,30 @@ def create_departments_id(request):
         form = DepartmentsIdForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('accounts:Departments_id_list')  # Redirect to a success URL after form submission
+            return redirect('accounts:departments_id_list')
+
     else:
         form = DepartmentsIdForm()
     return render(request, 'accounts/admin/create.html', {'form': form})
+
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Departments_id
+from .forms import DepartmentsIdForm
+
+
+def update_departments_id(request, pk):
+    departments_id_instance = get_object_or_404(Departments_id, pk=pk)
+    if request.method == 'POST':
+        form = DepartmentsIdForm(request.POST, instance=departments_id_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:Departments_id_list')  # Redirect to a success URL after updating
+    else:
+        form = DepartmentsIdForm(instance=departments_id_instance)
+    return render(request, 'accounts/admin/update.html', {'form': form})
+
+
       

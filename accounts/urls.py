@@ -5,7 +5,7 @@ app_name = 'accounts'
 urlpatterns = [
     #=============================USERS VIEWS=====================================
     path('', views.home, name='home'),
-    path('Departments_id_list/', views.Departments_id_list, name='Departments_id_list'),
-    path('create_departments_id/', views.create_departments_id, name='account-create_departments_id'),
-    path('profile/', views.profile, name='account-profile'),
+    path('departments_id_list/', views.Departments_id_list, name='departments_id_list'),
+    path('create_departments_id/', views.create_departments_id, name='create_departments_id'),
+    path('update_departments_id/<int:pk>/', views.update_departments_id, name='update_departments_id'),
 ]
