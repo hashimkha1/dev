@@ -264,3 +264,17 @@ def Departments_id_list(request):
     print("info==============================", info)  # Corrected 'sprint' to 'print'
     return render(request, "accounts/admin/list.html", {'Departments_id': info}) 
        
+
+from django.shortcuts import render, redirect
+from .forms import DepartmentsIdForm
+
+def create_departments_id(request):
+    if request.method == 'POST':
+        form = DepartmentsIdForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:Departments_id_list')  # Redirect to a success URL after form submission
+    else:
+        form = DepartmentsIdForm()
+    return render(request, 'accounts/admin/create.html', {'form': form})
+      
