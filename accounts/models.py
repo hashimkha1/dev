@@ -78,4 +78,18 @@ class employees_tracker(models.Model):
     duration = models.IntegerField(null=True)
     time = models.PositiveIntegerField(null=True)
 
+
+
+from django.db import models
+
+class Departments_id(models.Model):
+    description = models.TextField(max_length=500, blank=True, null=True)
+    slug = models.SlugField(unique=True)
+    is_featured = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.slug
+
+
     

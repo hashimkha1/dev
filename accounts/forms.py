@@ -20,6 +20,7 @@ class UserForm(forms.ModelForm):
                 regex=phone_regex,
                 message="Phone number must be 10 digits (e.g., 5551234567).",),],)
     email = AutocompleteEmailField()
+    
 
     class Meta:
         model = CustomerUser
@@ -38,7 +39,7 @@ class UserForm(forms.ModelForm):
             "city",
             "state",
             "country",
-            "zipcode",
+            # "zipcode",
             "resume_file",
             "is_staff",
             "is_applicant",
