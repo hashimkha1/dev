@@ -333,7 +333,7 @@ def sCredentialCategorys_list(request):
 
 from django.shortcuts import render, redirect
 from .forms import sCredentialCategorysForm
-  
+
 def sCredentialCategorys_create(request):
     if request.method == 'POST':
         form = sCredentialCategorysForm(request.POST)
@@ -345,6 +345,31 @@ def sCredentialCategorys_create(request):
         form = sCredentialCategorysForm()  # Creating an empty form for GET requests
 
     return render(request, 'accounts/admin/create_credential.html', {'form': form})
+
+
+
+
+
+
+
+
+def sCredentialCategorys_update(request, pk):
+    sCredentialCategorys_instance = get_object_or_404(sCredentialCategorys, pk=pk)
+    if request.method == 'POST':
+        form = sCredentialCategorysForm(request.POST, instance=sCredentialCategorys_instance)
+        if form.is_valid():
+            form.save()
+            return redirect('accounts:sCredentialCategorys_list')  
+    else:
+        form = sCredentialCategorysForm(instance=sCredentialCategorys_instance)
+    return render(request, 'accounts/admin/credential_update.htnl', {'form': form})
+
+
+
+
+
+
+
 
 
 
