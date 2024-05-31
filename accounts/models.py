@@ -7,6 +7,10 @@ from django.utils.translation import gettext_lazy as _
 
 from django_countries.fields import CountryField
 from accounts.choices import CategoryChoices,SubCategoryChoices
+# from django.contrib.auth import get_user_model
+
+
+
 
 # Create your models here.
 class CustomerUser(AbstractUser):
@@ -30,7 +34,7 @@ class CustomerUser(AbstractUser):
     address = models.CharField(blank=True, null=True, max_length=255)
     city = models.CharField(blank=True, null=True, max_length=255)
     state = models.CharField(blank=True, null=True, max_length=255)
-    zipcode = models.CharField(blank=True, null=True, max_length=255)
+    # zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
@@ -63,4 +67,22 @@ class CustomerUser(AbstractUser):
     @property
     def days_since_joined(self):
         return (timezone.now().date() - self.date_joined.date()).days
+    
+ 
+class companytracker(models.Model):
+    category = models.CharField(max_length=25, null=False)
+    sub_category = models.CharField(max_length=25, null=False)  # Should be linked as ForeignKey if required
+    task = models.CharField(max_length=25, null=False)
+    plan = models.CharField(max_length=255, null=False)
+    empname = models.CharField( max_length=255,null=False)
+    author = models.CharField(max_length=255, null=False)
+    employee = models.CharField(max_length=255, null=False)
+    login_date = models.DateTimeField(default=timezone.now, null=False)
+    start_time = models.TimeField(null=True)  # Optional
+    duration = models.IntegerField(null=True)  # Optional
+    time = models.PositiveIntegerField(null=True)  # Optional
+
+    def __str__(self):
+        return f"Tracker for {self.employee} on task {self.task}"
+
     
