@@ -3,11 +3,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login
 from django.utils.decorators import method_decorator
-from .forms import UserForm, LoginForm
+from .forms import *
 from coda_project import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import CustomerUser
+from .models import CustomerUser,companytracker
 from .utils import agreement_data
 from application.models import UserProfile,Assets
 from .utils import generate_random_password
@@ -257,3 +257,7 @@ def custom_social_login(request):
     except:
     
         return render(request, "accounts/registration/coda/join.html", {"form": UserForm()})
+    
+def companytracker_List(request):
+    trackers = companytracker.objects.all()
+    return render(request, 'accounts/companytracker_list.html', {'trackers': trackers})
