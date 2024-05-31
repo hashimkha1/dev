@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import  Textarea
-from .models import CustomerUser,Departments_id
+from .models import CustomerUser,Departments_id,sCredentialCategorys
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import  RegexValidator,validate_email
 from django.core.exceptions import ValidationError
@@ -149,3 +149,12 @@ class DepartmentsIdForm(forms.ModelForm):
     class Meta:
         model = Departments_id
         fields = '__all__'  # You can specify specific fields here instead of '__all__' if needed
+
+
+
+class sCredentialCategorysForm(forms.ModelForm):
+    class Meta:
+        model = sCredentialCategorys
+        fields = '__all__'  # You can specify specific fields here instead of '__all__' if needed
+
+        

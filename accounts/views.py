@@ -7,7 +7,7 @@ from .forms import UserForm, LoginForm
 from coda_project import settings
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from .models import CustomerUser,Departments_id
+from .models import CustomerUser,Departments_id,sCredentialCategorys
 from .utils import agreement_data
 from application.models import UserProfile,Assets
 from .utils import generate_random_password
@@ -313,6 +313,41 @@ def delete_departments_id(request, pk):
         departments_id_instance.delete()
         return redirect("accounts:departments_id_list")
     return render(request, "accounts/admin/delete.html", {'departments_id_instance': departments_id_instance})
+
+
+
+
+
+
+
+
+
+def sCredentialCategorys_list(request):
+    info=sCredentialCategorys.objects.all()
+    # prints("info======================================,"info)
+    return render(request,"accounts/admin/credentiallist.html",{"sCredentialCategorys":info})
+
+
+
+
+
+from django.shortcuts import render, redirect
+from .forms import sCredentialCategorysForm
+  
+def sCredentialCategorys_create(request):
+    if request.method == 'POST':
+        form = sCredentialCategorysForm(request.POST)
+        if form.is_valid():
+            form.save()  # Saving the form data to create a new CredentialCategory instance
+            return redirect('accounts:sCredentialCategorys_list')  # Redirecting to the list view after successful creation
+
+    else:
+        form = sCredentialCategorysForm()  # Creating an empty form for GET requests
+
+    return render(request, 'accounts/admin/create_credential.html', {'form': form})
+
+
+
 
 
 
