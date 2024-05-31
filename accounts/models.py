@@ -92,4 +92,19 @@ class Departments_id(models.Model):
         return self.slug
 
 
+
+
+from django.db import models
+
+class sCredentialCategorys(models.Model):
+    department = models.CharField(max_length=255)
+    category = models.CharField(max_length=255)
+    slug = models.SlugField(max_length=255)
+    description = models.TextField(max_length=1000)
+    entry_date = models.DateField()
+    is_active = models.BooleanField(default=True)
+    is_featured = models.BooleanField(default=False)
+
+
+
     
