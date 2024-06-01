@@ -369,6 +369,20 @@ def sCredentialCategorys_update(request, pk):
 
 
 
+def sCredentialCategorys_delete(request, pk):
+    sCredentialCategorys_instance = get_object_or_404(sCredentialCategorys, pk=pk)
+    if request.method == "POST":
+        sCredentialCategorys_instance.delete()
+        return redirect("accounts:sCredentialCategorys_list")
+    return render(request, "accounts/admin/delet.html", {'sCredentialCategorys_instance': sCredentialCategorys_instance})
+
+
+
+
+
+
+
+
 
 
 
