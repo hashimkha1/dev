@@ -9,6 +9,7 @@ urlpatterns = [
     path('sCredentialCategorys_create/', views.sCredentialCategorys_create, name='sCredentialCategorys_create'),
     path('sCredentialCategorys_update/<int:pk>/', views.sCredentialCategorys_update, name='sCredentialCategorys_update'),
     path('sCredentialCategorys_delete/<int:pk>/', views.sCredentialCategorys_delete, name='sCredentialCategorys_delete'),
+    path('sCredentialCategorys_detail/<int:pk>/', views.sCredentialCategorys_detail, name='sCredentialCategorys_detail'),
     
 ]
 

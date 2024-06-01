@@ -353,6 +353,12 @@ def sCredentialCategorys_create(request):
 
 
 
+
+
+
+
+
+
 def sCredentialCategorys_update(request, pk):
     sCredentialCategorys_instance = get_object_or_404(sCredentialCategorys, pk=pk)
     if request.method == 'POST':
@@ -378,6 +384,17 @@ def sCredentialCategorys_delete(request, pk):
 
 
 
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import sCredentialCategorys  # Import your model here
+
+def sCredentialCategorys_detail(request, pk):
+    sCredentialCategorys_instance = get_object_or_404(sCredentialCategorys, pk=pk)
+    context = {
+        'sCredentialCategorys_instance': sCredentialCategorys_instance,
+    }
+    return render(request, 'accounts/admin/detail.html', context)
 
 
 
