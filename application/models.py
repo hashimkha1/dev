@@ -61,3 +61,19 @@ class UserProfile(models.Model):
     def img_category(self):
         img_cat=self.image2.category
         return img_cat
+
+
+class JobDetails(models.Model):
+    job_description = models.TextField(null=False)
+    skills_expertise = models.TextField(null=False)
+    number_of_connects = models.IntegerField(null=False)
+    min_payment = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    max_payment = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    min_duration = models.IntegerField(null=False)
+    max_duration = models.IntegerField(null=False)
+    project_type = models.TextField(null=False)
+    deliverables = models.TextField(null=False)
+    links = models.URLField(null=True)  # This field can be null as per your specification
+
+    
+
