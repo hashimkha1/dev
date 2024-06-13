@@ -1,0 +1,106 @@
+{% extends "main/base_templates/new_base.html" %}
+{% block content %}
+
+<style>
+    .custom-table-container {
+        max-width: 90%;
+        margin: auto;
+        overflow-x: auto;
+    }
+    .user-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .user-table th, .user-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eaecef;
+    }
+    .user-table th {
+        background-color: #007bff;
+        color: white;
+    }
+    .user-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+    .user-table tr:hover {
+        background-color: #f1f1f1;
+    }
+    .icon-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .icon-buttons a {
+        color: #007bff; /* Color for icons */
+        text-decoration: none;
+    }
+    .icon-buttons a:hover {
+        color: #0056b3;
+    }
+</style>
+
+<main class="mn-inner">
+    <h5 style="color: #007bff; padding-top: 10px; padding-left: 50px;">User List</h5>
+    <div class="custom-table-container">
+        <!-- Display Messages -->
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+
+        <!-- User Table -->
+        <table class="user-table">
+            <thead>
+                <tr>
+                    <th> job_description</th>
+                    <th> skills_expertise</th>
+                    <th>number_of_connects</th>
+                    <th>min_payment</th>
+                    <th>min_duration</th>
+                    <th>max_duration</th>
+                    <th>project_type</th>
+                    <th>deliverables</th>
+                    <th>links</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for JobDetails in JobDetails %}
+                    <tr>
+                        <td>{{ JobDetails.job_description }}</td>
+                        <td>{{ JobDetails.skills_expertise }}</td>
+                        <td>{{ JobDetails.number_of_connects }}</td>
+                        <td>{{ JobDetails.min_payment }}</td>
+                        <td>{{ JobDetails.max_payment }}</td>
+                        <td>{{ JobDetails.limin_durationnk }}</td>
+                        <td>{{ JobDetails.max_duration }}</td>
+                        <td>{{ JobDetails.project_type }}</td>
+                        <td>{{ JobDetails.deliverables }}</td>
+                        <td>{{ JobDetails.link }}</td>
+                        
+                        <td class="icon-buttons">
+                            <a href="#">
+                                <i class="material-icons"></i>
+                            </a>
+                            <a href="#">
+                                <i class="material-icons"></i>
+                            </a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No users.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+{% endblock content %}
