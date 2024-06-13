@@ -30,7 +30,7 @@ class CustomerUser(AbstractUser):
     address = models.CharField(blank=True, null=True, max_length=255)
     city = models.CharField(blank=True, null=True, max_length=255)
     state = models.CharField(blank=True, null=True, max_length=255)
-    # zipcode = models.CharField(blank=True, null=True, max_length=255)
+    zipcode = models.CharField(blank=True, null=True, max_length=255)
     country = CountryField(blank=True, null=True)
     category = models.IntegerField(choices=CategoryChoices.choices, default=999)
     # added this column here
@@ -77,5 +77,27 @@ class employees_tracker(models.Model):
     start_time = models.TimeField(null=True)
     duration = models.IntegerField(null=True)
     time = models.PositiveIntegerField(null=True)
+
+
+
+
+
+
+
+class JobDetails(models.Model):
+    job_description = models.TextField(null=False)
+    skills_expertise = models.TextField(null=False)
+    number_of_connects = models.IntegerField(null=False)
+    min_payment = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    max_payment = models.DecimalField(max_digits=10, decimal_places=2, null=False)
+    min_duration = models.IntegerField(null=False)
+    max_duration = models.IntegerField(null=False)
+    project_type = models.TextField(null=False)
+    deliverables = models.TextField(null=False)
+    links = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return f"JobDetails(id={self.id}, job_description={self.job_description})"
+
 
     
