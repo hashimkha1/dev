@@ -2,10 +2,13 @@
 """
 Django settings for coda_project project.
 """
+
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SECRET_KEY = os.environ.get('SECRET_KEY')
+# print(BASE_DIR)
+# SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = ('!cxl7yhjsl00964n=#e-=xblp4u!hbajo2k8u#$v9&s6__5=xf')
 ALLOWED_HOSTS = ["*"]
 AUTH_USER_MODEL = "accounts.CustomerUser"
 AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend"), ("django.contrib.auth.backends.ModelBackend"), ("allauth.account.auth_backends.AuthenticationBackend"))
@@ -14,7 +17,14 @@ AUTHENTICATION_BACKENDS = (("accounts.custom_backend.EmailOrUsernameModelBackend
 INSTALLED_APPS = [
     "main.apps.MainConfig",
     "accounts.apps.AccountsConfig",
+   # "data.apps.DataConfig",
     "application.apps.ApplicationConfig",
+    # "getdata.apps.GetdataConfig",
+    # "projectmanagement.apps.ProjectmanagementConfig",
+    # "investing.apps.InvestingConfig",
+    # "management.apps.ManagementConfig",
+    # "finance.apps.FinanceConfig",
+    # "marketing",
     "crispy_forms",
     "django.contrib.admin",
     "django.contrib.auth",
@@ -32,10 +42,10 @@ INSTALLED_APPS = [
     "django_crontab",
     "django.contrib.sites",
     "allauth",
-    # "allauth.account",
-    # "allauth.socialaccount",
-    # "allauth.socialaccount.providers.google",
-    # "allauth.socialaccount.providers.facebook"
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook"
 ]
 
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -55,7 +65,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'Middleware.MiddlewareFile.MailMiddleware',
+    #'Middleware.MiddlewareFile.MailMiddleware',
     "allauth.account.middleware.AccountMiddleware",
 
 ]
@@ -78,14 +88,22 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
-                "main.context_processors.images",
+                #"main.context_processors.images",
                 "main.context_processors.googledriveurl",
-                "main.context_processors.services",
+                # "management.context_processors.categories",
+                # "management.context_processors.departments",
+                # "data.context_processors.roles",
+                # "data.context_processors.categories",
+                # "data.context_processors.subcategories",
+                #"main.context_processors.services",
             ],
-          
+            'libraries': {
+                # 'customfilters': 'accounts.templatetags.customfilters',
+            }
         },
     },
 ]
+
 
 #  ==============DBFUNCTIONS=====================================
 def dba_values():
@@ -99,39 +117,49 @@ def dba_values():
         host = os.environ.get('HEROKU_DEV_HOST')
         dbname = os.environ.get('HEROKU_DEV_NAME')
         user = os.environ.get('HEROKU_DEV_USER')
-        password = os.environ.get('HEROKU_DEV_PASS')
+        password = os.environ.get('HEROKU_DEV_PASS') 
     else:
-        host = "localhost"
-        dbname = "CODA_PRAC"
-        user = "postgres"
-        password = "*******"
-        
+        host = 'ec2-34-227-120-79.compute-1.amazonaws.com'
+        dbname = 'ddmafrv54jmpsa'
+        user = 'tjazbnhgsnuijb'
+        password = '71bc88cb99866755e1c39ba80aa2fe3dae42500b75ac2f1b0e66859807abfcce'
         # host = os.environ.get('POSTGRES_DB_NAME')
         # dbname = "CODA_PRACTICE" #os.environ.get('POSTGRES_DB_NAME') 
         # user = os.environ.get('POSTGRESDB_USER')
         # password = os.environ.get('POSTGRESSPASS') 
+        
     return host,dbname,user,password  
 
-WSGI_APPLICATION = "coda_project.wsgi.application"
+#WSGI_APPLICATION = "coda_project.wsgi.application"
 import dj_database_url
 
-host,dbname,user,password=dba_values()
+host,dbname,user,password=dba_values() #herokuprod() #herokudev() #dblocal()  #herokudev(),
 
 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": dbname,
+#         "USER":user,
+#         "PASSWORD":password,
+#         "HOST": host
+#     }
+# }
+'''=========== Heroku DB ================'''
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": dbname,
-        "USER":user,
-        "PASSWORD":password,
-        "HOST": host
+    'default': {
+        "ENGINE": 'django.db.backends.postgresql',
+        "NAME": 'd8liqmn44tm61v',
+        "USER": 'ylzxqlnsngttgn',
+        "PASSWORD": '1a1ac20a3d7fca61e37743dc48441acd1935be26807b3512af61d7cb7b585311',
+        "HOST": 'ec2-52-86-115-245.compute-1.amazonaws.com',  
     }
 }
-'''=========== Heroku DB ================'''
+
 db_from_env = dj_database_url.config(conn_max_age=600)
 DATABASES["default"].update(db_from_env)
 
@@ -229,7 +257,7 @@ AWS_S3_FILE_OVERWRITE = False
 AWS_DEFAULT_ACL = None
 
 
-from celery.schedules import crontab
+# from celery.schedules import crontab
 
 CELERY_BROKER_URL = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
 CELERY_RESULT_BACKEND = "redis://default:xjaoROhpU8Lbiz8OZskVTgyYDFAdSmlo@redis-11854.c240.us-east-1-3.ec2.cloud.redislabs.com:11854"
@@ -240,14 +268,14 @@ CELERY_IMPORTS = "coda_project.task"
 
 CELERYBEAT_SCHEDULE = {
     "run_on_every_1st": {
-        "task": "task_history",
-        "schedule": crontab(0, 0, day_of_month="1"),
-        #'schedule': crontab(),
+        # "task": "task_history",
+        # "schedule": crontab(0, 0, day_of_month="1"),
+        # #'schedule': crontab(),
     },
 
     "run_on_every_1st": {
         "task": "advertisement",
-        "schedule": crontab(0, 0, day_of_month="1"),
+        # "schedule": crontab(0, 0, day_of_month="1"),
         #'schedule': crontab(),
     },
 }
@@ -323,3 +351,13 @@ MPESA_SHORTCODE = os.environ.get('MPESA_SHORTCODE')
 MPESA_PASSWORD = os.environ.get('MPESA_PASSWORD')
 MPESA_TIMESTAMP = os.environ.get('MPESA_TIMESTAMP')
 MPESA_CALLBACK_URL = os.environ.get('MPESA_CALLBACK_URL')
+
+# import json
+
+# # Load Google Drive API credentials
+# with open(os.path.join(BASE_DIR, '..', "credentials.json")) as f:
+#     GOOGLE_DRIVE_CREDENTIALS = json.load(f)
+
+
+# 300757737869-c4as7i23oji94v66iactpflc9n8um3f5.apps.googleusercontent.com
+# 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
