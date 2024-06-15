@@ -2,6 +2,7 @@ import os
 from django.db import connection
 from django.apps import apps
 from django.db.utils import ProgrammingError
+
 import datetime
 
 def clear():
@@ -22,6 +23,7 @@ def all_tables():
     finally:
         cursor.close()
 
+
 def django_migration():
     cursor = connection.cursor()
     try:
@@ -39,6 +41,7 @@ def delete_table_records(mytable):
     if mytable._meta.db_table in table_names:
         mytable.objects.all().delete()
 
+
 def delete_table(mytable):
     cursor = connection.cursor()
     try:
@@ -49,12 +52,13 @@ def delete_table(mytable):
     finally:
         cursor.close()
 
-def delete_migrations():
+
+def delete_migrations(myapp):
     cursor = connection.cursor()
     try:
-        cursor.execute("DELETE FROM django_migrations WHERE app = 'finance'")
+        cursor.execute("DELETE FROM django_migrations WHERE app = %s", [myapp])
         connection.commit()
-        print("Entries deleted successfully from django_migrations table for app 'finance'!")
+        print(f"Entries deleted successfully from django_migrations table for app '{myapp}'!")
     except Exception as e:
         print("Error deleting entries from django_migrations table:", str(e))
     finally:

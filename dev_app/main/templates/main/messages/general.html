@@ -1,4 +1,4 @@
-{%extends "main/base_templates/new_base.html"%} {% block content %}
+{%extends "main/base_templates/base.html"%} {% block content %}
 <!-------------------404------------------------->
 <div class="container-fluid padding">
     <div class="row welcome text-center">
@@ -6,16 +6,19 @@
         <h1 class="display-4">{{title}}</h1>
       </div>
       <hr/>
-      <!-- <div class="col-12">
+      <div class="col-12">
         <p class="lead">
          Hi,{{request.user}}, {{message}},
         </p>
       <p class="lead">
          Hi,{{request.user}}, {{msg}},
-        </p> -->
+        </p>
+      <p class="lead">
+         Hi,{{request.user}},Here are {{values}},
+        </p>
 
         {% if values %}
-        <a href="{% url 'getdata:shortputdata'%}" class="btn btn-secondary">SEE ACCESS</a>
+        <a href="{% url 'getdata:shortput'%}" class="btn btn-secondary">SEE ACCESS</a>
         {% endif %}
         {% if site %}
         <a href="{{site}}" class="btn btn-secondary">WATCH </a>

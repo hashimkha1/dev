@@ -1,71 +1,59 @@
 from django import forms
-from django.db.models import Q
-from django.forms import  Textarea
-from accounts.models import CustomerUser
-from .models import Testimonials
+from django.contrib.auth.forms import UserCreationForm
+from django.forms import ModelForm, Textarea
+from django.contrib.auth.forms import UserCreationForm
+from accounts.models import User,UserCategory
+from .models import Feedback
 from django.utils.translation import gettext_lazy as _
-from .models import *
-# from django.db import transaction
 
 class ContactForm(forms.ModelForm):
-    pass
-    # class Meta:
-    #     model = DSU
-    #     fields = [
-    #         "trained_by",
-    #         "client_name",
-    #         "type",
-    #         "category",
-    #         "task",
-    #         "plan",
-    #         "challenge",
-    #         "uploaded",
-    #     ]
-    #     labels = {
-    #         "type": "Are You a Client/Staff?(Select Other if None of the above)",
-    #         "client_name": "Manager",
-    #         "trained_by": "Staff/Employee",
-    #         "category": "Pick your Category</h2>",
-    #         "task": "What Did You Work On?",
-    #         "plan": "What is your next plan of action on areas that you have not touched on?",
-    #         "challenge": "How Can We Help You?",
-    #         "uploaded": "Have you uploaded any DAF evidence/1-1 sessions?",
-    #     }
-
-    # def __init__(self, *args, **kwargs):
-    #     super(ContactForm, self).__init__(*args, **kwargs)
-    #     self.fields['trained_by'].required=False
-    #     self.fields['client_name'].required=False
-    #     self.fields['type'].required=False
-    #     self.fields['category'].required=False
-    #     self.fields['task'].required=False
-    #     self.fields['plan'].required=False
-    #     self.fields['challenge'].required=False
-    #     # self.fields['uploaded'].required=False
-
-class PostForm(forms.ModelForm):
-    class Meta:  
-        model = Testimonials  
-        # fields = ['writer', 'title', 'content']
-        fields = ['title', 'content']
-        widgets = {"content": Textarea(attrs={"cols": 40, "rows": 3})}
+    class Meta:
+        model = Feedback
+        fields = [
+            "user",
+            # "category",
+            # "sub_category",
+            "topic",
+            "description",
+        ]
+        labels = {
+            "user": "Staff/Employee",
+            # "category": "Pick your Category</h2>",
+            # "subcategory": "Are You a Client/Staff?(Select Other if None of the above)",
+            "topic": "Type your topic",
+            "description": "Describe your issue or question in detail",
+        }
 
     def __init__(self, *args, **kwargs):
-        super(PostForm, self).__init__(*args, **kwargs)
-        
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields['user'].required=False
+        self.fields['topic'].required=False
+        # self.fields['category'].required=False
+        # self.fields['sub_category'].required=False
 
-class ClientAvailabilityForm(forms.ModelForm):
+
+class FeedbackForm(forms.ModelForm):
+    # category = forms.ModelChoiceField(queryset=UserCategory.objects.all())
+    category = forms.ModelChoiceField(queryset=UserCategory.objects.all())
+    sub_category = forms.ModelChoiceField(queryset=UserCategory.objects.all(), required=False)
+
     class Meta:
-        model = ClientAvailability
-        fields = ['day', 'start_time', 'end_time', 'time_standards', 'topic']
+        model = Feedback
+        fields = ['topic', 'description']
 
-
-# class ClientNameForm(forms.Form):
-#     client = forms.ModelChoiceField(queryset=CustomerUser.objects.filter(is_client=True))
-#     fields = ['client']
-
-class ClientNameForm(forms.Form):
-    client = forms.ModelChoiceField(
-        queryset=CustomerUser.objects.filter(Q(is_client=True) | Q(is_staff=True)),
-        label='Select a client'
-    )
+# class FeedbackForm(forms.ModelForm):
+#     class Meta:
+#         model = Feedback
+#         fields = ("topic", "category", "sub_category", "description")
+#     category = forms.ModelChoiceField(
+#         queryset=UserCategory.objects.all(),
+#         to_field_name='category',
+#         label='Category',
+#         widget=forms.Select(attrs={'class': 'form-control'}),
+#     )
+#     sub_category = forms.ModelChoiceField(
+#         queryset=UserCategory.objects.all(),
+#         to_field_name='sub_category',
+#         label='Sub Category',
+#         widget=forms.Select(attrs={'class': 'form-control'}),
+#     )

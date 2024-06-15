@@ -1,5 +1,6 @@
 import django_filters 
-from accounts.models import CustomerUser
+from accounts.models import User
+from finance.models import Food
 
 
 class UserFilter(django_filters.FilterSet):
@@ -10,65 +11,5 @@ class UserFilter(django_filters.FilterSet):
     date_joined = django_filters.DateFilter(label='Entry date', lookup_expr='exact')
 
     class Meta:
-        model = CustomerUser
+        model = User
         fields = ['email', 'first_name', 'last_name', 'username','date_joined']
-
-
-
-class TaskHistoryFilter(django_filters.FilterSet):
-    pass
-#     class Meta:
-#         model=TaskHistory
-#         # fields= '__all__'
-#         fields ={
-#                 'group':['icontains'],
-#                 'activity_name':['icontains']
-#         }
-#         labels={
-#                 'employee'
-#                 'activity_name':'Task',
-#                 'group':'Group',
-#         }
-
-class TaskFilter(django_filters.FilterSet):
-    pass
-#     class Meta:
-#         model=Task
-#         # fields= '__all__'
-#         fields ={
-#                 'group':['icontains'],
-#                 'activity_name':['icontains']
-#         }
-#         labels={
-#                 'activity_name':'Task',
-#                 'group':'Group',
-#         }
-
-class RequirementFilter(django_filters.FilterSet):
-    pass
-#     class Meta:
-#         model=Requirement
-#         # fields= '__all__'
-#         fields ={
-#         'category':['icontains'],
-#         'status':['icontains'],
-#         'is_active':['icontains'],
-#         }
-    
-class FoodFilter(django_filters.FilterSet):
-    pass
-#     class Meta:
-#         model=Food
-#         # fields='__all__'
-#         fields ={'supplier','item'}
-    
-# ==================================INVESTING MODELS==================================================
-
-class ReturnsFilter(django_filters.FilterSet):
-    symbol = django_filters.CharFilter(label='Symbol', lookup_expr='icontains')
-    action = django_filters.CharFilter(label='Type', lookup_expr='icontains')
-    event = django_filters.CharFilter(label='Action', lookup_expr='icontains')
-
-    class Meta:
-        model = CustomerUser
-        fields = ['symbol', 'action', 'event']

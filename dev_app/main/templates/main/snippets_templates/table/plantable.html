@@ -2,14 +2,7 @@
     <tr>
         <!-- <td>{{instance.created_at|date:"n-d-Y"}}</td> -->
         <td>{{instance.goal}}</td>
-        {% if instance.category == "Work" %}
-        <td>
-            <a class="article-title" href="{% url 'main:open_urls' url_type=instance.pptlink  %}">
-            {{instance.task}}
-        </td>
-        {% else %}
         <td>{{instance.task}}</td>
-        {% endif %}
         <td>{{instance.responsible_party}}</td>
         <td>{{instance.duration}}</td>
         <td>{{delivery_date|date:"n-d-Y"}}</td>
